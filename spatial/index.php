@@ -40,14 +40,17 @@ if(file_exists(__DIR__ . '/../config/includes/searchVarCustom.php')){
     include(__DIR__ . '/../config/includes/searchVarCustom.php');
 }
 
-$mapCenter = '[-110.90713, 32.21976]';
-if(isset($GLOBALS['SPATIAL_INITIAL_CENTER']) && $GLOBALS['SPATIAL_INITIAL_CENTER']) {
-    $mapCenter = $GLOBALS['SPATIAL_INITIAL_CENTER'];
-}
-$mapZoom = 7;
-if(isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM']) {
-    $mapZoom = $GLOBALS['SPATIAL_INITIAL_ZOOM'];
-}
+$mapCenter = ((isset($GLOBALS['SPATIAL_INITIAL_CENTER']) && $GLOBALS['SPATIAL_INITIAL_CENTER'])?$GLOBALS['SPATIAL_INITIAL_CENTER']:'[-110.90713, 32.21976]');
+$mapZoom = ((isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM'])?$GLOBALS['SPATIAL_INITIAL_ZOOM']:7);
+$initialPointColor = ((isset($GLOBALS['SPATIAL_INITIAL_POINT_COLOR']) && $GLOBALS['SPATIAL_INITIAL_POINT_COLOR'])?$GLOBALS['SPATIAL_INITIAL_POINT_COLOR']:'E69E67');
+$shapesFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']:'ffffff');
+$shapesBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']:'3399CC');
+$shapesBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']:2);
+$shapesOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']:'0.4');
+$dragDropFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']:'aaaaaa');
+$dragDropBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']:'000000');
+$dragDropBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']:2);
+$dragDropOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']:'0.3');
 
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
@@ -102,7 +105,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20211227" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220221" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210705" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20211104" type="text/javascript"></script>
     <script type="text/javascript">
@@ -113,7 +116,7 @@ $dbArr = array();
             winHeight = winHeight + "px";
             document.getElementById('spatialpanel').style.height = winHeight;
 
-            $("#accordion").accordion({
+            $("#sidepanel-accordion").accordion({
                 icons: null,
                 collapsible: true,
                 heightStyle: "fill"
@@ -124,14 +127,43 @@ $dbArr = array();
             let winHeight = $(window).height();
             winHeight = winHeight + "px";
             document.getElementById('spatialpanel').style.height = winHeight;
-            $("#accordion").accordion("refresh");
+            $("#sidepanel-accordion").accordion("refresh");
         });
 
         $(document).on("pageloadfailed", function(event){
             event.preventDefault();
         });
 
+        function rgbaStrToHexStr(rgbaString) {
+            const rgbArr = rgbaString.match(/[.?\d]+/g);
+            let retStr = '';
+            if(rgbArr){
+                if(rgbArr[0].length == 1){
+                    rgbArr[0] = "0" + rgbArr[0];
+                }
+                if(rgbArr[1].length == 1){
+                    rgbArr[1] = "0" + rgbArr[1];
+                }
+                if(rgbArr[2].length == 1){
+                    rgbArr[2] = "0" + rgbArr[2];
+                }
+                retStr = "#" + rgbArr[0] + rgbArr[1] + rgbArr[2];
+            }
+            return retStr;
+        }
+
+        function setLayerOrderScrollers() {
+            for(let i in layerOrderArr){
+                if(layerOrderArr.hasOwnProperty(i)){
+                    const index = i + 1;
+                    const sortingScrollerId = 'layerOrder-' + layerOrderArr[i];
+                    document.getElementById(sortingScrollerId).value = Number(index);
+                }
+            }
+        }
+
         $(document).ready(function() {
+            setLayersController();
             if(document.getElementById("taxa")){
                 $( "#taxa" )
                     .bind( "keydown", function( event ) {
@@ -310,6 +342,15 @@ $dbArr = array();
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
     const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
+    const initialPointColor = '<?php echo $initialPointColor; ?>';
+    const shapesFillColor = '<?php echo $shapesFillColor; ?>';
+    const shapesBorderColor = '<?php echo $shapesBorderColor; ?>';
+    const shapesBorderWidth = <?php echo $shapesBorderWidth; ?>;
+    const shapesOpacity = '<?php echo $shapesOpacity; ?>';
+    const dragDropFillColor = '<?php echo $dragDropFillColor; ?>';
+    const dragDropBorderColor = '<?php echo $dragDropBorderColor; ?>';
+    const dragDropBorderWidth = <?php echo $dragDropBorderWidth; ?>;
+    const dragDropOpacity = '<?php echo $dragDropOpacity; ?>';
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');
@@ -354,20 +395,20 @@ $dbArr = array();
         source: selectsource,
         style: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: 'rgba(255,255,255,0.4)'
+                color: getRgbaStrFromHexOpacity(('#' + shapesFillColor),shapesOpacity)
             }),
             stroke: new ol.style.Stroke({
-                color: '#3399CC',
-                width: 2
+                color: ('#' + shapesBorderColor),
+                width: shapesBorderWidth
             }),
             image: new ol.style.Circle({
                 radius: 7,
                 stroke: new ol.style.Stroke({
-                    color: '#3399CC',
-                    width: 2
+                    color: ('#' + shapesBorderColor),
+                    width: shapesBorderWidth
                 }),
                 fill: new ol.style.Fill({
-                    color: 'rgba(255,255,255,0.4)'
+                    color: getRgbaStrFromHexOpacity(('#' + shapesFillColor),shapesOpacity)
                 })
             })
         })
@@ -429,13 +470,40 @@ $dbArr = array();
         wrapX: true
     });
     const dragdroplayer1 = new ol.layer.Vector({
-        source: blankdragdropsource
+        source: blankdragdropsource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
+            }),
+            stroke: new ol.style.Stroke({
+                color: ('#' + dragDropBorderColor),
+                width: dragDropBorderWidth
+            })
+        })
     });
     const dragdroplayer2 = new ol.layer.Vector({
-        source: blankdragdropsource
+        source: blankdragdropsource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
+            }),
+            stroke: new ol.style.Stroke({
+                color: ('#' + dragDropBorderColor),
+                width: dragDropBorderWidth
+            })
+        })
     });
     const dragdroplayer3 = new ol.layer.Vector({
-        source: blankdragdropsource
+        source: blankdragdropsource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
+            }),
+            stroke: new ol.style.Stroke({
+                color: ('#' + dragDropBorderColor),
+                width: dragDropBorderWidth
+            })
+        })
     });
     const dragdroplayer4 = new ol.layer.Image();
     const dragdroplayer5 = new ol.layer.Image();
@@ -576,11 +644,19 @@ $dbArr = array();
             if(fileType === 'geojson' || fileType === 'kml'){
                 if(setDragDropTarget()){
                     const infoArr = [];
-                    infoArr['Name'] = dragDropTarget;
-                    infoArr['layerType'] = 'vector';
-                    infoArr['Title'] = filename;
-                    infoArr['Abstract'] = '';
-                    infoArr['DefaultCRS'] = '';
+                    infoArr['id'] = dragDropTarget;
+                    infoArr['type'] = 'userLayer';
+                    infoArr['fileType'] = fileType;
+                    infoArr['layerName'] = filename;
+                    infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
+                    infoArr['fillColor'] = dragDropFillColor;
+                    infoArr['borderColor'] = dragDropBorderColor;
+                    infoArr['borderWidth'] = dragDropBorderWidth;
+                    infoArr['opacity'] = dragDropOpacity;
+                    infoArr['removable'] = true;
+                    infoArr['sortable'] = true;
+                    infoArr['symbology'] = true;
+                    infoArr['query'] = true;
                     const sourceIndex = dragDropTarget + 'Source';
                     let features = event.features;
                     if(fileType === 'kml'){
@@ -590,11 +666,10 @@ $dbArr = array();
                     layersArr[sourceIndex] = new ol.source.Vector({
                         features: features
                     });
-                    layersArr[dragDropTarget].setStyle(getDragDropStyle);
                     layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                    buildLayerTableRow(infoArr,true);
+                    processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                     map.getView().fit(layersArr[sourceIndex].getExtent());
-                    toggleLayerTable();
+                    toggleLayerDisplayMessage();
                 }
             }
             else if(fileType === 'zip'){
@@ -602,11 +677,19 @@ $dbArr = array();
                     getArrayBuffer(event.file).then((data) => {
                         shp(data).then((geojson) => {
                             const infoArr = [];
-                            infoArr['Name'] = dragDropTarget;
-                            infoArr['layerType'] = 'vector';
-                            infoArr['Title'] = filename;
-                            infoArr['Abstract'] = '';
-                            infoArr['DefaultCRS'] = '';
+                            infoArr['id'] = dragDropTarget;
+                            infoArr['type'] = 'userLayer';
+                            infoArr['fileType'] = 'zip';
+                            infoArr['layerName'] = filename;
+                            infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
+                            infoArr['fillColor'] = dragDropFillColor;
+                            infoArr['borderColor'] = dragDropBorderColor;
+                            infoArr['borderWidth'] = dragDropBorderWidth;
+                            infoArr['opacity'] = dragDropOpacity;
+                            infoArr['removable'] = true;
+                            infoArr['sortable'] = true;
+                            infoArr['symbology'] = true;
+                            infoArr['query'] = true;
                             const sourceIndex = dragDropTarget + 'Source';
                             const format = new ol.format.GeoJSON();
                             const features = format.readFeatures(geojson, {
@@ -615,11 +698,10 @@ $dbArr = array();
                             layersArr[sourceIndex] = new ol.source.Vector({
                                 features: features
                             });
-                            layersArr[dragDropTarget].setStyle(getDragDropStyle);
                             layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                            buildLayerTableRow(infoArr,true);
+                            processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                             map.getView().fit(layersArr[sourceIndex].getExtent());
-                            toggleLayerTable();
+                            toggleLayerDisplayMessage();
                         });
                     });
                 }
@@ -628,11 +710,15 @@ $dbArr = array();
                 if(setRasterDragDropTarget()){
                     event.file.arrayBuffer().then((data) => {
                         const infoArr = [];
-                        infoArr['Name'] = dragDropTarget;
-                        infoArr['layerType'] = 'raster';
-                        infoArr['Title'] = filename;
-                        infoArr['Abstract'] = '';
-                        infoArr['DefaultCRS'] = '';
+                        infoArr['id'] = dragDropTarget;
+                        infoArr['type'] = 'userLayer';
+                        infoArr['fileType'] = 'tif';
+                        infoArr['layerName'] = filename;
+                        infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
+                        infoArr['removable'] = true;
+                        infoArr['sortable'] = true;
+                        infoArr['symbology'] = false;
+                        infoArr['query'] = false;
                         const sourceIndex = dragDropTarget + 'Source';
                         const imageIndex = dragDropTarget + 'Image';
                         const tiff = GeoTIFF.parse(data);
@@ -660,8 +746,8 @@ $dbArr = array();
                         });
                         layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
                         map.addLayer(layersArr[dragDropTarget]);
-                        buildLayerTableRow(infoArr,true);
-                        toggleLayerTable();
+                        processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
+                        toggleLayerDisplayMessage();
                     });
                 }
             }
@@ -860,12 +946,20 @@ $dbArr = array();
             if(featureCnt > 0){
                 if(!shapeActive){
                     const infoArr = [];
-                    infoArr['Name'] = 'select';
-                    infoArr['layerType'] = 'vector';
-                    infoArr['Title'] = 'Shapes';
-                    infoArr['Abstract'] = '';
-                    infoArr['DefaultCRS'] = '';
-                    buildLayerTableRow(infoArr,true);
+                    infoArr['id'] = 'select';
+                    infoArr['type'] = 'userLayer';
+                    infoArr['fileType'] = 'vector';
+                    infoArr['layerName'] = 'Shapes';
+                    infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
+                    infoArr['fillColor'] = shapesFillColor;
+                    infoArr['borderColor'] = shapesBorderColor;
+                    infoArr['borderWidth'] = shapesBorderWidth;
+                    infoArr['opacity'] = shapesOpacity;
+                    infoArr['removable'] = true;
+                    infoArr['sortable'] = false;
+                    infoArr['symbology'] = true;
+                    infoArr['query'] = true;
+                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
                     shapeActive = true;
                 }
             }

@@ -80,7 +80,7 @@ $voucherProjects = $clManager->getVoucherProjects();
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
-	<script type="text/javascript" src="../js/symb/shared.js?ver=20211227"></script>
+	<script type="text/javascript" src="../js/symb/shared.js?ver=20220221"></script>
 	<script type="text/javascript" src="../js/symb/checklists.checklistadmin.js?ver=20210218"></script>
 </head>
 

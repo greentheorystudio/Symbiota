@@ -72,13 +72,40 @@ const blankdragdropsource = new ol.source.Vector({
     wrapX: true
 });
 const dragdroplayer1 = new ol.layer.Vector({
-    source: blankdragdropsource
+    source: blankdragdropsource,
+    style: new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
+        }),
+        stroke: new ol.style.Stroke({
+            color: ('#' + dragDropBorderColor),
+            width: dragDropBorderWidth
+        })
+    })
 });
 const dragdroplayer2 = new ol.layer.Vector({
-    source: blankdragdropsource
+    source: blankdragdropsource,
+    style: new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
+        }),
+        stroke: new ol.style.Stroke({
+            color: ('#' + dragDropBorderColor),
+            width: dragDropBorderWidth
+        })
+    })
 });
 const dragdroplayer3 = new ol.layer.Vector({
-    source: blankdragdropsource
+    source: blankdragdropsource,
+    style: new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
+        }),
+        stroke: new ol.style.Stroke({
+            color: ('#' + dragDropBorderColor),
+            width: dragDropBorderWidth
+        })
+    })
 });
 
 layersArr['base'] = baselayer;
@@ -160,7 +187,6 @@ dragAndDropInteraction.on('addfeatures', function(event) {
                 layersArr[sourceIndex] = new ol.source.Vector({
                     features: features
                 });
-                layersArr[dragDropTarget].setStyle(getDragDropStyle);
                 layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
                 map.getView().fit(layersArr[sourceIndex].getExtent());
             }
@@ -177,7 +203,6 @@ dragAndDropInteraction.on('addfeatures', function(event) {
                         layersArr[sourceIndex] = new ol.source.Vector({
                             features: features
                         });
-                        layersArr[dragDropTarget].setStyle(getDragDropStyle);
                         layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
                         map.getView().fit(layersArr[sourceIndex].getExtent());
                     });
