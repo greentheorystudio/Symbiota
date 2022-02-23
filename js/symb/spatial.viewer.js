@@ -76,41 +76,17 @@ const blankdragdropsource = new ol.source.Vector({
 const dragdroplayer1 = new ol.layer.Vector({
     zIndex: 1,
     source: blankdragdropsource,
-    style: new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
-        }),
-        stroke: new ol.style.Stroke({
-            color: ('#' + dragDropBorderColor),
-            width: dragDropBorderWidth
-        })
-    })
+    style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
 });
 const dragdroplayer2 = new ol.layer.Vector({
     zIndex: 2,
     source: blankdragdropsource,
-    style: new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
-        }),
-        stroke: new ol.style.Stroke({
-            color: ('#' + dragDropBorderColor),
-            width: dragDropBorderWidth
-        })
-    })
+    style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
 });
 const dragdroplayer3 = new ol.layer.Vector({
     zIndex: 3,
     source: blankdragdropsource,
-    style: new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
-        }),
-        stroke: new ol.style.Stroke({
-            color: ('#' + dragDropBorderColor),
-            width: dragDropBorderWidth
-        })
-    })
+    style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
 });
 
 layersArr['base'] = baselayer;

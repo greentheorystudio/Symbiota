@@ -88,7 +88,7 @@ $dbArr = array();
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol-ext.min.css" type="text/css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220203" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220222" type="text/css" rel="stylesheet" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
@@ -222,6 +222,28 @@ $dbArr = array();
             delete layersArr[id];
         }
 
+        function setVectorStyle(fillColor, borderColor, borderWidth, opacity){
+            return new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                }),
+                stroke: new ol.style.Stroke({
+                    color: ('#' + borderColor),
+                    width: borderWidth
+                }),
+                image: new ol.style.Circle({
+                    radius: 5,
+                    fill: new ol.style.Fill({
+                        color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: ('#' + borderColor),
+                        width: borderWidth
+                    })
+                })
+            })
+        }
+
         function loadServerLayer(id,file){
             const zIndex = layerOrderArr.length + 1;
             const filenameParts = file.split('.');
@@ -234,25 +256,7 @@ $dbArr = array();
                 opacity = document.getElementById(('opacity-' + id)).value;
                 layersArr[id] = new ol.layer.Vector({
                     zIndex: zIndex,
-                    style: new ol.style.Style({
-                        fill: new ol.style.Fill({
-                            color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
-                        }),
-                        stroke: new ol.style.Stroke({
-                            color: ('#' + borderColor),
-                            width: borderWidth
-                        }),
-                        image: new ol.style.Circle({
-                            radius: 5,
-                            fill: new ol.style.Fill({
-                                color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
-                            }),
-                            stroke: new ol.style.Stroke({
-                                color: ('#' + borderColor),
-                                width: borderWidth
-                            })
-                        })
-                    })
+                    style: setVectorStyle(fillColor, borderColor, borderWidth, opacity)
                 });
             }
             else{
@@ -560,25 +564,7 @@ $dbArr = array();
     const selectlayer = new ol.layer.Vector({
         zIndex: 8,
         source: selectsource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + shapesFillColor),shapesOpacity)
-            }),
-            stroke: new ol.style.Stroke({
-                color: ('#' + shapesBorderColor),
-                width: shapesBorderWidth
-            }),
-            image: new ol.style.Circle({
-                radius: 7,
-                stroke: new ol.style.Stroke({
-                    color: ('#' + shapesBorderColor),
-                    width: shapesBorderWidth
-                }),
-                fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + shapesFillColor),shapesOpacity)
-                })
-            })
-        })
+        style: setVectorStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesOpacity)
     });
 
     let uncertaintycirclesource = new ol.source.Vector({
@@ -642,41 +628,17 @@ $dbArr = array();
     const dragdroplayer1 = new ol.layer.Vector({
         zIndex: 1,
         source: blankdragdropsource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
-            }),
-            stroke: new ol.style.Stroke({
-                color: ('#' + dragDropBorderColor),
-                width: dragDropBorderWidth
-            })
-        })
+        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
     });
     const dragdroplayer2 = new ol.layer.Vector({
         zIndex: 2,
         source: blankdragdropsource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
-            }),
-            stroke: new ol.style.Stroke({
-                color: ('#' + dragDropBorderColor),
-                width: dragDropBorderWidth
-            })
-        })
+        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
     });
     const dragdroplayer3 = new ol.layer.Vector({
         zIndex: 3,
         source: blankdragdropsource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + dragDropFillColor),dragDropOpacity)
-            }),
-            stroke: new ol.style.Stroke({
-                color: ('#' + dragDropBorderColor),
-                width: dragDropBorderWidth
-            })
-        })
+        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
     });
     const dragdroplayer4 = new ol.layer.Image({
         zIndex: 4,
