@@ -20,6 +20,7 @@ let vectorsource = new ol.source.Vector({
     wrapX: true
 });
 const vectorlayer = new ol.layer.Vector({
+    zIndex: 5,
     source: vectorsource,
     style: new ol.style.Style({
         fill: new ol.style.Fill({
@@ -46,6 +47,7 @@ let radiuscirclesource = new ol.source.Vector({
     wrapX: true
 });
 const radiuscirclelayer = new ol.layer.Vector({
+    zIndex: 4,
     source: radiuscirclesource,
     style: new ol.style.Style({
         fill: new ol.style.Fill({
@@ -72,6 +74,7 @@ const blankdragdropsource = new ol.source.Vector({
     wrapX: true
 });
 const dragdroplayer1 = new ol.layer.Vector({
+    zIndex: 1,
     source: blankdragdropsource,
     style: new ol.style.Style({
         fill: new ol.style.Fill({
@@ -84,6 +87,7 @@ const dragdroplayer1 = new ol.layer.Vector({
     })
 });
 const dragdroplayer2 = new ol.layer.Vector({
+    zIndex: 2,
     source: blankdragdropsource,
     style: new ol.style.Style({
         fill: new ol.style.Fill({
@@ -96,6 +100,7 @@ const dragdroplayer2 = new ol.layer.Vector({
     })
 });
 const dragdroplayer3 = new ol.layer.Vector({
+    zIndex: 3,
     source: blankdragdropsource,
     style: new ol.style.Style({
         fill: new ol.style.Fill({

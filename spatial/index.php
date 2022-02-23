@@ -169,7 +169,8 @@ $dbArr = array();
         }
 
         function setLayersOrder() {
-            const layersArrLength = layersArr.length;
+            const layersArrKeys = Object.keys(layersArr);
+            const layersArrLength = layersArrKeys.length;
             for(let i in layerOrderArr){
                 if(layerOrderArr.hasOwnProperty(i)){
                     const index = (layerOrderArr.indexOf(layerOrderArr[i])) + 1;
@@ -201,6 +202,130 @@ $dbArr = array();
             if(layersArr.hasOwnProperty('vector')){
                 layersArr['vector'].setZIndex(layersArrLength);
             }
+        }
+
+        function toggleServerLayerVisibility(id,name,file,visible){
+            if(visible === true){
+                loadServerLayer(id,file);
+                addLayerToSelList(id,name,false);
+                addLayerToLayerOrderArr(id);
+            }
+            else{
+                removeServerLayer(id);
+                removeLayerToSelList(id);
+                removeLayerFromLayerOrderArr(id);
+            }
+        }
+
+        function removeServerLayer(id){
+            map.removeLayer(layersArr[id]);
+            delete layersArr[id];
+        }
+
+        function loadServerLayer(id,file){
+            const zIndex = layerOrderArr.length + 1;
+            const filenameParts = file.split('.');
+            const fileType = filenameParts.pop();
+            let serverLayerSource,serverLayerLayer,fillColor,borderColor,borderWidth,opacity;
+            if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
+                fillColor = document.getElementById(('fillColor-' + id)).value;
+                borderColor = document.getElementById(('borderColor-' + id)).value;
+                borderWidth = document.getElementById(('borderWidth-' + id)).value;
+                opacity = document.getElementById(('opacity-' + id)).value;
+                layersArr[id] = new ol.layer.Vector({
+                    zIndex: zIndex,
+                    style: new ol.style.Style({
+                        fill: new ol.style.Fill({
+                            color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: ('#' + borderColor),
+                            width: borderWidth
+                        }),
+                        image: new ol.style.Circle({
+                            radius: 5,
+                            fill: new ol.style.Fill({
+                                color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                            }),
+                            stroke: new ol.style.Stroke({
+                                color: ('#' + borderColor),
+                                width: borderWidth
+                            })
+                        })
+                    })
+                });
+            }
+            else{
+                layersArr[id] = new ol.layer.Image({
+                    zIndex: zIndex,
+                });
+            }
+            if(fileType === 'geojson'){
+                layersArr[id].setSource(new ol.source.Vector({
+                    url: ('../content/spatial/' + file),
+                    format: new ol.format.GeoJSON(),
+                    wrapX: true
+                }));
+            }
+            else if(fileType === 'kml'){
+                layersArr[id].setSource(new ol.source.Vector({
+                    url: ('../content/spatial/' + file),
+                    format: new ol.format.KML({
+                        extractStyles: false,
+                    }),
+                    wrapX: true
+                }));
+            }
+            else if(fileType === 'zip'){
+                fetch(('../content/spatial/' + file)).then((fileFetch) => {
+                    fileFetch.blob().then((blob) => {
+                        getArrayBuffer(blob).then((data) => {
+                            shp(data).then((geojson) => {
+                                const format = new ol.format.GeoJSON();
+                                const features = format.readFeatures(geojson, {
+                                    featureProjection: 'EPSG:3857'
+                                });
+                                layersArr[id].setSource(new ol.source.Vector({
+                                    features: features,
+                                    wrapX: true
+                                }));
+                            });
+                        });
+                    });
+                });
+            }
+            else if(fileType === 'tif'){
+                fetch(('../content/spatial/' + file)).then((fileFetch) => {
+                    fileFetch.blob().then((blob) => {
+                        blob.arrayBuffer().then((data) => {
+                            const tiff = GeoTIFF.parse(data);
+                            const image = tiff.getImage();
+                            const rawBox = image.getBoundingBox();
+                            const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
+                            const bands = image.readRasters();
+                            const canvasElement = document.createElement('canvas');
+                            const minValue = 0;
+                            const maxValue = 1200;
+                            const plot = new plotty.plot({
+                                canvas: canvasElement,
+                                data: bands[0],
+                                width: image.getWidth(),
+                                height: image.getHeight(),
+                                domain: [minValue, maxValue],
+                                colorScale: 'earth'
+                            });
+                            plot.render();
+                            layersArr[id].setSource(new ol.source.ImageStatic({
+                                url: canvasElement.toDataURL("image/png"),
+                                imageExtent: box,
+                                projection: 'EPSG:4326'
+                            }));
+                        });
+                    });
+                });
+            }
+            map.addLayer(layersArr[id]);
+            toggleLayerDisplayMessage();
         }
 
         $(document).ready(function() {
@@ -433,6 +558,7 @@ $dbArr = array();
         wrapX: true
     });
     const selectlayer = new ol.layer.Vector({
+        zIndex: 8,
         source: selectsource,
         style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -459,6 +585,7 @@ $dbArr = array();
         wrapX: true
     });
     const uncertaintycirclelayer = new ol.layer.Vector({
+        zIndex: 7,
         source: uncertaintycirclesource,
         style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -485,10 +612,12 @@ $dbArr = array();
         wrapX: true
     });
     const pointvectorlayer = new ol.layer.Vector({
+        zIndex: 9,
         source: pointvectorsource
     });
 
     const heatmaplayer = new ol.layer.Heatmap({
+        zIndex: 10,
         source: pointvectorsource,
         weight: function (feature) {
             let showPoint = true;
@@ -511,6 +640,7 @@ $dbArr = array();
         wrapX: true
     });
     const dragdroplayer1 = new ol.layer.Vector({
+        zIndex: 1,
         source: blankdragdropsource,
         style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -523,6 +653,7 @@ $dbArr = array();
         })
     });
     const dragdroplayer2 = new ol.layer.Vector({
+        zIndex: 2,
         source: blankdragdropsource,
         style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -535,6 +666,7 @@ $dbArr = array();
         })
     });
     const dragdroplayer3 = new ol.layer.Vector({
+        zIndex: 3,
         source: blankdragdropsource,
         style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -546,11 +678,18 @@ $dbArr = array();
             })
         })
     });
-    const dragdroplayer4 = new ol.layer.Image();
-    const dragdroplayer5 = new ol.layer.Image();
-    const dragdroplayer6 = new ol.layer.Image();
+    const dragdroplayer4 = new ol.layer.Image({
+        zIndex: 4,
+    });
+    const dragdroplayer5 = new ol.layer.Image({
+        zIndex: 5,
+    });
+    const dragdroplayer6 = new ol.layer.Image({
+        zIndex: 6,
+    });
 
     const spiderLayer = new ol.layer.Vector({
+        zIndex: 11,
         source: new ol.source.Vector({
             features: new ol.Collection(),
             useSpatialIndex: true
@@ -1074,92 +1213,8 @@ $dbArr = array();
 
     map.on('singleclick', function(evt) {
         let infoHTML;
-        let url;
-        let viewResolution;
-        let layerIndex;
         if(evt.originalEvent.altKey){
-            layerIndex = activeLayer + "Source";
-            viewResolution = (mapView.getResolution());
-            if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv' && activeLayer !== 'dragdrop1' && activeLayer !== 'dragdrop2' && activeLayer !== 'dragdrop3' && activeLayer !== 'dragdrop4' && activeLayer !== 'dragdrop5' && activeLayer !== 'dragdrop6'){
-                url = layersArr[layerIndex].getGetFeatureInfoUrl(evt.coordinate, viewResolution, 'EPSG:3857', {'INFO_FORMAT': 'application/json'});
-                if (url) {
-                    $.ajax({
-                        type: "GET",
-                        url: url,
-                        async: true
-                    }).done(function(msg) {
-                        if(msg){
-                            let infoHTML = '';
-                            const infoArr = JSON.parse(msg);
-                            const propArr = infoArr['features'][0]['properties'];
-                            for(const key in propArr){
-                                if(propArr.hasOwnProperty(key)){
-                                    let valTag = '';
-                                    if(key === 'GRAY_INDEX') {
-                                        valTag = 'Value';
-                                    }
-                                    else {
-                                        valTag = key;
-                                    }
-                                    infoHTML += '<b>'+valTag+':</b> '+propArr[key]+'<br />';
-                                }
-                            }
-                            popupcontent.innerHTML = infoHTML;
-                            popupoverlay.setPosition(evt.coordinate);
-                        }
-                    });
-                }
-            }
-            else if(activeLayer === 'none' || activeLayer === 'dragdrop1' || activeLayer === 'dragdrop2' || activeLayer === 'dragdrop3' || activeLayer === 'select'){
-                infoHTML = '';
-                const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-                    if (layer === layersArr[activeLayer]) {
-                        return feature;
-                    }
-                });
-                if(feature){
-                    const properties = feature.getKeys();
-                    for(let i in properties){
-                        if(properties.hasOwnProperty(i) && String(properties[i]) !== 'geometry'){
-                            infoHTML += '<b>'+properties[i]+':</b> '+feature.get(properties[i])+'<br />';
-                        }
-                    }
-                    if(infoHTML){
-                        popupcontent.innerHTML = infoHTML;
-                        popupoverlay.setPosition(evt.coordinate);
-                    }
-                }
-            }
-            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6'){
-                infoHTML = '';
-                const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-                const imageIndex = activeLayer + 'Image';
-                const image = layersArr[imageIndex];
-                const meta = image.getFileDirectory();
-                const x_min = meta.ModelTiepoint[3];
-                const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
-                const y_min = meta.ModelTiepoint[4];
-                const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
-                const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
-                const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
-                const bands = image.readRasters();
-                const canvasElement = document.createElement('canvas');
-                const minValue = 0;
-                const maxValue = 1200;
-                const plot = new plotty.plot({
-                    canvas: canvasElement,
-                    data: bands[0],
-                    width: image.getWidth(),
-                    height: image.getHeight(),
-                    domain: [minValue, maxValue],
-                    colorScale: 'earth'
-                });
-                const rasterValue = plot.atPoint(x,y);
-                infoHTML += '<b>Value:</b> '+rasterValue+'<br />';
-                popupcontent.innerHTML = infoHTML;
-                popupoverlay.setPosition(evt.coordinate);
-            }
-            else if(activeLayer === 'pointv'){
+            if(activeLayer === 'pointv'){
                 infoHTML = '';
                 let targetFeature = '';
                 let iFeature = '';
@@ -1205,11 +1260,59 @@ $dbArr = array();
                 }
                 clickedFeatures = [];
             }
+            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6'){
+                infoHTML = '';
+                const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                const imageIndex = activeLayer + 'Image';
+                const image = layersArr[imageIndex];
+                const meta = image.getFileDirectory();
+                const x_min = meta.ModelTiepoint[3];
+                const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                const y_min = meta.ModelTiepoint[4];
+                const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+                const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
+                const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
+                const bands = image.readRasters();
+                const canvasElement = document.createElement('canvas');
+                const minValue = 0;
+                const maxValue = 1200;
+                const plot = new plotty.plot({
+                    canvas: canvasElement,
+                    data: bands[0],
+                    width: image.getWidth(),
+                    height: image.getHeight(),
+                    domain: [minValue, maxValue],
+                    colorScale: 'earth'
+                });
+                const rasterValue = plot.atPoint(x,y);
+                infoHTML += '<b>Value:</b> '+rasterValue+'<br />';
+                popupcontent.innerHTML = infoHTML;
+                popupoverlay.setPosition(evt.coordinate);
+            }
+            else if(layersArr[activeLayer] instanceof ol.layer.Vector){
+                infoHTML = '';
+                const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+                    if (layer === layersArr[activeLayer]) {
+                        return feature;
+                    }
+                });
+                if(feature){
+                    const properties = feature.getKeys();
+                    for(let i in properties){
+                        if(properties.hasOwnProperty(i) && String(properties[i]) !== 'geometry'){
+                            infoHTML += '<b>'+properties[i]+':</b> '+feature.get(properties[i])+'<br />';
+                        }
+                    }
+                    if(infoHTML){
+                        popupcontent.innerHTML = infoHTML;
+                        popupoverlay.setPosition(evt.coordinate);
+                    }
+                }
+            }
         }
         else{
-            layerIndex = activeLayer + "Source";
             if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv'){
-                if(activeLayer === 'dragdrop1' || activeLayer === 'dragdrop2' || activeLayer === 'dragdrop3'){
+                if(layersArr[activeLayer] instanceof ol.layer.Vector){
                     map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
                         if(layer === layersArr[activeLayer]){
                             try{

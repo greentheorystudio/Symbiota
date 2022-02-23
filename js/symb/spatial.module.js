@@ -85,7 +85,9 @@ for (let z = 0; z < 16; ++z) {
     resolutions[z] = maxResolution / Math.pow(2, z);
 }
 
-const baselayer = new ol.layer.Tile();
+const baselayer = new ol.layer.Tile({
+    zIndex: 0
+});
 
 function addLayerToSelList(layer,title,active){
     const origValue = document.getElementById("selectlayerselect").value;
@@ -360,7 +362,6 @@ function processAddLayerControllerGroup(lArr,parentElement){
                 processAddLayerControllerElement(layersArr[i],layerGroupContainerDiv,false)
             }
         }
-        //$(('#' + layerGroupdDivId)).accordion("refresh");
     }
     toggleLayerDisplayMessage();
 }
@@ -472,7 +473,7 @@ function buildLayerControllerLayerElement(lArr,active){
         visibilityOnchangeVal = "toggleUserLayerVisibility('" + lArr['id'] + "','" + lArr['layerName'] + "',this.checked);";
     }
     else{
-        visibilityOnchangeVal = "toggleServerLayerVisibility('" + lArr['id'] + "','" + lArr['file'] + "',this.checked);";
+        visibilityOnchangeVal = "toggleServerLayerVisibility('" + lArr['id'] + "','" + lArr['layerName'] + "','" + lArr['file'] + "',this.checked);";
     }
     visibilityCheckbox.setAttribute("onchange",visibilityOnchangeVal);
     if(active){
@@ -2062,6 +2063,16 @@ function getArrayBuffer(file) {
             const arrayBuffer = reader.result;
             const bytes = new Uint8Array(arrayBuffer);
             resolve(bytes);
+        };
+    });
+}
+
+function getTextBlob(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
+            resolve(reader.result);
         };
     });
 }
