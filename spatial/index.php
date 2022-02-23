@@ -219,6 +219,10 @@ $dbArr = array();
 
         function removeServerLayer(id){
             map.removeLayer(layersArr[id]);
+            const imageIndex = id + 'Image';
+            if(layersArr.hasOwnProperty(imageIndex)){
+                delete layersArr[imageIndex];
+            }
             delete layersArr[id];
         }
 
@@ -304,6 +308,8 @@ $dbArr = array();
                         blob.arrayBuffer().then((data) => {
                             const tiff = GeoTIFF.parse(data);
                             const image = tiff.getImage();
+                            const imageIndex = id + 'Image';
+                            layersArr[imageIndex] = image;
                             const rawBox = image.getBoundingBox();
                             const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
                             const bands = image.readRasters();
@@ -1222,7 +1228,7 @@ $dbArr = array();
                 }
                 clickedFeatures = [];
             }
-            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6'){
+            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6' || layersArr[activeLayer] instanceof ol.layer.Image){
                 infoHTML = '';
                 const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
                 const imageIndex = activeLayer + 'Image';
