@@ -3483,26 +3483,28 @@ function setInputFormBySearchTermsArr(){
 }
 
 function setLayersController(){
-    var http = new XMLHttpRequest();
-    var url = "rpc/getlayersconfig.php";
-    //console.log(url+'?'+params);
+    const http = new XMLHttpRequest();
+    const url = "rpc/getlayersconfig.php";
+    //console.log(url);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
         if(http.readyState == 4 && http.status == 200) {
-            const layerArrObject = JSON.parse(http.responseText);
-            if(layerArrObject.hasOwnProperty('layerConfig')){
-                const layerArr = layerArrObject['layerConfig'];
-                for(let i in layerArr){
-                    if(layerArr[i]['type'] === 'layer'){
-                        layerArr[i]['removable'] = false;
-                        layerArr[i]['sortable'] = true;
-                        layerArr[i]['symbology'] = true;
-                        layerArr[i]['query'] = true;
-                        processAddLayerControllerElement(layerArr[i],document.getElementById("confLayers"),false);
-                    }
-                    if(layerArr[i]['type'] === 'layerGroup'){
-                        processAddLayerControllerGroup(layerArr[i],document.getElementById("confLayers"));
+            if(http.responseText){
+                const layerArrObject = JSON.parse(http.responseText);
+                if(layerArrObject.hasOwnProperty('layerConfig')){
+                    const layerArr = layerArrObject['layerConfig'];
+                    for(let i in layerArr){
+                        if(layerArr[i]['type'] === 'layer'){
+                            layerArr[i]['removable'] = false;
+                            layerArr[i]['sortable'] = true;
+                            layerArr[i]['symbology'] = true;
+                            layerArr[i]['query'] = true;
+                            processAddLayerControllerElement(layerArr[i],document.getElementById("confLayers"),false);
+                        }
+                        if(layerArr[i]['type'] === 'layerGroup'){
+                            processAddLayerControllerGroup(layerArr[i],document.getElementById("confLayers"));
+                        }
                     }
                 }
             }
