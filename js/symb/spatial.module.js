@@ -369,6 +369,7 @@ function processAddLayerControllerGroup(lArr,parentElement){
 function buildLayerControllerLayerElement(lArr,active){
     const layerDivId = 'layer-' + lArr['id'];
     const layerDiv = document.createElement('div');
+    const raster = (lArr['fileType'] === 'tif');
     layerDiv.setAttribute("id",layerDivId);
     layerDiv.setAttribute("style","border:1px solid black;padding:5px;margin-bottom:5px;background-color:white;width:100%;font-family:Verdana,Arial,sans-serif;font-size:14px;");
     const layerMainDiv = document.createElement('div');
@@ -432,7 +433,7 @@ function buildLayerControllerLayerElement(lArr,active){
         sortingScrollerDiv.appendChild(sortingScroller);
         layerMainBottomDiv.appendChild(sortingScrollerDiv);
     }
-    if(lArr['symbology']){
+    if(lArr['symbology'] && !raster){
         const symbologyButton = document.createElement('button');
         const symbologyOnclickVal = "toggleLayerSymbology('" + lArr['id'] + "');";
         symbologyButton.setAttribute("type","button");
@@ -442,7 +443,7 @@ function buildLayerControllerLayerElement(lArr,active){
         symbologyButton.innerHTML = 'Symbology';
         layerMainBottomDiv.appendChild(symbologyButton);
     }
-    if(lArr['query']){
+    if(lArr['query'] && !raster){
         const queryButton = document.createElement('button');
         const queryOnclickVal = "toggleLayerQuerySelector('" + lArr['id'] + "');";
         queryButton.setAttribute("type","button");
