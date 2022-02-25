@@ -27,6 +27,27 @@ $displayQuery = 0;
 $isGenObs = 0;
 $collMap = array();
 $recArr = array();
+$displayHeaderMapBase = array('institutioncode'=>'Institution Code (override)','collectioncode'=>'Collection Code (override)',
+    'ownerinstitutioncode'=>'Owner Code (override)','catalognumber' => 'Catalog Number',
+    'othercatalognumbers' => 'Other Catalog #','family' => 'Family','identificationqualifier' => 'ID Qualifier',
+    'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Number',
+    'associatedcollectors' => 'Associated Collectors','eventdate' => 'Event Date','verbatimeventdate' => 'Verbatim Date',
+    'identificationremarks' => 'Identification Remarks','taxonremarks' => 'Taxon Remarks','identifiedby' => 'Identified By',
+    'dateidentified' => 'Date Identified', 'identificationreferences' => 'Identification References',
+    'country' => 'Country','stateprovince' => 'State/Province','county' => 'County','municipality' => 'Municipality',
+    'locality' => 'Locality','decimallatitude' => 'Latitude', 'decimallongitude' => 'Longitude',
+    'coordinateuncertaintyinmeters' => 'Uncertainty In Meters', 'verbatimcoordinates' => 'Verbatim Coordinates','geodeticdatum' => 'Datum',
+    'georeferencedby' => 'Georeferenced By','georeferenceprotocol' => 'Georeference Protocol','georeferencesources' => 'Georeference Sources',
+    'georeferenceverificationstatus' => 'Georef Verification Status','georeferenceremarks' => 'Georef Remarks',
+    'minimumelevationinmeters' => 'Elev. Min. (m)','maximumelevationinmeters' => 'Elev. Max. (m)','verbatimelevation' => 'Verbatim Elev.',
+    'minimumdepthinmeters' => 'Depth. Min. (m)','maximumdepthinmeters' => 'Depth. Max. (m)','verbatimdepth' => 'Verbatim Depth',
+    'habitat' => 'Habitat','substrate' => 'Substrate','occurrenceremarks' => 'Notes (Occurrence Remarks)','associatedtaxa' => 'Associated Taxa',
+    'verbatimattributes' => 'Description','lifestage' => 'Life Stage', 'sex' => 'Sex', 'individualcount' => 'Individual Count',
+    'samplingprotocol' => 'Sampling Protocol', 'preparations' => 'Preparations', 'reproductivecondition' => 'Reproductive Condition',
+    'typestatus' => 'Type Status','cultivationstatus' => 'Cultivation Status','establishmentmeans' => 'Establishment Means','datageneralizations' => 'Data Generalizations',
+    'disposition' => 'Disposition','duplicatequantity' => 'Duplicate Qty','datelastmodified' => 'Date Last Modified', 'labelproject' => 'Project',
+    'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','dbpk' => 'dbpk','basisofrecord' => 'Basis Of Record',
+    'language' => 'Language');
 $headerMapBase = array(
     'associatedcollectors'=>'Associated Collectors',
     'associatedoccurrences'=>'Associated Occurrences',
@@ -236,7 +257,7 @@ else{
 				if(isset($qCustomField3) && !array_key_exists(strtolower($qCustomField3),$headerArr)){
 					$headerArr[strtolower($qCustomField3)] = strtolower($qCustomField3);
 				}
-				$headerMap = array_intersect_key($headerMapBase, $headerArr);
+				$headerMap = array_intersect_key($displayHeaderMapBase, $headerArr);
 			}
 			if($isEditor === 1 || $isGenObs){
 				$buFieldName = (array_key_exists('bufieldname',$_REQUEST)?$_REQUEST['bufieldname']:'');
