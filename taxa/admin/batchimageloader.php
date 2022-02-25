@@ -136,7 +136,7 @@ if($isEditor){
 	?>
 	<div id="innertext">
 		<h1>Taxa Batch Image Loader</h1>
-        <form id="fileupload" action="" method="POST" enctype="multipart/form-data">
+        <form id="fileupload" action="rpc/uploadimage.php" method="POST" enctype="multipart/form-data">
             <div class="row fileupload-buttonbar">
                 <div class="col-lg-7">
                     <span class="btn btn-success fileinput-button">
