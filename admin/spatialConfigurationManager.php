@@ -36,8 +36,8 @@ $coreConfArr = $fullConfArr['core'];
             display: none;
         }
     </style>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220209" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220211" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220223" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('#tabs').tabs({
@@ -66,6 +66,7 @@ include(__DIR__ . '/../header.php');
     <div id="tabs" style="width:95%;">
         <ul>
             <li><a href='#spatialconfig'>Spatial Configurations</a></li>
+            <li><a href="#layersconfig">Layers</a></li>
         </ul>
 
         <div id="spatialconfig">
@@ -78,6 +79,10 @@ include(__DIR__ . '/../header.php');
             </div>
             <?php include_once(__DIR__ . '/../spatial/viewerElement.php'); ?>
             <div style="clear:both;width:100%;height:40px;"></div>
+        </div>
+
+        <div id="layersconfig">
+
         </div>
     </div>
 </div>

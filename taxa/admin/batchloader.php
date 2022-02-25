@@ -52,7 +52,7 @@ if($isEditor){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxa Loader</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <script src="../../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
+    <script src="../../js/symb/shared.js?ver=20220221" type="text/javascript"></script>
 	<script type="text/javascript">
 		function verifyUploadForm(f){
 			let inputValue = f.uploadfile.value;
