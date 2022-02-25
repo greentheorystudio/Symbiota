@@ -712,29 +712,6 @@ CREATE TABLE `omcollpublications` (
   CONSTRAINT `FK_adminpub_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `omcollsecondary` (
-  `ocsid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `collid` int(10) unsigned NOT NULL,
-  `InstitutionCode` varchar(45) NOT NULL,
-  `CollectionCode` varchar(45) DEFAULT NULL,
-  `CollectionName` varchar(150) NOT NULL,
-  `BriefDescription` varchar(300) DEFAULT NULL,
-  `FullDescription` varchar(1000) DEFAULT NULL,
-  `Homepage` varchar(250) DEFAULT NULL,
-  `IndividualUrl` varchar(500) DEFAULT NULL,
-  `Contact` varchar(45) DEFAULT NULL,
-  `Email` varchar(45) DEFAULT NULL,
-  `LatitudeDecimal` double DEFAULT NULL,
-  `LongitudeDecimal` double DEFAULT NULL,
-  `icon` varchar(250) DEFAULT NULL,
-  `CollType` varchar(45) DEFAULT NULL,
-  `SortSeq` int(10) unsigned DEFAULT NULL,
-  `InitialTimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ocsid`),
-  KEY `FK_omcollsecondary_coll` (`collid`),
-  CONSTRAINT `FK_omcollsecondary_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE `omcrowdsourcecentral` (
   `omcsid` int(11) NOT NULL AUTO_INCREMENT,
   `collid` int(10) unsigned NOT NULL,
@@ -1476,13 +1453,6 @@ CREATE TABLE `referencetype` (
   UNIQUE KEY `ReferenceType_UNIQUE` (`ReferenceType`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
 
-CREATE TABLE `schemaversion` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `versionnumber` varchar(20) NOT NULL,
-  `dateapplied` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-
 CREATE TABLE `specprocessorprojects` (
   `spprid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `collid` int(10) unsigned NOT NULL,
@@ -2140,8 +2110,6 @@ CREATE TABLE `usertaxonomy` (
   CONSTRAINT `FK_usertaxonomy_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO schemaversion (versionnumber) VALUES ('1.0');
-
 INSERT INTO users(uid,firstname,lastname,state,country,email) VALUES (1,'General','Administrator','NA','NA','NA');
 INSERT INTO userlogin(uid,username,password) VALUES (1,'admin', SHA2('admin', 224));
 INSERT INTO userroles(uid,role) VALUES (1,'SuperAdmin');
@@ -2254,11 +2222,6 @@ INSERT INTO `lkupcounty` VALUES (3137,170,'Tillamook','2011-06-01 02:06:40'),(31
 INSERT INTO `lkupcounty` VALUES (3226,128,'Sitka','2011-06-01 02:06:40'),(3227,128,'Ketchikan gateway','2011-06-01 02:06:40'),(3228,128,'Prince wales ketchikan','2011-06-01 02:06:40');
 
 SET FOREIGN_KEY_CHECKS = 1;
-
-ALTER TABLE `schemaversion`
-  ADD UNIQUE INDEX `versionnumber_UNIQUE` (`versionnumber` ASC);
-
-INSERT IGNORE INTO schemaversion (versionnumber) values ("1.1");
 
 CREATE TABLE `tmtraits` (
   `traitid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2403,18 +2366,6 @@ ALTER TABLE `omoccurassociations`
   ADD INDEX `INDEX_verbatimSciname` (`verbatimsciname` ASC);
 
 DROP TABLE IF EXISTS `omoccurassoctaxa`;
-
-CREATE TABLE `lkupmunicipality` (
-  `municipalityId` int NOT NULL AUTO_INCREMENT,
-  `stateId` int NOT NULL,
-  `municipalityName` varchar(100) NOT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`municipalityId`),
-  UNIQUE KEY `unique_municipality` (`stateId`,`municipalityName`),
-  KEY `fk_stateprovince` (`stateId`),
-  KEY `index_municipalityname` (`municipalityName`),
-  CONSTRAINT `lkupmunicipality_ibfk_1` FOREIGN KEY (`stateId`) REFERENCES `lkupstateprovince` (`stateId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `fmvouchers`
   DROP COLUMN `Collector`,
@@ -3114,8 +3065,6 @@ CREATE TABLE `useraccesstokens` (
   CONSTRAINT `FK_useraccess_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE  ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT IGNORE INTO schemaversion (versionnumber) values ("1.2");
-
 ALTER TABLE `adminlanguages`
     ADD COLUMN `ISO 639-3` varchar(3) NULL AFTER `iso639_2`;
 
@@ -3168,17 +3117,6 @@ PRIMARY KEY,
   ADD PRIMARY KEY (`vid`),
 DROP INDEX `chklst_taxavouchers`,
   ADD UNIQUE INDEX `UNIQUE_voucher`(`CLID`, `occid`);
-
-CREATE TABLE `igsnverification`
-(
-    `igsn`             varchar(15) NOT NULL,
-    `occid`            int(10) unsigned DEFAULT NULL,
-    `status`           int(11) DEFAULT NULL,
-    `initialtimestamp` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    KEY                `FK_igsn_occid_idx` (`occid`),
-    KEY                `INDEX_igsn` (`igsn`),
-    CONSTRAINT `FK_igsn_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
 
 ALTER TABLE `images`
     ADD INDEX `Index_images_datelastmod` (`InitialTimeStamp` ASC),

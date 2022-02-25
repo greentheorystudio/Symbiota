@@ -118,7 +118,7 @@ else{
 			return true;
 		}
 	</script>
-	<script src="../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
+	<script src="../js/symb/shared.js?ver=20220221" type="text/javascript"></script>
 </head>
 <body>
 

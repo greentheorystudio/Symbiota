@@ -1,5 +1,3 @@
-INSERT IGNORE INTO schemaversion (versionnumber) values ("1.2");
-
 ALTER TABLE `adminlanguages`
     ADD COLUMN `ISO 639-3` varchar(3) NULL AFTER `iso639_2`;
 
@@ -52,17 +50,6 @@ PRIMARY KEY,
   ADD PRIMARY KEY (`vid`),
 DROP INDEX `chklst_taxavouchers`,
   ADD UNIQUE INDEX `UNIQUE_voucher`(`CLID`, `occid`);
-
-CREATE TABLE `igsnverification`
-(
-    `igsn`             varchar(15) NOT NULL,
-    `occid`            int(10) unsigned DEFAULT NULL,
-    `status`           int(11) DEFAULT NULL,
-    `initialtimestamp` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    KEY                `FK_igsn_occid_idx` (`occid`),
-    KEY                `INDEX_igsn` (`igsn`),
-    CONSTRAINT `FK_igsn_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
 
 ALTER TABLE `images`
     ADD INDEX `Index_images_datelastmod` (`InitialTimeStamp` ASC),

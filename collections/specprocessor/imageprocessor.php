@@ -35,7 +35,7 @@ if($spprid) {
     <script src="../../js/all.min.js" type="text/javascript"></script>
     <script src="../../js/jquery.js" type="text/javascript"></script>
     <script src="../../js/jquery-ui.js" type="text/javascript"></script>
-    <script src="../../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
+    <script src="../../js/symb/shared.js?ver=20220221" type="text/javascript"></script>
     <script>
         $(function() {
             const dialogArr = ["speckeypattern", "patternreplace", "replacestr", "sourcepath", "targetpath", "imgurl", "webpixwidth", "tnpixwidth", "lgpixwidth", "jpgcompression"];

@@ -19,10 +19,10 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
     <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/symb/shared.js?ver=20211227"></script>
+    <script type="text/javascript" src="../js/symb/shared.js?ver=20220221"></script>
     <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=20211104"></script>
     <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20211104"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220209" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';

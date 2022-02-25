@@ -1,10 +1,12 @@
 let spatialModuleInitialising = false;
+const coreLayers = ['base','uncertainty','select','pointv','heat','spider','radius','vector'];
 let inputResponseData = {};
 let geoPolyArr = [];
 let geoCircleArr = [];
 let geoBoundingBoxArr = {};
 let geoPointArr = [];
 let layersArr = [];
+let layerOrderArr = [];
 let mouseCoords = [];
 let selections = [];
 let collSymbology = [];
@@ -64,62 +66,6 @@ let zipFolder = '';
 let transformStartAngle = 0;
 let transformD = [0,0];
 let transformFirstPoint = false;
-const dragDropStyle = {
-    'Point': new ol.style.Style({
-        image: new ol.style.Circle({
-            fill: new ol.style.Fill({
-                color: 'rgba(255,255,0,0.5)'
-            }),
-            radius: 5,
-            stroke: new ol.style.Stroke({
-                color: '#ff0',
-                width: 1
-            })
-        })
-    }),
-    'LineString': new ol.style.Style({
-        stroke: new ol.style.Stroke({
-            color: '#f00',
-            width: 3
-        })
-    }),
-    'Polygon': new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: 'rgba(170,170,170,0.3)'
-        }),
-        stroke: new ol.style.Stroke({
-            color: '#000000',
-            width: 1
-        })
-    }),
-    'MultiPoint': new ol.style.Style({
-        image: new ol.style.Circle({
-            fill: new ol.style.Fill({
-                color: 'rgba(255,0,255,0.5)'
-            }),
-            radius: 5,
-            stroke: new ol.style.Stroke({
-                color: '#f0f',
-                width: 1
-            })
-        })
-    }),
-    'MultiLineString': new ol.style.Style({
-        stroke: new ol.style.Stroke({
-            color: '#0f0',
-            width: 3
-        })
-    }),
-    'MultiPolygon': new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: 'rgba(170,170,170,0.3)'
-        }),
-        stroke: new ol.style.Stroke({
-            color: '#000000',
-            width: 1
-        })
-    })
-};
 
 const mapProjection = new ol.proj.Projection({
     code: 'EPSG:3857'
@@ -139,16 +85,18 @@ for (let z = 0; z < 16; ++z) {
     resolutions[z] = maxResolution / Math.pow(2, z);
 }
 
-const baselayer = new ol.layer.Tile();
+const baselayer = new ol.layer.Tile({
+    zIndex: 0
+});
 
-function addLayerToSelList(layer,title){
+function addLayerToSelList(layer,title,active){
     const origValue = document.getElementById("selectlayerselect").value;
     let selectionList = document.getElementById("selectlayerselect").innerHTML;
     const optionId = "lsel-" + layer;
     const newOption = '<option id="lsel-' + optionId + '" value="' + layer + '">' + title + '</option>';
     selectionList += newOption;
     document.getElementById("selectlayerselect").innerHTML = selectionList;
-    if(layer !== 'select'){
+    if(active){
         document.getElementById("selectlayerselect").value = layer;
         setActiveLayer();
     }
@@ -332,43 +280,287 @@ function buildCollKeyPiece(key){
     collKeyArr[key] = keyHTML;
 }
 
-function buildLayerTableRow(lArr,removable){
-    let trfragment = '';
-    const layerID = lArr['Name'];
-    const layerType = lArr['layerType'];
-    const addLayerFunction = 'editVectorLayers';
-    const divid = "lay-" + layerID;
-    if(!document.getElementById(divid)){
-        trfragment += '<td style="width:30px;">';
-        const onchange = (removable ? "toggleUploadLayer(this,'" + lArr['Title'] + "');" : addLayerFunction + "(this,'" + lArr['Title'] + "');");
-        trfragment += '<input type="checkbox" value="'+layerID+'" onchange="'+onchange+'" '+(removable?'checked ':'')+'/>';
-        trfragment += '</td>';
-        trfragment += '<td style="width:170px;">';
-        trfragment += '<b>'+lArr['Title']+'</b>';
-        trfragment += '</td>';
-        trfragment += '<td style="width:330px;">';
-        trfragment += lArr['Abstract'];
-        trfragment += '</td>';
-        trfragment += '<td style="width:50px;background-color:black">';
-        trfragment += '<img src="../images/'+(layerType === 'vector'?'button_wfs.png':'button_wms.png')+'" style="width:20px;margin-left:8px;">';
-        trfragment += '</td>';
-        trfragment += '<td style="width:50px;">';
-        if(removable){
-            const onclick = "removeUserLayer('" + layerID + "');";
-            trfragment += '<button style="margin:0;padding:2px;" type="button" onclick="'+onclick+'" title="Remove layer"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
+function processAddLayerControllerElement(lArr,parentElement,active){
+    const layerDivId = 'layer-' + lArr['id'];
+    if(!document.getElementById(layerDivId)){
+        const layerDiv = buildLayerControllerLayerElement(lArr,active);
+        if(lArr['id'] === 'pointv'){
+            parentElement.insertBefore(layerDiv, parentElement.firstChild);
         }
-        trfragment += '</td>';
-        const layerTable = document.getElementById("layercontroltable");
-        const newLayerRow = (removable ? layerTable.insertRow(0) : layerTable.insertRow());
-        newLayerRow.id = 'lay-'+layerID;
-        newLayerRow.innerHTML = trfragment;
-        if(removable) addLayerToSelList(layerID,lArr['Title']);
+        else{
+            parentElement.appendChild(layerDiv);
+        }
+        if(lArr['symbology']){
+            const symbologyOpacityId = '#opacity-' + lArr['id'];
+            const symbologyBorderWidthId = '#borderWidth-' + lArr['id'];
+            $( symbologyOpacityId ).spinner({
+                step: 0.1,
+                min: 0,
+                max: 1,
+                numberFormat: "n"
+            });
+            $( symbologyBorderWidthId ).spinner({
+                step: 1,
+                min: 0,
+                numberFormat: "n"
+            });
+            jscolor.init();
+        }
+        if(lArr['sortable']){
+            const sortingScrollerId = '#layerOrder-' + lArr['id'];
+            $( sortingScrollerId ).spinner({
+                step: 1,
+                min: 1,
+                disabled: !active,
+                numberFormat: "n"
+            });
+            if(active){
+                layerOrderArr.push(lArr['id']);
+                setLayersOrder();
+            }
+        }
+        if(active){
+            addLayerToSelList(lArr['id'], lArr['layerName'], active);
+        }
     }
     else{
-        document.getElementById("selectlayerselect").value = layerID;
+        document.getElementById("selectlayerselect").value = lArr['id'];
         setActiveLayer();
     }
-    toggleLayerTable();
+    toggleLayerDisplayMessage();
+}
+
+function processAddLayerControllerGroup(lArr,parentElement){
+    const layerGroupdDivId = 'layerGroup-' + lArr['id'] + '-accordion';
+    if(!document.getElementById(layerGroupdDivId)){
+        const layersArr = lArr['layers'];
+        const layerGroupContainerId = 'layerGroup-' + lArr['id'] + '-layers';
+        const layerGroupDiv = document.createElement('div');
+        layerGroupDiv.setAttribute("id",layerGroupdDivId);
+        layerGroupDiv.setAttribute("style","margin-bottom:5px;");
+        const layerGroupLabel = document.createElement('h3');
+        layerGroupLabel.setAttribute("style","font-weight:bold;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+        layerGroupLabel.innerHTML = lArr['name'];
+        layerGroupDiv.appendChild(layerGroupLabel);
+        const layerGroupContainerDiv = document.createElement('div');
+        layerGroupContainerDiv.setAttribute("id",layerGroupContainerId);
+        layerGroupContainerDiv.setAttribute("style","display:flex;flex-direction:column;margin: 5px 0;");
+        layerGroupDiv.appendChild(layerGroupContainerDiv);
+        parentElement.appendChild(layerGroupDiv);
+        $( ('#' + layerGroupdDivId) ).accordion({
+            icons: null,
+            collapsible: true,
+            active: false,
+            heightStyle: "content"
+        });
+        for(let i in layersArr){
+            if(layersArr.hasOwnProperty(i)){
+                layersArr[i]['removable'] = false;
+                layersArr[i]['sortable'] = true;
+                layersArr[i]['symbology'] = true;
+                layersArr[i]['query'] = true;
+                processAddLayerControllerElement(layersArr[i],layerGroupContainerDiv,false)
+            }
+        }
+    }
+    toggleLayerDisplayMessage();
+}
+
+function buildLayerControllerLayerElement(lArr,active){
+    const layerDivId = 'layer-' + lArr['id'];
+    const layerDiv = document.createElement('div');
+    const raster = (lArr['fileType'] === 'tif');
+    layerDiv.setAttribute("id",layerDivId);
+    layerDiv.setAttribute("style","border:1px solid black;padding:5px;margin-bottom:5px;background-color:white;width:100%;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+    const layerMainDiv = document.createElement('div');
+    layerMainDiv.setAttribute("style","display:flex;flex-direction:column;");
+    const layerTitleDiv = document.createElement('div');
+    layerTitleDiv.setAttribute("style","font-size:14px;font-weight:bold;");
+    layerTitleDiv.innerHTML = lArr['layerName'];
+    layerMainDiv.appendChild(layerTitleDiv);
+    if(lArr.hasOwnProperty('layerDescription') && lArr['layerDescription']){
+        const layerDescDiv = document.createElement('div');
+        layerDescDiv.innerHTML = lArr['layerDescription'];
+        layerMainDiv.appendChild(layerDescDiv);
+    }
+    if(lArr.hasOwnProperty('providedBy') || lArr.hasOwnProperty('sourceURL')){
+        const layerProvidedDiv = document.createElement('div');
+        let innerHtml = '';
+        if(lArr.hasOwnProperty('providedBy') && lArr['providedBy']){
+            innerHtml += '<span style="font-weight:bold;">Provided by: </span>' + lArr['providedBy'] + ' ';
+        }
+        if(lArr.hasOwnProperty('sourceURL') && lArr['sourceURL']){
+            innerHtml += '<span style="font-weight:bold;"><a href="' + lArr['sourceURL'] + '" target="_blank">(Go to source)</a></span>';
+        }
+        layerProvidedDiv.innerHTML = innerHtml;
+        layerMainDiv.appendChild(layerProvidedDiv);
+    }
+    if(lArr.hasOwnProperty('dateAquired') || lArr.hasOwnProperty('dateUploaded')){
+        const layerAquiredDiv = document.createElement('div');
+        let innerHtml = '';
+        if(lArr.hasOwnProperty('dateAquired') && lArr['dateAquired']){
+            innerHtml += '<span style="font-weight:bold;">Date aquired: </span>' + lArr['dateAquired'] + ' ';
+        }
+        if(lArr.hasOwnProperty('dateUploaded') && lArr['dateUploaded']){
+            innerHtml += '<span style="font-weight:bold;">Date uploaded: </span>' + lArr['dateUploaded'];
+        }
+        layerAquiredDiv.innerHTML = innerHtml;
+        layerMainDiv.appendChild(layerAquiredDiv);
+    }
+    const layerMainBottomDiv = document.createElement('div');
+    layerMainBottomDiv.setAttribute("style","font-size:14px;font-weight:bold;width:100%;display:flex;justify-content:flex-end;align-items:flex-end;margin-top:5px;");
+    const dataTypeImageDiv = document.createElement('div');
+    dataTypeImageDiv.setAttribute("style","width:30px;height:30px;background-color:black;margin:0 5px;");
+    const dataTypeImage = document.createElement('img');
+    dataTypeImage.setAttribute("style","width:20px;margin-left:5px;margin-top:5px;");
+    if(lArr['fileType'] === 'tif'){
+        dataTypeImage.setAttribute("src","../images/button_wms.png");
+    }
+    else{
+        dataTypeImage.setAttribute("src","../images/button_wfs.png");
+    }
+    dataTypeImageDiv.appendChild(dataTypeImage);
+    layerMainBottomDiv.appendChild(dataTypeImageDiv);
+    if(lArr['sortable']){
+        const sortingScrollerDiv = document.createElement('div');
+        sortingScrollerDiv.setAttribute("style","display:flex;align-items:center;margin:0 5px;");
+        const sortingOnchangeVal = "changeLayerOrder('" + lArr['id'] + "');";
+        const sortingScrollerId = 'layerOrder-' + lArr['id'];
+        const sortingScroller = document.createElement('input');
+        sortingScroller.setAttribute("id",sortingScrollerId);
+        sortingScroller.setAttribute("style","width:25px;");
+        sortingScroller.setAttribute("onchange",sortingOnchangeVal);
+        sortingScrollerDiv.appendChild(sortingScroller);
+        layerMainBottomDiv.appendChild(sortingScrollerDiv);
+    }
+    if(lArr['symbology'] && !raster){
+        const symbologyButton = document.createElement('button');
+        const symbologyOnclickVal = "toggleLayerSymbology('" + lArr['id'] + "');";
+        symbologyButton.setAttribute("type","button");
+        symbologyButton.setAttribute("style","margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+        symbologyButton.setAttribute("title","Toggle Symbology");
+        symbologyButton.setAttribute("onclick",symbologyOnclickVal);
+        symbologyButton.innerHTML = 'Symbology';
+        layerMainBottomDiv.appendChild(symbologyButton);
+    }
+    if(lArr['query'] && !raster){
+        const queryButton = document.createElement('button');
+        const queryOnclickVal = "toggleLayerQuerySelector('" + lArr['id'] + "');";
+        queryButton.setAttribute("type","button");
+        queryButton.setAttribute("style","margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+        queryButton.setAttribute("title","Toggle Symbology");
+        queryButton.setAttribute("onclick",queryOnclickVal);
+        queryButton.innerHTML = 'Query Selector';
+        layerMainBottomDiv.appendChild(queryButton);
+    }
+    if(lArr['removable']){
+        const removeButton = document.createElement('button');
+        const removeOnclickVal = "removeUserLayer('" + lArr['id'] + "');";
+        removeButton.setAttribute("type","button");
+        removeButton.setAttribute("style","margin:0 5px;padding:2px;height:25px;width:25px;");
+        removeButton.setAttribute("title","Remove layer");
+        removeButton.setAttribute("onclick",removeOnclickVal);
+        const removeIcon = document.createElement('i');
+        removeIcon.setAttribute("style","height:15px;width:15px;");
+        removeIcon.setAttribute("class","far fa-trash-alt");
+        removeButton.appendChild(removeIcon);
+        layerMainBottomDiv.appendChild(removeButton);
+    }
+    const visibilityCheckbox = document.createElement('input');
+    visibilityCheckbox.setAttribute('type','checkbox');
+    visibilityCheckbox.setAttribute("style","margin:0 5px;");
+    let visibilityOnchangeVal;
+    if(lArr['type'] === 'userLayer'){
+        visibilityOnchangeVal = "toggleUserLayerVisibility('" + lArr['id'] + "','" + lArr['layerName'] + "',this.checked);";
+    }
+    else{
+        visibilityOnchangeVal = "toggleServerLayerVisibility('" + lArr['id'] + "','" + lArr['layerName'] + "','" + lArr['file'] + "',this.checked);";
+    }
+    visibilityCheckbox.setAttribute("onchange",visibilityOnchangeVal);
+    if(active){
+        visibilityCheckbox.checked = true;
+    }
+    layerMainBottomDiv.appendChild(visibilityCheckbox);
+    layerMainDiv.appendChild(layerMainBottomDiv);
+    layerDiv.appendChild(layerMainDiv);
+    if(lArr['symbology']){
+        const layerSymbologyDivId = 'layerSymbology-' + lArr['id'];
+        const layerSymbologyDiv = document.createElement('div');
+        layerSymbologyDiv.setAttribute("id",layerSymbologyDivId);
+        layerSymbologyDiv.setAttribute("style","border:1px solid black;padding:5px;margin-top:5px;display:none;flex-direction:column;width:350px;margin-left:auto;margin-right:auto;");
+        const symbologyTopRow = document.createElement('div');
+        symbologyTopRow.setAttribute("style","display:flex;justify-content:space-evenly;");
+        const symbologyBorderColorDiv = document.createElement('div');
+        symbologyBorderColorDiv.setAttribute("style","display:flex;align-items:center;");
+        const symbologyBorderColorSpan = document.createElement('span');
+        symbologyBorderColorSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+        symbologyBorderColorSpan.innerHTML = 'Border color: ';
+        symbologyBorderColorDiv.appendChild(symbologyBorderColorSpan);
+        const symbologyBorderColorInputId = 'borderColor-' + lArr['id'];
+        const symbologyBorderColorOnchangeVal = "changeBorderColor('" + lArr['id'] + "');";
+        const symbologyBorderColorInput = document.createElement('input');
+        symbologyBorderColorInput.setAttribute("data-role","none");
+        symbologyBorderColorInput.setAttribute("id",symbologyBorderColorInputId);
+        symbologyBorderColorInput.setAttribute("class","color");
+        symbologyBorderColorInput.setAttribute("style","cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;");
+        symbologyBorderColorInput.setAttribute("value",lArr['borderColor']);
+        symbologyBorderColorInput.setAttribute("onchange",symbologyBorderColorOnchangeVal);
+        symbologyBorderColorDiv.appendChild(symbologyBorderColorInput);
+        symbologyTopRow.appendChild(symbologyBorderColorDiv);
+        const symbologyFillColorDiv = document.createElement('div');
+        symbologyFillColorDiv.setAttribute("style","display:flex;align-items:center;");
+        const symbologyFillColorSpan = document.createElement('span');
+        symbologyFillColorSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+        symbologyFillColorSpan.innerHTML = 'Fill color: ';
+        symbologyFillColorDiv.appendChild(symbologyFillColorSpan);
+        const symbologyFillColorInputId = 'fillColor-' + lArr['id'];
+        const symbologyFillColorOnchangeVal = "changeFillColor('" + lArr['id'] + "');";
+        const symbologyFillColorInput = document.createElement('input');
+        symbologyFillColorInput.setAttribute("data-role","none");
+        symbologyFillColorInput.setAttribute("id",symbologyFillColorInputId);
+        symbologyFillColorInput.setAttribute("class","color");
+        symbologyFillColorInput.setAttribute("style","cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;");
+        symbologyFillColorInput.setAttribute("value",lArr['fillColor']);
+        symbologyFillColorInput.setAttribute("onchange",symbologyFillColorOnchangeVal);
+        symbologyFillColorDiv.appendChild(symbologyFillColorInput);
+        symbologyTopRow.appendChild(symbologyFillColorDiv);
+        layerSymbologyDiv.appendChild(symbologyTopRow);
+        const symbologyBottomRow = document.createElement('div');
+        symbologyBottomRow.setAttribute("style","display:flex;justify-content:space-evenly;margin-top:3px;");
+        const symbologyBorderWidthDiv = document.createElement('div');
+        symbologyBorderWidthDiv.setAttribute("style","display:flex;align-items:center;");
+        const symbologyBorderWidthSpan = document.createElement('span');
+        symbologyBorderWidthSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+        symbologyBorderWidthSpan.innerHTML = 'Border width (px): ';
+        symbologyBorderWidthDiv.appendChild(symbologyBorderWidthSpan);
+        const symbologyBorderWidthInputId = 'borderWidth-' + lArr['id'];
+        const symbologyBorderWidthOnchangeVal = "changeBorderWidth('" + lArr['id'] + "');";
+        const symbologyBorderWidthInput = document.createElement('input');
+        symbologyBorderWidthInput.setAttribute("id",symbologyBorderWidthInputId);
+        symbologyBorderWidthInput.setAttribute("style","width:25px;");
+        symbologyBorderWidthInput.setAttribute("value",lArr['borderWidth']);
+        symbologyBorderWidthInput.setAttribute("onchange",symbologyBorderWidthOnchangeVal);
+        symbologyBorderWidthDiv.appendChild(symbologyBorderWidthInput);
+        symbologyBottomRow.appendChild(symbologyBorderWidthDiv);
+        const symbologyOpacityDiv = document.createElement('div');
+        symbologyOpacityDiv.setAttribute("style","display:flex;align-items:center;");
+        const symbologyOpacitySpan = document.createElement('span');
+        symbologyOpacitySpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+        symbologyOpacitySpan.innerHTML = 'Opacity: ';
+        symbologyOpacityDiv.appendChild(symbologyOpacitySpan);
+        const symbologyOpacityInputId = 'opacity-' + lArr['id'];
+        const symbologyOpacityOnchangeVal = "changeLayerOpacity('" + lArr['id'] + "');";
+        const symbologyOpacityInput = document.createElement('input');
+        symbologyOpacityInput.setAttribute("id",symbologyOpacityInputId);
+        symbologyOpacityInput.setAttribute("style","width:25px;");
+        symbologyOpacityInput.setAttribute("value",lArr['opacity']);
+        symbologyOpacityInput.setAttribute("onchange",symbologyOpacityOnchangeVal);
+        symbologyOpacityDiv.appendChild(symbologyOpacityInput);
+        symbologyBottomRow.appendChild(symbologyOpacityDiv);
+        layerSymbologyDiv.appendChild(symbologyBottomRow);
+        layerDiv.appendChild(layerSymbologyDiv);
+    }
+    return layerDiv;
 }
 
 function buildTaxaKey(){
@@ -610,12 +802,20 @@ function changeDraw() {
             map.removeInteraction(draw);
             if(!shapeActive){
                 const infoArr = [];
-                infoArr['Name'] = 'select';
-                infoArr['Title'] = 'Shapes';
-                infoArr['layerType'] = 'vector';
-                infoArr['Abstract'] = '';
-                infoArr['DefaultCRS'] = '';
-                buildLayerTableRow(infoArr,true);
+                infoArr['id'] = 'select';
+                infoArr['type'] = 'userLayer';
+                infoArr['fileType'] = 'vector';
+                infoArr['layerName'] = 'Shapes';
+                infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
+                infoArr['fillColor'] = shapesFillColor;
+                infoArr['borderColor'] = shapesBorderColor;
+                infoArr['borderWidth'] = shapesBorderWidth;
+                infoArr['opacity'] = shapesOpacity;
+                infoArr['removable'] = true;
+                infoArr['sortable'] = false;
+                infoArr['symbology'] = true;
+                infoArr['query'] = true;
+                processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
                 shapeActive = true;
                 document.getElementById("selectlayerselect").value = 'select';
                 setActiveLayer();
@@ -906,10 +1106,10 @@ function clearSelections(){
 function clearTaxaSymbology(){
     for(let i in taxaSymbology){
         if(taxaSymbology.hasOwnProperty(i)){
-            taxaSymbology[i]['color'] = "E69E67";
+            taxaSymbology[i]['color'] = initialPointColor;
             const keyName = 'taxaColor' + i;
             if(document.getElementById(keyName)){
-                document.getElementById(keyName).color.fromString("E69E67");
+                document.getElementById(keyName).color.fromString(initialPointColor);
             }
         }
     }
@@ -1868,14 +2068,14 @@ function getArrayBuffer(file) {
     });
 }
 
-function getDragDropStyle(feature, resolution) {
-    const featureStyleFunction = feature.getStyleFunction();
-    if(featureStyleFunction) {
-        return featureStyleFunction.call(feature, resolution);
-    }
-    else{
-        return dragDropStyle[feature.getGeometry().getType()];
-    }
+function getTextBlob(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
+            resolve(reader.result);
+        };
+    });
 }
 
 function getGeographyParams(){
@@ -2238,16 +2438,20 @@ function loadPoints(){
                 setRecordsTab();
                 changeRecordPage(1);
                 $('#recordstab').tabs({active: 1});
-                $("#accordion").accordion("option","active",1);
+                $("#sidepanel-accordion").accordion("option","active",1);
                 //selectInteraction.getFeatures().clear();
                 if(!pointActive){
                     const infoArr = [];
-                    infoArr['Name'] = 'pointv';
-                    infoArr['layerType'] = 'vector';
-                    infoArr['Title'] = 'Points';
-                    infoArr['Abstract'] = '';
-                    infoArr['DefaultCRS'] = '';
-                    buildLayerTableRow(infoArr,true);
+                    infoArr['id'] = 'pointv';
+                    infoArr['type'] = 'userLayer';
+                    infoArr['fileType'] = 'vector';
+                    infoArr['layerName'] = 'Points';
+                    infoArr['layerDescription'] = "This layer contains all of the occurrence points that have been loaded onto the map.",
+                    infoArr['removable'] = true;
+                    infoArr['sortable'] = false;
+                    infoArr['symbology'] = false;
+                    infoArr['query'] = false;
+                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
                     pointActive = true;
                 }
             }
@@ -2299,7 +2503,6 @@ function primeSymbologyData(features){
                     }
                 }
             }
-            const color = 'e69e67';
             const collName = features[f].get('CollectionName');
             const collid = features[f].get('collid');
             const tidinterpreted = features[f].get('tidinterpreted');
@@ -2319,7 +2522,7 @@ function primeSymbologyData(features){
             if(!collSymbology[collName]){
                 collSymbology[collName] = [];
                 collSymbology[collName]['collid'] = collid;
-                collSymbology[collName]['color'] = color;
+                collSymbology[collName]['color'] = initialPointColor;
             }
             if(!taxaSymbology[namestring]){
                 taxaCnt++;
@@ -2327,7 +2530,7 @@ function primeSymbologyData(features){
                 taxaSymbology[namestring]['sciname'] = sciname;
                 taxaSymbology[namestring]['tidinterpreted'] = tidinterpreted;
                 taxaSymbology[namestring]['family'] = family;
-                taxaSymbology[namestring]['color'] = color;
+                taxaSymbology[namestring]['color'] = initialPointColor;
                 taxaSymbology[namestring]['count'] = 1;
             }
             else{
@@ -2844,7 +3047,7 @@ function removeSelectionRecord(sel){
 }
 
 function removeUserLayer(layerID){
-    const layerDivId = "lay-" + layerID;
+    const layerDivId = "layer-" + layerID;
     if(document.getElementById(layerDivId)){
         const layerDiv = document.getElementById(layerDivId);
         layerDiv.parentNode.removeChild(layerDiv);
@@ -2862,7 +3065,7 @@ function removeUserLayer(layerID){
         layersArr['heat'].setVisible(false);
         clustersource = '';
         $('#criteriatab').tabs({active: 0});
-        $("#accordion").accordion("option","active",0);
+        $("#sidepanel-accordion").accordion("option","active",0);
         pointActive = false;
     }
     else{
@@ -2901,16 +3104,16 @@ function removeUserLayer(layerID){
     document.getElementById("selectlayerselect").value = 'none';
     removeLayerToSelList(layerID);
     setActiveLayer();
-    toggleLayerTable();
+    toggleLayerDisplayMessage();
 }
 
 function resetMainSymbology(){
     for(let i in collSymbology){
         if(collSymbology.hasOwnProperty(i)){
-            collSymbology[i]['color'] = "E69E67";
+            collSymbology[i]['color'] = initialPointColor;
             const keyName = 'keyColor' + i;
             if(document.getElementById(keyName)){
-                document.getElementById(keyName).color.fromString("E69E67");
+                document.getElementById(keyName).color.fromString(initialPointColor);
             }
         }
     }
@@ -3279,6 +3482,38 @@ function setInputFormBySearchTermsArr(){
     }
 }
 
+function setLayersController(){
+    const http = new XMLHttpRequest();
+    const url = "rpc/getlayersconfig.php";
+    //console.log(url);
+    http.open("POST", url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    http.onreadystatechange = function() {
+        if(http.readyState == 4 && http.status == 200) {
+            if(http.responseText){
+                const layerArrObject = JSON.parse(http.responseText);
+                if(layerArrObject.hasOwnProperty('layerConfig')){
+                    const layerArr = layerArrObject['layerConfig'];
+                    for(let i in layerArr){
+                        if(layerArr[i]['type'] === 'layer'){
+                            layerArr[i]['removable'] = false;
+                            layerArr[i]['sortable'] = true;
+                            layerArr[i]['symbology'] = true;
+                            layerArr[i]['query'] = true;
+                            processAddLayerControllerElement(layerArr[i],document.getElementById("confLayers"),false);
+                        }
+                        if(layerArr[i]['type'] === 'layerGroup'){
+                            processAddLayerControllerGroup(layerArr[i],document.getElementById("confLayers"));
+                        }
+                    }
+                }
+            }
+        }
+        toggleLayerDisplayMessage();
+    };
+    http.send();
+}
+
 function setLoadingTimer(){
     loadingTimer = 20000;
     if(queryRecCnt < 200000) loadingTimer = 13000;
@@ -3604,29 +3839,47 @@ function toggleHeatMap(){
     }
 }
 
-function toggleLayerTable(layerID){
-    const tableRows = document.getElementById("layercontroltable").rows.length;
-    if(tableRows > 0){
+function toggleLayerDisplayMessage(){
+    const core = document.getElementById("coreLayers").childNodes.length;
+    const dragDrop = document.getElementById("dragDropLayers").childNodes.length;
+    const conf = document.getElementById("confLayers").childNodes.length;
+    if(core > 0 || dragDrop > 0 || conf > 0){
         document.getElementById("nolayermessage").style.display = "none";
-        document.getElementById("layercontroltable").style.display = "block";
     }
     else{
         $('#addLayers').popup('hide');
         document.getElementById("nolayermessage").style.display = "block";
-        document.getElementById("layercontroltable").style.display = "none";
     }
 }
 
-function toggleUploadLayer(c,title){
-    let layer = c.value;
-    if(layer === 'pointv' && showHeatMap) layer = 'heat';
-    if(c.checked === true){
-        layersArr[layer].setVisible(true);
-        addLayerToSelList(c.value,title);
+function toggleLayerSymbology(layerID){
+    const symbologyDivID = 'layerSymbology-' + layerID;
+    if(document.getElementById(symbologyDivID).style.display === 'flex'){
+        document.getElementById(symbologyDivID).style.display = 'none';
     }
     else{
-        layersArr[layer].setVisible(false);
-        removeLayerToSelList(c.value);
+        document.getElementById(symbologyDivID).style.display = 'flex';
+    }
+}
+
+function toggleUserLayerVisibility(id,name,visible){
+    let layerId = id;
+    if(id === 'pointv' && showHeatMap) {
+        layerId = 'heat';
+    }
+    if(visible === true){
+        layersArr[layerId].setVisible(true);
+        addLayerToSelList(id,name,false);
+        if(!coreLayers.includes(id)){
+            addLayerToLayerOrderArr(id);
+        }
+    }
+    else{
+        layersArr[layerId].setVisible(false);
+        removeLayerToSelList(id);
+        if(!coreLayers.includes(id)){
+            removeLayerFromLayerOrderArr(id);
+        }
     }
 }
 

@@ -175,17 +175,6 @@ $(document).ready(function() {
 		}
 	});
 
-	$("#ffmunicipality").autocomplete({ 
-		source: function( request, response ) {
-			$.getJSON( "rpc/lookupMunicipality.php", { term: request.term, "state": document.fullform.stateprovince.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		change: function(){
-			fieldChanged("municipality");
-		}
-	});
-	
 	$("textarea[name=associatedtaxa]").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "rpc/getassocspp.php", { term: extractLast( request.term ) }, response );
