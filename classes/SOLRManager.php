@@ -258,7 +258,6 @@ class SOLRManager extends OccurrenceManager{
 
     public function translateSOLRGeoCollList($sArr): array{
         $returnArr = array();
-        $color = 'e69e67';
         foreach($sArr as $k){
             $canReadRareSpp = false;
             $collid = $this->xmlentities($k['collid']);
@@ -309,11 +308,11 @@ class SOLRManager extends OccurrenceManager{
                 $returnArr[$collName][$occId]['collectioncode'] = $this->xmlentities($k['CollectionCode']);
                 $returnArr[$collName][$occId]['catalognumber'] = $this->xmlentities($k['catalogNumber']);
                 $returnArr[$collName][$occId]['othercatalognumbers'] = $this->xmlentities($k['otherCatalogNumbers']);
-                $returnArr[$collName]['color'] = $color;
+                $returnArr[$collName]['color'] = $GLOBALS['SPATIAL_INITIAL_POINT_COLOR'];
             }
         }
         if(isset($returnArr['undefined'])){
-            $returnArr['undefined']['color'] = $color;
+            $returnArr['undefined']['color'] = $GLOBALS['SPATIAL_INITIAL_POINT_COLOR'];
         }
 
         return $returnArr;

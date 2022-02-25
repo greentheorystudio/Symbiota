@@ -40,14 +40,17 @@ if(file_exists(__DIR__ . '/../config/includes/searchVarCustom.php')){
     include(__DIR__ . '/../config/includes/searchVarCustom.php');
 }
 
-$mapCenter = '[-110.90713, 32.21976]';
-if(isset($GLOBALS['SPATIAL_INITIAL_CENTER']) && $GLOBALS['SPATIAL_INITIAL_CENTER']) {
-    $mapCenter = $GLOBALS['SPATIAL_INITIAL_CENTER'];
-}
-$mapZoom = 7;
-if(isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM']) {
-    $mapZoom = $GLOBALS['SPATIAL_INITIAL_ZOOM'];
-}
+$mapCenter = ((isset($GLOBALS['SPATIAL_INITIAL_CENTER']) && $GLOBALS['SPATIAL_INITIAL_CENTER'])?$GLOBALS['SPATIAL_INITIAL_CENTER']:'[-110.90713, 32.21976]');
+$mapZoom = ((isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM'])?$GLOBALS['SPATIAL_INITIAL_ZOOM']:7);
+$initialPointColor = ((isset($GLOBALS['SPATIAL_INITIAL_POINT_COLOR']) && $GLOBALS['SPATIAL_INITIAL_POINT_COLOR'])?$GLOBALS['SPATIAL_INITIAL_POINT_COLOR']:'E69E67');
+$shapesFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']:'ffffff');
+$shapesBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']:'3399CC');
+$shapesBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']:2);
+$shapesOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']:'0.4');
+$dragDropFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']:'aaaaaa');
+$dragDropBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']:'000000');
+$dragDropBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']:2);
+$dragDropOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']:'0.3');
 
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
@@ -85,16 +88,16 @@ $dbArr = array();
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol-ext.min.css" type="text/css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220203" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220222" type="text/css" rel="stylesheet" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220209222" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol-ext.min.js" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
-    <script src="https://unpkg.com/shpjs@latest/dist/shp.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shp.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jszip.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jscolor/jscolor.js?ver=13" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/stream.js" type="text/javascript"></script>
@@ -102,8 +105,8 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20211227" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210705" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220221" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220223" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20211104" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -113,7 +116,7 @@ $dbArr = array();
             winHeight = winHeight + "px";
             document.getElementById('spatialpanel').style.height = winHeight;
 
-            $("#accordion").accordion({
+            $("#sidepanel-accordion").accordion({
                 icons: null,
                 collapsible: true,
                 heightStyle: "fill"
@@ -124,14 +127,219 @@ $dbArr = array();
             let winHeight = $(window).height();
             winHeight = winHeight + "px";
             document.getElementById('spatialpanel').style.height = winHeight;
-            $("#accordion").accordion("refresh");
+            $("#sidepanel-accordion").accordion("refresh");
         });
 
         $(document).on("pageloadfailed", function(event){
             event.preventDefault();
         });
 
+        function rgbaStrToHexStr(rgbaString) {
+            const rgbArr = rgbaString.match(/[.?\d]+/g);
+            let retStr = '';
+            if(rgbArr){
+                if(rgbArr[0].length == 1){
+                    rgbArr[0] = "0" + rgbArr[0];
+                }
+                if(rgbArr[1].length == 1){
+                    rgbArr[1] = "0" + rgbArr[1];
+                }
+                if(rgbArr[2].length == 1){
+                    rgbArr[2] = "0" + rgbArr[2];
+                }
+                retStr = "#" + rgbArr[0] + rgbArr[1] + rgbArr[2];
+            }
+            return retStr;
+        }
+
+        function addLayerToLayerOrderArr(layerId) {
+            layerOrderArr.push(layerId);
+            const sortingScrollerId = 'layerOrder-' + layerId;
+            $( ('#' + sortingScrollerId) ).spinner( "enable" );
+            setLayersOrder();
+        }
+
+        function removeLayerFromLayerOrderArr(layerId) {
+            const index = layerOrderArr.indexOf(layerId);
+            layerOrderArr.splice(index,1);
+            const sortingScrollerId = 'layerOrder-' + layerId;
+            $( ('#' + sortingScrollerId) ).spinner( "value", null );
+            $( ('#' + sortingScrollerId) ).spinner( "disable" );
+            setLayersOrder();
+        }
+
+        function setLayersOrder() {
+            const layersArrKeys = Object.keys(layersArr);
+            const layersArrLength = layersArrKeys.length;
+            for(let i in layerOrderArr){
+                if(layerOrderArr.hasOwnProperty(i)){
+                    const index = (layerOrderArr.indexOf(layerOrderArr[i])) + 1;
+                    layersArr[layerOrderArr[i]].setZIndex(index);
+                    const sortingScrollerId = 'layerOrder-' + layerOrderArr[i];
+                    $( ('#' + sortingScrollerId) ).spinner( "value", index );
+                    $( ('#' + sortingScrollerId) ).spinner( "option", "max", layerOrderArr.length );
+                }
+            }
+            layersArr['base'].setZIndex(0);
+            if(layersArr.hasOwnProperty('uncertainty')){
+                layersArr['uncertainty'].setZIndex((layersArrLength - 4));
+            }
+            if(layersArr.hasOwnProperty('select')){
+                layersArr['select'].setZIndex((layersArrLength - 3));
+            }
+            if(layersArr.hasOwnProperty('pointv')){
+                layersArr['pointv'].setZIndex((layersArrLength - 2));
+            }
+            if(layersArr.hasOwnProperty('heat')){
+                layersArr['heat'].setZIndex((layersArrLength - 1));
+            }
+            if(layersArr.hasOwnProperty('spider')){
+                layersArr['spider'].setZIndex(layersArrLength);
+            }
+            if(layersArr.hasOwnProperty('radius')){
+                layersArr['radius'].setZIndex((layersArrLength - 1));
+            }
+            if(layersArr.hasOwnProperty('vector')){
+                layersArr['vector'].setZIndex(layersArrLength);
+            }
+        }
+
+        function toggleServerLayerVisibility(id,name,file,visible){
+            if(visible === true){
+                loadServerLayer(id,file);
+                addLayerToSelList(id,name,false);
+                addLayerToLayerOrderArr(id);
+            }
+            else{
+                removeServerLayer(id);
+                removeLayerToSelList(id);
+                removeLayerFromLayerOrderArr(id);
+            }
+        }
+
+        function removeServerLayer(id){
+            map.removeLayer(layersArr[id]);
+            const imageIndex = id + 'Image';
+            if(layersArr.hasOwnProperty(imageIndex)){
+                delete layersArr[imageIndex];
+            }
+            delete layersArr[id];
+        }
+
+        function setVectorStyle(fillColor, borderColor, borderWidth, opacity){
+            return new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                }),
+                stroke: new ol.style.Stroke({
+                    color: ('#' + borderColor),
+                    width: borderWidth
+                }),
+                image: new ol.style.Circle({
+                    radius: 5,
+                    fill: new ol.style.Fill({
+                        color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: ('#' + borderColor),
+                        width: borderWidth
+                    })
+                })
+            })
+        }
+
+        function loadServerLayer(id,file){
+            const zIndex = layerOrderArr.length + 1;
+            const filenameParts = file.split('.');
+            const fileType = filenameParts.pop();
+            let serverLayerSource,serverLayerLayer,fillColor,borderColor,borderWidth,opacity;
+            if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
+                fillColor = document.getElementById(('fillColor-' + id)).value;
+                borderColor = document.getElementById(('borderColor-' + id)).value;
+                borderWidth = document.getElementById(('borderWidth-' + id)).value;
+                opacity = document.getElementById(('opacity-' + id)).value;
+                layersArr[id] = new ol.layer.Vector({
+                    zIndex: zIndex,
+                    style: setVectorStyle(fillColor, borderColor, borderWidth, opacity)
+                });
+            }
+            else{
+                layersArr[id] = new ol.layer.Image({
+                    zIndex: zIndex,
+                });
+            }
+            if(fileType === 'geojson'){
+                layersArr[id].setSource(new ol.source.Vector({
+                    url: ('../content/spatial/' + file),
+                    format: new ol.format.GeoJSON(),
+                    wrapX: true
+                }));
+            }
+            else if(fileType === 'kml'){
+                layersArr[id].setSource(new ol.source.Vector({
+                    url: ('../content/spatial/' + file),
+                    format: new ol.format.KML({
+                        extractStyles: false,
+                    }),
+                    wrapX: true
+                }));
+            }
+            else if(fileType === 'zip'){
+                fetch(('../content/spatial/' + file)).then((fileFetch) => {
+                    fileFetch.blob().then((blob) => {
+                        getArrayBuffer(blob).then((data) => {
+                            shp(data).then((geojson) => {
+                                const format = new ol.format.GeoJSON();
+                                const features = format.readFeatures(geojson, {
+                                    featureProjection: 'EPSG:3857'
+                                });
+                                layersArr[id].setSource(new ol.source.Vector({
+                                    features: features,
+                                    wrapX: true
+                                }));
+                            });
+                        });
+                    });
+                });
+            }
+            else if(fileType === 'tif'){
+                fetch(('../content/spatial/' + file)).then((fileFetch) => {
+                    fileFetch.blob().then((blob) => {
+                        blob.arrayBuffer().then((data) => {
+                            const tiff = GeoTIFF.parse(data);
+                            const image = tiff.getImage();
+                            const imageIndex = id + 'Image';
+                            layersArr[imageIndex] = image;
+                            const rawBox = image.getBoundingBox();
+                            const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
+                            const bands = image.readRasters();
+                            const canvasElement = document.createElement('canvas');
+                            const minValue = 0;
+                            const maxValue = 1200;
+                            const plot = new plotty.plot({
+                                canvas: canvasElement,
+                                data: bands[0],
+                                width: image.getWidth(),
+                                height: image.getHeight(),
+                                domain: [minValue, maxValue],
+                                colorScale: 'earth'
+                            });
+                            plot.render();
+                            layersArr[id].setSource(new ol.source.ImageStatic({
+                                url: canvasElement.toDataURL("image/png"),
+                                imageExtent: box,
+                                projection: 'EPSG:4326'
+                            }));
+                        });
+                    });
+                });
+            }
+            map.addLayer(layersArr[id]);
+            toggleLayerDisplayMessage();
+        }
+
         $(document).ready(function() {
+            setLayersController();
             if(document.getElementById("taxa")){
                 $( "#taxa" )
                     .bind( "keydown", function( event ) {
@@ -310,6 +518,15 @@ $dbArr = array();
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
     const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
+    const initialPointColor = '<?php echo $initialPointColor; ?>';
+    const shapesFillColor = '<?php echo $shapesFillColor; ?>';
+    const shapesBorderColor = '<?php echo $shapesBorderColor; ?>';
+    const shapesBorderWidth = <?php echo $shapesBorderWidth; ?>;
+    const shapesOpacity = '<?php echo $shapesOpacity; ?>';
+    const dragDropFillColor = '<?php echo $dragDropFillColor; ?>';
+    const dragDropBorderColor = '<?php echo $dragDropBorderColor; ?>';
+    const dragDropBorderWidth = <?php echo $dragDropBorderWidth; ?>;
+    const dragDropOpacity = '<?php echo $dragDropOpacity; ?>';
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');
@@ -351,32 +568,16 @@ $dbArr = array();
         wrapX: true
     });
     const selectlayer = new ol.layer.Vector({
+        zIndex: 8,
         source: selectsource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(255,255,255,0.4)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#3399CC',
-                width: 2
-            }),
-            image: new ol.style.Circle({
-                radius: 7,
-                stroke: new ol.style.Stroke({
-                    color: '#3399CC',
-                    width: 2
-                }),
-                fill: new ol.style.Fill({
-                    color: 'rgba(255,255,255,0.4)'
-                })
-            })
-        })
+        style: setVectorStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesOpacity)
     });
 
     let uncertaintycirclesource = new ol.source.Vector({
         wrapX: true
     });
     const uncertaintycirclelayer = new ol.layer.Vector({
+        zIndex: 7,
         source: uncertaintycirclesource,
         style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -403,10 +604,12 @@ $dbArr = array();
         wrapX: true
     });
     const pointvectorlayer = new ol.layer.Vector({
+        zIndex: 9,
         source: pointvectorsource
     });
 
     const heatmaplayer = new ol.layer.Heatmap({
+        zIndex: 10,
         source: pointvectorsource,
         weight: function (feature) {
             let showPoint = true;
@@ -429,19 +632,32 @@ $dbArr = array();
         wrapX: true
     });
     const dragdroplayer1 = new ol.layer.Vector({
-        source: blankdragdropsource
+        zIndex: 1,
+        source: blankdragdropsource,
+        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
     });
     const dragdroplayer2 = new ol.layer.Vector({
-        source: blankdragdropsource
+        zIndex: 2,
+        source: blankdragdropsource,
+        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
     });
     const dragdroplayer3 = new ol.layer.Vector({
-        source: blankdragdropsource
+        zIndex: 3,
+        source: blankdragdropsource,
+        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
     });
-    const dragdroplayer4 = new ol.layer.Image();
-    const dragdroplayer5 = new ol.layer.Image();
-    const dragdroplayer6 = new ol.layer.Image();
+    const dragdroplayer4 = new ol.layer.Image({
+        zIndex: 4,
+    });
+    const dragdroplayer5 = new ol.layer.Image({
+        zIndex: 5,
+    });
+    const dragdroplayer6 = new ol.layer.Image({
+        zIndex: 6,
+    });
 
     const spiderLayer = new ol.layer.Vector({
+        zIndex: 11,
         source: new ol.source.Vector({
             features: new ol.Collection(),
             useSpatialIndex: true
@@ -576,11 +792,19 @@ $dbArr = array();
             if(fileType === 'geojson' || fileType === 'kml'){
                 if(setDragDropTarget()){
                     const infoArr = [];
-                    infoArr['Name'] = dragDropTarget;
-                    infoArr['layerType'] = 'vector';
-                    infoArr['Title'] = filename;
-                    infoArr['Abstract'] = '';
-                    infoArr['DefaultCRS'] = '';
+                    infoArr['id'] = dragDropTarget;
+                    infoArr['type'] = 'userLayer';
+                    infoArr['fileType'] = fileType;
+                    infoArr['layerName'] = filename;
+                    infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
+                    infoArr['fillColor'] = dragDropFillColor;
+                    infoArr['borderColor'] = dragDropBorderColor;
+                    infoArr['borderWidth'] = dragDropBorderWidth;
+                    infoArr['opacity'] = dragDropOpacity;
+                    infoArr['removable'] = true;
+                    infoArr['sortable'] = true;
+                    infoArr['symbology'] = true;
+                    infoArr['query'] = true;
                     const sourceIndex = dragDropTarget + 'Source';
                     let features = event.features;
                     if(fileType === 'kml'){
@@ -590,11 +814,10 @@ $dbArr = array();
                     layersArr[sourceIndex] = new ol.source.Vector({
                         features: features
                     });
-                    layersArr[dragDropTarget].setStyle(getDragDropStyle);
                     layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                    buildLayerTableRow(infoArr,true);
+                    processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                     map.getView().fit(layersArr[sourceIndex].getExtent());
-                    toggleLayerTable();
+                    toggleLayerDisplayMessage();
                 }
             }
             else if(fileType === 'zip'){
@@ -602,11 +825,19 @@ $dbArr = array();
                     getArrayBuffer(event.file).then((data) => {
                         shp(data).then((geojson) => {
                             const infoArr = [];
-                            infoArr['Name'] = dragDropTarget;
-                            infoArr['layerType'] = 'vector';
-                            infoArr['Title'] = filename;
-                            infoArr['Abstract'] = '';
-                            infoArr['DefaultCRS'] = '';
+                            infoArr['id'] = dragDropTarget;
+                            infoArr['type'] = 'userLayer';
+                            infoArr['fileType'] = 'zip';
+                            infoArr['layerName'] = filename;
+                            infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
+                            infoArr['fillColor'] = dragDropFillColor;
+                            infoArr['borderColor'] = dragDropBorderColor;
+                            infoArr['borderWidth'] = dragDropBorderWidth;
+                            infoArr['opacity'] = dragDropOpacity;
+                            infoArr['removable'] = true;
+                            infoArr['sortable'] = true;
+                            infoArr['symbology'] = true;
+                            infoArr['query'] = true;
                             const sourceIndex = dragDropTarget + 'Source';
                             const format = new ol.format.GeoJSON();
                             const features = format.readFeatures(geojson, {
@@ -615,11 +846,10 @@ $dbArr = array();
                             layersArr[sourceIndex] = new ol.source.Vector({
                                 features: features
                             });
-                            layersArr[dragDropTarget].setStyle(getDragDropStyle);
                             layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                            buildLayerTableRow(infoArr,true);
+                            processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                             map.getView().fit(layersArr[sourceIndex].getExtent());
-                            toggleLayerTable();
+                            toggleLayerDisplayMessage();
                         });
                     });
                 }
@@ -628,11 +858,15 @@ $dbArr = array();
                 if(setRasterDragDropTarget()){
                     event.file.arrayBuffer().then((data) => {
                         const infoArr = [];
-                        infoArr['Name'] = dragDropTarget;
-                        infoArr['layerType'] = 'raster';
-                        infoArr['Title'] = filename;
-                        infoArr['Abstract'] = '';
-                        infoArr['DefaultCRS'] = '';
+                        infoArr['id'] = dragDropTarget;
+                        infoArr['type'] = 'userLayer';
+                        infoArr['fileType'] = 'tif';
+                        infoArr['layerName'] = filename;
+                        infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
+                        infoArr['removable'] = true;
+                        infoArr['sortable'] = true;
+                        infoArr['symbology'] = false;
+                        infoArr['query'] = false;
                         const sourceIndex = dragDropTarget + 'Source';
                         const imageIndex = dragDropTarget + 'Image';
                         const tiff = GeoTIFF.parse(data);
@@ -660,8 +894,8 @@ $dbArr = array();
                         });
                         layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
                         map.addLayer(layersArr[dragDropTarget]);
-                        buildLayerTableRow(infoArr,true);
-                        toggleLayerTable();
+                        processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
+                        toggleLayerDisplayMessage();
                     });
                 }
             }
@@ -860,12 +1094,20 @@ $dbArr = array();
             if(featureCnt > 0){
                 if(!shapeActive){
                     const infoArr = [];
-                    infoArr['Name'] = 'select';
-                    infoArr['layerType'] = 'vector';
-                    infoArr['Title'] = 'Shapes';
-                    infoArr['Abstract'] = '';
-                    infoArr['DefaultCRS'] = '';
-                    buildLayerTableRow(infoArr,true);
+                    infoArr['id'] = 'select';
+                    infoArr['type'] = 'userLayer';
+                    infoArr['fileType'] = 'vector';
+                    infoArr['layerName'] = 'Shapes';
+                    infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
+                    infoArr['fillColor'] = shapesFillColor;
+                    infoArr['borderColor'] = shapesBorderColor;
+                    infoArr['borderWidth'] = shapesBorderWidth;
+                    infoArr['opacity'] = shapesOpacity;
+                    infoArr['removable'] = true;
+                    infoArr['sortable'] = false;
+                    infoArr['symbology'] = true;
+                    infoArr['query'] = true;
+                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
                     shapeActive = true;
                 }
             }
@@ -939,92 +1181,8 @@ $dbArr = array();
 
     map.on('singleclick', function(evt) {
         let infoHTML;
-        let url;
-        let viewResolution;
-        let layerIndex;
         if(evt.originalEvent.altKey){
-            layerIndex = activeLayer + "Source";
-            viewResolution = (mapView.getResolution());
-            if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv' && activeLayer !== 'dragdrop1' && activeLayer !== 'dragdrop2' && activeLayer !== 'dragdrop3' && activeLayer !== 'dragdrop4' && activeLayer !== 'dragdrop5' && activeLayer !== 'dragdrop6'){
-                url = layersArr[layerIndex].getGetFeatureInfoUrl(evt.coordinate, viewResolution, 'EPSG:3857', {'INFO_FORMAT': 'application/json'});
-                if (url) {
-                    $.ajax({
-                        type: "GET",
-                        url: url,
-                        async: true
-                    }).done(function(msg) {
-                        if(msg){
-                            let infoHTML = '';
-                            const infoArr = JSON.parse(msg);
-                            const propArr = infoArr['features'][0]['properties'];
-                            for(const key in propArr){
-                                if(propArr.hasOwnProperty(key)){
-                                    let valTag = '';
-                                    if(key === 'GRAY_INDEX') {
-                                        valTag = 'Value';
-                                    }
-                                    else {
-                                        valTag = key;
-                                    }
-                                    infoHTML += '<b>'+valTag+':</b> '+propArr[key]+'<br />';
-                                }
-                            }
-                            popupcontent.innerHTML = infoHTML;
-                            popupoverlay.setPosition(evt.coordinate);
-                        }
-                    });
-                }
-            }
-            else if(activeLayer === 'none' || activeLayer === 'dragdrop1' || activeLayer === 'dragdrop2' || activeLayer === 'dragdrop3' || activeLayer === 'select'){
-                infoHTML = '';
-                const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-                    if (layer === layersArr[activeLayer]) {
-                        return feature;
-                    }
-                });
-                if(feature){
-                    const properties = feature.getKeys();
-                    for(let i in properties){
-                        if(properties.hasOwnProperty(i) && String(properties[i]) !== 'geometry'){
-                            infoHTML += '<b>'+properties[i]+':</b> '+feature.get(properties[i])+'<br />';
-                        }
-                    }
-                    if(infoHTML){
-                        popupcontent.innerHTML = infoHTML;
-                        popupoverlay.setPosition(evt.coordinate);
-                    }
-                }
-            }
-            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6'){
-                infoHTML = '';
-                const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-                const imageIndex = activeLayer + 'Image';
-                const image = layersArr[imageIndex];
-                const meta = image.getFileDirectory();
-                const x_min = meta.ModelTiepoint[3];
-                const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
-                const y_min = meta.ModelTiepoint[4];
-                const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
-                const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
-                const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
-                const bands = image.readRasters();
-                const canvasElement = document.createElement('canvas');
-                const minValue = 0;
-                const maxValue = 1200;
-                const plot = new plotty.plot({
-                    canvas: canvasElement,
-                    data: bands[0],
-                    width: image.getWidth(),
-                    height: image.getHeight(),
-                    domain: [minValue, maxValue],
-                    colorScale: 'earth'
-                });
-                const rasterValue = plot.atPoint(x,y);
-                infoHTML += '<b>Value:</b> '+rasterValue+'<br />';
-                popupcontent.innerHTML = infoHTML;
-                popupoverlay.setPosition(evt.coordinate);
-            }
-            else if(activeLayer === 'pointv'){
+            if(activeLayer === 'pointv'){
                 infoHTML = '';
                 let targetFeature = '';
                 let iFeature = '';
@@ -1070,11 +1228,59 @@ $dbArr = array();
                 }
                 clickedFeatures = [];
             }
+            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6' || layersArr[activeLayer] instanceof ol.layer.Image){
+                infoHTML = '';
+                const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                const imageIndex = activeLayer + 'Image';
+                const image = layersArr[imageIndex];
+                const meta = image.getFileDirectory();
+                const x_min = meta.ModelTiepoint[3];
+                const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                const y_min = meta.ModelTiepoint[4];
+                const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+                const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
+                const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
+                const bands = image.readRasters();
+                const canvasElement = document.createElement('canvas');
+                const minValue = 0;
+                const maxValue = 1200;
+                const plot = new plotty.plot({
+                    canvas: canvasElement,
+                    data: bands[0],
+                    width: image.getWidth(),
+                    height: image.getHeight(),
+                    domain: [minValue, maxValue],
+                    colorScale: 'earth'
+                });
+                const rasterValue = plot.atPoint(x,y);
+                infoHTML += '<b>Value:</b> '+rasterValue+'<br />';
+                popupcontent.innerHTML = infoHTML;
+                popupoverlay.setPosition(evt.coordinate);
+            }
+            else if(layersArr[activeLayer] instanceof ol.layer.Vector){
+                infoHTML = '';
+                const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+                    if (layer === layersArr[activeLayer]) {
+                        return feature;
+                    }
+                });
+                if(feature){
+                    const properties = feature.getKeys();
+                    for(let i in properties){
+                        if(properties.hasOwnProperty(i) && String(properties[i]) !== 'geometry'){
+                            infoHTML += '<b>'+properties[i]+':</b> '+feature.get(properties[i])+'<br />';
+                        }
+                    }
+                    if(infoHTML){
+                        popupcontent.innerHTML = infoHTML;
+                        popupoverlay.setPosition(evt.coordinate);
+                    }
+                }
+            }
         }
         else{
-            layerIndex = activeLayer + "Source";
             if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv'){
-                if(activeLayer === 'dragdrop1' || activeLayer === 'dragdrop2' || activeLayer === 'dragdrop3'){
+                if(layersArr[activeLayer] instanceof ol.layer.Vector){
                     map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
                         if(layer === layersArr[activeLayer]){
                             try{

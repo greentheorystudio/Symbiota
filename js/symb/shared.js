@@ -197,6 +197,15 @@ function hexToRgb(hex) {
 	} : null;
 }
 
+function getRgbaStrFromHexOpacity(hex,opacity) {
+	const rgbArr = hexToRgb(hex);
+	let retStr = '';
+	if(rgbArr){
+		retStr = 'rgba('+rgbArr['r']+','+rgbArr['g']+','+rgbArr['b']+','+opacity+')';
+	}
+	return retStr;
+}
+
 function imagePostFunction(image, src) {
 	const img = image.getImage();
 	if(typeof window.btoa === 'function'){

@@ -46,7 +46,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.js" type="text/javascript"></script>
-		<script src="../../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
+		<script src="../../js/symb/shared.js?ver=20220221" type="text/javascript"></script>
 		<script src="../../js/symb/geolocate.js?ver=1.0" type="text/javascript"></script>
 	</head>
 	<body>
