@@ -170,8 +170,8 @@ $taxaUtilities = new TaxonomyUtilities();
                 dropZone: $('#fileDropZone'),
                 filesContainer: '#uploadList',
                 add: function (e, data) {
-                    const fileName = data.files[0].name
-                    const fileType = fileName.split('.').pop()
+                    const fileName = data.files[0].name;
+                    const fileType = fileName.split('.').pop();
                     if(fileType === 'csv'){
                         processCsvFile(e, data.files[0]);
                         data.files.splice(data, 1);
@@ -196,10 +196,11 @@ $taxaUtilities = new TaxonomyUtilities();
                             data.files[0].anatomy = imageFileData.anatomy;
                             data.files[0].dynamicProperties = imageFileData.dynamicProperties;
                         }
-                        if(!data.files[0].hasOwnProperty('scientificname') || !data.files[0].tid){
+                        if(!data.files[0].hasOwnProperty('scientificname') || !data.files[0].scientificname){
+                            parseScinameFromFilename(fileName);
                             data.files[0].errorMessage = 'Scientific name required';
                         }
-                        else if(!data.files[0].hasOwnProperty('tid') || !data.files[0].scientificname){
+                        else if(!data.files[0].hasOwnProperty('tid') || !data.files[0].tid){
                             if(taxaDataArr.hasOwnProperty(imageFileData.scientificname)){
                                 data.files[0].tid = taxaDataArr[imageFileData.scientificname];
                             }
@@ -208,37 +209,37 @@ $taxaUtilities = new TaxonomyUtilities();
                                 data.files[0].errorMessage = 'Validating name...';
                             }
                         }
-                        var $this = $(this),
-                            that = $this.data('blueimp-fileupload') || $this.data('fileupload'),
-                            options = that.options;
-                        data.context = that
+                        const initializedObj = $(this);
+                        const fileuploadObj = initializedObj.data('blueimp-fileupload') || initializedObj.data('fileupload');
+                        const fileuploadObjOptions = fileuploadObj.options;
+                        data.context = fileuploadObj
                             ._renderUpload(data.files)
                             .data('data', data)
                             .addClass('processing');
-                        options.filesContainer[options.prependFiles ? 'prepend' : 'append'](
+                        fileuploadObjOptions.filesContainer[fileuploadObjOptions.prependFiles ? 'prepend' : 'append'](
                             data.context
                         );
-                        that._forceReflow(data.context);
-                        that._transition(data.context);
+                        fileuploadObj._forceReflow(data.context);
+                        fileuploadObj._transition(data.context);
                         data
                             .process(function () {
-                                return $this.fileupload('process', data);
+                                return initializedObj.fileupload('process', data);
                             })
                             .always(function () {
                                 data.context
                                     .each(function (index) {
                                         $(this)
                                             .find('.size')
-                                            .text(that._formatFileSize(data.files[index].size));
+                                            .text(fileuploadObj._formatFileSize(data.files[index].size));
                                     })
                                     .removeClass('processing');
-                                that._renderPreviews(data);
+                                fileuploadObj._renderPreviews(data);
                             })
                             .done(function () {
                                 data.context.find('.edit,.start').prop('disabled', false);
                                 if (
-                                    that._trigger('added', e, data) !== false &&
-                                    (options.autoUpload || data.autoUpload) &&
+                                    fileuploadObj._trigger('added', e, data) !== false &&
+                                    (fileuploadObjOptions.autoUpload || data.autoUpload) &&
                                     data.autoUpload !== false
                                 ) {
                                     data.submit();
@@ -260,6 +261,98 @@ $taxaUtilities = new TaxonomyUtilities();
                 data.formData = data.context.find(':input').serializeArray();
             });
         });
+
+        function parseScinameFromFilename(fileName){
+            let adjustedFileName = fileName.replace(/_/g, ' ');
+            adjustedFileName = adjustedFileName.replace(/\s+/g, ' ').trim();
+            const lastDotIndex = adjustedFileName.lastIndexOf('.');
+            adjustedFileName = adjustedFileName.substr(0, lastDotIndex);
+            const lastSpaceIndex = adjustedFileName.lastIndexOf(' ');
+            if(lastSpaceIndex){
+                const lastPartAfterSpace = adjustedFileName.substr(lastSpaceIndex);
+                if(!isNaN(lastPartAfterSpace)){
+                    adjustedFileName = adjustedFileName.substr(0, lastSpaceIndex);
+                }
+            }
+            taxaNameArr.push(adjustedFileName);
+            getNewTaxaDataArr(adjustedFileName,fileName,false);
+        }
+
+        function getNewTaxaDataArr(value,fileName,validate){
+            const fileNodeArr = document.getElementById('uploadList').childNodes;
+            const http = new XMLHttpRequest();
+            const url = "rpc/getbatchimageuploadtaxadata.php";
+            const params = 'taxa='+encodeURIComponent(JSON.stringify(taxaNameArr));
+            //console.log(url+'?'+params);
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    if(http.responseText) {
+                        taxaDataArr = {
+                            ...taxaDataArr,
+                            ...JSON.parse(http.responseText)
+                        };
+                        taxaNameArr = [];
+                        if(taxaDataArr.hasOwnProperty(value)){
+                            for(let n in fileNodeArr){
+                                if(fileNodeArr.hasOwnProperty(n)){
+                                    const fileNode = fileNodeArr[n];
+                                    const nodeFileName = fileNode.getElementsByClassName('name')[0].innerHTML;
+                                    if(nodeFileName === fileName){
+                                        if(!validate){
+                                            fileNode.querySelectorAll('input[name="scientificname[]"]')[0].value = value;
+                                        }
+                                        fileNode.querySelectorAll('input[name="tid[]"]')[0].value = taxaDataArr[value];
+                                        fileNode.getElementsByClassName('errorMessage')[0].innerHTML = '';
+                                        fileNode.getElementsByClassName('errorMessage')[0].style.display = 'none';
+                                        fileNode.getElementsByClassName('goodMessage')[0].style.display = 'block';
+                                    }
+                                }
+                            }
+                            updateFileDataArrTid();
+                            updateDisplay();
+                        }
+                        else if(validate){
+                            for(let n in fileNodeArr){
+                                if(fileNodeArr.hasOwnProperty(n)){
+                                    const fileNode = fileNodeArr[n];
+                                    const nodeFileName = fileNode.getElementsByClassName('name')[0].innerHTML;
+                                    if(nodeFileName === fileName){
+                                        fileNode.getElementsByClassName('errorMessage')[0].innerHTML = 'Scientific name not found in taxonomic thesaurus';
+                                        fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
+                                        fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            http.send(params);
+        }
+
+        function updateFileDataArrTid(){
+            for(let i in fileData){
+                if(fileData.hasOwnProperty(i)){
+                    const sciname = fileData[i].scientificname;
+                    if(!fileData[i].hasOwnProperty('tid') || fileData[i].tid === ''){
+                        if(sciname){
+                            if(taxaDataArr.hasOwnProperty(sciname)){
+                                fileData[i].tid = taxaDataArr[sciname];
+                                fileData[i].errorMessage = '';
+                            }
+                            else{
+                                fileData[i].errorMessage = 'Scientific name not found in taxonomic thesaurus';
+                            }
+                        }
+                    }
+                    else{
+                        data.files[0].errorMessage = '';
+                    }
+                }
+            }
+        }
 
         function updateDisplay(){
             const fileNodeArr = document.getElementById('uploadList').childNodes;
@@ -353,71 +446,7 @@ $taxaUtilities = new TaxonomyUtilities();
                 }
             }
             taxaNameArr.push(value);
-            const http = new XMLHttpRequest();
-            const url = "rpc/getbatchimageuploadtaxadata.php";
-            const params = 'taxa='+encodeURIComponent(JSON.stringify(taxaNameArr));
-            //console.log(url+'?'+params);
-            http.open("POST", url, true);
-            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            http.onreadystatechange = function() {
-                if(http.readyState === 4 && http.status === 200) {
-                    if(http.responseText) {
-                        taxaDataArr = {
-                            ...taxaDataArr,
-                            ...JSON.parse(http.responseText)
-                        };
-                        taxaNameArr = [];
-                        if(taxaDataArr.hasOwnProperty(value)){
-                            for(let n in fileNodeArr){
-                                if(fileNodeArr.hasOwnProperty(n)){
-                                    const fileNode = fileNodeArr[n];
-                                    const nodeFileName = fileNode.getElementsByClassName('name')[0].innerHTML;
-                                    if(nodeFileName === fileName){
-                                        fileNode.querySelectorAll('input[name="tid[]"]')[0].value = taxaDataArr[value];
-                                        fileNode.getElementsByClassName('errorMessage')[0].innerHTML = '';
-                                        fileNode.getElementsByClassName('errorMessage')[0].style.display = 'none';
-                                        fileNode.getElementsByClassName('goodMessage')[0].style.display = 'block';
-                                    }
-                                }
-                            }
-                            for(let i in fileData){
-                                if(fileData.hasOwnProperty(i)){
-                                    const sciname = fileData[i].scientificname;
-                                    if(!fileData[i].hasOwnProperty('tid') || fileData[i].tid === ''){
-                                        if(sciname){
-                                            if(taxaDataArr.hasOwnProperty(sciname)){
-                                                fileData[i].tid = taxaDataArr[sciname];
-                                                fileData[i].errorMessage = '';
-                                            }
-                                            else{
-                                                fileData[i].errorMessage = 'Scientific name not found in taxonomic thesaurus';
-                                            }
-                                        }
-                                    }
-                                    else{
-                                        data.files[0].errorMessage = '';
-                                    }
-                                }
-                            }
-                            updateDisplay();
-                        }
-                        else{
-                            for(let n in fileNodeArr){
-                                if(fileNodeArr.hasOwnProperty(n)){
-                                    const fileNode = fileNodeArr[n];
-                                    const nodeFileName = fileNode.getElementsByClassName('name')[0].innerHTML;
-                                    if(nodeFileName === fileName){
-                                        fileNode.getElementsByClassName('errorMessage')[0].innerHTML = 'Scientific name not found in taxonomic thesaurus';
-                                        fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
-                                        fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-            http.send(params);
+            getNewTaxaDataArr(value,fileName,true);
         }
 
         function csvToArray(str) {
@@ -454,25 +483,7 @@ $taxaUtilities = new TaxonomyUtilities();
                             ...JSON.parse(http.responseText)
                         };
                         taxaNameArr = [];
-                        for(let i in fileData){
-                            if(fileData.hasOwnProperty(i)){
-                                const sciname = fileData[i].scientificname;
-                                if(!fileData[i].hasOwnProperty('tid') || fileData[i].tid === ''){
-                                    if(sciname){
-                                        if(taxaDataArr.hasOwnProperty(sciname)){
-                                            fileData[i].tid = taxaDataArr[sciname];
-                                            fileData[i].errorMessage = '';
-                                        }
-                                        else{
-                                            fileData[i].errorMessage = 'Scientific name not found in taxonomic thesaurus';
-                                        }
-                                    }
-                                }
-                                else{
-                                    data.files[0].errorMessage = '';
-                                }
-                            }
-                        }
+                        updateFileDataArrTid();
                         updateDisplay();
                     }
                 }
@@ -492,9 +503,9 @@ include(__DIR__ . '/../../header.php');
 <?php
 
 if($isEditor){
-	?>
-	<div id="innertext">
-		<h1>Taxa Batch Image Loader</h1>
+    ?>
+    <div id="innertext">
+        <h1>Taxa Batch Image Loader</h1>
         <div style="margin-bottom:20px;font-size:16px;">
             To batch upload taxa images, either click the Add files button to select the files to be uploaded or drag and
             drop the files onto the box below. A csv spreadheet can also be uploaded to provide further metadata for the files.
@@ -532,15 +543,15 @@ if($isEditor){
                 <tbody id="uploadList"></tbody>
             </table>
         </form>
-	</div>
+    </div>
     <?php
 }
 else{
-	?>
-	<div style='font-weight:bold;margin:30px;'>
-		You do not have permissions to batch upload taxa images
-	</div>
-	<?php
+    ?>
+    <div style='font-weight:bold;margin:30px;'>
+        You do not have permissions to batch upload taxa images
+    </div>
+    <?php
 }
 include(__DIR__ . '/../../footer.php');
 ?>
