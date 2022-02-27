@@ -100,52 +100,18 @@ $taxaUtilities = new TaxonomyUtilities();
                     <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
                 </td>
                 <td style="display:flex;justify-content:flex-end;align-items:center;align-content:center;gap:5px;">
-                    {% if (!i && !o.options.autoUpload) { %}
-                        <button class="btn btn-primary start">
+                    {% if (!i) { %}
+                        <button name="startButton" class="btn btn-primary start {%=file.tid?'':'disabled'%}">
                             <i style="height:15px;width:15px;" class="fas fa-upload"></i>
                             <span>Start</span>
                         </button>
                     {% } %}
                     {% if (!i) { %}
-                        <button class="btn btn-warning cancel">
+                        <button name="cancelButton" class="btn btn-warning cancel">
                             <i style="height:15px;width:15px;" class="fas fa-ban"></i>
                             <span>Cancel</span>
                         </button>
                     {% } %}
-                </td>
-            </tr>
-        {% } %}
-    </script>
-    <script id="template-download" type="text/x-tmpl">
-        {% for (var i=0, file; file=o.files[i]; i++) { %}
-            <tr class="template-download fade{%=file.thumbnailUrl?' image':''%}">
-                <td>
-                    <span class="preview">
-                        {% if (file.thumbnailUrl) { %}
-                            <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
-                        {% } %}
-                    </span>
-                </td>
-                <td>
-                    <p class="name">
-                        {% if (file.url) { %}
-                            <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
-                        {% } else { %}
-                            <span>{%=file.name%}</span>
-                        {% } %}
-                    </p>
-                    {% if (file.error) { %}
-                        <div><span class="label label-danger">Error</span> {%=file.error%}</div>
-                    {% } %}
-                </td>
-                <td>
-                    <span class="size">{%=o.formatFileSize(file.size)%}</span>
-                </td>
-                <td>
-                    <button class="btn btn-warning cancel">
-                        <i style="height:15px;width:15px;" class="fas fa-ban"></i>
-                        <span>Cancel</span>
-                    </button>
                 </td>
             </tr>
         {% } %}
@@ -166,9 +132,10 @@ $taxaUtilities = new TaxonomyUtilities();
 
         $(function () {
             $('#fileupload').fileupload({
-                url: 'rpc/uploadimage.php',
+                url: 'index.php',
                 dropZone: $('#fileDropZone'),
                 filesContainer: '#uploadList',
+                downloadTemplateId: '',
                 add: function (e, data) {
                     const fileName = data.files[0].name;
                     const fileType = fileName.split('.').pop();
@@ -258,7 +225,12 @@ $taxaUtilities = new TaxonomyUtilities();
                     }
                 }
             }).on('fileuploadsubmit', function (e, data) {
-                data.formData = data.context.find(':input').serializeArray();
+                if(data.context.find(':input[name="tid[]"]')[0].value){
+                    data.formData = data.context.find(':input').serializeArray();
+                }
+                else{
+                    return false;
+                }
             });
         });
 
@@ -307,6 +279,8 @@ $taxaUtilities = new TaxonomyUtilities();
                                         fileNode.getElementsByClassName('errorMessage')[0].innerHTML = '';
                                         fileNode.getElementsByClassName('errorMessage')[0].style.display = 'none';
                                         fileNode.getElementsByClassName('goodMessage')[0].style.display = 'block';
+                                        fileNode.querySelectorAll('button[name="startButton"]')[0].classList.remove('disabled');
+                                        fileNode.querySelectorAll('button[name="startButton"]')[0].disabled = false;
                                     }
                                 }
                             }
@@ -322,6 +296,7 @@ $taxaUtilities = new TaxonomyUtilities();
                                         fileNode.getElementsByClassName('errorMessage')[0].innerHTML = 'Scientific name not found in taxonomic thesaurus';
                                         fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
                                         fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
+                                        fileNode.querySelectorAll('button[name="startButton"]')[0].classList.add('disabled');
                                     }
                                 }
                             }
@@ -408,11 +383,13 @@ $taxaUtilities = new TaxonomyUtilities();
                             fileNode.getElementsByClassName('errorMessage')[0].innerHTML = imageFileData.errorMessage;
                             fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
                             fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
+                            fileNode.querySelectorAll('button[name="startButton"]')[0].classList.add('disabled');
                         }
                         else{
                             fileNode.getElementsByClassName('errorMessage')[0].innerHTML = '';
                             fileNode.getElementsByClassName('errorMessage')[0].style.display = 'none';
                             fileNode.getElementsByClassName('goodMessage')[0].style.display = 'block';
+                            fileNode.querySelectorAll('button[name="startButton"]')[0].classList.remove('disabled');
                         }
                     }
                 }
@@ -442,6 +419,7 @@ $taxaUtilities = new TaxonomyUtilities();
                         fileNode.getElementsByClassName('errorMessage')[0].innerHTML = 'Validating name...';
                         fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
                         fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
+                        fileNode.querySelectorAll('button[name="startButton"]')[0].classList.add('disabled');
                     }
                 }
             }
