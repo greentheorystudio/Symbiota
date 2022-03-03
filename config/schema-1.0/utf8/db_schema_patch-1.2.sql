@@ -519,7 +519,7 @@ CREATE TABLE `uploadspectemppoints`
 
 CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp` FOR EACH ROW BEGIN
     IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
-		INSERT INTO uploadspectemppoints (`collid`,``upspid`,`point`)
+		INSERT INTO uploadspectemppoints (`collid`,`upspid`,`point`)
 		VALUES (NEW.`collid`,NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
     END IF;
 END;
