@@ -3575,17 +3575,19 @@ ALTER TABLE `uploadspectemp`
 CREATE TABLE `uploadspectemppoints`
 (
     `geoID`  int(11) NOT NULL AUTO_INCREMENT,
+    `collid` int(10) NOT NULL,
     `upspid` int(50) NOT NULL,
     `point`  point NOT NULL,
     PRIMARY KEY (`geoID`),
-    UNIQUE KEY `upspid` (`upspid`),
-    SPATIAL KEY `point` (`point`)
+    KEY `upspid` (`upspid`),
+    SPATIAL KEY `point` (`point`),
+    KEY `collid` (`collid`)
 ) ENGINE=MyISAM;
 
 CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp` FOR EACH ROW BEGIN
     IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
-		INSERT INTO uploadspectemppoints (`upspid`,`point`)
-		VALUES (NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+		INSERT INTO uploadspectemppoints (`collid`,``upspid`,`point`)
+		VALUES (NEW.`collid`,NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
     END IF;
 END;
 

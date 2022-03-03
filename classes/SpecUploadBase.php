@@ -362,7 +362,7 @@ class SpecUploadBase extends SpecUpload{
     protected function prepUploadData(): void
     {
         $this->outputMsg('<li>Clearing staging tables</li>');
-        $sqlDel1 = 'DELETE up.* FROM uploadspectemp AS u LEFT JOIN uploadspectemppoints AS up ON u.upspid = up.upspid WHERE (u.collid IN('.$this->collId.'))';
+        $sqlDel1 = 'DELETE FROM uploadspectemppoints WHERE (collid IN('.$this->collId.'))';
         $this->conn->query($sqlDel1);
         $sqlDel2 = 'DELETE FROM uploadspectemp WHERE (collid IN('.$this->collId.'))';
         $this->conn->query($sqlDel2);
