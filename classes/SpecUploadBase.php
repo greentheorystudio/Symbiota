@@ -362,12 +362,14 @@ class SpecUploadBase extends SpecUpload{
     protected function prepUploadData(): void
     {
         $this->outputMsg('<li>Clearing staging tables</li>');
-        $sqlDel1 = 'DELETE FROM uploadspectemp WHERE (collid IN('.$this->collId.'))';
+        $sqlDel1 = 'DELETE up.* FROM uploadspectemp AS u LEFT JOIN uploadspectemppoints AS up ON u.upspid = up.upspid WHERE (u.collid IN('.$this->collId.'))';
         $this->conn->query($sqlDel1);
-        $sqlDel2 = 'DELETE FROM uploaddetermtemp WHERE (collid IN('.$this->collId.'))';
+        $sqlDel2 = 'DELETE FROM uploadspectemp WHERE (collid IN('.$this->collId.'))';
         $this->conn->query($sqlDel2);
-        $sqlDel3 = 'DELETE FROM uploadimagetemp WHERE (collid IN('.$this->collId.'))';
+        $sqlDel3 = 'DELETE FROM uploaddetermtemp WHERE (collid IN('.$this->collId.'))';
         $this->conn->query($sqlDel3);
+        $sqlDel4 = 'DELETE FROM uploadimagetemp WHERE (collid IN('.$this->collId.'))';
+        $this->conn->query($sqlDel4);
     }
 
     public function uploadData($finalTransfer): void
@@ -1107,7 +1109,6 @@ class SpecUploadBase extends SpecUpload{
             }
             else{
                 $this->outputMsg('<li>FAILED adding record #' .$this->transferCount. '</li>');
-                $this->outputMsg('<li style="margin-left:10px;">Error</li>');
             }
         }
     }
