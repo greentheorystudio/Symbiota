@@ -86,14 +86,9 @@ $taxaUtilities = new TaxonomyUtilities();
                     <input type="hidden" name="caption[]" value="{%=file.caption?file.caption:''%}">
                     <input type="hidden" name="owner[]" value="{%=file.owner?file.owner:''%}">
                     <input type="hidden" name="sourceurl[]" value="{%=file.sourceurl?file.sourceurl:''%}">
-                    <input type="hidden" name="referenceUrl[]" value="{%=file.referenceUrl?file.referenceUrl:''%}">
                     <input type="hidden" name="copyright[]" value="{%=file.copyright?file.copyright:''%}">
-                    <input type="hidden" name="rights[]" value="{%=file.rights?file.rights:''%}">
-                    <input type="hidden" name="accessrights[]" value="{%=file.accessrights?file.accessrights:''%}">
                     <input type="hidden" name="locality[]" value="{%=file.locality?file.locality:''%}">
                     <input type="hidden" name="notes[]" value="{%=file.notes?file.notes:''%}">
-                    <input type="hidden" name="anatomy[]" value="{%=file.anatomy?file.anatomy:''%}">
-                    <input type="hidden" name="dynamicProperties[]" value="{%=file.dynamicProperties?file.dynamicProperties:''%}">
                 </td>
                 <td>
                     <p class="size">Processing...</p>
@@ -132,18 +127,19 @@ $taxaUtilities = new TaxonomyUtilities();
 
         $(function () {
             $('#fileupload').fileupload({
-                url: 'index.php',
+                url: 'rpc/uploadimage.php',
                 dropZone: $('#fileDropZone'),
+                paramName: 'imgfile[]',
                 filesContainer: '#uploadList',
                 downloadTemplateId: '',
                 add: function (e, data) {
                     const fileName = data.files[0].name;
-                    const fileType = fileName.split('.').pop();
+                    const fileType = fileName.split('.').pop().toLowerCase();
                     if(fileType === 'csv'){
                         processCsvFile(e, data.files[0]);
                         data.files.splice(data, 1);
                     }
-                    else{
+                    else if(fileType === 'jpeg' || fileType === 'jpg' || fileType === 'png'){
                         let imageFileData = fileData.find((obj) => obj.filename === fileName);
                         if(imageFileData){
                             data.files[0].scientificname = imageFileData.scientificname;
@@ -154,14 +150,9 @@ $taxaUtilities = new TaxonomyUtilities();
                             data.files[0].caption = imageFileData.caption;
                             data.files[0].owner = imageFileData.owner;
                             data.files[0].sourceurl = imageFileData.sourceurl;
-                            data.files[0].referenceUrl = imageFileData.referenceUrl;
                             data.files[0].copyright = imageFileData.copyright;
-                            data.files[0].rights = imageFileData.rights;
-                            data.files[0].accessrights = imageFileData.accessrights;
                             data.files[0].locality = imageFileData.locality;
                             data.files[0].notes = imageFileData.notes;
-                            data.files[0].anatomy = imageFileData.anatomy;
-                            data.files[0].dynamicProperties = imageFileData.dynamicProperties;
                         }
                         if(!data.files[0].hasOwnProperty('scientificname') || !data.files[0].scientificname){
                             parseScinameFromFilename(fileName);
@@ -355,29 +346,14 @@ $taxaUtilities = new TaxonomyUtilities();
                         if(imageFileData.hasOwnProperty('sourceurl') && imageFileData.sourceurl && !fileNode.querySelectorAll('input[name="sourceurl[]"]')[0].value){
                             fileNode.querySelectorAll('input[name="sourceurl[]"]')[0].value = imageFileData.sourceurl;
                         }
-                        if(imageFileData.hasOwnProperty('referenceUrl') && imageFileData.referenceUrl && !fileNode.querySelectorAll('input[name="referenceUrl[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="referenceUrl[]"]')[0].value = imageFileData.referenceUrl;
-                        }
                         if(imageFileData.hasOwnProperty('copyright') && imageFileData.copyright && !fileNode.querySelectorAll('input[name="copyright[]"]')[0].value){
                             fileNode.querySelectorAll('input[name="copyright[]"]')[0].value = imageFileData.copyright;
-                        }
-                        if(imageFileData.hasOwnProperty('rights') && imageFileData.rights && !fileNode.querySelectorAll('input[name="rights[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="rights[]"]')[0].value = imageFileData.rights;
-                        }
-                        if(imageFileData.hasOwnProperty('accessrights') && imageFileData.accessrights && !fileNode.querySelectorAll('input[name="accessrights[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="accessrights[]"]')[0].value = imageFileData.accessrights;
                         }
                         if(imageFileData.hasOwnProperty('locality') && imageFileData.locality && !fileNode.querySelectorAll('input[name="locality[]"]')[0].value){
                             fileNode.querySelectorAll('input[name="locality[]"]')[0].value = imageFileData.locality;
                         }
                         if(imageFileData.hasOwnProperty('notes') && imageFileData.notes && !fileNode.querySelectorAll('input[name="notes[]"]')[0].value){
                             fileNode.querySelectorAll('input[name="notes[]"]')[0].value = imageFileData.notes;
-                        }
-                        if(imageFileData.hasOwnProperty('anatomy') && imageFileData.anatomy && !fileNode.querySelectorAll('input[name="anatomy[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="anatomy[]"]')[0].value = imageFileData.anatomy;
-                        }
-                        if(imageFileData.hasOwnProperty('dynamicProperties') && imageFileData.dynamicProperties && !fileNode.querySelectorAll('input[name="dynamicProperties[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="dynamicProperties[]"]')[0].value = imageFileData.dynamicProperties;
                         }
                         if(imageFileData.hasOwnProperty('errorMessage') && imageFileData.errorMessage){
                             fileNode.getElementsByClassName('errorMessage')[0].innerHTML = imageFileData.errorMessage;
@@ -496,7 +472,7 @@ if($isEditor){
                     <span class="btn btn-success fileinput-button">
                         <i style="height:15px;width:15px;" class="fas fa-plus"></i>
                         <span>Add files</span>
-                        <input type="file" id="batchUploadedElement" name="files[]" multiple/>
+                        <input type="file" id="batchUploadedElement" name="imgfile[]" multiple/>
                     </span>
                     <button type="submit" class="btn btn-primary start">
                         <i style="height:15px;width:15px;" class="fas fa-upload"></i>
