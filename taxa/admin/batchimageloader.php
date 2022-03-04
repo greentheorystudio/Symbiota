@@ -79,7 +79,7 @@ $taxaUtilities = new TaxonomyUtilities();
                     </label>
                     <div>
                         <strong class="goodMessage" style="color:green;{%=file.errorMessage?'display:none;':'display:block;'%}">Linked to thesaurus and ready to upload</strong>
-                        <strong class="errorMessage" style="color:red;{%=file.errorMessage?'display:block;':'display:none;'%}">Not inked to thesaurus</strong>
+                        <strong class="errorMessage" style="color:red;{%=file.errorMessage?'display:block;':'display:none;'%}width:350px;">Not inked to thesaurus</strong>
                     </div>
                     <input type="hidden" name="tid[]" value="{%=file.tid?file.tid:''%}">
                     <input type="hidden" name="photographer[]" value="{%=file.photographer?file.photographer:''%}">
@@ -129,6 +129,7 @@ $taxaUtilities = new TaxonomyUtilities();
             $('#fileupload').fileupload({
                 url: 'rpc/uploadimage.php',
                 dropZone: $('#fileDropZone'),
+                paramName: 'imgfile[]',
                 filesContainer: '#uploadList',
                 downloadTemplateId: '',
                 add: function (e, data) {
@@ -212,6 +213,54 @@ $taxaUtilities = new TaxonomyUtilities();
                                     });
                                 }
                             });
+                    }
+                },
+                done: function (e, data) {
+                    const that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
+                    const getFilesFromResponse = data.getFilesFromResponse || that.options.getFilesFromResponse;
+                    const files = getFilesFromResponse(data);
+                    let template;
+                    let deferred;
+                    if(data._response.jqXHR.responseJSON.files[0]){
+                        data.context.each(function () {
+                            $(this)
+                                .find('.progress')
+                                .attr('aria-valuenow', '0')
+                                .children()
+                                .first()
+                                .css('width', '0%');
+                        });
+                        const fileName = data.files[0].name;
+                        const fileNodeArr = document.getElementById('uploadList').childNodes;
+                        for(let n in fileNodeArr){
+                            if(fileNodeArr.hasOwnProperty(n)){
+                                const fileNode = fileNodeArr[n];
+                                const nodeFileName = fileNode.getElementsByClassName('name')[0].innerHTML;
+                                if(nodeFileName === fileName){
+                                    fileNode.getElementsByClassName('errorMessage')[0].innerHTML = data._response.jqXHR.responseJSON.files[0].error;
+                                    fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
+                                    fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
+                                    fileNode.querySelectorAll('button[name="startButton"]')[0].disabled = false;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        data.context.each(function (index) {
+                            const file = files[index] || { error: 'Empty file upload result' };
+                            deferred = that._addFinishedDeferreds();
+                            that._transition($(this)).done(function () {
+                                const node = $(this);
+                                template = that._renderDownload([file]).replaceAll(node);
+                                that._forceReflow(template);
+                                that._transition(template).done(function () {
+                                    data.context = $(this);
+                                    that._trigger('completed', e, data);
+                                    that._trigger('finished', e, data);
+                                    deferred.resolve();
+                                });
+                            });
+                        });
                     }
                 }
             }).on('fileuploadsubmit', function (e, data) {
@@ -465,7 +514,7 @@ if($isEditor){
             <a href="../../templates/batchTaxaImageData.csv"><b>Use this template for the csv spreadsheet.</b></a> For each
             row in the spreadsheet, the value in the filename column must match the filename of the associated file being uploaded.
         </div>
-        <form id="fileupload" action="rpc/uploadimage.php" method="POST" enctype="multipart/form-data">
+        <form id="fileupload" method="POST" enctype="multipart/form-data">
             <div class="row fileupload-buttonbar">
                 <div class="col-lg-7">
                     <span class="btn btn-success fileinput-button">
