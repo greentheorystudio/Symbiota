@@ -75,20 +75,20 @@ $taxaUtilities = new TaxonomyUtilities();
                     <div class="name">{%=file.name%}</div>
                     <label>
                         <strong>Scientific Name:</strong><br>
-                        <input name="scientificname[]" value="{%=file.scientificname?file.scientificname:''%}" class="form-control" style="width:250px;" onchange="validateSciNameChange(this.value,'{%=file.name%}');">
+                        <input name="scientificname" value="{%=file.scientificname?file.scientificname:''%}" class="form-control" style="width:250px;" onchange="validateSciNameChange(this.value,'{%=file.name%}');">
                     </label>
                     <div>
                         <strong class="goodMessage" style="color:green;{%=file.errorMessage?'display:none;':'display:block;'%}">Linked to thesaurus and ready to upload</strong>
                         <strong class="errorMessage" style="color:red;{%=file.errorMessage?'display:block;':'display:none;'%}width:350px;">Not inked to thesaurus</strong>
                     </div>
-                    <input type="hidden" name="tid[]" value="{%=file.tid?file.tid:''%}">
-                    <input type="hidden" name="photographer[]" value="{%=file.photographer?file.photographer:''%}">
-                    <input type="hidden" name="caption[]" value="{%=file.caption?file.caption:''%}">
-                    <input type="hidden" name="owner[]" value="{%=file.owner?file.owner:''%}">
-                    <input type="hidden" name="sourceurl[]" value="{%=file.sourceurl?file.sourceurl:''%}">
-                    <input type="hidden" name="copyright[]" value="{%=file.copyright?file.copyright:''%}">
-                    <input type="hidden" name="locality[]" value="{%=file.locality?file.locality:''%}">
-                    <input type="hidden" name="notes[]" value="{%=file.notes?file.notes:''%}">
+                    <input type="hidden" name="tid" value="{%=file.tid?file.tid:''%}">
+                    <input type="hidden" name="photographer" value="{%=file.photographer?file.photographer:''%}">
+                    <input type="hidden" name="caption" value="{%=file.caption?file.caption:''%}">
+                    <input type="hidden" name="owner" value="{%=file.owner?file.owner:''%}">
+                    <input type="hidden" name="sourceurl" value="{%=file.sourceurl?file.sourceurl:''%}">
+                    <input type="hidden" name="copyright" value="{%=file.copyright?file.copyright:''%}">
+                    <input type="hidden" name="locality" value="{%=file.locality?file.locality:''%}">
+                    <input type="hidden" name="notes" value="{%=file.notes?file.notes:''%}">
                 </td>
                 <td>
                     <p class="size">Processing...</p>
@@ -129,7 +129,7 @@ $taxaUtilities = new TaxonomyUtilities();
             $('#fileupload').fileupload({
                 url: 'rpc/uploadimage.php',
                 dropZone: $('#fileDropZone'),
-                paramName: 'imgfile[]',
+                paramName: 'imgfile',
                 filesContainer: '#uploadList',
                 downloadTemplateId: '',
                 add: function (e, data) {
@@ -264,7 +264,7 @@ $taxaUtilities = new TaxonomyUtilities();
                     }
                 }
             }).on('fileuploadsubmit', function (e, data) {
-                if(data.context.find(':input[name="tid[]"]')[0].value){
+                if(data.context.find(':input[name="tid"]')[0].value){
                     data.formData = data.context.find(':input').serializeArray();
                 }
                 else{
@@ -312,9 +312,9 @@ $taxaUtilities = new TaxonomyUtilities();
                                     const nodeFileName = fileNode.getElementsByClassName('name')[0].innerHTML;
                                     if(nodeFileName === fileName){
                                         if(!validate){
-                                            fileNode.querySelectorAll('input[name="scientificname[]"]')[0].value = value;
+                                            fileNode.querySelectorAll('input[name="scientificname"]')[0].value = value;
                                         }
-                                        fileNode.querySelectorAll('input[name="tid[]"]')[0].value = taxaDataArr[value];
+                                        fileNode.querySelectorAll('input[name="tid"]')[0].value = taxaDataArr[value];
                                         fileNode.getElementsByClassName('errorMessage')[0].innerHTML = '';
                                         fileNode.getElementsByClassName('errorMessage')[0].style.display = 'none';
                                         fileNode.getElementsByClassName('goodMessage')[0].style.display = 'block';
@@ -376,32 +376,32 @@ $taxaUtilities = new TaxonomyUtilities();
                     const fileName = fileNode.getElementsByClassName('name')[0].innerHTML;
                     let imageFileData = fileData.find((obj) => obj.filename === fileName);
                     if(imageFileData){
-                        if(imageFileData.hasOwnProperty('scientificname') && imageFileData.scientificname && !fileNode.querySelectorAll('input[name="scientificname[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="scientificname[]"]')[0].value = imageFileData.scientificname;
+                        if(imageFileData.hasOwnProperty('scientificname') && imageFileData.scientificname && !fileNode.querySelectorAll('input[name="scientificname"]')[0].value){
+                            fileNode.querySelectorAll('input[name="scientificname"]')[0].value = imageFileData.scientificname;
                         }
-                        if(imageFileData.hasOwnProperty('tid') && imageFileData.tid && !fileNode.querySelectorAll('input[name="tid[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="tid[]"]')[0].value = imageFileData.tid;
+                        if(imageFileData.hasOwnProperty('tid') && imageFileData.tid && !fileNode.querySelectorAll('input[name="tid"]')[0].value){
+                            fileNode.querySelectorAll('input[name="tid"]')[0].value = imageFileData.tid;
                         }
-                        if(imageFileData.hasOwnProperty('photographer') && imageFileData.photographer && !fileNode.querySelectorAll('input[name="photographer[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="photographer[]"]')[0].value = imageFileData.photographer;
+                        if(imageFileData.hasOwnProperty('photographer') && imageFileData.photographer && !fileNode.querySelectorAll('input[name="photographer"]')[0].value){
+                            fileNode.querySelectorAll('input[name="photographer"]')[0].value = imageFileData.photographer;
                         }
-                        if(imageFileData.hasOwnProperty('caption') && imageFileData.caption && !fileNode.querySelectorAll('input[name="caption[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="caption[]"]')[0].value = imageFileData.caption;
+                        if(imageFileData.hasOwnProperty('caption') && imageFileData.caption && !fileNode.querySelectorAll('input[name="caption"]')[0].value){
+                            fileNode.querySelectorAll('input[name="caption"]')[0].value = imageFileData.caption;
                         }
-                        if(imageFileData.hasOwnProperty('owner') && imageFileData.owner && !fileNode.querySelectorAll('input[name="owner[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="owner[]"]')[0].value = imageFileData.owner;
+                        if(imageFileData.hasOwnProperty('owner') && imageFileData.owner && !fileNode.querySelectorAll('input[name="owner"]')[0].value){
+                            fileNode.querySelectorAll('input[name="owner"]')[0].value = imageFileData.owner;
                         }
-                        if(imageFileData.hasOwnProperty('sourceurl') && imageFileData.sourceurl && !fileNode.querySelectorAll('input[name="sourceurl[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="sourceurl[]"]')[0].value = imageFileData.sourceurl;
+                        if(imageFileData.hasOwnProperty('sourceurl') && imageFileData.sourceurl && !fileNode.querySelectorAll('input[name="sourceurl"]')[0].value){
+                            fileNode.querySelectorAll('input[name="sourceurl"]')[0].value = imageFileData.sourceurl;
                         }
-                        if(imageFileData.hasOwnProperty('copyright') && imageFileData.copyright && !fileNode.querySelectorAll('input[name="copyright[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="copyright[]"]')[0].value = imageFileData.copyright;
+                        if(imageFileData.hasOwnProperty('copyright') && imageFileData.copyright && !fileNode.querySelectorAll('input[name="copyright"]')[0].value){
+                            fileNode.querySelectorAll('input[name="copyright"]')[0].value = imageFileData.copyright;
                         }
-                        if(imageFileData.hasOwnProperty('locality') && imageFileData.locality && !fileNode.querySelectorAll('input[name="locality[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="locality[]"]')[0].value = imageFileData.locality;
+                        if(imageFileData.hasOwnProperty('locality') && imageFileData.locality && !fileNode.querySelectorAll('input[name="locality"]')[0].value){
+                            fileNode.querySelectorAll('input[name="locality"]')[0].value = imageFileData.locality;
                         }
-                        if(imageFileData.hasOwnProperty('notes') && imageFileData.notes && !fileNode.querySelectorAll('input[name="notes[]"]')[0].value){
-                            fileNode.querySelectorAll('input[name="notes[]"]')[0].value = imageFileData.notes;
+                        if(imageFileData.hasOwnProperty('notes') && imageFileData.notes && !fileNode.querySelectorAll('input[name="notes"]')[0].value){
+                            fileNode.querySelectorAll('input[name="notes"]')[0].value = imageFileData.notes;
                         }
                         if(imageFileData.hasOwnProperty('errorMessage') && imageFileData.errorMessage){
                             fileNode.getElementsByClassName('errorMessage')[0].innerHTML = imageFileData.errorMessage;
@@ -520,7 +520,7 @@ if($isEditor){
                     <span class="btn btn-success fileinput-button">
                         <i style="height:15px;width:15px;" class="fas fa-plus"></i>
                         <span>Add files</span>
-                        <input type="file" id="batchUploadedElement" name="files[]" multiple/>
+                        <input type="file" id="batchUploadedElement" name="imgfile" multiple/>
                     </span>
                     <button type="submit" class="btn btn-primary start">
                         <i style="height:15px;width:15px;" class="fas fa-upload"></i>
