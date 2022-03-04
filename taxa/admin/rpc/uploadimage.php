@@ -11,7 +11,8 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS
     $editable = true;
 }
 
-if($editable){
+if($editable && isset($_FILES)){
+    $_FILES['imgfile'] = $_FILES['files[]'];
     if($tImageEditor->loadImage($_POST)){
         $returnArr = array();
         $returnArr['files'] = array();

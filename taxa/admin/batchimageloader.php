@@ -129,7 +129,6 @@ $taxaUtilities = new TaxonomyUtilities();
             $('#fileupload').fileupload({
                 url: 'rpc/uploadimage.php',
                 dropZone: $('#fileDropZone'),
-                paramName: 'imgfile[]',
                 filesContainer: '#uploadList',
                 downloadTemplateId: '',
                 add: function (e, data) {
@@ -472,7 +471,7 @@ if($isEditor){
                     <span class="btn btn-success fileinput-button">
                         <i style="height:15px;width:15px;" class="fas fa-plus"></i>
                         <span>Add files</span>
-                        <input type="file" id="batchUploadedElement" name="imgfile[]" multiple/>
+                        <input type="file" id="batchUploadedElement" name="files[]" multiple/>
                     </span>
                     <button type="submit" class="btn btn-primary start">
                         <i style="height:15px;width:15px;" class="fas fa-upload"></i>
