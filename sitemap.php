@@ -208,6 +208,7 @@ $smManager = new SiteMapManager();
                         }
                         if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
                             ?>
+                            <li><a href="taxa/admin/batchimageloader.php">Batch Upload Taxa Images</a></li>
                             <li>To edit the synonyms, common names, description, or images for a taxon, click on the editing link located in the upper right of each
                                 <a href="taxa/admin/tpeditor.php?taxon=">Taxon Profile page</a>
                             </li>
