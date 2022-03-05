@@ -516,7 +516,7 @@ if($isEditor){
         </div>
         <form id="fileupload" method="POST" enctype="multipart/form-data">
             <div class="row fileupload-buttonbar">
-                <div class="col-lg-7">
+                <div class="col-lg-7" style="margin-bottom:15px;">
                     <span class="btn btn-success fileinput-button">
                         <i style="height:15px;width:15px;" class="fas fa-plus"></i>
                         <span>Add files</span>
