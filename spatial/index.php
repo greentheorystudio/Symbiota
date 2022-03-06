@@ -708,6 +708,18 @@ $dbArr = array();
     layersArr['heat'] = heatmaplayer;
     layersArr['spider'] = spiderLayer;
 
+    layersArr['dragdrop1'].on('postrender', function(evt) {
+        hideWorking();
+    });
+
+    layersArr['dragdrop2'].on('postrender', function(evt) {
+        hideWorking();
+    });
+
+    layersArr['dragdrop3'].on('postrender', function(evt) {
+        hideWorking();
+    });
+
     layersArr['pointv'].on('postrender', function(evt) {
         checkLoading();
     });
@@ -946,11 +958,13 @@ $dbArr = array();
                         ol.extent.extend(extent, bottomLeft.getExtent());
                         ol.extent.extend(extent, bottomRight.getExtent());
                         map.getView().fit(extent, map.getSize());
+                        hideWorking();
                     });
                 }
             }
         }
         else{
+            hideWorking();
             alert('The drag and drop file loading only supports GeoJSON, kml, tif, and shapefile zip archives.');
         }
     });
@@ -1228,6 +1242,10 @@ $dbArr = array();
             layersArr['heat'].setVisible(true);
         }
     }
+
+    map.getViewport().addEventListener('drop', function(event) {
+        showWorking();
+    });
 
     map.on('singleclick', function(evt) {
         let infoHTML;
