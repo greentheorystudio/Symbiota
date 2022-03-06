@@ -49,7 +49,6 @@ let tsOldestDate = '';
 let tsNewestDate = '';
 let dateSliderActive = false;
 let sliderdiv = '';
-let loadingTimer = 0;
 let loadingComplete = true;
 let returnClusters = false;
 let dsAnimDuration = '';
@@ -2371,7 +2370,6 @@ function lazyLoadPoints(index,callback){
         http.onreadystatechange = function() {
             if(http.readyState === 4 && http.status === 200) {
                 loadingComplete = false;
-                setTimeout(checkLoading,loadingTimer);
                 callback(http.responseText);
             }
         };
@@ -2386,7 +2384,6 @@ function lazyLoadPoints(index,callback){
         http.onreadystatechange = function() {
             if(http.readyState === 4 && http.status === 200) {
                 loadingComplete = false;
-                setTimeout(checkLoading,loadingTimer);
                 callback(http.responseText);
             }
         };
@@ -2432,7 +2429,6 @@ function loadPoints(){
             if(queryRecCnt > 0){
                 loadPointsEvent = true;
                 setCopySearchUrlDiv();
-                setLoadingTimer();
                 loadPointWFSLayer(0);
                 //cleanSelectionsLayer();
                 setRecordsTab();
@@ -3512,16 +3508,6 @@ function setLayersController(){
         toggleLayerDisplayMessage();
     };
     http.send();
-}
-
-function setLoadingTimer(){
-    loadingTimer = 20000;
-    if(queryRecCnt < 200000) loadingTimer = 13000;
-    if(queryRecCnt < 150000) loadingTimer = 10000;
-    if(queryRecCnt < 100000) loadingTimer = 7000;
-    if(queryRecCnt < 50000) loadingTimer = 5000;
-    if(queryRecCnt < 10000) loadingTimer = 3000;
-    if(queryRecCnt < 5000) loadingTimer = 1000;
 }
 
 function setRecordsTab(){

@@ -106,7 +106,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220221" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220223" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220305" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20211104" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -249,16 +249,20 @@ $dbArr = array();
         }
 
         function loadServerLayer(id,file){
+            showWorking();
             const zIndex = layerOrderArr.length + 1;
             const filenameParts = file.split('.');
             const fileType = filenameParts.pop();
-            let serverLayerSource,serverLayerLayer,fillColor,borderColor,borderWidth,opacity;
+            let fillColor,borderColor,borderWidth,opacity;
             if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
                 fillColor = document.getElementById(('fillColor-' + id)).value;
                 borderColor = document.getElementById(('borderColor-' + id)).value;
                 borderWidth = document.getElementById(('borderWidth-' + id)).value;
                 opacity = document.getElementById(('opacity-' + id)).value;
                 layersArr[id] = new ol.layer.Vector({
+                    source: new ol.source.Vector({
+                        wrapX: true
+                    }),
                     zIndex: zIndex,
                     style: setVectorStyle(fillColor, borderColor, borderWidth, opacity)
                 });
@@ -274,6 +278,12 @@ $dbArr = array();
                     format: new ol.format.GeoJSON(),
                     wrapX: true
                 }));
+                layersArr[id].getSource().on('addfeature', function(evt) {
+                    map.getView().fit(layersArr[id].getSource().getExtent());
+                });
+                layersArr[id].on('postrender', function(evt) {
+                    hideWorking();
+                });
             }
             else if(fileType === 'kml'){
                 layersArr[id].setSource(new ol.source.Vector({
@@ -283,6 +293,12 @@ $dbArr = array();
                     }),
                     wrapX: true
                 }));
+                layersArr[id].getSource().on('addfeature', function(evt) {
+                    map.getView().fit(layersArr[id].getSource().getExtent());
+                });
+                layersArr[id].on('postrender', function(evt) {
+                    hideWorking();
+                });
             }
             else if(fileType === 'zip'){
                 fetch(('../content/spatial/' + file)).then((fileFetch) => {
@@ -297,6 +313,10 @@ $dbArr = array();
                                     features: features,
                                     wrapX: true
                                 }));
+                                map.getView().fit(layersArr[id].getSource().getExtent());
+                                layersArr[id].on('postrender', function(evt) {
+                                    hideWorking();
+                                });
                             });
                         });
                     });
@@ -306,6 +326,7 @@ $dbArr = array();
                 fetch(('../content/spatial/' + file)).then((fileFetch) => {
                     fileFetch.blob().then((blob) => {
                         blob.arrayBuffer().then((data) => {
+                            const extent = ol.extent.createEmpty();
                             const tiff = GeoTIFF.parse(data);
                             const image = tiff.getImage();
                             const imageIndex = id + 'Image';
@@ -330,6 +351,16 @@ $dbArr = array();
                                 imageExtent: box,
                                 projection: 'EPSG:4326'
                             }));
+                            const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
+                            const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
+                            const bottomLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[1]]));
+                            const bottomRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[1]]));
+                            ol.extent.extend(extent, topRight.getExtent());
+                            ol.extent.extend(extent, topLeft.getExtent());
+                            ol.extent.extend(extent, bottomLeft.getExtent());
+                            ol.extent.extend(extent, bottomRight.getExtent());
+                            map.getView().fit(extent, map.getSize());
+                            hideWorking();
                         });
                     });
                 });
@@ -459,21 +490,21 @@ $dbArr = array();
                 echo 'loadInputParentParams();';
             }
             if($queryId || $validStArr){
-                if($validStArr){
-                    ?>
-                    initializeSearchStorage(<?php echo $queryId; ?>);
-                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-                    <?php
-                }
-                ?>
-                searchTermsArr = getSearchTermsArr();
-                if(validateSearchTermsArr(searchTermsArr)){
-                    setInputFormBySearchTermsArr();
-                    createShapesFromSearchTermsArr();
-                    setCollectionForms();
-                    loadPoints();
-                }
-                <?php
+            if($validStArr){
+            ?>
+            initializeSearchStorage(<?php echo $queryId; ?>);
+            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+            <?php
+            }
+            ?>
+            searchTermsArr = getSearchTermsArr();
+            if(validateSearchTermsArr(searchTermsArr)){
+                setInputFormBySearchTermsArr();
+                createShapesFromSearchTermsArr();
+                setCollectionForms();
+                loadPoints();
+            }
+            <?php
             }
             ?>
             spatialModuleInitialising = false;
@@ -677,6 +708,14 @@ $dbArr = array();
     layersArr['heat'] = heatmaplayer;
     layersArr['spider'] = spiderLayer;
 
+    layersArr['pointv'].on('postrender', function(evt) {
+        checkLoading();
+    });
+
+    layersArr['heat'].on('postrender', function(evt) {
+        checkLoading();
+    });
+
     const selectInteraction = new ol.interaction.Select({
         layers: [layersArr['select']],
         condition: function (evt) {
@@ -797,7 +836,7 @@ $dbArr = array();
                     infoArr['fileType'] = fileType;
                     infoArr['layerName'] = filename;
                     infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                    infoArr['fillColor'] = dragDropFillColor;
+                        infoArr['fillColor'] = dragDropFillColor;
                     infoArr['borderColor'] = dragDropBorderColor;
                     infoArr['borderWidth'] = dragDropBorderWidth;
                     infoArr['opacity'] = dragDropOpacity;
@@ -830,7 +869,7 @@ $dbArr = array();
                             infoArr['fileType'] = 'zip';
                             infoArr['layerName'] = filename;
                             infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                            infoArr['fillColor'] = dragDropFillColor;
+                                infoArr['fillColor'] = dragDropFillColor;
                             infoArr['borderColor'] = dragDropBorderColor;
                             infoArr['borderWidth'] = dragDropBorderWidth;
                             infoArr['opacity'] = dragDropOpacity;
@@ -849,6 +888,7 @@ $dbArr = array();
                             layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
                             processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                             map.getView().fit(layersArr[sourceIndex].getExtent());
+                            hideWorking();
                             toggleLayerDisplayMessage();
                         });
                     });
@@ -857,13 +897,14 @@ $dbArr = array();
             else if(fileType === 'tif'){
                 if(setRasterDragDropTarget()){
                     event.file.arrayBuffer().then((data) => {
+                        const extent = ol.extent.createEmpty();
                         const infoArr = [];
                         infoArr['id'] = dragDropTarget;
                         infoArr['type'] = 'userLayer';
                         infoArr['fileType'] = 'tif';
                         infoArr['layerName'] = filename;
                         infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                        infoArr['removable'] = true;
+                            infoArr['removable'] = true;
                         infoArr['sortable'] = true;
                         infoArr['symbology'] = false;
                         infoArr['query'] = false;
@@ -896,6 +937,15 @@ $dbArr = array();
                         map.addLayer(layersArr[dragDropTarget]);
                         processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                         toggleLayerDisplayMessage();
+                        const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
+                        const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
+                        const bottomLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[1]]));
+                        const bottomRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[1]]));
+                        ol.extent.extend(extent, topRight.getExtent());
+                        ol.extent.extend(extent, topLeft.getExtent());
+                        ol.extent.extend(extent, bottomLeft.getExtent());
+                        ol.extent.extend(extent, bottomRight.getExtent());
+                        map.getView().fit(extent, map.getSize());
                     });
                 }
             }
@@ -1099,7 +1149,7 @@ $dbArr = array();
                     infoArr['fileType'] = 'vector';
                     infoArr['layerName'] = 'Shapes';
                     infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
-                    infoArr['fillColor'] = shapesFillColor;
+                        infoArr['fillColor'] = shapesFillColor;
                     infoArr['borderColor'] = shapesBorderColor;
                     infoArr['borderWidth'] = shapesBorderWidth;
                     infoArr['opacity'] = shapesOpacity;
