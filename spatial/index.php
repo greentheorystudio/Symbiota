@@ -136,6 +136,11 @@ $dbArr = array();
             event.preventDefault();
         });
 
+        function toggleLayerQuerySelector(layerId) {
+            $('#addLayers').popup('hide');
+            $('#layerqueryselector').popup('show');
+        }
+
         $(document).ready(function() {
             setLayersController();
             if(document.getElementById("taxa")){
@@ -147,61 +152,60 @@ $dbArr = array();
                         }
                     })
                     .autocomplete({
-                            source: function( request, response ) {
-                                const t = Number(document.getElementById("taxontype").value);
-                                let rankLow = '';
-                                let rankHigh = '';
-                                let rankLimit = '';
-                                let source = '';
-                                if(t === 5){
-                                    source = '../webservices/autofillvernacular.php';
-                                }
-                                else{
-                                    source = '../webservices/autofillsciname.php';
-                                }
-                                if(t === 4){
-                                    rankLow = 21;
-                                    rankHigh = 139;
-                                }
-                                else if(t === 2){
-                                    rankLimit = 140;
-                                }
-                                else if(t === 3){
-                                    rankLow = 141;
-                                }
-                                else{
-                                    rankLow = 140;
-                                }
-                                //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
-                                $.getJSON( source, {
-                                    term: extractLast( request.term ),
-                                    rlow: rankLow,
-                                    rhigh: rankHigh,
-                                    rlimit: rankLimit,
-                                    hideauth: true,
-                                    limit: 20
-                                }, response );
-                            },
-                            appendTo: "#taxa_autocomplete",
-                            search: function() {
-                                const term = extractLast( this.value );
-                                if ( term.length < 4 ) {
-                                    return false;
-                                }
-                            },
-                            focus: function() {
-                                return false;
-                            },
-                            select: function( event, ui ) {
-                                const terms = split( this.value );
-                                terms.pop();
-                                terms.push( ui.item.value );
-                                this.value = terms.join( ", " );
-                                processTaxaParamChange();
+                        source: function( request, response ) {
+                            const t = Number(document.getElementById("taxontype").value);
+                            let rankLow = '';
+                            let rankHigh = '';
+                            let rankLimit = '';
+                            let source = '';
+                            if(t === 5){
+                                source = '../webservices/autofillvernacular.php';
+                            }
+                            else{
+                                source = '../webservices/autofillsciname.php';
+                            }
+                            if(t === 4){
+                                rankLow = 21;
+                                rankHigh = 139;
+                            }
+                            else if(t === 2){
+                                rankLimit = 140;
+                            }
+                            else if(t === 3){
+                                rankLow = 141;
+                            }
+                            else{
+                                rankLow = 140;
+                            }
+                            //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
+                            $.getJSON( source, {
+                                term: extractLast( request.term ),
+                                rlow: rankLow,
+                                rhigh: rankHigh,
+                                rlimit: rankLimit,
+                                hideauth: true,
+                                limit: 20
+                            }, response );
+                        },
+                        appendTo: "#taxa_autocomplete",
+                        search: function() {
+                            const term = extractLast( this.value );
+                            if ( term.length < 4 ) {
                                 return false;
                             }
-                        },{}
-                    );
+                        },
+                        focus: function() {
+                            return false;
+                        },
+                        select: function( event, ui ) {
+                            const terms = split( this.value );
+                            terms.pop();
+                            terms.push( ui.item.value );
+                            this.value = terms.join( ", " );
+                            processTaxaParamChange();
+                            return false;
+                        }
+                    },{});
             }
 
             spatialModuleInitialising = true;
@@ -241,6 +245,10 @@ $dbArr = array();
                 transition: 'all 0.3s',
                 scrolllock: true
             });
+            $('#layerqueryselector').popup({
+                transition: 'all 0.3s',
+                scrolllock: true
+            });
             $('#loadingOverlay').popup({
                 transition: 'all 0.3s',
                 scrolllock: true,
@@ -257,21 +265,21 @@ $dbArr = array();
                 echo 'loadInputParentParams();';
             }
             if($queryId || $validStArr){
-            if($validStArr){
-            ?>
-            initializeSearchStorage(<?php echo $queryId; ?>);
-            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-            <?php
-            }
-            ?>
-            searchTermsArr = getSearchTermsArr();
-            if(validateSearchTermsArr(searchTermsArr)){
-                setInputFormBySearchTermsArr();
-                createShapesFromSearchTermsArr();
-                setCollectionForms();
-                loadPoints();
-            }
-            <?php
+                if($validStArr){
+                    ?>
+                    initializeSearchStorage(<?php echo $queryId; ?>);
+                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                    <?php
+                }
+                ?>
+                searchTermsArr = getSearchTermsArr();
+                if(validateSearchTermsArr(searchTermsArr)){
+                    setInputFormBySearchTermsArr();
+                    createShapesFromSearchTermsArr();
+                    setCollectionForms();
+                    loadPoints();
+                }
+                <?php
             }
             ?>
             spatialModuleInitialising = false;
@@ -1180,6 +1188,8 @@ $dbArr = array();
 <?php include_once(__DIR__ . '/includes/datasetmanagement.php'); ?>
 
 <?php include_once(__DIR__ . '/includes/mapsettings.php'); ?>
+
+<?php include_once(__DIR__ . '/includes/layerqueryselector.php'); ?>
 
 <?php include_once(__DIR__ . '/includes/infowindow.php'); ?>
 

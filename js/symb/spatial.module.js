@@ -2327,25 +2327,40 @@ function getTurfPointFeaturesetSelected(){
 }
 
 function getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, opacity){
-    return new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
-        }),
-        stroke: new ol.style.Stroke({
-            color: ('#' + borderColor),
-            width: borderWidth
-        }),
-        image: new ol.style.Circle({
-            radius: pointRadius,
+    if(Number(borderWidth) !== 0){
+        return new ol.style.Style({
             fill: new ol.style.Fill({
                 color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
             }),
             stroke: new ol.style.Stroke({
                 color: ('#' + borderColor),
                 width: borderWidth
+            }),
+            image: new ol.style.Circle({
+                radius: pointRadius,
+                fill: new ol.style.Fill({
+                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                }),
+                stroke: new ol.style.Stroke({
+                    color: ('#' + borderColor),
+                    width: borderWidth
+                })
             })
         })
-    })
+    }
+    else{
+        return new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+            }),
+            image: new ol.style.Circle({
+                radius: pointRadius,
+                fill: new ol.style.Fill({
+                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                })
+            })
+        })
+    }
 }
 
 function getWGS84CirclePoly(center,radius){
