@@ -46,10 +46,12 @@ $initialPointColor = ((isset($GLOBALS['SPATIAL_INITIAL_POINT_COLOR']) && $GLOBAL
 $shapesFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']:'ffffff');
 $shapesBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']:'3399CC');
 $shapesBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']:2);
+$shapesPointRadius = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS']:5);
 $shapesOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']:'0.4');
 $dragDropFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']:'aaaaaa');
 $dragDropBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']:'000000');
 $dragDropBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']:2);
+$dragDropPointRadius = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS']:5);
 $dragDropOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']:'0.3');
 
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
@@ -106,7 +108,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220221" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220305" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220307" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20211104" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -152,81 +154,7 @@ $dbArr = array();
             return retStr;
         }
 
-        function addLayerToLayerOrderArr(layerId) {
-            layerOrderArr.push(layerId);
-            const sortingScrollerId = 'layerOrder-' + layerId;
-            $( ('#' + sortingScrollerId) ).spinner( "enable" );
-            setLayersOrder();
-        }
-
-        function removeLayerFromLayerOrderArr(layerId) {
-            const index = layerOrderArr.indexOf(layerId);
-            layerOrderArr.splice(index,1);
-            const sortingScrollerId = 'layerOrder-' + layerId;
-            $( ('#' + sortingScrollerId) ).spinner( "value", null );
-            $( ('#' + sortingScrollerId) ).spinner( "disable" );
-            setLayersOrder();
-        }
-
-        function setLayersOrder() {
-            const layersArrKeys = Object.keys(layersArr);
-            const layersArrLength = layersArrKeys.length;
-            for(let i in layerOrderArr){
-                if(layerOrderArr.hasOwnProperty(i)){
-                    const index = (layerOrderArr.indexOf(layerOrderArr[i])) + 1;
-                    layersArr[layerOrderArr[i]].setZIndex(index);
-                    const sortingScrollerId = 'layerOrder-' + layerOrderArr[i];
-                    $( ('#' + sortingScrollerId) ).spinner( "value", index );
-                    $( ('#' + sortingScrollerId) ).spinner( "option", "max", layerOrderArr.length );
-                }
-            }
-            layersArr['base'].setZIndex(0);
-            if(layersArr.hasOwnProperty('uncertainty')){
-                layersArr['uncertainty'].setZIndex((layersArrLength - 4));
-            }
-            if(layersArr.hasOwnProperty('select')){
-                layersArr['select'].setZIndex((layersArrLength - 3));
-            }
-            if(layersArr.hasOwnProperty('pointv')){
-                layersArr['pointv'].setZIndex((layersArrLength - 2));
-            }
-            if(layersArr.hasOwnProperty('heat')){
-                layersArr['heat'].setZIndex((layersArrLength - 1));
-            }
-            if(layersArr.hasOwnProperty('spider')){
-                layersArr['spider'].setZIndex(layersArrLength);
-            }
-            if(layersArr.hasOwnProperty('radius')){
-                layersArr['radius'].setZIndex((layersArrLength - 1));
-            }
-            if(layersArr.hasOwnProperty('vector')){
-                layersArr['vector'].setZIndex(layersArrLength);
-            }
-        }
-
-        function toggleServerLayerVisibility(id,name,file,visible){
-            if(visible === true){
-                loadServerLayer(id,file);
-                addLayerToSelList(id,name,false);
-                addLayerToLayerOrderArr(id);
-            }
-            else{
-                removeServerLayer(id);
-                removeLayerToSelList(id);
-                removeLayerFromLayerOrderArr(id);
-            }
-        }
-
-        function removeServerLayer(id){
-            map.removeLayer(layersArr[id]);
-            const imageIndex = id + 'Image';
-            if(layersArr.hasOwnProperty(imageIndex)){
-                delete layersArr[imageIndex];
-            }
-            delete layersArr[id];
-        }
-
-        function setVectorStyle(fillColor, borderColor, borderWidth, opacity){
+        function setVectorStyle(fillColor, borderColor, borderWidth, pointRadius, opacity){
             return new ol.style.Style({
                 fill: new ol.style.Fill({
                     color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
@@ -236,7 +164,7 @@ $dbArr = array();
                     width: borderWidth
                 }),
                 image: new ol.style.Circle({
-                    radius: 5,
+                    radius: pointRadius,
                     fill: new ol.style.Fill({
                         color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
                     }),
@@ -246,127 +174,6 @@ $dbArr = array();
                     })
                 })
             })
-        }
-
-        function loadServerLayer(id,file){
-            showWorking();
-            const zIndex = layerOrderArr.length + 1;
-            const filenameParts = file.split('.');
-            const fileType = filenameParts.pop();
-            let fillColor,borderColor,borderWidth,opacity;
-            if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
-                fillColor = document.getElementById(('fillColor-' + id)).value;
-                borderColor = document.getElementById(('borderColor-' + id)).value;
-                borderWidth = document.getElementById(('borderWidth-' + id)).value;
-                opacity = document.getElementById(('opacity-' + id)).value;
-                layersArr[id] = new ol.layer.Vector({
-                    source: new ol.source.Vector({
-                        wrapX: true
-                    }),
-                    zIndex: zIndex,
-                    style: setVectorStyle(fillColor, borderColor, borderWidth, opacity)
-                });
-            }
-            else{
-                layersArr[id] = new ol.layer.Image({
-                    zIndex: zIndex,
-                });
-            }
-            if(fileType === 'geojson'){
-                layersArr[id].setSource(new ol.source.Vector({
-                    url: ('../content/spatial/' + file),
-                    format: new ol.format.GeoJSON(),
-                    wrapX: true
-                }));
-                layersArr[id].getSource().on('addfeature', function(evt) {
-                    map.getView().fit(layersArr[id].getSource().getExtent());
-                });
-                layersArr[id].on('postrender', function(evt) {
-                    hideWorking();
-                });
-            }
-            else if(fileType === 'kml'){
-                layersArr[id].setSource(new ol.source.Vector({
-                    url: ('../content/spatial/' + file),
-                    format: new ol.format.KML({
-                        extractStyles: false,
-                    }),
-                    wrapX: true
-                }));
-                layersArr[id].getSource().on('addfeature', function(evt) {
-                    map.getView().fit(layersArr[id].getSource().getExtent());
-                });
-                layersArr[id].on('postrender', function(evt) {
-                    hideWorking();
-                });
-            }
-            else if(fileType === 'zip'){
-                fetch(('../content/spatial/' + file)).then((fileFetch) => {
-                    fileFetch.blob().then((blob) => {
-                        getArrayBuffer(blob).then((data) => {
-                            shp(data).then((geojson) => {
-                                const format = new ol.format.GeoJSON();
-                                const features = format.readFeatures(geojson, {
-                                    featureProjection: 'EPSG:3857'
-                                });
-                                layersArr[id].setSource(new ol.source.Vector({
-                                    features: features,
-                                    wrapX: true
-                                }));
-                                map.getView().fit(layersArr[id].getSource().getExtent());
-                                layersArr[id].on('postrender', function(evt) {
-                                    hideWorking();
-                                });
-                            });
-                        });
-                    });
-                });
-            }
-            else if(fileType === 'tif'){
-                fetch(('../content/spatial/' + file)).then((fileFetch) => {
-                    fileFetch.blob().then((blob) => {
-                        blob.arrayBuffer().then((data) => {
-                            const extent = ol.extent.createEmpty();
-                            const tiff = GeoTIFF.parse(data);
-                            const image = tiff.getImage();
-                            const imageIndex = id + 'Image';
-                            layersArr[imageIndex] = image;
-                            const rawBox = image.getBoundingBox();
-                            const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
-                            const bands = image.readRasters();
-                            const canvasElement = document.createElement('canvas');
-                            const minValue = 0;
-                            const maxValue = 1200;
-                            const plot = new plotty.plot({
-                                canvas: canvasElement,
-                                data: bands[0],
-                                width: image.getWidth(),
-                                height: image.getHeight(),
-                                domain: [minValue, maxValue],
-                                colorScale: 'earth'
-                            });
-                            plot.render();
-                            layersArr[id].setSource(new ol.source.ImageStatic({
-                                url: canvasElement.toDataURL("image/png"),
-                                imageExtent: box,
-                                projection: 'EPSG:4326'
-                            }));
-                            const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
-                            const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
-                            const bottomLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[1]]));
-                            const bottomRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[1]]));
-                            ol.extent.extend(extent, topRight.getExtent());
-                            ol.extent.extend(extent, topLeft.getExtent());
-                            ol.extent.extend(extent, bottomLeft.getExtent());
-                            ol.extent.extend(extent, bottomRight.getExtent());
-                            map.getView().fit(extent, map.getSize());
-                            hideWorking();
-                        });
-                    });
-                });
-            }
-            map.addLayer(layersArr[id]);
-            toggleLayerDisplayMessage();
         }
 
         $(document).ready(function() {
@@ -553,10 +360,12 @@ $dbArr = array();
     const shapesFillColor = '<?php echo $shapesFillColor; ?>';
     const shapesBorderColor = '<?php echo $shapesBorderColor; ?>';
     const shapesBorderWidth = <?php echo $shapesBorderWidth; ?>;
+    const shapesPointRadius = <?php echo $shapesPointRadius; ?>;
     const shapesOpacity = '<?php echo $shapesOpacity; ?>';
     const dragDropFillColor = '<?php echo $dragDropFillColor; ?>';
     const dragDropBorderColor = '<?php echo $dragDropBorderColor; ?>';
     const dragDropBorderWidth = <?php echo $dragDropBorderWidth; ?>;
+    const dragDropPointRadius = <?php echo $dragDropPointRadius; ?>;
     const dragDropOpacity = '<?php echo $dragDropOpacity; ?>';
 
     const popupcontainer = document.getElementById('popup');
@@ -601,7 +410,7 @@ $dbArr = array();
     const selectlayer = new ol.layer.Vector({
         zIndex: 8,
         source: selectsource,
-        style: setVectorStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesOpacity)
+        style: setVectorStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesPointRadius, shapesOpacity)
     });
 
     let uncertaintycirclesource = new ol.source.Vector({
@@ -665,17 +474,17 @@ $dbArr = array();
     const dragdroplayer1 = new ol.layer.Vector({
         zIndex: 1,
         source: blankdragdropsource,
-        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
+        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
     });
     const dragdroplayer2 = new ol.layer.Vector({
         zIndex: 2,
         source: blankdragdropsource,
-        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
+        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
     });
     const dragdroplayer3 = new ol.layer.Vector({
         zIndex: 3,
         source: blankdragdropsource,
-        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
+        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
     });
     const dragdroplayer4 = new ol.layer.Image({
         zIndex: 4,
@@ -848,9 +657,10 @@ $dbArr = array();
                     infoArr['fileType'] = fileType;
                     infoArr['layerName'] = filename;
                     infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                        infoArr['fillColor'] = dragDropFillColor;
+                    infoArr['fillColor'] = dragDropFillColor;
                     infoArr['borderColor'] = dragDropBorderColor;
                     infoArr['borderWidth'] = dragDropBorderWidth;
+                    infoArr['pointRadius'] = dragDropPointRadius;
                     infoArr['opacity'] = dragDropOpacity;
                     infoArr['removable'] = true;
                     infoArr['sortable'] = true;
@@ -881,9 +691,10 @@ $dbArr = array();
                             infoArr['fileType'] = 'zip';
                             infoArr['layerName'] = filename;
                             infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                                infoArr['fillColor'] = dragDropFillColor;
+                            infoArr['fillColor'] = dragDropFillColor;
                             infoArr['borderColor'] = dragDropBorderColor;
                             infoArr['borderWidth'] = dragDropBorderWidth;
+                            infoArr['pointRadius'] = dragDropPointRadius;
                             infoArr['opacity'] = dragDropOpacity;
                             infoArr['removable'] = true;
                             infoArr['sortable'] = true;
@@ -1163,9 +974,10 @@ $dbArr = array();
                     infoArr['fileType'] = 'vector';
                     infoArr['layerName'] = 'Shapes';
                     infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
-                        infoArr['fillColor'] = shapesFillColor;
+                    infoArr['fillColor'] = shapesFillColor;
                     infoArr['borderColor'] = shapesBorderColor;
                     infoArr['borderWidth'] = shapesBorderWidth;
+                    infoArr['pointRadius'] = shapesPointRadius;
                     infoArr['opacity'] = shapesOpacity;
                     infoArr['removable'] = true;
                     infoArr['sortable'] = false;

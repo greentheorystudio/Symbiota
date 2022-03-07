@@ -88,6 +88,13 @@ const baselayer = new ol.layer.Tile({
     zIndex: 0
 });
 
+function addLayerToLayerOrderArr(layerId) {
+    layerOrderArr.push(layerId);
+    const sortingScrollerId = 'layerOrder-' + layerId;
+    $( ('#' + sortingScrollerId) ).spinner( "enable" );
+    setLayersOrder();
+}
+
 function addLayerToSelList(layer,title,active){
     const origValue = document.getElementById("selectlayerselect").value;
     let selectionList = document.getElementById("selectlayerselect").innerHTML;
@@ -279,92 +286,6 @@ function buildCollKeyPiece(key){
     collKeyArr[key] = keyHTML;
 }
 
-function processAddLayerControllerElement(lArr,parentElement,active){
-    const layerDivId = 'layer-' + lArr['id'];
-    if(!document.getElementById(layerDivId)){
-        const layerDiv = buildLayerControllerLayerElement(lArr,active);
-        if(lArr['id'] === 'pointv'){
-            parentElement.insertBefore(layerDiv, parentElement.firstChild);
-        }
-        else{
-            parentElement.appendChild(layerDiv);
-        }
-        if(lArr['symbology']){
-            const symbologyOpacityId = '#opacity-' + lArr['id'];
-            const symbologyBorderWidthId = '#borderWidth-' + lArr['id'];
-            $( symbologyOpacityId ).spinner({
-                step: 0.1,
-                min: 0,
-                max: 1,
-                numberFormat: "n"
-            });
-            $( symbologyBorderWidthId ).spinner({
-                step: 1,
-                min: 0,
-                numberFormat: "n"
-            });
-            jscolor.init();
-        }
-        if(lArr['sortable']){
-            const sortingScrollerId = '#layerOrder-' + lArr['id'];
-            $( sortingScrollerId ).spinner({
-                step: 1,
-                min: 1,
-                disabled: !active,
-                numberFormat: "n"
-            });
-            if(active){
-                layerOrderArr.push(lArr['id']);
-                setLayersOrder();
-            }
-        }
-        if(active){
-            addLayerToSelList(lArr['id'], lArr['layerName'], active);
-        }
-    }
-    else{
-        document.getElementById("selectlayerselect").value = lArr['id'];
-        setActiveLayer();
-    }
-    toggleLayerDisplayMessage();
-}
-
-function processAddLayerControllerGroup(lArr,parentElement){
-    const layerGroupdDivId = 'layerGroup-' + lArr['id'] + '-accordion';
-    if(!document.getElementById(layerGroupdDivId)){
-        const layersArr = lArr['layers'];
-        const layerGroupContainerId = 'layerGroup-' + lArr['id'] + '-layers';
-        const layerGroupDiv = document.createElement('div');
-        layerGroupDiv.setAttribute("id",layerGroupdDivId);
-        layerGroupDiv.setAttribute("style","margin-bottom:5px;");
-        const layerGroupLabel = document.createElement('h3');
-        layerGroupLabel.setAttribute("style","font-weight:bold;font-family:Verdana,Arial,sans-serif;font-size:14px;");
-        layerGroupLabel.innerHTML = lArr['name'];
-        layerGroupDiv.appendChild(layerGroupLabel);
-        const layerGroupContainerDiv = document.createElement('div');
-        layerGroupContainerDiv.setAttribute("id",layerGroupContainerId);
-        layerGroupContainerDiv.setAttribute("style","display:flex;flex-direction:column;margin: 5px 0;");
-        layerGroupDiv.appendChild(layerGroupContainerDiv);
-        parentElement.appendChild(layerGroupDiv);
-        $( ('#' + layerGroupdDivId) ).accordion({
-            icons: null,
-            collapsible: true,
-            active: false,
-            heightStyle: "content"
-        });
-        for(let i in layersArr){
-            if(layersArr.hasOwnProperty(i)){
-                layersArr[i]['removable'] = false;
-                layersArr[i]['sortable'] = true;
-                layersArr[i]['symbology'] = true;
-                layersArr[i]['query'] = true;
-                processAddLayerControllerElement(layersArr[i],layerGroupContainerDiv,false)
-            }
-        }
-    }
-    toggleLayerDisplayMessage();
-}
-
 function buildLayerControllerLayerElement(lArr,active){
     const layerDivId = 'layer-' + lArr['id'];
     const layerDiv = document.createElement('div');
@@ -423,12 +344,10 @@ function buildLayerControllerLayerElement(lArr,active){
     if(lArr['sortable']){
         const sortingScrollerDiv = document.createElement('div');
         sortingScrollerDiv.setAttribute("style","display:flex;align-items:center;margin:0 5px;");
-        const sortingOnchangeVal = "changeLayerOrder('" + lArr['id'] + "');";
         const sortingScrollerId = 'layerOrder-' + lArr['id'];
         const sortingScroller = document.createElement('input');
         sortingScroller.setAttribute("id",sortingScrollerId);
         sortingScroller.setAttribute("style","width:25px;");
-        sortingScroller.setAttribute("onchange",sortingOnchangeVal);
         sortingScrollerDiv.appendChild(sortingScroller);
         layerMainBottomDiv.appendChild(sortingScrollerDiv);
     }
@@ -486,7 +405,7 @@ function buildLayerControllerLayerElement(lArr,active){
         const layerSymbologyDivId = 'layerSymbology-' + lArr['id'];
         const layerSymbologyDiv = document.createElement('div');
         layerSymbologyDiv.setAttribute("id",layerSymbologyDivId);
-        layerSymbologyDiv.setAttribute("style","border:1px solid black;padding:5px;margin-top:5px;display:none;flex-direction:column;width:350px;margin-left:auto;margin-right:auto;");
+        layerSymbologyDiv.setAttribute("style","border:1px solid black;padding:5px;margin-top:5px;display:none;flex-direction:column;width:60%;margin-left:auto;margin-right:auto;");
         const symbologyTopRow = document.createElement('div');
         symbologyTopRow.setAttribute("style","display:flex;justify-content:space-evenly;");
         const symbologyBorderColorDiv = document.createElement('div');
@@ -541,6 +460,21 @@ function buildLayerControllerLayerElement(lArr,active){
         symbologyBorderWidthInput.setAttribute("onchange",symbologyBorderWidthOnchangeVal);
         symbologyBorderWidthDiv.appendChild(symbologyBorderWidthInput);
         symbologyBottomRow.appendChild(symbologyBorderWidthDiv);
+        const symbologyPointRadiusDiv = document.createElement('div');
+        symbologyPointRadiusDiv.setAttribute("style","display:flex;align-items:center;");
+        const symbologyPointRadiusSpan = document.createElement('span');
+        symbologyPointRadiusSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+        symbologyPointRadiusSpan.innerHTML = 'Point radius (px): ';
+        symbologyPointRadiusDiv.appendChild(symbologyPointRadiusSpan);
+        const symbologyPointRadiusInputId = 'pointRadius-' + lArr['id'];
+        const symbologyPointRadiusOnchangeVal = "changePointRadius('" + lArr['id'] + "');";
+        const symbologyPointRadiusInput = document.createElement('input');
+        symbologyPointRadiusInput.setAttribute("id",symbologyPointRadiusInputId);
+        symbologyPointRadiusInput.setAttribute("style","width:25px;");
+        symbologyPointRadiusInput.setAttribute("value",lArr['pointRadius']);
+        symbologyPointRadiusInput.setAttribute("onchange",symbologyPointRadiusOnchangeVal);
+        symbologyPointRadiusDiv.appendChild(symbologyPointRadiusInput);
+        symbologyBottomRow.appendChild(symbologyPointRadiusDiv);
         const symbologyOpacityDiv = document.createElement('div');
         symbologyOpacityDiv.setAttribute("style","display:flex;align-items:center;");
         const symbologyOpacitySpan = document.createElement('span');
@@ -809,6 +743,7 @@ function changeDraw() {
                 infoArr['fillColor'] = shapesFillColor;
                 infoArr['borderColor'] = shapesBorderColor;
                 infoArr['borderWidth'] = shapesBorderWidth;
+                infoArr['pointRadius'] = shapesPointRadius;
                 infoArr['opacity'] = shapesOpacity;
                 infoArr['removable'] = true;
                 infoArr['sortable'] = false;
@@ -840,6 +775,14 @@ function changeHeatMapBlur(){
 function changeHeatMapRadius(){
     heatMapRadius = document.getElementById("heatmapradius").value;
     layersArr['heat'].setRadius(parseInt(heatMapRadius, 10));
+}
+
+function changeLayerOrder(layerId, value) {
+    const scrollerId = 'layerOrder-' + layerId;
+    const currentIndex = layerOrderArr.indexOf(layerId);
+    layerOrderArr.splice(currentIndex,1);
+    layerOrderArr.splice((value - 1),0,layerId);
+    setLayersOrder();
 }
 
 function changeMapSymbology(symbology){
@@ -2468,6 +2411,127 @@ function loadPoints(){
     }
 }
 
+function loadServerLayer(id,file){
+    showWorking();
+    const zIndex = layerOrderArr.length + 1;
+    const filenameParts = file.split('.');
+    const fileType = filenameParts.pop();
+    if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
+        const fillColor = document.getElementById(('fillColor-' + id)).value;
+        const borderColor = document.getElementById(('borderColor-' + id)).value;
+        const borderWidth = document.getElementById(('borderWidth-' + id)).value;
+        const pointRadius = document.getElementById(('pointRadius-' + id)).value;
+        const opacity = document.getElementById(('opacity-' + id)).value;
+        layersArr[id] = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                wrapX: true
+            }),
+            zIndex: zIndex,
+            style: setVectorStyle(fillColor, borderColor, borderWidth, pointRadius, opacity)
+        });
+    }
+    else{
+        layersArr[id] = new ol.layer.Image({
+            zIndex: zIndex,
+        });
+    }
+    if(fileType === 'geojson'){
+        layersArr[id].setSource(new ol.source.Vector({
+            url: ('../content/spatial/' + file),
+            format: new ol.format.GeoJSON(),
+            wrapX: true
+        }));
+        layersArr[id].getSource().on('addfeature', function(evt) {
+            map.getView().fit(layersArr[id].getSource().getExtent());
+        });
+        layersArr[id].on('postrender', function(evt) {
+            hideWorking();
+        });
+    }
+    else if(fileType === 'kml'){
+        layersArr[id].setSource(new ol.source.Vector({
+            url: ('../content/spatial/' + file),
+            format: new ol.format.KML({
+                extractStyles: false,
+            }),
+            wrapX: true
+        }));
+        layersArr[id].getSource().on('addfeature', function(evt) {
+            map.getView().fit(layersArr[id].getSource().getExtent());
+        });
+        layersArr[id].on('postrender', function(evt) {
+            hideWorking();
+        });
+    }
+    else if(fileType === 'zip'){
+        fetch(('../content/spatial/' + file)).then((fileFetch) => {
+            fileFetch.blob().then((blob) => {
+                getArrayBuffer(blob).then((data) => {
+                    shp(data).then((geojson) => {
+                        const format = new ol.format.GeoJSON();
+                        const features = format.readFeatures(geojson, {
+                            featureProjection: 'EPSG:3857'
+                        });
+                        layersArr[id].setSource(new ol.source.Vector({
+                            features: features,
+                            wrapX: true
+                        }));
+                        map.getView().fit(layersArr[id].getSource().getExtent());
+                        layersArr[id].on('postrender', function(evt) {
+                            hideWorking();
+                        });
+                    });
+                });
+            });
+        });
+    }
+    else if(fileType === 'tif'){
+        fetch(('../content/spatial/' + file)).then((fileFetch) => {
+            fileFetch.blob().then((blob) => {
+                blob.arrayBuffer().then((data) => {
+                    const extent = ol.extent.createEmpty();
+                    const tiff = GeoTIFF.parse(data);
+                    const image = tiff.getImage();
+                    const imageIndex = id + 'Image';
+                    layersArr[imageIndex] = image;
+                    const rawBox = image.getBoundingBox();
+                    const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
+                    const bands = image.readRasters();
+                    const canvasElement = document.createElement('canvas');
+                    const minValue = 0;
+                    const maxValue = 1200;
+                    const plot = new plotty.plot({
+                        canvas: canvasElement,
+                        data: bands[0],
+                        width: image.getWidth(),
+                        height: image.getHeight(),
+                        domain: [minValue, maxValue],
+                        colorScale: 'earth'
+                    });
+                    plot.render();
+                    layersArr[id].setSource(new ol.source.ImageStatic({
+                        url: canvasElement.toDataURL("image/png"),
+                        imageExtent: box,
+                        projection: 'EPSG:4326'
+                    }));
+                    const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
+                    const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
+                    const bottomLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[1]]));
+                    const bottomRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[1]]));
+                    ol.extent.extend(extent, topRight.getExtent());
+                    ol.extent.extend(extent, topLeft.getExtent());
+                    ol.extent.extend(extent, bottomLeft.getExtent());
+                    ol.extent.extend(extent, bottomRight.getExtent());
+                    map.getView().fit(extent, map.getSize());
+                    hideWorking();
+                });
+            });
+        });
+    }
+    map.addLayer(layersArr[id]);
+    toggleLayerDisplayMessage();
+}
+
 function openIndPopup(occid){
     openPopup('../collections/individual/index.php?occid=' + occid);
 }
@@ -2535,6 +2599,65 @@ function primeSymbologyData(features){
             features[f].set('namestring',namestring,true);
         }
     }
+}
+
+function processAddLayerControllerElement(lArr,parentElement,active){
+    const layerDivId = 'layer-' + lArr['id'];
+    if(!document.getElementById(layerDivId)){
+        const layerDiv = buildLayerControllerLayerElement(lArr,active);
+        if(lArr['id'] === 'pointv'){
+            parentElement.insertBefore(layerDiv, parentElement.firstChild);
+        }
+        else{
+            parentElement.appendChild(layerDiv);
+        }
+        if(lArr['symbology']){
+            const symbologyOpacityId = '#opacity-' + lArr['id'];
+            const symbologyBorderWidthId = '#borderWidth-' + lArr['id'];
+            const symbologyPointRadiusId = '#pointRadius-' + lArr['id'];
+            $( symbologyOpacityId ).spinner({
+                step: 0.1,
+                min: 0,
+                max: 1,
+                numberFormat: "n"
+            });
+            $( symbologyBorderWidthId ).spinner({
+                step: 1,
+                min: 0,
+                numberFormat: "n"
+            });
+            $( symbologyPointRadiusId ).spinner({
+                step: 1,
+                min: 0,
+                numberFormat: "n"
+            });
+            jscolor.init();
+        }
+        if(lArr['sortable']){
+            const sortingScrollerId = '#layerOrder-' + lArr['id'];
+            $( sortingScrollerId ).spinner({
+                step: 1,
+                min: 1,
+                disabled: !active,
+                numberFormat: "n",
+                spin: function( event, ui ) {
+                    changeLayerOrder(lArr['id'], ui.value);
+                }
+            });
+            if(active){
+                layerOrderArr.push(lArr['id']);
+                setLayersOrder();
+            }
+        }
+        if(active){
+            addLayerToSelList(lArr['id'], lArr['layerName'], active);
+        }
+    }
+    else{
+        document.getElementById("selectlayerselect").value = lArr['id'];
+        setActiveLayer();
+    }
+    toggleLayerDisplayMessage();
 }
 
 function processCheckSelection(c){
@@ -2922,6 +3045,42 @@ function processInputSubmit(){
     self.close();
 }
 
+function processAddLayerControllerGroup(lArr,parentElement){
+    const layerGroupdDivId = 'layerGroup-' + lArr['id'] + '-accordion';
+    if(!document.getElementById(layerGroupdDivId)){
+        const layersArr = lArr['layers'];
+        const layerGroupContainerId = 'layerGroup-' + lArr['id'] + '-layers';
+        const layerGroupDiv = document.createElement('div');
+        layerGroupDiv.setAttribute("id",layerGroupdDivId);
+        layerGroupDiv.setAttribute("style","margin-bottom:5px;");
+        const layerGroupLabel = document.createElement('h3');
+        layerGroupLabel.setAttribute("style","font-weight:bold;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+        layerGroupLabel.innerHTML = lArr['name'];
+        layerGroupDiv.appendChild(layerGroupLabel);
+        const layerGroupContainerDiv = document.createElement('div');
+        layerGroupContainerDiv.setAttribute("id",layerGroupContainerId);
+        layerGroupContainerDiv.setAttribute("style","display:flex;flex-direction:column;margin: 5px 0;");
+        layerGroupDiv.appendChild(layerGroupContainerDiv);
+        parentElement.appendChild(layerGroupDiv);
+        $( ('#' + layerGroupdDivId) ).accordion({
+            icons: null,
+            collapsible: true,
+            active: false,
+            heightStyle: "content"
+        });
+        for(let i in layersArr){
+            if(layersArr.hasOwnProperty(i)){
+                layersArr[i]['removable'] = false;
+                layersArr[i]['sortable'] = true;
+                layersArr[i]['symbology'] = true;
+                layersArr[i]['query'] = true;
+                processAddLayerControllerElement(layersArr[i],layerGroupContainerDiv,false)
+            }
+        }
+    }
+    toggleLayerDisplayMessage();
+}
+
 function processPointSelection(sFeature){
     const feature = (sFeature.get('features') ? sFeature.get('features')[0] : sFeature);
     const occid = Number(feature.get('occid'));
@@ -3002,6 +3161,16 @@ function removeDateSlider(){
     layersArr['pointv'].getSource().changed();
 }
 
+function removeLayerFromLayerOrderArr(layerId) {
+    const index = layerOrderArr.indexOf(layerId);
+    layerOrderArr.splice(index,1);
+    const sortingScrollerId = 'layerOrder-' + layerId;
+    $( ('#' + sortingScrollerId) ).spinner( "value", null );
+    $( ('#' + sortingScrollerId) ).on( "spin", function( event, ui ) {} );
+    $( ('#' + sortingScrollerId) ).spinner( "disable" );
+    setLayersOrder();
+}
+
 function removeLayerToSelList(layer){
     const selectobject = document.getElementById("selectlayerselect");
     for (let i = 0; i<selectobject.length; i++){
@@ -3040,6 +3209,15 @@ function removeSelectionRecord(sel){
         const selDiv = document.getElementById(selDivId);
         selDiv.parentNode.removeChild(selDiv);
     }
+}
+
+function removeServerLayer(id){
+    map.removeLayer(layersArr[id]);
+    const imageIndex = id + 'Image';
+    if(layersArr.hasOwnProperty(imageIndex)){
+        delete layersArr[imageIndex];
+    }
+    delete layersArr[id];
 }
 
 function removeUserLayer(layerID){
@@ -3317,6 +3495,42 @@ function setDragDropTarget(){
     else{
         alert('You may only have 3 uploaded vector layers at a time. Please remove one of the currently uploaded layers to upload more.');
         return false;
+    }
+}
+
+function setLayersOrder() {
+    const layersArrKeys = Object.keys(layersArr);
+    const layersArrLength = layersArrKeys.length;
+    for(let i in layerOrderArr){
+        if(layerOrderArr.hasOwnProperty(i)){
+            const index = (layerOrderArr.indexOf(layerOrderArr[i])) + 1;
+            layersArr[layerOrderArr[i]].setZIndex(index);
+            const sortingScrollerId = 'layerOrder-' + layerOrderArr[i];
+            $( ('#' + sortingScrollerId) ).spinner( "value", index );
+            $( ('#' + sortingScrollerId) ).spinner( "option", "max", layerOrderArr.length );
+        }
+    }
+    layersArr['base'].setZIndex(0);
+    if(layersArr.hasOwnProperty('uncertainty')){
+        layersArr['uncertainty'].setZIndex((layersArrLength - 4));
+    }
+    if(layersArr.hasOwnProperty('select')){
+        layersArr['select'].setZIndex((layersArrLength - 3));
+    }
+    if(layersArr.hasOwnProperty('pointv')){
+        layersArr['pointv'].setZIndex((layersArrLength - 2));
+    }
+    if(layersArr.hasOwnProperty('heat')){
+        layersArr['heat'].setZIndex((layersArrLength - 1));
+    }
+    if(layersArr.hasOwnProperty('spider')){
+        layersArr['spider'].setZIndex(layersArrLength);
+    }
+    if(layersArr.hasOwnProperty('radius')){
+        layersArr['radius'].setZIndex((layersArrLength - 1));
+    }
+    if(layersArr.hasOwnProperty('vector')){
+        layersArr['vector'].setZIndex(layersArrLength);
     }
 }
 
@@ -3845,6 +4059,19 @@ function toggleLayerSymbology(layerID){
     }
     else{
         document.getElementById(symbologyDivID).style.display = 'flex';
+    }
+}
+
+function toggleServerLayerVisibility(id,name,file,visible){
+    if(visible === true){
+        loadServerLayer(id,file);
+        addLayerToSelList(id,name,false);
+        addLayerToLayerOrderArr(id);
+    }
+    else{
+        removeServerLayer(id);
+        removeLayerToSelList(id);
+        removeLayerFromLayerOrderArr(id);
     }
 }
 
