@@ -385,6 +385,8 @@ function buildLayerControllerLayerElement(lArr,active){
         layerMainBottomDiv.appendChild(removeButton);
     }
     const visibilityCheckbox = document.createElement('input');
+    const visibilityCheckboxId = 'layerVisible-' + lArr['id'];
+    visibilityCheckbox.setAttribute("id",visibilityCheckboxId);
     visibilityCheckbox.setAttribute('type','checkbox');
     visibilityCheckbox.setAttribute("style","margin:0 5px;");
     let visibilityOnchangeVal;
@@ -415,7 +417,7 @@ function buildLayerControllerLayerElement(lArr,active){
         symbologyBorderColorSpan.innerHTML = 'Border color: ';
         symbologyBorderColorDiv.appendChild(symbologyBorderColorSpan);
         const symbologyBorderColorInputId = 'borderColor-' + lArr['id'];
-        const symbologyBorderColorOnchangeVal = "changeBorderColor('" + lArr['id'] + "');";
+        const symbologyBorderColorOnchangeVal = "changeBorderColor('" + lArr['id'] + "',this.value);";
         const symbologyBorderColorInput = document.createElement('input');
         symbologyBorderColorInput.setAttribute("data-role","none");
         symbologyBorderColorInput.setAttribute("id",symbologyBorderColorInputId);
@@ -432,7 +434,7 @@ function buildLayerControllerLayerElement(lArr,active){
         symbologyFillColorSpan.innerHTML = 'Fill color: ';
         symbologyFillColorDiv.appendChild(symbologyFillColorSpan);
         const symbologyFillColorInputId = 'fillColor-' + lArr['id'];
-        const symbologyFillColorOnchangeVal = "changeFillColor('" + lArr['id'] + "');";
+        const symbologyFillColorOnchangeVal = "changeFillColor('" + lArr['id'] + "',this.value);";
         const symbologyFillColorInput = document.createElement('input');
         symbologyFillColorInput.setAttribute("data-role","none");
         symbologyFillColorInput.setAttribute("id",symbologyFillColorInputId);
@@ -452,12 +454,10 @@ function buildLayerControllerLayerElement(lArr,active){
         symbologyBorderWidthSpan.innerHTML = 'Border width (px): ';
         symbologyBorderWidthDiv.appendChild(symbologyBorderWidthSpan);
         const symbologyBorderWidthInputId = 'borderWidth-' + lArr['id'];
-        const symbologyBorderWidthOnchangeVal = "changeBorderWidth('" + lArr['id'] + "');";
         const symbologyBorderWidthInput = document.createElement('input');
         symbologyBorderWidthInput.setAttribute("id",symbologyBorderWidthInputId);
         symbologyBorderWidthInput.setAttribute("style","width:25px;");
         symbologyBorderWidthInput.setAttribute("value",lArr['borderWidth']);
-        symbologyBorderWidthInput.setAttribute("onchange",symbologyBorderWidthOnchangeVal);
         symbologyBorderWidthDiv.appendChild(symbologyBorderWidthInput);
         symbologyBottomRow.appendChild(symbologyBorderWidthDiv);
         const symbologyPointRadiusDiv = document.createElement('div');
@@ -467,12 +467,10 @@ function buildLayerControllerLayerElement(lArr,active){
         symbologyPointRadiusSpan.innerHTML = 'Point radius (px): ';
         symbologyPointRadiusDiv.appendChild(symbologyPointRadiusSpan);
         const symbologyPointRadiusInputId = 'pointRadius-' + lArr['id'];
-        const symbologyPointRadiusOnchangeVal = "changePointRadius('" + lArr['id'] + "');";
         const symbologyPointRadiusInput = document.createElement('input');
         symbologyPointRadiusInput.setAttribute("id",symbologyPointRadiusInputId);
         symbologyPointRadiusInput.setAttribute("style","width:25px;");
         symbologyPointRadiusInput.setAttribute("value",lArr['pointRadius']);
-        symbologyPointRadiusInput.setAttribute("onchange",symbologyPointRadiusOnchangeVal);
         symbologyPointRadiusDiv.appendChild(symbologyPointRadiusInput);
         symbologyBottomRow.appendChild(symbologyPointRadiusDiv);
         const symbologyOpacityDiv = document.createElement('div');
@@ -482,12 +480,10 @@ function buildLayerControllerLayerElement(lArr,active){
         symbologyOpacitySpan.innerHTML = 'Opacity: ';
         symbologyOpacityDiv.appendChild(symbologyOpacitySpan);
         const symbologyOpacityInputId = 'opacity-' + lArr['id'];
-        const symbologyOpacityOnchangeVal = "changeLayerOpacity('" + lArr['id'] + "');";
         const symbologyOpacityInput = document.createElement('input');
         symbologyOpacityInput.setAttribute("id",symbologyOpacityInputId);
         symbologyOpacityInput.setAttribute("style","width:25px;");
         symbologyOpacityInput.setAttribute("value",lArr['opacity']);
-        symbologyOpacityInput.setAttribute("onchange",symbologyOpacityOnchangeVal);
         symbologyOpacityDiv.appendChild(symbologyOpacityInput);
         symbologyBottomRow.appendChild(symbologyOpacityDiv);
         layerSymbologyDiv.appendChild(symbologyBottomRow);
@@ -643,6 +639,28 @@ function changeBaseMap(){
     baseLayer.setSource(blsource);
 }
 
+function changeBorderColor(layerId,value) {
+    if(document.getElementById(('layerVisible-' + layerId)).checked === true){
+        const fillColor = document.getElementById(('fillColor-' + layerId)).value;
+        const borderWidth = document.getElementById(('borderWidth-' + layerId)).value;
+        const pointRadius = document.getElementById(('pointRadius-' + layerId)).value;
+        const opacity = document.getElementById(('opacity-' + layerId)).value;
+        const style = getVectorLayerStyle(fillColor, value, borderWidth, pointRadius, opacity);
+        layersArr[layerId].setStyle(style);
+    }
+}
+
+function changeBorderWidth(layerId,value) {
+    if(document.getElementById(('layerVisible-' + layerId)).checked === true){
+        const borderColor = document.getElementById(('borderColor-' + layerId)).value;
+        const fillColor = document.getElementById(('fillColor-' + layerId)).value;
+        const pointRadius = document.getElementById(('pointRadius-' + layerId)).value;
+        const opacity = document.getElementById(('opacity-' + layerId)).value;
+        const style = getVectorLayerStyle(fillColor, borderColor, value, pointRadius, opacity);
+        layersArr[layerId].setStyle(style);
+    }
+}
+
 function changeClusterDistance(){
     clusterDistance = document.getElementById("setclusterdistance").value;
     clustersource.setDistance(clusterDistance);
@@ -767,6 +785,17 @@ function changeDraw() {
     }
 }
 
+function changeFillColor(layerId,value) {
+    if(document.getElementById(('layerVisible-' + layerId)).checked === true){
+        const borderColor = document.getElementById(('borderColor-' + layerId)).value;
+        const borderWidth = document.getElementById(('borderWidth-' + layerId)).value;
+        const pointRadius = document.getElementById(('pointRadius-' + layerId)).value;
+        const opacity = document.getElementById(('opacity-' + layerId)).value;
+        const style = getVectorLayerStyle(value, borderColor, borderWidth, pointRadius, opacity);
+        layersArr[layerId].setStyle(style);
+    }
+}
+
 function changeHeatMapBlur(){
     heatMapBlur = document.getElementById("heatmapblur").value;
     layersArr['heat'].setBlur(parseInt(heatMapBlur, 10));
@@ -775,6 +804,17 @@ function changeHeatMapBlur(){
 function changeHeatMapRadius(){
     heatMapRadius = document.getElementById("heatmapradius").value;
     layersArr['heat'].setRadius(parseInt(heatMapRadius, 10));
+}
+
+function changeLayerOpacity(layerId,value) {
+    if(document.getElementById(('layerVisible-' + layerId)).checked === true){
+        const borderColor = document.getElementById(('borderColor-' + layerId)).value;
+        const fillColor = document.getElementById(('fillColor-' + layerId)).value;
+        const borderWidth = document.getElementById(('borderWidth-' + layerId)).value;
+        const pointRadius = document.getElementById(('pointRadius-' + layerId)).value;
+        const style = getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, value);
+        layersArr[layerId].setStyle(style);
+    }
 }
 
 function changeLayerOrder(layerId, value) {
@@ -824,6 +864,17 @@ function changeMapSymbology(symbology){
                 loadPointWFSLayer(0);
             }
         }
+    }
+}
+
+function changePointRadius(layerId,value) {
+    if(document.getElementById(('layerVisible-' + layerId)).checked === true){
+        const borderColor = document.getElementById(('borderColor-' + layerId)).value;
+        const fillColor = document.getElementById(('fillColor-' + layerId)).value;
+        const borderWidth = document.getElementById(('borderWidth-' + layerId)).value;
+        const opacity = document.getElementById(('opacity-' + layerId)).value;
+        const style = getVectorLayerStyle(fillColor, borderColor, borderWidth, value, opacity);
+        layersArr[layerId].setStyle(style);
     }
 }
 
@@ -2275,6 +2326,28 @@ function getTurfPointFeaturesetSelected(){
     }
 }
 
+function getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, opacity){
+    return new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+        }),
+        stroke: new ol.style.Stroke({
+            color: ('#' + borderColor),
+            width: borderWidth
+        }),
+        image: new ol.style.Circle({
+            radius: pointRadius,
+            fill: new ol.style.Fill({
+                color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+            }),
+            stroke: new ol.style.Stroke({
+                color: ('#' + borderColor),
+                width: borderWidth
+            })
+        })
+    })
+}
+
 function getWGS84CirclePoly(center,radius){
     let turfFeature = '';
     const ciroptions = {steps: 200, units: 'kilometers'};
@@ -2427,7 +2500,7 @@ function loadServerLayer(id,file){
                 wrapX: true
             }),
             zIndex: zIndex,
-            style: setVectorStyle(fillColor, borderColor, borderWidth, pointRadius, opacity)
+            style: getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, opacity)
         });
     }
     else{
@@ -2619,17 +2692,26 @@ function processAddLayerControllerElement(lArr,parentElement,active){
                 step: 0.1,
                 min: 0,
                 max: 1,
-                numberFormat: "n"
+                numberFormat: "n",
+                spin: function( event, ui ) {
+                    changeLayerOpacity(lArr['id'], ui.value);
+                }
             });
             $( symbologyBorderWidthId ).spinner({
                 step: 1,
                 min: 0,
-                numberFormat: "n"
+                numberFormat: "n",
+                spin: function( event, ui ) {
+                    changeBorderWidth(lArr['id'], ui.value);
+                }
             });
             $( symbologyPointRadiusId ).spinner({
                 step: 1,
                 min: 0,
-                numberFormat: "n"
+                numberFormat: "n",
+                spin: function( event, ui ) {
+                    changePointRadius(lArr['id'], ui.value);
+                }
             });
             jscolor.init();
         }

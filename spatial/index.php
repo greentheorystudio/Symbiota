@@ -136,46 +136,6 @@ $dbArr = array();
             event.preventDefault();
         });
 
-        function rgbaStrToHexStr(rgbaString) {
-            const rgbArr = rgbaString.match(/[.?\d]+/g);
-            let retStr = '';
-            if(rgbArr){
-                if(rgbArr[0].length == 1){
-                    rgbArr[0] = "0" + rgbArr[0];
-                }
-                if(rgbArr[1].length == 1){
-                    rgbArr[1] = "0" + rgbArr[1];
-                }
-                if(rgbArr[2].length == 1){
-                    rgbArr[2] = "0" + rgbArr[2];
-                }
-                retStr = "#" + rgbArr[0] + rgbArr[1] + rgbArr[2];
-            }
-            return retStr;
-        }
-
-        function setVectorStyle(fillColor, borderColor, borderWidth, pointRadius, opacity){
-            return new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
-                }),
-                stroke: new ol.style.Stroke({
-                    color: ('#' + borderColor),
-                    width: borderWidth
-                }),
-                image: new ol.style.Circle({
-                    radius: pointRadius,
-                    fill: new ol.style.Fill({
-                        color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
-                    }),
-                    stroke: new ol.style.Stroke({
-                        color: ('#' + borderColor),
-                        width: borderWidth
-                    })
-                })
-            })
-        }
-
         $(document).ready(function() {
             setLayersController();
             if(document.getElementById("taxa")){
@@ -410,7 +370,7 @@ $dbArr = array();
     const selectlayer = new ol.layer.Vector({
         zIndex: 8,
         source: selectsource,
-        style: setVectorStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesPointRadius, shapesOpacity)
+        style: getVectorLayerStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesPointRadius, shapesOpacity)
     });
 
     let uncertaintycirclesource = new ol.source.Vector({
@@ -474,17 +434,17 @@ $dbArr = array();
     const dragdroplayer1 = new ol.layer.Vector({
         zIndex: 1,
         source: blankdragdropsource,
-        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
     });
     const dragdroplayer2 = new ol.layer.Vector({
         zIndex: 2,
         source: blankdragdropsource,
-        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
     });
     const dragdroplayer3 = new ol.layer.Vector({
         zIndex: 3,
         source: blankdragdropsource,
-        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
     });
     const dragdroplayer4 = new ol.layer.Image({
         zIndex: 4,
