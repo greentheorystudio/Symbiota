@@ -342,8 +342,11 @@ function buildLayerControllerLayerElement(lArr,active){
     dataTypeImageDiv.appendChild(dataTypeImage);
     layerMainBottomDiv.appendChild(dataTypeImageDiv);
     if(lArr['sortable']){
+        const sortingScrollerDivId = 'layerOrderDiv-' + lArr['id'];
         const sortingScrollerDiv = document.createElement('div');
-        sortingScrollerDiv.setAttribute("style","display:flex;align-items:center;margin:0 5px;");
+        sortingScrollerDiv.setAttribute("id",sortingScrollerDivId);
+        const sortingScrollerDisplayVal = (active ? 'flex' : 'none');
+        sortingScrollerDiv.setAttribute("style","display:" + sortingScrollerDisplayVal + ";align-items:center;margin:0 5px;");
         const sortingScrollerId = 'layerOrder-' + lArr['id'];
         const sortingScroller = document.createElement('input');
         sortingScroller.setAttribute("id",sortingScrollerId);
@@ -352,20 +355,26 @@ function buildLayerControllerLayerElement(lArr,active){
         layerMainBottomDiv.appendChild(sortingScrollerDiv);
     }
     if(lArr['symbology'] && !raster){
+        const symbologyButtonId = 'layerSymbologyButton-' + lArr['id'];
         const symbologyButton = document.createElement('button');
+        symbologyButton.setAttribute("id",symbologyButtonId);
         const symbologyOnclickVal = "toggleLayerSymbology('" + lArr['id'] + "');";
+        const symbologyButtonDisplayVal = (active ? 'block' : 'none');
         symbologyButton.setAttribute("type","button");
-        symbologyButton.setAttribute("style","margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+        symbologyButton.setAttribute("style","display:" + symbologyButtonDisplayVal + ";margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
         symbologyButton.setAttribute("title","Toggle Symbology");
         symbologyButton.setAttribute("onclick",symbologyOnclickVal);
         symbologyButton.innerHTML = 'Symbology';
         layerMainBottomDiv.appendChild(symbologyButton);
     }
     if(lArr['query'] && !raster){
+        const queryButtonId = 'layerQueryButton-' + lArr['id'];
         const queryButton = document.createElement('button');
+        queryButton.setAttribute("id",queryButtonId);
         const queryOnclickVal = "toggleLayerQuerySelector('" + lArr['id'] + "');";
+        const queryButtonDisplayVal = (active ? 'block' : 'none');
         queryButton.setAttribute("type","button");
-        queryButton.setAttribute("style","margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+        queryButton.setAttribute("style","display:" + queryButtonDisplayVal + ";margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
         queryButton.setAttribute("title","Toggle Symbology");
         queryButton.setAttribute("onclick",queryOnclickVal);
         queryButton.innerHTML = 'Query Selector';
@@ -397,7 +406,7 @@ function buildLayerControllerLayerElement(lArr,active){
         visibilityOnchangeVal = "toggleServerLayerVisibility('" + lArr['id'] + "','" + lArr['layerName'] + "','" + lArr['file'] + "',this.checked);";
     }
     visibilityCheckbox.setAttribute("onchange",visibilityOnchangeVal);
-    if(active){
+    if(active || lArr['id'] === 'select'){
         visibilityCheckbox.checked = true;
     }
     layerMainBottomDiv.appendChild(visibilityCheckbox);
@@ -1079,6 +1088,17 @@ function cleanSelectionsLayer(){
             layersArr['select'].getSource().removeFeature(selLayerFeatures[i]);
         }
     }
+}
+
+function clearLayerQuerySelector() {
+    document.getElementById('spatialQueryFieldSelector').innerHTML = '';
+    document.getElementById('spatialQueryOperatorSelector').value = 'equals';
+    document.getElementById('spatialQuerySingleValueDiv').style.display = 'block';
+    document.getElementById('spatialQueryBetweenValueDiv').style.display = 'none';
+    document.getElementById('spatialQuerySingleValueInput').value = '';
+    document.getElementById('spatialQueryDoubleValueInput1').value = '';
+    document.getElementById('spatialQueryDoubleValueInput2').value = '';
+    document.getElementById('spatialQuerySelectorLayerId').value = '';
 }
 
 function clearSelections(){
@@ -2630,6 +2650,45 @@ function openOccidInfoBox(occid,label){
     finderpopupoverlay.setPosition(occpos);
 }
 
+function primeLayerQuerySelectorFields(layerId) {
+    const fieldArr = [];
+    const fieldSelector = document.getElementById('spatialQueryFieldSelector');
+    const layerFeatures = layersArr[layerId].getSource().getFeatures();
+    for(let f in layerFeatures){
+        if(layerFeatures.hasOwnProperty(f)){
+            const properties = layerFeatures[f].getKeys();
+            for(let i in properties){
+                if(properties.hasOwnProperty(i) && !fieldArr.includes(String(properties[i])) && String(properties[i]) !== 'geometry' && String(properties[i]) !== 'OBJECTID'){
+                    fieldArr.push(String(properties[i]));
+                }
+            }
+        }
+    }
+    if(fieldArr.length > 0){
+        fieldArr.sort(function (a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        });
+        const blankSelectorOption = document.createElement('option');
+        blankSelectorOption.setAttribute("value","");
+        blankSelectorOption.innerHTML = 'Select data point';
+        fieldSelector.appendChild(blankSelectorOption);
+        for(let f in fieldArr){
+            if(fieldArr.hasOwnProperty(f)){
+                const selectorOption = document.createElement('option');
+                selectorOption.setAttribute("value",fieldArr[f]);
+                selectorOption.innerHTML = fieldArr[f];
+                fieldSelector.appendChild(selectorOption);
+            }
+        }
+    }
+    else{
+        const blankSelectorOption = document.createElement('option');
+        blankSelectorOption.setAttribute("value","");
+        blankSelectorOption.innerHTML = 'Layer does not include data';
+        fieldSelector.appendChild(blankSelectorOption);
+    }
+}
+
 function primeSymbologyData(features){
     const currentDate = new Date();
     for(let f in features) {
@@ -2746,13 +2805,49 @@ function processAddLayerControllerElement(lArr,parentElement,active){
                 setLayersOrder();
             }
         }
-        if(active){
+        if(active || lArr['id'] === 'select'){
             addLayerToSelList(lArr['id'], lArr['layerName'], active);
         }
     }
     else{
         document.getElementById("selectlayerselect").value = lArr['id'];
         setActiveLayer();
+    }
+    toggleLayerDisplayMessage();
+}
+
+function processAddLayerControllerGroup(lArr,parentElement){
+    const layerGroupdDivId = 'layerGroup-' + lArr['id'] + '-accordion';
+    if(!document.getElementById(layerGroupdDivId)){
+        const layersArr = lArr['layers'];
+        const layerGroupContainerId = 'layerGroup-' + lArr['id'] + '-layers';
+        const layerGroupDiv = document.createElement('div');
+        layerGroupDiv.setAttribute("id",layerGroupdDivId);
+        layerGroupDiv.setAttribute("style","margin-bottom:5px;");
+        const layerGroupLabel = document.createElement('h3');
+        layerGroupLabel.setAttribute("style","font-weight:bold;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+        layerGroupLabel.innerHTML = lArr['name'];
+        layerGroupDiv.appendChild(layerGroupLabel);
+        const layerGroupContainerDiv = document.createElement('div');
+        layerGroupContainerDiv.setAttribute("id",layerGroupContainerId);
+        layerGroupContainerDiv.setAttribute("style","display:flex;flex-direction:column;margin: 5px 0;");
+        layerGroupDiv.appendChild(layerGroupContainerDiv);
+        parentElement.appendChild(layerGroupDiv);
+        $( ('#' + layerGroupdDivId) ).accordion({
+            icons: null,
+            collapsible: true,
+            active: false,
+            heightStyle: "content"
+        });
+        for(let i in layersArr){
+            if(layersArr.hasOwnProperty(i)){
+                layersArr[i]['removable'] = false;
+                layersArr[i]['sortable'] = true;
+                layersArr[i]['symbology'] = true;
+                layersArr[i]['query'] = true;
+                processAddLayerControllerElement(layersArr[i],layerGroupContainerDiv,false)
+            }
+        }
     }
     toggleLayerDisplayMessage();
 }
@@ -3142,42 +3237,6 @@ function processInputSubmit(){
     self.close();
 }
 
-function processAddLayerControllerGroup(lArr,parentElement){
-    const layerGroupdDivId = 'layerGroup-' + lArr['id'] + '-accordion';
-    if(!document.getElementById(layerGroupdDivId)){
-        const layersArr = lArr['layers'];
-        const layerGroupContainerId = 'layerGroup-' + lArr['id'] + '-layers';
-        const layerGroupDiv = document.createElement('div');
-        layerGroupDiv.setAttribute("id",layerGroupdDivId);
-        layerGroupDiv.setAttribute("style","margin-bottom:5px;");
-        const layerGroupLabel = document.createElement('h3');
-        layerGroupLabel.setAttribute("style","font-weight:bold;font-family:Verdana,Arial,sans-serif;font-size:14px;");
-        layerGroupLabel.innerHTML = lArr['name'];
-        layerGroupDiv.appendChild(layerGroupLabel);
-        const layerGroupContainerDiv = document.createElement('div');
-        layerGroupContainerDiv.setAttribute("id",layerGroupContainerId);
-        layerGroupContainerDiv.setAttribute("style","display:flex;flex-direction:column;margin: 5px 0;");
-        layerGroupDiv.appendChild(layerGroupContainerDiv);
-        parentElement.appendChild(layerGroupDiv);
-        $( ('#' + layerGroupdDivId) ).accordion({
-            icons: null,
-            collapsible: true,
-            active: false,
-            heightStyle: "content"
-        });
-        for(let i in layersArr){
-            if(layersArr.hasOwnProperty(i)){
-                layersArr[i]['removable'] = false;
-                layersArr[i]['sortable'] = true;
-                layersArr[i]['symbology'] = true;
-                layersArr[i]['query'] = true;
-                processAddLayerControllerElement(layersArr[i],layerGroupContainerDiv,false)
-            }
-        }
-    }
-    toggleLayerDisplayMessage();
-}
-
 function processPointSelection(sFeature){
     const feature = (sFeature.get('features') ? sFeature.get('features')[0] : sFeature);
     const occid = Number(feature.get('occid'));
@@ -3194,6 +3253,50 @@ function processPointSelection(sFeature){
     const style = (sFeature.get('features') ? setClusterSymbol(sFeature) : setSymbol(sFeature));
     sFeature.setStyle(style);
     adjustSelectionsTab();
+}
+
+function processQuerySelectorQuery() {
+    let valid = true;
+    const fieldValue = document.getElementById('spatialQueryFieldSelector').value;
+    const operatorValue = document.getElementById('spatialQueryOperatorSelector').value;
+    const singleVal = document.getElementById('spatialQuerySingleValueInput').value;
+    const doubleVal1 = document.getElementById('spatialQueryDoubleValueInput1').value;
+    const doubleVal2 = document.getElementById('spatialQueryDoubleValueInput2').value;
+    if(fieldValue === ''){
+        alert('Please select a field on which to run the query.');
+        valid = false;
+    }
+    else if(operatorValue !== 'between' && singleVal === ''){
+        alert('Please enter a value with which to run the query.');
+        valid = false;
+    }
+    else if((operatorValue === 'greaterThan' || operatorValue === 'lessThan') && isNaN(singleVal)){
+        alert('A numerical value must be entered for greater than or less than queries.');
+        valid = false;
+    }
+    else if(operatorValue === 'between' && (doubleVal1 === '' || doubleVal2 === '')){
+        alert('Two values must be entered for a between query.');
+        valid = false;
+    }
+    else if(operatorValue === 'between' && (isNaN(doubleVal1) || isNaN(doubleVal2))){
+        alert('Both values must be numeric for a between query.');
+        valid = false;
+    }
+    if(valid){
+        const layerId = document.getElementById('spatialQuerySelectorLayerId').value;
+        runQuerySelectorQuery(layerId,fieldValue,operatorValue,singleVal,doubleVal1,doubleVal2);
+    }
+}
+
+function processSpatialQueryOperatorSelectorChange(value) {
+    if(value === 'between'){
+        document.getElementById('spatialQuerySingleValueDiv').style.display = 'none';
+        document.getElementById('spatialQueryBetweenValueDiv').style.display = 'flex';
+    }
+    else{
+        document.getElementById('spatialQuerySingleValueDiv').style.display = 'block';
+        document.getElementById('spatialQueryBetweenValueDiv').style.display = 'none';
+    }
 }
 
 function processToggleSelectedChange(){
@@ -3412,6 +3515,37 @@ function resetSymbology(){
     }
     document.getElementById("symbolizeReset1").disabled = false;
     document.getElementById("symbolizeReset2").disabled = false;
+}
+
+function runQuerySelectorQuery(layerId,fieldValue,operatorValue,singleVal,doubleVal1,doubleVal2) {
+    const addFeatures = [];
+    const layerFeatures = layersArr[layerId].getSource().getFeatures();
+    for(let f in layerFeatures){
+        if(layerFeatures.hasOwnProperty(f) && layerFeatures[f].get(fieldValue)){
+            let add = false;
+            const featureValue = layerFeatures[f].get(fieldValue);
+            if(operatorValue === 'equals' && featureValue.toString().toLowerCase() === singleVal.toString().toLowerCase()){
+                add = true;
+            }
+            else if(operatorValue === 'contains' && featureValue.toString().toLowerCase().includes(singleVal.toString().toLowerCase())){
+                add = true;
+            }
+            else if(operatorValue === 'greaterThan' && !isNaN(featureValue) && Number(featureValue) > Number(singleVal)){
+                add = true;
+            }
+            else if(operatorValue === 'lessThan' && !isNaN(featureValue) && Number(featureValue) < Number(singleVal)){
+                add = true;
+            }
+            else if(operatorValue === 'between' && !isNaN(featureValue) && Number(featureValue) >= Number(doubleVal1) && Number(featureValue) <= Number(doubleVal2)){
+                add = true;
+            }
+            if(add){
+                const featureClone = layerFeatures[f].clone();
+                addFeatures.push(featureClone);
+            }
+        }
+    }
+    selectsource.addFeatures(addFeatures);
 }
 
 function saveKeyImage(){
@@ -4149,6 +4283,13 @@ function toggleLayerDisplayMessage(){
     }
 }
 
+function toggleLayerQuerySelector(layerId) {
+    primeLayerQuerySelectorFields(layerId);
+    document.getElementById('spatialQuerySelectorLayerId').value = layerId;
+    $('#addLayers').popup('hide');
+    $('#layerqueryselector').popup('show');
+}
+
 function toggleLayerSymbology(layerID){
     const symbologyDivID = 'layerSymbology-' + layerID;
     if(document.getElementById(symbologyDivID).style.display === 'flex'){
@@ -4160,12 +4301,21 @@ function toggleLayerSymbology(layerID){
 }
 
 function toggleServerLayerVisibility(id,name,file,visible){
+    const sortingScrollerDivId = 'layerOrderDiv-' + id;
+    const symbologyButtonId = 'layerSymbologyButton-' + id;
+    const queryButtonId = 'layerQueryButton-' + id;
     if(visible === true){
+        document.getElementById(sortingScrollerDivId).style.display = 'flex';
+        document.getElementById(symbologyButtonId).style.display = 'block';
+        document.getElementById(queryButtonId).style.display = 'block';
         loadServerLayer(id,file);
         addLayerToSelList(id,name,false);
         addLayerToLayerOrderArr(id);
     }
     else{
+        document.getElementById(sortingScrollerDivId).style.display = 'none';
+        document.getElementById(symbologyButtonId).style.display = 'none';
+        document.getElementById(queryButtonId).style.display = 'none';
         removeServerLayer(id);
         removeLayerToSelList(id);
         removeLayerFromLayerOrderArr(id);

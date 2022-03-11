@@ -11,7 +11,7 @@ $smManager = new SiteMapManager();
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
 	<link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="js/symb/shared.js?ver=20220221"></script>
+	<script type="text/javascript" src="js/symb/shared.js?ver=20220310"></script>
 </head>
 <body>
 	<?php

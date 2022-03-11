@@ -107,8 +107,8 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220221" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220307" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220310" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20211104" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -135,11 +135,6 @@ $dbArr = array();
         $(document).on("pageloadfailed", function(event){
             event.preventDefault();
         });
-
-        function toggleLayerQuerySelector(layerId) {
-            $('#addLayers').popup('hide');
-            $('#layerqueryselector').popup('show');
-        }
 
         $(document).ready(function() {
             setLayersController();
@@ -247,14 +242,10 @@ $dbArr = array();
             });
             $('#layerqueryselector').popup({
                 transition: 'all 0.3s',
-                scrolllock: true
-            });
-            $('#loadingOverlay').popup({
-                transition: 'all 0.3s',
                 scrolllock: true,
-                opacity:0.6,
-                color:'white',
-                blur: false
+                closetransitionend: function(event, ui) {
+                    clearLayerQuerySelector();
+                }
             });
 
             <?php
@@ -497,6 +488,10 @@ $dbArr = array();
         hideWorking();
     });
 
+    layersArr['select'].on('postrender', function(evt) {
+        hideWorking();
+    });
+
     layersArr['pointv'].on('postrender', function(evt) {
         checkLoading();
     });
@@ -695,7 +690,7 @@ $dbArr = array();
                         infoArr['fileType'] = 'tif';
                         infoArr['layerName'] = filename;
                         infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                            infoArr['removable'] = true;
+                        infoArr['removable'] = true;
                         infoArr['sortable'] = true;
                         infoArr['symbology'] = false;
                         infoArr['query'] = false;
@@ -951,7 +946,7 @@ $dbArr = array();
                     infoArr['sortable'] = false;
                     infoArr['symbology'] = true;
                     infoArr['query'] = true;
-                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
+                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),false);
                     shapeActive = true;
                 }
             }
@@ -1131,14 +1126,9 @@ $dbArr = array();
                 if(layersArr[activeLayer] instanceof ol.layer.Vector){
                     map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
                         if(layer === layersArr[activeLayer]){
-                            try{
+                            if(!selectsource.hasFeature(feature)){
                                 const featureClone = feature.clone();
                                 selectsource.addFeature(featureClone);
-                                document.getElementById("selectlayerselect").value = 'select';
-                                setActiveLayer();
-                            }
-                            catch(e){
-                                alert('Feature has already been added to Shapes layer.');
                             }
                         }
                     });
@@ -1228,7 +1218,7 @@ $dbArr = array();
     </form>
 </div>
 
-<div id="loadingOverlay" data-role="popup" style="width:100%;position:relative;">
+<div class="loadingModal">
     <div id="loader"></div>
 </div>
 <input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />

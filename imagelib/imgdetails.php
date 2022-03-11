@@ -81,7 +81,7 @@ if($imgArr){
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/symb/imagelib.imgdetails.js?ver=20210313" type="text/javascript"></script>
-	<script src="../js/symb/shared.js?ver=20220221" type="text/javascript"></script>
+	<script src="../js/symb/shared.js?ver=20220310" type="text/javascript"></script>
 </head>
 <body>
 	<div id="fb-root"></div>
