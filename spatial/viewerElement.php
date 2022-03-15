@@ -1,17 +1,33 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-$mapCenter = '[-110.90713, 32.21976]';
-if(isset($GLOBALS['SPATIAL_INITIAL_CENTER']) && $GLOBALS['SPATIAL_INITIAL_CENTER']) {
-    $mapCenter = $GLOBALS['SPATIAL_INITIAL_CENTER'];
-}
-$mapZoom = 7;
-if(isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM']) {
-    $mapZoom = $GLOBALS['SPATIAL_INITIAL_ZOOM'];
-}
+$mapCenter = ((isset($GLOBALS['SPATIAL_INITIAL_CENTER']) && $GLOBALS['SPATIAL_INITIAL_CENTER'])?$GLOBALS['SPATIAL_INITIAL_CENTER']:'[-110.90713, 32.21976]');
+$mapZoom = ((isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM'])?$GLOBALS['SPATIAL_INITIAL_ZOOM']:7);
+$initialPointColor = ((isset($GLOBALS['SPATIAL_INITIAL_POINT_COLOR']) && $GLOBALS['SPATIAL_INITIAL_POINT_COLOR'])?$GLOBALS['SPATIAL_INITIAL_POINT_COLOR']:'E69E67');
+$shapesFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']:'ffffff');
+$shapesBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']:'3399CC');
+$shapesBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']:2);
+$shapesPointRadius = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS']:5);
+$shapesOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']:'0.4');
+$dragDropFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']:'aaaaaa');
+$dragDropBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']:'000000');
+$dragDropBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']:2);
+$dragDropPointRadius = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS']:5);
+$dragDropOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']:'0.3');
 ?>
 <script type="text/javascript">
     const initialMapZoom = <?php echo $mapZoom; ?>;
     const initialMapCenter = <?php echo $mapCenter; ?>;
+    const initialPointColor = '<?php echo $initialPointColor; ?>';
+    const shapesFillColor = '<?php echo $shapesFillColor; ?>';
+    const shapesBorderColor = '<?php echo $shapesBorderColor; ?>';
+    const shapesBorderWidth = <?php echo $shapesBorderWidth; ?>;
+    const shapesPointRadius = <?php echo $shapesPointRadius; ?>;
+    const shapesOpacity = '<?php echo $shapesOpacity; ?>';
+    const dragDropFillColor = '<?php echo $dragDropFillColor; ?>';
+    const dragDropBorderColor = '<?php echo $dragDropBorderColor; ?>';
+    const dragDropBorderWidth = <?php echo $dragDropBorderWidth; ?>;
+    const dragDropPointRadius = <?php echo $dragDropPointRadius; ?>;
+    const dragDropOpacity = '<?php echo $dragDropOpacity; ?>';
 </script>
 <div id="map" class="map">
     <div id="popup" class="ol-popup">
@@ -44,4 +60,4 @@ if(isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM']) 
         <div id="mapcoords"></div>
     </div>
 </div>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.viewer.js?ver=20220205" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.viewer.js?ver=20220306" type="text/javascript"></script>

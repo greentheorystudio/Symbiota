@@ -971,7 +971,7 @@ else{
                                                     <?php echo (defined('MUNICIPALITYLABEL')?MUNICIPALITYLABEL:'Municipality'); ?>
                                                     <a href="#" onclick="return dwcDoc('municipality')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
                                                     <br/>
-                                                    <input type="text" id="ffmunicipality" name="municipality" tabindex="45" value="<?php echo array_key_exists('municipality',$occArr)?$occArr['municipality']:''; ?>" onchange="fieldChanged('municipality');" autocomplete="off" />
+                                                    <input type="text" name="municipality" tabindex="45" value="<?php echo array_key_exists('municipality',$occArr)?$occArr['municipality']:''; ?>" onchange="fieldChanged('municipality');" autocomplete="off" />
                                                 </div>
                                             </div>
                                             <div id="localityDiv">

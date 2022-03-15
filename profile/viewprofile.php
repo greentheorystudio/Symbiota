@@ -153,7 +153,7 @@ if($isEditor){
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
     <script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=20210313"></script>
-    <script type="text/javascript" src="../js/symb/shared.js?ver=20211227"></script>
+    <script type="text/javascript" src="../js/symb/shared.js?ver=20220310"></script>
 </head>
 <body>
 <?php

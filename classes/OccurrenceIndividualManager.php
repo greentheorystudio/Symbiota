@@ -129,21 +129,6 @@ class OccurrenceIndividualManager extends Manager{
                     }
                 }
 
-                if($this->occArr['secondaryinstcode'] && $this->occArr['secondaryinstcode'] !== $this->metadataArr['institutioncode']){
-                    $sqlSec = 'SELECT collectionname, homepage, individualurl, contact, email, icon '.
-                        'FROM omcollsecondary '.
-                        'WHERE (collid = '.$this->occArr['collid'].')';
-                    $rsSec = $this->conn->query($sqlSec);
-                    if($r = $rsSec->fetch_object()){
-                        $this->metadataArr['collectionname'] = $r->collectionname;
-                        $this->metadataArr['homepage'] = $r->homepage;
-                        $this->metadataArr['individualurl'] = $r->individualurl;
-                        $this->metadataArr['contact'] = $r->contact;
-                        $this->metadataArr['email'] = $r->email;
-                        $this->metadataArr['icon'] = $r->icon;
-                    }
-                    $rsSec->close();
-                }
                 $this->loadImages();
                 $this->loadMedia();
                 $this->loadDeterminations();
