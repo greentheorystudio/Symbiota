@@ -82,6 +82,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                 </div>
             </div>
         </div>
+        <div style="width:100%;clear:both;"></div>
         <div class="footer">
             <p style="text-align:center;">© <a href="http://herbarium.wisc.edu/" title="Wisconsin State Herbarium home">Wisconsin State Herbarium, UW-Madison</a>
                 <br>
