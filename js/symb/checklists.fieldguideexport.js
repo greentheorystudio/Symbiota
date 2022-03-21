@@ -33,7 +33,7 @@ const t0 = 0;
 const t1 = 0;
 
 function hideWorking(){
-    $('#loadingOverlay').popup('hide');
+    document.body.classList.remove("processing");
     $("#fieldguideexport").popup("show");
     //t1 = performance.now();
     //console.log("Total process took " + ((t1 - t0)/1000) + " seconds.");
@@ -41,7 +41,7 @@ function hideWorking(){
 
 function showWorking(){
     $("#fieldguideexport").popup("hide");
-    $('#loadingOverlay').popup('show');
+    document.body.classList.add("processing");
     //t0 = performance.now();
 }
 

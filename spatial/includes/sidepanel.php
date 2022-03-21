@@ -5,7 +5,7 @@
 /** @var OccurrenceManager $occManager */
 ?>
 <div id="spatialpanel">
-    <div id="accordion">
+    <div id="sidepanel-accordion">
         <?php
         if($inputWindowMode) {
             include_once(__DIR__ . '/vectortoolstab.php');
