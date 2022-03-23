@@ -52,7 +52,7 @@ $taxaUtilities = new TaxonomyUtilities();
             color: #a9a9a9;
         }
     </style>
-    <script src="../../js/symb/shared.js?ver=20220221" type="text/javascript"></script>
+    <script src="../../js/symb/shared.js?ver=20220310" type="text/javascript"></script>
     <script src="../../js/jquery.js"></script>
     <script src="../../js/jquery.ui.widget.js"></script>
     <script src="../../js/tmpl.min.js"></script>

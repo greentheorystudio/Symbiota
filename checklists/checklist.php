@@ -911,7 +911,7 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']){
         </div>
     </div>
 
-    <div id="loadingOverlay" data-role="popup" style="width:100%;height:100%;position:relative;display:none;">
+    <div class="loadingModal">
         <div id="loader"></div>
         <div id="loaderMessage">This may take several minutes...</div>
     </div>

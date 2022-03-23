@@ -152,7 +152,7 @@ elseif($activeCollArr){
 				return true;
 			}
 		</script>
-		<script src="../../js/symb/shared.js?ver=20220221" type="text/javascript"></script>
+		<script src="../../js/symb/shared.js?ver=20220310" type="text/javascript"></script>
 	</head>
 	<body>
 		<?php
