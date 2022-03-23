@@ -76,17 +76,17 @@ const blankdragdropsource = new ol.source.Vector({
 const dragdroplayer1 = new ol.layer.Vector({
     zIndex: 1,
     source: blankdragdropsource,
-    style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
+    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
 });
 const dragdroplayer2 = new ol.layer.Vector({
     zIndex: 2,
     source: blankdragdropsource,
-    style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
+    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
 });
 const dragdroplayer3 = new ol.layer.Vector({
     zIndex: 3,
     source: blankdragdropsource,
-    style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
+    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
 });
 
 layersArr['base'] = baselayer;

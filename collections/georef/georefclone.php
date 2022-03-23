@@ -42,7 +42,7 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220223" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220310" type="text/javascript"></script>
 		<script type="text/javascript">
             $(document).ready(function() {
                 const cloneArr = JSON.parse('<?php echo json_encode($clones); ?>');

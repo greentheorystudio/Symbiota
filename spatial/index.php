@@ -46,10 +46,12 @@ $initialPointColor = ((isset($GLOBALS['SPATIAL_INITIAL_POINT_COLOR']) && $GLOBAL
 $shapesFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']:'ffffff');
 $shapesBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']:'3399CC');
 $shapesBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']:2);
+$shapesPointRadius = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS']:5);
 $shapesOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']:'0.4');
 $dragDropFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']:'aaaaaa');
 $dragDropBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']:'000000');
 $dragDropBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']:2);
+$dragDropPointRadius = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS']:5);
 $dragDropOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']:'0.3');
 
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
@@ -105,8 +107,8 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220221" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220223" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220310" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20211104" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -134,210 +136,6 @@ $dbArr = array();
             event.preventDefault();
         });
 
-        function rgbaStrToHexStr(rgbaString) {
-            const rgbArr = rgbaString.match(/[.?\d]+/g);
-            let retStr = '';
-            if(rgbArr){
-                if(rgbArr[0].length == 1){
-                    rgbArr[0] = "0" + rgbArr[0];
-                }
-                if(rgbArr[1].length == 1){
-                    rgbArr[1] = "0" + rgbArr[1];
-                }
-                if(rgbArr[2].length == 1){
-                    rgbArr[2] = "0" + rgbArr[2];
-                }
-                retStr = "#" + rgbArr[0] + rgbArr[1] + rgbArr[2];
-            }
-            return retStr;
-        }
-
-        function addLayerToLayerOrderArr(layerId) {
-            layerOrderArr.push(layerId);
-            const sortingScrollerId = 'layerOrder-' + layerId;
-            $( ('#' + sortingScrollerId) ).spinner( "enable" );
-            setLayersOrder();
-        }
-
-        function removeLayerFromLayerOrderArr(layerId) {
-            const index = layerOrderArr.indexOf(layerId);
-            layerOrderArr.splice(index,1);
-            const sortingScrollerId = 'layerOrder-' + layerId;
-            $( ('#' + sortingScrollerId) ).spinner( "value", null );
-            $( ('#' + sortingScrollerId) ).spinner( "disable" );
-            setLayersOrder();
-        }
-
-        function setLayersOrder() {
-            const layersArrKeys = Object.keys(layersArr);
-            const layersArrLength = layersArrKeys.length;
-            for(let i in layerOrderArr){
-                if(layerOrderArr.hasOwnProperty(i)){
-                    const index = (layerOrderArr.indexOf(layerOrderArr[i])) + 1;
-                    layersArr[layerOrderArr[i]].setZIndex(index);
-                    const sortingScrollerId = 'layerOrder-' + layerOrderArr[i];
-                    $( ('#' + sortingScrollerId) ).spinner( "value", index );
-                    $( ('#' + sortingScrollerId) ).spinner( "option", "max", layerOrderArr.length );
-                }
-            }
-            layersArr['base'].setZIndex(0);
-            if(layersArr.hasOwnProperty('uncertainty')){
-                layersArr['uncertainty'].setZIndex((layersArrLength - 4));
-            }
-            if(layersArr.hasOwnProperty('select')){
-                layersArr['select'].setZIndex((layersArrLength - 3));
-            }
-            if(layersArr.hasOwnProperty('pointv')){
-                layersArr['pointv'].setZIndex((layersArrLength - 2));
-            }
-            if(layersArr.hasOwnProperty('heat')){
-                layersArr['heat'].setZIndex((layersArrLength - 1));
-            }
-            if(layersArr.hasOwnProperty('spider')){
-                layersArr['spider'].setZIndex(layersArrLength);
-            }
-            if(layersArr.hasOwnProperty('radius')){
-                layersArr['radius'].setZIndex((layersArrLength - 1));
-            }
-            if(layersArr.hasOwnProperty('vector')){
-                layersArr['vector'].setZIndex(layersArrLength);
-            }
-        }
-
-        function toggleServerLayerVisibility(id,name,file,visible){
-            if(visible === true){
-                loadServerLayer(id,file);
-                addLayerToSelList(id,name,false);
-                addLayerToLayerOrderArr(id);
-            }
-            else{
-                removeServerLayer(id);
-                removeLayerToSelList(id);
-                removeLayerFromLayerOrderArr(id);
-            }
-        }
-
-        function removeServerLayer(id){
-            map.removeLayer(layersArr[id]);
-            const imageIndex = id + 'Image';
-            if(layersArr.hasOwnProperty(imageIndex)){
-                delete layersArr[imageIndex];
-            }
-            delete layersArr[id];
-        }
-
-        function setVectorStyle(fillColor, borderColor, borderWidth, opacity){
-            return new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
-                }),
-                stroke: new ol.style.Stroke({
-                    color: ('#' + borderColor),
-                    width: borderWidth
-                }),
-                image: new ol.style.Circle({
-                    radius: 5,
-                    fill: new ol.style.Fill({
-                        color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
-                    }),
-                    stroke: new ol.style.Stroke({
-                        color: ('#' + borderColor),
-                        width: borderWidth
-                    })
-                })
-            })
-        }
-
-        function loadServerLayer(id,file){
-            const zIndex = layerOrderArr.length + 1;
-            const filenameParts = file.split('.');
-            const fileType = filenameParts.pop();
-            let serverLayerSource,serverLayerLayer,fillColor,borderColor,borderWidth,opacity;
-            if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
-                fillColor = document.getElementById(('fillColor-' + id)).value;
-                borderColor = document.getElementById(('borderColor-' + id)).value;
-                borderWidth = document.getElementById(('borderWidth-' + id)).value;
-                opacity = document.getElementById(('opacity-' + id)).value;
-                layersArr[id] = new ol.layer.Vector({
-                    zIndex: zIndex,
-                    style: setVectorStyle(fillColor, borderColor, borderWidth, opacity)
-                });
-            }
-            else{
-                layersArr[id] = new ol.layer.Image({
-                    zIndex: zIndex,
-                });
-            }
-            if(fileType === 'geojson'){
-                layersArr[id].setSource(new ol.source.Vector({
-                    url: ('../content/spatial/' + file),
-                    format: new ol.format.GeoJSON(),
-                    wrapX: true
-                }));
-            }
-            else if(fileType === 'kml'){
-                layersArr[id].setSource(new ol.source.Vector({
-                    url: ('../content/spatial/' + file),
-                    format: new ol.format.KML({
-                        extractStyles: false,
-                    }),
-                    wrapX: true
-                }));
-            }
-            else if(fileType === 'zip'){
-                fetch(('../content/spatial/' + file)).then((fileFetch) => {
-                    fileFetch.blob().then((blob) => {
-                        getArrayBuffer(blob).then((data) => {
-                            shp(data).then((geojson) => {
-                                const format = new ol.format.GeoJSON();
-                                const features = format.readFeatures(geojson, {
-                                    featureProjection: 'EPSG:3857'
-                                });
-                                layersArr[id].setSource(new ol.source.Vector({
-                                    features: features,
-                                    wrapX: true
-                                }));
-                            });
-                        });
-                    });
-                });
-            }
-            else if(fileType === 'tif'){
-                fetch(('../content/spatial/' + file)).then((fileFetch) => {
-                    fileFetch.blob().then((blob) => {
-                        blob.arrayBuffer().then((data) => {
-                            const tiff = GeoTIFF.parse(data);
-                            const image = tiff.getImage();
-                            const imageIndex = id + 'Image';
-                            layersArr[imageIndex] = image;
-                            const rawBox = image.getBoundingBox();
-                            const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
-                            const bands = image.readRasters();
-                            const canvasElement = document.createElement('canvas');
-                            const minValue = 0;
-                            const maxValue = 1200;
-                            const plot = new plotty.plot({
-                                canvas: canvasElement,
-                                data: bands[0],
-                                width: image.getWidth(),
-                                height: image.getHeight(),
-                                domain: [minValue, maxValue],
-                                colorScale: 'earth'
-                            });
-                            plot.render();
-                            layersArr[id].setSource(new ol.source.ImageStatic({
-                                url: canvasElement.toDataURL("image/png"),
-                                imageExtent: box,
-                                projection: 'EPSG:4326'
-                            }));
-                        });
-                    });
-                });
-            }
-            map.addLayer(layersArr[id]);
-            toggleLayerDisplayMessage();
-        }
-
         $(document).ready(function() {
             setLayersController();
             if(document.getElementById("taxa")){
@@ -349,61 +147,60 @@ $dbArr = array();
                         }
                     })
                     .autocomplete({
-                            source: function( request, response ) {
-                                const t = Number(document.getElementById("taxontype").value);
-                                let rankLow = '';
-                                let rankHigh = '';
-                                let rankLimit = '';
-                                let source = '';
-                                if(t === 5){
-                                    source = '../webservices/autofillvernacular.php';
-                                }
-                                else{
-                                    source = '../webservices/autofillsciname.php';
-                                }
-                                if(t === 4){
-                                    rankLow = 21;
-                                    rankHigh = 139;
-                                }
-                                else if(t === 2){
-                                    rankLimit = 140;
-                                }
-                                else if(t === 3){
-                                    rankLow = 141;
-                                }
-                                else{
-                                    rankLow = 140;
-                                }
-                                //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
-                                $.getJSON( source, {
-                                    term: extractLast( request.term ),
-                                    rlow: rankLow,
-                                    rhigh: rankHigh,
-                                    rlimit: rankLimit,
-                                    hideauth: true,
-                                    limit: 20
-                                }, response );
-                            },
-                            appendTo: "#taxa_autocomplete",
-                            search: function() {
-                                const term = extractLast( this.value );
-                                if ( term.length < 4 ) {
-                                    return false;
-                                }
-                            },
-                            focus: function() {
-                                return false;
-                            },
-                            select: function( event, ui ) {
-                                const terms = split( this.value );
-                                terms.pop();
-                                terms.push( ui.item.value );
-                                this.value = terms.join( ", " );
-                                processTaxaParamChange();
+                        source: function( request, response ) {
+                            const t = Number(document.getElementById("taxontype").value);
+                            let rankLow = '';
+                            let rankHigh = '';
+                            let rankLimit = '';
+                            let source = '';
+                            if(t === 5){
+                                source = '../webservices/autofillvernacular.php';
+                            }
+                            else{
+                                source = '../webservices/autofillsciname.php';
+                            }
+                            if(t === 4){
+                                rankLow = 21;
+                                rankHigh = 139;
+                            }
+                            else if(t === 2){
+                                rankLimit = 140;
+                            }
+                            else if(t === 3){
+                                rankLow = 141;
+                            }
+                            else{
+                                rankLow = 140;
+                            }
+                            //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
+                            $.getJSON( source, {
+                                term: extractLast( request.term ),
+                                rlow: rankLow,
+                                rhigh: rankHigh,
+                                rlimit: rankLimit,
+                                hideauth: true,
+                                limit: 20
+                            }, response );
+                        },
+                        appendTo: "#taxa_autocomplete",
+                        search: function() {
+                            const term = extractLast( this.value );
+                            if ( term.length < 4 ) {
                                 return false;
                             }
-                        },{}
-                    );
+                        },
+                        focus: function() {
+                            return false;
+                        },
+                        select: function( event, ui ) {
+                            const terms = split( this.value );
+                            terms.pop();
+                            terms.push( ui.item.value );
+                            this.value = terms.join( ", " );
+                            processTaxaParamChange();
+                            return false;
+                        }
+                    },{});
             }
 
             spatialModuleInitialising = true;
@@ -443,12 +240,12 @@ $dbArr = array();
                 transition: 'all 0.3s',
                 scrolllock: true
             });
-            $('#loadingOverlay').popup({
+            $('#layerqueryselector').popup({
                 transition: 'all 0.3s',
                 scrolllock: true,
-                opacity:0.6,
-                color:'white',
-                blur: false
+                closetransitionend: function(event, ui) {
+                    clearLayerQuerySelector();
+                }
             });
 
             <?php
@@ -522,10 +319,12 @@ $dbArr = array();
     const shapesFillColor = '<?php echo $shapesFillColor; ?>';
     const shapesBorderColor = '<?php echo $shapesBorderColor; ?>';
     const shapesBorderWidth = <?php echo $shapesBorderWidth; ?>;
+    const shapesPointRadius = <?php echo $shapesPointRadius; ?>;
     const shapesOpacity = '<?php echo $shapesOpacity; ?>';
     const dragDropFillColor = '<?php echo $dragDropFillColor; ?>';
     const dragDropBorderColor = '<?php echo $dragDropBorderColor; ?>';
     const dragDropBorderWidth = <?php echo $dragDropBorderWidth; ?>;
+    const dragDropPointRadius = <?php echo $dragDropPointRadius; ?>;
     const dragDropOpacity = '<?php echo $dragDropOpacity; ?>';
 
     const popupcontainer = document.getElementById('popup');
@@ -570,7 +369,7 @@ $dbArr = array();
     const selectlayer = new ol.layer.Vector({
         zIndex: 8,
         source: selectsource,
-        style: setVectorStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesOpacity)
+        style: getVectorLayerStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesPointRadius, shapesOpacity)
     });
 
     let uncertaintycirclesource = new ol.source.Vector({
@@ -634,17 +433,17 @@ $dbArr = array();
     const dragdroplayer1 = new ol.layer.Vector({
         zIndex: 1,
         source: blankdragdropsource,
-        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
+        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
     });
     const dragdroplayer2 = new ol.layer.Vector({
         zIndex: 2,
         source: blankdragdropsource,
-        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
+        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
     });
     const dragdroplayer3 = new ol.layer.Vector({
         zIndex: 3,
         source: blankdragdropsource,
-        style: setVectorStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropOpacity)
+        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
     });
     const dragdroplayer4 = new ol.layer.Image({
         zIndex: 4,
@@ -676,6 +475,30 @@ $dbArr = array();
     layersArr['pointv'] = pointvectorlayer;
     layersArr['heat'] = heatmaplayer;
     layersArr['spider'] = spiderLayer;
+
+    layersArr['dragdrop1'].on('postrender', function(evt) {
+        hideWorking();
+    });
+
+    layersArr['dragdrop2'].on('postrender', function(evt) {
+        hideWorking();
+    });
+
+    layersArr['dragdrop3'].on('postrender', function(evt) {
+        hideWorking();
+    });
+
+    layersArr['select'].on('postrender', function(evt) {
+        hideWorking();
+    });
+
+    layersArr['pointv'].on('postrender', function(evt) {
+        checkLoading();
+    });
+
+    layersArr['heat'].on('postrender', function(evt) {
+        checkLoading();
+    });
 
     const selectInteraction = new ol.interaction.Select({
         layers: [layersArr['select']],
@@ -800,6 +623,7 @@ $dbArr = array();
                     infoArr['fillColor'] = dragDropFillColor;
                     infoArr['borderColor'] = dragDropBorderColor;
                     infoArr['borderWidth'] = dragDropBorderWidth;
+                    infoArr['pointRadius'] = dragDropPointRadius;
                     infoArr['opacity'] = dragDropOpacity;
                     infoArr['removable'] = true;
                     infoArr['sortable'] = true;
@@ -833,6 +657,7 @@ $dbArr = array();
                             infoArr['fillColor'] = dragDropFillColor;
                             infoArr['borderColor'] = dragDropBorderColor;
                             infoArr['borderWidth'] = dragDropBorderWidth;
+                            infoArr['pointRadius'] = dragDropPointRadius;
                             infoArr['opacity'] = dragDropOpacity;
                             infoArr['removable'] = true;
                             infoArr['sortable'] = true;
@@ -849,6 +674,7 @@ $dbArr = array();
                             layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
                             processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                             map.getView().fit(layersArr[sourceIndex].getExtent());
+                            hideWorking();
                             toggleLayerDisplayMessage();
                         });
                     });
@@ -857,6 +683,7 @@ $dbArr = array();
             else if(fileType === 'tif'){
                 if(setRasterDragDropTarget()){
                     event.file.arrayBuffer().then((data) => {
+                        const extent = ol.extent.createEmpty();
                         const infoArr = [];
                         infoArr['id'] = dragDropTarget;
                         infoArr['type'] = 'userLayer';
@@ -896,11 +723,22 @@ $dbArr = array();
                         map.addLayer(layersArr[dragDropTarget]);
                         processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                         toggleLayerDisplayMessage();
+                        const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
+                        const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
+                        const bottomLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[1]]));
+                        const bottomRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[1]]));
+                        ol.extent.extend(extent, topRight.getExtent());
+                        ol.extent.extend(extent, topLeft.getExtent());
+                        ol.extent.extend(extent, bottomLeft.getExtent());
+                        ol.extent.extend(extent, bottomRight.getExtent());
+                        map.getView().fit(extent, map.getSize());
+                        hideWorking();
                     });
                 }
             }
         }
         else{
+            hideWorking();
             alert('The drag and drop file loading only supports GeoJSON, kml, tif, and shapefile zip archives.');
         }
     });
@@ -1102,12 +940,13 @@ $dbArr = array();
                     infoArr['fillColor'] = shapesFillColor;
                     infoArr['borderColor'] = shapesBorderColor;
                     infoArr['borderWidth'] = shapesBorderWidth;
+                    infoArr['pointRadius'] = shapesPointRadius;
                     infoArr['opacity'] = shapesOpacity;
                     infoArr['removable'] = true;
                     infoArr['sortable'] = false;
                     infoArr['symbology'] = true;
                     infoArr['query'] = true;
-                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
+                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),false);
                     shapeActive = true;
                 }
             }
@@ -1178,6 +1017,10 @@ $dbArr = array();
             layersArr['heat'].setVisible(true);
         }
     }
+
+    map.getViewport().addEventListener('drop', function(event) {
+        showWorking();
+    });
 
     map.on('singleclick', function(evt) {
         let infoHTML;
@@ -1283,14 +1126,9 @@ $dbArr = array();
                 if(layersArr[activeLayer] instanceof ol.layer.Vector){
                     map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
                         if(layer === layersArr[activeLayer]){
-                            try{
+                            if(!selectsource.hasFeature(feature)){
                                 const featureClone = feature.clone();
                                 selectsource.addFeature(featureClone);
-                                document.getElementById("selectlayerselect").value = 'select';
-                                setActiveLayer();
-                            }
-                            catch(e){
-                                alert('Feature has already been added to Shapes layer.');
                             }
                         }
                     });
@@ -1341,6 +1179,8 @@ $dbArr = array();
 
 <?php include_once(__DIR__ . '/includes/mapsettings.php'); ?>
 
+<?php include_once(__DIR__ . '/includes/layerqueryselector.php'); ?>
+
 <?php include_once(__DIR__ . '/includes/infowindow.php'); ?>
 
 <?php include_once(__DIR__ . '/includes/layercontroller.php'); ?>
@@ -1378,7 +1218,7 @@ $dbArr = array();
     </form>
 </div>
 
-<div id="loadingOverlay" data-role="popup" style="width:100%;position:relative;">
+<div class="loadingModal">
     <div id="loader"></div>
 </div>
 <input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />
