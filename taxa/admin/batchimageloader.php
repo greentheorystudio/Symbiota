@@ -117,11 +117,9 @@ $taxaUtilities = new TaxonomyUtilities();
         let taxaDataArr = {};
 
         window.addEventListener("dragover",function(e){
-            e = e || event;
             e.preventDefault();
         },false);
         window.addEventListener("drop",function(e){
-            e = e || event;
             e.preventDefault();
         },false);
 
@@ -262,6 +260,9 @@ $taxaUtilities = new TaxonomyUtilities();
                             });
                         });
                     }
+                    if(document.getElementById('uploadList').childNodes.length === 0){
+                        resetUploader();
+                    }
                 }
             }).on('fileuploadsubmit', function (e, data) {
                 if(data.context.find(':input[name="tid"]')[0].value){
@@ -272,6 +273,13 @@ $taxaUtilities = new TaxonomyUtilities();
                 }
             });
         });
+
+        function resetUploader(){
+            fileData = [];
+            taxaNameArr = [];
+            taxaDataArr = {};
+            document.getElementById('csvDataMessage').style.display = 'none';
+        }
 
         function parseScinameFromFilename(fileName){
             let adjustedFileName = fileName.replace(/_/g, ' ');
@@ -454,20 +462,21 @@ $taxaUtilities = new TaxonomyUtilities();
         function csvToArray(str) {
             const headers = str.slice(0, str.indexOf("\n")).split(',');
             const rows = str.slice(str.indexOf("\n") + 1).split("\n");
-            const arr = rows.map(function (row) {
-                const values = row.split(',');
-                const el = headers.reduce(function (object, header, index) {
-                    const fieldName = header.trim();
-                    const fieldValue = values[index].replace('\r', '');
-                    if(fieldName === 'scientificname' && fieldValue && !taxaNameArr.includes(fieldValue) && !taxaDataArr.hasOwnProperty(fieldValue)){
-                        taxaNameArr.push(fieldValue);
-                    }
-                    object[fieldName] = fieldValue;
-                    return object;
-                }, {});
-                return el;
+            return rows.map(function (row) {
+                if (row) {
+                    document.getElementById('csvDataMessage').style.display = 'inline-block';
+                    const values = row.split(',');
+                    return headers.reduce(function (object, header, index) {
+                        const fieldName = header.trim();
+                        const fieldValue = values[index].replace('\r', '');
+                        if (fieldName === 'scientificname' && fieldValue && !taxaNameArr.includes(fieldValue) && !taxaDataArr.hasOwnProperty(fieldValue)) {
+                            taxaNameArr.push(fieldValue);
+                        }
+                        object[fieldName] = fieldValue;
+                        return object;
+                    }, {});
+                }
             });
-            return arr;
         }
 
         function setTaxaDataObjFromTaxaArr(){
@@ -526,10 +535,13 @@ if($isEditor){
                         <i style="height:15px;width:15px;" class="fas fa-upload"></i>
                         <span>Start upload</span>
                     </button>
-                    <button type="reset" class="btn btn-warning cancel">
+                    <button type="reset" class="btn btn-warning cancel" onclick="resetUploader();">
                         <i style="height:15px;width:15px;" class="fas fa-ban"></i>
                         <span>Cancel upload</span>
                     </button>
+                    <div id="csvDataMessage" style="display:none;">
+                        <strong style="color:red;">CSV Data Uploaded</strong>
+                    </div>
                     <span class="fileupload-process"></span>
                 </div>
                 <div class="col-lg-5 fileupload-progress fade" style="margin-bottom:0;">
