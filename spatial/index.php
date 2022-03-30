@@ -223,7 +223,8 @@ $dbArr = array();
             });
             $('#addLayers').popup({
                 transition: 'all 0.3s',
-                scrolllock: true
+                scrolllock: true,
+                blur: false
             });
             $('#infopopup').popup({
                 transition: 'all 0.3s'
