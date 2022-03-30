@@ -38,7 +38,7 @@ $coreConfArr = $fullConfArr['core'];
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220310" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220330" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('#tabs').tabs({

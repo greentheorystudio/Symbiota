@@ -348,9 +348,14 @@ function buildLayerControllerLayerElement(lArr,active){
         const sortingScrollerDisplayVal = (active ? 'flex' : 'none');
         sortingScrollerDiv.setAttribute("style","display:" + sortingScrollerDisplayVal + ";align-items:center;margin:0 5px;");
         const sortingScrollerId = 'layerOrder-' + lArr['id'];
+        const sortingScrollerLabel = document.createElement('label');
+        sortingScrollerLabel.setAttribute("for",sortingScrollerId);
+        sortingScrollerLabel.setAttribute("style","margin-top:8px;margin-right:5px;font-weight:bold;");
+        sortingScrollerLabel.innerHTML = 'Order:';
         const sortingScroller = document.createElement('input');
         sortingScroller.setAttribute("id",sortingScrollerId);
         sortingScroller.setAttribute("style","width:25px;");
+        sortingScrollerDiv.appendChild(sortingScrollerLabel);
         sortingScrollerDiv.appendChild(sortingScroller);
         layerMainBottomDiv.appendChild(sortingScrollerDiv);
     }
