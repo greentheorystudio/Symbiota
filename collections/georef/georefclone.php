@@ -42,6 +42,7 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220330" type="text/javascript"></script>
 		<script type="text/javascript">
             $(document).ready(function() {
@@ -115,7 +116,7 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
 				<legend><b>Search Form</b></legend>
 				<form name="cloneform" action="georefclone.php" method="post" onsubmit="return verifyCloneForm(this)">
 					<div>
-						Locality: 
+						Locality:
 						<input name="locality" type="text" value="<?php echo $locality; ?>" style="width:600px" />
 					</div>
 					<div>
@@ -123,14 +124,14 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
 						<input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType === 2?'checked':''); ?> /> Contains
 						<input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType === 3?'checked':''); ?> /> Deep Search
 					</div>
-					<?php 
+					<?php
 					if($collid){
 						?>
 						<div>
 							<input name="colltype" type="radio" value="0" <?php echo ($collType?'':'checked'); ?> /> Search all collections
 							<input name="colltype" type="radio" value="1" <?php echo ($collType?'checked':''); ?> /> Target collection only
 						</div>
-						<?php 
+						<?php
 					}
 					?>
 					<div style="float:left;margin:5px 20px;">
@@ -140,9 +141,9 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="submitaction" type="submit" value="Search" />
 					</div>
-				</form> 
+				</form>
 			</fieldset>
-			<?php 
+			<?php
 			if($clones){
 				?>
 				<div style="margin:3px;font-weight:bold;">
@@ -179,12 +180,12 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
                         }
                     });
                 </script>
-				<?php 
+				<?php
 			}
 			else{
 				?>
 				<div style="margin:30px"><h2>Search failed to return occurrence matches</h2></div>
-				<?php 
+				<?php
 			}
 			?>
 		</div>
