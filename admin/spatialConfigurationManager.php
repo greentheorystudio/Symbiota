@@ -66,11 +66,11 @@ include(__DIR__ . '/../header.php');
 <div id="innertext">
     <div id="tabs" style="width:95%;">
         <ul>
-            <li><a href='#spatialconfig'>Spatial Configurations</a></li>
-            <li><a href="#layersconfig">Layers</a></li>
+            <li><a href='#mapwindow'>Map Window</a></li>
+            <li><a href="#symbology">Symbology</a></li>
         </ul>
 
-        <div id="spatialconfig">
+        <div id="mapwindow">
             <div style="width:95%;margin: 20px auto;">
                 Adjust the Base Layer and zoom level, and move the map below to how you would like maps to open by default within the portal.
                 Then click the Save Spatial Defaults button to save the settings.
@@ -82,7 +82,7 @@ include(__DIR__ . '/../header.php');
             <div style="clear:both;width:100%;height:40px;"></div>
         </div>
 
-        <div id="layersconfig">
+        <div id="symbology">
 
         </div>
     </div>
