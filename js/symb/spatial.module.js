@@ -1124,10 +1124,10 @@ function clearSelections(){
 function clearTaxaSymbology(){
     for(let i in taxaSymbology){
         if(taxaSymbology.hasOwnProperty(i)){
-            taxaSymbology[i]['color'] = initialPointColor;
+            taxaSymbology[i]['color'] = pointLayerFillColor;
             const keyName = 'taxaColor' + i;
             if(document.getElementById(keyName)){
-                document.getElementById(keyName).color.fromString(initialPointColor);
+                document.getElementById(keyName).color.fromString(pointLayerFillColor);
             }
         }
     }
@@ -2734,7 +2734,7 @@ function primeSymbologyData(features){
             if(!collSymbology[collName]){
                 collSymbology[collName] = [];
                 collSymbology[collName]['collid'] = collid;
-                collSymbology[collName]['color'] = initialPointColor;
+                collSymbology[collName]['color'] = pointLayerFillColor;
             }
             if(!taxaSymbology[namestring]){
                 taxaCnt++;
@@ -2742,7 +2742,7 @@ function primeSymbologyData(features){
                 taxaSymbology[namestring]['sciname'] = sciname;
                 taxaSymbology[namestring]['tidinterpreted'] = tidinterpreted;
                 taxaSymbology[namestring]['family'] = family;
-                taxaSymbology[namestring]['color'] = initialPointColor;
+                taxaSymbology[namestring]['color'] = pointLayerFillColor;
                 taxaSymbology[namestring]['count'] = 1;
             }
             else{
@@ -3489,10 +3489,10 @@ function removeUserLayer(layerID){
 function resetMainSymbology(){
     for(let i in collSymbology){
         if(collSymbology.hasOwnProperty(i)){
-            collSymbology[i]['color'] = initialPointColor;
+            collSymbology[i]['color'] = pointLayerFillColor;
             const keyName = 'keyColor' + i;
             if(document.getElementById(keyName)){
-                document.getElementById(keyName).color.fromString(initialPointColor);
+                document.getElementById(keyName).color.fromString(pointLayerFillColor);
             }
         }
     }
@@ -3628,15 +3628,27 @@ function setClusterSymbol(feature) {
                 hexcolor = '#'+taxaSymbology[cKey]['color'];
             }
             const colorArr = hexToRgb(hexcolor);
-            if(size < 10) radius = 10;
-            else if(size < 100) radius = 15;
-            else if(size < 1000) radius = 20;
-            else if(size < 10000) radius = 25;
-            else if(size < 100000) radius = 30;
-            else radius = 35;
+            if(size < 10) {
+                radius = (pointLayerPointRadius + 5);
+            }
+            else if(size < 100) {
+                radius = (pointLayerPointRadius + 10);
+            }
+            else if(size < 1000) {
+                radius = (pointLayerPointRadius + 15);
+            }
+            else if(size < 10000) {
+                radius = (pointLayerPointRadius + 20);
+            }
+            else if(size < 100000) {
+                radius = (pointLayerPointRadius + 25);
+            }
+            else {
+                radius = (pointLayerPointRadius + 30);
+            }
 
             if(selected) {
-                stroke = new ol.style.Stroke({color: '#10D8E6', width: 2})
+                stroke = new ol.style.Stroke({color: ('#' + pointLayerSelectionsBorderColor), width: pointLayerSelectionsBorderWidth})
             }
 
             style = new ol.style.Style({
@@ -4015,10 +4027,10 @@ function setSymbol(feature){
 
     if(showPoint){
         if(selected) {
-            stroke = new ol.style.Stroke({color: '#10D8E6', width: 2});
+            stroke = new ol.style.Stroke({color: ('#' + pointLayerSelectionsBorderColor), width: pointLayerSelectionsBorderWidth});
         }
         else {
-            stroke = new ol.style.Stroke({color: 'black', width: 1});
+            stroke = new ol.style.Stroke({color: ('#' + pointLayerBorderColor), width: pointLayerBorderWidth});
         }
         fill = new ol.style.Fill({color: color});
     }
@@ -4033,14 +4045,14 @@ function setSymbol(feature){
                 fill: fill,
                 stroke: stroke,
                 points: 3,
-                radius: 7
+                radius: pointLayerPointRadius
             })
         });
     }
     else{
         style = new ol.style.Style({
             image: new ol.style.Circle({
-                radius: 7,
+                radius: pointLayerPointRadius,
                 fill: fill,
                 stroke: stroke
             })

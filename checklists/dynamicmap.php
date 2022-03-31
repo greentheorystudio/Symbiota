@@ -34,8 +34,15 @@ $dynClManager = new DynamicChecklistManager();
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220330" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220331" type="text/javascript"></script>
     <script type="text/javascript">
+        const shapesBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH']; ?>;
+        const shapesPointRadius = <?php echo $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']; ?>;
+        const shapesSelectionsBorderColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR']; ?>';
+        const shapesSelectionsFillColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR']; ?>';
+        const shapesSelectionsBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH']; ?>;
+        const shapesSelectionsOpacity = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY']; ?>';
+
         $(document).ready(function() {
             $( "#taxa" ).autocomplete({
                 source: function( request, response ) {
@@ -129,20 +136,20 @@ include_once($GLOBALS['SERVER_ROOT'].'/footer.php');
         },
         style: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: 'rgba(255,255,255,0.5)'
+                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsFillColor),shapesSelectionsOpacity)'
             }),
             stroke: new ol.style.Stroke({
-                color: 'rgba(0,153,255,1)',
-                width: 5
+                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1),
+                width: shapesSelectionsBorderWidth
             }),
             image: new ol.style.Circle({
-                radius: 7,
+                radius: shapesPointRadius,
                 stroke: new ol.style.Stroke({
-                    color: 'rgba(0,153,255,1)',
-                    width: 2
+                    color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1),
+                    width: (shapesBorderWidth + 2)
                 }),
                 fill: new ol.style.Fill({
-                    color: 'rgba(0,153,255,1)'
+                    color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1)
                 })
             })
         }),
