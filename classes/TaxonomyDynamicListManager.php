@@ -11,6 +11,7 @@ class TaxonomyDynamicListManager{
     private $index = 0;
     private $taxaCnt = 0;
     private $tidArr = array();
+    private $targetTidArr = array();
     private $sciname = '';
 
     public function __construct(){
@@ -56,37 +57,40 @@ class TaxonomyDynamicListManager{
         }
         $rs->free();
         if($tid){
-            $this->tid = $tid;
             $this->sciname = $sciname;
         }
         return $tid;
     }
 
+    public function setTid($tid): void
+    {
+        if(is_numeric($tid)) {
+            $this->tid = $tid;
+            $this->targetTidArr[] = $tid;
+            $tidSql = 'SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$this->tid;
+            //echo "<div>TID sql: ".$tidSql."</div>";
+            $rs = $this->conn->query($tidSql);
+            while($r = $rs->fetch_object()){
+                $this->targetTidArr[] = $r->tid;
+            }
+            $rs->free();
+            if(!$this->sciname){
+                $this->setSciName();
+            }
+            $this->setTaxaCnt();
+        }
+    }
+
     public function setTaxaCnt(): void
     {
         $taxCnt = 0;
-        $sql = 'SELECT COUNT(t1.SciName) AS cnt '.
-            'FROM taxaenumtree AS te1 LEFT JOIN taxa AS t1 ON te1.tid = t1.TID '.
-            'LEFT JOIN taxstatus AS ts ON t1.TID = ts.tid '.
-            'LEFT JOIN taxaenumtree AS te2 ON t1.TID = te2.tid '.
-            'LEFT JOIN taxa AS t2 ON te2.parenttid = t2.TID '.
-            'LEFT JOIN taxaenumtree AS te3 ON t1.TID = te3.tid '.
-            'LEFT JOIN taxa AS t3 ON te3.parenttid = t3.TID '.
-            'LEFT JOIN taxaenumtree AS te4 ON t1.TID = te4.tid '.
-            'LEFT JOIN taxa AS t4 ON te4.parenttid = t4.TID '.
-            'LEFT JOIN taxaenumtree AS te5 ON t1.TID = te5.tid '.
-            'LEFT JOIN taxa AS t5 ON te5.parenttid = t5.TID '.
-            'LEFT JOIN taxaenumtree AS te6 ON t1.TID = te6.tid '.
-            'LEFT JOIN taxa AS t6 ON te6.parenttid = t6.TID '.
-            'WHERE ((te1.parenttid = '.$this->tid.' OR t1.TID = '.$this->tid.') AND t1.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
-            'AND (t2.RankId = 10 OR ISNULL(t2.RankId)) '.
-            'AND (t3.RankId = 30 OR ISNULL(t3.RankId)) '.
-            'AND (t4.RankId = 60 OR ISNULL(t4.RankId)) '.
-            'AND (t5.RankId = 100 OR ISNULL(t5.RankId)) '.
-            'AND (t6.RankId = 140 OR ISNULL(t6.RankId)) '.
-            'AND (t1.SciName LIKE "% %" OR t1.TID NOT IN(SELECT parenttid FROM taxstatus)) ';
+        $sql = 'SELECT COUNT(DISTINCT t.SciName) AS cnt '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
+            'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND t.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
+            'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT parenttid FROM taxstatus)) ';
         if($this->descLimit){
-            $sql .= 'AND t1.TID IN(SELECT tid FROM taxadescrblock) ';
+            $sql .= 'AND t.TID IN(SELECT tid FROM taxadescrblock) ';
         }
         //echo "<div>Count sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
@@ -98,72 +102,94 @@ class TaxonomyDynamicListManager{
 
     public function getTableArr(): array
     {
+        $parentTaxonArr = array();
         $returnArr = array();
-        $sql = 'SELECT DISTINCT t1.TID, t1.SciName, t2.TID AS kingdomTid, t2.SciName AS kingdomName, t3.TID AS phylumTid, '.
-            't3.SciName AS phylumName, t4.TID AS classTid, t4.SciName AS className, t5.TID AS orderTid, t5.SciName AS orderName, '.
-            't6.TID AS familyTid, t6.SciName AS familyName '.
-            'FROM taxaenumtree AS te1 LEFT JOIN taxa AS t1 ON te1.tid = t1.TID '.
-            'LEFT JOIN taxstatus AS ts ON t1.TID = ts.tid '.
-            'LEFT JOIN taxaenumtree AS te2 ON t1.TID = te2.tid '.
-            'LEFT JOIN taxa AS t2 ON te2.parenttid = t2.TID '.
-            'LEFT JOIN taxaenumtree AS te3 ON t1.TID = te3.tid '.
-            'LEFT JOIN taxa AS t3 ON te3.parenttid = t3.TID '.
-            'LEFT JOIN taxaenumtree AS te4 ON t1.TID = te4.tid '.
-            'LEFT JOIN taxa AS t4 ON te4.parenttid = t4.TID '.
-            'LEFT JOIN taxaenumtree AS te5 ON t1.TID = te5.tid '.
-            'LEFT JOIN taxa AS t5 ON te5.parenttid = t5.TID '.
-            'LEFT JOIN taxaenumtree AS te6 ON t1.TID = te6.tid '.
-            'LEFT JOIN taxa AS t6 ON te6.parenttid = t6.TID '.
-            'WHERE ((te1.parenttid = '.$this->tid.' OR t1.TID = '.$this->tid.') AND t1.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
-            'AND (t2.RankId = 10 OR ISNULL(t2.RankId)) '.
-            'AND (t3.RankId = 30 OR ISNULL(t3.RankId)) '.
-            'AND (t4.RankId = 60 OR ISNULL(t4.RankId)) '.
-            'AND (t5.RankId = 100 OR ISNULL(t5.RankId)) '.
-            'AND (t6.RankId = 140 OR ISNULL(t6.RankId)) '.
-            'AND (t1.SciName LIKE "% %" OR t1.TID NOT IN(SELECT parenttid FROM taxstatus)) ';
+        $parentTaxonSql = 'SELECT DISTINCT te.tid, t.TID AS parentTid, t.RankId, t.SciName '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
+            'LEFT JOIN taxstatus AS ts ON te.tid = ts.tid '.
+            'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND ts.tid = ts.tidaccepted AND t.RankId IN(10,30,60,100,140)) ';
+        //echo "<div>Parent sql: ".$parentTaxonSql."</div>";
+        $rs = $this->conn->query($parentTaxonSql);
+        while($r = $rs->fetch_object()){
+            $parentTaxonArr[$r->tid][(int)$r->RankId]['id'] = $r->parentTid;
+            $parentTaxonArr[$r->tid][(int)$r->RankId]['sciname'] = $r->SciName;
+        }
+        $rs->free();
+
+        $sql = 'SELECT DISTINCT t.TID, t.SciName '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
+            'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND t.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
+            'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT parenttid FROM taxstatus)) ';
         if($this->descLimit){
-            $sql .= 'AND t1.TID IN(SELECT tid FROM taxadescrblock) ';
+            $sql .= 'AND t.TID IN(SELECT tid FROM taxadescrblock) ';
         }
-        if($this->sortField === 'kingdom'){
-            $sql .= 'ORDER BY kingdomName, phylumName, className, orderName, familyName, SciName ';
-        }
-        elseif($this->sortField === 'phylum'){
-            $sql .= 'ORDER BY phylumName, className, orderName, familyName, SciName ';
-        }
-        elseif($this->sortField === 'class'){
-            $sql .= 'ORDER BY className, orderName, familyName, SciName ';
-        }
-        elseif($this->sortField === 'order'){
-            $sql .= 'ORDER BY orderName, familyName, SciName ';
-        }
-        elseif($this->sortField === 'family'){
-            $sql .= 'ORDER BY familyName, SciName ';
-        }
-        elseif($this->sortField === 'sciname'){
-            $sql .= 'ORDER BY SciName ';
-        }
-        $sql .= 'LIMIT '.($this->index > 0?$this->index * 100:0).',100';
         //echo "<div>Table sql: ".$sql."</div>";
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $tid = $r->TID;
-            $indexId = $r->kingdomTid . $r->phylumTid . $r->classTid . $r->orderTid . $r->familyTid . $r->TID;
-            $this->tidArr[] = $tid;
-            $returnArr[$indexId]['tid'] = $tid;
-            $returnArr[$indexId]['SciName'] = $r->SciName;
-            $returnArr[$indexId]['kingdomTid'] = $r->kingdomTid;
-            $returnArr[$indexId]['kingdomName'] = $r->kingdomName;
-            $returnArr[$indexId]['phylumTid'] = $r->phylumTid;
-            $returnArr[$indexId]['phylumName'] = $r->phylumName;
-            $returnArr[$indexId]['classTid'] = $r->classTid;
-            $returnArr[$indexId]['className'] = $r->className;
-            $returnArr[$indexId]['orderTid'] = $r->orderTid;
-            $returnArr[$indexId]['orderName'] = $r->orderName;
-            $returnArr[$indexId]['familyTid'] = $r->familyTid;
-            $returnArr[$indexId]['familyName'] = $r->familyName;
+            if($tid){
+                $recordArr = array();
+                $parentArr = (array_key_exists($tid,$parentTaxonArr)?$parentTaxonArr[$tid]:array());
+                $this->tidArr[] = $tid;
+                $recordArr['tid'] = $tid;
+                $recordArr['SciName'] = $r->SciName;
+                $recordArr['kingdomTid'] = (array_key_exists(10,$parentArr)?$parentArr[10]['id']:0);
+                $recordArr['kingdomName'] = (array_key_exists(10,$parentArr)?$parentArr[10]['sciname']:'');
+                $recordArr['phylumTid'] = (array_key_exists(30,$parentArr)?$parentArr[30]['id']:0);
+                $recordArr['phylumName'] = (array_key_exists(30,$parentArr)?$parentArr[30]['sciname']:'');
+                $recordArr['classTid'] = (array_key_exists(60,$parentArr)?$parentArr[60]['id']:0);
+                $recordArr['className'] = (array_key_exists(60,$parentArr)?$parentArr[60]['sciname']:'');
+                $recordArr['orderTid'] = (array_key_exists(100,$parentArr)?$parentArr[100]['id']:0);
+                $recordArr['orderName'] = (array_key_exists(100,$parentArr)?$parentArr[100]['sciname']:'');
+                $recordArr['familyTid'] = (array_key_exists(140,$parentArr)?$parentArr[140]['id']:0);
+                $recordArr['familyName'] = (array_key_exists(140,$parentArr)?$parentArr[140]['sciname']:'');
+                $returnArr[] = $recordArr;
+            }
         }
         $rs->free();
-        return $returnArr;
+
+        if($this->sortField === 'kingdom'){
+            $kingdomName  = array_column($returnArr, 'kingdomName');
+            $phylumName = array_column($returnArr, 'phylumName');
+            $className = array_column($returnArr, 'className');
+            $orderName = array_column($returnArr, 'orderName');
+            $familyName = array_column($returnArr, 'familyName');
+            $SciName = array_column($returnArr, 'SciName');
+            array_multisort($kingdomName, SORT_ASC, $phylumName, SORT_ASC, $className, SORT_ASC, $orderName, SORT_ASC, $familyName, SORT_ASC, $SciName, SORT_ASC, $returnArr);
+        }
+        elseif($this->sortField === 'phylum'){
+            $phylumName = array_column($returnArr, 'phylumName');
+            $className = array_column($returnArr, 'className');
+            $orderName = array_column($returnArr, 'orderName');
+            $familyName = array_column($returnArr, 'familyName');
+            $SciName = array_column($returnArr, 'SciName');
+            array_multisort($phylumName, SORT_ASC, $className, SORT_ASC, $orderName, SORT_ASC, $familyName, SORT_ASC, $SciName, SORT_ASC, $returnArr);
+        }
+        elseif($this->sortField === 'class'){
+            $className = array_column($returnArr, 'className');
+            $orderName = array_column($returnArr, 'orderName');
+            $familyName = array_column($returnArr, 'familyName');
+            $SciName = array_column($returnArr, 'SciName');
+            array_multisort($className, SORT_ASC, $orderName, SORT_ASC, $familyName, SORT_ASC, $SciName, SORT_ASC, $returnArr);
+        }
+        elseif($this->sortField === 'order'){
+            $orderName = array_column($returnArr, 'orderName');
+            $familyName = array_column($returnArr, 'familyName');
+            $SciName = array_column($returnArr, 'SciName');
+            array_multisort($orderName, SORT_ASC, $familyName, SORT_ASC, $SciName, SORT_ASC, $returnArr);
+        }
+        elseif($this->sortField === 'family'){
+            $familyName = array_column($returnArr, 'familyName');
+            $SciName = array_column($returnArr, 'SciName');
+            array_multisort($familyName, SORT_ASC, $SciName, SORT_ASC, $returnArr);
+        }
+        elseif($this->sortField === 'sciname'){
+            $SciName = array_column($returnArr, 'SciName');
+            array_multisort($SciName, SORT_ASC, $returnArr);
+        }
+
+        return array_slice($returnArr, ($this->index > 0?$this->index * 100:0), 100);
     }
 
     public function getVernacularArr(): array
@@ -207,15 +233,6 @@ class TaxonomyDynamicListManager{
             $this->sciname = $r->SciName;
         }
         $rs->free();
-    }
-
-    public function setTid($id): void
-    {
-        if(is_numeric($id)) {
-            $this->tid = $id;
-            $this->setSciName();
-            $this->setTaxaCnt();
-        }
     }
 
     public function setDescLimit($value): void

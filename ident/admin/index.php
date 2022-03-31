@@ -30,7 +30,7 @@ $headingAdminUrl = 'headingadmin.php';
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/shared.js?ver=20211227"></script>
+	<script type="text/javascript" src="../../js/symb/shared.js?ver=20220310"></script>
 	<script type="text/javascript">
 		function validateNewCharForm(f){
 			if(f.charname.value === ""){
