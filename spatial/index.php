@@ -957,6 +957,7 @@ $dbArr = array();
     });
 
     function loadPointWFSLayer(index){
+        pointvectorsource.clear();
         let processed = 0;
         do{
             lazyLoadPoints(index,function(res){
