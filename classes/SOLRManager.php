@@ -308,11 +308,11 @@ class SOLRManager extends OccurrenceManager{
                 $returnArr[$collName][$occId]['collectioncode'] = $this->xmlentities($k['CollectionCode']);
                 $returnArr[$collName][$occId]['catalognumber'] = $this->xmlentities($k['catalogNumber']);
                 $returnArr[$collName][$occId]['othercatalognumbers'] = $this->xmlentities($k['otherCatalogNumbers']);
-                $returnArr[$collName]['color'] = $GLOBALS['SPATIAL_INITIAL_POINT_COLOR'];
+                $returnArr[$collName]['color'] = $GLOBALS['SPATIAL_POINT_FILL_COLOR'];
             }
         }
         if(isset($returnArr['undefined'])){
-            $returnArr['undefined']['color'] = $GLOBALS['SPATIAL_INITIAL_POINT_COLOR'];
+            $returnArr['undefined']['color'] = $GLOBALS['SPATIAL_POINT_FILL_COLOR'];
         }
 
         return $returnArr;
