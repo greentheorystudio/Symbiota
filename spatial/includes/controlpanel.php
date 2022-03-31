@@ -60,29 +60,29 @@
             <?php
             if(!$inputWindowMode){
                 ?>
-                <div id="settingsLink" style="margin-left:22px;float:left;">
+                <div id="settingsLink">
                     <span class="maptext"><a class="mapsettings_open" href="#mapsettings"><b>Settings</b></a></span>
                 </div>
                 <?php
             }
             ?>
-            <div id="layerControllerLink" style="margin-left:22px;float:left;">
+            <div id="layerControllerLink">
                 <span class="maptext"><a class="addLayers_open" href="#addLayers"><b>Layers</b></a></span>
             </div>
             <?php
             if($inputWindowMode){
                 ?>
-                <div id="infopopupLink" style="margin-left:22px;float:left;">
+                <div id="infopopupLink">
                     <span class="maptext"><a class="infopopup_open" href="#infopopup"><b>Info</b></a></span>
                 </div>
-                <div style="margin-left:22px;float:left;">
+                <div>
                     <button data-role="none" id="inputSubmitButton" type="button" onclick='processInputSubmit();' disabled>Submit <?php echo $inputWindowSubmitText; ?></button>
                 </div>
                 <?php
             }
             ?>
-            <div id="deleteSelections" style="margin-left:22px;float:left;">
-                <button data-role="none" type="button" onclick='deleteSelections();' >Delete Shapes</button>
+            <div id="mapPngDownloadDiv">
+                <button data-role="none" type="button" onclick='processMapPNGDownload();' >Download Map PNG</button>
             </div>
         </div>
         <div style="clear:both;"></div>

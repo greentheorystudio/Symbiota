@@ -28,7 +28,7 @@ if($stArrJson){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search Results</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/bootstrap.css?ver=20220202" type="text/css" rel="stylesheet" />
+    <link href="../css/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
     <style type="text/css">
         .ui-tabs .ui-tabs-nav li { width:32%; }
@@ -48,7 +48,7 @@ if($stArrJson){
     <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/symb/collections.search.js?ver=20210621"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20211104"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20220330"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};

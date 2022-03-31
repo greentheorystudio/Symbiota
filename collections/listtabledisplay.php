@@ -45,13 +45,13 @@ if($stArrJson){
     </style>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/bootstrap.css?ver=20220202" type="text/css" rel="stylesheet" />
+    <link href="../css/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
     <script src="../js/all.min.js" type="text/javascript"></script>
     <script src="../js/jquery.js" type="text/javascript"></script>
     <script src="../js/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script src="../js/symb/collections.search.js?ver=20210621" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20211104"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20220330"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};

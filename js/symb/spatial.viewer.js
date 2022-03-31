@@ -20,6 +20,7 @@ let vectorsource = new ol.source.Vector({
     wrapX: true
 });
 const vectorlayer = new ol.layer.Vector({
+    zIndex: 5,
     source: vectorsource,
     style: new ol.style.Style({
         fill: new ol.style.Fill({
@@ -46,6 +47,7 @@ let radiuscirclesource = new ol.source.Vector({
     wrapX: true
 });
 const radiuscirclelayer = new ol.layer.Vector({
+    zIndex: 4,
     source: radiuscirclesource,
     style: new ol.style.Style({
         fill: new ol.style.Fill({
@@ -72,13 +74,19 @@ const blankdragdropsource = new ol.source.Vector({
     wrapX: true
 });
 const dragdroplayer1 = new ol.layer.Vector({
-    source: blankdragdropsource
+    zIndex: 1,
+    source: blankdragdropsource,
+    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
 });
 const dragdroplayer2 = new ol.layer.Vector({
-    source: blankdragdropsource
+    zIndex: 2,
+    source: blankdragdropsource,
+    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
 });
 const dragdroplayer3 = new ol.layer.Vector({
-    source: blankdragdropsource
+    zIndex: 3,
+    source: blankdragdropsource,
+    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
 });
 
 layersArr['base'] = baselayer;
@@ -160,7 +168,6 @@ dragAndDropInteraction.on('addfeatures', function(event) {
                 layersArr[sourceIndex] = new ol.source.Vector({
                     features: features
                 });
-                layersArr[dragDropTarget].setStyle(getDragDropStyle);
                 layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
                 map.getView().fit(layersArr[sourceIndex].getExtent());
             }
@@ -177,7 +184,6 @@ dragAndDropInteraction.on('addfeatures', function(event) {
                         layersArr[sourceIndex] = new ol.source.Vector({
                             features: features
                         });
-                        layersArr[dragDropTarget].setStyle(getDragDropStyle);
                         layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
                         map.getView().fit(layersArr[sourceIndex].getExtent());
                     });
