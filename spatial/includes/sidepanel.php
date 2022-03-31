@@ -209,7 +209,6 @@
                                 <option value="kml">KML</option>
                                 <option value="geojson">GeoJSON</option>
                                 <option value="gpx">GPX</option>
-                                <option value="png">Map PNG Image</option>
                             </select>
                             <button data-role="none" class="icon-button" title="Download" onclick="processDownloadRequest(false,queryRecCnt);"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>
                         </div>
