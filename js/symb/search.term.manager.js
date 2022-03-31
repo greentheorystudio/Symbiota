@@ -494,10 +494,6 @@ function processDownloadRequest(selection,rows){
         else if(dlType === 'kml' || dlType === 'geojson' || dlType === 'gpx'){
             document.getElementById("datadownloadform").submit();
         }
-        else if(dlType === 'png'){
-            const imagefilename = 'map_' + getDateTimeString() + '.png';
-            exportMapPNG(imagefilename,false);
-        }
     }
     else{
         alert('Please select a download type.')

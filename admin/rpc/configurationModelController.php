@@ -4,20 +4,36 @@ include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
-$name = array_key_exists('name',$_REQUEST)?$_REQUEST['name']:'';
-$value = array_key_exists('value',$_REQUEST)?$_REQUEST['value']:'';
+$jsonData = array_key_exists('data',$_REQUEST)?$_REQUEST['data']:'';
 
+$dataArr = array();
 $confManager = new ConfigurationManager();
+
+if($jsonData){
+    $dataArr = json_decode($jsonData, true);
+}
 
 if($GLOBALS['IS_ADMIN']){
     if($action === 'add'){
-        $confManager->addConfiguration($name,$value);
+        foreach($dataArr as $key => $value){
+            if($key){
+                $confManager->addConfiguration($key,$value);
+            }
+        }
     }
     elseif($action === 'update'){
-        $confManager->updateConfigurationValue($name,$value);
+        foreach($dataArr as $key => $value){
+            if($key){
+                $confManager->updateConfigurationValue($key,$value);
+            }
+        }
     }
     elseif($action === 'delete'){
-        $confManager->deleteConfiguration($name);
+        foreach($dataArr as $key => $value){
+            if($key){
+                $confManager->deleteConfiguration($key);
+            }
+        }
     }
     elseif($action === 'updateCss'){
         $confManager->updateCssVersion();

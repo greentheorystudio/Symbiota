@@ -40,20 +40,6 @@ if(file_exists(__DIR__ . '/../config/includes/searchVarCustom.php')){
     include(__DIR__ . '/../config/includes/searchVarCustom.php');
 }
 
-$mapCenter = ((isset($GLOBALS['SPATIAL_INITIAL_CENTER']) && $GLOBALS['SPATIAL_INITIAL_CENTER'])?$GLOBALS['SPATIAL_INITIAL_CENTER']:'[-110.90713, 32.21976]');
-$mapZoom = ((isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM'])?$GLOBALS['SPATIAL_INITIAL_ZOOM']:7);
-$initialPointColor = ((isset($GLOBALS['SPATIAL_INITIAL_POINT_COLOR']) && $GLOBALS['SPATIAL_INITIAL_POINT_COLOR'])?$GLOBALS['SPATIAL_INITIAL_POINT_COLOR']:'E69E67');
-$shapesFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_FILL_COLOR']:'ffffff');
-$shapesBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_COLOR']:'3399CC');
-$shapesBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_BORDER_WIDTH']:2);
-$shapesPointRadius = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_POINT_RADIUS']:5);
-$shapesOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_SHAPES_OPACITY']:'0.4');
-$dragDropFillColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_FILL_COLOR']:'aaaaaa');
-$dragDropBorderColor = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_COLOR']:'000000');
-$dragDropBorderWidth = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_BORDER_WIDTH']:2);
-$dragDropPointRadius = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_POINT_RADIUS']:5);
-$dragDropOpacity = ((isset($GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']) && $GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY'])?$GLOBALS['SPATIAL_INITIAL_DRAGDROP_OPACITY']:'0.3');
-
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
     $catId = $GLOBALS['DEFAULTCATID'];
@@ -108,8 +94,8 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20211104" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220332" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20220330" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
 
@@ -223,7 +209,8 @@ $dbArr = array();
             });
             $('#addLayers').popup({
                 transition: 'all 0.3s',
-                scrolllock: true
+                scrolllock: true,
+                blur: false
             });
             $('#infopopup').popup({
                 transition: 'all 0.3s'
@@ -315,17 +302,26 @@ $dbArr = array();
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
     const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
-    const initialPointColor = '<?php echo $initialPointColor; ?>';
-    const shapesFillColor = '<?php echo $shapesFillColor; ?>';
-    const shapesBorderColor = '<?php echo $shapesBorderColor; ?>';
-    const shapesBorderWidth = <?php echo $shapesBorderWidth; ?>;
-    const shapesPointRadius = <?php echo $shapesPointRadius; ?>;
-    const shapesOpacity = '<?php echo $shapesOpacity; ?>';
-    const dragDropFillColor = '<?php echo $dragDropFillColor; ?>';
-    const dragDropBorderColor = '<?php echo $dragDropBorderColor; ?>';
-    const dragDropBorderWidth = <?php echo $dragDropBorderWidth; ?>;
-    const dragDropPointRadius = <?php echo $dragDropPointRadius; ?>;
-    const dragDropOpacity = '<?php echo $dragDropOpacity; ?>';
+    const pointLayerFillColor = '<?php echo $GLOBALS['SPATIAL_POINT_FILL_COLOR']; ?>';
+    const pointLayerBorderColor = '<?php echo $GLOBALS['SPATIAL_POINT_BORDER_COLOR']; ?>';
+    const pointLayerBorderWidth = <?php echo $GLOBALS['SPATIAL_POINT_BORDER_WIDTH']; ?>;
+    const pointLayerPointRadius = <?php echo $GLOBALS['SPATIAL_POINT_POINT_RADIUS']; ?>;
+    const pointLayerSelectionsBorderColor = '<?php echo $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_COLOR']; ?>';
+    const pointLayerSelectionsBorderWidth = <?php echo $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_WIDTH']; ?>;
+    const shapesFillColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_FILL_COLOR']; ?>';
+    const shapesBorderColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR']; ?>';
+    const shapesBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH']; ?>;
+    const shapesPointRadius = <?php echo $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']; ?>;
+    const shapesOpacity = '<?php echo $GLOBALS['SPATIAL_SHAPES_OPACITY']; ?>';
+    const shapesSelectionsBorderColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR']; ?>';
+    const shapesSelectionsFillColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR']; ?>';
+    const shapesSelectionsBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH']; ?>;
+    const shapesSelectionsOpacity = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY']; ?>';
+    const dragDropFillColor = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR']; ?>';
+    const dragDropBorderColor = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']; ?>';
+    const dragDropBorderWidth = <?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH']; ?>;
+    const dragDropPointRadius = <?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>;
+    const dragDropOpacity = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>';
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');
@@ -417,7 +413,8 @@ $dbArr = array();
             }
             if (showPoint) {
                 return 1;
-            } else {
+            }
+            else {
                 return 0;
             }
         },
@@ -507,20 +504,20 @@ $dbArr = array();
         },
         style: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: 'rgba(255,255,255,0.5)'
+                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsFillColor),shapesSelectionsOpacity)
             }),
             stroke: new ol.style.Stroke({
-                color: 'rgba(0,153,255,1)',
-                width: 5
+                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1),
+                width: shapesSelectionsBorderWidth
             }),
             image: new ol.style.Circle({
-                radius: 7,
+                radius: shapesPointRadius,
                 stroke: new ol.style.Stroke({
-                    color: 'rgba(0,153,255,1)',
-                    width: 2
+                    color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1),
+                    width: (shapesBorderWidth + 2)
                 }),
                 fill: new ol.style.Fill({
-                    color: 'rgba(0,153,255,1)'
+                    color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1)
                 })
             })
         }),
@@ -744,11 +741,11 @@ $dbArr = array();
     });
 
     const mapView = new ol.View({
-        zoom: <?php echo $mapZoom; ?>,
+        zoom: <?php echo $GLOBALS['SPATIAL_INITIAL_ZOOM']; ?>,
         projection: 'EPSG:3857',
         minZoom: 2.5,
         maxZoom: 19,
-        center: ol.proj.transform(<?php echo $mapCenter; ?>, 'EPSG:4326', 'EPSG:3857'),
+        center: ol.proj.transform(<?php echo $GLOBALS['SPATIAL_INITIAL_CENTER']; ?>, 'EPSG:4326', 'EPSG:3857'),
     });
 
     const map = new ol.Map({
