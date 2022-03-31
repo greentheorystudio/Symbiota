@@ -133,19 +133,4 @@ class SiteMapManager{
         }
         return $bool;
     }
-	
-	public function getSchemaVersion(): string
-	{
-		$result = 'No Schema Version Found';
-		$sql = 'SELECT versionnumber, dateapplied FROM schemaversion ORDER BY dateapplied DESC LIMIT 1 ';
-		$statement = $this->conn->prepare($sql);
-		$statement->execute();
-		$statement->bind_result($version,$dateapplied);
-		while ($statement->fetch())  { 
-			$result = $version;
-		}
-		$statement->close();
-		return $result;		
-	}
-	
 }

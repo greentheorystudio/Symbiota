@@ -180,7 +180,7 @@ if($GLOBALS['SYMB_UID']){
 								<div id="municipalityDiv">
 									<?php echo (defined('MUNICIPALITYLABEL')?MUNICIPALITYLABEL:'Municipality'); ?>
 									<br/>
-									<input type="text" id="ffmunicipality" name="municipality" tabindex="45" value="<?php echo array_key_exists('municipality',$occArr)?$occArr['municipality']:''; ?>" />
+									<input type="text" name="municipality" tabindex="45" value="<?php echo array_key_exists('municipality',$occArr)?$occArr['municipality']:''; ?>" />
 								</div>
 							</div>
 							<div id="localityDiv">

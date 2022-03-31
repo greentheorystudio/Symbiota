@@ -11,7 +11,7 @@ $smManager = new SiteMapManager();
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
 	<link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="js/symb/shared.js?ver=20211227"></script>
+	<script type="text/javascript" src="js/symb/shared.js?ver=20220310"></script>
 </head>
 <body>
 	<?php
@@ -208,6 +208,7 @@ $smManager = new SiteMapManager();
                         }
                         if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
                             ?>
+                            <li><a href="taxa/admin/batchimageloader.php">Batch Upload Taxa Images</a></li>
                             <li>To edit the synonyms, common names, description, or images for a taxon, click on the editing link located in the upper right of each
                                 <a href="taxa/admin/tpeditor.php?taxon=">Taxon Profile page</a>
                             </li>

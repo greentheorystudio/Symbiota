@@ -113,7 +113,7 @@ if($isEditor){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Manager</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/bootstrap.css?ver=20220202" type="text/css" rel="stylesheet" />
+    <link href="../../css/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <style type="text/css">
         a.boxclose{
@@ -130,8 +130,8 @@ if($isEditor){
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../../js/symb/shared.js?ver=20211227"></script>
-    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20211104"></script>
+    <script type="text/javascript" src="../../js/symb/shared.js?ver=20220310"></script>
+    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20220330"></script>
     <script type="text/javascript">
         let stArr = {};
         $(document).ready(function() {

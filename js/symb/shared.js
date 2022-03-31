@@ -114,11 +114,11 @@ function parseDate(dateStr){
 }
 
 function showWorking(){
-	$('#loadingOverlay').popup('show');
+	document.body.classList.add("processing");
 }
 
 function hideWorking(){
-	$('#loadingOverlay').popup('hide');
+	document.body.classList.remove("processing");
 }
 
 function arrayIndexSort(obj){
@@ -195,6 +195,15 @@ function hexToRgb(hex) {
 		g: parseInt(result[2],16),
 		b: parseInt(result[3],16)
 	} : null;
+}
+
+function getRgbaStrFromHexOpacity(hex,opacity) {
+	const rgbArr = hexToRgb(hex);
+	let retStr = '';
+	if(rgbArr){
+		retStr = 'rgba('+rgbArr['r']+','+rgbArr['g']+','+rgbArr['b']+','+opacity+')';
+	}
+	return retStr;
 }
 
 function imagePostFunction(image, src) {
