@@ -3242,6 +3242,11 @@ function processInputSubmit(){
     self.close();
 }
 
+function processMapPNGDownload(){
+    const imagefilename = 'map_' + getDateTimeString() + '.png';
+    exportMapPNG(imagefilename,false);
+}
+
 function processPointSelection(sFeature){
     const feature = (sFeature.get('features') ? sFeature.get('features')[0] : sFeature);
     const occid = Number(feature.get('occid'));
