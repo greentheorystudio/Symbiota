@@ -47,7 +47,7 @@ $additionalConfArr = $fullConfArr['additional'];
     <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
-    <script type="text/javascript" src="../js/symb/shared.js?ver=20211227"></script>
+    <script type="text/javascript" src="../js/symb/shared.js?ver=20220310"></script>
     <script type="text/javascript">
         const maxPostSize = <?php echo $confManager->getServerMaxPostSize(); ?>;
         const maxUploadSize = <?php echo $confManager->getServerMaxUploadFilesize(); ?>;
@@ -139,9 +139,12 @@ $additionalConfArr = $fullConfArr['additional'];
         }
 
         function sendAPIRequest(action,configname,configvalue){
+            const data = {};
             const http = new XMLHttpRequest();
             const url = "rpc/configurationModelController.php";
-            const params = 'action='+action+'&name='+configname+'&value='+configvalue;
+            data[configname] = configvalue;
+            const jsonData = JSON.stringify(data);
+            const params = 'action='+action+'&data='+jsonData;
             //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
