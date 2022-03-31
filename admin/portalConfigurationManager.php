@@ -139,9 +139,12 @@ $additionalConfArr = $fullConfArr['additional'];
         }
 
         function sendAPIRequest(action,configname,configvalue){
+            const data = {};
             const http = new XMLHttpRequest();
             const url = "rpc/configurationModelController.php";
-            const params = 'action='+action+'&name='+configname+'&value='+configvalue;
+            data[configname] = configvalue;
+            const jsonData = JSON.stringify(data);
+            const params = 'action='+action+'&data='+jsonData;
             //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

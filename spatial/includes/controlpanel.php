@@ -81,8 +81,8 @@
                 <?php
             }
             ?>
-            <div id="deleteSelections">
-                <button data-role="none" type="button" onclick='deleteSelections();' >Delete Shapes</button>
+            <div id="mapPngDownloadDiv">
+                <button data-role="none" type="button" onclick='processMapPNGDownload();' >Download Map PNG</button>
             </div>
         </div>
         <div style="clear:both;"></div>
