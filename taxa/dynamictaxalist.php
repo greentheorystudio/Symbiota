@@ -41,12 +41,10 @@ if($higherRankArr){
 }
 
 if($targetTid){
+    $listManager->setTid($targetTid);
     $listManager->setDescLimit($descLimit);
     $listManager->setSortField($sortSelect);
     $listManager->setPageIndex($index);
-    if(!$targetTaxon){
-        $listManager->setTid($targetTid);
-    }
     $tableArr = $listManager->getTableArr();
     $vernacularArr = $listManager->getVernacularArr();
     $qryCnt = (int)$listManager->getTaxaCnt();

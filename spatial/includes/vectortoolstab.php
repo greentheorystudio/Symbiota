@@ -22,6 +22,12 @@
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
+            <div id="deleteSelections" style="display:flex;justify-content:center;">
+                <button data-role="none" type="button" onclick='deleteSelections();' >Delete Selected Shapes</button>
+            </div>
+        </div>
+        <div style="margin:5px 0 5px 0;"><hr /></div>
+        <div style="margin-top:10px;">
             <button data-role="none" onclick="createBuffers();" >Buffer</button> Creates a buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" /> km around selected features.
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
