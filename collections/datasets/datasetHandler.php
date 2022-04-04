@@ -8,8 +8,12 @@ $action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']):'
 $datasetID = array_key_exists('targetdatasetid',$_POST)?htmlspecialchars($_POST['targetdatasetid']):'';
 $stArrJson = array_key_exists('dsstarrjson',$_POST)?$_POST['dsstarrjson']:'';
 $sourcePage = array_key_exists('sourcepage',$_POST)?htmlspecialchars($_POST['sourcepage']):'datasetmanager';
-$occid = array_key_exists('occid',$_POST)?(int)$_POST['occid']:0;
+$occid = array_key_exists('occid',$_POST)?$_POST['occid']:array();
 $occArrJson = array_key_exists('occarrjson',$_POST)?$_POST['occarrjson']:'';
+
+if(!is_array($occid) && !is_numeric($occid)){
+    $occid = array();
+}
 
 if(!is_numeric($datasetID) && $datasetID !== '--newDataset') {
     $datasetID = 0;
@@ -17,10 +21,10 @@ if(!is_numeric($datasetID) && $datasetID !== '--newDataset') {
 
 $stArr= array();
 if($stArrJson){
-    $stArr= json_decode($stArrJson, true);
+    $stArr = json_decode($stArrJson, true);
 }
 if($occArrJson){
-    $occid= json_decode($occArrJson, true);
+    $occid = json_decode($occArrJson, true);
 }
 
 if($GLOBALS['SYMB_UID'] && $action){
