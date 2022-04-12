@@ -207,41 +207,6 @@ function ocrImage(ocrButton,imgidVar,imgCnt){
 	});
 }
 
-function pushDwcArrToForm(msg,bgColor){
-	const dwcArr = $.parseJSON(msg);
-	const f = document.fullform;
-	let scinameTransferred = false;
-	let verbatimElevTransferred = false;
-	for(const k in dwcArr){
-		if(dwcArr.hasOwnProperty(k)){
-			try{
-				if(k !== 'family' && k !== 'scientificnameauthorship'){
-					const elem = f.elements[k];
-					const inVal = dwcArr[k];
-					if(inVal && elem && elem.value === "" && elem.disabled === false && elem.type !== "hidden"){
-						if(k === "sciname") {
-							scinameTransferred = true;
-						}
-						if(k === "verbatimelevation") {
-							verbatimElevTransferred = true;
-						}
-						elem.value = inVal;
-						elem.style.backgroundColor = bgColor;
-						fieldChanged(k);
-					}
-				}
-			}
-			catch(err){}
-		}
-	}
-	if(scinameTransferred) {
-		verifyFullFormSciName();
-	}
-	if(verbatimElevTransferred) {
-		parseVerbatimElevation(f);
-	}
-}
-
 function nextLabelProcessingImage(imgCnt){
 	document.getElementById("labeldiv-"+(imgCnt-1)).style.display = "none";
 	let imgObj = document.getElementById("labeldiv-" + imgCnt);

@@ -52,19 +52,24 @@ $(document).ready(function() {
 			}
 			else{
 				if($( "#ometidinput" ).val() === ""){
-					$.ajax({
-						type: "POST",
-						url: "rpc/exsiccativalidation.php",
-						data: { term: $( this ).val() }
-					}).done(function( msg ) {
-						if(msg === ""){
-							alert("Exsiccati title not found within system");
+					const http = new XMLHttpRequest();
+					const url = "rpc/exsiccativalidation.php";
+					const params = 'term=' + $( this ).val();
+					//console.log(url+'?'+params);
+					http.open("POST", url, true);
+					http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+					http.onreadystatechange = function() {
+						if(http.readyState === 4 && http.status === 200) {
+							if(http.responseText){
+								$( "#ometidinput" ).val(msg);
+								fieldChanged('ometid');
+							}
+							else{
+								alert("Exsiccati title not found within system");
+							}
 						}
-						else{
-							$( "#ometidinput" ).val(msg);
-							fieldChanged('ometid');
-						}
-					});
+					};
+					http.send(params);
 				}
 			}
 		}
@@ -73,7 +78,7 @@ $(document).ready(function() {
 	$("#ffsciname").autocomplete({ 
 		source: "rpc/getspeciessuggest.php", 
 		minLength: 3,
-		change: function() {
+		select: function(event, ui) {
 			$( "#tidinterpreted" ).val("");
 			$( 'input[name=scientificnameauthorship]' ).val("");
 			$( 'input[name=family]' ).val("");
@@ -84,7 +89,7 @@ $(document).ready(function() {
 			fieldChanged('family');
 			fieldChanged('localitysecurity');
 			if($( "#ffsciname" ).val()){
-				verifyFullFormSciName();
+				verifyFullFormSciName(ui.item.id);
 			}
 			else{
 				$( "#tidinterpreted" ).val("");
@@ -113,17 +118,7 @@ $(document).ready(function() {
 	if(localityAutoLookup){
 		$("#fflocality").autocomplete({ 
 			source: function( request, response ) {
-				$.ajax( {
-					url: "rpc/getlocality.php",
-					data: { 
-						recordedby: $( "input[name=recordedby]" ).val(), 
-						eventdate: $( "input[name=eventdate]" ).val(), 
-						locality: request.term 
-					},
-					success: function( data ) {
-						response( data );
-		            }
-				});
+				$.getJSON( "rpc/getlocality.php", { recordedby: $( "input[name=recordedby]" ).val(), eventdate: $( "input[name=eventdate]" ).val(), locality: request.term }, response );
 			},
 			minLength: 4,
 			select: function( event, ui ) {
@@ -148,7 +143,7 @@ $(document).ready(function() {
 		},
 		minLength: 2,
 		autoFocus: true,
-		change: function(){
+		select: function(){
 			fieldChanged("country");
 		}
 	});
@@ -159,7 +154,7 @@ $(document).ready(function() {
 		},
 		minLength: 2,
 		autoFocus: true,
-		change: function(){
+		select: function(){
 			fieldChanged("stateprovince");
 		}
 	});
@@ -170,7 +165,7 @@ $(document).ready(function() {
 		},
 		minLength: 2,
 		autoFocus: true,
-		change: function(){
+		select: function(){
 			fieldChanged("county");
 		}
 	});
@@ -204,20 +199,6 @@ $(document).ready(function() {
 		}
 	});
 	
-	if(document.getElementById('hostDiv')){
-		$("#quickhost").autocomplete({
-			source: function( request, response ) {
-				const name = request.term.replaceAll(" ", "+");
-				$.getJSON( "rpc/getcolspeciessuggest.php", { term: name }, response );
-			},
-			minLength: 4,
-			autoFocus: true,
-			change: function(){
-				fieldChanged("host");
-			}
-		});
-	}
-
 	const apstatus = getCookie("autopstatus");
 	if(getCookie("autopstatus")) {
 		document.fullform.autoprocessingstatus.value = apstatus;
@@ -245,50 +226,62 @@ function toggleQueryForm(){
 	}
 }
 
-function verifyFullFormSciName(){
-	$.ajax({
-		type: "POST",
-		url: "rpc/verifysciname.php",
-		dataType: "json",
-		data: { term: $( "#ffsciname" ).val() }
-	}).done(function( data ) {
-		if(data){
-			$( "#tidinterpreted" ).val(data.tid);
-			$( 'input[name=family]' ).val(data.family);
-			$( 'input[name=scientificnameauthorship]' ).val(data.author);
-			if(data.status == 1){
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
-			}
-			else{
-				if(data.tid){
-					const stateVal = $('input[name=stateprovince]').val();
-					if(stateVal !== ""){
-						localitySecurityCheck();
+function verifyFullFormSciName(id = null){
+	if(!id){
+		id = document.getElementById("ffsciname").value;
+	}
+	const http = new XMLHttpRequest();
+	const url = "rpc/verifysciname.php";
+	const params = 'term='+id;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status === 200) {
+			if(http.responseText){
+				const data = JSON.parse(http.responseText);
+				$( "#tidinterpreted" ).val(data.tid);
+				$( 'input[name=family]' ).val(data.family);
+				$( 'input[name=scientificnameauthorship]' ).val(data.author);
+				if(data.status == 1){
+					$( 'input[name=localitysecurity]' ).prop('checked', true);
+				}
+				else{
+					if(data.tid){
+						const stateVal = $('input[name=stateprovince]').val();
+						if(stateVal !== ""){
+							localitySecurityCheck();
+						}
 					}
 				}
 			}
+			else{
+				$( 'select[name=confidenceranking]' ).val(5);
+				alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
+			}
 		}
-		else{
-			$( 'select[name=confidenceranking]' ).val(5);
-            alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
-		}
-	});
+	};
+	http.send(params);
 }
 
 function localitySecurityCheck(){
 	const tidIn = $("input[name=tidinterpreted]").val();
 	const stateIn = $("input[name=stateprovince]").val();
 	if(tidIn !== "" && stateIn !== ""){
-		$.ajax({
-			type: "POST",
-			url: "rpc/localitysecuritycheck.php",
-			dataType: "json",
-			data: { tid: tidIn, state: stateIn }
-		}).done(function( data ) {
-			if(data == "1"){
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
+		const http = new XMLHttpRequest();
+		const url = "rpc/localitysecuritycheck.php";
+		const params = 'tid='+tidIn+'&state='+stateIn;
+		//console.log(url+'?'+params);
+		http.open("POST", url, true);
+		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		http.onreadystatechange = function() {
+			if(http.readyState === 4 && http.status === 200) {
+				if(Number(http.responseText) === 1){
+					$( 'input[name=localitysecurity]' ).prop('checked', true);
+				}
 			}
-		});
+		};
+		http.send(params);
 	}
 }
 
@@ -757,48 +750,59 @@ function verifyDeletion(f){
 }
 
 function verifyAssocImages(occidIn){
-	$.ajax({
-		type: "POST",
-		url: "rpc/getassocimgcnt.php",
-		dataType: "json",
-		data: { occid: occidIn }
-	}).done(function( imgCnt ) {
-		document.getElementById("delverimgspan").style.display = "none";
-		if(imgCnt > 0){
-			document.getElementById("delimgfailspan").style.display = "block";
+	const http = new XMLHttpRequest();
+	const url = "rpc/getassocimgcnt.php";
+	const params = 'occid='+occidIn;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status === 200) {
+			document.getElementById("delverimgspan").style.display = "none";
+			if(Number(http.responseText) > 0){
+				document.getElementById("delimgfailspan").style.display = "block";
+			}
+			else{
+				document.getElementById("delimgappdiv").style.display = "block";
+			}
+			imgAssocCleared = true;
+			displayDeleteSubmit();
 		}
-		else{
-			document.getElementById("delimgappdiv").style.display = "block";
-		}
-		imgAssocCleared = true;
-		displayDeleteSubmit();
-	});
+	};
+	http.send(params);
 }
 
 function verifyAssocVouchers(occidIn){
-	$.ajax({
-		type: "POST",
-		url: "rpc/getassocvouchers.php",
-		dataType: "json",
-		data: { occid: occidIn }
-	}).done(function( vList ) {
-		document.getElementById("delvervouspan").style.display = "none";
-		if(!vList.hasOwnProperty('length')){
-			document.getElementById("delvoulistdiv").style.display = "block";
-			let strOut = "";
-			for(const key in vList){
-				if(vList.hasOwnProperty(key)){
-					strOut = strOut + "<li><a href='../../checklists/checklist.php?cl="+key+"' target='_blank'>"+vList[key]+"</a></li>";
+	const http = new XMLHttpRequest();
+	const url = "rpc/getassocvouchers.php";
+	const params = 'occid='+occidIn;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status === 200) {
+			if(http.responseText){
+				const vList = JSON.parse(http.responseText);
+				document.getElementById("delvervouspan").style.display = "none";
+				if(!vList.hasOwnProperty('length')){
+					document.getElementById("delvoulistdiv").style.display = "block";
+					let strOut = "";
+					for(const key in vList){
+						if(vList.hasOwnProperty(key)){
+							strOut = strOut + "<li><a href='../../checklists/checklist.php?cl="+key+"' target='_blank'>"+vList[key]+"</a></li>";
+						}
+					}
+					document.getElementById("voucherlist").innerHTML = strOut;
 				}
+				else{
+					document.getElementById("delvouappdiv").style.display = "block";
+				}
+				voucherAssocCleared = true;
+				displayDeleteSubmit();
 			}
-			document.getElementById("voucherlist").innerHTML = strOut;
 		}
-		else{
-			document.getElementById("delvouappdiv").style.display = "block";
-		}
-		voucherAssocCleared = true;
-		displayDeleteSubmit();
-	});
+	};
+	http.send(params);
 }
 
 function displayDeleteSubmit(){
@@ -969,10 +973,10 @@ function initDetAutocomplete(f){
 	$( f.sciname ).autocomplete({ 
 		source: "rpc/getspeciessuggest.php", 
 		minLength: 3,
-		change: function() {
+		select: function(event, ui) {
 			if(f.sciname.value){
 				pauseSubmit = true;
-				verifyDetSciName(f);
+				verifyDetSciName(f,id);
 			}
 			else{
 				f.scientificnameauthorship.value = "";
@@ -983,25 +987,33 @@ function initDetAutocomplete(f){
 	});
 }
 
-function verifyDetSciName(f){
-	$.ajax({
-		type: "POST",
-		url: "rpc/verifysciname.php",
-		dataType: "json",
-		data: { term: f.sciname.value }
-	}).done(function( data ) {
-		if(data){
-			f.scientificnameauthorship.value = data.author;
-			f.family.value = data.family;
-			f.tidtoadd.value = data.tid;
+function verifyDetSciName(f,id = null){
+	if(!id){
+		id = f.sciname.value;
+	}
+	const http = new XMLHttpRequest();
+	const url = "rpc/verifysciname.php";
+	const params = 'term='+id;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status === 200) {
+			if(http.responseText){
+				const data = JSON.parse(http.responseText);
+				f.scientificnameauthorship.value = data.author;
+				f.family.value = data.family;
+				f.tidtoadd.value = data.tid;
+			}
+			else{
+				alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
+				f.scientificnameauthorship.value = "";
+				f.family.value = "";
+				f.tidtoadd.value = "";
+			}
 		}
-		else{
-            alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
-			f.scientificnameauthorship.value = "";
-			f.family.value = "";
-			f.tidtoadd.value = "";
-		}
-	});
+	};
+	http.send(params);
 } 
 
 function detDateChanged(f){
