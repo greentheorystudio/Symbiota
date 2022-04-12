@@ -434,21 +434,13 @@ if(!$printMode){
                                 </div>
                                 <div>
                                     <div style="margin-left:10px;">
-                                        <?php
-                                        if($GLOBALS['DISPLAY_COMMON_NAMES']){
-                                            echo "<input data-role='none' type='checkbox' name='searchcommon' value='1' ".($searchCommon? 'checked' : ''). '/> Common Names<br/>';
-                                        }
-                                        ?>
-                                        <input data-role='none' type="checkbox" name="searchsynonyms" value="1"<?php echo ($searchSynonyms? 'checked' : '');?>/> Synonyms
+                                        <input data-role='none' type='checkbox' name='searchcommon' value='1' <?php echo ($searchCommon? 'checked' : '');?> /> Common Names<br/>
+                                        <input data-role='none' type="checkbox" name="searchsynonyms" value="1" <?php echo ($searchSynonyms? 'checked' : '');?> /> Synonyms
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <?php
-                                if($GLOBALS['DISPLAY_COMMON_NAMES']) {
-                                    echo "<input data-role='none' id='showcommon' name='showcommon' type='checkbox' value='1' " . ($showCommon ? 'checked' : '') . '/> Common Names';
-                                }
-                                ?>
+                                <input data-role='none' id='showcommon' name='showcommon' type='checkbox' value='1' <?php echo ($showCommon ? 'checked' : '');?> /> Common Names
                             </div>
                             <div>
                                 <input data-role='none' name='showimages' type='checkbox' value='1' <?php echo ($showImages? 'checked' : ''); ?> onclick="showImagesChecked(this.form);" />
@@ -458,18 +450,18 @@ if(!$printMode){
                             if($clValue){
                                 ?>
                                 <div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showvouchersdiv">
-                                    <input data-role='none' name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers? 'checked' : ''); ?>/>
+                                    <input data-role='none' name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers? 'checked' : ''); ?> />
                                     Notes &amp; Vouchers
                                 </div>
                                 <?php
                             }
                             ?>
                             <div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showauthorsdiv">
-                                <input data-role='none' name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors? 'checked' : ''); ?>/>
+                                <input data-role='none' name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors? 'checked' : ''); ?> />
                                 Taxon Authors
                             </div>
                             <div style='' id="showalphataxadiv">
-                                <input data-role='none' name='showalphataxa' type='checkbox' value='1' <?php echo ($showAlphaTaxa? 'checked' : ''); ?>/>
+                                <input data-role='none' name='showalphataxa' type='checkbox' value='1' <?php echo ($showAlphaTaxa? 'checked' : ''); ?> />
                                 Show Taxa Alphabetically
                             </div>
                             <div style="margin:5px 0 0 5px;">
