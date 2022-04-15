@@ -370,7 +370,7 @@ $taxaUtilities = new TaxonomyUtilities();
                         }
                     }
                     else{
-                        data.files[0].errorMessage = '';
+                        fileData[i].errorMessage = '';
                     }
                 }
             }
@@ -461,6 +461,9 @@ $taxaUtilities = new TaxonomyUtilities();
 
         function csvToArray(str) {
             const headers = str.slice(0, str.indexOf("\n")).split(',');
+            if(str.endsWith("\n")){
+                str = str.substring(0, str.length - 2);
+            }
             const rows = str.slice(str.indexOf("\n") + 1).split("\n");
             return rows.map(function (row) {
                 if (row) {
