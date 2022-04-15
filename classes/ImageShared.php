@@ -208,7 +208,7 @@ class ImageShared{
 					$urlPrefix = 'https://';
 				}
 				$urlPrefix .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
 					$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
 				}
 				$url = $urlPrefix.$url;
@@ -584,7 +584,7 @@ class ImageShared{
 					$domain = 'https://';
 				}
 				$domain .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
 					$domain .= ':' . $_SERVER['SERVER_PORT'];
 				}
 				if(stripos($imgUrl,$domain) === 0){
@@ -693,7 +693,7 @@ class ImageShared{
 				$urlPrefix = 'https://';
 			}
 			$urlPrefix .= $_SERVER['HTTP_HOST'];
-			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
 				$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
 			}
 			$urlBase = $urlPrefix.$urlBase;
@@ -874,7 +874,7 @@ class ImageShared{
 					$urlPrefix = 'https://';
 				}
 				$urlPrefix .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
 					$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
 				}
 				$uri = $urlPrefix.$uri;
