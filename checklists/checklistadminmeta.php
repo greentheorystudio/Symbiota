@@ -195,7 +195,7 @@ if(!$clid){
 					<legend><b>Default Display Settings</b></legend>
                     <div>
                         <input name='thesfilter' id='thesfilter' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['thesfilter'])? 'checked' : ''); ?> />
-                        Display Accepted Names Only
+                        Filter Through Thesaurus
                     </div>
                     <div>
                         <input name='showsynonyms' id='showsynonyms' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['showsynonyms'])? 'checked' : ''); ?> />

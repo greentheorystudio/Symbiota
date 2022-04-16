@@ -454,7 +454,7 @@ if(!$printMode){
                                 </div>
                             </div>
                             <div>
-                                <input data-role='none' id='thesfilter' name='thesfilter' type='checkbox' value='1' <?php echo ($thesFilter ? 'checked' : '');?> /> Display Accepted Names Only
+                                <input data-role='none' id='thesfilter' name='thesfilter' type='checkbox' value='1' <?php echo ($thesFilter ? 'checked' : '');?> /> Filter Through Thesaurus
                             </div>
                             <div>
                                 <input data-role='none' id='showsynonyms' name='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms ? 'checked' : '');?> /> Display Synonyms
