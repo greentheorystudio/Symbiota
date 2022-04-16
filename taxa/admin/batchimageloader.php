@@ -138,7 +138,7 @@ $taxaUtilities = new TaxonomyUtilities();
                         data.files.splice(data, 1);
                     }
                     else if(fileType === 'jpeg' || fileType === 'jpg' || fileType === 'png'){
-                        let imageFileData = fileData.find((obj) => obj.filename === fileName);
+                        let imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.toLowerCase());
                         if(imageFileData){
                             data.files[0].scientificname = imageFileData.scientificname;
                             if(imageFileData.hasOwnProperty('tid') && imageFileData.tid){
@@ -370,7 +370,7 @@ $taxaUtilities = new TaxonomyUtilities();
                         }
                     }
                     else{
-                        data.files[0].errorMessage = '';
+                        fileData[i].errorMessage = '';
                     }
                 }
             }
@@ -382,7 +382,7 @@ $taxaUtilities = new TaxonomyUtilities();
                 if(fileNodeArr.hasOwnProperty(n)){
                     const fileNode = fileNodeArr[n];
                     const fileName = fileNode.getElementsByClassName('name')[0].innerHTML;
-                    let imageFileData = fileData.find((obj) => obj.filename === fileName);
+                    let imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.toLowerCase());
                     if(imageFileData){
                         if(imageFileData.hasOwnProperty('scientificname') && imageFileData.scientificname && !fileNode.querySelectorAll('input[name="scientificname"]')[0].value){
                             fileNode.querySelectorAll('input[name="scientificname"]')[0].value = imageFileData.scientificname;
@@ -461,6 +461,9 @@ $taxaUtilities = new TaxonomyUtilities();
 
         function csvToArray(str) {
             const headers = str.slice(0, str.indexOf("\n")).split(',');
+            if(str.endsWith("\n")){
+                str = str.substring(0, str.length - 2);
+            }
             const rows = str.slice(str.indexOf("\n") + 1).split("\n");
             return rows.map(function (row) {
                 if (row) {
