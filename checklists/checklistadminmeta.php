@@ -193,17 +193,22 @@ if(!$clid){
 			<div style="clear:both;margin-top:5px;">
 				<fieldset style="width:300px;">
 					<legend><b>Default Display Settings</b></legend>
-					<div>
+                    <div>
+                        <input name='thesfilter' id='thesfilter' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['thesfilter'])? 'checked' : ''); ?> />
+                        Display Accepted Names Only
+                    </div>
+                    <div>
+                        <input name='showsynonyms' id='showsynonyms' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['showsynonyms'])? 'checked' : ''); ?> />
+                        Display Synonyms
+                    </div>
+                    <div>
 						<input name='ddetails' id='ddetails' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['ddetails'])? 'checked' : ''); ?> />
                         Show Details
 					</div>
-					<div>
-						<?php
-						if($GLOBALS['DISPLAY_COMMON_NAMES']) {
-                            echo "<input id='dcommon' name='dcommon' type='checkbox' value='1' " . (($defaultArr && $defaultArr['dcommon']) ? 'checked' : '') . ' /> Display Common Names';
-                        }
-						?>
-					</div>
+                    <div>
+                        <input id='dcommon' name='dcommon' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['dcommon'])? 'checked' : ''); ?> />
+                        Display Common Names
+                    </div>
 					<div>
 						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['dimages'])? 'checked' : ''); ?> onclick="showImagesDefaultChecked(this.form);" />
                         Display as Images

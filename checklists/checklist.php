@@ -12,6 +12,8 @@ $dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
 $pageNumber = array_key_exists('pagenumber',$_REQUEST)?(int)$_REQUEST['pagenumber']:1;
 $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?htmlspecialchars($_REQUEST['taxonfilter']): '';
+$thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:0;
+$showSynonyms = array_key_exists('showsynonyms',$_REQUEST)?(int)$_REQUEST['showsynonyms']:0;
 $showAuthors = array_key_exists('showauthors',$_REQUEST)?(int)$_REQUEST['showauthors']:0;
 $showCommon = array_key_exists('showcommon',$_REQUEST)?(int)$_REQUEST['showcommon']:0;
 $showImages = array_key_exists('showimages',$_REQUEST)?(int)$_REQUEST['showimages']:0;
@@ -51,6 +53,12 @@ if($clValue && $clArray['defaultSettings']){
     $defaultArr = json_decode($clArray['defaultSettings'], true);
     $showDetails = $defaultArr['ddetails'];
     if(!$defaultOverride){
+        if(array_key_exists('thesfilter',$defaultArr)){
+            $thesFilter = $defaultArr['thesfilter'];
+        }
+        if(array_key_exists('showsynonyms',$defaultArr)){
+            $showSynonyms = $defaultArr['showsynonyms'];
+        }
         if(array_key_exists('dcommon',$defaultArr)){
             $showCommon = $defaultArr['dcommon'];
         }
@@ -86,6 +94,12 @@ if($searchCommon){
 }
 if($searchSynonyms) {
     $clManager->setSearchSynonyms();
+}
+if($thesFilter) {
+    $clManager->setThesFilter();
+}
+if($showSynonyms) {
+    $clManager->setShowSynonyms();
 }
 if($showAuthors) {
     $clManager->setShowAuthors();
@@ -355,7 +369,7 @@ if(!$printMode){
                     <li>
 					    <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
                             <?php
-                            $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon;
+                            $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon. '&thesfilter=' .$thesFilter. '&showsynonyms=' .$showSynonyms;
                             ?>
                             <a href="../games/namegame.php<?php echo $varStr; ?>">Name Game</a>
                             <a href="../games/flashcards.php<?php echo $varStr; ?>">Flash Card Quiz</a>
@@ -438,6 +452,12 @@ if(!$printMode){
                                         <input data-role='none' type="checkbox" name="searchsynonyms" value="1" <?php echo ($searchSynonyms? 'checked' : '');?> /> Synonyms
                                     </div>
                                 </div>
+                            </div>
+                            <div>
+                                <input data-role='none' id='thesfilter' name='thesfilter' type='checkbox' value='1' <?php echo ($thesFilter ? 'checked' : '');?> /> Display Accepted Names Only
+                            </div>
+                            <div>
+                                <input data-role='none' id='showsynonyms' name='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms ? 'checked' : '');?> /> Display Synonyms
                             </div>
                             <div>
                                 <input data-role='none' id='showcommon' name='showcommon' type='checkbox' value='1' <?php echo ($showCommon ? 'checked' : '');?> /> Common Names
@@ -546,6 +566,8 @@ if(!$printMode){
                                         <input type="hidden" name="cl" value="<?php echo $clid; ?>" />
                                         <input type="hidden" name="cltype" value="<?php echo $clArray['type']; ?>" />
                                         <input type="hidden" name="pid" value="<?php echo $pid; ?>" />
+                                        <input type='hidden' name='thesfilter' value='<?php echo $thesFilter; ?>' />
+                                        <input type='hidden' name='showsynonyms' value='<?php echo $showSynonyms; ?>' />
                                         <input type='hidden' name='showcommon' value='<?php echo $showCommon; ?>' />
                                         <input type='hidden' name='showvouchers' value='<?php echo $showVouchers; ?>' />
                                         <input type='hidden' name='showauthors' value='<?php echo $showAuthors; ?>' />
@@ -608,6 +630,8 @@ if(!$printMode){
                         $pageNumber = 1;
                     }
                     $argStr .= '&cl=' .$clValue. '&dynclid=' .$dynClid.($showCommon? '&showcommon=' .$showCommon: '').($showVouchers? '&showvouchers=' .$showVouchers: '');
+                    $argStr .= ($thesFilter? '&thesfilter=' .$thesFilter: '');
+                    $argStr .= ($showSynonyms? '&showsynonyms=' .$showSynonyms: '');
                     $argStr .= ($showAuthors? '&showauthors=' .$showAuthors: '');
                     $argStr .= ($pid? '&pid=' .$pid: '').($showImages? '&showimages=' .$showImages: '').($taxonFilter? '&taxonfilter=' .$taxonFilter: '');
                     $argStr .= ($searchCommon? '&searchcommon=' .$searchCommon: '').($searchSynonyms? '&searchsynonyms=' .$searchSynonyms: '');
@@ -742,6 +766,9 @@ if(!$printMode){
                             }
                         }
                         echo "</div>\n";
+                        if($showSynonyms && isset($sppArr['syn'])){
+                            echo '<div class="syn-div">['.$sppArr['syn'].']</div>';
+                        }
                         if($showVouchers){
                             $voucStr = '';
                             if(array_key_exists($tid,$voucherArr)){
