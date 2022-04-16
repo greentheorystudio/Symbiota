@@ -62,7 +62,7 @@ if($collid){
 			$urlPrefix = 'https://';
 		}
 		$urlPrefix .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
 			$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
 		}
 		$urlPath = $urlPrefix.$GLOBALS['CLIENT_ROOT'];
