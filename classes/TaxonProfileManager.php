@@ -219,37 +219,27 @@ class TaxonProfileManager {
 
     public function setSppData(): void
     {
-        $sqlWhereRank = '';
-        if($this->rankId === 140){
-            $sqlWhereRank = ' AND t.rankid = 180';
-        }
-        elseif($this->rankId <= 180){
-            $sqlWhereRank = ' AND t.rankid = 220';
-        }
-        elseif($this->rankId <= 220){
-            $sqlWhereRank = ' AND t.rankid > 220';
-        }
         $this->sppArray = array();
         if($this->clid){
             $sql = 'SELECT t.tid, t.sciname, t.securitystatus '.
-                'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.tid '.
-                'INNER JOIN fmchklsttaxalink ctl ON ctl.TID = t.tid '.
-                'WHERE (ctl.clid = '.$this->clid.')'.$sqlWhereRank.' AND (te.parenttid = '.$this->tid.')';
+                'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
+                'INNER JOIN fmchklsttaxalink AS ctl ON ctl.TID = t.tid '.
+                'WHERE (ctl.clid = '.$this->clid.') AND (te.parenttid = '.$this->tid.' OR t.tid = '.$this->tid.')';
         }
         elseif($this->pid){
             $sql = 'SELECT DISTINCT t.tid, t.sciname, t.securitystatus '.
-                'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.tid '.
-                'INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
-                'INNER JOIN fmchklsttaxalink ctl ON ts.Tid = ctl.TID '.
-                'INNER JOIN fmchklstprojlink cpl ON ctl.clid = cpl.clid '.
+                'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
+                'INNER JOIN taxstatus AS ts ON t.tid = ts.tidaccepted '.
+                'INNER JOIN fmchklsttaxalink AS ctl ON ts.tid = ctl.TID '.
+                'INNER JOIN fmchklstprojlink AS cpl ON ctl.clid = cpl.clid '.
                 'WHERE (cpl.pid = '.$this->pid.') '.
-                'AND (te.parenttid = '.$this->tid.')'.$sqlWhereRank;
+                'AND (te.parenttid = '.$this->tid.' OR t.tid = '.$this->tid.')';
         }
         else{
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
-                'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.tid '.
-                'INNER JOIN taxstatus ts ON t.Tid = ts.tidaccepted '.
-                'WHERE (te.parenttid = '.$this->tid.')'.$sqlWhereRank;
+                'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
+                'INNER JOIN taxstatus AS ts ON t.TID = ts.tidaccepted '.
+                'WHERE (te.parenttid = '.$this->tid.' OR t.tid = '.$this->tid.')';
         }
         //echo $sql; exit;
 
@@ -266,9 +256,9 @@ class TaxonProfileManager {
 
         if(!$tids){
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
-                'FROM taxa t INNER JOIN taxstatus ts ON t.Tid = ts.tidaccepted '.
-                'INNER JOIN taxaenumtree te ON ts.tid = te.tid '.
-                'WHERE (te.parenttid = '.$this->tid.')'.$sqlWhereRank;
+                'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tidaccepted '.
+                'INNER JOIN taxaenumtree AS te ON ts.tid = te.tid '.
+                'WHERE (te.parenttid = '.$this->tid.' OR t.TID = '.$this->tid.')';
             //echo $sql;
 
             $result = $this->con->query($sql);

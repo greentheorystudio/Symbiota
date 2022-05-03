@@ -68,7 +68,7 @@ if($exportType === 'translation'){
 				$serverDomain = 'https://';
 			}
 			$serverDomain .= $_SERVER['HTTP_HOST'];
-			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
 				$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
 			}
 			$textrun->addImage($serverDomain.$GLOBALS['CLIENT_ROOT'].'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
@@ -202,7 +202,7 @@ elseif($exportType === 'singlelanguage'){
 				$serverDomain = 'https://';
 			}
 			$serverDomain .= $_SERVER['HTTP_HOST'];
-			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
 				$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
 			}
 			$textrun->addImage($serverDomain.$GLOBALS['CLIENT_ROOT'].'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
