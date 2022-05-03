@@ -16,6 +16,8 @@ $dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
 $pageNumber = array_key_exists('pagenumber',$_REQUEST)?(int)$_REQUEST['pagenumber']:1;
 $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?htmlspecialchars($_REQUEST['taxonfilter']): '';
+$thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:0;
+$showSynonyms = array_key_exists('showsynonyms',$_REQUEST)?(int)$_REQUEST['showsynonyms']:0;
 $showAuthors = array_key_exists('showauthors',$_REQUEST)?(int)$_REQUEST['showauthors']:0;
 $showCommon = array_key_exists('showcommon',$_REQUEST)?(int)$_REQUEST['showcommon']:0;
 $showImages = array_key_exists('showimages',$_REQUEST)?(int)$_REQUEST['showimages']:0;
@@ -57,6 +59,12 @@ if($searchCommon){
 if($searchSynonyms) {
 	$clManager->setSearchSynonyms();
 }
+if($thesFilter) {
+    $clManager->setThesFilter();
+}
+if($showSynonyms) {
+    $clManager->setShowSynonyms();
+}
 if($showAuthors) {
 	$clManager->setShowAuthors();
 }
@@ -94,6 +102,8 @@ $phpWord->addParagraphStyle('familyPara', array('align'=>'left','lineHeight'=>1.
 $phpWord->addFontStyle('familyFont', array('bold'=>true,'size'=>16,'name'=>'Arial'));
 $phpWord->addParagraphStyle('scinamePara', array('align'=>'left','lineHeight'=>1.0,'indent'=>0.3125,'spaceBefore'=>0,'spaceAfter'=>45,'keepNext'=>true));
 $phpWord->addFontStyle('scientificnameFont', array('bold'=>true,'italic'=>true,'size'=>12,'name'=>'Arial'));
+$phpWord->addParagraphStyle('synonymPara', array('align'=>'left','lineHeight'=>1.0,'indent'=>0.78125,'spaceBefore'=>0,'spaceAfter'=>45));
+$phpWord->addFontStyle('synonymFont', array('bold'=>false,'italic'=>true,'size'=>12,'name'=>'Arial'));
 $phpWord->addParagraphStyle('notesvouchersPara', array('align'=>'left','lineHeight'=>1.0,'indent'=>0.78125,'spaceBefore'=>0,'spaceAfter'=>45));
 $phpWord->addParagraphStyle('imagePara', array('align'=>'center','lineHeight'=>1.0,'spaceBefore'=>0,'spaceAfter'=>0));
 $tableStyle = array('width'=>100);
@@ -189,7 +199,7 @@ if($showImages){
 				$textrun->addText(htmlspecialchars($vern),'topicFont');
 				$textrun->addTextBreak();
 			}
-			if(!$showAlphaTaxa && $family !== $prevfam) {
+            if(!$showAlphaTaxa && $family !== $prevfam) {
 				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$family.'&cl='.$clid,htmlspecialchars('['.$family.']'),'textFont');
 				$prevfam = $family;
 			}
@@ -226,6 +236,12 @@ else{
 			$vern = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['vern']);
 			$textrun->addText(htmlspecialchars(' - '.$vern),'topicFont');
 		}
+        if(isset($sppArr['syn']) && $sppArr['syn']){
+            $textrun = $section->addTextRun('synonymPara');
+            $textrun->addText('[','textFont');
+            $textrun->addText(htmlspecialchars(strip_tags($sppArr['syn'])),'synonymFont');
+            $textrun->addText(']','textFont');
+        }
 		if($showVouchers){
 			if(array_key_exists('notes',$sppArr) || array_key_exists($tid,$voucherArr)){
 				$textrun = $section->addTextRun('notesvouchersPara');

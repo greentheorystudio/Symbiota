@@ -1771,7 +1771,7 @@ class DwcArchiverCore extends Manager{
                 $this->serverDomain = 'https://';
             }
             $this->serverDomain .= $_SERVER['HTTP_HOST'];
-            if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+            if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
                 $this->serverDomain .= ':' . $_SERVER['SERVER_PORT'];
             }
         }
