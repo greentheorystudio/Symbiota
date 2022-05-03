@@ -187,7 +187,7 @@
                                 <button data-role="none" id="randomColorColl" onclick='autoColorColl();' >Auto Color</button>
                             </div>
                             <div style="margin-top:5px;">
-                                <button data-role="none" id="saveCollKeyImage" onclick='saveKeyImage();' >Save Image</button>
+                                <button data-role="none" id="saveCollKeyImage" onclick='saveKeyImage();' >Save Symbology</button>
                             </div>
                         </div>
                     </div>
@@ -252,7 +252,7 @@
                                 <button data-role="none" id="randomColorTaxa" onclick='autoColorTaxa();' >Auto Color</button>
                             </div>
                             <div style="margin-top:5px;">
-                                <button data-role="none" id="saveTaxaKeyImage" onclick='saveKeyImage();' >Save Image</button>
+                                <button data-role="none" id="saveTaxaKeyImage" onclick='saveKeyImage();' >Save Symbology</button>
                             </div>
                         </div>
                     </div>
