@@ -976,7 +976,7 @@ function initDetAutocomplete(f){
 		select: function(event, ui) {
 			if(f.sciname.value){
 				pauseSubmit = true;
-				verifyDetSciName(f,id);
+				verifyDetSciName(f,ui.item.id);
 			}
 			else{
 				f.scientificnameauthorship.value = "";
