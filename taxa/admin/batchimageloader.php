@@ -468,10 +468,13 @@ $taxaUtilities = new TaxonomyUtilities();
             return rows.map(function (row) {
                 if (row) {
                     document.getElementById('csvDataMessage').style.display = 'inline-block';
-                    const values = row.split(',');
+                    const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     return headers.reduce(function (object, header, index) {
                         const fieldName = header.trim();
-                        const fieldValue = values[index].replace('\r', '');
+                        let fieldValue = values[index].replace('\r', '');
+                        if(fieldValue.startsWith('"')){
+                            fieldValue = fieldValue.replaceAll('"','');
+                        }
                         if (fieldName === 'scientificname' && fieldValue && !taxaNameArr.includes(fieldValue) && !taxaDataArr.hasOwnProperty(fieldValue)) {
                             taxaNameArr.push(fieldValue);
                         }
