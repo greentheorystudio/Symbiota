@@ -83,21 +83,13 @@ else{
 
 $numBoxes = 0;
 if($loanType === 'exchange'){
-    $numBoxes = $invoiceArr['totalboxes'];
+    $numBoxes = (int)$invoiceArr['totalboxes'];
 }
 else if($loanType === 'out'){
-    if($invoiceArr['totalboxes'] === 1){
-        $numBoxes = 1;
-    }
-    else{
-        $numBoxes = $invoiceArr['totalboxes'];
-    }
-}
-else if($invoiceArr['totalboxesreturned'] === 1){
-    $numBoxes = 1;
+    $numBoxes = (int)$invoiceArr['totalboxes'];
 }
 else{
-    $numBoxes = $invoiceArr['totalboxesreturned'];
+    $numBoxes = (int)$invoiceArr['totalboxesreturned'];
 }
 
 if($export){
@@ -183,13 +175,13 @@ if($export){
 	$section->addTextBreak();
 	$textrun = $section->addTextRun('sendwhom');
 	if($english){
-		$textrun->addText(htmlspecialchars('We are sending you '.($numBoxes === 1?'1 box ':$numBoxes.' boxes ')),'sendwhomFont');
-		$textrun->addText(htmlspecialchars('containing '.($numSpecimens === 1?'1 occurrence. ':$numSpecimens.' occurrences. ')),'sendwhomFont');
+		$textrun->addText(htmlspecialchars('We are sending you '.$numBoxes.' box(es) '),'sendwhomFont');
+		$textrun->addText(htmlspecialchars('containing '.$numSpecimens.' specimen(s) '),'sendwhomFont');
 		if(($loanType === 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
-			$textrun->addText(htmlspecialchars(($numBoxes === 1?'This package was ':'These packages were ').'delivered via '.($loanType === 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. '),'sendwhomFont');
+			$textrun->addText(htmlspecialchars(($numBoxes === 1?'This package was ':'These packages were ').'sent via '.($loanType === 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. '),'sendwhomFont');
 		}
 		$textrun->addText(htmlspecialchars('Upon arrival of the shipment, kindly verify its contents and acknowledge '),'sendwhomFont');
-		$textrun->addText(htmlspecialchars('receipt by signing and returning the duplicate invoice to us.'),'sendwhomFont');
+		$textrun->addText(htmlspecialchars('by signing one copy of the invoice and returning it to '.($addressArr['institutioncode'] ?: 'us').'.'),'sendwhomFont');
 	}
 	if($engspan){
 		$textrun->addTextBreak(2);
@@ -227,16 +219,19 @@ if($export){
 		}
 		$textrun->addTextBreak(2);
 		if($english){
-			$textrun->addText(htmlspecialchars('When circumstances warrant, the loan period may be extended. Specimens should be returned by '),'otherFont');
-			$textrun->addText(htmlspecialchars('insured parcel post or by prepaid express. All material of this loan should be returned at the same time. Notes or '),'otherFont');
+			$textrun->addText(htmlspecialchars('When circumstances warrant, the loan period may be extended. '),'otherFont');
+            $textrun->addText(htmlspecialchars('Loans may not be transferred except by permission. Prior permission must be obtained before any destructive sampling. '),'otherFont');
+            $textrun->addTextBreak(2);
+			$textrun->addText(htmlspecialchars('Specimens should be returned by insured parcel post or by prepaid express. All material of this loan should be returned at the same time. Notes or '),'otherFont');
 			$textrun->addText(htmlspecialchars('changes should be written on annotation labels. Reprints dealing with taxonomic groups will be appreciated.'),'otherFont');
 		}
 		if($engspan){
 			$textrun->addTextBreak(2);
 		}
 		if($spanish){
-			$textrun->addText(htmlspecialchars('Siempre y cuando las circunstancias se permiten, se puede pedir un prórroga de la fecha límite de este '),'otherFont');
-			$textrun->addText(htmlspecialchars('préstamo. Todo material del préstamo debe devolverse en el mismo envío. Notas y cambios de identificación se '),'otherFont');
+			$textrun->addText(htmlspecialchars('Siempre y cuando las circunstancias se permiten, se puede pedir un prórroga de la fecha límite de este préstamo. '),'otherFont');
+            $textrun->addTextBreak(2);
+			$textrun->addText(htmlspecialchars('Todo material del préstamo debe devolverse en el mismo envío. Notas y cambios de identificación se '),'otherFont');
 			$textrun->addText(htmlspecialchars('deben indicar con notas de anotación. Además, le pedimos mandar separatas de cualquier publicación '),'otherFont');
 			$textrun->addText(htmlspecialchars('proveniente del uso de este material.'),'otherFont');
 		}
@@ -263,7 +258,7 @@ if($export){
 			if($english){
 				$textrun->addText(htmlspecialchars('This shipment is an EXCHANGE, consisting of '.($invoiceArr['totalexunmounted']?$invoiceArr['totalexunmounted'].' unmounted ':'')),'returnamtdueFont');
 				$textrun->addText(htmlspecialchars((($invoiceArr['totalexunmounted'] && $invoiceArr['totalexmounted'])?'and ':'').($invoiceArr['totalexmounted']?$invoiceArr['totalexmounted'].' mounted ':'')),'returnamtdueFont');
-				$textrun->addText(htmlspecialchars('specimens, for an exchange value of '.$exchangeValue.'. Please note that mounted specimens count as two.'),'returnamtdueFont');
+				$textrun->addText(htmlspecialchars('specimens, for an exchange value of '.$exchangeValue),'returnamtdueFont');
 			}
 			if($engspan){
 				$textrun->addTextBreak(2);
@@ -271,7 +266,7 @@ if($export){
 			if($spanish){
 				$textrun->addText(htmlspecialchars('Este envío es un INTERCAMBIO, consistiendo en '.($invoiceArr['totalexunmounted']?$invoiceArr['totalexunmounted'].' ejemplares no montados ':'')),'returnamtdueFont');
 				$textrun->addText(htmlspecialchars((($invoiceArr['totalexunmounted'] && $invoiceArr['totalexmounted'])?'y ':'').($invoiceArr['totalexmounted']?$invoiceArr['totalexmounted'].' ejemplares montados ':'')),'returnamtdueFont');
-				$textrun->addText(htmlspecialchars('con un valor de intercambio de '.$exchangeValue.'. Favor de notarse que las ejemplares montados son de valor 2.'),'returnamtdueFont');
+				$textrun->addText(htmlspecialchars('con un valor de intercambio de '.$exchangeValue),'returnamtdueFont');
 			}
 			if($transType === 'both'){
 				$textrun->addTextBreak(2);
