@@ -698,7 +698,7 @@ class ChecklistVoucherAdmin {
 			$serverDomain = 'https://';
 		}
 		$serverDomain .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
 			$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
 		}
 		$retArr[] = 'CONCAT("'.$serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=",o.occid) as `references`';

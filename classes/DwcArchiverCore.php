@@ -77,7 +77,7 @@ class DwcArchiverCore extends Manager{
             $sql .= ' LIMIT 1000000';
         }
         if($sql){
-            $sql = 'SELECT COUNT(o.occid) as cnt '.$sql;
+            $sql = 'SELECT COUNT(o.occid) AS cnt '.$sql;
             //echo $sql; exit;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
@@ -289,21 +289,24 @@ class DwcArchiverCore extends Manager{
     {
         $sql = '';
         if($this->conditionSql){
+            if(stripos($this->conditionSql,' te.')){
+                $sql .= 'INNER JOIN taxaenumtree AS te ON o.tidinterpreted = te.tid ';
+            }
             if(stripos($this->conditionSql,'v.clid')){
-                $sql = 'LEFT JOIN fmvouchers v ON o.occid = v.occid ';
+                $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             }
             if(stripos($this->conditionSql,'p.point')){
-                $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
+                $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
             }
             if(strpos($this->conditionSql,'MATCH(f.recordedby)') || strpos($this->conditionSql,'MATCH(f.locality)')){
-                $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+                $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
             }
             if(stripos($this->conditionSql,'a.stateid')){
-                $sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid ';
+                $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid ';
             }
             elseif(stripos($this->conditionSql,'s.traitid')){
-                $sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid '.
-                    'INNER JOIN tmstates s ON a.stateid = s.stateid ';
+                $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid '.
+                    'INNER JOIN tmstates AS s ON a.stateid = s.stateid ';
             }
         }
         return $sql;
@@ -1220,7 +1223,7 @@ class DwcArchiverCore extends Manager{
             }
             $this->writeOutRecord($fh,$fieldOutArr);
             if(!$this->collArr){
-                $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences o ';
+                $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences AS o ';
                 if($this->conditionSql){
                     $sql1 .= $this->getTableJoins().$this->conditionSql;
                 }
@@ -1768,7 +1771,7 @@ class DwcArchiverCore extends Manager{
                 $this->serverDomain = 'https://';
             }
             $this->serverDomain .= $_SERVER['HTTP_HOST'];
-            if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+            if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
                 $this->serverDomain .= ':' . $_SERVER['SERVER_PORT'];
             }
         }

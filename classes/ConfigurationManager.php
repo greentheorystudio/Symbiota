@@ -135,7 +135,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20220309';
+        $GLOBALS['CSS_VERSION'] = '20220415';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -526,7 +526,7 @@ class ConfigurationManager{
             $testURL = 'https://';
         }
         $testURL .= $_SERVER['HTTP_HOST'];
-        if($_SERVER['SERVER_PORT'] && (int)$_SERVER['SERVER_PORT'] !== 80) {
+        if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
             $testURL .= ':' . $_SERVER['SERVER_PORT'];
         }
         $testURL .= $path . '/sitemap.php';

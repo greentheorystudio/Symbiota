@@ -437,3 +437,7 @@ body.processing .loadingModal {
 body.processing .loadingModal {
 	display: block;
 }
+
+.syn-div {
+	margin-left: 15px
+}

@@ -40,9 +40,6 @@ function toggle(target){
 	}
 }
 
-/**
- * @return {boolean}
- */
 function ProcessReport(){
 	if(document.pressed === 'invoice'){
 		document.reportsform.action ="reports/defaultinvoice.php";
@@ -96,19 +93,18 @@ function displayNewExchange(){
 }
 
 function generateNewId(collId,targetObj,idType){
-	let xmlHttp = GetXmlHttpObject();
-	if (xmlHttp==null){
-		alert ("Your browser does not support AJAX!");
-		return false;
-	}
-	const url = "rpc/generatenextid.php?idtype=" + idType + "&collid=" + collId;
-	xmlHttp.onreadystatechange=function(){
-		if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
-			targetObj.value = xmlHttp.responseText;
+	const http = new XMLHttpRequest();
+	const url = "rpc/generatenextid.php";
+	let params = 'idtype=' + idType + '&collid=' + collId;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status === 200) {
+			targetObj.value = http.responseText;
 		}
 	};
-	xmlHttp.open("POST",url,true);
-	xmlHttp.send(null);
+	http.send(params);
 }
 
 function verfifyLoanOutAddForm(f){
@@ -181,71 +177,65 @@ function addSpecimen(f,splist){
 	const catalogNumber = f.catalognumber.value;
 	const loanid = f.loanid.value;
 	const collid = f.collid.value;
-	let xmlHttp;
-	if (!catalogNumber) {
+	if(!catalogNumber){
 		alert("Please enter a catalog number!");
 		return false;
-	} else {
-		xmlHttp = GetXmlHttpObject();
-		if (xmlHttp == null) {
-			alert("Your browser does not support AJAX!");
-			return false;
-		}
-		let url = "rpc/insertloanspecimens.php";
-		url = url + "?loanid=" + loanid;
-		url = url + "&catalognumber=" + catalogNumber;
-		url = url + "&collid=" + collid;
-		xmlHttp.onreadystatechange = function () {
-			let responseCode;
-			if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-				responseCode = xmlHttp.responseText;
-				if (responseCode == "0") {
+	}
+	else{
+		const http = new XMLHttpRequest();
+		const url = "rpc/insertloanspecimens.php";
+		let params = 'loanid=' + loanid + '&catalognumber=' + catalogNumber + '&collid=' + collid;
+		//console.log(url+'?'+params);
+		http.open("POST", url, true);
+		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		http.onreadystatechange = function() {
+			if(http.readyState === 4 && http.status === 200) {
+				responseCode = Number(http.responseText);
+				if (responseCode === 0) {
 					document.getElementById("addspecsuccess").style.display = "none";
 					document.getElementById("addspecerr1").style.display = "block";
 					document.getElementById("addspecerr2").style.display = "none";
 					document.getElementById("addspecerr3").style.display = "none";
-					setTimeout(function () {
-						document.getElementById("addspecerr1").style.display = "none";
-					}, 750);
-				} else if (responseCode == "1") {
+					document.getElementById("addspecerr1").style.display = "none";
+				}
+				else if (responseCode === 1) {
 					document.getElementById("addspecsuccess").style.display = "block";
 					document.getElementById("addspecerr1").style.display = "none";
 					document.getElementById("addspecerr2").style.display = "none";
 					document.getElementById("addspecerr3").style.display = "none";
-					setTimeout(function () {
-						document.getElementById("addspecsuccess").style.display = "none";
-					}, 750);
-					if (splist == 0) {
+					document.getElementById("addspecsuccess").style.display = "none";
+					if(splist === 0){
 						document.getElementById("speclistdiv").style.display = "block";
 						document.getElementById("nospecdiv").style.display = "none";
 					}
-				} else if (responseCode == "2") {
+				}
+				else if (responseCode === 2) {
 					document.getElementById("addspecsuccess").style.display = "none";
 					document.getElementById("addspecerr1").style.display = "none";
 					document.getElementById("addspecerr2").style.display = "block";
 					document.getElementById("addspecerr3").style.display = "none";
-					setTimeout(function () {
-						document.getElementById("addspecerr2").style.display = "none";
-					}, 750);
-				} else if (responseCode == "3") {
+					document.getElementById("addspecerr2").style.display = "none";
+				}
+				else if (responseCode === 3) {
 					document.getElementById("addspecsuccess").style.display = "none";
 					document.getElementById("addspecerr1").style.display = "none";
 					document.getElementById("addspecerr2").style.display = "none";
 					document.getElementById("addspecerr3").style.display = "block";
-					setTimeout(function () {
-						document.getElementById("addspecerr3").style.display = "none";
-					}, 750);
-				} else {
+					document.getElementById("addspecerr3").style.display = "none";
+				}
+				else {
 					f.catalognumber.value = "";
 					document.refreshspeclist.emode.value = 1;
 					document.refreshspeclist.submit();
 				}
+				return true;
+			}
+			else{
+				return false;
 			}
 		};
-		xmlHttp.open("POST", url, true);
-		xmlHttp.send(null);
+		http.send(params);
 	}
-	return false;
 }
 
 function openIndPopup(occid){
@@ -269,22 +259,6 @@ function openPopup(urlStr){
 		newWindow.opener = self;
 	}
 	return false;
-}
-
-function GetXmlHttpObject(){
-	let xmlHttp;
-	try{
-		xmlHttp=new XMLHttpRequest();
-	}
-	catch (e){
-		try{
-			xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
-		}
-		catch(e){
-			xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-		}
-	}
-	return xmlHttp;
 }
 
 function verifyDate(eventDateInput){
@@ -424,57 +398,27 @@ function parseDate(dateStr){
 	return retArr;
 }
 
-function acroCheck(){
-	const acroelement = document.getElementById('institutioncode');
-	const acronym = acroelement.value;
-	if (acronym.length === 0){
-  		return;
-  	}
-	let sutXmlHttp = GetXmlHttpObject();
-	if (sutXmlHttp==null){
-  		alert ("Your browser does not support AJAX!");
-  		return;
-  	}
-	let url = "rpc/ariz_acrocheck.php";
-	url=url+"?acronym="+acronym;
-	sutXmlHttp.onreadystatechange=function(){
-		if(sutXmlHttp.readyState === 4 && sutXmlHttp.status === 200){
-			const responseArr = JSON.parse(sutXmlHttp.responseText);
-			if(responseArr){
-				acroelement.value="";
-				alert("Institution already exists, please select it from drop down menu above.");
-			}
-		}
-	};
-	sutXmlHttp.open("POST",url,true);
-	sutXmlHttp.send(null);
-}
-
 function outIdentCheck(collid){
 	const loanoutidentelement = document.getElementById('loanidentifierown');
 	const loanidentifierown = loanoutidentelement.value;
-	if (loanidentifierown.length === 0){
+	if(loanidentifierown.length === 0){
   		return;
   	}
-	let sutXmlHttp = GetXmlHttpObject();
-	if (sutXmlHttp==null){
-  		alert ("Your browser does not support AJAX!");
-  		return;
-  	}
-	let url = "rpc/loanoutidentifiercheck.php";
-	url = url+"?ident="+loanidentifierown;
-	url = url+"&collid="+collid;
-	sutXmlHttp.onreadystatechange=function(){
-		if(sutXmlHttp.readyState === 4 && sutXmlHttp.status === 200){
-			const responseArr = JSON.parse(sutXmlHttp.responseText);
-			if(responseArr){
-				loanoutidentelement.value="";
+	const http = new XMLHttpRequest();
+	const url = "rpc/loanoutidentifiercheck.php";
+	let params = 'ident=' + loanidentifierown + '&collid=' + collid;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status === 200) {
+			if(http.responseText){
+				loanoutidentelement.value = "";
 				alert("There is already a loan with that identifier, please enter a different one.");
 			}
 		}
 	};
-	sutXmlHttp.open("POST",url,true);
-	sutXmlHttp.send(null);
+	http.send(params);
 }
 
 function inIdentCheck(collid){
@@ -483,25 +427,22 @@ function inIdentCheck(collid){
 	if (loanidentifierborr.length === 0){
   		return;
   	}
-	let sutXmlHttp = GetXmlHttpObject();
-	if (sutXmlHttp == null){
-  		alert ("Your browser does not support AJAX!");
-  		return;
-  	}
-	let url = "rpc/loaninidentifiercheck.php";
-	url = url+"?ident="+loanidentifierborr;
-	url = url+"&collid="+collid;
-	sutXmlHttp.onreadystatechange=function(){
-		if(sutXmlHttp.readyState === 4 && sutXmlHttp.status === 200){
-			const responseArr = JSON.parse(sutXmlHttp.responseText);
-			if(responseArr){
+	const http = new XMLHttpRequest();
+	const url = "rpc/loaninidentifiercheck.php";
+	let params = 'ident=' + loanidentifierborr + '&collid=' + collid;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status === 200) {
+			console.log(http.responseText);
+			if(http.responseText){
 				loaninidentelement.value="";
 				alert("There is already a loan with that identifier, please enter a different one.");
 			}
 		}
 	};
-	sutXmlHttp.open("POST",url,true);
-	sutXmlHttp.send(null);
+	http.send(params);
 }
 
 function exIdentCheck(collid){
@@ -510,25 +451,22 @@ function exIdentCheck(collid){
 	if (identifier.length === 0){
   		return;
   	}
-	let sutXmlHttp = GetXmlHttpObject();
-	if (sutXmlHttp == null){
-  		alert ("Your browser does not support AJAX!");
-  		return;
-  	}
-	let url = "rpc/exidentifiercheck.php";
-	url = url+"?ident="+identifier;
-	url = url+"&collid="+collid;
-	sutXmlHttp.onreadystatechange=function(){
-		if(sutXmlHttp.readyState === 4 && sutXmlHttp.status === 200){
-			const responseArr = JSON.parse(sutXmlHttp.responseText);
-			if(responseArr){
+	const http = new XMLHttpRequest();
+	const url = "rpc/exidentifiercheck.php";
+	let params = 'ident=' + identifier + '&collid=' + collid;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status === 200) {
+			console.log(http.responseText);
+			if(http.responseText){
 				exidentelement.value="";
 				alert("There is already a transaction with that identifier, please enter a different one.");
 			}
 		}
 	};
-	sutXmlHttp.open("POST",url,true);
-	sutXmlHttp.send(null);
+	http.send(params);
 }
 
 function verifyLoanDet(){
@@ -574,22 +512,27 @@ function initLoanDetAutocomplete(f){
 }
 
 function verifyLoanDetSciName(f){
-	$.ajax({
-		type: "POST",
-		url: "../editor/rpc/verifysciname.php",
-		dataType: "json",
-		data: { term: f.sciname.value }
-	}).done(function( data ) {
-		if(data){
-			f.scientificnameauthorship.value = data.author;
-			f.family.value = data.family;
-			f.tidtoadd.value = data.tid;
+	const http = new XMLHttpRequest();
+	const url = "../editor/rpc/verifysciname.php";
+	let params = 'term=' + f.sciname.value;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status === 200) {
+			const data = JSON.parse(http.responseText);
+			if(data.hasOwnProperty('tid')){
+				f.scientificnameauthorship.value = data.author;
+				f.family.value = data.family;
+				f.tidtoadd.value = data.tid;
+			}
+			else{
+				alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
+				f.scientificnameauthorship.value = "";
+				f.family.value = "";
+				f.tidtoadd.value = "";
+			}
 		}
-		else{
-            alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
-			f.scientificnameauthorship.value = "";
-			f.family.value = "";
-			f.tidtoadd.value = "";
-		}
-	});
+	};
+	http.send(params);
 }
