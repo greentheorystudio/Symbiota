@@ -21,6 +21,8 @@ class ConfigurationManager{
         'SERVER_ROOT',
         'TEMP_DIR_ROOT',
         'LOG_PATH',
+        'PORTAL_EMAIL_ADDRESS',
+        'EMAIL_CONFIGURED',
         'SMTP_HOST',
         'SMTP_PORT',
         'SMTP_ENCRYPTION',
@@ -135,7 +137,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20220309';
+        $GLOBALS['CSS_VERSION'] = '20220415';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -224,6 +226,9 @@ class ConfigurationManager{
         if(isset($GLOBALS['CLIENT_ROOT']) && substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
             $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
         }
+        if(!isset($GLOBALS['CLIENT_ROOT'])){
+            $GLOBALS['CLIENT_ROOT'] = '';
+        }
         if(!isset($GLOBALS['TEMP_DIR_ROOT']) || $GLOBALS['TEMP_DIR_ROOT'] === ''){
             $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
         }
@@ -246,7 +251,12 @@ class ConfigurationManager{
         if(!isset($GLOBALS['SOLR_URL']) || $GLOBALS['SOLR_URL'] === ''){
             $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 0;
         }
+        if(!isset($GLOBALS['PORTAL_EMAIL_ADDRESS']) && isset($GLOBALS['ADMIN_EMAIL'])){
+            $GLOBALS['PORTAL_EMAIL_ADDRESS'] = $GLOBALS['ADMIN_EMAIL'];
+        }
         if((!isset($GLOBALS['SMTP_USERNAME']) || $GLOBALS['SMTP_USERNAME'] === '') && (!isset($GLOBALS['SMTP_PASSWORD']) || $GLOBALS['SMTP_PASSWORD'] === '')){
+            $GLOBALS['SMTP_USERNAME'] = '';
+            $GLOBALS['SMTP_PASSWORD'] = '';
             $GLOBALS['SMTP_HOST'] = '';
             $GLOBALS['SMTP_PORT'] = '';
             $GLOBALS['SMTP_ENCRYPTION'] = '';
@@ -324,6 +334,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
             $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
         }
+        $GLOBALS['EMAIL_CONFIGURED'] = (isset($GLOBALS['PORTAL_EMAIL_ADDRESS']) && $GLOBALS['PORTAL_EMAIL_ADDRESS'] && $GLOBALS['SMTP_USERNAME'] && $GLOBALS['SMTP_PASSWORD'] && $GLOBALS['SMTP_HOST'] && $GLOBALS['SMTP_PORT']);
     }
 
     public function setGlobalArrFromDefaults(): void
@@ -526,7 +537,7 @@ class ConfigurationManager{
             $testURL = 'https://';
         }
         $testURL .= $_SERVER['HTTP_HOST'];
-        if($_SERVER['SERVER_PORT'] && (int)$_SERVER['SERVER_PORT'] !== 80) {
+        if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
             $testURL .= ':' . $_SERVER['SERVER_PORT'];
         }
         $testURL .= $path . '/sitemap.php';

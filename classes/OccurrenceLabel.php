@@ -646,7 +646,7 @@ class OccurrenceLabel{
             $urlStr = 'https://';
         }
         $urlStr .= $_SERVER['HTTP_HOST'];
-        if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+        if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
             $urlStr .= ':' . $_SERVER['SERVER_PORT'];
         }
         $urlStr .= $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?fullwindow=1&occid=' . $occid;

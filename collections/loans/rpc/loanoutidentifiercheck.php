@@ -8,18 +8,19 @@ $con = $connection->getConnection();
 $ident = $con->real_escape_string($_REQUEST['ident']);
 $collId = (int)$_REQUEST['collid'];
 
-$returnArr = array();
+$returnVal = '';
 $sql = 'SELECT loanid ' .
 	'FROM omoccurloans ' .
-	'WHERE loanIdentifierOwn = "'.$ident.'" AND collidOwn = '.$collId;
+	'WHERE loanIdentifierOwn = "'.$ident.'" AND collidOwn = '.$collId.' '.
+    'LIMIT 1';
 //echo $sql;
 $result = $con->query($sql);
 while ($row = $result->fetch_object()) {
-	$returnArr[] = $row->loanid;
+    $returnVal = $row->loanid;
 }
 $result->close();
 if($con) {
     $con->close();
 }
 
-echo json_encode($returnArr);
+echo $returnVal;
