@@ -186,6 +186,17 @@ class ProfileManager extends Manager{
         return $success;
     }
 
+    public function validateUser($userId){
+        if($userId){
+            $connection = new DbConnection();
+            $editCon = $connection->getConnection();
+            $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$userId.')';
+            //echo $sql; Exit;
+            $editCon->query($sql);
+            $editCon->close();
+        }
+    }
+
     public function deleteProfile($reset = null){
         $success = false;
         if($this->uid){
@@ -241,52 +252,52 @@ class ProfileManager extends Manager{
         return $success;
     }
 
-    public function resetPassword($un): string
+    public function resetPassword($uid,$admin): string
     {
-        if(isset($GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) && $GLOBALS['SMTP_HOST']){
+        $returnStr = '';
+        $status = false;
+        if($uid && ($admin || $GLOBALS['EMAIL_CONFIGURED'])){
             $newPassword = $this->generateNewPassword();
-            $status = false;
-            if($un){
-                $connection = new DbConnection();
-                $editCon = $connection->getConnection();
-                $sql = '';
-                if($this->encryption === 'password'){
-                    $sql = 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($newPassword).'") '.
-                        'WHERE (username = "'.Sanitizer::cleanInStr($un).'")';
-                }
-                if($this->encryption === 'sha2'){
-                    $sql = 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($newPassword).'", 224) '.
-                        'WHERE (username = "'.Sanitizer::cleanInStr($un).'")';
-                }
-                $status = $editCon->query($sql);
-                $editCon->close();
+            $connection = new DbConnection();
+            $editCon = $connection->getConnection();
+            $sql = '';
+            if($this->encryption === 'password'){
+                $sql = 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($newPassword).'") '.
+                    'WHERE (uid = '.(int)$uid.')';
             }
+            if($this->encryption === 'sha2'){
+                $sql = 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($newPassword).'", 224) '.
+                    'WHERE (uid = '.(int)$uid.')';
+            }
+            $status = $editCon->query($sql);
+            $editCon->close();
             if($status){
-                $emailAddr = '';
-                $sql = 'SELECT u.email FROM users u '.
-                    'WHERE (u.username = "'.Sanitizer::cleanInStr($un).'")';
-                $result = $this->conn->query($sql);
-                if($row = $result->fetch_object()){
-                    $emailAddr = $row->email;
+                if($admin){
+                    $returnStr = $newPassword;
                 }
-                $result->free();
+                else{
+                    $emailAddr = '';
+                    $sql = 'SELECT email FROM users '.
+                        'WHERE (uid = '.(int)$uid.')';
+                    $result = $this->conn->query($sql);
+                    if($row = $result->fetch_object()){
+                        $emailAddr = $row->email;
+                    }
+                    $result->free();
 
-                $subject = 'Your password';
-                $bodyStr = 'Your ' .$GLOBALS['DEFAULT_TITLE']." (<a href='http://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."'>http://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']. '</a>) password has been reset to: ' .$newPassword. ' ';
-                $bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='http://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."/profile/viewprofile.php'>View Profile</a> link and then click the Edit Profile tab.";
-                $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator ';
-                if($GLOBALS['ADMIN_EMAIL']){
-                    $bodyStr .= '<' .$GLOBALS['ADMIN_EMAIL']. '>';
+                    $subject = 'Your password';
+                    $bodyStr = 'Your ' .$GLOBALS['DEFAULT_TITLE'].' password has been reset to: ' .$newPassword. ' ';
+                    $bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='".(((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http')."://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."/profile/viewprofile.php'>View Profile</a> link and then click the View Profile tab.";
+                    if($GLOBALS['ADMIN_EMAIL']){
+                        $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                    }
+                    (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
+                    $returnStr = 'Your new password has been emailed to: ' .$emailAddr.' Please check your junk folder if no email appears in your inbox.';
                 }
-                (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
-                $returnStr = 'Your new password has been emailed to: ' .$emailAddr.' Please check your junk folder if no email appears in your inbox.';
             }
             else{
-                $returnStr = 'Reset Failed! Contact Administrator';
+                $returnStr = 'Password reset failed';
             }
-        }
-        else{
-            $returnStr = 'Reset Failed! Email has not been configured on this portal. Please contact portal admin.';
         }
         return $returnStr;
     }
@@ -296,7 +307,7 @@ class ProfileManager extends Manager{
         $newPassword = '';
         $alphabet = str_split('0123456789abcdefghijklmnopqrstuvwxyz');
         if($alphabet){
-            for($i = 0; $i<8; $i++) {
+            for($i = 0; $i<16; $i++) {
                 try {
                     $newPassword .= $alphabet[random_int(0, count($alphabet) - 1)];
                 } catch (Exception $e) {}
@@ -1098,5 +1109,39 @@ class ProfileManager extends Manager{
         }
         $editCon->close();
         return $statusStr;
+    }
+
+    public function validateAllUnconfirmedUsers(): void
+    {
+        $sql = 'SELECT uid FROM users WHERE (validated <> "1")';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $connection = new DbConnection();
+            $editCon = $connection->getConnection();
+            $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $editCon->close();
+        }
+        $rs->free();
+    }
+
+    public function deleteAllUnconfirmedUsers(): void
+    {
+        $sql = 'SELECT uid FROM users WHERE (validated <> "1")';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $connection = new DbConnection();
+            $editCon = $connection->getConnection();
+            $sql = 'DELETE FROM useraccesstokens WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $sql = 'DELETE FROM userroles WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $sql = 'DELETE FROM usertaxonomy WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $sql = 'DELETE FROM users WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $editCon->close();
+        }
+        $rs->free();
     }
 }

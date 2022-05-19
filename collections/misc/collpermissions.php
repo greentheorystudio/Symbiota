@@ -206,7 +206,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 							<option value="">Select User</option>
 							<option value="">-----------------------------------</option>
 							<?php 
-							$userArr = $permManager->getUsers();
+							$userArr = $permManager->getUsers('confirmed');
 							foreach($userArr as $uid => $uName){
 								echo '<option value="'.$uid.'">'.$uName.'</option>';
 							}

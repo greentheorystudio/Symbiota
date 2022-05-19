@@ -108,7 +108,7 @@ $smManager = new SiteMapManager();
                                 <a href="admin/spatialConfigurationManager.php">Spatial Configurations</a>
                             </li>
                             <li>
-                                <a href="profile/usermanagement.php">User Permissions</a>
+                                <a href="profile/usermanagement.php">User Management</a>
                             </li>
                             <li>
                                 <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collmetadata.php">

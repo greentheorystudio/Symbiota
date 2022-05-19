@@ -88,7 +88,7 @@ elseif($action === 'Retrieve Login'){
 	}
 }
 elseif($resetPwd){
-	$statusStr = $pHandler->resetPassword($login);
+	$statusStr = $pHandler->resetPassword($pHandler->getUid($login),false);
 }
 else{
 	$statusStr = $pHandler->getErrorStr();
@@ -164,26 +164,47 @@ include(__DIR__ . '/../header.php');
 				Don't have an Account?
 			</div>
 			<div style="">
-				<a href="newprofile.php?refurl=<?php echo $refUrl; ?>">Create an account now</a>
+				<a href="newprofile.php?refurl=<?php echo $refUrl; ?>">Create an account here</a>
 			</div>
-			<div style="font-weight:bold;margin-top:5px">
-				Can't remember your password?
-			</div>
-			<div style="color:blue;cursor:pointer;" onclick="resetPassword();">Reset Password</div>
-			<div style="font-weight:bold;margin-top:5px">
-				Can't Remember Login Name?
-			</div>
-			<div>
-				<div style="color:blue;cursor:pointer;" onclick="toggle('emaildiv');">Retrieve Login</div>
-				<div id="emaildiv" style="display:none;margin:10px 0 10px 40px;">
-					<fieldset style="padding:10px;">
-						<form id="retrieveloginform" name="retrieveloginform" action="index.php" method="post">
-							<div>Your Email: <input type="text" name="emailaddr" /></div>
-							<div><input type="submit" name="action" value="Retrieve Login"/></div>
-						</form>
-					</fieldset>
-				</div>
-			</div>
+			<?php
+            if($GLOBALS['EMAIL_CONFIGURED']){
+                ?>
+                <div style="font-weight:bold;margin-top:5px">
+                    Can't remember your password?
+                </div>
+                <div style="color:blue;cursor:pointer;" onclick="resetPassword();">Reset Password</div>
+                <div style="font-weight:bold;margin-top:5px">
+                    Can't Remember Login Name?
+                </div>
+                <div>
+                    <div style="color:blue;cursor:pointer;" onclick="toggle('emaildiv');">Retrieve Login</div>
+                    <div id="emaildiv" style="display:none;margin:10px 0 10px 40px;">
+                        <fieldset style="padding:10px;">
+                            <form id="retrieveloginform" name="retrieveloginform" action="index.php" method="post">
+                                <div>Your Email: <input type="text" name="emailaddr" /></div>
+                                <div><input type="submit" name="action" value="Retrieve Login"/></div>
+                            </form>
+                        </fieldset>
+                    </div>
+                </div>
+                <?php
+            }
+            elseif(isset($GLOBALS['ADMIN_EMAIL']) && $GLOBALS['ADMIN_EMAIL']){
+                ?>
+                <div style="font-weight:bold;margin-top:5px">
+                    Can't remember your password?
+                </div>
+                <div style="font-weight:bold;margin-top:5px">
+                    Can't Remember Login Name?
+                </div>
+                <div style="color:red;">
+                    Contact the portal administrator at<br>
+                    <?php echo $GLOBALS['ADMIN_EMAIL']; ?><br>
+                    for assistance.
+                </div>
+                <?php
+            }
+            ?>
 		</div>
 	</div>
 </div>
