@@ -521,6 +521,12 @@ include(__DIR__ . '/../header.php');
             <fieldset style="margin: 10px 0;">
                 <legend><b>Email</b></legend>
                 <div class="field-block">
+                    <span class="field-label">Portal Email Address:</span>
+                    <span class="field-elem">
+                        <input type="text" id="PORTAL_EMAIL_ADDRESS" value="<?php echo (array_key_exists('PORTAL_EMAIL_ADDRESS',$coreConfArr)?$coreConfArr['PORTAL_EMAIL_ADDRESS']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('PORTAL_EMAIL_ADDRESS','<?php echo (array_key_exists('PORTAL_EMAIL_ADDRESS',$coreConfArr)?$coreConfArr['PORTAL_EMAIL_ADDRESS']:''); ?>',false);" />
+                    </span>
+                </div>
+                <div class="field-block">
                     <span class="field-label">Host:</span>
                     <span class="field-elem">
                         <input type="text" id="SMTP_HOST" value="<?php echo (array_key_exists('SMTP_HOST',$coreConfArr)?$coreConfArr['SMTP_HOST']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('SMTP_HOST','<?php echo (array_key_exists('SMTP_HOST',$coreConfArr)?$coreConfArr['SMTP_HOST']:''); ?>',false);" />

@@ -6,7 +6,7 @@ include_once(__DIR__ . '/../classes/Sanitizer.php');
 Sanitizer::validateRequestPath();
 ini_set('session.gc_maxlifetime',3600);
 ini_set('session.cookie_httponly',1);
-if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443)){
+if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] === 443)){
     ini_set('session.cookie_secure',1);
 }
 session_start();
@@ -30,6 +30,7 @@ if(isset($_SESSION['USER_RIGHTS'])){
 $GLOBALS['USER_DISPLAY_NAME'] = (array_key_exists('dn',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['dn']: '');
 $GLOBALS['USERNAME'] = (array_key_exists('un',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['un']:0);
 $GLOBALS['SYMB_UID'] = (array_key_exists('uid',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['uid']:0);
+$GLOBALS['VALID_USER'] = (array_key_exists('valid',$GLOBALS['PARAMS_ARR'])?($GLOBALS['PARAMS_ARR']['valid'] === 1):false);
 $GLOBALS['IS_ADMIN'] = (array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS'])?1:0);
 $GLOBALS['SOLR_MODE'] = (isset($GLOBALS['SOLR_URL']) && $GLOBALS['SOLR_URL']);
 $GLOBALS['CHECKLIST_FG_EXPORT'] = (isset($GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']) && $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']);
