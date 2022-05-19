@@ -199,7 +199,7 @@ class OccurrenceCollectionProfile {
 			$rightsUrl = '';
             if(strncmp($rights, 'http', 4) === 0){
                 $rightsUrl = $rights;
-                if($GLOBALS['RIGHTS_TERMS']) {
+                if(isset($GLOBALS['RIGHTS_TERMS'])) {
                     foreach($GLOBALS['RIGHTS_TERMS'] as $name => $url){
                         if($url === $rights){
                             $rights = $name;
@@ -418,7 +418,7 @@ class OccurrenceCollectionProfile {
 			$urlPrefix = 'https://';
 		}
 		$urlPrefix .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
 			$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
 		}
 		$urlBase = $urlPrefix.$urlBase;

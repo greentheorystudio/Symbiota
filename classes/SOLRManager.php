@@ -235,6 +235,7 @@ class SOLRManager extends OccurrenceManager{
             $returnArr[$occId]['s'] = ($k['sciname'] ?? '');
             $returnArr[$occId]['lat'] = ($k['decimalLatitude'] ?? '');
             $returnArr[$occId]['lon'] = ($k['decimalLongitude'] ?? '');
+            $returnArr[$occId]['tid'] = ($k['tidinterpreted'] ?? '');
             if(!$localitySecurity || $canReadRareSpp
                 || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
                 || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){

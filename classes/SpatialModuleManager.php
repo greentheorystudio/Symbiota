@@ -263,9 +263,9 @@ class SpatialModuleManager{
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT o.occid, o.collid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
-            'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
+            'o.eventdate, o.family, o.sciname, o.tidinterpreted, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
-            'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid '.
+            'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
             'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
             'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins();
@@ -299,6 +299,7 @@ class SpatialModuleManager{
             $retArr[$occId]['l'] = Sanitizer::cleanOutStr($r->locality);
             $retArr[$occId]['lat'] = Sanitizer::cleanOutStr($r->DecimalLatitude);
             $retArr[$occId]['lon'] = Sanitizer::cleanOutStr($r->DecimalLongitude);
+            $retArr[$occId]['tid'] = Sanitizer::cleanOutStr($r->tidinterpreted);
             $localitySecurity = $r->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
                 || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
