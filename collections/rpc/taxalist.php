@@ -6,7 +6,7 @@ $connection = new DbConnection();
 $con = $connection->getConnection();
 $returnArr = array();
 $queryString = $con->real_escape_string($_REQUEST['term']);
-$taxonType = array_key_exists('t',$_REQUEST)?(int)$con->real_escape_string($_REQUEST['t']):1;
+$taxonType = array_key_exists('t',$_REQUEST)?(int)$_REQUEST['t']:1;
 if($queryString) {
     $sql = '';
     if($taxonType === 5){
