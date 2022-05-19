@@ -168,8 +168,14 @@ include(__DIR__ . '/../header.php');
         ?>
         <div id="tabs" style="margin:10px;">
             <ul>
-                <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
-                <li><a href="occurrencemenu.php">Occurrence Management</a></li>
+                <?php
+                if($GLOBALS['VALID_USER']){
+                    ?>
+                    <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
+                    <li><a href="occurrencemenu.php">Occurrence Management</a></li>
+                    <?php
+                }
+                ?>
                 <li><a href="userprofile.php?userid=<?php echo $userId; ?>">User Profile</a></li>
             </ul>
         </div>
