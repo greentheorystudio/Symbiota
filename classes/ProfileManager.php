@@ -12,6 +12,7 @@ class ProfileManager extends Manager{
     private $uid;
     private $userName;
     private $displayName;
+    private $validated;
     private $token;
     private $authSql;
     private $errorStr;
@@ -46,7 +47,7 @@ class ProfileManager extends Manager{
         unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
         if($this->userName){
             if(!$this->authSql){
-                $this->authSql = 'SELECT u.uid, u.firstname, u.lastname '.
+                $this->authSql = 'SELECT u.uid, u.firstname, u.lastname, u.validated '.
                     'FROM users AS u '.
                     'WHERE (u.username = "'.$this->userName.'") ';
                 if($pwdStr) {
@@ -61,6 +62,7 @@ class ProfileManager extends Manager{
             $result = $this->conn->query($this->authSql);
             if($row = $result->fetch_object()){
                 $this->uid = $row->uid;
+                $this->validated = (int)$row->validated;
                 $this->displayName = $row->firstname;
                 if(strlen($this->displayName) > 15) {
                     $this->displayName = $this->userName;
@@ -779,6 +781,7 @@ class ProfileManager extends Manager{
         $_SESSION['PARAMS_ARR']['un'] = $this->userName;
         $_SESSION['PARAMS_ARR']['dn'] = $this->displayName;
         $_SESSION['PARAMS_ARR']['uid'] = $this->uid;
+        $_SESSION['PARAMS_ARR']['valid'] = $this->validated;
         $GLOBALS['PARAMS_ARR'] = $_SESSION['PARAMS_ARR'];
         $GLOBALS['USERNAME'] = $this->userName;
     }

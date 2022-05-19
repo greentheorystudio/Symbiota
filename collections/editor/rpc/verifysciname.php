@@ -8,29 +8,28 @@ $con = $connection->getConnection();
 $retArr = array();
 $term = trim($con->real_escape_string($_REQUEST['term']));
 if($term){
-	$sql = 'SELECT DISTINCT t.tid, t.author, ts.family, t.securitystatus '.
-		'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-		'WHERE t.sciname = "'.$term.'" ';
-	//echo $sql;
-	$rs = $con->query($sql);
-	while ($r = $rs->fetch_object()) {
-		$retArr['tid'] = $r->tid;
-		$retArr['family'] = $r->family;
-		$retArr['author'] = $r->author;
-		$retArr['status'] = $r->securitystatus;
-	}
-	$rs->free();
-	$con->close();
+	if(is_numeric($term)){
+        $sql = 'SELECT DISTINCT ts.tidaccepted, t.author, ts.family, t.securitystatus '.
+            'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
+            'WHERE t.tid = '.$term.' ';
+    }
+    else{
+        $sql = 'SELECT DISTINCT ts.tidaccepted, t.author, ts.family, t.securitystatus '.
+            'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
+            'WHERE t.sciname = "'.$term.'" ';
+    }
+    //echo $sql;
+    $rs = $con->query($sql);
+    while ($r = $rs->fetch_object()) {
+        $retArr['tid'] = $r->tidaccepted;
+        $retArr['family'] = $r->family;
+        $retArr['author'] = $r->author;
+        $retArr['status'] = $r->securitystatus;
+    }
+    $rs->free();
+    $con->close();
 }
 
 if($retArr){
-	if($GLOBALS['CHARSET'] === 'UTF-8'){
-		echo json_encode($retArr);
-	}
-	else{
-		echo '{"tid":"'.$retArr['tid'].'","family":"'.$retArr['family'].'","author":"'.str_replace('"',"''",$retArr['author']).'","status":"'.$retArr['status'].'"}';
-	}
-}
-else{
-	echo 'null';
+    echo json_encode($retArr);
 }

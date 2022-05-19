@@ -15,7 +15,7 @@ services:
       - 80:80
 
   php:
-    image: devilbox/php-fpm:7.2-work
+    image: devilbox/php-fpm:8.1-work
     container_name: php
     volumes:
       - ./:/var/www/default/htdocs
