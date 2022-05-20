@@ -10,7 +10,7 @@ $emailAddr = array_key_exists('emailaddr',$_POST)?$_POST['emailaddr']:'';
 $resetPwd = array_key_exists('resetpwd',$_REQUEST)?(int)$_REQUEST['resetpwd']:0;
 $uid = array_key_exists('uid',$_REQUEST)?(int)$_REQUEST['uid']:0;
 $confirmationCode = array_key_exists('confirmationcode',$_REQUEST)?htmlspecialchars($_REQUEST['confirmationcode']):'';
-$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 if(!$action && array_key_exists('submit',$_REQUEST)) {
     $action = $_REQUEST['submit'];
 }

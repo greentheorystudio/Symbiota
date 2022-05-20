@@ -39,6 +39,7 @@ $listArr = $clManager->getManagementLists($userId);
                 <div style="font-weight: bold;color:red;margin:15px;">
                     You have one more step to confirm your account. A confirmation email was sent to the email address for your account.
                     Please follow the instructions in that email to confirm your account.<br>
+                    <br>
                     <a href="viewprofile.php?action=resendconfirmationemail"><input type="button" value="Resend Confirmation Email" /></a>
                 </div>
                 <?php
