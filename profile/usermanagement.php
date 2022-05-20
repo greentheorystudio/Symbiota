@@ -9,12 +9,17 @@ $loginAs = array_key_exists('loginas',$_REQUEST)?trim($_REQUEST['loginas']): '';
 $searchTerm = array_key_exists('searchterm',$_REQUEST)?trim($_REQUEST['searchterm']): '';
 $userId = array_key_exists('userid',$_REQUEST)?(int)$_REQUEST['userid']:0;
 $delRole = array_key_exists('delrole',$_REQUEST)?$_REQUEST['delrole']: '';
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$listType = array_key_exists('listType',$_REQUEST)?$_REQUEST['listType']:'all';
 $tablePk = array_key_exists('tablepk',$_REQUEST)?(int)$_REQUEST['tablepk']:0;
 
 $userManager = new PermissionsManager();
+$pHandler = new ProfileManager();
+
+$newPw = '';
+
 if($GLOBALS['IS_ADMIN']){
 	if($loginAs){
-		$pHandler = new ProfileManager();
 		$pHandler->setUserName($loginAs);
 		$pHandler->authenticate();
 		header('Location: ../index.php');
@@ -36,6 +41,22 @@ if($GLOBALS['IS_ADMIN']){
 			$userManager->addPermission($userId, $role, $tablePk);
 		}
 	}
+    if($action){
+        if($action === 'validate'){
+            $pHandler->validateUser($userId);
+        }
+        elseif($action === 'pwreset'){
+            $newPw = $pHandler->resetPassword($userId,true);
+        }
+        elseif($action === 'validateallunconfirmed'){
+            $pHandler->validateAllUnconfirmedUsers();
+            $listType = 'all';
+        }
+        elseif($action === 'deleteallunconfirmed'){
+            $pHandler->deleteAllUnconfirmedUsers();
+            $listType = 'all';
+        }
+    }
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -47,8 +68,7 @@ if($GLOBALS['IS_ADMIN']){
 </head>
 
 <body>
-
-	<?php
+    <?php
 	include(__DIR__ . '/../header.php');
 	?>
 	<div id="innertext">
@@ -118,15 +138,43 @@ if($GLOBALS['IS_ADMIN']){
 							</a>
 						</div>
 					</div>
-					<div style="clear:left;">
+					<div style="clear:left;margin-bottom:10px;">
 						<div style="float:left;font-weight:bold;margin-right:8px;">Login: </div>
-						<div style="float:left;margin-bottom:30px;"><?php echo ($user['username']?$user['username'].' (last login: '.$user['lastlogindate'].')':'login not registered for this user'); ?></div>
+						<div style="float:left;"><?php echo ($user['username']?$user['username'].' (last login: '.$user['lastlogindate'].')':'login not registered for this user'); ?></div>
 					</div>
-				</div>
+                    <?php
+                    if(!$user['validated']){
+                        ?>
+                        <div style="clear:left;margin-top:20px;">
+                            <span style="font-weight:bold;margin-right:8px;color:red">UNCONFIRMED USER </span>
+                            <span>
+                                <a href="usermanagement.php?action=validate&userid=<?php echo $userId; ?>"><input type="button" value="Confirm" /></a>
+                            </span>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                    <div style="clear:left;margin-top:20px;">
+                        <div>
+                            <span>
+                                <a href="usermanagement.php?action=pwreset&userid=<?php echo $userId; ?>"><input type="button" value="Reset Password" /></a>
+                            </span>
+                        </div>
+                        <?php
+                        if($newPw){
+                            ?>
+                            <div style="clear:left;margin-top:10px;color:red;">
+                                Notify user that their password has been reset to: <span style="font-weight: bold"><?php echo $newPw; ?></span>
+                            </div>
+                            <?php
+                        }
+                        ?>
+                    </div>
+                </div>
 				<?php
 				if($user['username']){
 					?>
-					<div style="clear:both;margin:0 0 20px 30px;">
+					<div style="clear:both;margin:30px 0 20px 30px;">
 						<a href="usermanagement.php?loginas=<?php echo $user['username']; ?>">Login</a> as this user
 					</div>
 					<?php
@@ -549,10 +597,36 @@ if($GLOBALS['IS_ADMIN']){
 				<?php
 			}
 			else{
-				$users = $userManager->getUsers($searchTerm);
-				echo '<h1>Users</h1>';
+				$users = $userManager->getUsers($listType, $searchTerm);
+				?>
+                <h1>Users</h1>
+                <div style="height:30px;display:flex;gap:20px;">
+                    <div>
+                        <form id="userlistform" action="usermanagement.php" method="post">
+                            <select name="listType" onchange="this.form.submit();">
+                                <option value="all" <?php echo ($listType === 'all'?'selected':''); ?>>All Users</option>
+                                <option value="confirmed" <?php echo ($listType === 'confirmed'?'selected':''); ?>>Confirmed Users</option>
+                                <option value="unconfirmed" <?php echo ($listType === 'unconfirmed'?'selected':''); ?>>Unconfirmed Users</option>
+                            </select>
+                            <input name="searchterm" type="hidden" value="<?php echo $searchTerm;?>" />
+                        </form>
+                    </div>
+                    <?php
+                    if($listType === 'unconfirmed'){
+                        ?>
+                        <div>
+                            <a href="usermanagement.php?action=validateallunconfirmed"><input type="button" value="Confirm All" /></a>
+                        </div>
+                        <div>
+                            <a href="usermanagement.php?action=deleteallunconfirmed"><input type="button" value="Delete All" /></a>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                </div>
+                <?php
 				foreach($users as $id => $name){
-					echo "<div><a href='usermanagement.php?userid=$id'>$name</a></div>";
+					echo "<div><a href='usermanagement.php?userid=".$id."'>".$name. '</a></div>';
 				}
 			}
 		}
@@ -563,7 +637,6 @@ if($GLOBALS['IS_ADMIN']){
 	</div>
 	<?php
 	include(__DIR__ . '/../footer.php');
-	?> 
-
+	?>
 </body>
 </html>
