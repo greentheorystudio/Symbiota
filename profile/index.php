@@ -43,11 +43,6 @@ $pHandler = new ProfileManager();
 
 $statusStr = '';
 
-if($action === 'confirm' && $uid && $confirmationCode){
-    $pHandler->reset();
-    $statusStr = $pHandler->validateFromConfirmationEmail($uid,$confirmationCode);
-}
-
 if($login && !$pHandler->setUserName($login)) {
     $login = '';
     $statusStr = 'Invalid login name';
@@ -62,12 +57,15 @@ if(!is_numeric($resetPwd)) {
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-
 if($remMe) {
     $pHandler->setRememberMe(true);
 }
 
-if($action === 'logout'){
+if($action === 'confirm' && $uid && $confirmationCode){
+    $pHandler->reset();
+    $statusStr = $pHandler->validateFromConfirmationEmail($uid,$confirmationCode);
+}
+elseif($action === 'logout'){
 	$pHandler->reset();
 	header('Location: ../index.php');
 }
@@ -101,7 +99,6 @@ else{
 	$statusStr = $pHandler->getErrorStr();
 }
 ?>
-
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Login</title>
@@ -116,7 +113,7 @@ else{
 			document.getElementById("resetpwd").value = "1";
 			document.forms["loginform"].submit();
 		}
-		
+
 		function checkCreds(){
 			if(document.getElementById("login").value === "" || document.getElementById("password").value === ""){
 				alert("Please enter your login and password.");
@@ -133,19 +130,19 @@ else{
 include(__DIR__ . '/../header.php');
 ?>
 <div id="innertext" style="padding-left:0;margin-left:0;">
-	
+
 	<?php
 	if($statusStr){
 		?>
 		<div style='color:#FF0000;margin: 1em 1em 0 1em;'>
-			<?php 
+			<?php
 			echo $statusStr;
 			?>
 		</div>
-		<?php 
+		<?php
 	}
 	?>
-	
+
 	<div style="width:300px;margin-right:auto;margin-left:auto;">
 		<fieldset style='padding:25px;margin:20px;width:300px;background-color:#FFFFCC;border:2px outset #E8EEFA;'>
 			<form id="loginform" name="loginform" action="index.php" onsubmit="return checkCreds();" method="post">
