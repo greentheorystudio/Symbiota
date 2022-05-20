@@ -5,6 +5,7 @@ include_once(__DIR__ . '/Person.php');
 include_once(__DIR__ . '/Encryption.php');
 include_once(__DIR__ . '/Mailer.php');
 include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/UuidFactory.php');
 
 class ProfileManager extends Manager{
 
@@ -109,11 +110,11 @@ class ProfileManager extends Manager{
 
     public function getPerson(): Person
     {
-        $sqlStr = 'SELECT u.uid, u.firstname, ' .($this->checkFieldExists('users','middleinitial')?'u.middleinitial, ':''). 'u.lastname, u.title, u.institution, u.department, ' .
-            'u.address, u.city, u.state, u.zip, u.country, u.phone, u.email, ' .
-            'u.url, u.biography, u.ispublic, u.notes, u.username, u.lastlogindate ' .
-            'FROM users u ' .
-            'WHERE (u.uid = ' .$this->uid. ')';
+        $sqlStr = 'SELECT uid, firstname, middleinitial, lastname, title, institution, department, ' .
+            'address, city, state, zip, country, phone, email, ' .
+            'url, biography, ispublic, notes, username, lastlogindate, validated ' .
+            'FROM users ' .
+            'WHERE (uid = ' .$this->uid. ')';
         $person = new Person();
         //echo $sqlStr;
         $result = $this->conn->query($sqlStr);
@@ -139,6 +140,7 @@ class ProfileManager extends Manager{
             $person->setUrl($row->url);
             $person->setBiography($row->biography);
             $person->setIsPublic($row->ispublic);
+            $person->setValidated($row->validated);
             $this->setUserTaxonomy($person);
             while($row = $result->fetch_object()){
                 if($row->lastlogindate && (!$person->getLastLoginDate() || $row->lastlogindate > $person->getLastLoginDate())){
@@ -342,6 +344,7 @@ class ProfileManager extends Manager{
             $person->setUrl($postArr['url']);
             $person->setBiography($postArr['biography']);
             $person->setIsPublic(isset($postArr['ispublic'])?1:0);
+            $person->setGuid(UuidFactory::getUuidV4());
 
             $fields = 'INSERT INTO users (';
             $values = 'VALUES (';
@@ -351,6 +354,8 @@ class ProfileManager extends Manager{
             $values .= ', "'.Sanitizer::cleanInStr($person->getMiddleInitial()).'"';
             $fields .= ', lastname';
             $values .= ', "'.Sanitizer::cleanInStr($person->getLastName()).'"';
+            $fields .= ', guid';
+            $values .= ', "'.$person->getGuid().'"';
             $fields .= ', username';
             $values .= ', "'.Sanitizer::cleanInStr($person->getUserName()).'"';
             $fields .= ', password';
@@ -414,13 +419,15 @@ class ProfileManager extends Manager{
             $connection = new DbConnection();
             $editCon = $connection->getConnection();
             if($editCon->query($sql)){
-                $person->setUid($editCon->insert_id);
-                $this->uid = $person->getUid();
+                $this->uid = $editCon->insert_id;
                 $status = true;
                 $this->userName = $person->getUserName();
                 $this->displayName = $person->getFirstName();
                 $this->reset();
                 $this->authenticate();
+                if($GLOBALS['EMAIL_CONFIGURED']){
+                    $this->sendConfirmationEmail($this->uid);
+                }
             }
             else{
                 $this->errorStr = 'FAILED: Unable to create user.<div style="margin-left:55px;">Please contact system administrator for assistance.</div>';
@@ -431,17 +438,61 @@ class ProfileManager extends Manager{
         return $status;
     }
 
+    public function sendConfirmationEmail($uid): bool
+    {
+        $status = false;
+        if($GLOBALS['EMAIL_CONFIGURED']){
+            $email = '';
+            $code = '';
+            $sql = 'SELECT email, guid '.
+                'FROM users '.
+                'WHERE (uid = '.$uid.')';
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $email = $row->email;
+                $code = $row->guid;
+                if(!$code){
+                    $code = UuidFactory::getUuidV4();
+                    $connection = new DbConnection();
+                    $editCon = $connection->getConnection();
+                    $sql = 'UPDATE users SET guid = "'.$code.'" WHERE (uid = '.$uid.')';
+                    $editCon->query($sql);
+                    $editCon->close();
+                }
+            }
+            $result->free();
+            if($email && $code){
+                $confirmationLink = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http')."://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'];
+                $confirmationLink .= '/profile/index.php?action=confirm&uid='.$uid.'&confirmationcode='.$code;
+                $subject = $GLOBALS['DEFAULT_TITLE'].' Confirmation';
+                $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' account has been created. ';
+                $bodyStr .= "<br/><br/><a href='".$confirmationLink."'>Please follow this link to confirm your new account.</a>";
+                if($GLOBALS['ADMIN_EMAIL']){
+                    $bodyStr .= '<br/>If you have trouble confirming your account, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                }
+                $mailerResult = (new Mailer)->sendEmail($email,$subject,$bodyStr);
+                if($mailerResult === 'Sent'){
+                    $status = true;
+                }
+                else{
+                    $this->errorStr = $mailerResult;
+                }
+            }
+        }
+        return $status;
+    }
+
     public function lookupUserName($emailAddr): bool
     {
         $status = false;
-        if(isset($GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) && $GLOBALS['SMTP_HOST']){
+        if($GLOBALS['EMAIL_CONFIGURED']){
             if(!$this->validateEmailAddress($emailAddr)) {
                 return false;
             }
             $loginStr = '';
-            $sql = 'SELECT u.uid, u.username, concat_ws("; ",u.lastname,u.firstname) '.
-                'FROM users u '.
-                'WHERE (u.email = "'.$emailAddr.'")';
+            $sql = 'SELECT uid, username, concat_ws("; ",lastname,firstname) '.
+                'FROM users '.
+                'WHERE (email = "'.$emailAddr.'")';
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
                 if($loginStr) {
@@ -452,11 +503,9 @@ class ProfileManager extends Manager{
             $result->free();
             if($loginStr){
                 $subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
-                $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'">http://'.
-                    $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'</a>) login name is: '.$loginStr.' ';
-                $bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator ';
+                $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' login name is: '.$loginStr.' ';
                 if($GLOBALS['ADMIN_EMAIL']){
-                    $bodyStr .= '<' .$GLOBALS['ADMIN_EMAIL']. '>';
+                    $bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                 }
                 $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
                 if($mailerResult === 'Sent'){
@@ -470,10 +519,6 @@ class ProfileManager extends Manager{
                 $this->errorStr = 'There are no users registered to email address: '.$emailAddr;
             }
         }
-        else{
-            $this->errorStr = 'ERROR: email has not been configured on this portal. Please contact portal admin.';
-        }
-
         return $status;
     }
 
@@ -1109,6 +1154,36 @@ class ProfileManager extends Manager{
         }
         $editCon->close();
         return $statusStr;
+    }
+
+    public function validateFromConfirmationEmail($uid,$confirmationCode): string
+    {
+        $returnStr = '';
+        if($uid && $confirmationCode){
+            $sql = 'SELECT guid '.
+                'FROM users '.
+                'WHERE (uid = '.$uid.')';
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                if($row->guid && $row->guid === $confirmationCode){
+                    $connection = new DbConnection();
+                    $editCon = $connection->getConnection();
+                    $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$uid.')';
+                    $editCon->query($sql);
+                    $editCon->close();
+                    $returnStr = 'Success! Your account has been confirmed. Please login to activate confirmation.';
+                }
+                else{
+                    $returnStr = 'There was a problem confirming your account. ';
+                    $returnStr .= '<a href="viewprofile.php">Please follow this link to your profile page and click the Resend Confirmation Email button.</a> ';
+                    if($GLOBALS['ADMIN_EMAIL']){
+                        $returnStr .= 'If you continue to have trouble confirming your account, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                    }
+                }
+            }
+            $result->free();
+        }
+        return $returnStr;
     }
 
     public function validateAllUnconfirmedUsers(): void
