@@ -27,10 +27,13 @@ if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
 if($action === 'Create Login'){
     if($pHandler->checkLogin($emailAddr)){
         if($pHandler->register($_POST)){
-            header('Location: ../index.php');
+            header('Location: viewprofile.php');
         }
         else{
-            $displayStr = 'FAILED: Unable to create user.<div style="margin-left:55px;">Please contact system administrator for assistance.</div>';
+            $displayStr = 'Unable to create account.';
+            if($GLOBALS['ADMIN_EMAIL']){
+                $displayStr .= '<div style="margin-left:55px;">Please contact system administrator at ' . $GLOBALS['ADMIN_EMAIL'] . ' for assistance.</div>';
+            }
         }
     }
     else{

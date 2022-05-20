@@ -13,7 +13,7 @@ $submit = array_key_exists('formsubmit',$_REQUEST)?htmlspecialchars($_REQUEST['f
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $fullWindow = (array_key_exists('fullwindow', $_REQUEST) && $_REQUEST['fullwindow']);
-$format = htmlspecialchars($_GET['format']) ?? '';
+$format = array_key_exists('format',$_REQUEST)?htmlspecialchars($_GET['format']):'';
 
 if($guid && !preg_match('/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/', $guid)) {
     $guid = '';
@@ -1242,7 +1242,7 @@ if($fullWindow){
                 <fieldset style="padding:20px;">
                     <legend><b>New Comment</b></legend>
                     <?php
-                    if($GLOBALS['SYMB_UID']){
+                    if($GLOBALS['VALID_USER']){
                         ?>
                         <form name="commentform" action="index.php" method="post" onsubmit="return verifyCommentForm(this);">
                             <textarea name="commentstr" rows="8" style="width:98%;"></textarea>

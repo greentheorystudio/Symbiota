@@ -2110,8 +2110,7 @@ CREATE TABLE `usertaxonomy` (
   CONSTRAINT `FK_usertaxonomy_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO users(uid,firstname,lastname,state,country,email) VALUES (1,'General','Administrator','NA','NA','NA');
-INSERT INTO userlogin(uid,username,password) VALUES (1,'admin', SHA2('admin', 224));
+INSERT INTO users(uid,firstname,lastname,username,password,state,country,email,validated) VALUES (1,'General','Administrator','admin',SHA2('admin', 224),'NA','NA','NA',1);
 INSERT INTO userroles(uid,role) VALUES (1,'SuperAdmin');
 
 INSERT IGNORE INTO `taxonunits`(rankid,rankname, dirparentrankid, reqparentrankid)
