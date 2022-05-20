@@ -77,8 +77,6 @@ if($isEditor){
         if(!$pHandler->updateProfile($newPerson)){
             $statusStr = 'Profile update failed!';
         }
-        $person = $pHandler->getPerson();
-        $tabIndex = 2;
     }
     elseif($action === 'Change Password'){
         $newPwd = $_REQUEST['newpwd'];
@@ -96,8 +94,6 @@ if($isEditor){
         else{
             $statusStr = 'Password update failed! Are you sure you typed the old password correctly?';
         }
-        $person = $pHandler->getPerson();
-        $tabIndex = 2;
     }
     elseif($action === 'Change Login'){
         $pwd = '';
@@ -107,13 +103,9 @@ if($isEditor){
         if(!$pHandler->changeLogin($_POST['newlogin'], $pwd)){
             $statusStr = $pHandler->getErrorStr();
         }
-        $person = $pHandler->getPerson();
-        $tabIndex = 2;
     }
     elseif($action === 'Clear Tokens'){
         $statusStr = $pHandler->clearAccessTokens();
-        $person = $pHandler->getPerson();
-        $tabIndex = 2;
     }
     elseif($action === 'Delete Profile'){
         if($pHandler->deleteProfile(true)){
@@ -125,17 +117,22 @@ if($isEditor){
     }
     elseif($action === 'delusertaxonomy'){
         $statusStr = $pHandler->deleteUserTaxonomy($_GET['utid']);
-        $person = $pHandler->getPerson();
-        $tabIndex = 2;
     }
     elseif($action === 'Add Taxonomic Relationship'){
         $statusStr = $pHandler->addUserTaxonomy($_POST['taxon'], $_POST['editorstatus'], $_POST['geographicscope'], $_POST['notes']);
-        $person = $pHandler->getPerson();
-        $tabIndex = 2;
     }
-
-    if(!$person) {
-        $person = $pHandler->getPerson();
+    elseif($action === 'resendconfirmationemail'){
+        $pHandler->addUserTaxonomy($_POST['taxon'], $_POST['editorstatus'], $_POST['geographicscope'], $_POST['notes']);
+        $statusStr = 'Resent confirmation email!';
+    }
+    $person = $pHandler->getPerson();
+    if($action){
+        if($GLOBALS['VALID_USER']){
+            $tabIndex = 2;
+        }
+        else{
+            $tabIndex = 0;
+        }
     }
 }
 ?>

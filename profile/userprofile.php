@@ -32,6 +32,27 @@ $listArr = $clManager->getManagementLists($userId);
 		<div>
 			<b><u>Profile Details</u></b>
 		</div>
+        <?php
+        if((int)$person->getValidated() !== 1){
+            if($GLOBALS['EMAIL_CONFIGURED']){
+                ?>
+                <div style="font-weight: bold;color:red;margin:15px;">
+                    You have one more step to confirm your account. A confirmation email was sent to the email address for your account.
+                    Please follow the instructions in that email to confirm your account.<br>
+                    <a href="viewprofile.php?action=resendconfirmationemail"><input type="button" value="Resend Confirmation Email" /></a>
+                </div>
+                <?php
+            }
+            elseif(isset($GLOBALS['ADMIN_EMAIL']) && $GLOBALS['ADMIN_EMAIL']){
+                ?>
+                <div style="font-weight: bold;color:red;margin:15px;">
+                    You have one more step to confirm your account. Please contact the portal administrator at <?php echo $GLOBALS['ADMIN_EMAIL']; ?> for
+                    assistance.
+                </div>
+                <?php
+            }
+        }
+        ?>
 		<div style="margin:20px;">
 			<?php
 			echo '<div>'.$person->getFirstName().' '.($middle?$person->getMiddleInitial().' ':'').$person->getLastName().'</div>';
@@ -311,82 +332,88 @@ $listArr = $clManager->getManagementLists($userId);
             </form>
         </fieldset>
     </div>
-	<div>
-		<div>
-			<b><u>Taxonomic Relationships</u></b>
-			<a href="#" onclick="toggle('addtaxonrelationdiv')" title="Add a new taxonomic relationship">
-                <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
-			</a>
-		</div>
-		<div id="addtaxonrelationdiv" style="display:none;">
-			<fieldset style="padding:20px;margin:15px;">
-				<legend><b>New Taxonomic Region of Interest</b></legend>
-				<div style="margin-bottom:10px;">
-					Use this form to define a new taxon-based region of interest.
-					Contact portal administrators for assignment of new
-					taxon specific Occurrence Identification and Taxonomic Thesaurus editing status.
-				</div>
-				<form name="addtaxonomyform" action="viewprofile.php" method="post" onsubmit="return verifyAddTaxonomyForm(this)">
-					<div style="margin:3px;">
-						<b>Taxon</b><br/>
-						<input id="taxoninput" name="taxon" type="text" value="" style="width:90%;" onfocus="initTaxonAutoComplete()" />
-					</div>
-					<div style="margin:3px;">
-						<b>Scope of Relationship</b><br/>
-						<select name="editorstatus">
-							<option value="RegionOfInterest">Region Of Interest</option>
-						</select>
+	<?php
+    if($GLOBALS['VALID_USER']){
+        ?>
+        <div>
+            <div>
+                <b><u>Taxonomic Relationships</u></b>
+                <a href="#" onclick="toggle('addtaxonrelationdiv')" title="Add a new taxonomic relationship">
+                    <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
+                </a>
+            </div>
+            <div id="addtaxonrelationdiv" style="display:none;">
+                <fieldset style="padding:20px;margin:15px;">
+                    <legend><b>New Taxonomic Region of Interest</b></legend>
+                    <div style="margin-bottom:10px;">
+                        Use this form to define a new taxon-based region of interest.
+                        Contact portal administrators for assignment of new
+                        taxon specific Occurrence Identification and Taxonomic Thesaurus editing status.
                     </div>
-					<div style="margin:3px;">
-						<b>Geographic Scope Limits</b><br/>
-						<input name="geographicscope" type="text" value="" style="width:90%;"/>
-                    </div>
-					<div style="margin:3px;">
-						<b>Notes</b><br/>
-						<input name="notes" type="text" value="" style="width:90%;" />
-                    </div>
-					<div style="margin:20px 10px;">
-						<input name="action" type="submit" value="Add Taxonomic Relationship" />
-					</div>
-				</form>
-			</fieldset>
-		</div>
-		<?php
-		$userTaxonomy = $person->getUserTaxonomy();
-		if($userTaxonomy){
-			ksort($userTaxonomy);
-			foreach($userTaxonomy as $cat => $userTaxArr){
-				if($cat === 'RegionOfInterest') {
-                    $cat = 'Region Of Interest';
-                }
-				elseif($cat === 'OccurrenceEditor') {
-                    $cat = 'Occurrence Editor';
-                }
-				elseif($cat === 'TaxonomicThesaurusEditor') {
-                    $cat = 'Taxonomic Thesaurus Editor';
-                }
-				echo '<div style="margin:10px;">';
-				echo '<div><b>'.$cat.'</b></div>';
-				echo '<ul style="margin:10px;">';
-				foreach($userTaxArr as $utid => $utArr){
-					echo '<li>';
-					echo $utArr['sciname'];
-					if($utArr['geographicScope']) {
-                        echo ' - ' . $utArr['geographicScope'] . ' ';
+                    <form name="addtaxonomyform" action="viewprofile.php" method="post" onsubmit="return verifyAddTaxonomyForm(this)">
+                        <div style="margin:3px;">
+                            <b>Taxon</b><br/>
+                            <input id="taxoninput" name="taxon" type="text" value="" style="width:90%;" onfocus="initTaxonAutoComplete()" />
+                        </div>
+                        <div style="margin:3px;">
+                            <b>Scope of Relationship</b><br/>
+                            <select name="editorstatus">
+                                <option value="RegionOfInterest">Region Of Interest</option>
+                            </select>
+                        </div>
+                        <div style="margin:3px;">
+                            <b>Geographic Scope Limits</b><br/>
+                            <input name="geographicscope" type="text" value="" style="width:90%;"/>
+                        </div>
+                        <div style="margin:3px;">
+                            <b>Notes</b><br/>
+                            <input name="notes" type="text" value="" style="width:90%;" />
+                        </div>
+                        <div style="margin:20px 10px;">
+                            <input name="action" type="submit" value="Add Taxonomic Relationship" />
+                        </div>
+                    </form>
+                </fieldset>
+            </div>
+            <?php
+            $userTaxonomy = $person->getUserTaxonomy();
+            if($userTaxonomy){
+                ksort($userTaxonomy);
+                foreach($userTaxonomy as $cat => $userTaxArr){
+                    if($cat === 'RegionOfInterest') {
+                        $cat = 'Region Of Interest';
                     }
-					if($utArr['notes']) {
-                        echo ', ' . $utArr['notes'];
+                    elseif($cat === 'OccurrenceEditor') {
+                        $cat = 'Occurrence Editor';
                     }
-					echo ' <a href="viewprofile.php?action=delusertaxonomy&utid='.$utid.'&userid='.$userId.'"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a>';
-					echo '</li>';
-				}
-				echo '</ul>';
-				echo '</div>';
-			}
-		}
-		else{
-			echo '<div style="margin:20px;">No relationships defined</div>';
-		}
-		?>
-	</div>
+                    elseif($cat === 'TaxonomicThesaurusEditor') {
+                        $cat = 'Taxonomic Thesaurus Editor';
+                    }
+                    echo '<div style="margin:10px;">';
+                    echo '<div><b>'.$cat.'</b></div>';
+                    echo '<ul style="margin:10px;">';
+                    foreach($userTaxArr as $utid => $utArr){
+                        echo '<li>';
+                        echo $utArr['sciname'];
+                        if($utArr['geographicScope']) {
+                            echo ' - ' . $utArr['geographicScope'] . ' ';
+                        }
+                        if($utArr['notes']) {
+                            echo ', ' . $utArr['notes'];
+                        }
+                        echo ' <a href="viewprofile.php?action=delusertaxonomy&utid='.$utid.'&userid='.$userId.'"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a>';
+                        echo '</li>';
+                    }
+                    echo '</ul>';
+                    echo '</div>';
+                }
+            }
+            else{
+                echo '<div style="margin:20px;">No relationships defined</div>';
+            }
+            ?>
+        </div>
+        <?php
+    }
+    ?>
 </div>
