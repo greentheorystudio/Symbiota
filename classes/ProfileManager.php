@@ -5,6 +5,7 @@ include_once(__DIR__ . '/Person.php');
 include_once(__DIR__ . '/Encryption.php');
 include_once(__DIR__ . '/Mailer.php');
 include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/UuidFactory.php');
 
 class ProfileManager extends Manager{
 
@@ -12,6 +13,7 @@ class ProfileManager extends Manager{
     private $uid;
     private $userName;
     private $displayName;
+    private $validated;
     private $token;
     private $authSql;
     private $errorStr;
@@ -46,7 +48,7 @@ class ProfileManager extends Manager{
         unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
         if($this->userName){
             if(!$this->authSql){
-                $this->authSql = 'SELECT u.uid, u.firstname, u.lastname '.
+                $this->authSql = 'SELECT u.uid, u.firstname, u.lastname, u.validated '.
                     'FROM users AS u '.
                     'WHERE (u.username = "'.$this->userName.'") ';
                 if($pwdStr) {
@@ -61,6 +63,7 @@ class ProfileManager extends Manager{
             $result = $this->conn->query($this->authSql);
             if($row = $result->fetch_object()){
                 $this->uid = $row->uid;
+                $this->validated = (int)$row->validated;
                 $this->displayName = $row->firstname;
                 if(strlen($this->displayName) > 15) {
                     $this->displayName = $this->userName;
@@ -107,11 +110,11 @@ class ProfileManager extends Manager{
 
     public function getPerson(): Person
     {
-        $sqlStr = 'SELECT u.uid, u.firstname, ' .($this->checkFieldExists('users','middleinitial')?'u.middleinitial, ':''). 'u.lastname, u.title, u.institution, u.department, ' .
-            'u.address, u.city, u.state, u.zip, u.country, u.phone, u.email, ' .
-            'u.url, u.biography, u.ispublic, u.notes, u.username, u.lastlogindate ' .
-            'FROM users u ' .
-            'WHERE (u.uid = ' .$this->uid. ')';
+        $sqlStr = 'SELECT uid, firstname, middleinitial, lastname, title, institution, department, ' .
+            'address, city, state, zip, country, phone, email, ' .
+            'url, biography, ispublic, notes, username, lastlogindate, validated ' .
+            'FROM users ' .
+            'WHERE (uid = ' .$this->uid. ')';
         $person = new Person();
         //echo $sqlStr;
         $result = $this->conn->query($sqlStr);
@@ -137,6 +140,7 @@ class ProfileManager extends Manager{
             $person->setUrl($row->url);
             $person->setBiography($row->biography);
             $person->setIsPublic($row->ispublic);
+            $person->setValidated($row->validated);
             $this->setUserTaxonomy($person);
             while($row = $result->fetch_object()){
                 if($row->lastlogindate && (!$person->getLastLoginDate() || $row->lastlogindate > $person->getLastLoginDate())){
@@ -182,6 +186,17 @@ class ProfileManager extends Manager{
             $editCon->close();
         }
         return $success;
+    }
+
+    public function validateUser($userId){
+        if($userId){
+            $connection = new DbConnection();
+            $editCon = $connection->getConnection();
+            $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$userId.')';
+            //echo $sql; Exit;
+            $editCon->query($sql);
+            $editCon->close();
+        }
     }
 
     public function deleteProfile($reset = null){
@@ -239,52 +254,52 @@ class ProfileManager extends Manager{
         return $success;
     }
 
-    public function resetPassword($un): string
+    public function resetPassword($uid,$admin): string
     {
-        if(isset($GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) && $GLOBALS['SMTP_HOST']){
+        $returnStr = '';
+        $status = false;
+        if($uid && ($admin || $GLOBALS['EMAIL_CONFIGURED'])){
             $newPassword = $this->generateNewPassword();
-            $status = false;
-            if($un){
-                $connection = new DbConnection();
-                $editCon = $connection->getConnection();
-                $sql = '';
-                if($this->encryption === 'password'){
-                    $sql = 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($newPassword).'") '.
-                        'WHERE (username = "'.Sanitizer::cleanInStr($un).'")';
-                }
-                if($this->encryption === 'sha2'){
-                    $sql = 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($newPassword).'", 224) '.
-                        'WHERE (username = "'.Sanitizer::cleanInStr($un).'")';
-                }
-                $status = $editCon->query($sql);
-                $editCon->close();
+            $connection = new DbConnection();
+            $editCon = $connection->getConnection();
+            $sql = '';
+            if($this->encryption === 'password'){
+                $sql = 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($newPassword).'") '.
+                    'WHERE (uid = '.(int)$uid.')';
             }
+            if($this->encryption === 'sha2'){
+                $sql = 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($newPassword).'", 224) '.
+                    'WHERE (uid = '.(int)$uid.')';
+            }
+            $status = $editCon->query($sql);
+            $editCon->close();
             if($status){
-                $emailAddr = '';
-                $sql = 'SELECT u.email FROM users u '.
-                    'WHERE (u.username = "'.Sanitizer::cleanInStr($un).'")';
-                $result = $this->conn->query($sql);
-                if($row = $result->fetch_object()){
-                    $emailAddr = $row->email;
+                if($admin){
+                    $returnStr = $newPassword;
                 }
-                $result->free();
+                else{
+                    $emailAddr = '';
+                    $sql = 'SELECT email FROM users '.
+                        'WHERE (uid = '.(int)$uid.')';
+                    $result = $this->conn->query($sql);
+                    if($row = $result->fetch_object()){
+                        $emailAddr = $row->email;
+                    }
+                    $result->free();
 
-                $subject = 'Your password';
-                $bodyStr = 'Your ' .$GLOBALS['DEFAULT_TITLE']." (<a href='http://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."'>http://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']. '</a>) password has been reset to: ' .$newPassword. ' ';
-                $bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='http://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."/profile/viewprofile.php'>View Profile</a> link and then click the Edit Profile tab.";
-                $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator ';
-                if($GLOBALS['ADMIN_EMAIL']){
-                    $bodyStr .= '<' .$GLOBALS['ADMIN_EMAIL']. '>';
+                    $subject = 'Your password';
+                    $bodyStr = 'Your ' .$GLOBALS['DEFAULT_TITLE'].' password has been reset to: ' .$newPassword. ' ';
+                    $bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='".(((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http')."://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."/profile/viewprofile.php'>View Profile</a> link and then click the View Profile tab.";
+                    if($GLOBALS['ADMIN_EMAIL']){
+                        $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                    }
+                    (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
+                    $returnStr = 'Your new password has been emailed to: ' .$emailAddr.' Please check your junk folder if no email appears in your inbox.';
                 }
-                (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
-                $returnStr = 'Your new password has been emailed to: ' .$emailAddr.' Please check your junk folder if no email appears in your inbox.';
             }
             else{
-                $returnStr = 'Reset Failed! Contact Administrator';
+                $returnStr = 'Password reset failed';
             }
-        }
-        else{
-            $returnStr = 'Reset Failed! Email has not been configured on this portal. Please contact portal admin.';
         }
         return $returnStr;
     }
@@ -294,7 +309,7 @@ class ProfileManager extends Manager{
         $newPassword = '';
         $alphabet = str_split('0123456789abcdefghijklmnopqrstuvwxyz');
         if($alphabet){
-            for($i = 0; $i<8; $i++) {
+            for($i = 0; $i<16; $i++) {
                 try {
                     $newPassword .= $alphabet[random_int(0, count($alphabet) - 1)];
                 } catch (Exception $e) {}
@@ -329,6 +344,7 @@ class ProfileManager extends Manager{
             $person->setUrl($postArr['url']);
             $person->setBiography($postArr['biography']);
             $person->setIsPublic(isset($postArr['ispublic'])?1:0);
+            $person->setGuid(UuidFactory::getUuidV4());
 
             $fields = 'INSERT INTO users (';
             $values = 'VALUES (';
@@ -338,6 +354,8 @@ class ProfileManager extends Manager{
             $values .= ', "'.Sanitizer::cleanInStr($person->getMiddleInitial()).'"';
             $fields .= ', lastname';
             $values .= ', "'.Sanitizer::cleanInStr($person->getLastName()).'"';
+            $fields .= ', guid';
+            $values .= ', "'.$person->getGuid().'"';
             $fields .= ', username';
             $values .= ', "'.Sanitizer::cleanInStr($person->getUserName()).'"';
             $fields .= ', password';
@@ -401,13 +419,15 @@ class ProfileManager extends Manager{
             $connection = new DbConnection();
             $editCon = $connection->getConnection();
             if($editCon->query($sql)){
-                $person->setUid($editCon->insert_id);
-                $this->uid = $person->getUid();
+                $this->uid = $editCon->insert_id;
                 $status = true;
                 $this->userName = $person->getUserName();
                 $this->displayName = $person->getFirstName();
                 $this->reset();
                 $this->authenticate();
+                if($GLOBALS['EMAIL_CONFIGURED']){
+                    $this->sendConfirmationEmail($this->uid);
+                }
             }
             else{
                 $this->errorStr = 'FAILED: Unable to create user.<div style="margin-left:55px;">Please contact system administrator for assistance.</div>';
@@ -418,17 +438,61 @@ class ProfileManager extends Manager{
         return $status;
     }
 
+    public function sendConfirmationEmail($uid): bool
+    {
+        $status = false;
+        if($GLOBALS['EMAIL_CONFIGURED']){
+            $email = '';
+            $code = '';
+            $sql = 'SELECT email, guid '.
+                'FROM users '.
+                'WHERE (uid = '.$uid.')';
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $email = $row->email;
+                $code = $row->guid;
+                if(!$code){
+                    $code = UuidFactory::getUuidV4();
+                    $connection = new DbConnection();
+                    $editCon = $connection->getConnection();
+                    $sql = 'UPDATE users SET guid = "'.$code.'" WHERE (uid = '.$uid.')';
+                    $editCon->query($sql);
+                    $editCon->close();
+                }
+            }
+            $result->free();
+            if($email && $code){
+                $confirmationLink = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http')."://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'];
+                $confirmationLink .= '/profile/index.php?action=confirm&uid='.$uid.'&confirmationcode='.$code;
+                $subject = $GLOBALS['DEFAULT_TITLE'].' Confirmation';
+                $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' account has been created. ';
+                $bodyStr .= "<br/><br/><a href='".$confirmationLink."'>Please follow this link to confirm your new account.</a>";
+                if($GLOBALS['ADMIN_EMAIL']){
+                    $bodyStr .= '<br/>If you have trouble confirming your account, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                }
+                $mailerResult = (new Mailer)->sendEmail($email,$subject,$bodyStr);
+                if($mailerResult === 'Sent'){
+                    $status = true;
+                }
+                else{
+                    $this->errorStr = $mailerResult;
+                }
+            }
+        }
+        return $status;
+    }
+
     public function lookupUserName($emailAddr): bool
     {
         $status = false;
-        if(isset($GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) && $GLOBALS['SMTP_HOST']){
+        if($GLOBALS['EMAIL_CONFIGURED']){
             if(!$this->validateEmailAddress($emailAddr)) {
                 return false;
             }
             $loginStr = '';
-            $sql = 'SELECT u.uid, u.username, concat_ws("; ",u.lastname,u.firstname) '.
-                'FROM users u '.
-                'WHERE (u.email = "'.$emailAddr.'")';
+            $sql = 'SELECT uid, username, concat_ws("; ",lastname,firstname) '.
+                'FROM users '.
+                'WHERE (email = "'.$emailAddr.'")';
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
                 if($loginStr) {
@@ -439,11 +503,9 @@ class ProfileManager extends Manager{
             $result->free();
             if($loginStr){
                 $subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
-                $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'">http://'.
-                    $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'</a>) login name is: '.$loginStr.' ';
-                $bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator ';
+                $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' login name is: '.$loginStr.' ';
                 if($GLOBALS['ADMIN_EMAIL']){
-                    $bodyStr .= '<' .$GLOBALS['ADMIN_EMAIL']. '>';
+                    $bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                 }
                 $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
                 if($mailerResult === 'Sent'){
@@ -457,10 +519,6 @@ class ProfileManager extends Manager{
                 $this->errorStr = 'There are no users registered to email address: '.$emailAddr;
             }
         }
-        else{
-            $this->errorStr = 'ERROR: email has not been configured on this portal. Please contact portal admin.';
-        }
-
         return $status;
     }
 
@@ -779,6 +837,7 @@ class ProfileManager extends Manager{
         $_SESSION['PARAMS_ARR']['un'] = $this->userName;
         $_SESSION['PARAMS_ARR']['dn'] = $this->displayName;
         $_SESSION['PARAMS_ARR']['uid'] = $this->uid;
+        $_SESSION['PARAMS_ARR']['valid'] = $this->validated;
         $GLOBALS['PARAMS_ARR'] = $_SESSION['PARAMS_ARR'];
         $GLOBALS['USERNAME'] = $this->userName;
     }
@@ -1095,5 +1154,69 @@ class ProfileManager extends Manager{
         }
         $editCon->close();
         return $statusStr;
+    }
+
+    public function validateFromConfirmationEmail($uid,$confirmationCode): string
+    {
+        $returnStr = '';
+        if($uid && $confirmationCode){
+            $sql = 'SELECT guid '.
+                'FROM users '.
+                'WHERE (uid = '.$uid.')';
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                if($row->guid && $row->guid === $confirmationCode){
+                    $connection = new DbConnection();
+                    $editCon = $connection->getConnection();
+                    $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$uid.')';
+                    $editCon->query($sql);
+                    $editCon->close();
+                    $returnStr = 'Success! Your account has been confirmed. Please login to activate confirmation.';
+                }
+                else{
+                    $returnStr = 'There was a problem confirming your account. ';
+                    $returnStr .= '<a href="viewprofile.php">Please follow this link to your profile page and click the Resend Confirmation Email button.</a> ';
+                    if($GLOBALS['ADMIN_EMAIL']){
+                        $returnStr .= 'If you continue to have trouble confirming your account, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                    }
+                }
+            }
+            $result->free();
+        }
+        return $returnStr;
+    }
+
+    public function validateAllUnconfirmedUsers(): void
+    {
+        $sql = 'SELECT uid FROM users WHERE (validated <> "1")';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $connection = new DbConnection();
+            $editCon = $connection->getConnection();
+            $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $editCon->close();
+        }
+        $rs->free();
+    }
+
+    public function deleteAllUnconfirmedUsers(): void
+    {
+        $sql = 'SELECT uid FROM users WHERE (validated <> "1")';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $connection = new DbConnection();
+            $editCon = $connection->getConnection();
+            $sql = 'DELETE FROM useraccesstokens WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $sql = 'DELETE FROM userroles WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $sql = 'DELETE FROM usertaxonomy WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $sql = 'DELETE FROM users WHERE (uid = '.$r->uid.')';
+            $editCon->query($sql);
+            $editCon->close();
+        }
+        $rs->free();
     }
 }
