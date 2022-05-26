@@ -325,7 +325,7 @@ class ProfileManager extends Manager{
         $firstName = Sanitizer::cleanInStr($postArr['firstname']);
         $lastName = Sanitizer::cleanInStr($postArr['lastname']);
         $email = Sanitizer::cleanInStr($postArr['emailaddr']);
-        if($firstName && $lastName && $email && $this->userName){
+        if($firstName && $lastName && $email && $this->userName && trim($postArr['pwd'])){
             $person = new Person();
             $person->setPassword($postArr['pwd']);
             $person->setUserName($this->userName);
