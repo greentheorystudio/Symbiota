@@ -483,7 +483,7 @@ class TaxonProfileManager {
             $imgUrl = $imgObj['url'];
             $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
             $imgThumbnail = $imgObj['thumbnailurl'];
-            if($GLOBALS['IMAGE_DOMAIN']){
+            if(isset($GLOBALS['IMAGE_DOMAIN'])){
                 if(strncmp($imgUrl, '/', 1) === 0) {
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                 }
