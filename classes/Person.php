@@ -22,6 +22,8 @@ class Person{
     private $biography;
     private $isPublic = 0;
     private $password;
+    private $guid;
+    private $validated;
     private $userTaxonomy = array();
     private $isTaxonomyEditor = false;
 
@@ -254,6 +256,24 @@ class Person{
     public function setPassword($password): void
     {
         $this->password = $password;
+    }
+
+    public function getGuid(){
+        return $this->guid;
+    }
+
+    public function setGuid($guid): void
+    {
+        $this->guid = $guid;
+    }
+
+    public function getValidated(){
+        return $this->validated;
+    }
+
+    public function setValidated($validated): void
+    {
+        $this->validated = $validated;
     }
 
     public function getLastLoginDate(){

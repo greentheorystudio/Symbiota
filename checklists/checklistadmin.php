@@ -19,7 +19,7 @@ if(!$clid && isset($_POST['delclid'])) {
 }
 $clManager->setClid($clid);
 
-if($action === 'SubmitAdd' && $GLOBALS['SYMB_UID']){
+if($action === 'SubmitAdd' && $GLOBALS['VALID_USER']){
 	$newClid = $clManager->createChecklist($_POST);
 	header('Location: checklist.php?cl=' .$newClid. '&emode=1');
 }
