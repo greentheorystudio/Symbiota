@@ -855,7 +855,8 @@ class TaxonProfileManager {
     public function getCloseTaxaMatches($testValue): array
     {
         $retArr = array();
-        $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex("'.$testValue.'")';
+        $value = $this->con->real_escape_string($testValue);
+        $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex("'.$value.'")';
         if($rs = $this->con->query($sql)){
             while($r = $rs->fetch_object()){
                 if($testValue !== $r->sciname) {
