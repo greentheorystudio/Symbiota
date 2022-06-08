@@ -199,7 +199,7 @@ class OccurrenceCollectionProfile {
 			$rightsUrl = '';
             if(strncmp($rights, 'http', 4) === 0){
                 $rightsUrl = $rights;
-                if($GLOBALS['RIGHTS_TERMS']) {
+                if(array_key_exists('RIGHTS_TERMS',$GLOBALS)) {
                     foreach($GLOBALS['RIGHTS_TERMS'] as $name => $url){
                         if($url === $rights){
                             $rights = $name;

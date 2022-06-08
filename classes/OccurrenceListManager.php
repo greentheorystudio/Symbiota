@@ -36,8 +36,8 @@ class OccurrenceListManager extends OccurrenceManager{
             'o.associatedtaxa, o.substrate, o.individualCount, o.lifeStage, o.sex, c.sortseq ';
         $sql .= (array_key_exists('assochost',$this->searchTermsArr)?', oas.verbatimsciname ':' ');
         $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins($sqlWhere);
         $sql .= $sqlWhere;
         if($this->sortField1 || $this->sortField2 || $this->sortOrder){

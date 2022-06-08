@@ -69,36 +69,26 @@ class ChecklistAdmin{
 		if($defaultViewArr) {
             $postArr['defaultsettings'] = json_encode($defaultViewArr);
         }
-
-		$fieldArr = array('name'=>'s','authors'=>'s','type'=>'s','locality'=>'s','publication'=>'s','abstract'=>'s','notes'=>'s','latcentroid'=>'n',
-				'longcentroid'=>'n','pointradiusmeters'=>'n','footprintwkt'=>'s','parentclid'=>'n','access'=>'s','uid'=>'n','defaultsettings'=>'s');
-
-		$sqlInsert = '';
-		$sqlValues = '';
-		foreach($fieldArr as $fieldName => $fieldType){
-			$sqlInsert .= ','.$fieldName;
-			$v = Sanitizer::cleanInStr($postArr[$fieldName]);
-			if($fieldName !== 'abstract') {
-                $v = strip_tags($v, '<i><u><b><a>');
-            }
-			if($v){
-				if($fieldType === 's'){
-					$sqlValues .= ',"'.$v.'"';
-				}
-				else if(is_numeric($v)){
-                    $sqlValues .= ','.$v;
-                }
-                else{
-                    $sqlValues .= ',NULL';
-                }
-			}
-			else{
-				$sqlValues .= ',NULL';
-			}
-		}
-		$sql = 'INSERT INTO fmchecklists ('.substr($sqlInsert,1).') VALUES ('.substr($sqlValues,1).')';
-
-		$newClId = 0;
+        $sql = 'INSERT INTO fmchecklists(name,authors,type,locality,publication,abstract,notes,latcentroid,longcentroid,'.
+            'pointradiusmeters,footprintwkt,parentclid,access,uid,defaultsettings) '.
+            'VALUES('.
+            ($postArr['name']?'"'.Sanitizer::cleanInStr($postArr['name']).'"':'NULL').','.
+            ($postArr['authors']?'"'.Sanitizer::cleanInStr($postArr['authors']).'"':'NULL').','.
+            ($postArr['type']?'"'.Sanitizer::cleanInStr($postArr['type']).'"':'NULL').','.
+            ($postArr['locality']?'"'.Sanitizer::cleanInStr($postArr['locality']).'"':'NULL').','.
+            ($postArr['publication']?'"'.Sanitizer::cleanInStr($postArr['publication']).'"':'NULL').','.
+            ($postArr['abstract']?'"'.Sanitizer::cleanInStr($postArr['abstract']).'"':'NULL').','.
+            ($postArr['notes']?'"'.Sanitizer::cleanInStr($postArr['notes']).'"':'NULL').','.
+            ($postArr['latcentroid']?Sanitizer::cleanInStr($postArr['latcentroid']):'NULL').','.
+            ($postArr['longcentroid']?Sanitizer::cleanInStr($postArr['longcentroid']):'NULL').','.
+            ($postArr['pointradiusmeters']?Sanitizer::cleanInStr($postArr['pointradiusmeters']):'NULL').','.
+            ($postArr['footprintwkt']?"'".Sanitizer::cleanInStr($postArr['footprintwkt'])."'":'NULL').','.
+            ($postArr['parentclid']?Sanitizer::cleanInStr($postArr['parentclid']):'NULL').','.
+            ($postArr['access']?'"'.Sanitizer::cleanInStr($postArr['access']).'"':'NULL').','.
+            $GLOBALS['SYMB_UID'].','.
+            ($postArr['defaultsettings']?"'".$postArr['defaultsettings']."'":'NULL').
+            ')';
+        $newClId = 0;
 		if($this->conn->query($sql)){
 			$newClId = $this->conn->insert_id;
 			$this->conn->query('INSERT INTO userroles (uid, role, tablename, tablepk) VALUES('.$GLOBALS['SYMB_UID'].',"ClAdmin","fmchecklists",'.$newClId.') ');

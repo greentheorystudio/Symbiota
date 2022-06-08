@@ -365,36 +365,33 @@ class OccurrenceIndividualManager extends Manager{
 
     public function reportComment($repComId): bool
     {
-        if(isset($GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) && $GLOBALS['SMTP_HOST']){
+        if($GLOBALS['EMAIL_CONFIGURED'] && isset($GLOBALS['ADMIN_EMAIL']) && $GLOBALS['ADMIN_EMAIL']){
             $status = true;
             if(!is_numeric($repComId)) {
                 return false;
             }
-            if(isset($GLOBALS['ADMIN_EMAIL'])){
-                if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 2 WHERE comid = '.$repComId)){
-                    $this->errorMessage = 'ERROR changing comment status to needing review.';
-                    $status = false;
-                }
-                $this->conn->close();
-
-                $emailAddr = $GLOBALS['ADMIN_EMAIL'];
-                $comUrl = 'http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
-                $subject = $GLOBALS['DEFAULT_TITLE'].' inappropriate comment reported<br/>';
-                $bodyStr = 'The following comment has been reported as inappropriate:<br/> '.
-                    '<a href="'.$comUrl.'">'.$comUrl.'</a>';
-                $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
-                if($mailerResult !== 'Sent'){
-                    $this->errorMessage = 'ERROR sending email to portal manager, error unknown';
-                    $status = false;
-                }
+            if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 2 WHERE comid = '.$repComId)){
+                $this->errorMessage = 'ERROR changing comment status to needing review.';
+                $status = false;
             }
-            else{
-                $this->errorMessage = 'ERROR: email has not been configured on this portal. Please contact portal admin.';
+            $this->conn->close();
+
+            $emailAddr = $GLOBALS['ADMIN_EMAIL'];
+            $comUrl = 'http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
+            $subject = $GLOBALS['DEFAULT_TITLE'].' inappropriate comment reported<br/>';
+            $bodyStr = 'The following comment has been reported as inappropriate:<br/> '.
+                '<a href="'.$comUrl.'">'.$comUrl.'</a>';
+            $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
+            if($mailerResult !== 'Sent'){
+                $this->errorMessage = 'ERROR sending email to portal manager, error unknown';
                 $status = false;
             }
         }
         else{
-            $this->errorMessage = 'ERROR: Portal admin email not defined in central configuration file ';
+            $this->errorMessage = 'Email has not been configured on this portal. ';
+            if(isset($GLOBALS['ADMIN_EMAIL']) && $GLOBALS['ADMIN_EMAIL']){
+                $this->errorMessage .= 'Please contact portal administrator at: ' . $GLOBALS['ADMIN_EMAIL'];
+            }
             $status = false;
         }
         return $status;

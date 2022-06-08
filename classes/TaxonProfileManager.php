@@ -483,7 +483,7 @@ class TaxonProfileManager {
             $imgUrl = $imgObj['url'];
             $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
             $imgThumbnail = $imgObj['thumbnailurl'];
-            if($GLOBALS['IMAGE_DOMAIN']){
+            if(isset($GLOBALS['IMAGE_DOMAIN'])){
                 if(strncmp($imgUrl, '/', 1) === 0) {
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                 }
@@ -855,7 +855,8 @@ class TaxonProfileManager {
     public function getCloseTaxaMatches($testValue): array
     {
         $retArr = array();
-        $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex("'.$testValue.'")';
+        $value = $this->con->real_escape_string($testValue);
+        $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex("'.$value.'")';
         if($rs = $this->con->query($sql)){
             while($r = $rs->fetch_object()){
                 if($testValue !== $r->sciname) {

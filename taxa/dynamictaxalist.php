@@ -7,7 +7,7 @@ header('Cache-Control: no-cache, must-revalidate, max-age=0');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $index = array_key_exists('index',$_REQUEST)?(int)$_REQUEST['index']:0;
-$descLimit = array_key_exists('desclimit',$_REQUEST);
+$descLimit = array_key_exists('desclimit',$_REQUEST)?(int)$_REQUEST['desclimit']:0;
 $orderInput = array_key_exists('orderinput',$_REQUEST)?$_REQUEST['orderinput']:'';
 $familyInput = array_key_exists('familyinput',$_REQUEST)?$_REQUEST['familyinput']:'';
 $scinameInput = array_key_exists('scinameinput',$_REQUEST)?$_REQUEST['scinameinput']:'';
@@ -34,6 +34,7 @@ if(!$targetTid && $targetTaxon){
 }
 
 $higherRankArr = $listManager->getHigherRankArr();
+$listManager->setDescLimit($descLimit);
 if($higherRankArr){
     $kingdomArr = $higherRankArr[10];
     $phylumArr = $higherRankArr[30];
@@ -42,13 +43,12 @@ if($higherRankArr){
 
 if($targetTid){
     $listManager->setTid($targetTid);
-    $listManager->setDescLimit($descLimit);
     $listManager->setSortField($sortSelect);
     $listManager->setPageIndex($index);
     $tableArr = $listManager->getTableArr();
     $vernacularArr = $listManager->getVernacularArr();
     $qryCnt = (int)$listManager->getTaxaCnt();
-    $urlVars = ($descLimit?'desclimit=1':'').'&orderinput='.$orderInput.'&familyinput='.$familyInput.'&scinameinput='.$scinameInput.'&commoninput='.$commonInput.'&sortSelect='.$sortSelect.'&targettid='.$targetTid;
+    $urlVars = 'desclimit='.$descLimit.'&orderinput='.$orderInput.'&familyinput='.$familyInput.'&scinameinput='.$scinameInput.'&commoninput='.$commonInput.'&sortSelect='.$sortSelect.'&targettid='.$targetTid.'&desclimit='.$descLimit;
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -279,6 +279,7 @@ include(__DIR__ . '/../header.php');
         if($tableArr){
             $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/';
             $navUrl = $urlPrefix . 'dynamictaxalist.php?' . $urlVars . '&index=';
+            $downloadUrl = $urlPrefix . 'dynamictaxalistdownload.php?' . $urlVars;
             $navStr = '<div style="clear:both;display:flex;justify-content:center;">';
             $lastPage = ($qryCnt / 100) + 1;
             $startPage = ($index > 4?$index - 4:1);
@@ -307,8 +308,14 @@ include(__DIR__ . '/../header.php');
                 $endNum = $qryCnt;
             }
             $navStr .= '</div>';
-            $navStr .= '<div style="clear:both;display:flex;justify-content:center;">';
+            $navStr .= '<div style="clear:both;display:flex;justify-content:center;align-items:center;align-content:center;gap:10px;">';
+            $navStr .= '<div>';
+            $navStr .= '<a href="'.$downloadUrl.'"><button type="button">Download Results</button></a>';
+            $navStr .= '</div>';
+            $navStr .= '<div>';
             $navStr .= 'Page '.($index + 1).', records '.$beginNum.'-'.$endNum.' of '.$qryCnt;
+            $navStr .= '</div>';
+            $navStr .= '<div></div>';
             $navStr .= '</div>';
 
             echo '<div style="width:100%;clear:both;margin:5px;">';
@@ -362,4 +369,3 @@ include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>
-
