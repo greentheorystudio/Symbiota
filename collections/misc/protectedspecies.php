@@ -100,7 +100,7 @@ include(__DIR__ . '/../../header.php');
 	if($isEditor){
 		?>
 		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
-			<img style="border:0px;" src="../../images/edit.png" />
+            <i style='width:15px;height:15px;' class="far fa-edit"></i>
 		</div>
 		<?php
 	}
