@@ -1445,12 +1445,7 @@ class DwcArchiverCore extends Manager{
             $this->setServerDomain();
             $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
 
-            if($GLOBALS['IMAGE_DOMAIN']){
-                $localDomain = $GLOBALS['IMAGE_DOMAIN'];
-            }
-            else{
-                $localDomain = $this->serverDomain;
-            }
+            $localDomain = $GLOBALS['IMAGE_DOMAIN'] ?? $this->serverDomain;
 
             while($r = $rs->fetch_assoc()){
                 if(strncmp($r['identifier'], '/', 1) === 0) {
