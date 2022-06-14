@@ -608,7 +608,8 @@ class ConfigurationManager{
             else{
                 $versionArr['db'] = 'MySQL';
             }
-            $versionArr['ver'] = str_replace('-MariaDB-log', '', $versionStr);
+            $versionPieces = explode('-', $versionStr);
+            $versionArr['ver'] = $versionPieces[0];
         }
         return $versionArr;
     }
