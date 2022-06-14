@@ -13,6 +13,7 @@ $confManager = new ConfigurationManager();
 $fullConfArr = $confManager->getConfigurationsArr();
 $coreConfArr = $fullConfArr['core'];
 $additionalConfArr = $fullConfArr['additional'];
+$databaseProperties = $confManager->getDatabasePropArr();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -656,6 +657,10 @@ include(__DIR__ . '/../header.php');
                     </span>
                 </div>
             </fieldset>
+            <div style="margin-top:20px;">
+                <b>php version:</b> <?php echo $confManager->getPhpVersion(); ?><br />
+                <b>Database server:</b> <?php echo $databaseProperties['db'].' '.$databaseProperties['ver']; ?>
+            </div>
         </div>
 
         <div id="additionalconfig">
