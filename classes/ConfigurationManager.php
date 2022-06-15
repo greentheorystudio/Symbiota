@@ -591,6 +591,34 @@ class ConfigurationManager{
         return $year . $month . $day;
     }
 
+    public function getDatabasePropArr(): array
+    {
+        $versionArr = array();
+        $versionStr = '';
+        $sql = 'SELECT VERSION() AS ver ';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $versionStr = $r->ver;
+        }
+        $rs->free();
+        if($versionStr){
+            if(strpos($versionStr,'MariaDB') !== false){
+                $versionArr['db'] = 'MariaDB';
+            }
+            else{
+                $versionArr['db'] = 'MySQL';
+            }
+            $versionPieces = explode('-', $versionStr);
+            $versionArr['ver'] = $versionPieces[0];
+        }
+        return $versionArr;
+    }
+
+    public function getPhpVersion(): string
+    {
+        return PHP_VERSION;
+    }
+
     public function setGlobalCssVersion(): void
     {
         if(strpos($GLOBALS['CSS_VERSION_LOCAL'], '-') !== false){
