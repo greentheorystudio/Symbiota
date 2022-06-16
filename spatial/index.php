@@ -82,7 +82,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol-ext.min.js" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shp.js" type="text/javascript"></script>
@@ -94,7 +94,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220332" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220615" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20220330" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -608,7 +608,7 @@ $dbArr = array();
         let filename = event.file.name.split('.');
         const fileType = filename.pop();
         filename = filename.join("");
-        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif'){
+        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif' || fileType === 'tiff'){
             if(fileType === 'geojson' || fileType === 'kml'){
                 if(setDragDropTarget()){
                     const infoArr = [];
@@ -677,7 +677,7 @@ $dbArr = array();
                     });
                 }
             }
-            else if(fileType === 'tif'){
+            else if(fileType === 'tif' || fileType === 'tiff'){
                 if(setRasterDragDropTarget()){
                     event.file.arrayBuffer().then((data) => {
                         const extent = ol.extent.createEmpty();

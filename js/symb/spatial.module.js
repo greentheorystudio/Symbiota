@@ -289,7 +289,7 @@ function buildCollKeyPiece(key){
 function buildLayerControllerLayerElement(lArr,active){
     const layerDivId = 'layer-' + lArr['id'];
     const layerDiv = document.createElement('div');
-    const raster = (lArr['fileType'] === 'tif');
+    const raster = (lArr['fileType'] === 'tif' || lArr['fileType'] === 'tiff');
     layerDiv.setAttribute("id",layerDivId);
     layerDiv.setAttribute("style","border:1px solid black;padding:5px;margin-bottom:5px;background-color:white;width:100%;font-family:Verdana,Arial,sans-serif;font-size:14px;");
     const layerMainDiv = document.createElement('div');
@@ -333,7 +333,7 @@ function buildLayerControllerLayerElement(lArr,active){
     dataTypeImageDiv.setAttribute("style","width:30px;height:30px;background-color:black;margin:0 5px;");
     const dataTypeImage = document.createElement('img');
     dataTypeImage.setAttribute("style","width:20px;margin-left:5px;margin-top:5px;");
-    if(lArr['fileType'] === 'tif'){
+    if(lArr['fileType'] === 'tif' || lArr['fileType'] === 'tiff'){
         dataTypeImage.setAttribute("src","../images/button_wms.png");
     }
     else{
@@ -2598,7 +2598,7 @@ function loadServerLayer(id,file){
             });
         });
     }
-    else if(fileType === 'tif'){
+    else if(fileType === 'tif' || fileType === 'tiff'){
         fetch(('../content/spatial/' + file)).then((fileFetch) => {
             fileFetch.blob().then((blob) => {
                 blob.arrayBuffer().then((data) => {
