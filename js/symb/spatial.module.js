@@ -6,6 +6,7 @@ let geoCircleArr = [];
 let geoBoundingBoxArr = {};
 let geoPointArr = [];
 let layersArr = [];
+let rasterLayersArr = [];
 let layerOrderArr = [];
 let mouseCoords = [];
 let selections = [];
@@ -98,8 +99,7 @@ function addLayerToLayerOrderArr(layerId) {
 function addLayerToSelList(layer,title,active){
     const origValue = document.getElementById("selectlayerselect").value;
     let selectionList = document.getElementById("selectlayerselect").innerHTML;
-    const optionId = "lsel-" + layer;
-    const newOption = '<option id="lsel-' + optionId + '" value="' + layer + '">' + title + '</option>';
+    const newOption = '<option value="' + layer + '">' + title + '</option>';
     selectionList += newOption;
     document.getElementById("selectlayerselect").innerHTML = selectionList;
     if(active){
@@ -116,6 +116,19 @@ function addQueryToDataset(){
     document.getElementById("dsstarrjson").value = JSON.stringify(searchTermsArr);
     document.getElementById("datasetformaction").value = 'addAllToDataset';
     document.getElementById("datasetform").submit();
+}
+
+function addRasterLayerToTargetList(layerId,title){
+    let selectionList = document.getElementById("targetrasterselect").innerHTML;
+    const newOption = '<option value="' + layerId + '">' + title + '</option>';
+    selectionList += newOption;
+    document.getElementById("targetrasterselect").innerHTML = selectionList;
+    document.getElementById("targetrasterselect").value = 'none';
+    rasterLayersArr.push(layerId);
+    if(rasterLayersArr.length > 0){
+        document.getElementById("rastertoolspanel").style.display = "block";
+        document.getElementById("rastertoolstab").style.display = "block";
+    }
 }
 
 function addSelectionsToDataset(){
@@ -502,6 +515,9 @@ function buildLayerControllerLayerElement(lArr,active){
         symbologyBottomRow.appendChild(symbologyOpacityDiv);
         layerSymbologyDiv.appendChild(symbologyBottomRow);
         layerDiv.appendChild(layerSymbologyDiv);
+    }
+    if(raster){
+        addRasterLayerToTargetList(lArr['id'],lArr['layerName'])
     }
     return layerDiv;
 }
@@ -3389,6 +3405,19 @@ function removeLayerToSelList(layer){
     setActiveLayer();
 }
 
+function removeRasterLayerFromTargetList(layerId){
+    const selectobject = document.getElementById("targetrasterselect");
+    for (let i = 0; i<selectobject.length; i++){
+        if(selectobject.options[i].value === layerId) selectobject.remove(i);
+    }
+    const index = rasterLayersArr.indexOf(layerId);
+    rasterLayersArr.splice(index,1);
+    if(rasterLayersArr.length === 0){
+        document.getElementById("rastertoolspanel").style.display = "none";
+        document.getElementById("rastertoolstab").style.display = "none";
+    }
+}
+
 function removeSelection(c){
     if(c.checked === false){
         const occid = c.value;
@@ -3430,7 +3459,7 @@ function removeServerLayer(id){
     delete layersArr[id];
 }
 
-function removeUserLayer(layerID){
+function removeUserLayer(layerID,raster){
     const layerDivId = "layer-" + layerID;
     if(document.getElementById(layerDivId)){
         const layerDiv = document.getElementById(layerDivId);
@@ -3483,6 +3512,7 @@ function removeUserLayer(layerID){
             else if(layerID === 'dragdrop6') {
                 dragDrop6 = false;
             }
+            removeRasterLayerFromTargetList(layerID);
         }
     }
     document.getElementById("selectlayerselect").value = 'none';
