@@ -123,7 +123,7 @@ function addRasterLayerToTargetList(layerId,title){
     const newOption = '<option value="' + layerId + '">' + title + '</option>';
     selectionList += newOption;
     document.getElementById("targetrasterselect").innerHTML = selectionList;
-    document.getElementById("targetrasterselect").value = 'none';
+    document.getElementById("targetrasterselect").value = '';
     rasterLayersArr.push(layerId);
     if(rasterLayersArr.length > 0){
         document.getElementById("rastertoolspanel").style.display = "block";
@@ -4470,6 +4470,94 @@ function validateFeatureDate(feature){
         }
     }
     return valid;
+}
+
+function vectorizeRaster(){
+    let selectedClone = null;
+    let shapeCount = 0;
+    const turfFeatureArr = [];
+    const targetRaster = document.getElementById("targetrasterselect").value;
+    const valLow = document.getElementById("vectorizeRasterValueLow").value;
+    const valHigh = document.getElementById("vectorizeRasterValueHigh").value;
+    const resolutionVal = document.getElementById("vectorizeRasterResolution").value;
+    if(targetRaster === ''){
+        alert("Please select a target raster layer.");
+    }
+    else if(resolutionVal === '' || isNaN(resolutionVal)){
+        alert("Please enter a number for the resolution in kilometers in which to vectorize the raster.");
+    }
+    else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
+        alert("Please enter high and low numbers for the value range.");
+    }
+    else{
+        showWorking();
+        selectInteraction.getFeatures().forEach(function(feature){
+            selectedClone = feature.clone();
+            const geoType = selectedClone.getGeometry().getType();
+            if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
+                shapeCount++;
+            }
+        });
+        if(shapeCount === 1){
+            const geoJSONFormat = new ol.format.GeoJSON();
+            const selectiongeometry = selectedClone.getGeometry();
+            selectiongeometry.transform(mapProjection, wgs84Projection);
+            const geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
+            const featCoords = JSON.parse(geojsonStr).coordinates;
+            const extentBBox = turf.bbox(turf.polygon(featCoords));
+            const gridPoints = turf.pointGrid(extentBBox, resolutionVal, {units: 'kilometers',mask: turf.polygon(featCoords)});
+            const gridPointFeatures = geoJSONFormat.readFeatures(gridPoints);
+            const imageIndex = targetRaster + 'Image';
+            const image = layersArr[imageIndex];
+            const meta = image.getFileDirectory();
+            const x_min = meta.ModelTiepoint[3];
+            const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+            const y_min = meta.ModelTiepoint[4];
+            const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+            const bands = image.readRasters();
+            const canvasElement = document.createElement('canvas');
+            const minValue = 0;
+            const maxValue = 1200;
+            const plot = new plotty.plot({
+                canvas: canvasElement,
+                data: bands[0],
+                width: image.getWidth(),
+                height: image.getHeight(),
+                domain: [minValue, maxValue],
+                colorScale: 'earth'
+            });
+            gridPointFeatures.forEach(function(feature){
+                const coords = feature.getGeometry().getCoordinates();
+                const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
+                const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
+                if(coords[0] >= x_min && coords[0] <= x_max && coords[1] <= y_min && coords[1] >= y_max){
+                    const rasterValue = plot.atPoint(x,y);
+                    if(Number(rasterValue) >= Number(valLow) && Number(rasterValue) <= Number(valHigh)){
+                        turfFeatureArr.push(turf.point(coords));
+                    }
+                }
+            });
+            const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
+            let concavepoly = '';
+            try{
+                const maxEdgeVal = Number(resolutionVal) + (Number(resolutionVal) / 2);
+                const options = {units: 'kilometers', maxEdge: maxEdgeVal};
+                concavepoly = turf.concave(turfFeatureCollection,options);
+            }
+            catch(e){
+                alert('Concave polygon was not able to be calculated. Perhaps try using a larger value for the maximum edge length.');
+            }
+            if(concavepoly){
+                const cnvepoly = geoJSONFormat.readFeature(concavepoly);
+                cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
+                selectsource.addFeature(cnvepoly);
+            }
+            hideWorking();
+        }
+        else{
+            alert('You must have one polygon or circle, and only one polygon or circle, selected in your Shapes layer to serve as the bounds of the vectorization.');
+        }
+    }
 }
 
 function verifyCollForm(){

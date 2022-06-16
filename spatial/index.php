@@ -94,7 +94,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=202206152" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220616" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20220330" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -368,6 +368,26 @@ $dbArr = array();
         style: getVectorLayerStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesPointRadius, shapesOpacity)
     });
 
+    let rasteranalysissource = new ol.source.Vector({
+        wrapX: true
+    });
+    const rasteranalysislayer = new ol.layer.Vector({
+        zIndex: 7,
+        source: rasteranalysissource,
+        style: new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 7,
+                stroke: new ol.style.Stroke({
+                    color: '#000000',
+                    width: 1
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255,0,0)'
+                })
+            })
+        })
+    });
+
     let uncertaintycirclesource = new ol.source.Vector({
         wrapX: true
     });
@@ -467,6 +487,7 @@ $dbArr = array();
     layersArr['dragdrop4'] = dragdroplayer4;
     layersArr['dragdrop5'] = dragdroplayer5;
     layersArr['dragdrop6'] = dragdroplayer6;
+    layersArr['rasteranalysis'] = rasteranalysislayer;
     layersArr['uncertainty'] = uncertaintycirclelayer;
     layersArr['select'] = selectlayer;
     layersArr['pointv'] = pointvectorlayer;
@@ -759,6 +780,7 @@ $dbArr = array();
             layersArr['dragdrop1'],
             layersArr['dragdrop2'],
             layersArr['dragdrop3'],
+            layersArr['rasteranalysis'],
             layersArr['uncertainty'],
             layersArr['select'],
             layersArr['pointv'],
