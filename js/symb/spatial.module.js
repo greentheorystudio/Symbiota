@@ -4327,17 +4327,29 @@ function toggleServerLayerVisibility(id,name,file,visible){
     const symbologyButtonId = 'layerSymbologyButton-' + id;
     const queryButtonId = 'layerQueryButton-' + id;
     if(visible === true){
-        document.getElementById(sortingScrollerDivId).style.display = 'flex';
-        document.getElementById(symbologyButtonId).style.display = 'block';
-        document.getElementById(queryButtonId).style.display = 'block';
+        if(document.getElementById(sortingScrollerDivId)){
+            document.getElementById(sortingScrollerDivId).style.display = 'flex';
+        }
+        if(document.getElementById(symbologyButtonId)){
+            document.getElementById(symbologyButtonId).style.display = 'block';
+        }
+        if(document.getElementById(queryButtonId)){
+            document.getElementById(queryButtonId).style.display = 'block';
+        }
         loadServerLayer(id,file);
         addLayerToSelList(id,name,false);
         addLayerToLayerOrderArr(id);
     }
     else{
-        document.getElementById(sortingScrollerDivId).style.display = 'none';
-        document.getElementById(symbologyButtonId).style.display = 'none';
-        document.getElementById(queryButtonId).style.display = 'none';
+        if(document.getElementById(sortingScrollerDivId)){
+            document.getElementById(sortingScrollerDivId).style.display = 'none';
+        }
+        if(document.getElementById(symbologyButtonId)){
+            document.getElementById(symbologyButtonId).style.display = 'none';
+        }
+        if(document.getElementById(queryButtonId)){
+            document.getElementById(queryButtonId).style.display = 'none';
+        }
         removeServerLayer(id);
         removeLayerToSelList(id);
         removeLayerFromLayerOrderArr(id);
