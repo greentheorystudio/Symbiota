@@ -345,7 +345,7 @@ if($action === 'Create Login'){
                     <tr>
                         <td colspan="2">
                             <div style="float:right;margin:20px;">
-                                <input type="submit" id="submitButton" value="Create Login" name="submit" disabled />
+                                <input type="submit" id="submitButton" value="Create Account" name="submit" disabled />
                             </div>
                         </td>
                     </tr>

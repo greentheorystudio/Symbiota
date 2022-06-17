@@ -6,9 +6,10 @@ class TaxonomyDynamicListManager{
 
     private $conn;
     private $tid = 0;
-    private $descLimit = false;
+    private $descLimit = 0;
     private $sortField = '';
     private $index = 0;
+    private $collid = 0;
     private $taxaCnt = 0;
     private $tidArr = array();
     private $targetTidArr = array();
@@ -67,11 +68,18 @@ class TaxonomyDynamicListManager{
         if(is_numeric($tid)) {
             $this->tid = $tid;
             $this->targetTidArr[] = $tid;
-            $tidSql = 'SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$this->tid;
+            if($this->collid){
+                $tidSql = 'SELECT DISTINCT tidinterpreted AS tid FROM omoccurrences WHERE collid = '.$this->collid.' ';
+            }
+            else{
+                $tidSql = 'SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$this->tid.' ';
+            }
             //echo "<div>TID sql: ".$tidSql."</div>";
             $rs = $this->conn->query($tidSql);
             while($r = $rs->fetch_object()){
-                $this->targetTidArr[] = $r->tid;
+                if($r->tid){
+                    $this->targetTidArr[] = $r->tid;
+                }
             }
             $rs->free();
             if(!$this->sciname){
@@ -84,15 +92,16 @@ class TaxonomyDynamicListManager{
     public function setTaxaCnt(): void
     {
         $taxCnt = 0;
-        $sql = 'SELECT COUNT(DISTINCT t.SciName) AS cnt '.
+        $sql = 'SELECT COUNT(DISTINCT t2.SciName) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'LEFT JOIN taxa AS t2 ON te.tid = t2.TID '.
             'LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
             'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND t.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
             'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT parenttid FROM taxstatus)) ';
-        if($this->descLimit){
+        if($this->descLimit > 0){
             $sql .= 'AND t.TID IN(SELECT tid FROM taxadescrblock) ';
         }
-        //echo "<div>Count sql: ".$sql."</div>";
+        //echo '<div>Count sql: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
             $this->taxaCnt = $row->cnt;
@@ -108,7 +117,7 @@ class TaxonomyDynamicListManager{
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
             'LEFT JOIN taxstatus AS ts ON te.tid = ts.tid '.
             'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND ts.tid = ts.tidaccepted AND t.RankId IN(10,30,60,100,140)) ';
-        //echo "<div>Parent sql: ".$parentTaxonSql."</div>";
+        //echo '<div>Parent sql: ' .$parentTaxonSql. '</div>';
         $rs = $this->conn->query($parentTaxonSql);
         while($r = $rs->fetch_object()){
             $parentTaxonArr[$r->tid][(int)$r->RankId]['id'] = $r->parentTid;
@@ -124,7 +133,7 @@ class TaxonomyDynamicListManager{
         if($this->descLimit){
             $sql .= 'AND t.TID IN(SELECT tid FROM taxadescrblock) ';
         }
-        //echo "<div>Table sql: ".$sql."</div>";
+        //echo '<div>Table sql: ' .$sql. '</div>';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $tid = $r->TID;
@@ -189,7 +198,11 @@ class TaxonomyDynamicListManager{
             array_multisort($SciName, SORT_ASC, $returnArr);
         }
 
-        return array_slice($returnArr, ($this->index > 0?$this->index * 100:0), 100);
+        if($this->index){
+            return array_slice($returnArr, ($this->index > 0?$this->index * 100:0), 100);
+        }
+
+        return $returnArr;
     }
 
     public function getVernacularArr(): array
@@ -248,6 +261,11 @@ class TaxonomyDynamicListManager{
     public function setPageIndex($value): void
     {
         $this->index = $value;
+    }
+
+    public function setCollId($value): void
+    {
+        $this->collid = $value;
     }
 
     public function getSciName(): string
