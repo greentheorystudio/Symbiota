@@ -82,7 +82,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol-ext.min.js" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shp.js" type="text/javascript"></script>
@@ -94,7 +94,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220332" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=202206162" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20220330" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -608,7 +608,7 @@ $dbArr = array();
         let filename = event.file.name.split('.');
         const fileType = filename.pop();
         filename = filename.join("");
-        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif'){
+        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif' || fileType === 'tiff'){
             if(fileType === 'geojson' || fileType === 'kml'){
                 if(setDragDropTarget()){
                     const infoArr = [];
@@ -677,7 +677,7 @@ $dbArr = array();
                     });
                 }
             }
-            else if(fileType === 'tif'){
+            else if(fileType === 'tif' || fileType === 'tiff'){
                 if(setRasterDragDropTarget()){
                     event.file.arrayBuffer().then((data) => {
                         const extent = ol.extent.createEmpty();
@@ -956,66 +956,6 @@ $dbArr = array();
         }
     });
 
-    function loadPointWFSLayer(index){
-        pointvectorsource.clear();
-        let processed = 0;
-        do{
-            lazyLoadPoints(index,function(res){
-                const format = new ol.format.GeoJSON();
-                let features = format.readFeatures(res, {
-                    featureProjection: 'EPSG:3857'
-                });
-                if(toggleSelectedPoints){
-                    features = features.filter(function (feature){
-                        const occid = Number(feature.get('occid'));
-                        return (selections.indexOf(occid) !== -1);
-                    });
-                }
-                primeSymbologyData(features);
-                pointvectorsource.addFeatures(features);
-                if(loadPointsEvent){
-                    const pointextent = pointvectorsource.getExtent();
-                    map.getView().fit(pointextent,map.getSize());
-                }
-            });
-            processed = processed + lazyLoadCnt;
-            index++;
-        }
-        while(processed < queryRecCnt);
-
-        clustersource = new ol.source.PropertyCluster({
-            distance: clusterDistance,
-            source: pointvectorsource,
-            clusterkey: clusterKey,
-            indexkey: 'occid',
-            geometryFunction: function(feature){
-                if(dateSliderActive){
-                    if(validateFeatureDate(feature)){
-                        return feature.getGeometry();
-                    }
-                    else{
-                        return null;
-                    }
-                }
-                else{
-                    return feature.getGeometry();
-                }
-            }
-        });
-
-        layersArr['pointv'].setStyle(getPointStyle);
-        if(clusterPoints){
-            layersArr['pointv'].setSource(clustersource);
-        }
-        else{
-            layersArr['pointv'].setSource(pointvectorsource);
-        }
-        layersArr['heat'].setSource(pointvectorsource);
-        if(showHeatMap){
-            layersArr['heat'].setVisible(true);
-        }
-    }
-
     map.getViewport().addEventListener('drop', function(event) {
         showWorking();
     });
@@ -1131,6 +1071,33 @@ $dbArr = array();
                         }
                     });
                 }
+            }
+        }
+    });
+
+    map.on('pointermove', function (evt) {
+        if(activeLayer === 'none'){
+            const selectobject = document.getElementById("selectlayerselect");
+            let infoHTML = '';
+            let idArr = [];
+            map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+                for(let i = 0; i<selectobject.length; i++){
+                    if(layer === layersArr[selectobject.options[i].value] && !idArr.includes(selectobject.options[i].value)){
+                        idArr.push(selectobject.options[i].value);
+                        if(infoHTML){
+                            infoHTML += '<br />';
+                        }
+                        infoHTML += selectobject.options[i].innerHTML;
+                    }
+                }
+            });
+            if(infoHTML){
+                popupcontent.innerHTML = infoHTML;
+                popupoverlay.setPosition(evt.coordinate);
+            }
+            else{
+                popupoverlay.setPosition(undefined);
+                popupcloser.blur();
             }
         }
     });

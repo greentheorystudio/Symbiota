@@ -217,7 +217,7 @@ else{
 					</span>
 				</div>
 				<?php
-				if($GLOBALS['ACTIVATE_EXSICCATI'] && $exsList = $occManager->getExsiccatiList()) {
+				if(array_key_exists('$GLOBALS',$GLOBALS) && $GLOBALS['ACTIVATE_EXSICCATI'] && $exsList = $occManager->getExsiccatiList()) {
                     ?>
                     <div style="margin:2px;" title="Enter Exsiccati Title">
                         <b>Exsiccati Title:</b>
