@@ -6,6 +6,7 @@ let geoCircleArr = [];
 let geoBoundingBoxArr = {};
 let geoPointArr = [];
 let layersArr = [];
+let rasterLayersArr = [];
 let layerOrderArr = [];
 let mouseCoords = [];
 let selections = [];
@@ -98,8 +99,7 @@ function addLayerToLayerOrderArr(layerId) {
 function addLayerToSelList(layer,title,active){
     const origValue = document.getElementById("selectlayerselect").value;
     let selectionList = document.getElementById("selectlayerselect").innerHTML;
-    const optionId = "lsel-" + layer;
-    const newOption = '<option id="lsel-' + optionId + '" value="' + layer + '">' + title + '</option>';
+    const newOption = '<option value="' + layer + '">' + title + '</option>';
     selectionList += newOption;
     document.getElementById("selectlayerselect").innerHTML = selectionList;
     if(active){
@@ -116,6 +116,19 @@ function addQueryToDataset(){
     document.getElementById("dsstarrjson").value = JSON.stringify(searchTermsArr);
     document.getElementById("datasetformaction").value = 'addAllToDataset';
     document.getElementById("datasetform").submit();
+}
+
+function addRasterLayerToTargetList(layerId,title){
+    let selectionList = document.getElementById("targetrasterselect").innerHTML;
+    const newOption = '<option value="' + layerId + '">' + title + '</option>';
+    selectionList += newOption;
+    document.getElementById("targetrasterselect").innerHTML = selectionList;
+    document.getElementById("targetrasterselect").value = '';
+    rasterLayersArr.push(layerId);
+    if(rasterLayersArr.length > 0){
+        document.getElementById("rastertoolspanel").style.display = "block";
+        document.getElementById("rastertoolstab").style.display = "block";
+    }
 }
 
 function addSelectionsToDataset(){
@@ -289,7 +302,7 @@ function buildCollKeyPiece(key){
 function buildLayerControllerLayerElement(lArr,active){
     const layerDivId = 'layer-' + lArr['id'];
     const layerDiv = document.createElement('div');
-    const raster = (lArr['fileType'] === 'tif');
+    const raster = (lArr['fileType'] === 'tif' || lArr['fileType'] === 'tiff');
     layerDiv.setAttribute("id",layerDivId);
     layerDiv.setAttribute("style","border:1px solid black;padding:5px;margin-bottom:5px;background-color:white;width:100%;font-family:Verdana,Arial,sans-serif;font-size:14px;");
     const layerMainDiv = document.createElement('div');
@@ -333,7 +346,7 @@ function buildLayerControllerLayerElement(lArr,active){
     dataTypeImageDiv.setAttribute("style","width:30px;height:30px;background-color:black;margin:0 5px;");
     const dataTypeImage = document.createElement('img');
     dataTypeImage.setAttribute("style","width:20px;margin-left:5px;margin-top:5px;");
-    if(lArr['fileType'] === 'tif'){
+    if(lArr['fileType'] === 'tif' || lArr['fileType'] === 'tiff'){
         dataTypeImage.setAttribute("src","../images/button_wms.png");
     }
     else{
@@ -502,6 +515,9 @@ function buildLayerControllerLayerElement(lArr,active){
         symbologyBottomRow.appendChild(symbologyOpacityDiv);
         layerSymbologyDiv.appendChild(symbologyBottomRow);
         layerDiv.appendChild(layerSymbologyDiv);
+    }
+    if(raster){
+        addRasterLayerToTargetList(lArr['id'],lArr['layerName'])
     }
     return layerDiv;
 }
@@ -2524,6 +2540,66 @@ function loadPoints(){
     }
 }
 
+function loadPointWFSLayer(index){
+    pointvectorsource.clear();
+    let processed = 0;
+    do{
+        lazyLoadPoints(index,function(res){
+            const format = new ol.format.GeoJSON();
+            let features = format.readFeatures(res, {
+                featureProjection: 'EPSG:3857'
+            });
+            if(toggleSelectedPoints){
+                features = features.filter(function (feature){
+                    const occid = Number(feature.get('occid'));
+                    return (selections.indexOf(occid) !== -1);
+                });
+            }
+            primeSymbologyData(features);
+            pointvectorsource.addFeatures(features);
+            if(loadPointsEvent){
+                const pointextent = pointvectorsource.getExtent();
+                map.getView().fit(pointextent,map.getSize());
+            }
+        });
+        processed = processed + lazyLoadCnt;
+        index++;
+    }
+    while(processed < queryRecCnt);
+
+    clustersource = new ol.source.PropertyCluster({
+        distance: clusterDistance,
+        source: pointvectorsource,
+        clusterkey: clusterKey,
+        indexkey: 'occid',
+        geometryFunction: function(feature){
+            if(dateSliderActive){
+                if(validateFeatureDate(feature)){
+                    return feature.getGeometry();
+                }
+                else{
+                    return null;
+                }
+            }
+            else{
+                return feature.getGeometry();
+            }
+        }
+    });
+
+    layersArr['pointv'].setStyle(getPointStyle);
+    if(clusterPoints){
+        layersArr['pointv'].setSource(clustersource);
+    }
+    else{
+        layersArr['pointv'].setSource(pointvectorsource);
+    }
+    layersArr['heat'].setSource(pointvectorsource);
+    if(showHeatMap){
+        layersArr['heat'].setVisible(true);
+    }
+}
+
 function loadServerLayer(id,file){
     showWorking();
     const zIndex = layerOrderArr.length + 1;
@@ -2598,7 +2674,7 @@ function loadServerLayer(id,file){
             });
         });
     }
-    else if(fileType === 'tif'){
+    else if(fileType === 'tif' || fileType === 'tiff'){
         fetch(('../content/spatial/' + file)).then((fileFetch) => {
             fileFetch.blob().then((blob) => {
                 blob.arrayBuffer().then((data) => {
@@ -3384,9 +3460,24 @@ function removeLayerFromLayerOrderArr(layerId) {
 function removeLayerToSelList(layer){
     const selectobject = document.getElementById("selectlayerselect");
     for (let i = 0; i<selectobject.length; i++){
-        if(selectobject.options[i].value === layer) selectobject.remove(i);
+        if(selectobject.options[i].value === layer){
+            selectobject.remove(i);
+        }
     }
     setActiveLayer();
+}
+
+function removeRasterLayerFromTargetList(layerId){
+    const selectobject = document.getElementById("targetrasterselect");
+    for (let i = 0; i<selectobject.length; i++){
+        if(selectobject.options[i].value === layerId) selectobject.remove(i);
+    }
+    const index = rasterLayersArr.indexOf(layerId);
+    rasterLayersArr.splice(index,1);
+    if(rasterLayersArr.length === 0){
+        document.getElementById("rastertoolspanel").style.display = "none";
+        document.getElementById("rastertoolstab").style.display = "none";
+    }
 }
 
 function removeSelection(c){
@@ -3430,7 +3521,7 @@ function removeServerLayer(id){
     delete layersArr[id];
 }
 
-function removeUserLayer(layerID){
+function removeUserLayer(layerID,raster){
     const layerDivId = "layer-" + layerID;
     if(document.getElementById(layerDivId)){
         const layerDiv = document.getElementById(layerDivId);
@@ -3483,6 +3574,7 @@ function removeUserLayer(layerID){
             else if(layerID === 'dragdrop6') {
                 dragDrop6 = false;
             }
+            removeRasterLayerFromTargetList(layerID);
         }
     }
     document.getElementById("selectlayerselect").value = 'none';
@@ -4327,17 +4419,29 @@ function toggleServerLayerVisibility(id,name,file,visible){
     const symbologyButtonId = 'layerSymbologyButton-' + id;
     const queryButtonId = 'layerQueryButton-' + id;
     if(visible === true){
-        document.getElementById(sortingScrollerDivId).style.display = 'flex';
-        document.getElementById(symbologyButtonId).style.display = 'block';
-        document.getElementById(queryButtonId).style.display = 'block';
+        if(document.getElementById(sortingScrollerDivId)){
+            document.getElementById(sortingScrollerDivId).style.display = 'flex';
+        }
+        if(document.getElementById(symbologyButtonId)){
+            document.getElementById(symbologyButtonId).style.display = 'block';
+        }
+        if(document.getElementById(queryButtonId)){
+            document.getElementById(queryButtonId).style.display = 'block';
+        }
         loadServerLayer(id,file);
         addLayerToSelList(id,name,false);
         addLayerToLayerOrderArr(id);
     }
     else{
-        document.getElementById(sortingScrollerDivId).style.display = 'none';
-        document.getElementById(symbologyButtonId).style.display = 'none';
-        document.getElementById(queryButtonId).style.display = 'none';
+        if(document.getElementById(sortingScrollerDivId)){
+            document.getElementById(sortingScrollerDivId).style.display = 'none';
+        }
+        if(document.getElementById(symbologyButtonId)){
+            document.getElementById(symbologyButtonId).style.display = 'none';
+        }
+        if(document.getElementById(queryButtonId)){
+            document.getElementById(queryButtonId).style.display = 'none';
+        }
         removeServerLayer(id);
         removeLayerToSelList(id);
         removeLayerFromLayerOrderArr(id);
@@ -4428,6 +4532,97 @@ function validateFeatureDate(feature){
         }
     }
     return valid;
+}
+
+function vectorizeRaster(){
+    showWorking();
+    setTimeout(function() {
+        let selectedClone = null;
+        let shapeCount = 0;
+        const turfFeatureArr = [];
+        const targetRaster = document.getElementById("targetrasterselect").value;
+        const valLow = document.getElementById("vectorizeRasterValueLow").value;
+        const valHigh = document.getElementById("vectorizeRasterValueHigh").value;
+        const resolutionVal = document.getElementById("vectorizeRasterResolution").value;
+        if(targetRaster === ''){
+            alert("Please select a target raster layer.");
+        }
+        else if(resolutionVal === '' || isNaN(resolutionVal)){
+            alert("Please enter a number for the resolution in kilometers in which to vectorize the raster.");
+        }
+        else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
+            alert("Please enter high and low numbers for the value range.");
+        }
+        else{
+            selectInteraction.getFeatures().forEach((feature) => {
+                selectedClone = feature.clone();
+                const geoType = selectedClone.getGeometry().getType();
+                if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
+                    shapeCount++;
+                }
+            });
+            if(shapeCount === 1){
+                const geoJSONFormat = new ol.format.GeoJSON();
+                const selectiongeometry = selectedClone.getGeometry();
+                selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
+                const featCoords = JSON.parse(geojsonStr).coordinates;
+                const extentBBox = turf.bbox(turf.polygon(featCoords));
+                const gridPoints = turf.pointGrid(extentBBox, resolutionVal, {units: 'kilometers',mask: turf.polygon(featCoords)});
+                const gridPointFeatures = geoJSONFormat.readFeatures(gridPoints);
+                const imageIndex = targetRaster + 'Image';
+                const image = layersArr[imageIndex];
+                const meta = image.getFileDirectory();
+                const x_min = meta.ModelTiepoint[3];
+                const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                const y_min = meta.ModelTiepoint[4];
+                const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+                const bands = image.readRasters();
+                const canvasElement = document.createElement('canvas');
+                const minValue = 0;
+                const maxValue = 1200;
+                const plot = new plotty.plot({
+                    canvas: canvasElement,
+                    data: bands[0],
+                    width: image.getWidth(),
+                    height: image.getHeight(),
+                    domain: [minValue, maxValue],
+                    colorScale: 'earth'
+                });
+                gridPointFeatures.forEach(function(feature){
+                    const coords = feature.getGeometry().getCoordinates();
+                    const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
+                    const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
+                    if(coords[0] >= x_min && coords[0] <= x_max && coords[1] <= y_min && coords[1] >= y_max){
+                        const rasterValue = plot.atPoint(x,y);
+                        if(Number(rasterValue) >= Number(valLow) && Number(rasterValue) <= Number(valHigh)){
+                            turfFeatureArr.push(turf.point(coords));
+                        }
+                    }
+                });
+                const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
+                let concavepoly = '';
+                try{
+                    const maxEdgeVal = Number(resolutionVal) + (Number(resolutionVal) / 2);
+                    const options = {units: 'kilometers', maxEdge: maxEdgeVal};
+                    concavepoly = turf.concave(turfFeatureCollection,options);
+                }
+                catch(e){
+                    alert('Concave polygon was not able to be calculated. Perhaps try using a larger value for the maximum edge length.');
+                }
+                if(concavepoly){
+                    const cnvepoly = geoJSONFormat.readFeature(concavepoly);
+                    cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
+                    selectsource.addFeature(cnvepoly);
+                }
+                hideWorking();
+            }
+            else{
+                hideWorking();
+                alert('You must have one polygon or circle, and only one polygon or circle, selected in your Shapes layer to serve as the bounds of the vectorization.');
+            }
+        }
+    }, 50);
 }
 
 function verifyCollForm(){

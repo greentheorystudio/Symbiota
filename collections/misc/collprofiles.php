@@ -472,6 +472,9 @@ if($GLOBALS['SYMB_UID']){
 						?>
 					</ul>
 				</div>
+                <div style="margin-top:5px;">
+                    <div><a href="../../taxa/dynamictaxalistdownload.php?collid=<?php echo $collid; ?>"><b>Download Species List</b></a></div>
+                </div>
 			</div>
 			<fieldset style='margin:20px;padding:10px;width:300px;background-color:#FFFFCC;'>
 				<legend><b>Extra Statistics</b></legend>

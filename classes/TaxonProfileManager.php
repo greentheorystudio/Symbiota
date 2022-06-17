@@ -224,7 +224,7 @@ class TaxonProfileManager {
             $sql = 'SELECT t.tid, t.sciname, t.securitystatus '.
                 'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
                 'INNER JOIN fmchklsttaxalink AS ctl ON ctl.TID = t.tid '.
-                'WHERE (ctl.clid = '.$this->clid.') AND (te.parenttid = '.$this->tid.' OR t.tid = '.$this->tid.')';
+                'WHERE (ctl.clid = '.$this->clid.') AND (te.parenttid = '.$this->tid.')';
         }
         elseif($this->pid){
             $sql = 'SELECT DISTINCT t.tid, t.sciname, t.securitystatus '.
@@ -233,13 +233,13 @@ class TaxonProfileManager {
                 'INNER JOIN fmchklsttaxalink AS ctl ON ts.tid = ctl.TID '.
                 'INNER JOIN fmchklstprojlink AS cpl ON ctl.clid = cpl.clid '.
                 'WHERE (cpl.pid = '.$this->pid.') '.
-                'AND (te.parenttid = '.$this->tid.' OR t.tid = '.$this->tid.')';
+                'AND (te.parenttid = '.$this->tid.')';
         }
         else{
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
                 'INNER JOIN taxstatus AS ts ON t.TID = ts.tidaccepted '.
-                'WHERE (te.parenttid = '.$this->tid.' OR t.tid = '.$this->tid.')';
+                'WHERE (te.parenttid = '.$this->tid.')';
         }
         //echo $sql; exit;
 
@@ -258,7 +258,7 @@ class TaxonProfileManager {
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tidaccepted '.
                 'INNER JOIN taxaenumtree AS te ON ts.tid = te.tid '.
-                'WHERE (te.parenttid = '.$this->tid.' OR t.TID = '.$this->tid.')';
+                'WHERE (te.parenttid = '.$this->tid.')';
             //echo $sql;
 
             $result = $this->con->query($sql);
@@ -274,14 +274,14 @@ class TaxonProfileManager {
         if($tids){
             $sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, '.
                 'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
-                'FROM images i INNER JOIN '.
+                'FROM images AS i INNER JOIN '.
                 '(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
-                'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-                'INNER JOIN images i ON ts2.tid = i.tid '.
+                'FROM taxstatus AS ts1 INNER JOIN taxstatus AS ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
+                'INNER JOIN images AS i ON ts2.tid = i.tid '.
                 'WHERE (ts1.tid IN('.implode(',',$tids).')) '.
-                'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid '.
-                'INNER JOIN taxa t ON i2.tid = t.tid '.
-                'LEFT JOIN users u ON i.photographeruid = u.uid ';
+                'GROUP BY ts1.tid) AS i2 ON i.imgid = i2.imgid '.
+                'INNER JOIN taxa AS t ON i2.tid = t.tid '.
+                'LEFT JOIN users AS u ON i.photographeruid = u.uid ';
             //echo $sql;
             $result = $this->con->query($sql);
             while($row = $result->fetch_object()){
@@ -483,7 +483,7 @@ class TaxonProfileManager {
             $imgUrl = $imgObj['url'];
             $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
             $imgThumbnail = $imgObj['thumbnailurl'];
-            if($GLOBALS['IMAGE_DOMAIN']){
+            if(isset($GLOBALS['IMAGE_DOMAIN'])){
                 if(strncmp($imgUrl, '/', 1) === 0) {
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                 }
@@ -855,7 +855,8 @@ class TaxonProfileManager {
     public function getCloseTaxaMatches($testValue): array
     {
         $retArr = array();
-        $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex("'.$testValue.'")';
+        $value = $this->con->real_escape_string($testValue);
+        $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex("'.$value.'")';
         if($rs = $this->con->query($sql)){
             while($r = $rs->fetch_object()){
                 if($testValue !== $r->sciname) {
