@@ -2696,12 +2696,27 @@ function loadServerLayer(id,file){
                     const extent = ol.extent.createEmpty();
                     const tiff = GeoTIFF.parse(data);
                     const image = tiff.getImage();
-                    const imageIndex = id + 'Image';
-                    layersArr[imageIndex] = image;
+                    const dataIndex = id + 'Data';
                     const rawBox = image.getBoundingBox();
                     const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
                     const bands = image.readRasters();
-                    const canvasElement = document.createElement('canvas');
+                    const meta = image.getFileDirectory();
+                    const x_min = meta.ModelTiepoint[3];
+                    const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                    const y_min = meta.ModelTiepoint[4];
+                    const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+                    const imageWidth = image.getWidth();
+                    const imageHeight = image.getHeight();
+                    layersArr[dataIndex] = {};
+                    layersArr[dataIndex]['data'] = bands[0];
+                    layersArr[dataIndex]['bbox'] = rawBox;
+                    layersArr[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
+                    layersArr[dataIndex]['x_min'] = x_min;
+                    layersArr[dataIndex]['x_max'] = x_max;
+                    layersArr[dataIndex]['y_min'] = y_min;
+                    layersArr[dataIndex]['y_max'] = y_max;
+                    layersArr[dataIndex]['imageWidth'] = imageWidth;
+                    layersArr[dataIndex]['imageHeight'] = imageHeight;
                     let minValue = 0;
                     let maxValue = 0;
                     bands[0].forEach(function(item, index) {
@@ -2712,11 +2727,12 @@ function loadServerLayer(id,file){
                             maxValue = item;
                         }
                     });
+                    const canvasElement = document.createElement('canvas');
                     const plot = new plotty.plot({
                         canvas: canvasElement,
                         data: bands[0],
-                        width: image.getWidth(),
-                        height: image.getHeight(),
+                        width: imageWidth,
+                        height: imageHeight,
                         domain: [minValue, maxValue],
                         colorScale: 'earth'
                     });
@@ -4574,27 +4590,21 @@ function vectorizeRaster(){
         }
         else{
             const geoJSONFormat = new ol.format.GeoJSON();
-            const imageIndex = targetRaster + 'Image';
-            const image = layersArr[imageIndex];
-            const rawBox = image.getBoundingBox();
-            const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
-            const imageWidth = image.getWidth();
-            const imageHeight = image.getHeight();
-            const bands = image.readRasters();
-            const meta = image.getFileDirectory();
-            const resolutionVal = (Number(meta.ModelPixelScale[0]) * 100) * 1.4;
-            bands[0].forEach(function(item, index) {
+            const dataIndex = targetRaster + 'Data';
+            const dataObj = layersArr[dataIndex];
+            const box = [dataObj['bbox'][0],dataObj['bbox'][1] - (dataObj['bbox'][3] - dataObj['bbox'][1]), dataObj['bbox'][2], dataObj['bbox'][1]];
+            dataObj['data'].forEach(function(item, index) {
                 if(Number(item) >= Number(valLow) && Number(item) <= Number(valHigh)){
-                    const xyArr = getRasterXYFromDataIndex(index,image.getWidth());
-                    const lat = box[3] - (((box[3] - box[1]) / imageHeight) * xyArr[1]);
-                    const long = box[0] + (((box[2] - box[0]) / imageWidth) * xyArr[0]);
+                    const xyArr = getRasterXYFromDataIndex(index,dataObj['imageWidth']);
+                    const lat = box[3] - (((box[3] - box[1]) / dataObj['imageHeight']) * xyArr[1]);
+                    const long = box[0] + (((box[2] - box[0]) / dataObj['imageWidth']) * xyArr[0]);
                     turfFeatureArr.push(turf.point([long,lat]));
                 }
             });
             const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
             let concavepoly = '';
             try{
-                const options = {units: 'kilometers', maxEdge: resolutionVal};
+                const options = {units: 'kilometers', maxEdge: dataObj['resolution']};
                 concavepoly = turf.concave(turfFeatureCollection,options);
             }
             catch(e){}
@@ -4606,42 +4616,6 @@ function vectorizeRaster(){
             hideWorking();
         }
     }, 50);
-}
-
-function verifyCollForm(){
-    const f = document.getElementById("spatialcollsearchform");
-    let formVerified = false;
-    for(let h=0; h<f.length; h++){
-        if(f.elements[h].name === "db[]" && f.elements[h].checked){
-            formVerified = true;
-            break;
-        }
-        if(f.elements[h].name === "cat[]" && f.elements[h].checked){
-            formVerified = true;
-            break;
-        }
-    }
-    if(formVerified){
-        for(let i=0; i<f.length; i++){
-            if(f.elements[i].name === "cat[]" && f.elements[i].checked){
-                const childrenEle = document.getElementById('cat-' + f.elements[i].value).children;
-                for(let j=0; j<childrenEle.length; j++){
-                    if(childrenEle[j].tagName === "DIV"){
-                        const divChildren = childrenEle[j].children;
-                        for(let k=0; k<divChildren.length; k++){
-                            const divChildren2 = divChildren[k].children;
-                            for(let l=0; l<divChildren2.length; l++){
-                                if(divChildren2[l].tagName === "INPUT"){
-                                    divChildren2[l].checked = false;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return formVerified;
 }
 
 function writeMySQLWktString(type,geocoords) {
