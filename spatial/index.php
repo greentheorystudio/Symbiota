@@ -94,7 +94,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=202206183" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220619" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20220330" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -692,17 +692,29 @@ $dbArr = array();
                         infoArr['symbology'] = false;
                         infoArr['query'] = false;
                         const sourceIndex = dragDropTarget + 'Source';
-                        const imageIndex = dragDropTarget + 'Image';
+                        const dataIndex = dragDropTarget + 'Data';
                         const tiff = GeoTIFF.parse(data);
                         const image = tiff.getImage();
-                        layersArr[imageIndex] = image;
                         const rawBox = image.getBoundingBox();
                         const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
                         const bands = image.readRasters();
-                        const canvasElement = document.createElement('canvas');
                         const meta = image.getFileDirectory();
                         const x_min = meta.ModelTiepoint[3];
                         const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                        const y_min = meta.ModelTiepoint[4];
+                        const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+                        const imageWidth = image.getWidth();
+                        const imageHeight = image.getHeight();
+                        layersArr[dataIndex] = {};
+                        layersArr[dataIndex]['data'] = bands[0];
+                        layersArr[dataIndex]['bbox'] = image.getBoundingBox();
+                        layersArr[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 2;
+                        layersArr[dataIndex]['x_min'] = x_min;
+                        layersArr[dataIndex]['x_max'] = x_max;
+                        layersArr[dataIndex]['y_min'] = y_min;
+                        layersArr[dataIndex]['y_max'] = y_max;
+                        layersArr[dataIndex]['imageWidth'] = imageWidth;
+                        layersArr[dataIndex]['imageHeight'] = imageHeight;
                         let minValue = 0;
                         let maxValue = 0;
                         bands[0].forEach(function(item, index) {
@@ -713,11 +725,12 @@ $dbArr = array();
                                 maxValue = item;
                             }
                         });
+                        const canvasElement = document.createElement('canvas');
                         const plot = new plotty.plot({
                             canvas: canvasElement,
                             data: bands[0],
-                            width: image.getWidth(),
-                            height: image.getHeight(),
+                            width: imageWidth,
+                            height: imageHeight,
                             domain: [minValue, maxValue],
                             colorScale: 'earth'
                         });
@@ -1023,18 +1036,11 @@ $dbArr = array();
             else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6' || layersArr[activeLayer] instanceof ol.layer.Image){
                 infoHTML = '';
                 const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-                const imageIndex = activeLayer + 'Image';
-                const image = layersArr[imageIndex];
-                const meta = image.getFileDirectory();
-                const x_min = meta.ModelTiepoint[3];
-                const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
-                const y_min = meta.ModelTiepoint[4];
-                const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
-                const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
-                const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
-                const dataIndex = (Number(image.getWidth()) * y) + x;
-                const bands = image.readRasters();
-                infoHTML += '<b>Value:</b> '+bands[0][dataIndex]+'<br />';
+                const dataIndex = activeLayer + 'Data';
+                const x = Math.floor(layersArr[dataIndex]['imageWidth']*(coords[0] - layersArr[dataIndex]['x_min'])/(layersArr[dataIndex]['x_max'] - layersArr[dataIndex]['x_min']));
+                const y = layersArr[dataIndex]['imageHeight']-Math.ceil(layersArr[dataIndex]['imageHeight']*(coords[1] - layersArr[dataIndex]['y_max'])/(layersArr[dataIndex]['y_min'] - layersArr[dataIndex]['y_max']));
+                const rasterDataIndex = (Number(layersArr[dataIndex]['imageWidth']) * y) + x;
+                infoHTML += '<b>Value:</b> '+layersArr[dataIndex]['data'][rasterDataIndex]+'<br />';
                 popupcontent.innerHTML = infoHTML;
                 popupoverlay.setPosition(evt.coordinate);
             }
