@@ -4582,7 +4582,7 @@ function vectorizeRaster(){
             const imageHeight = image.getHeight();
             const bands = image.readRasters();
             const meta = image.getFileDirectory();
-            const resolutionVal = (Number(meta.ModelPixelScale[0]) * 100) * 1.4;
+            const resolutionVal = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
             bands[0].forEach(function(item, index) {
                 if(Number(item) >= Number(valLow) && Number(item) <= Number(valHigh)){
                     const xyArr = getRasterXYFromDataIndex(index,image.getWidth());
@@ -4606,42 +4606,6 @@ function vectorizeRaster(){
             hideWorking();
         }
     }, 50);
-}
-
-function verifyCollForm(){
-    const f = document.getElementById("spatialcollsearchform");
-    let formVerified = false;
-    for(let h=0; h<f.length; h++){
-        if(f.elements[h].name === "db[]" && f.elements[h].checked){
-            formVerified = true;
-            break;
-        }
-        if(f.elements[h].name === "cat[]" && f.elements[h].checked){
-            formVerified = true;
-            break;
-        }
-    }
-    if(formVerified){
-        for(let i=0; i<f.length; i++){
-            if(f.elements[i].name === "cat[]" && f.elements[i].checked){
-                const childrenEle = document.getElementById('cat-' + f.elements[i].value).children;
-                for(let j=0; j<childrenEle.length; j++){
-                    if(childrenEle[j].tagName === "DIV"){
-                        const divChildren = childrenEle[j].children;
-                        for(let k=0; k<divChildren.length; k++){
-                            const divChildren2 = divChildren[k].children;
-                            for(let l=0; l<divChildren2.length; l++){
-                                if(divChildren2[l].tagName === "INPUT"){
-                                    divChildren2[l].checked = false;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return formVerified;
 }
 
 function writeMySQLWktString(type,geocoords) {
