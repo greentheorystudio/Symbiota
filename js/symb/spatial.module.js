@@ -2289,6 +2289,21 @@ function getQueryRecCnt(callback){
     }
 }
 
+function getRasterXYFromDataIndex(index,rasterWidth){
+    let xyArr = [];
+    if(index < rasterWidth){
+        xyArr.push(index);
+        xyArr.push(0);
+    }
+    else{
+        let y = Math.trunc(index / rasterWidth);
+        let x = ((index - (y * rasterWidth)) - 1);
+        xyArr.push(x);
+        xyArr.push(y);
+    }
+    return xyArr;
+}
+
 function getTurfPointFeaturesetAll(){
     let pntCoords;
     let geojsonStr;
@@ -2687,8 +2702,16 @@ function loadServerLayer(id,file){
                     const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
                     const bands = image.readRasters();
                     const canvasElement = document.createElement('canvas');
-                    const minValue = 0;
-                    const maxValue = 1200;
+                    let minValue = 0;
+                    let maxValue = 0;
+                    bands[0].forEach(function(item, index) {
+                        if(item < minValue && ((minValue - item) < 5000)){
+                            minValue = item;
+                        }
+                        if(item > maxValue){
+                            maxValue = item;
+                        }
+                    });
                     const plot = new plotty.plot({
                         canvas: canvasElement,
                         data: bands[0],
@@ -4537,90 +4560,50 @@ function validateFeatureDate(feature){
 function vectorizeRaster(){
     showWorking();
     setTimeout(function() {
-        let selectedClone = null;
-        let shapeCount = 0;
         const turfFeatureArr = [];
         const targetRaster = document.getElementById("targetrasterselect").value;
         const valLow = document.getElementById("vectorizeRasterValueLow").value;
         const valHigh = document.getElementById("vectorizeRasterValueHigh").value;
-        const resolutionVal = document.getElementById("vectorizeRasterResolution").value;
         if(targetRaster === ''){
             alert("Please select a target raster layer.");
-        }
-        else if(resolutionVal === '' || isNaN(resolutionVal)){
-            alert("Please enter a number for the resolution in kilometers in which to vectorize the raster.");
+            hideWorking();
         }
         else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
             alert("Please enter high and low numbers for the value range.");
+            hideWorking();
         }
         else{
-            selectInteraction.getFeatures().forEach((feature) => {
-                selectedClone = feature.clone();
-                const geoType = selectedClone.getGeometry().getType();
-                if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
-                    shapeCount++;
+            const geoJSONFormat = new ol.format.GeoJSON();
+            const imageIndex = targetRaster + 'Image';
+            const image = layersArr[imageIndex];
+            const rawBox = image.getBoundingBox();
+            const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
+            const imageWidth = image.getWidth();
+            const imageHeight = image.getHeight();
+            const bands = image.readRasters();
+            const meta = image.getFileDirectory();
+            const resolutionVal = (Number(meta.ModelPixelScale[0]) * 100) * 1.4;
+            bands[0].forEach(function(item, index) {
+                if(Number(item) >= Number(valLow) && Number(item) <= Number(valHigh)){
+                    const xyArr = getRasterXYFromDataIndex(index,image.getWidth());
+                    const lat = box[3] - (((box[3] - box[1]) / imageHeight) * xyArr[1]);
+                    const long = box[0] + (((box[2] - box[0]) / imageWidth) * xyArr[0]);
+                    turfFeatureArr.push(turf.point([long,lat]));
                 }
             });
-            if(shapeCount === 1){
-                const geoJSONFormat = new ol.format.GeoJSON();
-                const selectiongeometry = selectedClone.getGeometry();
-                selectiongeometry.transform(mapProjection, wgs84Projection);
-                const geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
-                const featCoords = JSON.parse(geojsonStr).coordinates;
-                const extentBBox = turf.bbox(turf.polygon(featCoords));
-                const gridPoints = turf.pointGrid(extentBBox, resolutionVal, {units: 'kilometers',mask: turf.polygon(featCoords)});
-                const gridPointFeatures = geoJSONFormat.readFeatures(gridPoints);
-                const imageIndex = targetRaster + 'Image';
-                const image = layersArr[imageIndex];
-                const meta = image.getFileDirectory();
-                const x_min = meta.ModelTiepoint[3];
-                const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
-                const y_min = meta.ModelTiepoint[4];
-                const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
-                const bands = image.readRasters();
-                const canvasElement = document.createElement('canvas');
-                const minValue = 0;
-                const maxValue = 1200;
-                const plot = new plotty.plot({
-                    canvas: canvasElement,
-                    data: bands[0],
-                    width: image.getWidth(),
-                    height: image.getHeight(),
-                    domain: [minValue, maxValue],
-                    colorScale: 'earth'
-                });
-                gridPointFeatures.forEach(function(feature){
-                    const coords = feature.getGeometry().getCoordinates();
-                    const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
-                    const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
-                    if(coords[0] >= x_min && coords[0] <= x_max && coords[1] <= y_min && coords[1] >= y_max){
-                        const rasterValue = plot.atPoint(x,y);
-                        if(Number(rasterValue) >= Number(valLow) && Number(rasterValue) <= Number(valHigh)){
-                            turfFeatureArr.push(turf.point(coords));
-                        }
-                    }
-                });
-                const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
-                let concavepoly = '';
-                try{
-                    const maxEdgeVal = Number(resolutionVal) + (Number(resolutionVal) / 2);
-                    const options = {units: 'kilometers', maxEdge: maxEdgeVal};
-                    concavepoly = turf.concave(turfFeatureCollection,options);
-                }
-                catch(e){
-                    alert('Concave polygon was not able to be calculated. Perhaps try using a larger value for the maximum edge length.');
-                }
-                if(concavepoly){
-                    const cnvepoly = geoJSONFormat.readFeature(concavepoly);
-                    cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
-                    selectsource.addFeature(cnvepoly);
-                }
-                hideWorking();
+            const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
+            let concavepoly = '';
+            try{
+                const options = {units: 'kilometers', maxEdge: resolutionVal};
+                concavepoly = turf.concave(turfFeatureCollection,options);
             }
-            else{
-                hideWorking();
-                alert('You must have one polygon or circle, and only one polygon or circle, selected in your Shapes layer to serve as the bounds of the vectorization.');
+            catch(e){}
+            if(concavepoly){
+                const cnvepoly = geoJSONFormat.readFeature(concavepoly);
+                cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
+                selectsource.addFeature(cnvepoly);
             }
+            hideWorking();
         }
     }, 50);
 }
