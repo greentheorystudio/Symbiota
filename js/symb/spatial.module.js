@@ -596,31 +596,31 @@ function changeBaseMap(){
     const baseLayer = map.getLayers().getArray()[0];
     if(selection === 'googleroadmap'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'googlealteredroadmap'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'googleterrain'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'googlehybrid'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'googlesatellite'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
@@ -638,31 +638,31 @@ function changeBaseMap(){
     }
     if(selection === 'worldimagery'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'ocean'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'ngstopo'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'natgeoworld'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'esristreet'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
