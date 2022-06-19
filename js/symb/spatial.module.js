@@ -4574,27 +4574,21 @@ function vectorizeRaster(){
         }
         else{
             const geoJSONFormat = new ol.format.GeoJSON();
-            const imageIndex = targetRaster + 'Image';
-            const image = layersArr[imageIndex];
-            const rawBox = image.getBoundingBox();
-            const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
-            const imageWidth = image.getWidth();
-            const imageHeight = image.getHeight();
-            const bands = image.readRasters();
-            const meta = image.getFileDirectory();
-            const resolutionVal = (Number(meta.ModelPixelScale[0]) * 100) * 2;
-            bands[0].forEach(function(item, index) {
+            const dataIndex = targetRaster + 'Data';
+            const dataObj = layersArr[dataIndex];
+            const box = [dataObj['bbox'][0],dataObj['bbox'][1] - (dataObj['bbox'][3] - dataObj['bbox'][1]), dataObj['bbox'][2], dataObj['bbox'][1]];
+            dataObj['data'].forEach(function(item, index) {
                 if(Number(item) >= Number(valLow) && Number(item) <= Number(valHigh)){
-                    const xyArr = getRasterXYFromDataIndex(index,image.getWidth());
-                    const lat = box[3] - (((box[3] - box[1]) / imageHeight) * xyArr[1]);
-                    const long = box[0] + (((box[2] - box[0]) / imageWidth) * xyArr[0]);
+                    const xyArr = getRasterXYFromDataIndex(index,dataObj['imageWidth']);
+                    const lat = box[3] - (((box[3] - box[1]) / dataObj['imageHeight']) * xyArr[1]);
+                    const long = box[0] + (((box[2] - box[0]) / dataObj['imageWidth']) * xyArr[0]);
                     turfFeatureArr.push(turf.point([long,lat]));
                 }
             });
             const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
             let concavepoly = '';
             try{
-                const options = {units: 'kilometers', maxEdge: resolutionVal};
+                const options = {units: 'kilometers', maxEdge: dataObj['resolution']};
                 concavepoly = turf.concave(turfFeatureCollection,options);
             }
             catch(e){}
