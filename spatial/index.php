@@ -94,7 +94,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=202206162" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220618" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20220330" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -700,8 +700,19 @@ $dbArr = array();
                         const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
                         const bands = image.readRasters();
                         const canvasElement = document.createElement('canvas');
-                        const minValue = 0;
-                        const maxValue = 1200;
+                        const meta = image.getFileDirectory();
+                        const x_min = meta.ModelTiepoint[3];
+                        const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                        let minValue = 0;
+                        let maxValue = 0;
+                        bands[0].forEach(function(item, index) {
+                            if(item < minValue && ((minValue - item) < 5000)){
+                                minValue = item;
+                            }
+                            if(item > maxValue){
+                                maxValue = item;
+                            }
+                        });
                         const plot = new plotty.plot({
                             canvas: canvasElement,
                             data: bands[0],
@@ -1021,20 +1032,9 @@ $dbArr = array();
                 const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
                 const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
                 const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
+                const dataIndex = (Number(image.getWidth()) * y) + x;
                 const bands = image.readRasters();
-                const canvasElement = document.createElement('canvas');
-                const minValue = 0;
-                const maxValue = 1200;
-                const plot = new plotty.plot({
-                    canvas: canvasElement,
-                    data: bands[0],
-                    width: image.getWidth(),
-                    height: image.getHeight(),
-                    domain: [minValue, maxValue],
-                    colorScale: 'earth'
-                });
-                const rasterValue = plot.atPoint(x,y);
-                infoHTML += '<b>Value:</b> '+rasterValue+'<br />';
+                infoHTML += '<b>Value:</b> '+bands[0][dataIndex]+'<br />';
                 popupcontent.innerHTML = infoHTML;
                 popupoverlay.setPosition(evt.coordinate);
             }
