@@ -2696,12 +2696,27 @@ function loadServerLayer(id,file){
                     const extent = ol.extent.createEmpty();
                     const tiff = GeoTIFF.parse(data);
                     const image = tiff.getImage();
-                    const imageIndex = id + 'Image';
-                    layersArr[imageIndex] = image;
+                    const dataIndex = id + 'Data';
                     const rawBox = image.getBoundingBox();
                     const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
                     const bands = image.readRasters();
-                    const canvasElement = document.createElement('canvas');
+                    const meta = image.getFileDirectory();
+                    const x_min = meta.ModelTiepoint[3];
+                    const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                    const y_min = meta.ModelTiepoint[4];
+                    const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+                    const imageWidth = image.getWidth();
+                    const imageHeight = image.getHeight();
+                    layersArr[dataIndex] = {};
+                    layersArr[dataIndex]['data'] = bands[0];
+                    layersArr[dataIndex]['bbox'] = rawBox;
+                    layersArr[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
+                    layersArr[dataIndex]['x_min'] = x_min;
+                    layersArr[dataIndex]['x_max'] = x_max;
+                    layersArr[dataIndex]['y_min'] = y_min;
+                    layersArr[dataIndex]['y_max'] = y_max;
+                    layersArr[dataIndex]['imageWidth'] = imageWidth;
+                    layersArr[dataIndex]['imageHeight'] = imageHeight;
                     let minValue = 0;
                     let maxValue = 0;
                     bands[0].forEach(function(item, index) {
@@ -2712,11 +2727,12 @@ function loadServerLayer(id,file){
                             maxValue = item;
                         }
                     });
+                    const canvasElement = document.createElement('canvas');
                     const plot = new plotty.plot({
                         canvas: canvasElement,
                         data: bands[0],
-                        width: image.getWidth(),
-                        height: image.getHeight(),
+                        width: imageWidth,
+                        height: imageHeight,
                         domain: [minValue, maxValue],
                         colorScale: 'earth'
                     });
