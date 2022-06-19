@@ -4582,7 +4582,7 @@ function vectorizeRaster(){
             const imageHeight = image.getHeight();
             const bands = image.readRasters();
             const meta = image.getFileDirectory();
-            const resolutionVal = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
+            const resolutionVal = (Number(meta.ModelPixelScale[0]) * 100) * 2;
             bands[0].forEach(function(item, index) {
                 if(Number(item) >= Number(valLow) && Number(item) <= Number(valHigh)){
                     const xyArr = getRasterXYFromDataIndex(index,image.getWidth());
