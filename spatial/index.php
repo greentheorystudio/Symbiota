@@ -94,7 +94,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=202206191" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220620" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20220330" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -395,6 +395,23 @@ $dbArr = array();
         })
     });
 
+    let rasteranalysissource = new ol.source.Vector({
+        wrapX: true
+    });
+    const rasteranalysislayer = new ol.layer.Vector({
+        zIndex: 7,
+        source: rasteranalysissource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,0,0.3)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: 'rgba(255,0,0,1)',
+                width: 5
+            })
+        })
+    });
+
     let pointvectorsource = new ol.source.Vector({
         wrapX: true
     });
@@ -468,6 +485,7 @@ $dbArr = array();
     layersArr['dragdrop5'] = dragdroplayer5;
     layersArr['dragdrop6'] = dragdroplayer6;
     layersArr['uncertainty'] = uncertaintycirclelayer;
+    layersArr['rasteranalysis'] = rasteranalysislayer;
     layersArr['select'] = selectlayer;
     layersArr['pointv'] = pointvectorlayer;
     layersArr['heat'] = heatmaplayer;
@@ -522,6 +540,23 @@ $dbArr = array();
             })
         }),
         toggleCondition: ol.events.condition.click
+    });
+
+    const rasterAnalysisInteraction = new ol.interaction.Select({
+        layers: [layersArr['rasteranalysis']],
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,0,0.3)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: 'rgba(255,0,0,1)',
+                width: 5
+            })
+        })
+    });
+
+    const rasterAnalysisTranslate = new ol.interaction.Translate({
+        features: rasterAnalysisInteraction.getFeatures(),
     });
 
     const pointInteraction = new ol.interaction.Select({
@@ -773,6 +808,7 @@ $dbArr = array();
     });
 
     const map = new ol.Map({
+        interactions: ol.interaction.defaults().extend([rasterAnalysisInteraction, rasterAnalysisTranslate]),
         view: mapView,
         target: 'map',
         controls: ol.control.defaults().extend([
@@ -784,6 +820,7 @@ $dbArr = array();
             layersArr['dragdrop2'],
             layersArr['dragdrop3'],
             layersArr['uncertainty'],
+            layersArr['rasteranalysis'],
             layersArr['select'],
             layersArr['pointv'],
             layersArr['heat'],

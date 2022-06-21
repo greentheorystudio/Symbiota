@@ -516,9 +516,6 @@ function buildLayerControllerLayerElement(lArr,active){
         layerSymbologyDiv.appendChild(symbologyBottomRow);
         layerDiv.appendChild(layerSymbologyDiv);
     }
-    if(raster){
-        addRasterLayerToTargetList(lArr['id'],lArr['layerName'])
-    }
     return layerDiv;
 }
 
@@ -1803,6 +1800,42 @@ function deleteSelections(){
     }
 }
 
+function displayVectorizeRasterByGridTargetPolygon(){
+    rasteranalysissource.clear();
+    rasterAnalysisInteraction.getFeatures().clear();
+    let polyOffset = 0;
+    const resolutionVal = Number(document.getElementById("vectorizeRasterByGridResolution").value);
+    if(resolutionVal === 0.025){
+        polyOffset = 15000;
+    }
+    else if(resolutionVal === 0.05){
+        polyOffset = 30000;
+    }
+    else if(resolutionVal === 0.1){
+        polyOffset = 60000;
+    }
+    else if(resolutionVal === 0.25){
+        polyOffset = 150000;
+    }
+    else if(resolutionVal === 0.5){
+        polyOffset = 300000;
+    }
+    const geoJSONFormat = new ol.format.GeoJSON();
+    const mapCenterPoint = map.getView().getCenter();
+    const highLong = mapCenterPoint[0] + polyOffset;
+    const lowLong = mapCenterPoint[0] - polyOffset;
+    const highLat = mapCenterPoint[1] + polyOffset;
+    const lowLat = mapCenterPoint[1] - polyOffset;
+    const line = turf.lineString([[lowLong, lowLat], [lowLong, highLat], [highLong, highLat]]);
+    const bbox = turf.bbox(line);
+    const bboxPolygon = turf.bboxPolygon(bbox);
+    const newPoly = geoJSONFormat.readFeature(bboxPolygon);
+    rasteranalysissource.addFeature(newPoly);
+    rasterAnalysisInteraction.getFeatures().push(newPoly);
+    document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").style.display = "none";
+    document.getElementById("vectorizeRasterByGridTargetPolyHideButton").style.display = "block";
+}
+
 function downloadShapesLayer(){
     let filetype;
     const dlType = document.getElementById("shapesdownloadselect").value;
@@ -2438,6 +2471,13 @@ function hideFeature(feature){
     feature.setStyle(invisibleStyle);
 }
 
+function hideVectorizeRasterByGridTargetPolygon(){
+    rasteranalysissource.clear();
+    rasterAnalysisInteraction.getFeatures().clear();
+    document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").style.display = "block";
+    document.getElementById("vectorizeRasterByGridTargetPolyHideButton").style.display = "none";
+}
+
 function lazyLoadPoints(index,callback){
     let params;
     let url;
@@ -2615,7 +2655,7 @@ function loadPointWFSLayer(index){
     }
 }
 
-function loadServerLayer(id,file){
+function loadServerLayer(id,name,file){
     showWorking();
     const zIndex = layerOrderArr.length + 1;
     const filenameParts = file.split('.');
@@ -2751,6 +2791,7 @@ function loadServerLayer(id,file){
                     ol.extent.extend(extent, bottomLeft.getExtent());
                     ol.extent.extend(extent, bottomRight.getExtent());
                     map.getView().fit(extent, map.getSize());
+                    addRasterLayerToTargetList(id,name);
                     hideWorking();
                 });
             });
@@ -3446,6 +3487,12 @@ function processVectorInteraction(){
     }
 }
 
+function processVectorizeRasterByGridResolutionChange(){
+    if(document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").style.display === "none"){
+        displayVectorizeRasterByGridTargetPolygon();
+    }
+}
+
 function refreshLayerOrder(){
     const layerCount = map.getLayers().getArray().length;
     layersArr['dragdrop1'].setZIndex(layerCount-6);
@@ -3553,9 +3600,10 @@ function removeSelectionRecord(sel){
 
 function removeServerLayer(id){
     map.removeLayer(layersArr[id]);
-    const imageIndex = id + 'Image';
-    if(layersArr.hasOwnProperty(imageIndex)){
-        delete layersArr[imageIndex];
+    const dataIndex = id + 'Data';
+    if(layersArr.hasOwnProperty(dataIndex)){
+        removeRasterLayerFromTargetList(id);
+        delete layersArr[dataIndex];
     }
     delete layersArr[id];
 }
@@ -3601,9 +3649,9 @@ function removeUserLayer(layerID,raster){
             map.removeLayer(layersArr[layerID]);
             layersArr[layerID].setSource(null);
             const sourceIndex = dragDropTarget + 'Source';
-            const imageIndex = dragDropTarget + 'Image';
+            const dataIndex = dragDropTarget + 'Data';
             delete layersArr[sourceIndex];
-            delete layersArr[imageIndex];
+            delete layersArr[dataIndex];
             if(layerID === 'dragdrop4') {
                 dragDrop4 = false;
             }
@@ -4467,7 +4515,7 @@ function toggleServerLayerVisibility(id,name,file,visible){
         if(document.getElementById(queryButtonId)){
             document.getElementById(queryButtonId).style.display = 'block';
         }
-        loadServerLayer(id,file);
+        loadServerLayer(id,name,file);
         addLayerToSelList(id,name,false);
         addLayerToLayerOrderArr(id);
     }
@@ -4573,13 +4621,13 @@ function validateFeatureDate(feature){
     return valid;
 }
 
-function vectorizeRaster(){
+function vectorizeRasterByData(){
     showWorking();
     setTimeout(function() {
         const turfFeatureArr = [];
         const targetRaster = document.getElementById("targetrasterselect").value;
-        const valLow = document.getElementById("vectorizeRasterValueLow").value;
-        const valHigh = document.getElementById("vectorizeRasterValueHigh").value;
+        const valLow = document.getElementById("vectorizeRasterByDataValueLow").value;
+        const valHigh = document.getElementById("vectorizeRasterByDataValueHigh").value;
         if(targetRaster === ''){
             alert("Please select a target raster layer.");
             hideWorking();
@@ -4614,6 +4662,71 @@ function vectorizeRaster(){
                 selectsource.addFeature(cnvepoly);
             }
             hideWorking();
+        }
+    }, 50);
+}
+
+function vectorizeRasterByGrid(){
+    showWorking();
+    setTimeout(function() {
+        let selectedClone;
+        const turfFeatureArr = [];
+        const targetRaster = document.getElementById("targetrasterselect").value;
+        const valLow = document.getElementById("vectorizeRasterByGridValueLow").value;
+        const valHigh = document.getElementById("vectorizeRasterByGridValueHigh").value;
+        const resolutionVal = Number(document.getElementById("vectorizeRasterByGridResolution").value);
+        if(targetRaster === ''){
+            alert("Please select a target raster layer.");
+            hideWorking();
+        }
+        else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
+            alert("Please enter high and low numbers for the value range.");
+            hideWorking();
+        }
+        else{
+            rasterAnalysisInteraction.getFeatures().forEach((feature) => {
+                selectedClone = feature.clone();
+            });
+            if(selectedClone){
+                const geoJSONFormat = new ol.format.GeoJSON();
+                const selectiongeometry = selectedClone.getGeometry();
+                selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
+                const featCoords = JSON.parse(geojsonStr).coordinates;
+                const extentBBox = turf.bbox(turf.polygon(featCoords));
+                const gridPoints = turf.pointGrid(extentBBox, resolutionVal, {units: 'kilometers',mask: turf.polygon(featCoords)});
+                const gridPointFeatures = geoJSONFormat.readFeatures(gridPoints);
+                const dataIndex = targetRaster + 'Data';
+                gridPointFeatures.forEach(function(feature){
+                    const coords = feature.getGeometry().getCoordinates();
+                    const x = Math.floor(layersArr[dataIndex]['imageWidth']*(coords[0] - layersArr[dataIndex]['x_min'])/(layersArr[dataIndex]['x_max'] - layersArr[dataIndex]['x_min']));
+                    const y = layersArr[dataIndex]['imageHeight']-Math.ceil(layersArr[dataIndex]['imageHeight']*(coords[1] - layersArr[dataIndex]['y_max'])/(layersArr[dataIndex]['y_min'] - layersArr[dataIndex]['y_max']));
+                    const rasterDataIndex = (Number(layersArr[dataIndex]['imageWidth']) * y) + x;
+                    if(coords[0] >= layersArr[dataIndex]['x_min'] && coords[0] <= layersArr[dataIndex]['x_max'] && coords[1] <= layersArr[dataIndex]['y_min'] && coords[1] >= layersArr[dataIndex]['y_max']){
+                        if(Number(layersArr[dataIndex]['data'][rasterDataIndex]) >= Number(valLow) && Number(layersArr[dataIndex]['data'][rasterDataIndex]) <= Number(valHigh)){
+                            turfFeatureArr.push(turf.point(coords));
+                        }
+                    }
+                });
+                const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
+                let concavepoly = '';
+                try{
+                    const maxEdgeVal = Number(resolutionVal) + (Number(resolutionVal) / 2);
+                    const options = {units: 'kilometers', maxEdge: maxEdgeVal};
+                    concavepoly = turf.concave(turfFeatureCollection,options);
+                }
+                catch(e){}
+                if(concavepoly){
+                    const cnvepoly = geoJSONFormat.readFeature(concavepoly);
+                    cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
+                    selectsource.addFeature(cnvepoly);
+                }
+                hideWorking();
+            }
+            else{
+                hideWorking();
+                alert('Click the Show Target button and then click and drag the Target to the area you would like to vectorize. Then click the Grid-Based Vectorize button.');
+            }
         }
     }, 50);
 }
