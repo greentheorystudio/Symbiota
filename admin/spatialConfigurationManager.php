@@ -39,7 +39,7 @@ $coreConfArr = $fullConfArr['core'];
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220620" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220621" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('#tabs').tabs({
@@ -201,7 +201,7 @@ include(__DIR__ . '/../header.php');
                             <input id="shapesPointRadius" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Opacity: </span>
+                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill Opacity: </span>
                             <input id="shapesOpacity" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_OPACITY']; ?>" />
                         </div>
                     </div>
@@ -228,9 +228,43 @@ include(__DIR__ . '/../header.php');
                 </div>
             </fieldset>
             <fieldset style="margin: 10px 0;">
-                <legend><b>Drag and Dropped Vector Layers</b></legend>
+                <legend><b>Drag and Dropped Layers</b></legend>
                 <div style="padding:5px;margin-top:5px;display:flex;flex-direction:column;width:90%;margin-left:auto;margin-right:auto;">
                     <div style="display:flex;justify-content:space-evenly;">
+                        <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
+                            <div style="display:flex;align-items:center;">
+                                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Raster color scale: </span>
+                                <select id="dragDropRasterColorScale">
+                                    <option value="autumn" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'autumn'?'selected':''); ?>>Autumn</option>
+                                    <option value="blackbody" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'blackbody'?'selected':''); ?>>Blackbody</option>
+                                    <option value="bluered" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'bluered'?'selected':''); ?>>Bluered</option>
+                                    <option value="bone" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'bone'?'selected':''); ?>>Bone</option>
+                                    <option value="cool" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'cool'?'selected':''); ?>>Cool</option>
+                                    <option value="copper" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'copper'?'selected':''); ?>>Copper</option>
+                                    <option value="earth" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'earth'?'selected':''); ?>>Earth</option>
+                                    <option value="electric" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'electric'?'selected':''); ?>>Electric</option>
+                                    <option value="greens" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'greens'?'selected':''); ?>>Greens</option>
+                                    <option value="greys" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'greys'?'selected':''); ?>>Greys</option>
+                                    <option value="hot" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'hot'?'selected':''); ?>>Hot</option>
+                                    <option value="hsv" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'hsv'?'selected':''); ?>>Hsv</option>
+                                    <option value="inferno" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'inferno'?'selected':''); ?>>Inferno</option>
+                                    <option value="jet" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'jet'?'selected':''); ?>>Jet</option>
+                                    <option value="magma" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'magma'?'selected':''); ?>>Magma</option>
+                                    <option value="picnic" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'picnic'?'selected':''); ?>>Picnic</option>
+                                    <option value="plasma" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'plasma'?'selected':''); ?>>Plasma</option>
+                                    <option value="portland" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'portland'?'selected':''); ?>>Portland</option>
+                                    <option value="rainbow" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'rainbow'?'selected':''); ?>>Rainbow</option>
+                                    <option value="rdbu" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'rdbu'?'selected':''); ?>>Rdbu</option>
+                                    <option value="spring" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'spring'?'selected':''); ?>>Spring</option>
+                                    <option value="summer" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'summer'?'selected':''); ?>>Summer</option>
+                                    <option value="turbo" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'turbo'?'selected':''); ?>>Turbo</option>
+                                    <option value="viridis" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'viridis'?'selected':''); ?>>Viridis</option>
+                                    <option value="winter" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'winter'?'selected':''); ?>>Winter</option>
+                                    <option value="ylgnbu" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'ylgnbu'?'selected':''); ?>>Ylgnbu</option>
+                                    <option value="ylorrd" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'ylorrd'?'selected':''); ?>>Ylorrd</option>
+                                </select>
+                            </div>
+                        </div>
                         <div style="display:flex;align-items:center;">
                             <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
                             <input id="dragDropBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']; ?>" />
@@ -250,7 +284,7 @@ include(__DIR__ . '/../header.php');
                             <input id="dragDropPointRadius" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Opacity: </span>
+                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill Opacity: </span>
                             <input id="dragDropOpacity" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>" />
                         </div>
                     </div>
@@ -316,6 +350,7 @@ include(__DIR__ . '/../footer.php');
         const dragDropBorderWidthValue = $('#dragDropBorderWidth').spinner( "value" );
         const dragDropPointRadiusValue = $('#dragDropPointRadius').spinner( "value" );
         const dragDropOpacityValue = $('#dragDropOpacity').spinner( "value" );
+        const dragDropRasterColorScaleValue = document.getElementById('dragDropRasterColorScale').value;
         data['SPATIAL_POINT_FILL_COLOR'] = '';
         data['SPATIAL_POINT_BORDER_COLOR'] = '';
         data['SPATIAL_POINT_BORDER_WIDTH'] = '';
@@ -336,6 +371,7 @@ include(__DIR__ . '/../footer.php');
         data['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '';
         data['SPATIAL_DRAGDROP_POINT_RADIUS'] = '';
         data['SPATIAL_DRAGDROP_OPACITY'] = '';
+        data['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = '';
         const deleteJsonData = JSON.stringify(data);
         const http = new XMLHttpRequest();
         const url = "rpc/configurationModelController.php";
@@ -365,6 +401,7 @@ include(__DIR__ . '/../footer.php');
                 data['SPATIAL_DRAGDROP_BORDER_WIDTH'] = dragDropBorderWidthValue;
                 data['SPATIAL_DRAGDROP_POINT_RADIUS'] = dragDropPointRadiusValue;
                 data['SPATIAL_DRAGDROP_OPACITY'] = dragDropOpacityValue;
+                data['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = dragDropRasterColorScaleValue;
                 const addJsonData = JSON.stringify(data);
                 let params = 'action=add&data='+addJsonData;
                 //console.log(url+'?'+params);
@@ -402,6 +439,7 @@ include(__DIR__ . '/../footer.php');
         $('#dragDropBorderWidth').spinner( "value", 2 );
         $('#dragDropPointRadius').spinner( "value", 5 );
         $('#dragDropOpacity').spinner( "value", 0.3 );
+        document.getElementById('dragDropRasterColorScale').value = 'earth';
         processSaveSymbologySettings();
     }
 </script>

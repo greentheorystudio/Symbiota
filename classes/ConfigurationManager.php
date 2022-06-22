@@ -64,6 +64,7 @@ class ConfigurationManager{
         'SPATIAL_DRAGDROP_BORDER_WIDTH',
         'SPATIAL_DRAGDROP_POINT_RADIUS',
         'SPATIAL_DRAGDROP_OPACITY',
+        'SPATIAL_DRAGDROP_RASTER_COLOR_SCALE',
         'GOOGLE_ANALYTICS_KEY',
         'RIGHTS_TERMS',
         'CSS_VERSION_LOCAL',
@@ -331,6 +332,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['SPATIAL_DRAGDROP_OPACITY']) || $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] === ''){
             $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
         }
+        if(!isset($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']) || $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === ''){
+            $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
+        }
         if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
             $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
         }
@@ -375,6 +379,7 @@ class ConfigurationManager{
         $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
         $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] = '5';
         $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
+        $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
     }
 
     public function getCoreConfigurationsArr(): array

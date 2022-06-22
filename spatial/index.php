@@ -94,7 +94,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220620" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220621" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20220330" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -322,6 +322,7 @@ $dbArr = array();
     const dragDropBorderWidth = <?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH']; ?>;
     const dragDropPointRadius = <?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>;
     const dragDropOpacity = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>';
+    const dragDropRasterColorScale = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']; ?>';
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');
@@ -724,7 +725,7 @@ $dbArr = array();
                         infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
                         infoArr['removable'] = true;
                         infoArr['sortable'] = true;
-                        infoArr['symbology'] = false;
+                        infoArr['symbology'] = true;
                         infoArr['query'] = false;
                         const sourceIndex = dragDropTarget + 'Source';
                         const dataIndex = dragDropTarget + 'Data';
@@ -740,16 +741,6 @@ $dbArr = array();
                         const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
                         const imageWidth = image.getWidth();
                         const imageHeight = image.getHeight();
-                        layersArr[dataIndex] = {};
-                        layersArr[dataIndex]['data'] = bands[0];
-                        layersArr[dataIndex]['bbox'] = image.getBoundingBox();
-                        layersArr[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
-                        layersArr[dataIndex]['x_min'] = x_min;
-                        layersArr[dataIndex]['x_max'] = x_max;
-                        layersArr[dataIndex]['y_min'] = y_min;
-                        layersArr[dataIndex]['y_max'] = y_max;
-                        layersArr[dataIndex]['imageWidth'] = imageWidth;
-                        layersArr[dataIndex]['imageHeight'] = imageHeight;
                         let minValue = 0;
                         let maxValue = 0;
                         bands[0].forEach(function(item, index) {
@@ -760,6 +751,18 @@ $dbArr = array();
                                 maxValue = item;
                             }
                         });
+                        layersArr[dataIndex] = {};
+                        layersArr[dataIndex]['data'] = bands[0];
+                        layersArr[dataIndex]['bbox'] = image.getBoundingBox();
+                        layersArr[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
+                        layersArr[dataIndex]['x_min'] = x_min;
+                        layersArr[dataIndex]['x_max'] = x_max;
+                        layersArr[dataIndex]['y_min'] = y_min;
+                        layersArr[dataIndex]['y_max'] = y_max;
+                        layersArr[dataIndex]['imageWidth'] = imageWidth;
+                        layersArr[dataIndex]['imageHeight'] = imageHeight;
+                        layersArr[dataIndex]['minValue'] = minValue;
+                        layersArr[dataIndex]['maxValue'] = maxValue;
                         const canvasElement = document.createElement('canvas');
                         const plot = new plotty.plot({
                             canvas: canvasElement,
@@ -767,7 +770,7 @@ $dbArr = array();
                             width: imageWidth,
                             height: imageHeight,
                             domain: [minValue, maxValue],
-                            colorScale: 'earth'
+                            colorScale: dragDropRasterColorScale
                         });
                         plot.render();
                         layersArr[sourceIndex] = new ol.source.ImageStatic({
@@ -778,6 +781,7 @@ $dbArr = array();
                         layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
                         map.addLayer(layersArr[dragDropTarget]);
                         processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
+                        addRasterLayerToTargetList(dragDropTarget,filename);
                         toggleLayerDisplayMessage();
                         const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
                         const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
