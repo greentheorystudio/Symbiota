@@ -3100,7 +3100,7 @@ function processAddLayerControllerElement(lArr,parentElement,active){
             addLayerToSelList(lArr['id'], lArr['layerName'], active);
         }
     }
-    else{
+    else if(active){
         document.getElementById("selectlayerselect").value = lArr['id'];
         setActiveLayer();
     }

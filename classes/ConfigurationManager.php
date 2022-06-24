@@ -660,4 +660,19 @@ class ConfigurationManager{
             }
         }
     }
+
+    public function saveMapServerConfig($json): bool
+    {
+        $status = true;
+        if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/json/spatiallayerconfig.json', 'wb')){
+            if(!fwrite($fh,$json)){
+                $status = false;
+            }
+            fclose($fh);
+        }
+        else{
+            $status = false;
+        }
+        return $status;
+    }
 }

@@ -94,7 +94,7 @@ $coreConfArr = $fullConfArr['core'];
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220621" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220622" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $( "#addLayerDateAquired" ).datepicker({ dateFormat: 'yy-mm-dd' });
@@ -394,7 +394,7 @@ include(__DIR__ . '/../header.php');
                             </div>
                         </div>
                         <div>
-                            <button type="button" onclick="">Save Changes</button>
+                            <button type="button" onclick="saveLayerConfigChanges();">Save Changes</button>
                         </div>
                     </div>
                     <div id="addLayerGroupDiv" style="width:95%;display:none;">
@@ -466,6 +466,9 @@ include(__DIR__ . '/../footer.php');
 ?>
 <script type="text/javascript">
     const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
+    let serverayerArrObject;
+    let layerArr;
+    let layerData = {};
 
     function processSaveDisplaySettings(){
         const data = {};
@@ -622,15 +625,23 @@ include(__DIR__ . '/../footer.php');
         http.onreadystatechange = function () {
             if (http.readyState == 4 && http.status == 200) {
                 if (http.responseText) {
-                    const layerArrObject = JSON.parse(http.responseText);
-                    if (layerArrObject.hasOwnProperty('layerConfig')) {
-                        const layerArr = layerArrObject['layerConfig'];
+                    serverayerArrObject = JSON.parse(http.responseText);
+                    if (serverayerArrObject.hasOwnProperty('layerConfig')) {
+                        layerArr = serverayerArrObject['layerConfig'];
                         for (let i in layerArr) {
-                            if (layerArr[i]['type'] === 'layer') {
-                                processAddLayerListElement(layerArr[i],document.getElementById("layerList"));
-                            }
-                            if (layerArr[i]['type'] === 'layerGroup') {
-                                processAddLayerListGroup(layerArr[i],document.getElementById("layerList"));
+                            if(layerArr.hasOwnProperty(i)){
+                                const layerId = layerArr[i]['id'];
+                                const layerType = layerArr[i]['type'];
+                                layerData[layerId] = {};
+                                layerData[layerId]['type'] = layerType;
+                                if(layerType === 'layer'){
+                                    processLayerDataFromLayerArr(layerArr[i],layerId);
+                                    processAddLayerListElement(layerArr[i],document.getElementById("layerList"));
+                                }
+                                else if(layerType === 'layerGroup'){
+                                    layerData[layerId]['name'] = layerArr[i]['name'];
+                                    processAddLayerListGroup(layerArr[i],document.getElementById("layerList"));
+                                }
                             }
                         }
                     }
@@ -638,6 +649,27 @@ include(__DIR__ . '/../footer.php');
             }
         };
         http.send();
+    }
+
+    function processLayerDataFromLayerArr(lArr,id) {
+        layerData[id]['file'] = lArr['file'];
+        layerData[id]['fileType'] = lArr['fileType'];
+        layerData[id]['layerName'] = lArr['layerName'];
+        layerData[id]['layerDescription'] = lArr.hasOwnProperty('layerDescription') ? lArr['layerDescription'] : '';
+        layerData[id]['providedBy'] = lArr.hasOwnProperty('providedBy') ? lArr['providedBy'] : '';
+        layerData[id]['sourceURL'] = lArr.hasOwnProperty('sourceURL') ? lArr['sourceURL'] : '';
+        layerData[id]['dateAquired'] = lArr.hasOwnProperty('dateAquired') ? lArr['dateAquired'] : '';
+        layerData[id]['dateUploaded'] = lArr.hasOwnProperty('dateUploaded') ? lArr['dateUploaded'] : '';
+        layerData[id]['opacity'] = (lArr.hasOwnProperty('opacity') && lArr['opacity']) ? lArr['opacity'] : dragDropOpacity;
+        if(lArr['fileType'] === 'tif'){
+            layerData[id]['colorScale'] = (lArr.hasOwnProperty('colorScale') && lArr['colorScale']) ? lArr['colorScale'] : dragDropRasterColorScale;
+        }
+        else{
+            layerData[id]['fillColor'] = (lArr.hasOwnProperty('fillColor') && lArr['fillColor']) ? lArr['fillColor'] : dragDropFillColor;
+            layerData[id]['borderColor'] = (lArr.hasOwnProperty('borderColor') && lArr['borderColor']) ? lArr['borderColor'] : dragDropBorderColor;
+            layerData[id]['borderWidth'] = (lArr.hasOwnProperty('borderWidth') && lArr['borderWidth']) ? lArr['borderWidth'] : dragDropBorderWidth;
+            layerData[id]['pointRadius'] = (lArr.hasOwnProperty('pointRadius') && lArr['pointRadius']) ? lArr['pointRadius'] : dragDropPointRadius;
+        }
     }
 
     function processAddLayerListElement(lArr, parentElement) {
@@ -699,6 +731,11 @@ include(__DIR__ . '/../footer.php');
             parentElement.appendChild(layerGroupLi);
             for (let i in layersArr) {
                 if (layersArr.hasOwnProperty(i)) {
+                    const layerId = layersArr[i]['id'];
+                    const layerType = layersArr[i]['type'];
+                    layerData[layerId] = {};
+                    layerData[layerId]['type'] = layerType;
+                    processLayerDataFromLayerArr(layersArr[i],layerId);
                     processAddLayerListElement(layersArr[i], layerGroupContainerOl)
                 }
             }
@@ -797,6 +834,124 @@ include(__DIR__ . '/../footer.php');
             alert("The file you are trying to upload is larger than the maximum upload size of " + maxUploadSizeMB + "MB");
             document.getElementById('addLayerFile').value = '';
         }
+    }
+
+    function buildNewLayerBlockObjFromData(id,dataArr){
+        const blockObj = {};
+        blockObj['id'] = id;
+        blockObj['type'] = 'layer';
+        blockObj['file'] = dataArr['file'];
+        blockObj['fileType'] = dataArr['fileType'];
+        blockObj['layerName'] = dataArr['layerName'];
+        if(dataArr['layerDescription'] !== ''){
+            blockObj['layerDescription'] = dataArr['layerDescription'];
+        }
+        if(dataArr['providedBy'] !== ''){
+            blockObj['providedBy'] = dataArr['providedBy'];
+        }
+        if(dataArr['sourceURL'] !== ''){
+            blockObj['sourceURL'] = dataArr['sourceURL'];
+        }
+        if(dataArr['dateAquired'] !== ''){
+            blockObj['dateAquired'] = dataArr['dateAquired'];
+        }
+        if(dataArr['dateUploaded'] !== ''){
+            blockObj['dateUploaded'] = dataArr['dateUploaded'];
+        }
+        blockObj['opacity'] = dataArr['opacity'];
+        if(dataArr['fileType'] === 'tif'){
+            blockObj['colorScale'] = dataArr['colorScale'];
+        }
+        else{
+            blockObj['fillColor'] = dataArr['fillColor'];
+            blockObj['borderColor'] = dataArr['borderColor'];
+            blockObj['borderWidth'] = dataArr['borderWidth'];
+            blockObj['pointRadius'] = dataArr['pointRadius'];
+        }
+        return blockObj;
+    }
+
+    function setNewLayerConfigArr(){
+        const newLayerConfigArr = [];
+        const layerBlocks = document.getElementById('layerList').querySelectorAll('li');
+        layerBlocks.forEach((block) => {
+            const blockObj = {};
+            const blockIdArr = block.id.split("-");
+            const type = blockIdArr[0];
+            const id = Number(blockIdArr[1]);
+            const dataArr = layerData[id];
+            if(type === 'layer'){
+                newLayerConfigArr.push(buildNewLayerBlockObjFromData(id,dataArr));
+            }
+            else if(type === 'layerGroup'){
+                const newLayerGroupArr = [];
+                const layerGroupContainerId = 'layerGroupList-' + id;
+                const layerGroupBlocks = document.getElementById(layerGroupContainerId).querySelectorAll('li');
+                blockObj['id'] = id;
+                blockObj['type'] = type;
+                blockObj['name'] = dataArr['name'];
+                layerGroupBlocks.forEach((groupBlock) => {
+                    const blockObj = {};
+                    const blockIdArr = groupBlock.id.split("-");
+                    const type = blockIdArr[0];
+                    const id = Number(blockIdArr[1]);
+                    const dataArr = layerData[id];
+                    newLayerGroupArr.push(buildNewLayerBlockObjFromData(id,dataArr));
+                });
+                blockObj['layers'] = newLayerGroupArr;
+                newLayerConfigArr.push(blockObj);
+            }
+        });
+        return newLayerConfigArr;
+    }
+
+    function saveLayerConfigChanges(){
+        const newLayerConfigArr = setNewLayerConfigArr();
+        if(newLayerConfigArr.length > 0){
+            const newLayerConfig = {};
+            newLayerConfig['layerConfig'] = newLayerConfigArr;
+            const http = new XMLHttpRequest();
+            const url = "rpc/mapServerConfigurationController.php";
+            const jsonData = JSON.stringify(newLayerConfig).replaceAll('&','%<amp>%');
+            const params = 'action=saveMapServerConfig&data='+jsonData;
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    if(Number(http.responseText) !== 1){
+                        document.getElementById("statusStr").innerHTML = 'Error saving changes';
+                        setTimeout(function () {
+                            document.getElementById("statusStr").innerHTML = '';
+                        }, 5000);
+                    }
+                    else{
+                        document.getElementById("statusStr").innerHTML = 'Configuration saved';
+                        setTimeout(function () {
+                            document.getElementById("statusStr").innerHTML = '';
+                        }, 5000);
+                    }
+                }
+            };
+            http.send(params);
+        }
+    }
+
+    function sendAPIRequest(action,configname,configvalue){
+        const data = {};
+        const http = new XMLHttpRequest();
+        const url = "rpc/configurationModelController.php";
+        data[configname] = configvalue;
+        const jsonData = JSON.stringify(data);
+        const params = 'action='+action+'&data='+jsonData;
+        //console.log(url+'?'+params);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState === 4 && http.status === 200) {
+                location.reload();
+            }
+        };
+        http.send(params);
     }
 </script>
 </body>
