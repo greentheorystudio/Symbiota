@@ -24,6 +24,7 @@ $coreConfArr = $fullConfArr['core'];
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.nestedSortable.js?ver=20220624" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jscolor/jscolor.js?ver=13" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
     <style type="text/css">
@@ -33,9 +34,63 @@ $coreConfArr = $fullConfArr['core'];
             margin-left: auto;
             margin-right: auto;
         }
-
         #mapinfo, #mapscale_us, #mapscale_metric {
             display: none;
+        }
+        .placeholder {
+            outline: 1px dashed #4183C4;
+        }
+        .layer-group-header {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-content: center;
+            align-items: center;
+        }
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-content: center;
+            align-items: center;
+        }
+        .layer-group-container, .layerContent{
+            background: #FFF;
+        }
+        .layer-group-container{
+            padding: 10px;
+        }
+        .layerContent{
+            padding: 5px;
+        }
+        ol.sortable{
+            padding: 0 10px;
+        }
+        ol.sortable, ol.sortable ol {
+            list-style-type: none;
+        }
+
+        ol.sortable li, ol.sortable ol li {
+            display: list-item;
+        }
+        ol.sortable li, ol.sortable li ol li {
+            border: 1px solid #d4d4d4;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            cursor: move;
+            border-color: #D4D4D4 #D4D4D4 #BCBCBC;
+            background: #EBEBEB;
+            margin: 10px 0;
+        }
+        li.group {
+            padding: 0 5px 5px 5px;
+        }
+        li.layer {
+            padding: 5px 5px 5px 5px;
+        }
+        ol.sortable li ol {
+            padding: 10px;
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
@@ -106,6 +161,31 @@ $coreConfArr = $fullConfArr['core'];
                 numberFormat: "n"
             });
             jscolor.init();
+
+            $('ol.sortable').nestedSortable({
+                doNotClear: true,
+                forcePlaceholderSize: true,
+                handle: 'div',
+                helper: 'clone',
+                items: 'li',
+                opacity: .6,
+                placeholder: 'placeholder',
+                revert: 250,
+                tabSize: 0,
+                tolerance: 'pointer',
+                toleranceElement: '> div',
+                maxLevels: 2,
+                expandOnHover: 700,
+                startCollapsed: false,
+                isAllowed: function (placeholder, placeholderParent, currentItem) {
+                    if(!placeholderParent || !currentItem[0].id.startsWith("layerGroup-")){
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+            });
         });
 
         function formatPath(path){
@@ -124,10 +204,12 @@ $coreConfArr = $fullConfArr['core'];
 include(__DIR__ . '/../header.php');
 ?>
 <div id="innertext">
+    <div id="statusStr" style="margin:20px;font-weight:bold;color:red;"></div>
     <div id="tabs" style="width:95%;">
         <ul>
             <li><a href='#mapwindow'>Map Window</a></li>
             <li><a href="#symbology">Symbology</a></li>
+            <li><a href="#layers" onclick="setLayersList();">Layers</a></li>
         </ul>
 
         <div id="mapwindow">
@@ -297,6 +379,29 @@ include(__DIR__ . '/../header.php');
                 </div>
             </div>
         </div>
+
+        <div id="layers">
+            <fieldset style="margin: 10px 0;padding:15px;">
+                <div style="width:95%;margin: 10px 0;display:flex;flex-direction:column;gap:10px;justify-content:center;align-items:center;">
+                    <div style="width:100%;display:flex;justify-content:space-around;">
+                        <div>
+                            <button type="button" onclick="">Upload File</button>
+                        </div>
+                        <div>
+                            <button type="button" onclick="">Add Layer Group</button>
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-around;">
+
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div>
+                    <ol id="layerList" class="sortable"></ol>
+                </div>
+            </fieldset>
+        </div>
     </div>
 </div>
 <?php
@@ -320,9 +425,12 @@ include(__DIR__ . '/../footer.php');
         //console.log(url+'?'+params);
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                location.reload();
+        http.onreadystatechange = function () {
+            if (http.readyState === 4 && http.status === 200) {
+                document.getElementById("statusStr").innerHTML = 'Settings saved!';
+                setTimeout(function () {
+                    document.getElementById("statusStr").innerHTML = '';
+                }, 5000);
             }
         };
         http.send(params);
@@ -403,13 +511,16 @@ include(__DIR__ . '/../footer.php');
                 data['SPATIAL_DRAGDROP_OPACITY'] = dragDropOpacityValue;
                 data['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = dragDropRasterColorScaleValue;
                 const addJsonData = JSON.stringify(data);
-                let params = 'action=add&data='+addJsonData;
+                let params = 'action=add&data=' + addJsonData;
                 //console.log(url+'?'+params);
                 http.open("POST", url, true);
                 http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                http.onreadystatechange = function() {
-                    if(http.readyState === 4 && http.status === 200) {
-                        location.reload();
+                http.onreadystatechange = function () {
+                    if (http.readyState === 4 && http.status === 200) {
+                        document.getElementById("statusStr").innerHTML = 'Settings saved!';
+                        setTimeout(function () {
+                            document.getElementById("statusStr").innerHTML = '';
+                        }, 5000);
                     }
                 };
                 http.send(params);
@@ -418,29 +529,185 @@ include(__DIR__ . '/../footer.php');
         http.send(params);
     }
 
-    function processSetDefaultSettings(){
+    function processSetDefaultSettings() {
         document.getElementById('pointsBorderColor').value = '000000';
         document.getElementById('pointsFillColor').value = 'E69E67';
-        $('#pointsBorderWidth').spinner( "value", 1 );
-        $('#pointsPointRadius').spinner( "value", 7 );
+        $('#pointsBorderWidth').spinner("value", 1);
+        $('#pointsPointRadius').spinner("value", 7);
         document.getElementById('pointsSelectionsBorderColor').value = '10D8E6';
-        $('#pointsSelectionsBorderWidth').spinner( "value", 2 );
+        $('#pointsSelectionsBorderWidth').spinner("value", 2);
         document.getElementById('shapesBorderColor').value = '3399CC';
         document.getElementById('shapesFillColor').value = 'FFFFFF';
-        $('#shapesBorderWidth').spinner( "value", 2 );
-        $('#shapesPointRadius').spinner( "value", 5 );
-        $('#shapesOpacity').spinner( "value", 0.4 );
+        $('#shapesBorderWidth').spinner("value", 2);
+        $('#shapesPointRadius').spinner("value", 5);
+        $('#shapesOpacity').spinner("value", 0.4);
         document.getElementById('shapesSelectionsBorderColor').value = '0099FF';
         document.getElementById('shapesSelectionsFillColor').value = 'FFFFFF';
-        $('#shapesSelectionsBorderWidth').spinner( "value", 5 );
-        $('#shapesSelectionsOpacity').spinner( "value", 0.5 );
+        $('#shapesSelectionsBorderWidth').spinner("value", 5);
+        $('#shapesSelectionsOpacity').spinner("value", 0.5);
         document.getElementById('dragDropBorderColor').value = '000000';
         document.getElementById('dragDropFillColor').value = 'AAAAAA';
-        $('#dragDropBorderWidth').spinner( "value", 2 );
-        $('#dragDropPointRadius').spinner( "value", 5 );
-        $('#dragDropOpacity').spinner( "value", 0.3 );
+        $('#dragDropBorderWidth').spinner("value", 2);
+        $('#dragDropPointRadius').spinner("value", 5);
+        $('#dragDropOpacity').spinner("value", 0.3);
         document.getElementById('dragDropRasterColorScale').value = 'earth';
         processSaveSymbologySettings();
+    }
+
+    function setLayersList() {
+        const http = new XMLHttpRequest();
+        const url = "../spatial/rpc/getlayersconfig.php";
+        //console.log(url);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function () {
+            if (http.readyState == 4 && http.status == 200) {
+                if (http.responseText) {
+                    const layerArrObject = JSON.parse(http.responseText);
+                    if (layerArrObject.hasOwnProperty('layerConfig')) {
+                        const layerArr = layerArrObject['layerConfig'];
+                        for (let i in layerArr) {
+                            if (layerArr[i]['type'] === 'layer') {
+                                processAddLayerListElement(layerArr[i],document.getElementById("layerList"));
+                            }
+                            if (layerArr[i]['type'] === 'layerGroup') {
+                                processAddLayerListGroup(layerArr[i],document.getElementById("layerList"));
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        http.send();
+    }
+
+    function processAddLayerListElement(lArr, parentElement) {
+        const layerLiId = 'layer-' + lArr['id'];
+        if (!document.getElementById(layerLiId)) {
+            const layerLi = buildLayerListElement(lArr);
+            parentElement.appendChild(layerLi);
+        }
+    }
+
+    function processAddLayerListGroup(lArr, parentElement) {
+        const layerGroupdLiId = 'layerGroup-' + lArr['id'];
+        if (!document.getElementById(layerGroupdLiId)) {
+            const layersArr = lArr['layers'];
+            const layerGroupContainerId = 'layerGroupList-' + lArr['id'];
+            const layerGroupLi = document.createElement('li');
+            layerGroupLi.setAttribute("id", layerGroupdLiId);
+            layerGroupLi.setAttribute("class", "group");
+            const layerGroupHeaderDiv = document.createElement('div');
+            layerGroupHeaderDiv.setAttribute("class","layer-group-header");
+            const layerGroupTitleDiv = document.createElement('div');
+            layerGroupTitleDiv.setAttribute("style","display:flex;gap:15px;justify-content:flex-start;align-items:center;");
+            const layerGroupTitleB = document.createElement('b');
+            layerGroupTitleB.innerHTML = lArr['name'];
+            layerGroupTitleDiv.appendChild(layerGroupTitleB);
+            const layerGroupShowIconI = document.createElement('i');
+            const layerGroupShowIconIId = 'showLayerGroupButton-' + lArr['id'];
+            const layerGroupShowIconIOnclickVal = "showLayerGroup('" + lArr['id'] + "');";
+            layerGroupShowIconI.setAttribute("id",layerGroupShowIconIId);
+            layerGroupShowIconI.setAttribute("style","display:none;width:15px;height:15px;cursor:pointer;");
+            layerGroupShowIconI.setAttribute("title","Show layers");
+            layerGroupShowIconI.setAttribute("class","fas fa-plus");
+            layerGroupShowIconI.setAttribute("onclick",layerGroupShowIconIOnclickVal);
+            layerGroupTitleDiv.appendChild(layerGroupShowIconI);
+            const layerGroupHideIconI = document.createElement('i');
+            const layerGroupHideIconIId = 'hideLayerGroupButton-' + lArr['id'];
+            const layerGroupHideIconIOnclickVal = "hideLayerGroup('" + lArr['id'] + "');";
+            layerGroupHideIconI.setAttribute("id",layerGroupHideIconIId);
+            layerGroupHideIconI.setAttribute("style","width:15px;height:15px;cursor:pointer;");
+            layerGroupHideIconI.setAttribute("title","Hide layers");
+            layerGroupHideIconI.setAttribute("class","fas fa-minus");
+            layerGroupHideIconI.setAttribute("onclick",layerGroupHideIconIOnclickVal);
+            layerGroupTitleDiv.appendChild(layerGroupHideIconI);
+            layerGroupHeaderDiv.appendChild(layerGroupTitleDiv);
+            const layerGroupEditIconDiv = document.createElement('div');
+            const layerGroupEditIconI = document.createElement('i');
+            const layerGroupEditIconIOnclickVal = "openLayerGroupEditWindow('" + lArr['id'] + "');";
+            layerGroupEditIconI.setAttribute("style","width:20px;height:20px;cursor:pointer;margin-right:10px");
+            layerGroupEditIconI.setAttribute("title","Edit layer group");
+            layerGroupEditIconI.setAttribute("class","fas fa-edit");
+            layerGroupEditIconI.setAttribute("onclick",layerGroupEditIconIOnclickVal);
+            layerGroupEditIconDiv.appendChild(layerGroupEditIconI);
+            layerGroupHeaderDiv.appendChild(layerGroupEditIconDiv);
+            layerGroupLi.appendChild(layerGroupHeaderDiv);
+            const layerGroupContainerOl = document.createElement('div');
+            layerGroupContainerOl.setAttribute("id", layerGroupContainerId);
+            layerGroupContainerOl.setAttribute("class", "layer-group-container");
+            layerGroupLi.appendChild(layerGroupContainerOl);
+            parentElement.appendChild(layerGroupLi);
+            for (let i in layersArr) {
+                if (layersArr.hasOwnProperty(i)) {
+                    processAddLayerListElement(layersArr[i], layerGroupContainerOl)
+                }
+            }
+        }
+    }
+
+    function buildLayerListElement(lArr){
+        const layerLiId = 'layer-' + lArr['id'];
+        const layerLi = document.createElement('li');
+        layerLi.setAttribute("id",layerLiId);
+        layerLi.setAttribute("class","layer");
+        const layerContentDiv = document.createElement('div');
+        layerContentDiv.setAttribute("class","layerContent");
+        const layerHeaderDiv = document.createElement('div');
+        layerHeaderDiv.setAttribute("class","layer-header");
+        const layerTitleDiv = document.createElement('div');
+        layerTitleDiv.setAttribute("style","width:150px;");
+        const layerTitleB = document.createElement('b');
+        layerTitleB.innerHTML = lArr['layerName'];
+        layerTitleDiv.appendChild(layerTitleB);
+        layerHeaderDiv.appendChild(layerTitleDiv);
+        const layerEditIconDiv = document.createElement('div');
+        const layerEditIconA = document.createElement('a');
+        const layerEditIconAOnclickVal = "openLayerEditWindow('" + lArr['id'] + "');";
+        layerEditIconA.setAttribute("href","#");
+        layerEditIconA.setAttribute("onclick",layerEditIconAOnclickVal);
+        const layerEditIconI = document.createElement('i');
+        layerEditIconI.setAttribute("style","width:20px;height:20px;");
+        layerEditIconI.setAttribute("title","Edit layer");
+        layerEditIconI.setAttribute("class","fas fa-edit");
+        layerEditIconA.appendChild(layerEditIconI);
+        layerEditIconDiv.appendChild(layerEditIconA);
+        layerHeaderDiv.appendChild(layerEditIconDiv);
+        layerContentDiv.appendChild(layerHeaderDiv);
+        if(lArr.hasOwnProperty('layerDescription') && lArr['layerDescription']){
+            const layerDescDiv = document.createElement('div');
+            layerDescDiv.innerHTML = lArr['layerDescription'];
+            layerContentDiv.appendChild(layerDescDiv);
+        }
+        if(lArr.hasOwnProperty('providedBy') || lArr.hasOwnProperty('sourceURL')){
+            layerContentDiv.appendChild(buildLayerControllerLayerProvidedByElement(lArr));
+        }
+        if(lArr.hasOwnProperty('dateAquired') || lArr.hasOwnProperty('dateUploaded')){
+            layerContentDiv.appendChild(buildLayerControllerLayerDateElement(lArr));
+        }
+        const layerFileDiv = document.createElement('div');
+        layerFileDiv.innerHTML = '<b>File:</b> ' + lArr['file'];
+        layerContentDiv.appendChild(layerFileDiv);
+        layerLi.appendChild(layerContentDiv);
+        return layerLi;
+    }
+
+    function hideLayerGroup(layerId) {
+        const groupId = 'layerGroupList-' + layerId;
+        const hideButtonId = 'hideLayerGroupButton-' + layerId;
+        const showButtonId = 'showLayerGroupButton-' + layerId;
+        document.getElementById(groupId).style.display = "none";
+        document.getElementById(hideButtonId).style.display = "none";
+        document.getElementById(showButtonId).style.display = "block";
+    }
+
+    function showLayerGroup(layerId) {
+        const groupId = 'layerGroupList-' + layerId;
+        const hideButtonId = 'hideLayerGroupButton-' + layerId;
+        const showButtonId = 'showLayerGroupButton-' + layerId;
+        document.getElementById(groupId).style.display = "block";
+        document.getElementById(hideButtonId).style.display = "block";
+        document.getElementById(showButtonId).style.display = "none";
     }
 </script>
 </body>
