@@ -97,6 +97,7 @@ $coreConfArr = $fullConfArr['core'];
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220621" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            $( "#addLayerDateAquired" ).datepicker({ dateFormat: 'yy-mm-dd' });
             $('#tabs').tabs({
                 beforeLoad: function( event, ui ) {
                     $(ui.panel).html("<p>Loading...</p>");
@@ -382,17 +383,73 @@ include(__DIR__ . '/../header.php');
 
         <div id="layers">
             <fieldset style="margin: 10px 0;padding:15px;">
-                <div style="width:95%;margin: 10px 0;display:flex;flex-direction:column;gap:10px;justify-content:center;align-items:center;">
-                    <div style="width:100%;display:flex;justify-content:space-around;">
-                        <div>
-                            <button type="button" onclick="">Upload File</button>
+                <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;">
+                    <div style="width:95%;display:flex;justify-content:space-between;margin:auto;">
+                        <div style="display:flex;justify-content:flex-start;gap:10px;">
+                            <div>
+                                <button type="button" onclick="showAddLayer();">Add Layer</button>
+                            </div>
+                            <div>
+                                <button type="button" onclick="showAddLayerGroup();">Add Layer Group</button>
+                            </div>
                         </div>
                         <div>
-                            <button type="button" onclick="">Add Layer Group</button>
+                            <button type="button" onclick="">Save Changes</button>
                         </div>
                     </div>
-                    <div style="display:flex;justify-content:space-around;">
-
+                    <div id="addLayerGroupDiv" style="width:95%;display:none;">
+                        <fieldset style="margin: 10px 0;padding:10px;">
+                            <legend><b>Add Layer Group</b></legend>
+                            <div style="display:flex;justify-content: space-between;">
+                                <div>
+                                    <span style="font-weight:bold;margin-right:10px;font-size:14px;">Group Name: </span>
+                                    <input type="text" id="addLayerGroupName" style="width:400px;" value="" />
+                                </div>
+                                <div style="display:flex;justify-content: flex-end;gap:10px;">
+                                    <button type="button" onclick="hideAddLayerGroup();">Cancel</button>
+                                    <button type="button" onclick="">Add</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div id="addLayerDiv" style="width:95%;display:none;">
+                        <fieldset style="margin: 10px 0;padding:10px;">
+                            <legend><b>Add Layer</b></legend>
+                            <div style="display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">File:</div>
+                                <div style="width:550px;display:flex;justify-content:flex-start;">
+                                    <input id='addLayerFile' type='file' onchange="validateFileUpload();" />
+                                </div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Layer Name:</div>
+                                <div><input type="text" id="addLayerName" style="width:550px;" value="" /></div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Description:</div>
+                                <div>
+                                    <textarea id="addLayerDescription" style="width:550px;height:60px;resize:vertical;"></textarea>
+                                </div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Provided By:</div>
+                                <div><input type="text" id="addLayerProvidedBy" style="width:550px;" value="" /></div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Source URL:</div>
+                                <div><input type="text" id="addLayerSourceURL" style="width:550px;" value="" /></div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
+                                <div style="width:550px;display:flex;justify-content:flex-start;">
+                                    <input type="text" id="addLayerDateAquired" style="width:100px;" onchange="" />
+                                </div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: flex-end;gap:10px;">
+                                <button type="button" onclick="hideAddLayer();">Cancel</button>
+                                <button type="button" onclick="">Add</button>
+                            </div>
+                        </fieldset>
                     </div>
                 </div>
             </fieldset>
@@ -408,6 +465,8 @@ include(__DIR__ . '/../header.php');
 include(__DIR__ . '/../footer.php');
 ?>
 <script type="text/javascript">
+    const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
+
     function processSaveDisplaySettings(){
         const data = {};
         const baseLayerValue = document.getElementById('base-map').value;
@@ -656,7 +715,6 @@ include(__DIR__ . '/../footer.php');
         const layerHeaderDiv = document.createElement('div');
         layerHeaderDiv.setAttribute("class","layer-header");
         const layerTitleDiv = document.createElement('div');
-        layerTitleDiv.setAttribute("style","width:150px;");
         const layerTitleB = document.createElement('b');
         layerTitleB.innerHTML = lArr['layerName'];
         layerTitleDiv.appendChild(layerTitleB);
@@ -708,6 +766,37 @@ include(__DIR__ . '/../footer.php');
         document.getElementById(groupId).style.display = "block";
         document.getElementById(hideButtonId).style.display = "block";
         document.getElementById(showButtonId).style.display = "none";
+    }
+
+    function showAddLayer() {
+        document.getElementById('addLayerDiv').style.display = "block";
+        document.getElementById('addLayerGroupDiv').style.display = "none";
+    }
+
+    function hideAddLayer() {
+        document.getElementById('addLayerDiv').style.display = "none";
+    }
+
+    function showAddLayerGroup() {
+        document.getElementById('addLayerGroupDiv').style.display = "block";
+        document.getElementById('addLayerDiv').style.display = "none";
+    }
+
+    function hideAddLayerGroup() {
+        document.getElementById('addLayerGroupDiv').style.display = "none";
+    }
+
+    function validateFileUpload(){
+        const file = document.getElementById('addLayerFile').files[0];
+        const fileType = file.name.split('.').pop().toLowerCase();
+        if(fileType !== 'geojson' && fileType !== 'kml' && fileType !== 'zip' && fileType !== 'tif' && fileType !== 'tiff'){
+            alert("The file you are trying to upload is a type that is not supported. Only GeoJSON, KML, shapefile, and TIF file formats are supported.");
+            document.getElementById('addLayerFile').value = '';
+        }
+        else if(Number(file.size) > (maxUploadSizeMB * 1000 * 1000)){
+            alert("The file you are trying to upload is larger than the maximum upload size of " + maxUploadSizeMB + "MB");
+            document.getElementById('addLayerFile').value = '';
+        }
     }
 </script>
 </body>
