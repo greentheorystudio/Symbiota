@@ -26,7 +26,6 @@ $GLOBALS['IMAGE_ROOT_PATH'] = $GLOBALS['SERVER_ROOT'].'/content/imglib';			//Wri
 $GLOBALS['IMG_WEB_WIDTH'] = 1400;
 $GLOBALS['IMG_TN_WIDTH'] = 200;
 $GLOBALS['IMG_LG_WIDTH'] = 3200;
-$GLOBALS['IMG_FILE_SIZE_LIMIT'] = 300000;		//Files above this size limit and still within pixel width limits will still be resaved w/ some compression
 $GLOBALS['IPLANT_IMAGE_IMPORT_PATH'] = '';		//Path used to map/import images uploaded to the iPlant image server (e.g. /home/shared/project-name/--INSTITUTION_CODE--/, the --INSTITUTION_CODE-- text will be replaced with collection's institution code)
 
 //$GLOBALS['USE_IMAGE_MAGICK'] = 0;		//1 = ImageMagick resize images, given that it's installed (faster, less memory intensive)

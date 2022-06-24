@@ -35,7 +35,6 @@ class ConfigurationManager{
         'IMG_WEB_WIDTH',
         'IMG_TN_WIDTH',
         'IMG_LG_WIDTH',
-        'IMG_FILE_SIZE_LIMIT',
         'SOLR_URL',
         'SOLR_FULL_IMPORT_INTERVAL',
         'GBIF_USERNAME',
@@ -240,9 +239,6 @@ class ConfigurationManager{
             $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
             $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
         }
-        if(!isset($GLOBALS['IMG_FILE_SIZE_LIMIT']) || !(int)$GLOBALS['IMG_FILE_SIZE_LIMIT'] || (int)$GLOBALS['IMG_FILE_SIZE_LIMIT'] > $this->getServerMaxFilesize()){
-            $GLOBALS['IMG_FILE_SIZE_LIMIT'] = $this->getServerMaxFilesize();
-        }
         if(!isset($GLOBALS['PORTAL_GUID']) || $GLOBALS['PORTAL_GUID'] === ''){
             $GLOBALS['PORTAL_GUID'] = $this->getGUID();
         }
@@ -352,7 +348,6 @@ class ConfigurationManager{
         $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
         $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
         $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
-        $GLOBALS['IMG_FILE_SIZE_LIMIT'] = $this->getServerMaxFilesize();
         $GLOBALS['PORTAL_GUID'] = $this->getGUID();
         $GLOBALS['SECURITY_KEY'] = $this->getGUID();
         $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
