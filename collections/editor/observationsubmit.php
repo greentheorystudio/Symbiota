@@ -71,7 +71,7 @@ if($collMap){
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
-	<script src="../../js/symb/collections.observationsubmit.js?ver=20220112" type="text/javascript"></script>
+	<script src="../../js/symb/collections.observationsubmit.js?ver=20220624" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
@@ -353,9 +353,8 @@ if($collMap){
 				<fieldset>
 					<legend><b>Images</b></legend>
 					<div style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;'>
-				    	<input type='hidden' name='MAX_FILE_SIZE' value='4000000' />
-						<div>
-							Image 1: <input name='imgfile1' type='file' size='70' style="background-color:lightyellow;" onchange="verifyImageSize(this)" />
+				    	<div>
+							Image 1: <input name='imgfile1' type='file' size='70' style="background-color:lightyellow;" onchange="verifyImageSize(this,<?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile1.value = ''">
 						</div>
 						<div style="margin:5px;">
@@ -372,7 +371,7 @@ if($collMap){
 					</div>
 					<div id="img2div" style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
 						<div>
-							Image 2: <input name="imgfile2" type="file" size="70" onchange="verifyImageSize(this)" />
+							Image 2: <input name="imgfile2" type="file" size="70" onchange="verifyImageSize(this,<?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile2.value = ''">
 						</div>
 						<div style="margin:5px;">
@@ -389,7 +388,7 @@ if($collMap){
 					</div>
 					<div id="img3div" style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
 						<div>
-							Image 3: <input name="imgfile3" type="file" size="70" onchange="verifyImageSize(this)" />
+							Image 3: <input name="imgfile3" type="file" size="70" onchange="verifyImageSize(this,<?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile3.value = ''">
 						</div>
 						<div style="margin:5px;">
@@ -406,7 +405,7 @@ if($collMap){
 					</div>
 					<div id="img4div" style='padding:10px;width:700px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
 						<div>
-							Image 4: <input name="imgfile4" type="file" size="70" onchange="verifyImageSize(this)" />
+							Image 4: <input name="imgfile4" type="file" size="70" onchange="verifyImageSize(this,<?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile4.value = ''">
 						</div>
 						<div style="margin:5px;">
@@ -423,7 +422,7 @@ if($collMap){
 					</div>
 					<div id="img5div" style='padding:10px;width:700px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
 						<div>
-							Image 5: <input name="imgfile5" type="file" size="70" onchange="verifyImageSize(this)" />
+							Image 5: <input name="imgfile5" type="file" size="70" onchange="verifyImageSize(this,<?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile5.value = ''">
 						</div>
 						<div style="margin:5px;">
@@ -435,7 +434,7 @@ if($collMap){
 							</span>
 						</div>
 					</div>
-					<div style="margin-left:10px;">* Uploading web-ready images recommended. Upload image size can not be greater than <?php echo ($maxUpload/1000000); ?>MB</div>
+					<div style="margin-left:10px;">* Uploading web-ready images recommended. Upload image size can not be greater than <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>MB</div>
 				</fieldset>
 				<div style="margin:10px;">
 					<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
