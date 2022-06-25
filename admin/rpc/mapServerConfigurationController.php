@@ -5,11 +5,14 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $jsonData = array_key_exists('data',$_REQUEST)?$_REQUEST['data']:'';
+$fileName = array_key_exists('filename',$_REQUEST)?$_REQUEST['filename']:'';
 if($jsonData){
     $jsonData = str_replace('%<amp>%', '&', $jsonData);
 }
+if($fileName){
+    $fileName = str_replace('%<amp>%', '&', $fileName);
+}
 
-$dataArr = array();
 $confManager = new ConfigurationManager();
 
 if($GLOBALS['IS_ADMIN']){
@@ -18,5 +21,8 @@ if($GLOBALS['IS_ADMIN']){
     }
     elseif($action === 'uploadMapDataFile'){
         echo $confManager->uploadMapDataFile();
+    }
+    elseif($action === 'deleteMapDataFile'){
+        echo $confManager->deleteMapDataFile($fileName);
     }
 }

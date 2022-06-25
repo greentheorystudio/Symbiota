@@ -699,4 +699,14 @@ class ConfigurationManager{
         }
         return $returnStr;
     }
+
+    public function deleteMapDataFile($fileName): bool
+    {
+        $status = false;
+        $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial/' . $fileName;
+        if(file_exists($targetPath) && unlink($targetPath)) {
+            $status = true;
+        }
+        return $status;
+    }
 }

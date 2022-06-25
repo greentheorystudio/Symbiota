@@ -97,7 +97,7 @@ $coreConfArr = $fullConfArr['core'];
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220622" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/admin.spatial.js?ver=20220623" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/admin.spatial.js?ver=20220624" type="text/javascript"></script>
     <script type="text/javascript">
         const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
         let serverayerArrObject;
@@ -106,6 +106,7 @@ $coreConfArr = $fullConfArr['core'];
 
         $(document).ready(function() {
             $( "#addLayerDateAquired" ).datepicker({ dateFormat: 'yy-mm-dd' });
+            $( "#editLayerDateAquired" ).datepicker({ dateFormat: 'yy-mm-dd' });
             $('#tabs').tabs({
                 beforeLoad: function( event, ui ) {
                     $(ui.panel).html("<p>Loading...</p>");
@@ -200,18 +201,76 @@ $coreConfArr = $fullConfArr['core'];
                 scrolllock: true,
                 blur: false
             });
+            $('#layereditwindow').popup({
+                transition: 'all 0.3s',
+                scrolllock: true,
+                blur: false
+            });
         });
 
         function openLayerGroupEditWindow(id) {
-            const groupName = layerData[id]['name'];
-            document.getElementById('editLayerGroupName').value = groupName;
+            document.getElementById('editLayerGroupName').value = layerData[id]['name'];
             document.getElementById('editLayerGroupId').value = id;
             $('#layergroupeditwindow').popup('show');
+        }
+
+        function openLayerEditWindow(id) {
+            document.getElementById('editLayerName').value = layerData[id]['layerName'];
+            document.getElementById('editLayerDescription').value = layerData[id]['layerDescription'];
+            document.getElementById('editLayerProvidedBy').value = layerData[id]['providedBy'];
+            document.getElementById('editLayerSourceURL').value = layerData[id]['sourceURL'];
+            document.getElementById('editLayerDateAquired').value = layerData[id]['dateAquired'];
+            document.getElementById('editLayerDateUploaded').innerHTML = layerData[id]['dateUploaded'];
+            document.getElementById('editLayerFile').innerHTML = layerData[id]['file'];
+            document.getElementById('editLayerId').value = id;
+            if(layerData[id]['fileType'] === 'tif'){
+                document.getElementById('editLayerColorScale').value = layerData[id]['colorScale'];
+                document.getElementById('editRasterSymbology').style.display = "block";
+            }
+            else{
+                jscolor.init();
+                document.getElementById('editLayerBorderColor').color.fromString(layerData[id]['borderColor']);
+                document.getElementById('editLayerFillColor').color.fromString(layerData[id]['fillColor']);
+                $( '#editLayerOpacity' ).spinner({
+                    step: 0.1,
+                    min: 0,
+                    max: 1,
+                    numberFormat: "n"
+                });
+                $( '#editLayerBorderWidth' ).spinner({
+                    step: 1,
+                    min: 0,
+                    numberFormat: "n"
+                });
+                $( '#editLayerPointRadius' ).spinner({
+                    step: 1,
+                    min: 0,
+                    numberFormat: "n"
+                });
+                $( '#editLayerOpacity' ).spinner( "value", Number(layerData[id]['opacity']) );
+                $( '#editLayerBorderWidth' ).spinner( "value", Number(layerData[id]['borderWidth']) );
+                $( '#editLayerPointRadius' ).spinner( "value", Number(layerData[id]['pointRadius']) );
+                document.getElementById('editVectorSymbology').style.display = "block";
+            }
+            $('#layereditwindow').popup('show');
         }
 
         function clearEditWindows() {
             document.getElementById('editLayerGroupName').value = '';
             document.getElementById('editLayerGroupId').value = '';
+            document.getElementById('editLayerName').value = '';
+            document.getElementById('editLayerDescription').value = '';
+            document.getElementById('editLayerProvidedBy').value = '';
+            document.getElementById('editLayerSourceURL').value = '';
+            document.getElementById('editLayerDateAquired').value = '';
+            document.getElementById('editLayerDateUploaded').innerHTML = '';
+            document.getElementById('editLayerFile').innerHTML = '';
+            document.getElementById('editLayerId').value = '';
+            document.getElementById('editLayerColorScale').value = 'autumn';
+            document.getElementById('editLayerBorderColor').color.fromString('ffffff');
+            document.getElementById('editLayerFillColor').color.fromString('ffffff');
+            document.getElementById('editVectorSymbology').style.display = "none";
+            document.getElementById('editRasterSymbology').style.display = "none";
         }
 
         function deleteLayerGroup() {
@@ -240,7 +299,65 @@ $coreConfArr = $fullConfArr['core'];
                 saveLayerConfigChanges();
             }
             else{
-                alert('Please enter a Group Name to save.');
+                alert('Please enter a Group Name to save edits.');
+            }
+        }
+
+        function saveLayerEdits() {
+            const layerId = Number(document.getElementById('editLayerId').value);
+            const newLayerName = document.getElementById('editLayerName').value;
+            if(newLayerName !== ''){
+                layerData[layerId]['layerName'] = newLayerName;
+                layerData[layerId]['layerDescription'] = document.getElementById('editLayerDescription').value;
+                layerData[layerId]['providedBy'] = document.getElementById('editLayerProvidedBy').value;
+                layerData[layerId]['sourceURL'] = document.getElementById('editLayerSourceURL').value;
+                layerData[layerId]['dateAquired'] = document.getElementById('editLayerDateAquired').value;
+                if(layerData[layerId]['fileType'] === 'tif'){
+                    layerData[layerId]['colorScale'] = document.getElementById('editLayerColorScale').value;
+                }
+                else{
+                    layerData[layerId]['borderColor'] = document.getElementById('editLayerBorderColor').value;
+                    layerData[layerId]['fillColor'] = document.getElementById('editLayerFillColor').value;
+                    layerData[layerId]['opacity'] = $( '#editLayerOpacity' ).spinner( "value" );
+                    layerData[layerId]['borderWidth'] = $( '#editLayerBorderWidth' ).spinner( "value" );
+                    layerData[layerId]['pointRadius'] = $( '#editLayerPointRadius' ).spinner( "value" );
+                }
+                $('#layereditwindow').popup('hide');
+                clearEditWindows();
+                saveLayerConfigChanges();
+            }
+            else{
+                alert('Please enter a Layer Name to save edits.');
+            }
+        }
+
+        function deleteLayer() {
+            const layerId = Number(document.getElementById('editLayerId').value);
+            if(confirm("Are you sure you want to delete this layer? This will delete the layer data file from the server and cannot be undone.")){
+                const http = new XMLHttpRequest();
+                const url = "rpc/mapServerConfigurationController.php";
+                const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
+                const params = 'action=deleteMapDataFile&filename='+filename;
+                http.open("POST", url, true);
+                http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                http.onreadystatechange = function() {
+                    if(http.readyState === 4 && http.status === 200) {
+                        if(Number(http.responseText) !== 1){
+                            document.getElementById("statusStr").innerHTML = 'Error deleting data file';
+                            setTimeout(function () {
+                                document.getElementById("statusStr").innerHTML = '';
+                            }, 5000);
+                        }
+                        else{
+                            const layerElementId = 'layer-' + layerId;
+                            document.getElementById(layerElementId).remove();
+                            $('#layereditwindow').popup('hide');
+                            clearEditWindows();
+                            saveLayerConfigChanges();
+                        }
+                    }
+                };
+                http.send(params);
             }
         }
     </script>
@@ -487,7 +604,7 @@ include(__DIR__ . '/../header.php');
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
                                 <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
                                 <div style="width:550px;display:flex;justify-content:flex-start;">
-                                    <input type="text" id="addLayerDateAquired" style="width:100px;" onchange="" />
+                                    <input type="text" id="addLayerDateAquired" style="width:100px;" />
                                 </div>
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: flex-end;gap:10px;">
@@ -523,7 +640,126 @@ include(__DIR__ . '/../header.php');
                 <button onclick="deleteLayerGroup();">Delete Layer Group</button>
             </div>
             <div>
-                <button onclick="saveLayerGroupEdits();">Save</button>
+                <button onclick="saveLayerGroupEdits();">Save Edits</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="layereditwindow" data-role="popup" class="well" style="width:60%;min-width:800px;min-height:300px;font-size:14px;">
+    <fieldset style="padding:15px;">
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Layer Name:</div>
+            <div>
+                <input type="text" id="editLayerName" style="width:550px;" value="" />
+                <input type="hidden" id="editLayerId" value="" />
+            </div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Description:</div>
+            <div>
+                <textarea id="editLayerDescription" style="width:550px;height:60px;resize:vertical;"></textarea>
+            </div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Provided By:</div>
+            <div><input type="text" id="editLayerProvidedBy" style="width:550px;" value="" /></div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Source URL:</div>
+            <div><input type="text" id="editLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL();" /></div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
+            <div style="width:550px;display:flex;justify-content:flex-start;">
+                <input type="text" id="editLayerDateAquired" style="width:100px;" />
+            </div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Uploaded:</div>
+            <div id="editLayerDateUploaded" style="width:550px;display:flex;justify-content:flex-start;"></div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">File:</div>
+            <div id="editLayerFile" style="width:550px;display:flex;justify-content:flex-start;"></div>
+        </div>
+    </fieldset>
+    <fieldset id="editVectorSymbology" style="display:none;margin-top:10px;padding:15px;flex-direction:column;">
+        <legend><b>Symbology</b></legend>
+        <div style="display:flex;justify-content:space-evenly;">
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
+                <input id="editLayerBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" />
+            </div>
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill color: </span>
+                <input id="editLayerFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" />
+            </div>
+        </div>
+        <div style="display:flex;justify-content:space-evenly;margin-top:10px;">
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border width (px): </span>
+                <input id="editLayerBorderWidth" style="width:25px;" />
+            </div>
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Point radius (px): </span>
+                <input id="editLayerPointRadius" style="width:25px;" />
+            </div>
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill Opacity: </span>
+                <input id="editLayerOpacity" style="width:25px;" />
+            </div>
+        </div>
+    </fieldset>
+    <fieldset id="editRasterSymbology" style="display:none;margin-top:10px;padding:15px;flex-direction:column;">
+        <legend><b>Symbology</b></legend>
+        <div style="display:flex;justify-content:center;align-items:center;">
+            <div>
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Raster color scale: </span>
+                <select id="editLayerColorScale">
+                    <option value="autumn">Autumn</option>
+                    <option value="blackbody">Blackbody</option>
+                    <option value="bluered">Bluered</option>
+                    <option value="bone">Bone</option>
+                    <option value="cool">Cool</option>
+                    <option value="copper">Copper</option>
+                    <option value="earth">Earth</option>
+                    <option value="electric">Electric</option>
+                    <option value="greens">Greens</option>
+                    <option value="greys">Greys</option>
+                    <option value="hot">Hot</option>
+                    <option value="hsv">Hsv</option>
+                    <option value="inferno">Inferno</option>
+                    <option value="jet">Jet</option>
+                    <option value="magma">Magma</option>
+                    <option value="picnic">Picnic</option>
+                    <option value="plasma">Plasma</option>
+                    <option value="portland">Portland</option>
+                    <option value="rainbow">Rainbow</option>
+                    <option value="rdbu">Rdbu</option>
+                    <option value="spring">Spring</option>
+                    <option value="summer">Summer</option>
+                    <option value="turbo">Turbo</option>
+                    <option value="viridis">Viridis</option>
+                    <option value="winter">Winter</option>
+                    <option value="ylgnbu">Ylgnbu</option>
+                    <option value="ylorrd">Ylorrd</option>
+                </select>
+            </div>
+        </div>
+    </fieldset>
+    <div style="margin-top:15px;width:95%;margin: 15px auto;padding: 0 10px;display:flex;justify-content: space-between;">
+        <div>
+            <button onclick="closePopup('layereditwindow');">Cancel</button>
+        </div>
+        <div style="display:flex;gap:15px;">
+            <div>
+                <button onclick="deleteLayer();">Delete Layer Group</button>
+            </div>
+            <div>
+                <button onclick="openUpdateFileUpload();">Update Layer File</button>
+            </div>
+            <div>
+                <button onclick="saveLayerEdits();">Save Edits</button>
             </div>
         </div>
     </div>
