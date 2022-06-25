@@ -437,7 +437,7 @@ include(__DIR__ . '/../header.php');
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
                                 <div style="font-weight:bold;margin-right:10px;font-size:14px;">Source URL:</div>
-                                <div><input type="text" id="addLayerSourceURL" style="width:550px;" value="" /></div>
+                                <div><input type="text" id="addLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL();" /></div>
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
                                 <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
@@ -447,7 +447,7 @@ include(__DIR__ . '/../header.php');
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: flex-end;gap:10px;">
                                 <button type="button" onclick="hideAddLayer();">Cancel</button>
-                                <button type="button" onclick="">Add</button>
+                                <button type="button" onclick="uploadLayerFile();">Add</button>
                             </div>
                         </fieldset>
                     </div>
@@ -836,6 +836,14 @@ include(__DIR__ . '/../footer.php');
         }
     }
 
+    function validateSourceURL(){
+        const value = document.getElementById('addLayerSourceURL').value;
+        if(!value.startsWith("http")){
+            alert("Please enter a valid URL for Source URL.");
+            document.getElementById('addLayerSourceURL').value = '';
+        }
+    }
+
     function buildNewLayerBlockObjFromData(id,dataArr){
         const blockObj = {};
         blockObj['id'] = id;
@@ -1012,6 +1020,103 @@ include(__DIR__ . '/../footer.php');
         document.getElementById('addLayerProvidedBy').value = '';
         document.getElementById('addLayerSourceURL').value = '';
         document.getElementById('addLayerDateAquired').value = '';
+    }
+
+    function uploadLayerFile(){
+        const file = document.getElementById('addLayerFile').files[0];
+        const layerName = document.getElementById('addLayerName').value;
+        if(file && layerName !== ''){
+            const http = new XMLHttpRequest();
+            const url = "rpc/mapServerConfigurationController.php";
+            const formData = new FormData();
+            formData.append('addLayerFile', file);
+            formData.append('action', 'uploadMapDataFile');
+            http.open("POST", url, true);
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    if(http.responseText && http.responseText !== ''){
+                        createLayer(layerName,http.responseText);
+                    }
+                }
+            };
+            http.send(formData);
+        }
+        else{
+            alert("You need to upload a data file and enter a Layer Name before adding a layer.");
+        }
+    }
+
+    function createLayer(layerName,filename){
+        const newLayerId = Date.now();
+        const date = new Date();
+        let fileType = filename.split('.').pop();
+        if(fileType === 'tiff'){
+            fileType = 'tif';
+        }
+        layerData[newLayerId] = {};
+        layerData[newLayerId]['id'] = newLayerId;
+        layerData[newLayerId]['type'] = 'layer';
+        layerData[newLayerId]['file'] = filename;
+        layerData[newLayerId]['fileType'] = fileType;
+        layerData[newLayerId]['layerName'] = layerName;
+        layerData[newLayerId]['layerDescription'] = document.getElementById('addLayerDescription').value;
+        layerData[newLayerId]['providedBy'] = document.getElementById('addLayerProvidedBy').value;
+        layerData[newLayerId]['sourceURL'] = document.getElementById('addLayerSourceURL').value;
+        layerData[newLayerId]['dateAquired'] = document.getElementById('addLayerDateAquired').value;
+        layerData[newLayerId]['dateUploaded'] = date.toISOString().split('T')[0];
+        layerData[newLayerId]['opacity'] = dragDropOpacity;
+        if(fileType === 'tif'){
+            layerData[newLayerId]['colorScale'] = dragDropRasterColorScale;
+        }
+        else{
+            layerData[newLayerId]['fillColor'] = dragDropFillColor;
+            layerData[newLayerId]['borderColor'] = dragDropBorderColor;
+            layerData[newLayerId]['borderWidth'] = dragDropBorderWidth;
+            layerData[newLayerId]['pointRadius'] = dragDropPointRadius;
+        }
+        const layerLiId = 'layer-' + newLayerId;
+        const layerLi = document.createElement('li');
+        layerLi.setAttribute("id",layerLiId);
+        layerLi.setAttribute("class","layer");
+        const layerContentDiv = document.createElement('div');
+        layerContentDiv.setAttribute("class","layerContent");
+        const layerHeaderDiv = document.createElement('div');
+        layerHeaderDiv.setAttribute("class","layer-header");
+        const layerTitleDiv = document.createElement('div');
+        const layerTitleB = document.createElement('b');
+        layerTitleB.innerHTML = layerName;
+        layerTitleDiv.appendChild(layerTitleB);
+        layerHeaderDiv.appendChild(layerTitleDiv);
+        const layerEditIconDiv = document.createElement('div');
+        const layerEditIconA = document.createElement('a');
+        const layerEditIconAOnclickVal = "openLayerEditWindow('" + newLayerId + "');";
+        layerEditIconA.setAttribute("href","#");
+        layerEditIconA.setAttribute("onclick",layerEditIconAOnclickVal);
+        const layerEditIconI = document.createElement('i');
+        layerEditIconI.setAttribute("style","width:20px;height:20px;");
+        layerEditIconI.setAttribute("title","Edit layer");
+        layerEditIconI.setAttribute("class","fas fa-edit");
+        layerEditIconA.appendChild(layerEditIconI);
+        layerEditIconDiv.appendChild(layerEditIconA);
+        layerHeaderDiv.appendChild(layerEditIconDiv);
+        layerContentDiv.appendChild(layerHeaderDiv);
+        if(layerData[newLayerId]['layerDescription']){
+            const layerDescDiv = document.createElement('div');
+            layerDescDiv.innerHTML = layerData[newLayerId]['layerDescription'];
+            layerContentDiv.appendChild(layerDescDiv);
+        }
+        if(layerData[newLayerId]['providedBy'] || layerData[newLayerId]['sourceURL']){
+            layerContentDiv.appendChild(buildLayerControllerLayerProvidedByElement(layerData[newLayerId]));
+        }
+        layerContentDiv.appendChild(buildLayerControllerLayerDateElement(layerData[newLayerId]));
+        const layerFileDiv = document.createElement('div');
+        layerFileDiv.innerHTML = '<b>File:</b> ' + filename;
+        layerContentDiv.appendChild(layerFileDiv);
+        layerLi.appendChild(layerContentDiv);
+        document.getElementById("layerList").insertBefore(layerLi, document.getElementById("layerList").firstChild);
+        hideAddBoxes();
+        clearAddForms();
+        saveLayerConfigChanges();
     }
 </script>
 </body>

@@ -16,4 +16,7 @@ if($GLOBALS['IS_ADMIN']){
     if($action === 'saveMapServerConfig' && $jsonData){
         echo $confManager->saveMapServerConfig($jsonData);
     }
+    elseif($action === 'uploadMapDataFile'){
+        echo $confManager->uploadMapDataFile();
+    }
 }
