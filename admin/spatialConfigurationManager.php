@@ -407,7 +407,7 @@ include(__DIR__ . '/../header.php');
                                 </div>
                                 <div style="display:flex;justify-content: flex-end;gap:10px;">
                                     <button type="button" onclick="hideAddLayerGroup();">Cancel</button>
-                                    <button type="button" onclick="">Add</button>
+                                    <button type="button" onclick="createLayerGroup();">Add</button>
                                 </div>
                             </div>
                         </fieldset>
@@ -724,7 +724,7 @@ include(__DIR__ . '/../footer.php');
             layerGroupEditIconDiv.appendChild(layerGroupEditIconI);
             layerGroupHeaderDiv.appendChild(layerGroupEditIconDiv);
             layerGroupLi.appendChild(layerGroupHeaderDiv);
-            const layerGroupContainerOl = document.createElement('div');
+            const layerGroupContainerOl = document.createElement('ol');
             layerGroupContainerOl.setAttribute("id", layerGroupContainerId);
             layerGroupContainerOl.setAttribute("class", "layer-group-container");
             layerGroupLi.appendChild(layerGroupContainerOl);
@@ -936,22 +936,82 @@ include(__DIR__ . '/../footer.php');
         }
     }
 
-    function sendAPIRequest(action,configname,configvalue){
-        const data = {};
-        const http = new XMLHttpRequest();
-        const url = "rpc/configurationModelController.php";
-        data[configname] = configvalue;
-        const jsonData = JSON.stringify(data);
-        const params = 'action='+action+'&data='+jsonData;
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                location.reload();
-            }
-        };
-        http.send(params);
+    function createLayerGroup(){
+        const groupName = document.getElementById("addLayerGroupName").value;
+        if(groupName !== ''){
+            const newGroupId = Date.now();
+            layerData[newGroupId] = {};
+            layerData[newGroupId]['id'] = newGroupId;
+            layerData[newGroupId]['type'] = 'layerGroup';
+            layerData[newGroupId]['name'] = groupName;
+            const layerGroupdLiId = 'layerGroup-' + newGroupId;
+            const layerGroupContainerId = 'layerGroupList-' + newGroupId;
+            const layerGroupLi = document.createElement('li');
+            layerGroupLi.setAttribute("id", layerGroupdLiId);
+            layerGroupLi.setAttribute("class", "group");
+            const layerGroupHeaderDiv = document.createElement('div');
+            layerGroupHeaderDiv.setAttribute("class","layer-group-header");
+            const layerGroupTitleDiv = document.createElement('div');
+            layerGroupTitleDiv.setAttribute("style","display:flex;gap:15px;justify-content:flex-start;align-items:center;");
+            const layerGroupTitleB = document.createElement('b');
+            layerGroupTitleB.innerHTML = groupName;
+            layerGroupTitleDiv.appendChild(layerGroupTitleB);
+            const layerGroupShowIconI = document.createElement('i');
+            const layerGroupShowIconIId = 'showLayerGroupButton-' + newGroupId;
+            const layerGroupShowIconIOnclickVal = "showLayerGroup('" + newGroupId + "');";
+            layerGroupShowIconI.setAttribute("id",layerGroupShowIconIId);
+            layerGroupShowIconI.setAttribute("style","display:none;width:15px;height:15px;cursor:pointer;");
+            layerGroupShowIconI.setAttribute("title","Show layers");
+            layerGroupShowIconI.setAttribute("class","fas fa-plus");
+            layerGroupShowIconI.setAttribute("onclick",layerGroupShowIconIOnclickVal);
+            layerGroupTitleDiv.appendChild(layerGroupShowIconI);
+            const layerGroupHideIconI = document.createElement('i');
+            const layerGroupHideIconIId = 'hideLayerGroupButton-' + newGroupId;
+            const layerGroupHideIconIOnclickVal = "hideLayerGroup('" + newGroupId + "');";
+            layerGroupHideIconI.setAttribute("id",layerGroupHideIconIId);
+            layerGroupHideIconI.setAttribute("style","width:15px;height:15px;cursor:pointer;");
+            layerGroupHideIconI.setAttribute("title","Hide layers");
+            layerGroupHideIconI.setAttribute("class","fas fa-minus");
+            layerGroupHideIconI.setAttribute("onclick",layerGroupHideIconIOnclickVal);
+            layerGroupTitleDiv.appendChild(layerGroupHideIconI);
+            layerGroupHeaderDiv.appendChild(layerGroupTitleDiv);
+            const layerGroupEditIconDiv = document.createElement('div');
+            const layerGroupEditIconI = document.createElement('i');
+            const layerGroupEditIconIOnclickVal = "openLayerGroupEditWindow('" + newGroupId + "');";
+            layerGroupEditIconI.setAttribute("style","width:20px;height:20px;cursor:pointer;margin-right:10px");
+            layerGroupEditIconI.setAttribute("title","Edit layer group");
+            layerGroupEditIconI.setAttribute("class","fas fa-edit");
+            layerGroupEditIconI.setAttribute("onclick",layerGroupEditIconIOnclickVal);
+            layerGroupEditIconDiv.appendChild(layerGroupEditIconI);
+            layerGroupHeaderDiv.appendChild(layerGroupEditIconDiv);
+            layerGroupLi.appendChild(layerGroupHeaderDiv);
+            const layerGroupContainerOl = document.createElement('ol');
+            layerGroupContainerOl.setAttribute("id", layerGroupContainerId);
+            layerGroupContainerOl.setAttribute("class", "layer-group-container");
+            layerGroupLi.appendChild(layerGroupContainerOl);
+            document.getElementById("layerList").insertBefore(layerGroupLi, document.getElementById("layerList").firstChild);
+            hideAddBoxes();
+            clearAddForms();
+            saveLayerConfigChanges();
+        }
+        else{
+            alert("You need to enter a Group Name before adding a layer group.");
+        }
+    }
+
+    function hideAddBoxes() {
+        document.getElementById('addLayerDiv').style.display = "none";
+        document.getElementById('addLayerGroupDiv').style.display = "none";
+    }
+
+    function clearAddForms() {
+        document.getElementById('addLayerGroupName').value = '';
+        document.getElementById('addLayerFile').value = '';
+        document.getElementById('addLayerName').value = '';
+        document.getElementById('addLayerDescription').value = '';
+        document.getElementById('addLayerProvidedBy').value = '';
+        document.getElementById('addLayerSourceURL').value = '';
+        document.getElementById('addLayerDateAquired').value = '';
     }
 </script>
 </body>
