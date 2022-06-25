@@ -88,6 +88,11 @@ function clearAddForms() {
     document.getElementById('addLayerDateAquired').value = '';
 }
 
+function closePopup(id) {
+    $('#'+id).popup('hide');
+    clearEditWindows();
+}
+
 function createLayer(layerName,filename){
     const newLayerId = Date.now();
     const date = new Date();
@@ -517,6 +522,7 @@ function saveLayerConfigChanges(){
                     setTimeout(function () {
                         document.getElementById("statusStr").innerHTML = '';
                     }, 5000);
+                    setLayersList();
                 }
             }
         };
@@ -525,6 +531,7 @@ function saveLayerConfigChanges(){
 }
 
 function setLayersList() {
+    document.getElementById("layerList").innerHTML = '';
     const http = new XMLHttpRequest();
     const url = "../spatial/rpc/getlayersconfig.php";
     //console.log(url);
@@ -540,7 +547,9 @@ function setLayersList() {
                         if(layerArr.hasOwnProperty(i)){
                             const layerId = layerArr[i]['id'];
                             const layerType = layerArr[i]['type'];
-                            layerData[layerId] = {};
+                            if(!layerData.hasOwnProperty(layerId)){
+                                layerData[layerId] = {};
+                            }
                             layerData[layerId]['type'] = layerType;
                             if(layerType === 'layer'){
                                 processLayerDataFromLayerArr(layerArr[i],layerId);

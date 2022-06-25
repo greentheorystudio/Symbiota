@@ -97,7 +97,7 @@ $coreConfArr = $fullConfArr['core'];
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220622" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/admin.spatial.js?ver=20220622" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/admin.spatial.js?ver=20220623" type="text/javascript"></script>
     <script type="text/javascript">
         const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
         let serverayerArrObject;
@@ -195,12 +195,54 @@ $coreConfArr = $fullConfArr['core'];
                     }
                 }
             });
-            $('#blockoptions').popup({
+            $('#layergroupeditwindow').popup({
                 transition: 'all 0.3s',
                 scrolllock: true,
                 blur: false
             });
         });
+
+        function openLayerGroupEditWindow(id) {
+            const groupName = layerData[id]['name'];
+            document.getElementById('editLayerGroupName').value = groupName;
+            document.getElementById('editLayerGroupId').value = id;
+            $('#layergroupeditwindow').popup('show');
+        }
+
+        function clearEditWindows() {
+            document.getElementById('editLayerGroupName').value = '';
+            document.getElementById('editLayerGroupId').value = '';
+        }
+
+        function deleteLayerGroup() {
+            const groupId = Number(document.getElementById('editLayerGroupId').value);
+            const layerGroupContainerId = 'layerGroupList-' + groupId;
+            const layerGroupBlocks = document.getElementById(layerGroupContainerId).querySelectorAll('li');
+            if(layerGroupBlocks.length > 0){
+                alert('Please move all layers out of the layer group before deleting the group.');
+            }
+            else if(confirm("Are you sure you want to delete this layer group? This cannot be undone.")){
+                const layerGroupElementId = 'layerGroup-' + groupId;
+                document.getElementById(layerGroupElementId).remove();
+                $('#layergroupeditwindow').popup('hide');
+                clearEditWindows();
+                saveLayerConfigChanges();
+            }
+        }
+
+        function saveLayerGroupEdits() {
+            const groupId = Number(document.getElementById('editLayerGroupId').value);
+            const newGroupName = document.getElementById('editLayerGroupName').value;
+            if(newGroupName !== ''){
+                layerData[groupId]['name'] = newGroupName;
+                $('#layergroupeditwindow').popup('hide');
+                clearEditWindows();
+                saveLayerConfigChanges();
+            }
+            else{
+                alert('Please enter a Group Name to save.');
+            }
+        }
     </script>
 </head>
 <body>
@@ -464,107 +506,30 @@ include(__DIR__ . '/../header.php');
         </div>
     </div>
 </div>
-<div id="blockoptions" data-role="popup" class="well" style="width:500px;height:250px;font-size:14px;">
-    <h2>Block Options</h2>
-    <fieldset class="fieldset-block">
-        <div class="field-block">
-            <div class="field-elem">
-                <span class="field-inline">
-                    <span class="labelFormat">Text Alignment:</span>
-                    <select id="blockTextAlign" onchange="processBlockOptionsFormChange()">
-                        <option value="left">Left</option>
-                        <option value="center">Center</option>
-                        <option value="right">Right</option>
-                    </select>
-                </span>
-                <span class="field-inline" style="margin-left:5px;">
-                    <span class="labelFormat">Text Line Height (px):</span>
-                    <span class="field-elem"><input id="blockLineHeight" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
-                </span>
-            </div>
-        </div>
-        <div class="field-block" style="margin-top:5px;">
-            <div class="field-elem">
-                <span class="field-inline">
-                    <span class="labelFormat">Top Margin (px):</span>
-                    <span class="field-elem"><input id="blockTopMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
-                </span>
-                <span class="field-inline" style="margin-left:5px;">
-                    <span class="labelFormat">Bottom Margin (px):</span>
-                    <span class="field-elem"><input id="blockBottomMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
-                </span>
-            </div>
-        </div>
-        <div class="field-block" style="margin-top:5px;">
-            <div class="field-elem">
-                <span class="field-inline">
-                    <span class="labelFormat">Left Margin (px):</span>
-                    <span class="field-elem"><input id="blockLeftMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
-                </span>
-                <span class="field-inline" style="margin-left:5px;">
-                    <span class="labelFormat">Right Margin (px):</span>
-                    <span class="field-elem"><input id="blockRightMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
-                </span>
-            </div>
+<div id="layergroupeditwindow" data-role="popup" class="well" style="width:60%;min-width:425px;height:150px;font-size:14px;">
+    <fieldset style="padding:15px;">
+        <div>
+            <span style="font-weight:bold;margin-right:10px;font-size:14px;">Group Name: </span>
+            <input type="text" id="editLayerGroupName" style="width:400px;" value="" />
+            <input type="hidden" id="editLayerGroupId" value="" />
         </div>
     </fieldset>
-    <fieldset class="fieldset-block" id="blockLineOptions" style="display:none;">
-        <legend>Line</legend>
-        <div class="field-block">
-            <div class="field-elem">
-                <span class="field-inline">
-                    <input id="blockDisplayLine" type="checkbox" value="1" onchange="setBlockLineDisplay();processBlockOptionsFormChange();" />
-                    <span class="labelFormat">Display Horizontal Line <b>(Note: Fields cannot be added to blocks set to this display)</b></span>
-                </span>
+    <div style="margin-top:15px;width:95%;margin: 15px auto;padding: 0 10px;display:flex;justify-content: space-between;">
+        <div>
+            <button onclick="closePopup('layergroupeditwindow');">Cancel</button>
+        </div>
+        <div style="display:flex;gap:15px;">
+            <div>
+                <button onclick="deleteLayerGroup();">Delete Layer Group</button>
+            </div>
+            <div>
+                <button onclick="saveLayerGroupEdits();">Save</button>
             </div>
         </div>
-        <div class="field-block" style="margin-top:5px;">
-            <div class="field-elem">
-                <span class="field-inline">
-                    <span class="labelFormat">Line Style:</span>
-                    <select id="blockDisplayLineStyle" onchange="processBlockOptionsFormChange();">
-                        <option value="solid">Solid</option>
-                        <option value="dash">Dashed</option>
-                        <option value="dot">Dotted</option>
-                    </select>
-                </span>
-                <span class="field-inline" style="margin-left:5px;">
-                    <span class="labelFormat">Line Height (px):</span>
-                    <span class="field-elem"><input id="blockDisplayLineHeight" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
-                </span>
-            </div>
-        </div>
-    </fieldset>
-    <div style="margin-top:15px;">
-        <button onclick="closePopup('blockoptions');">Close</button>
     </div>
 </div>
 <?php
 include(__DIR__ . '/../footer.php');
 ?>
-<script type="text/javascript">
-    function openLayerGroupEditWindow(id) {
-        $('#blockoptions').popup('show');
-    }
-
-    function closePopup(id) {
-        let lines = labelMid.querySelectorAll('.field-block');
-        lines.forEach((line) => {
-            line.classList.remove('selected');
-        });
-        let fields = labelMid.querySelectorAll('.draggable');
-        fields.forEach((field) => {
-            field.classList.remove('selected');
-        });
-        currentEditId = null;
-        clearBlockOptionsForm();
-        clearFieldOptionsForm();
-        clearBarcodeOptionsForm();
-        clearQRCodeOptionsForm();
-        $('#'+ id).popup('hide');
-
-        $('#blockoptions').popup('show');
-    }
-</script>
 </body>
 </html>
