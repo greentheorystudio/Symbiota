@@ -446,7 +446,6 @@ $headingAdminUrl = 'headingadmin.php';
 												<div style="padding-top:2px;">
 													<b>File Upload: </b>
 													<input name="urlupload" type="file" size="50" />
-													<input name="MAX_FILE_SIZE" type="hidden" value="1000000" />
 												</div>
 												<div style="padding-top:2px;">
 													<b>Notes:</b> 

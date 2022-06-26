@@ -198,7 +198,6 @@ $procManager->setProjVariables('OCR Harvest');
 							<div style="float:right;"><a href="#" onclick="toggle('pathElem');return false;" title="toggle option to enter full path">full path option</a></div>
 							<div class="pathElem">
 								<input name="ocrfile" type="file" size="50" onchange="this.form.sourcepath.value = ''" />
-								<input name="MAX_FILE_SIZE" type="hidden" value="10000000" />
 								<a id="ocrfileinfo" href="#" onclick="return false" title="More Information">
                                     <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 								</a>
