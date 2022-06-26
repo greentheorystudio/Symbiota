@@ -59,8 +59,8 @@ class MediaShared{
 		if(substr($this->imageRootUrl,-1) !== '/') {
 			$this->imageRootUrl .= '/';
 		}
-		if($GLOBALS['IMG_FILE_SIZE_LIMIT']){
-			$this->webFileSizeLimit = $GLOBALS['IMG_FILE_SIZE_LIMIT'];
+		if($GLOBALS['MAX_UPLOAD_FILESIZE']){
+			$this->webFileSizeLimit = $GLOBALS['MAX_UPLOAD_FILESIZE'];
 		}
 		ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 		ini_set('memory_limit','512M');

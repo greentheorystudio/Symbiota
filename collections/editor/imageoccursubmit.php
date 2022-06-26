@@ -123,7 +123,6 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 				<fieldset style="padding:15px;">
 					<legend><b>Manual Occurrence Image Upload</b></legend>
 					<div class="targetdiv">
-						<input type='hidden' name='MAX_FILE_SIZE' value='10000000' />
 						<div>
 							<input name='imgfile' type='file' size='70' />
 						</div>

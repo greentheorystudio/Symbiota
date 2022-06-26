@@ -439,12 +439,6 @@ include(__DIR__ . '/../header.php');
                     </span>
                 </div>
                 <div class="field-block">
-                    <span class="field-label">Maximum Media Upload Filesize (Mb):  <button type="button" onclick="enableProtectedEditing('IMG_FILE_SIZE_LIMIT');">Edit</button></span>
-                    <span class="field-elem">
-                        <input type="text" id="IMG_FILE_SIZE_LIMIT" value="<?php echo (array_key_exists('IMG_FILE_SIZE_LIMIT',$coreConfArr)?$coreConfArr['IMG_FILE_SIZE_LIMIT']:''); ?>" style="width:600px;" onchange="processUploadFilesizeConfigurationChange('IMG_FILE_SIZE_LIMIT','<?php echo (array_key_exists('IMG_FILE_SIZE_LIMIT',$coreConfArr)?$coreConfArr['IMG_FILE_SIZE_LIMIT']:''); ?>');" disabled />
-                    </span>
-                </div>
-                <div class="field-block">
                     <span class="field-label">Portal GUID:  <button type="button" onclick="enableProtectedEditing('PORTAL_GUID');">Edit</button></span>
                     <span class="field-elem">
                         <input type="text" id="PORTAL_GUID" value="<?php echo (array_key_exists('PORTAL_GUID',$coreConfArr)?$coreConfArr['PORTAL_GUID']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('PORTAL_GUID','<?php echo (array_key_exists('PORTAL_GUID',$coreConfArr)?$coreConfArr['PORTAL_GUID']:''); ?>',true);" disabled />

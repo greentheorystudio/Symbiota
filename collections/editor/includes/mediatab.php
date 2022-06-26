@@ -35,11 +35,17 @@ $occMediaArr = $occManager->getMediaMap();
             else if(fileName.endsWith(".zc")){
                 f.type.value = 'Sound';
             }
+            else if(file.size > <?php echo ($GLOBALS['MAX_UPLOAD_FILESIZE'] * 1000 * 1000); ?>){
+                f.type.value = '';
+                f.format.value = '';
+                fileBox.value = '';
+                alert("The file you are trying to upload is too big. The maximum file size allowed is <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>MB");
+            }
             else{
                 f.type.value = '';
                 f.format.value = '';
-                alert("The file you are trying to upload is not a supported media filetype.");
                 fileBox.value = '';
+                alert("The file you are trying to upload is not a supported media filetype.");
             }
         }
     }
@@ -97,8 +103,7 @@ $occMediaArr = $occManager->getMediaMap();
 						<div style="font-weight:bold;font-size:110%;margin-bottom:5px;">
 							Select a media file located on your computer:
 						</div>
-				    	<input type='hidden' name='MAX_FILE_SIZE' value='5000000000' />
-						<div>
+				    	<div>
 							<input name='medfile' onchange="processMediaFileChange(this.form);" type='file' size='70'/>
 						</div>
 						<div style="float:right;text-decoration:underline;font-weight:bold;">

@@ -72,8 +72,8 @@ class ImageLocalProcessor {
 		if($GLOBALS['IMG_LG_WIDTH']) {
 			$this->lgPixWidth = $GLOBALS['IMG_LG_WIDTH'];
 		}
-		if($GLOBALS['IMG_FILE_SIZE_LIMIT']) {
-			$this->webFileSizeLimit = $GLOBALS['IMG_FILE_SIZE_LIMIT'];
+		if($GLOBALS['MAX_UPLOAD_FILESIZE']) {
+			$this->webFileSizeLimit = $GLOBALS['MAX_UPLOAD_FILESIZE'];
 		}
 		if($GLOBALS['LOG_PATH']) {
 			$this->logPath = $GLOBALS['LOG_PATH'];

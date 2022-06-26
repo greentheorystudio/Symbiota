@@ -24,6 +24,7 @@ include_once(__DIR__ . '/../config/symbbase.php');
     const dragDropBorderWidth = <?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH']; ?>;
     const dragDropPointRadius = <?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>;
     const dragDropOpacity = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>';
+    const dragDropRasterColorScale = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']; ?>';
 </script>
 <div id="map" class="map">
     <div id="popup" class="ol-popup">
