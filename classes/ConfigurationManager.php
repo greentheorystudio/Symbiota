@@ -682,6 +682,7 @@ class ConfigurationManager{
         $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial';
         if(file_exists($targetPath) || (mkdir($targetPath, 0775) && is_dir($targetPath))) {
             $uploadFileName = basename($_FILES['addLayerFile']['name']);
+            $uploadFileName = str_replace(array(',','&',' '), array('_','',''), $uploadFileName);
             $fileExtension =  substr(strrchr($uploadFileName, '.'), 1);
             $fileNameOnly =  substr($uploadFileName, 0, ((strlen($fileExtension) + 1) * -1));
             $tempFileName = $fileNameOnly;
@@ -704,7 +705,10 @@ class ConfigurationManager{
     {
         $status = false;
         $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial/' . $fileName;
-        if(file_exists($targetPath) && unlink($targetPath)) {
+        if(!file_exists($targetPath)) {
+            $status = true;
+        }
+        elseif(unlink($targetPath)){
             $status = true;
         }
         return $status;

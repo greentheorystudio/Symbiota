@@ -97,7 +97,7 @@ $coreConfArr = $fullConfArr['core'];
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220622" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/admin.spatial.js?ver=20220624" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/admin.spatial.js?ver=20220625" type="text/javascript"></script>
     <script type="text/javascript">
         const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
         let serverayerArrObject;
@@ -207,159 +207,6 @@ $coreConfArr = $fullConfArr['core'];
                 blur: false
             });
         });
-
-        function openLayerGroupEditWindow(id) {
-            document.getElementById('editLayerGroupName').value = layerData[id]['name'];
-            document.getElementById('editLayerGroupId').value = id;
-            $('#layergroupeditwindow').popup('show');
-        }
-
-        function openLayerEditWindow(id) {
-            document.getElementById('editLayerName').value = layerData[id]['layerName'];
-            document.getElementById('editLayerDescription').value = layerData[id]['layerDescription'];
-            document.getElementById('editLayerProvidedBy').value = layerData[id]['providedBy'];
-            document.getElementById('editLayerSourceURL').value = layerData[id]['sourceURL'];
-            document.getElementById('editLayerDateAquired').value = layerData[id]['dateAquired'];
-            document.getElementById('editLayerDateUploaded').innerHTML = layerData[id]['dateUploaded'];
-            document.getElementById('editLayerFile').innerHTML = layerData[id]['file'];
-            document.getElementById('editLayerId').value = id;
-            if(layerData[id]['fileType'] === 'tif'){
-                document.getElementById('editLayerColorScale').value = layerData[id]['colorScale'];
-                document.getElementById('editRasterSymbology').style.display = "block";
-            }
-            else{
-                jscolor.init();
-                document.getElementById('editLayerBorderColor').color.fromString(layerData[id]['borderColor']);
-                document.getElementById('editLayerFillColor').color.fromString(layerData[id]['fillColor']);
-                $( '#editLayerOpacity' ).spinner({
-                    step: 0.1,
-                    min: 0,
-                    max: 1,
-                    numberFormat: "n"
-                });
-                $( '#editLayerBorderWidth' ).spinner({
-                    step: 1,
-                    min: 0,
-                    numberFormat: "n"
-                });
-                $( '#editLayerPointRadius' ).spinner({
-                    step: 1,
-                    min: 0,
-                    numberFormat: "n"
-                });
-                $( '#editLayerOpacity' ).spinner( "value", Number(layerData[id]['opacity']) );
-                $( '#editLayerBorderWidth' ).spinner( "value", Number(layerData[id]['borderWidth']) );
-                $( '#editLayerPointRadius' ).spinner( "value", Number(layerData[id]['pointRadius']) );
-                document.getElementById('editVectorSymbology').style.display = "block";
-            }
-            $('#layereditwindow').popup('show');
-        }
-
-        function clearEditWindows() {
-            document.getElementById('editLayerGroupName').value = '';
-            document.getElementById('editLayerGroupId').value = '';
-            document.getElementById('editLayerName').value = '';
-            document.getElementById('editLayerDescription').value = '';
-            document.getElementById('editLayerProvidedBy').value = '';
-            document.getElementById('editLayerSourceURL').value = '';
-            document.getElementById('editLayerDateAquired').value = '';
-            document.getElementById('editLayerDateUploaded').innerHTML = '';
-            document.getElementById('editLayerFile').innerHTML = '';
-            document.getElementById('editLayerId').value = '';
-            document.getElementById('editLayerColorScale').value = 'autumn';
-            document.getElementById('editLayerBorderColor').color.fromString('ffffff');
-            document.getElementById('editLayerFillColor').color.fromString('ffffff');
-            document.getElementById('editVectorSymbology').style.display = "none";
-            document.getElementById('editRasterSymbology').style.display = "none";
-        }
-
-        function deleteLayerGroup() {
-            const groupId = Number(document.getElementById('editLayerGroupId').value);
-            const layerGroupContainerId = 'layerGroupList-' + groupId;
-            const layerGroupBlocks = document.getElementById(layerGroupContainerId).querySelectorAll('li');
-            if(layerGroupBlocks.length > 0){
-                alert('Please move all layers out of the layer group before deleting the group.');
-            }
-            else if(confirm("Are you sure you want to delete this layer group? This cannot be undone.")){
-                const layerGroupElementId = 'layerGroup-' + groupId;
-                document.getElementById(layerGroupElementId).remove();
-                $('#layergroupeditwindow').popup('hide');
-                clearEditWindows();
-                saveLayerConfigChanges();
-            }
-        }
-
-        function saveLayerGroupEdits() {
-            const groupId = Number(document.getElementById('editLayerGroupId').value);
-            const newGroupName = document.getElementById('editLayerGroupName').value;
-            if(newGroupName !== ''){
-                layerData[groupId]['name'] = newGroupName;
-                $('#layergroupeditwindow').popup('hide');
-                clearEditWindows();
-                saveLayerConfigChanges();
-            }
-            else{
-                alert('Please enter a Group Name to save edits.');
-            }
-        }
-
-        function saveLayerEdits() {
-            const layerId = Number(document.getElementById('editLayerId').value);
-            const newLayerName = document.getElementById('editLayerName').value;
-            if(newLayerName !== ''){
-                layerData[layerId]['layerName'] = newLayerName;
-                layerData[layerId]['layerDescription'] = document.getElementById('editLayerDescription').value;
-                layerData[layerId]['providedBy'] = document.getElementById('editLayerProvidedBy').value;
-                layerData[layerId]['sourceURL'] = document.getElementById('editLayerSourceURL').value;
-                layerData[layerId]['dateAquired'] = document.getElementById('editLayerDateAquired').value;
-                if(layerData[layerId]['fileType'] === 'tif'){
-                    layerData[layerId]['colorScale'] = document.getElementById('editLayerColorScale').value;
-                }
-                else{
-                    layerData[layerId]['borderColor'] = document.getElementById('editLayerBorderColor').value;
-                    layerData[layerId]['fillColor'] = document.getElementById('editLayerFillColor').value;
-                    layerData[layerId]['opacity'] = $( '#editLayerOpacity' ).spinner( "value" );
-                    layerData[layerId]['borderWidth'] = $( '#editLayerBorderWidth' ).spinner( "value" );
-                    layerData[layerId]['pointRadius'] = $( '#editLayerPointRadius' ).spinner( "value" );
-                }
-                $('#layereditwindow').popup('hide');
-                clearEditWindows();
-                saveLayerConfigChanges();
-            }
-            else{
-                alert('Please enter a Layer Name to save edits.');
-            }
-        }
-
-        function deleteLayer() {
-            const layerId = Number(document.getElementById('editLayerId').value);
-            if(confirm("Are you sure you want to delete this layer? This will delete the layer data file from the server and cannot be undone.")){
-                const http = new XMLHttpRequest();
-                const url = "rpc/mapServerConfigurationController.php";
-                const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
-                const params = 'action=deleteMapDataFile&filename='+filename;
-                http.open("POST", url, true);
-                http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                http.onreadystatechange = function() {
-                    if(http.readyState === 4 && http.status === 200) {
-                        if(Number(http.responseText) !== 1){
-                            document.getElementById("statusStr").innerHTML = 'Error deleting data file';
-                            setTimeout(function () {
-                                document.getElementById("statusStr").innerHTML = '';
-                            }, 5000);
-                        }
-                        else{
-                            const layerElementId = 'layer-' + layerId;
-                            document.getElementById(layerElementId).remove();
-                            $('#layereditwindow').popup('hide');
-                            clearEditWindows();
-                            saveLayerConfigChanges();
-                        }
-                    }
-                };
-                http.send(params);
-            }
-        }
     </script>
 </head>
 <body>
@@ -580,7 +427,7 @@ include(__DIR__ . '/../header.php');
                             <div style="display:flex;justify-content: space-between;align-content: center;align-items: center;">
                                 <div style="font-weight:bold;margin-right:10px;font-size:14px;">File:</div>
                                 <div style="width:550px;display:flex;justify-content:flex-start;">
-                                    <input id='addLayerFile' type='file' onchange="validateFileUpload();" />
+                                    <input id='addLayerFile' type='file' onchange="validateFileUpload('add');" />
                                 </div>
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
@@ -599,7 +446,7 @@ include(__DIR__ . '/../header.php');
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
                                 <div style="font-weight:bold;margin-right:10px;font-size:14px;">Source URL:</div>
-                                <div><input type="text" id="addLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL();" /></div>
+                                <div><input type="text" id="addLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL('add');" /></div>
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
                                 <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
@@ -666,7 +513,7 @@ include(__DIR__ . '/../header.php');
         </div>
         <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
             <div style="font-weight:bold;margin-right:10px;font-size:14px;">Source URL:</div>
-            <div><input type="text" id="editLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL();" /></div>
+            <div><input type="text" id="editLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL('edit');" /></div>
         </div>
         <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
             <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
@@ -747,13 +594,26 @@ include(__DIR__ . '/../header.php');
             </div>
         </div>
     </fieldset>
+    <fieldset id="updateLayerFileBox" style="display:none;margin-top:10px;padding:15px;flex-direction:column;">
+        <div style="display:flex;justify-content:flex-start;align-content:center;align-items:center;gap:15px;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Update File:</div>
+            <div>
+                <input id='layerFileUpdate' type='file' onchange="validateFileUpload('edit');" />
+            </div>
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:flex-end;align-content:center;align-items:center;">
+            <div>
+                <button onclick="uploadLayerUpdateFile();">Upload</button>
+            </div>
+        </div>
+    </fieldset>
     <div style="margin-top:15px;width:95%;margin: 15px auto;padding: 0 10px;display:flex;justify-content: space-between;">
         <div>
             <button onclick="closePopup('layereditwindow');">Cancel</button>
         </div>
         <div style="display:flex;gap:15px;">
             <div>
-                <button onclick="deleteLayer();">Delete Layer Group</button>
+                <button onclick="deleteLayer();">Delete Layer</button>
             </div>
             <div>
                 <button onclick="openUpdateFileUpload();">Update Layer File</button>
@@ -767,5 +627,8 @@ include(__DIR__ . '/../header.php');
 <?php
 include(__DIR__ . '/../footer.php');
 ?>
+<div class="loadingModal">
+    <div id="loader"></div>
+</div>
 </body>
 </html>

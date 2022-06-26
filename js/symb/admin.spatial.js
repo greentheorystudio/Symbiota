@@ -88,6 +88,25 @@ function clearAddForms() {
     document.getElementById('addLayerDateAquired').value = '';
 }
 
+function clearEditWindows() {
+    document.getElementById('editLayerGroupName').value = '';
+    document.getElementById('editLayerGroupId').value = '';
+    document.getElementById('editLayerName').value = '';
+    document.getElementById('editLayerDescription').value = '';
+    document.getElementById('editLayerProvidedBy').value = '';
+    document.getElementById('editLayerSourceURL').value = '';
+    document.getElementById('editLayerDateAquired').value = '';
+    document.getElementById('editLayerDateUploaded').innerHTML = '';
+    document.getElementById('editLayerFile').innerHTML = '';
+    document.getElementById('editLayerId').value = '';
+    document.getElementById('editLayerColorScale').value = 'autumn';
+    document.getElementById('editLayerBorderColor').color.fromString('ffffff');
+    document.getElementById('editLayerFillColor').color.fromString('ffffff');
+    document.getElementById('editVectorSymbology').style.display = "none";
+    document.getElementById('editRasterSymbology').style.display = "none";
+    document.getElementById('layerFileUpdate').value = '';
+}
+
 function closePopup(id) {
     $('#'+id).popup('hide');
     clearEditWindows();
@@ -229,6 +248,52 @@ function createLayerGroup(){
     }
 }
 
+function deleteLayer() {
+    const layerId = Number(document.getElementById('editLayerId').value);
+    if(confirm("Are you sure you want to delete this layer? This will delete the layer data file from the server and cannot be undone.")){
+        const http = new XMLHttpRequest();
+        const url = "rpc/mapServerConfigurationController.php";
+        const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
+        const params = 'action=deleteMapDataFile&filename='+filename;
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState === 4 && http.status === 200) {
+                if(Number(http.responseText) !== 1){
+                    document.getElementById("statusStr").innerHTML = 'Error deleting data file';
+                    setTimeout(function () {
+                        document.getElementById("statusStr").innerHTML = '';
+                    }, 5000);
+                }
+                else{
+                    const layerElementId = 'layer-' + layerId;
+                    document.getElementById(layerElementId).remove();
+                    $('#layereditwindow').popup('hide');
+                    clearEditWindows();
+                    saveLayerConfigChanges();
+                }
+            }
+        };
+        http.send(params);
+    }
+}
+
+function deleteLayerGroup() {
+    const groupId = Number(document.getElementById('editLayerGroupId').value);
+    const layerGroupContainerId = 'layerGroupList-' + groupId;
+    const layerGroupBlocks = document.getElementById(layerGroupContainerId).querySelectorAll('li');
+    if(layerGroupBlocks.length > 0){
+        alert('Please move all layers out of the layer group before deleting the group.');
+    }
+    else if(confirm("Are you sure you want to delete this layer group? This cannot be undone.")){
+        const layerGroupElementId = 'layerGroup-' + groupId;
+        document.getElementById(layerGroupElementId).remove();
+        $('#layergroupeditwindow').popup('hide');
+        clearEditWindows();
+        saveLayerConfigChanges();
+    }
+}
+
 function formatPath(path){
     if(path.charAt(path.length - 1) === '/'){
         path = path.substring(0, path.length - 1);
@@ -259,6 +324,57 @@ function hideLayerGroup(layerId) {
     document.getElementById(groupId).style.display = "none";
     document.getElementById(hideButtonId).style.display = "none";
     document.getElementById(showButtonId).style.display = "block";
+}
+
+function openLayerEditWindow(id) {
+    document.getElementById('editLayerName').value = layerData[id]['layerName'];
+    document.getElementById('editLayerDescription').value = layerData[id]['layerDescription'];
+    document.getElementById('editLayerProvidedBy').value = layerData[id]['providedBy'];
+    document.getElementById('editLayerSourceURL').value = layerData[id]['sourceURL'];
+    document.getElementById('editLayerDateAquired').value = layerData[id]['dateAquired'];
+    document.getElementById('editLayerDateUploaded').innerHTML = layerData[id]['dateUploaded'];
+    document.getElementById('editLayerFile').innerHTML = layerData[id]['file'];
+    document.getElementById('editLayerId').value = id;
+    if(layerData[id]['fileType'] === 'tif'){
+        document.getElementById('editLayerColorScale').value = layerData[id]['colorScale'];
+        document.getElementById('editRasterSymbology').style.display = "block";
+    }
+    else{
+        jscolor.init();
+        document.getElementById('editLayerBorderColor').color.fromString(layerData[id]['borderColor']);
+        document.getElementById('editLayerFillColor').color.fromString(layerData[id]['fillColor']);
+        $( '#editLayerOpacity' ).spinner({
+            step: 0.1,
+            min: 0,
+            max: 1,
+            numberFormat: "n"
+        });
+        $( '#editLayerBorderWidth' ).spinner({
+            step: 1,
+            min: 0,
+            numberFormat: "n"
+        });
+        $( '#editLayerPointRadius' ).spinner({
+            step: 1,
+            min: 0,
+            numberFormat: "n"
+        });
+        $( '#editLayerOpacity' ).spinner( "value", Number(layerData[id]['opacity']) );
+        $( '#editLayerBorderWidth' ).spinner( "value", Number(layerData[id]['borderWidth']) );
+        $( '#editLayerPointRadius' ).spinner( "value", Number(layerData[id]['pointRadius']) );
+        document.getElementById('editVectorSymbology').style.display = "block";
+    }
+    $('#layereditwindow').popup('show');
+}
+
+function openLayerGroupEditWindow(id) {
+    document.getElementById('editLayerGroupName').value = layerData[id]['name'];
+    document.getElementById('editLayerGroupId').value = id;
+    $('#layergroupeditwindow').popup('show');
+}
+
+function openUpdateFileUpload() {
+    document.getElementById('updateLayerFileBox').style.display = "block";
 }
 
 function processAddLayerListElement(lArr, parentElement) {
@@ -530,6 +646,48 @@ function saveLayerConfigChanges(){
     }
 }
 
+function saveLayerEdits() {
+    const layerId = Number(document.getElementById('editLayerId').value);
+    const newLayerName = document.getElementById('editLayerName').value;
+    if(newLayerName !== ''){
+        layerData[layerId]['layerName'] = newLayerName;
+        layerData[layerId]['layerDescription'] = document.getElementById('editLayerDescription').value;
+        layerData[layerId]['providedBy'] = document.getElementById('editLayerProvidedBy').value;
+        layerData[layerId]['sourceURL'] = document.getElementById('editLayerSourceURL').value;
+        layerData[layerId]['dateAquired'] = document.getElementById('editLayerDateAquired').value;
+        if(layerData[layerId]['fileType'] === 'tif'){
+            layerData[layerId]['colorScale'] = document.getElementById('editLayerColorScale').value;
+        }
+        else{
+            layerData[layerId]['borderColor'] = document.getElementById('editLayerBorderColor').value;
+            layerData[layerId]['fillColor'] = document.getElementById('editLayerFillColor').value;
+            layerData[layerId]['opacity'] = $( '#editLayerOpacity' ).spinner( "value" );
+            layerData[layerId]['borderWidth'] = $( '#editLayerBorderWidth' ).spinner( "value" );
+            layerData[layerId]['pointRadius'] = $( '#editLayerPointRadius' ).spinner( "value" );
+        }
+        $('#layereditwindow').popup('hide');
+        clearEditWindows();
+        saveLayerConfigChanges();
+    }
+    else{
+        alert('Please enter a Layer Name to save edits.');
+    }
+}
+
+function saveLayerGroupEdits() {
+    const groupId = Number(document.getElementById('editLayerGroupId').value);
+    const newGroupName = document.getElementById('editLayerGroupName').value;
+    if(newGroupName !== ''){
+        layerData[groupId]['name'] = newGroupName;
+        $('#layergroupeditwindow').popup('hide');
+        clearEditWindows();
+        saveLayerConfigChanges();
+    }
+    else{
+        alert('Please enter a Group Name to save edits.');
+    }
+}
+
 function setLayersList() {
     document.getElementById("layerList").innerHTML = '';
     const http = new XMLHttpRequest();
@@ -645,23 +803,85 @@ function uploadLayerFile(){
     }
 }
 
-function validateFileUpload(){
-    const file = document.getElementById('addLayerFile').files[0];
+function uploadLayerUpdateFile() {
+    showWorking();
+    const layerId = Number(document.getElementById('editLayerId').value);
+    const file = document.getElementById('layerFileUpdate').files[0];
+    const http = new XMLHttpRequest();
+    const url = "rpc/mapServerConfigurationController.php";
+    const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
+    const params = 'action=deleteMapDataFile&filename='+filename;
+    http.open("POST", url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    http.onreadystatechange = function() {
+        if(http.readyState === 4 && http.status === 200) {
+            if(Number(http.responseText) !== 1){
+                hideWorking();
+                document.getElementById("statusStr").innerHTML = 'Error deleting original data file';
+                setTimeout(function () {
+                    document.getElementById("statusStr").innerHTML = '';
+                }, 5000);
+            }
+            else{
+                const formData = new FormData();
+                formData.append('addLayerFile', file);
+                formData.append('action', 'uploadMapDataFile');
+                http.open("POST", url, true);
+                http.onreadystatechange = function() {
+                    if(http.readyState === 4 && http.status === 200) {
+                        if(http.responseText && http.responseText !== ''){
+                            const date = new Date();
+                            let fileType = http.responseText.split('.').pop();
+                            if(fileType === 'tiff'){
+                                fileType = 'tif';
+                            }
+                            layerData[layerId]['file'] = http.responseText;
+                            layerData[layerId]['fileType'] = fileType;
+                            layerData[layerId]['dateUploaded'] = date.toISOString().split('T')[0];
+                            $('#layereditwindow').popup('hide');
+                            clearEditWindows();
+                            saveLayerConfigChanges();
+                        }
+                    }
+                    hideWorking();
+                };
+                http.send(formData);
+            }
+        }
+    };
+    http.send(params);
+}
+
+function validateFileUpload(ele){
+    let input;
+    if(ele === 'add'){
+        input = document.getElementById('addLayerFile');
+    }
+    else{
+        input = document.getElementById('layerFileUpdate');
+    }
+    const file = input.files[0];
     const fileType = file.name.split('.').pop().toLowerCase();
     if(fileType !== 'geojson' && fileType !== 'kml' && fileType !== 'zip' && fileType !== 'tif' && fileType !== 'tiff'){
         alert("The file you are trying to upload is a type that is not supported. Only GeoJSON, KML, shapefile, and TIF file formats are supported.");
-        document.getElementById('addLayerFile').value = '';
+        input.value = '';
     }
     else if(Number(file.size) > (maxUploadSizeMB * 1000 * 1000)){
         alert("The file you are trying to upload is larger than the maximum upload size of " + maxUploadSizeMB + "MB");
-        document.getElementById('addLayerFile').value = '';
+        input.value = '';
     }
 }
 
-function validateSourceURL(){
-    const value = document.getElementById('addLayerSourceURL').value;
-    if(!value.startsWith("http")){
+function validateSourceURL(ele){
+    let input;
+    if(ele === 'add'){
+        input = document.getElementById('addLayerSourceURL');
+    }
+    else{
+        input = document.getElementById('editLayerSourceURL');
+    }
+    if(!input.value.startsWith("http")){
         alert("Please enter a valid URL for Source URL.");
-        document.getElementById('addLayerSourceURL').value = '';
+        input.value = '';
     }
 }
