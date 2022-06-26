@@ -589,8 +589,7 @@ if($collid){
                                 <span class="field-label">Icon URL:</span>
                                 <span class="field-elem">
 									<span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'display:none;':''); ?>">
-										<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
-                                        <input name='iconfile' id='iconfile' type='file' size='70' onchange="verifyIconImage();" />
+										<input name='iconfile' id='iconfile' type='file' size='70' onchange="verifyIconImage();" />
 									</span>
 									<span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'':'display:none;'); ?>">
 										<input style="width:600px;" type='text' name='iconurl' id='iconurl' value="<?php echo ($collid?$collData['icon']:'');?>" onchange="verifyIconURL();" />

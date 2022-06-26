@@ -215,21 +215,9 @@ $duManager->loadFieldMap();
 
 		function verifyImageSize(inputObj){
 			inputObj.form.ulfnoverride.value = '';
-			if (!window.FileReader) {
-				return;
-			}
-
-			<?php
-			$maxUpload = ini_get('upload_max_filesize');
-			$maxUpload = str_replace('M', '000000', $maxUpload);
-			if($maxUpload > 100000000) {
-                $maxUpload = 100000000;
-            }
-			echo 'var maxUpload = '.$maxUpload.";\n";
-			?>
-            const file = inputObj.files[0];
-            if(file.size > 100000000){
-                let msg = "Import file " + file.name + " (" + Math.round(file.size / 100000) / 10 + "MB) is larger than is allowed (current limit: " + (100000000 / 1000000) + "MB).";
+			const file = inputObj.files[0];
+            if(file.size > <?php echo ($GLOBALS['MAX_UPLOAD_FILESIZE'] * 1000 * 1000); ?>){
+                let msg = "Import file " + file.name + " (" + Math.round(file.size / 100000) / 10 + "MB) is larger than is allowed (current limit: <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>MB).";
                 if(file.name.slice(-3) !== "zip") {
                     msg = msg + " Note that import file size can be reduced by compressing within a zip file. ";
                 }
@@ -573,7 +561,6 @@ $duManager->loadFieldMap();
                                     <input name="uspid" type="hidden" value="<?php echo $uspid;?>" />
                                     <input name="collid" type="hidden" value="<?php echo $collid;?>" />
                                     <input name="uploadtype" type="hidden" value="<?php echo $uploadType;?>" />
-                                    <input name="MAX_FILE_SIZE" type="hidden" value="100000000" />
                                 </div>
                             </div>
                         </fieldset>

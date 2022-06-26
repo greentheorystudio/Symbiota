@@ -148,7 +148,6 @@ include(__DIR__ . '/../../header.php');
 				}
 				else {
 					?>
-					<input type='hidden' name='MAX_FILE_SIZE' value='10000000' />
 					<div>
 						<div>
 							<b>Upload File:</b>

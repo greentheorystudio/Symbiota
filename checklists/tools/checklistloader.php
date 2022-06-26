@@ -129,7 +129,6 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 					<form enctype="multipart/form-data" action="checklistloader.php" method="post" onsubmit="return validateUploadForm();">
 						<fieldset style="padding:15px;width:800px;">
 							<legend><b>Checklist Upload Form</b></legend>
-							<input type="hidden" name="MAX_FILE_SIZE" value="5000000" />
 							<div style="font-weight:bold;">
 								Checklist File:
 								<input id="uploadfile" name="uploadfile" type="file" size="45" />

@@ -520,7 +520,6 @@ if($spprid) {
                             <div id="chooseFileDiv" class="profileDiv" style="clear:both;padding:15px 0;display:none">
                                 <b>Select image data file:</b>
                                 <div style="margin:5px 15px;">
-                                    <input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
                                     <input name='uploadfile' type='file' size='70' value="Choose File" />
                                 </div>
                             </div>
@@ -568,7 +567,6 @@ if($spprid) {
                                     ?>
                                     <div style="font-weight:bold;">Select iDigBio Image Appliance output file</div>
                                     <div style="" title="Upload output file created by iDigBio Image Upload Appliance here.">
-                                        <input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
                                         <input name='idigbiofile' id='idigbiofile' type='file' size='70' value="Choose image alliance output file" />
                                     </div>
                                     <?php
