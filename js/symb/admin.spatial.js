@@ -780,6 +780,7 @@ function showLayerGroup(layerId) {
 }
 
 function uploadLayerFile(){
+    showWorking();
     const file = document.getElementById('addLayerFile').files[0];
     const layerName = document.getElementById('addLayerName').value;
     if(file && layerName !== ''){
@@ -795,10 +796,12 @@ function uploadLayerFile(){
                     createLayer(layerName,http.responseText);
                 }
             }
+            hideWorking();
         };
         http.send(formData);
     }
     else{
+        hideWorking();
         alert("You need to upload a data file and enter a Layer Name before adding a layer.");
     }
 }

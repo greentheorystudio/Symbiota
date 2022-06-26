@@ -137,7 +137,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20220415';
+        $GLOBALS['CSS_VERSION'] = '20220627';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -682,7 +682,7 @@ class ConfigurationManager{
         $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial';
         if(file_exists($targetPath) || (mkdir($targetPath, 0775) && is_dir($targetPath))) {
             $uploadFileName = basename($_FILES['addLayerFile']['name']);
-            $uploadFileName = str_replace(array(',','&',' '), array('_','',''), $uploadFileName);
+            $uploadFileName = str_replace(array(',','&',' '), array('','',''), urldecode($uploadFileName));
             $fileExtension =  substr(strrchr($uploadFileName, '.'), 1);
             $fileNameOnly =  substr($uploadFileName, 0, ((strlen($fileExtension) + 1) * -1));
             $tempFileName = $fileNameOnly;

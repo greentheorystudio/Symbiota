@@ -97,7 +97,7 @@ $coreConfArr = $fullConfArr['core'];
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220622" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/admin.spatial.js?ver=20220625" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/admin.spatial.js?ver=20220626" type="text/javascript"></script>
     <script type="text/javascript">
         const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
         let serverayerArrObject;
@@ -603,7 +603,7 @@ include(__DIR__ . '/../header.php');
         </div>
         <div style="margin-top:10px;display:flex;justify-content:flex-end;align-content:center;align-items:center;">
             <div>
-                <button onclick="uploadLayerUpdateFile();">Upload</button>
+                <button onclick="uploadLayerUpdateFile();">Update</button>
             </div>
         </div>
     </fieldset>
@@ -628,7 +628,7 @@ include(__DIR__ . '/../header.php');
 include(__DIR__ . '/../footer.php');
 ?>
 <div class="loadingModal">
-    <div id="loader"></div>
+    <div id="loaderAnimation"></div>
 </div>
 </body>
 </html>
