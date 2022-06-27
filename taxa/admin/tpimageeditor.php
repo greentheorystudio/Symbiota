@@ -129,8 +129,7 @@ if($tid){
 								<div style="font-weight:bold;font-size:110%;margin-bottom:5px;">
 									Select an image file located on your computer that you want to upload:
 								</div>
-						    	<input type='hidden' name='MAX_FILE_SIZE' value='3000000' />
-								<div>
+						    	<div>
 									<input name='imgfile' id='imgfile' type='file' size='70'/>
 								</div>
 								<div style="margin-left:10px;">

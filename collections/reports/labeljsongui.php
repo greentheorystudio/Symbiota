@@ -10,7 +10,7 @@ header('X-Frame-Options: DENY');
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
     <link href="../../css/jquery.mobile-1.4.0.min.css?ver=20210817" type="text/css" rel="stylesheet" />
-    <link href="../../css/jsongui.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/jsongui.css?ver=20220617" type="text/css" rel="stylesheet" />
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <script src="../../js/all.min.js" type="text/javascript"></script>
     <script src="../../js/jquery.js" type="text/javascript"></script>
