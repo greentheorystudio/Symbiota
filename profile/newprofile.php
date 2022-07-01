@@ -54,7 +54,7 @@ if($action === 'Create Login'){
             width: 400px;
         }
     </style>
-    <script src="../js/jquery.js" type="text/javascript"></script>
+    <script src="../js/external/jquery.js" type="text/javascript"></script>
 	<script type="text/javascript">
         let randNumber = 0;
 

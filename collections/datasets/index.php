@@ -35,16 +35,16 @@ elseif($action === 'addSelectedToDataset'){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Manager</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
     <style>
         fieldset{ padding:15px;margin:15px; }
         legend{ font-weight: bold; }
         .dataset-item{ margin-bottom: 10px }
     </style>
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/jquery.js"></script>
-    <script type="text/javascript" src="../../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../../js/symb/shared.js?ver=20220310"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/external/jquery.js"></script>
+    <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20220310"></script>
     <script type="text/javascript">
         function validateAddForm(f){
             if(f.adduser.value === ""){

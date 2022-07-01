@@ -92,14 +92,14 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Loan Management</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../../css/jquery-ui.css" rel="stylesheet" type="text/css" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<link href="../../css/external/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../js/external/jquery.js"></script>
+	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript">
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script type="text/javascript" src="../../js/symb/collections.loans.js?ver=20220425"></script>
+	<script type="text/javascript" src="../../js/collections.loans.js?ver=20220425"></script>
 </head>
 <body>
 	<?php
