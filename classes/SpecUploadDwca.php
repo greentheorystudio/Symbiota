@@ -120,10 +120,7 @@ class SpecUploadDwca extends SpecUploadBase{
                     $msg = 'unknown';
                     $err = (int)$_FILES['uploadfile']['error'];
                     if($err === 1) {
-                        $msg = 'uploaded file exceeds the upload_max_filesize directive in php.ini';
-                    }
-                    elseif($err === 2) {
-                        $msg = 'uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
+                        $msg = 'uploaded file exceeds the maximum filesize allowed';
                     }
                     elseif($err === 3) {
                         $msg = 'uploaded file was only partially uploaded';

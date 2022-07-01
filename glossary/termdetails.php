@@ -583,7 +583,6 @@ if($glossId){
 											<div style="height:10px;float:right;text-decoration:underline;font-weight:bold;">
 												<a href="#" onclick="toggle('targetdiv');return false;">Enter URL</a>
 											</div>
-											<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
 											<div>
 												<input name='imgfile' id='imgfile' type='file' size='70'/>
 											</div>

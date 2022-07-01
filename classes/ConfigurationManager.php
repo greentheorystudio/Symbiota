@@ -35,7 +35,6 @@ class ConfigurationManager{
         'IMG_WEB_WIDTH',
         'IMG_TN_WIDTH',
         'IMG_LG_WIDTH',
-        'IMG_FILE_SIZE_LIMIT',
         'SOLR_URL',
         'SOLR_FULL_IMPORT_INTERVAL',
         'GBIF_USERNAME',
@@ -64,6 +63,7 @@ class ConfigurationManager{
         'SPATIAL_DRAGDROP_BORDER_WIDTH',
         'SPATIAL_DRAGDROP_POINT_RADIUS',
         'SPATIAL_DRAGDROP_OPACITY',
+        'SPATIAL_DRAGDROP_RASTER_COLOR_SCALE',
         'GOOGLE_ANALYTICS_KEY',
         'RIGHTS_TERMS',
         'CSS_VERSION_LOCAL',
@@ -137,7 +137,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20220415';
+        $GLOBALS['CSS_VERSION'] = '20220627';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -239,9 +239,6 @@ class ConfigurationManager{
             $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
             $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
         }
-        if(!isset($GLOBALS['IMG_FILE_SIZE_LIMIT']) || !(int)$GLOBALS['IMG_FILE_SIZE_LIMIT'] || (int)$GLOBALS['IMG_FILE_SIZE_LIMIT'] > $this->getServerMaxFilesize()){
-            $GLOBALS['IMG_FILE_SIZE_LIMIT'] = $this->getServerMaxFilesize();
-        }
         if(!isset($GLOBALS['PORTAL_GUID']) || $GLOBALS['PORTAL_GUID'] === ''){
             $GLOBALS['PORTAL_GUID'] = $this->getGUID();
         }
@@ -331,6 +328,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['SPATIAL_DRAGDROP_OPACITY']) || $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] === ''){
             $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
         }
+        if(!isset($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']) || $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === ''){
+            $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
+        }
         if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
             $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
         }
@@ -348,7 +348,6 @@ class ConfigurationManager{
         $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
         $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
         $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
-        $GLOBALS['IMG_FILE_SIZE_LIMIT'] = $this->getServerMaxFilesize();
         $GLOBALS['PORTAL_GUID'] = $this->getGUID();
         $GLOBALS['SECURITY_KEY'] = $this->getGUID();
         $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
@@ -375,6 +374,7 @@ class ConfigurationManager{
         $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
         $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] = '5';
         $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
+        $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
     }
 
     public function getCoreConfigurationsArr(): array
@@ -591,6 +591,34 @@ class ConfigurationManager{
         return $year . $month . $day;
     }
 
+    public function getDatabasePropArr(): array
+    {
+        $versionArr = array();
+        $versionStr = '';
+        $sql = 'SELECT VERSION() AS ver ';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $versionStr = $r->ver;
+        }
+        $rs->free();
+        if($versionStr){
+            if(strpos($versionStr,'MariaDB') !== false){
+                $versionArr['db'] = 'MariaDB';
+            }
+            else{
+                $versionArr['db'] = 'MySQL';
+            }
+            $versionPieces = explode('-', $versionStr);
+            $versionArr['ver'] = $versionPieces[0];
+        }
+        return $versionArr;
+    }
+
+    public function getPhpVersion(): string
+    {
+        return PHP_VERSION;
+    }
+
     public function setGlobalCssVersion(): void
     {
         if(strpos($GLOBALS['CSS_VERSION_LOCAL'], '-') !== false){
@@ -631,5 +659,58 @@ class ConfigurationManager{
                 $pHandler->__destruct();
             }
         }
+    }
+
+    public function saveMapServerConfig($json): bool
+    {
+        $status = true;
+        if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/json/spatiallayerconfig.json', 'wb')){
+            if(!fwrite($fh,$json)){
+                $status = false;
+            }
+            fclose($fh);
+        }
+        else{
+            $status = false;
+        }
+        return $status;
+    }
+
+    public function uploadMapDataFile(): string
+    {
+        $returnStr = '';
+        $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial';
+        if(file_exists($targetPath) || (mkdir($targetPath, 0775) && is_dir($targetPath))) {
+            $uploadFileName = basename($_FILES['addLayerFile']['name']);
+            $uploadFileName = str_replace(array(',','&',' '), array('','',''), urldecode($uploadFileName));
+            $fileExtension =  substr(strrchr($uploadFileName, '.'), 1);
+            $fileNameOnly =  substr($uploadFileName, 0, ((strlen($fileExtension) + 1) * -1));
+            $tempFileName = $fileNameOnly;
+            $cnt = 0;
+            while(file_exists($targetPath.'/'.$tempFileName.'.'.$fileExtension)){
+                $tempFileName = $fileNameOnly.'_'.$cnt;
+                $cnt++;
+            }
+            if($cnt) {
+                $fileNameOnly = $tempFileName;
+            }
+            if(move_uploaded_file($_FILES['addLayerFile']['tmp_name'], $targetPath.'/'.$fileNameOnly.'.'.$fileExtension)){
+                $returnStr = $fileNameOnly.'.'.$fileExtension;
+            }
+        }
+        return $returnStr;
+    }
+
+    public function deleteMapDataFile($fileName): bool
+    {
+        $status = false;
+        $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial/' . $fileName;
+        if(!file_exists($targetPath)) {
+            $status = true;
+        }
+        elseif(unlink($targetPath)){
+            $status = true;
+        }
+        return $status;
     }
 }

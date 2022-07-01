@@ -6,6 +6,7 @@ let geoCircleArr = [];
 let geoBoundingBoxArr = {};
 let geoPointArr = [];
 let layersArr = [];
+let rasterLayersArr = [];
 let layerOrderArr = [];
 let mouseCoords = [];
 let selections = [];
@@ -65,6 +66,35 @@ let zipFolder = '';
 let transformStartAngle = 0;
 let transformD = [0,0];
 let transformFirstPoint = false;
+let rasterColorScales = [
+    {value: 'autumn', label: 'Autumn'},
+    {value: 'blackbody', label: 'Blackbody'},
+    {value: 'bluered', label: 'Bluered'},
+    {value: 'bone', label: 'Bone'},
+    {value: 'cool', label: 'Cool'},
+    {value: 'copper', label: 'Copper'},
+    {value: 'earth', label: 'Earth'},
+    {value: 'electric', label: 'Electric'},
+    {value: 'greens', label: 'Greens'},
+    {value: 'greys', label: 'Greys'},
+    {value: 'hot', label: 'Hot'},
+    {value: 'hsv', label: 'Hsv'},
+    {value: 'inferno', label: 'Inferno'},
+    {value: 'jet', label: 'Jet'},
+    {value: 'magma', label: 'Magma'},
+    {value: 'picnic', label: 'Picnic'},
+    {value: 'plasma', label: 'Plasma'},
+    {value: 'portland', label: 'Portland'},
+    {value: 'rainbow', label: 'Rainbow'},
+    {value: 'rdbu', label: 'Rdbu'},
+    {value: 'spring', label: 'Spring'},
+    {value: 'summer', label: 'Summer'},
+    {value: 'turbo', label: 'Turbo'},
+    {value: 'viridis', label: 'Viridis'},
+    {value: 'winter', label: 'Winter'},
+    {value: 'ylgnbu', label: 'Ylgnbu'},
+    {value: 'ylorrd', label: 'Ylorrd'}
+];
 
 const mapProjection = new ol.proj.Projection({
     code: 'EPSG:3857'
@@ -98,8 +128,7 @@ function addLayerToLayerOrderArr(layerId) {
 function addLayerToSelList(layer,title,active){
     const origValue = document.getElementById("selectlayerselect").value;
     let selectionList = document.getElementById("selectlayerselect").innerHTML;
-    const optionId = "lsel-" + layer;
-    const newOption = '<option id="lsel-' + optionId + '" value="' + layer + '">' + title + '</option>';
+    const newOption = '<option value="' + layer + '">' + title + '</option>';
     selectionList += newOption;
     document.getElementById("selectlayerselect").innerHTML = selectionList;
     if(active){
@@ -116,6 +145,19 @@ function addQueryToDataset(){
     document.getElementById("dsstarrjson").value = JSON.stringify(searchTermsArr);
     document.getElementById("datasetformaction").value = 'addAllToDataset';
     document.getElementById("datasetform").submit();
+}
+
+function addRasterLayerToTargetList(layerId,title){
+    let selectionList = document.getElementById("targetrasterselect").innerHTML;
+    const newOption = '<option value="' + layerId + '">' + title + '</option>';
+    selectionList += newOption;
+    document.getElementById("targetrasterselect").innerHTML = selectionList;
+    document.getElementById("targetrasterselect").value = '';
+    rasterLayersArr.push(layerId);
+    if(rasterLayersArr.length > 0){
+        document.getElementById("rastertoolspanel").style.display = "block";
+        document.getElementById("rastertoolstab").style.display = "block";
+    }
 }
 
 function addSelectionsToDataset(){
@@ -286,10 +328,23 @@ function buildCollKeyPiece(key){
     collKeyArr[key] = keyHTML;
 }
 
+function buildLayerControllerLayerDateElement(lArr){
+    const layerAquiredDiv = document.createElement('div');
+    let innerHtml = '';
+    if(lArr.hasOwnProperty('dateAquired') && lArr['dateAquired']){
+        innerHtml += '<span style="font-weight:bold;">Date aquired: </span>' + lArr['dateAquired'] + ' ';
+    }
+    if(lArr.hasOwnProperty('dateUploaded') && lArr['dateUploaded']){
+        innerHtml += '<span style="font-weight:bold;">Date uploaded: </span>' + lArr['dateUploaded'];
+    }
+    layerAquiredDiv.innerHTML = innerHtml;
+    return layerAquiredDiv;
+}
+
 function buildLayerControllerLayerElement(lArr,active){
     const layerDivId = 'layer-' + lArr['id'];
     const layerDiv = document.createElement('div');
-    const raster = (lArr['fileType'] === 'tif');
+    const raster = (lArr['fileType'] === 'tif' || lArr['fileType'] === 'tiff');
     layerDiv.setAttribute("id",layerDivId);
     layerDiv.setAttribute("style","border:1px solid black;padding:5px;margin-bottom:5px;background-color:white;width:100%;font-family:Verdana,Arial,sans-serif;font-size:14px;");
     const layerMainDiv = document.createElement('div');
@@ -304,28 +359,18 @@ function buildLayerControllerLayerElement(lArr,active){
         layerMainDiv.appendChild(layerDescDiv);
     }
     if(lArr.hasOwnProperty('providedBy') || lArr.hasOwnProperty('sourceURL')){
-        const layerProvidedDiv = document.createElement('div');
-        let innerHtml = '';
-        if(lArr.hasOwnProperty('providedBy') && lArr['providedBy']){
-            innerHtml += '<span style="font-weight:bold;">Provided by: </span>' + lArr['providedBy'] + ' ';
-        }
-        if(lArr.hasOwnProperty('sourceURL') && lArr['sourceURL']){
-            innerHtml += '<span style="font-weight:bold;"><a href="' + lArr['sourceURL'] + '" target="_blank">(Go to source)</a></span>';
-        }
-        layerProvidedDiv.innerHTML = innerHtml;
-        layerMainDiv.appendChild(layerProvidedDiv);
+        layerMainDiv.appendChild(buildLayerControllerLayerProvidedByElement(lArr));
     }
     if(lArr.hasOwnProperty('dateAquired') || lArr.hasOwnProperty('dateUploaded')){
-        const layerAquiredDiv = document.createElement('div');
-        let innerHtml = '';
-        if(lArr.hasOwnProperty('dateAquired') && lArr['dateAquired']){
-            innerHtml += '<span style="font-weight:bold;">Date aquired: </span>' + lArr['dateAquired'] + ' ';
+        layerMainDiv.appendChild(buildLayerControllerLayerDateElement(lArr));
+    }
+    if(lArr['symbology']){
+        if(raster){
+            layerMainDiv.appendChild(buildLayerControllerLayerRasterSymbologyElement(lArr));
         }
-        if(lArr.hasOwnProperty('dateUploaded') && lArr['dateUploaded']){
-            innerHtml += '<span style="font-weight:bold;">Date uploaded: </span>' + lArr['dateUploaded'];
+        else{
+            layerMainDiv.appendChild(buildLayerControllerLayerVectorSymbologyElement(lArr));
         }
-        layerAquiredDiv.innerHTML = innerHtml;
-        layerMainDiv.appendChild(layerAquiredDiv);
     }
     const layerMainBottomDiv = document.createElement('div');
     layerMainBottomDiv.setAttribute("style","font-size:14px;font-weight:bold;width:100%;display:flex;justify-content:flex-end;align-items:flex-end;margin-top:5px;");
@@ -333,7 +378,7 @@ function buildLayerControllerLayerElement(lArr,active){
     dataTypeImageDiv.setAttribute("style","width:30px;height:30px;background-color:black;margin:0 5px;");
     const dataTypeImage = document.createElement('img');
     dataTypeImage.setAttribute("style","width:20px;margin-left:5px;margin-top:5px;");
-    if(lArr['fileType'] === 'tif'){
+    if(lArr['fileType'] === 'tif' || lArr['fileType'] === 'tiff'){
         dataTypeImage.setAttribute("src","../images/button_wms.png");
     }
     else{
@@ -342,61 +387,16 @@ function buildLayerControllerLayerElement(lArr,active){
     dataTypeImageDiv.appendChild(dataTypeImage);
     layerMainBottomDiv.appendChild(dataTypeImageDiv);
     if(lArr['sortable']){
-        const sortingScrollerDivId = 'layerOrderDiv-' + lArr['id'];
-        const sortingScrollerDiv = document.createElement('div');
-        sortingScrollerDiv.setAttribute("id",sortingScrollerDivId);
-        const sortingScrollerDisplayVal = (active ? 'flex' : 'none');
-        sortingScrollerDiv.setAttribute("style","display:" + sortingScrollerDisplayVal + ";align-items:center;margin:0 5px;");
-        const sortingScrollerId = 'layerOrder-' + lArr['id'];
-        const sortingScrollerLabel = document.createElement('label');
-        sortingScrollerLabel.setAttribute("for",sortingScrollerId);
-        sortingScrollerLabel.setAttribute("style","margin-top:8px;margin-right:5px;font-weight:bold;");
-        sortingScrollerLabel.innerHTML = 'Order:';
-        const sortingScroller = document.createElement('input');
-        sortingScroller.setAttribute("id",sortingScrollerId);
-        sortingScroller.setAttribute("style","width:25px;");
-        sortingScrollerDiv.appendChild(sortingScrollerLabel);
-        sortingScrollerDiv.appendChild(sortingScroller);
-        layerMainBottomDiv.appendChild(sortingScrollerDiv);
+        layerMainBottomDiv.appendChild(buildLayerControllerLayerSortElement(lArr,active));
     }
-    if(lArr['symbology'] && !raster){
-        const symbologyButtonId = 'layerSymbologyButton-' + lArr['id'];
-        const symbologyButton = document.createElement('button');
-        symbologyButton.setAttribute("id",symbologyButtonId);
-        const symbologyOnclickVal = "toggleLayerSymbology('" + lArr['id'] + "');";
-        const symbologyButtonDisplayVal = (active ? 'block' : 'none');
-        symbologyButton.setAttribute("type","button");
-        symbologyButton.setAttribute("style","display:" + symbologyButtonDisplayVal + ";margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
-        symbologyButton.setAttribute("title","Toggle Symbology");
-        symbologyButton.setAttribute("onclick",symbologyOnclickVal);
-        symbologyButton.innerHTML = 'Symbology';
-        layerMainBottomDiv.appendChild(symbologyButton);
+    if(lArr['symbology']){
+        layerMainBottomDiv.appendChild(buildLayerControllerLayerSymbologyButtonElement(lArr,active));
     }
     if(lArr['query'] && !raster){
-        const queryButtonId = 'layerQueryButton-' + lArr['id'];
-        const queryButton = document.createElement('button');
-        queryButton.setAttribute("id",queryButtonId);
-        const queryOnclickVal = "toggleLayerQuerySelector('" + lArr['id'] + "');";
-        const queryButtonDisplayVal = (active ? 'block' : 'none');
-        queryButton.setAttribute("type","button");
-        queryButton.setAttribute("style","display:" + queryButtonDisplayVal + ";margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
-        queryButton.setAttribute("title","Toggle Symbology");
-        queryButton.setAttribute("onclick",queryOnclickVal);
-        queryButton.innerHTML = 'Query Selector';
-        layerMainBottomDiv.appendChild(queryButton);
+        layerMainBottomDiv.appendChild(buildLayerControllerLayerQueryButtonElement(lArr,active));
     }
     if(lArr['removable']){
-        const removeButton = document.createElement('button');
-        const removeOnclickVal = "removeUserLayer('" + lArr['id'] + "');";
-        removeButton.setAttribute("type","button");
-        removeButton.setAttribute("style","margin:0 5px;padding:2px;height:25px;width:25px;");
-        removeButton.setAttribute("title","Remove layer");
-        removeButton.setAttribute("onclick",removeOnclickVal);
-        const removeIcon = document.createElement('i');
-        removeIcon.setAttribute("style","height:15px;width:15px;");
-        removeIcon.setAttribute("class","far fa-trash-alt");
-        removeButton.appendChild(removeIcon);
-        layerMainBottomDiv.appendChild(removeButton);
+        layerMainBottomDiv.appendChild(buildLayerControllerLayerRemoveButtonElement(lArr));
     }
     const visibilityCheckbox = document.createElement('input');
     const visibilityCheckboxId = 'layerVisible-' + lArr['id'];
@@ -417,93 +417,205 @@ function buildLayerControllerLayerElement(lArr,active){
     layerMainBottomDiv.appendChild(visibilityCheckbox);
     layerMainDiv.appendChild(layerMainBottomDiv);
     layerDiv.appendChild(layerMainDiv);
-    if(lArr['symbology']){
-        const layerSymbologyDivId = 'layerSymbology-' + lArr['id'];
-        const layerSymbologyDiv = document.createElement('div');
-        layerSymbologyDiv.setAttribute("id",layerSymbologyDivId);
-        layerSymbologyDiv.setAttribute("style","border:1px solid black;padding:5px;margin-top:5px;display:none;flex-direction:column;width:60%;margin-left:auto;margin-right:auto;");
-        const symbologyTopRow = document.createElement('div');
-        symbologyTopRow.setAttribute("style","display:flex;justify-content:space-evenly;");
-        const symbologyBorderColorDiv = document.createElement('div');
-        symbologyBorderColorDiv.setAttribute("style","display:flex;align-items:center;");
-        const symbologyBorderColorSpan = document.createElement('span');
-        symbologyBorderColorSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
-        symbologyBorderColorSpan.innerHTML = 'Border color: ';
-        symbologyBorderColorDiv.appendChild(symbologyBorderColorSpan);
-        const symbologyBorderColorInputId = 'borderColor-' + lArr['id'];
-        const symbologyBorderColorOnchangeVal = "changeBorderColor('" + lArr['id'] + "',this.value);";
-        const symbologyBorderColorInput = document.createElement('input');
-        symbologyBorderColorInput.setAttribute("data-role","none");
-        symbologyBorderColorInput.setAttribute("id",symbologyBorderColorInputId);
-        symbologyBorderColorInput.setAttribute("class","color");
-        symbologyBorderColorInput.setAttribute("style","cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;");
-        symbologyBorderColorInput.setAttribute("value",lArr['borderColor']);
-        symbologyBorderColorInput.setAttribute("onchange",symbologyBorderColorOnchangeVal);
-        symbologyBorderColorDiv.appendChild(symbologyBorderColorInput);
-        symbologyTopRow.appendChild(symbologyBorderColorDiv);
-        const symbologyFillColorDiv = document.createElement('div');
-        symbologyFillColorDiv.setAttribute("style","display:flex;align-items:center;");
-        const symbologyFillColorSpan = document.createElement('span');
-        symbologyFillColorSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
-        symbologyFillColorSpan.innerHTML = 'Fill color: ';
-        symbologyFillColorDiv.appendChild(symbologyFillColorSpan);
-        const symbologyFillColorInputId = 'fillColor-' + lArr['id'];
-        const symbologyFillColorOnchangeVal = "changeFillColor('" + lArr['id'] + "',this.value);";
-        const symbologyFillColorInput = document.createElement('input');
-        symbologyFillColorInput.setAttribute("data-role","none");
-        symbologyFillColorInput.setAttribute("id",symbologyFillColorInputId);
-        symbologyFillColorInput.setAttribute("class","color");
-        symbologyFillColorInput.setAttribute("style","cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;");
-        symbologyFillColorInput.setAttribute("value",lArr['fillColor']);
-        symbologyFillColorInput.setAttribute("onchange",symbologyFillColorOnchangeVal);
-        symbologyFillColorDiv.appendChild(symbologyFillColorInput);
-        symbologyTopRow.appendChild(symbologyFillColorDiv);
-        layerSymbologyDiv.appendChild(symbologyTopRow);
-        const symbologyBottomRow = document.createElement('div');
-        symbologyBottomRow.setAttribute("style","display:flex;justify-content:space-evenly;margin-top:3px;");
-        const symbologyBorderWidthDiv = document.createElement('div');
-        symbologyBorderWidthDiv.setAttribute("style","display:flex;align-items:center;");
-        const symbologyBorderWidthSpan = document.createElement('span');
-        symbologyBorderWidthSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
-        symbologyBorderWidthSpan.innerHTML = 'Border width (px): ';
-        symbologyBorderWidthDiv.appendChild(symbologyBorderWidthSpan);
-        const symbologyBorderWidthInputId = 'borderWidth-' + lArr['id'];
-        const symbologyBorderWidthInput = document.createElement('input');
-        symbologyBorderWidthInput.setAttribute("id",symbologyBorderWidthInputId);
-        symbologyBorderWidthInput.setAttribute("style","width:25px;");
-        symbologyBorderWidthInput.setAttribute("value",lArr['borderWidth']);
-        symbologyBorderWidthDiv.appendChild(symbologyBorderWidthInput);
-        symbologyBottomRow.appendChild(symbologyBorderWidthDiv);
-        const symbologyPointRadiusDiv = document.createElement('div');
-        symbologyPointRadiusDiv.setAttribute("style","display:flex;align-items:center;");
-        const symbologyPointRadiusSpan = document.createElement('span');
-        symbologyPointRadiusSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
-        symbologyPointRadiusSpan.innerHTML = 'Point radius (px): ';
-        symbologyPointRadiusDiv.appendChild(symbologyPointRadiusSpan);
-        const symbologyPointRadiusInputId = 'pointRadius-' + lArr['id'];
-        const symbologyPointRadiusInput = document.createElement('input');
-        symbologyPointRadiusInput.setAttribute("id",symbologyPointRadiusInputId);
-        symbologyPointRadiusInput.setAttribute("style","width:25px;");
-        symbologyPointRadiusInput.setAttribute("value",lArr['pointRadius']);
-        symbologyPointRadiusDiv.appendChild(symbologyPointRadiusInput);
-        symbologyBottomRow.appendChild(symbologyPointRadiusDiv);
-        const symbologyOpacityDiv = document.createElement('div');
-        symbologyOpacityDiv.setAttribute("style","display:flex;align-items:center;");
-        const symbologyOpacitySpan = document.createElement('span');
-        symbologyOpacitySpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
-        symbologyOpacitySpan.innerHTML = 'Opacity: ';
-        symbologyOpacityDiv.appendChild(symbologyOpacitySpan);
-        const symbologyOpacityInputId = 'opacity-' + lArr['id'];
-        const symbologyOpacityInput = document.createElement('input');
-        symbologyOpacityInput.setAttribute("id",symbologyOpacityInputId);
-        symbologyOpacityInput.setAttribute("style","width:25px;");
-        symbologyOpacityInput.setAttribute("value",lArr['opacity']);
-        symbologyOpacityDiv.appendChild(symbologyOpacityInput);
-        symbologyBottomRow.appendChild(symbologyOpacityDiv);
-        layerSymbologyDiv.appendChild(symbologyBottomRow);
-        layerDiv.appendChild(layerSymbologyDiv);
-    }
     return layerDiv;
+}
+
+function buildLayerControllerLayerProvidedByElement(lArr){
+    const layerProvidedDiv = document.createElement('div');
+    let innerHtml = '';
+    if(lArr.hasOwnProperty('providedBy') && lArr['providedBy']){
+        innerHtml += '<span style="font-weight:bold;">Provided by: </span>' + lArr['providedBy'] + ' ';
+    }
+    if(lArr.hasOwnProperty('sourceURL') && lArr['sourceURL']){
+        innerHtml += '<span style="font-weight:bold;"><a href="' + lArr['sourceURL'] + '" target="_blank">(Go to source)</a></span>';
+    }
+    layerProvidedDiv.innerHTML = innerHtml;
+    return layerProvidedDiv;
+}
+
+function buildLayerControllerLayerQueryButtonElement(lArr,active){
+    const queryButtonId = 'layerQueryButton-' + lArr['id'];
+    const queryButton = document.createElement('button');
+    queryButton.setAttribute("id",queryButtonId);
+    const queryOnclickVal = "toggleLayerQuerySelector('" + lArr['id'] + "');";
+    const queryButtonDisplayVal = (active ? 'block' : 'none');
+    queryButton.setAttribute("type","button");
+    queryButton.setAttribute("style","display:" + queryButtonDisplayVal + ";margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+    queryButton.setAttribute("title","Toggle Symbology");
+    queryButton.setAttribute("onclick",queryOnclickVal);
+    queryButton.innerHTML = 'Query Selector';
+    return queryButton;
+}
+
+function buildLayerControllerLayerRasterSymbologyElement(lArr){
+    const layerSymbologyDivId = 'layerSymbology-' + lArr['id'];
+    const layerSymbologyDiv = document.createElement('div');
+    const layerColorScale = (lArr.hasOwnProperty('colorScale') && lArr['colorScale'] !== '') ? lArr['colorScale'] : dragDropRasterColorScale;
+    layerSymbologyDiv.setAttribute("id",layerSymbologyDivId);
+    layerSymbologyDiv.setAttribute("style","border:1px solid black;padding:5px;margin-top:5px;display:none;flex-direction:column;width:60%;margin-left:auto;margin-right:auto;");
+    const symbologyTopRow = document.createElement('div');
+    symbologyTopRow.setAttribute("style","display:flex;justify-content:space-evenly;");
+    const symbologyColorScaleDiv = document.createElement('div');
+    symbologyColorScaleDiv.setAttribute("style","display:flex;align-items:center;");
+    const symbologyColorScaleSpan = document.createElement('span');
+    symbologyColorScaleSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+    symbologyColorScaleSpan.innerHTML = 'Color scale: ';
+    symbologyColorScaleDiv.appendChild(symbologyColorScaleSpan);
+    const symbologyColorScaleInputId = 'rasterColorScale-' + lArr['id'];
+    const symbologyColorScaleOnchangeVal = "changeRasterColorScale('" + lArr['id'] + "',this.value);";
+    const symbologyColorScaleInput = document.createElement('select');
+    symbologyColorScaleInput.setAttribute("data-role","none");
+    symbologyColorScaleInput.setAttribute("id",symbologyColorScaleInputId);
+    symbologyColorScaleInput.setAttribute("onchange",symbologyColorScaleOnchangeVal);
+    for(let i in rasterColorScales){
+        if(rasterColorScales.hasOwnProperty(i)){
+            const symbologyColorScaleOption = document.createElement('option');
+            symbologyColorScaleOption.setAttribute("value",rasterColorScales[i]['value']);
+            symbologyColorScaleOption.innerHTML = rasterColorScales[i]['label'];
+            if(layerColorScale === rasterColorScales[i]['value']){
+                symbologyColorScaleOption.setAttribute("selected",true);
+            }
+            symbologyColorScaleInput.appendChild(symbologyColorScaleOption);
+        }
+    }
+    symbologyColorScaleDiv.appendChild(symbologyColorScaleInput);
+    symbologyTopRow.appendChild(symbologyColorScaleDiv);
+    layerSymbologyDiv.appendChild(symbologyTopRow);
+    return layerSymbologyDiv;
+}
+
+function buildLayerControllerLayerRemoveButtonElement(lArr){
+    const removeButton = document.createElement('button');
+    const removeOnclickVal = "removeUserLayer('" + lArr['id'] + "');";
+    removeButton.setAttribute("type","button");
+    removeButton.setAttribute("style","margin:0 5px;padding:2px;height:25px;width:25px;");
+    removeButton.setAttribute("title","Remove layer");
+    removeButton.setAttribute("onclick",removeOnclickVal);
+    const removeIcon = document.createElement('i');
+    removeIcon.setAttribute("style","height:15px;width:15px;");
+    removeIcon.setAttribute("class","far fa-trash-alt");
+    removeButton.appendChild(removeIcon);
+    return removeButton;
+}
+
+function buildLayerControllerLayerSortElement(lArr,active){
+    const sortingScrollerDivId = 'layerOrderDiv-' + lArr['id'];
+    const sortingScrollerDiv = document.createElement('div');
+    sortingScrollerDiv.setAttribute("id",sortingScrollerDivId);
+    const sortingScrollerDisplayVal = (active ? 'flex' : 'none');
+    sortingScrollerDiv.setAttribute("style","display:" + sortingScrollerDisplayVal + ";align-items:center;margin:0 5px;");
+    const sortingScrollerId = 'layerOrder-' + lArr['id'];
+    const sortingScrollerLabel = document.createElement('label');
+    sortingScrollerLabel.setAttribute("for",sortingScrollerId);
+    sortingScrollerLabel.setAttribute("style","margin-top:8px;margin-right:5px;font-weight:bold;");
+    sortingScrollerLabel.innerHTML = 'Order:';
+    const sortingScroller = document.createElement('input');
+    sortingScroller.setAttribute("id",sortingScrollerId);
+    sortingScroller.setAttribute("style","width:25px;");
+    sortingScrollerDiv.appendChild(sortingScrollerLabel);
+    sortingScrollerDiv.appendChild(sortingScroller);
+    return sortingScrollerDiv;
+}
+
+function buildLayerControllerLayerSymbologyButtonElement(lArr,active){
+    const symbologyButtonId = 'layerSymbologyButton-' + lArr['id'];
+    const symbologyButton = document.createElement('button');
+    symbologyButton.setAttribute("id",symbologyButtonId);
+    const symbologyOnclickVal = "toggleLayerSymbology('" + lArr['id'] + "');";
+    const symbologyButtonDisplayVal = (active ? 'block' : 'none');
+    symbologyButton.setAttribute("type","button");
+    symbologyButton.setAttribute("style","display:" + symbologyButtonDisplayVal + ";margin:0 5px;padding:3px;font-family:Verdana,Arial,sans-serif;font-size:14px;");
+    symbologyButton.setAttribute("title","Toggle Symbology");
+    symbologyButton.setAttribute("onclick",symbologyOnclickVal);
+    symbologyButton.innerHTML = 'Symbology';
+    return symbologyButton;
+}
+
+function buildLayerControllerLayerVectorSymbologyElement(lArr){
+    const layerSymbologyDivId = 'layerSymbology-' + lArr['id'];
+    const layerSymbologyDiv = document.createElement('div');
+    layerSymbologyDiv.setAttribute("id",layerSymbologyDivId);
+    layerSymbologyDiv.setAttribute("style","border:1px solid black;padding:5px;margin-top:5px;display:none;flex-direction:column;width:60%;margin-left:auto;margin-right:auto;");
+    const symbologyTopRow = document.createElement('div');
+    symbologyTopRow.setAttribute("style","display:flex;justify-content:space-evenly;");
+    const symbologyBorderColorDiv = document.createElement('div');
+    symbologyBorderColorDiv.setAttribute("style","display:flex;align-items:center;");
+    const symbologyBorderColorSpan = document.createElement('span');
+    symbologyBorderColorSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+    symbologyBorderColorSpan.innerHTML = 'Border color: ';
+    symbologyBorderColorDiv.appendChild(symbologyBorderColorSpan);
+    const symbologyBorderColorInputId = 'borderColor-' + lArr['id'];
+    const symbologyBorderColorOnchangeVal = "changeBorderColor('" + lArr['id'] + "',this.value);";
+    const symbologyBorderColorInput = document.createElement('input');
+    symbologyBorderColorInput.setAttribute("data-role","none");
+    symbologyBorderColorInput.setAttribute("id",symbologyBorderColorInputId);
+    symbologyBorderColorInput.setAttribute("class","color");
+    symbologyBorderColorInput.setAttribute("style","cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;");
+    symbologyBorderColorInput.setAttribute("value",lArr['borderColor']);
+    symbologyBorderColorInput.setAttribute("onchange",symbologyBorderColorOnchangeVal);
+    symbologyBorderColorDiv.appendChild(symbologyBorderColorInput);
+    symbologyTopRow.appendChild(symbologyBorderColorDiv);
+    const symbologyFillColorDiv = document.createElement('div');
+    symbologyFillColorDiv.setAttribute("style","display:flex;align-items:center;");
+    const symbologyFillColorSpan = document.createElement('span');
+    symbologyFillColorSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+    symbologyFillColorSpan.innerHTML = 'Fill color: ';
+    symbologyFillColorDiv.appendChild(symbologyFillColorSpan);
+    const symbologyFillColorInputId = 'fillColor-' + lArr['id'];
+    const symbologyFillColorOnchangeVal = "changeFillColor('" + lArr['id'] + "',this.value);";
+    const symbologyFillColorInput = document.createElement('input');
+    symbologyFillColorInput.setAttribute("data-role","none");
+    symbologyFillColorInput.setAttribute("id",symbologyFillColorInputId);
+    symbologyFillColorInput.setAttribute("class","color");
+    symbologyFillColorInput.setAttribute("style","cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;");
+    symbologyFillColorInput.setAttribute("value",lArr['fillColor']);
+    symbologyFillColorInput.setAttribute("onchange",symbologyFillColorOnchangeVal);
+    symbologyFillColorDiv.appendChild(symbologyFillColorInput);
+    symbologyTopRow.appendChild(symbologyFillColorDiv);
+    layerSymbologyDiv.appendChild(symbologyTopRow);
+    const symbologyBottomRow = document.createElement('div');
+    symbologyBottomRow.setAttribute("style","display:flex;justify-content:space-evenly;margin-top:3px;");
+    const symbologyBorderWidthDiv = document.createElement('div');
+    symbologyBorderWidthDiv.setAttribute("style","display:flex;align-items:center;");
+    const symbologyBorderWidthSpan = document.createElement('span');
+    symbologyBorderWidthSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+    symbologyBorderWidthSpan.innerHTML = 'Border width (px): ';
+    symbologyBorderWidthDiv.appendChild(symbologyBorderWidthSpan);
+    const symbologyBorderWidthInputId = 'borderWidth-' + lArr['id'];
+    const symbologyBorderWidthInput = document.createElement('input');
+    symbologyBorderWidthInput.setAttribute("id",symbologyBorderWidthInputId);
+    symbologyBorderWidthInput.setAttribute("style","width:25px;");
+    symbologyBorderWidthInput.setAttribute("value",lArr['borderWidth']);
+    symbologyBorderWidthDiv.appendChild(symbologyBorderWidthInput);
+    symbologyBottomRow.appendChild(symbologyBorderWidthDiv);
+    const symbologyPointRadiusDiv = document.createElement('div');
+    symbologyPointRadiusDiv.setAttribute("style","display:flex;align-items:center;");
+    const symbologyPointRadiusSpan = document.createElement('span');
+    symbologyPointRadiusSpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+    symbologyPointRadiusSpan.innerHTML = 'Point radius (px): ';
+    symbologyPointRadiusDiv.appendChild(symbologyPointRadiusSpan);
+    const symbologyPointRadiusInputId = 'pointRadius-' + lArr['id'];
+    const symbologyPointRadiusInput = document.createElement('input');
+    symbologyPointRadiusInput.setAttribute("id",symbologyPointRadiusInputId);
+    symbologyPointRadiusInput.setAttribute("style","width:25px;");
+    symbologyPointRadiusInput.setAttribute("value",lArr['pointRadius']);
+    symbologyPointRadiusDiv.appendChild(symbologyPointRadiusInput);
+    symbologyBottomRow.appendChild(symbologyPointRadiusDiv);
+    const symbologyOpacityDiv = document.createElement('div');
+    symbologyOpacityDiv.setAttribute("style","display:flex;align-items:center;");
+    const symbologyOpacitySpan = document.createElement('span');
+    symbologyOpacitySpan.setAttribute("style","font-weight:bold;margin-right:10px;font-size:12px;");
+    symbologyOpacitySpan.innerHTML = 'Fill Opacity: ';
+    symbologyOpacityDiv.appendChild(symbologyOpacitySpan);
+    const symbologyOpacityInputId = 'opacity-' + lArr['id'];
+    const symbologyOpacityInput = document.createElement('input');
+    symbologyOpacityInput.setAttribute("id",symbologyOpacityInputId);
+    symbologyOpacityInput.setAttribute("style","width:25px;");
+    symbologyOpacityInput.setAttribute("value",lArr['opacity']);
+    symbologyOpacityDiv.appendChild(symbologyOpacityInput);
+    symbologyBottomRow.appendChild(symbologyOpacityDiv);
+    layerSymbologyDiv.appendChild(symbologyBottomRow);
+    return layerSymbologyDiv;
 }
 
 function buildTaxaKey(){
@@ -580,31 +692,31 @@ function changeBaseMap(){
     const baseLayer = map.getLayers().getArray()[0];
     if(selection === 'googleroadmap'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'googlealteredroadmap'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'googleterrain'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'googlehybrid'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'googlesatellite'){
         blsource = new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',
+            url: 'https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',
             crossOrigin: 'anonymous'
         });
     }
@@ -622,31 +734,31 @@ function changeBaseMap(){
     }
     if(selection === 'worldimagery'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'ocean'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'ngstopo'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'natgeoworld'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
     if(selection === 'esristreet'){
         blsource = new ol.source.XYZ({
-            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
@@ -890,6 +1002,33 @@ function changePointRadius(layerId,value) {
         const style = getVectorLayerStyle(fillColor, borderColor, borderWidth, value, opacity);
         layersArr[layerId].setStyle(style);
     }
+}
+
+function changeRasterColorScale(layerId,value){
+    map.removeLayer(layersArr[layerId]);
+    layersArr[layerId].setSource(null);
+    const sourceIndex = layerId + 'Source';
+    const dataIndex = layerId + 'Data';
+    delete layersArr[sourceIndex];
+    const canvasElement = document.createElement('canvas');
+    const box = [layersArr[dataIndex]['bbox'][0],layersArr[dataIndex]['bbox'][1] - (layersArr[dataIndex]['bbox'][3] - layersArr[dataIndex]['bbox'][1]), layersArr[dataIndex]['bbox'][2], layersArr[dataIndex]['bbox'][1]];
+    const plot = new plotty.plot({
+        canvas: canvasElement,
+        data: layersArr[dataIndex]['data'],
+        width: layersArr[dataIndex]['imageWidth'],
+        height: layersArr[dataIndex]['imageHeight'],
+        domain: [layersArr[dataIndex]['minValue'], layersArr[dataIndex]['maxValue']],
+        colorScale: value
+    });
+    plot.render();
+    layersArr[sourceIndex] = new ol.source.ImageStatic({
+        url: canvasElement.toDataURL("image/png"),
+        imageExtent: box,
+        projection: 'EPSG:4326'
+    });
+    layersArr[layerId].setSource(layersArr[sourceIndex]);
+    map.addLayer(layersArr[layerId]);
+    setLayersOrder();
 }
 
 function changeRecordPage(page){
@@ -1787,6 +1926,42 @@ function deleteSelections(){
     }
 }
 
+function displayVectorizeRasterByGridTargetPolygon(){
+    rasteranalysissource.clear();
+    rasterAnalysisInteraction.getFeatures().clear();
+    let polyOffset = 0;
+    const resolutionVal = Number(document.getElementById("vectorizeRasterByGridResolution").value);
+    if(resolutionVal === 0.025){
+        polyOffset = 15000;
+    }
+    else if(resolutionVal === 0.05){
+        polyOffset = 30000;
+    }
+    else if(resolutionVal === 0.1){
+        polyOffset = 60000;
+    }
+    else if(resolutionVal === 0.25){
+        polyOffset = 150000;
+    }
+    else if(resolutionVal === 0.5){
+        polyOffset = 300000;
+    }
+    const geoJSONFormat = new ol.format.GeoJSON();
+    const mapCenterPoint = map.getView().getCenter();
+    const highLong = mapCenterPoint[0] + polyOffset;
+    const lowLong = mapCenterPoint[0] - polyOffset;
+    const highLat = mapCenterPoint[1] + polyOffset;
+    const lowLat = mapCenterPoint[1] - polyOffset;
+    const line = turf.lineString([[lowLong, lowLat], [lowLong, highLat], [highLong, highLat]]);
+    const bbox = turf.bbox(line);
+    const bboxPolygon = turf.bboxPolygon(bbox);
+    const newPoly = geoJSONFormat.readFeature(bboxPolygon);
+    rasteranalysissource.addFeature(newPoly);
+    rasterAnalysisInteraction.getFeatures().push(newPoly);
+    document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").style.display = "none";
+    document.getElementById("vectorizeRasterByGridTargetPolyHideButton").style.display = "block";
+}
+
 function downloadShapesLayer(){
     let filetype;
     const dlType = document.getElementById("shapesdownloadselect").value;
@@ -2273,6 +2448,21 @@ function getQueryRecCnt(callback){
     }
 }
 
+function getRasterXYFromDataIndex(index,rasterWidth){
+    let xyArr = [];
+    if(index < rasterWidth){
+        xyArr.push(index);
+        xyArr.push(0);
+    }
+    else{
+        let y = Math.trunc(index / rasterWidth);
+        let x = ((index - (y * rasterWidth)) - 1);
+        xyArr.push(x);
+        xyArr.push(y);
+    }
+    return xyArr;
+}
+
 function getTurfPointFeaturesetAll(){
     let pntCoords;
     let geojsonStr;
@@ -2407,6 +2597,13 @@ function hideFeature(feature){
     feature.setStyle(invisibleStyle);
 }
 
+function hideVectorizeRasterByGridTargetPolygon(){
+    rasteranalysissource.clear();
+    rasterAnalysisInteraction.getFeatures().clear();
+    document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").style.display = "block";
+    document.getElementById("vectorizeRasterByGridTargetPolyHideButton").style.display = "none";
+}
+
 function lazyLoadPoints(index,callback){
     let params;
     let url;
@@ -2524,7 +2721,67 @@ function loadPoints(){
     }
 }
 
-function loadServerLayer(id,file){
+function loadPointWFSLayer(index){
+    pointvectorsource.clear();
+    let processed = 0;
+    do{
+        lazyLoadPoints(index,function(res){
+            const format = new ol.format.GeoJSON();
+            let features = format.readFeatures(res, {
+                featureProjection: 'EPSG:3857'
+            });
+            if(toggleSelectedPoints){
+                features = features.filter(function (feature){
+                    const occid = Number(feature.get('occid'));
+                    return (selections.indexOf(occid) !== -1);
+                });
+            }
+            primeSymbologyData(features);
+            pointvectorsource.addFeatures(features);
+            if(loadPointsEvent){
+                const pointextent = pointvectorsource.getExtent();
+                map.getView().fit(pointextent,map.getSize());
+            }
+        });
+        processed = processed + lazyLoadCnt;
+        index++;
+    }
+    while(processed < queryRecCnt);
+
+    clustersource = new ol.source.PropertyCluster({
+        distance: clusterDistance,
+        source: pointvectorsource,
+        clusterkey: clusterKey,
+        indexkey: 'occid',
+        geometryFunction: function(feature){
+            if(dateSliderActive){
+                if(validateFeatureDate(feature)){
+                    return feature.getGeometry();
+                }
+                else{
+                    return null;
+                }
+            }
+            else{
+                return feature.getGeometry();
+            }
+        }
+    });
+
+    layersArr['pointv'].setStyle(getPointStyle);
+    if(clusterPoints){
+        layersArr['pointv'].setSource(clustersource);
+    }
+    else{
+        layersArr['pointv'].setSource(pointvectorsource);
+    }
+    layersArr['heat'].setSource(pointvectorsource);
+    if(showHeatMap){
+        layersArr['heat'].setVisible(true);
+    }
+}
+
+function loadServerLayer(id,name,file){
     showWorking();
     const zIndex = layerOrderArr.length + 1;
     const filenameParts = file.split('.');
@@ -2598,28 +2855,55 @@ function loadServerLayer(id,file){
             });
         });
     }
-    else if(fileType === 'tif'){
+    else if(fileType === 'tif' || fileType === 'tiff'){
         fetch(('../content/spatial/' + file)).then((fileFetch) => {
             fileFetch.blob().then((blob) => {
                 blob.arrayBuffer().then((data) => {
                     const extent = ol.extent.createEmpty();
                     const tiff = GeoTIFF.parse(data);
                     const image = tiff.getImage();
-                    const imageIndex = id + 'Image';
-                    layersArr[imageIndex] = image;
+                    const dataIndex = id + 'Data';
                     const rawBox = image.getBoundingBox();
                     const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
                     const bands = image.readRasters();
+                    const meta = image.getFileDirectory();
+                    const x_min = meta.ModelTiepoint[3];
+                    const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                    const y_min = meta.ModelTiepoint[4];
+                    const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+                    const imageWidth = image.getWidth();
+                    const imageHeight = image.getHeight();
+                    const colorScale = document.getElementById(('rasterColorScale-' + id)).value;
+                    let minValue = 0;
+                    let maxValue = 0;
+                    bands[0].forEach(function(item, index) {
+                        if(item < minValue && ((minValue - item) < 5000)){
+                            minValue = item;
+                        }
+                        if(item > maxValue){
+                            maxValue = item;
+                        }
+                    });
+                    layersArr[dataIndex] = {};
+                    layersArr[dataIndex]['data'] = bands[0];
+                    layersArr[dataIndex]['bbox'] = rawBox;
+                    layersArr[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
+                    layersArr[dataIndex]['x_min'] = x_min;
+                    layersArr[dataIndex]['x_max'] = x_max;
+                    layersArr[dataIndex]['y_min'] = y_min;
+                    layersArr[dataIndex]['y_max'] = y_max;
+                    layersArr[dataIndex]['imageWidth'] = imageWidth;
+                    layersArr[dataIndex]['imageHeight'] = imageHeight;
+                    layersArr[dataIndex]['minValue'] = minValue;
+                    layersArr[dataIndex]['maxValue'] = maxValue;
                     const canvasElement = document.createElement('canvas');
-                    const minValue = 0;
-                    const maxValue = 1200;
                     const plot = new plotty.plot({
                         canvas: canvasElement,
                         data: bands[0],
-                        width: image.getWidth(),
-                        height: image.getHeight(),
+                        width: imageWidth,
+                        height: imageHeight,
                         domain: [minValue, maxValue],
-                        colorScale: 'earth'
+                        colorScale: colorScale
                     });
                     plot.render();
                     layersArr[id].setSource(new ol.source.ImageStatic({
@@ -2636,6 +2920,7 @@ function loadServerLayer(id,file){
                     ol.extent.extend(extent, bottomLeft.getExtent());
                     ol.extent.extend(extent, bottomRight.getExtent());
                     map.getView().fit(extent, map.getSize());
+                    addRasterLayerToTargetList(id,name);
                     hideWorking();
                 });
             });
@@ -2755,6 +3040,7 @@ function primeSymbologyData(features){
 
 function processAddLayerControllerElement(lArr,parentElement,active){
     const layerDivId = 'layer-' + lArr['id'];
+    const raster = (lArr['fileType'] === 'tif' || lArr['fileType'] === 'tiff');
     if(!document.getElementById(layerDivId)){
         const layerDiv = buildLayerControllerLayerElement(lArr,active);
         if(lArr['id'] === 'pointv'){
@@ -2763,7 +3049,7 @@ function processAddLayerControllerElement(lArr,parentElement,active){
         else{
             parentElement.appendChild(layerDiv);
         }
-        if(lArr['symbology']){
+        if(lArr['symbology'] && !raster){
             const symbologyOpacityId = '#opacity-' + lArr['id'];
             const symbologyBorderWidthId = '#borderWidth-' + lArr['id'];
             const symbologyPointRadiusId = '#pointRadius-' + lArr['id'];
@@ -2814,7 +3100,7 @@ function processAddLayerControllerElement(lArr,parentElement,active){
             addLayerToSelList(lArr['id'], lArr['layerName'], active);
         }
     }
-    else{
+    else if(active){
         document.getElementById("selectlayerselect").value = lArr['id'];
         setActiveLayer();
     }
@@ -3331,6 +3617,12 @@ function processVectorInteraction(){
     }
 }
 
+function processVectorizeRasterByGridResolutionChange(){
+    if(document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").style.display === "none"){
+        displayVectorizeRasterByGridTargetPolygon();
+    }
+}
+
 function refreshLayerOrder(){
     const layerCount = map.getLayers().getArray().length;
     layersArr['dragdrop1'].setZIndex(layerCount-6);
@@ -3384,9 +3676,24 @@ function removeLayerFromLayerOrderArr(layerId) {
 function removeLayerToSelList(layer){
     const selectobject = document.getElementById("selectlayerselect");
     for (let i = 0; i<selectobject.length; i++){
-        if(selectobject.options[i].value === layer) selectobject.remove(i);
+        if(selectobject.options[i].value === layer){
+            selectobject.remove(i);
+        }
     }
     setActiveLayer();
+}
+
+function removeRasterLayerFromTargetList(layerId){
+    const selectobject = document.getElementById("targetrasterselect");
+    for (let i = 0; i<selectobject.length; i++){
+        if(selectobject.options[i].value === layerId) selectobject.remove(i);
+    }
+    const index = rasterLayersArr.indexOf(layerId);
+    rasterLayersArr.splice(index,1);
+    if(rasterLayersArr.length === 0){
+        document.getElementById("rastertoolspanel").style.display = "none";
+        document.getElementById("rastertoolstab").style.display = "none";
+    }
 }
 
 function removeSelection(c){
@@ -3423,14 +3730,15 @@ function removeSelectionRecord(sel){
 
 function removeServerLayer(id){
     map.removeLayer(layersArr[id]);
-    const imageIndex = id + 'Image';
-    if(layersArr.hasOwnProperty(imageIndex)){
-        delete layersArr[imageIndex];
+    const dataIndex = id + 'Data';
+    if(layersArr.hasOwnProperty(dataIndex)){
+        removeRasterLayerFromTargetList(id);
+        delete layersArr[dataIndex];
     }
     delete layersArr[id];
 }
 
-function removeUserLayer(layerID){
+function removeUserLayer(layerID,raster){
     const layerDivId = "layer-" + layerID;
     if(document.getElementById(layerDivId)){
         const layerDiv = document.getElementById(layerDivId);
@@ -3471,9 +3779,9 @@ function removeUserLayer(layerID){
             map.removeLayer(layersArr[layerID]);
             layersArr[layerID].setSource(null);
             const sourceIndex = dragDropTarget + 'Source';
-            const imageIndex = dragDropTarget + 'Image';
+            const dataIndex = dragDropTarget + 'Data';
             delete layersArr[sourceIndex];
-            delete layersArr[imageIndex];
+            delete layersArr[dataIndex];
             if(layerID === 'dragdrop4') {
                 dragDrop4 = false;
             }
@@ -3483,6 +3791,7 @@ function removeUserLayer(layerID){
             else if(layerID === 'dragdrop6') {
                 dragDrop6 = false;
             }
+            removeRasterLayerFromTargetList(layerID);
         }
     }
     document.getElementById("selectlayerselect").value = 'none';
@@ -4327,17 +4636,29 @@ function toggleServerLayerVisibility(id,name,file,visible){
     const symbologyButtonId = 'layerSymbologyButton-' + id;
     const queryButtonId = 'layerQueryButton-' + id;
     if(visible === true){
-        document.getElementById(sortingScrollerDivId).style.display = 'flex';
-        document.getElementById(symbologyButtonId).style.display = 'block';
-        document.getElementById(queryButtonId).style.display = 'block';
-        loadServerLayer(id,file);
+        if(document.getElementById(sortingScrollerDivId)){
+            document.getElementById(sortingScrollerDivId).style.display = 'flex';
+        }
+        if(document.getElementById(symbologyButtonId)){
+            document.getElementById(symbologyButtonId).style.display = 'block';
+        }
+        if(document.getElementById(queryButtonId)){
+            document.getElementById(queryButtonId).style.display = 'block';
+        }
+        loadServerLayer(id,name,file);
         addLayerToSelList(id,name,false);
         addLayerToLayerOrderArr(id);
     }
     else{
-        document.getElementById(sortingScrollerDivId).style.display = 'none';
-        document.getElementById(symbologyButtonId).style.display = 'none';
-        document.getElementById(queryButtonId).style.display = 'none';
+        if(document.getElementById(sortingScrollerDivId)){
+            document.getElementById(sortingScrollerDivId).style.display = 'none';
+        }
+        if(document.getElementById(symbologyButtonId)){
+            document.getElementById(symbologyButtonId).style.display = 'none';
+        }
+        if(document.getElementById(queryButtonId)){
+            document.getElementById(queryButtonId).style.display = 'none';
+        }
         removeServerLayer(id);
         removeLayerToSelList(id);
         removeLayerFromLayerOrderArr(id);
@@ -4430,40 +4751,114 @@ function validateFeatureDate(feature){
     return valid;
 }
 
-function verifyCollForm(){
-    const f = document.getElementById("spatialcollsearchform");
-    let formVerified = false;
-    for(let h=0; h<f.length; h++){
-        if(f.elements[h].name === "db[]" && f.elements[h].checked){
-            formVerified = true;
-            break;
+function vectorizeRasterByData(){
+    showWorking();
+    setTimeout(function() {
+        const turfFeatureArr = [];
+        const targetRaster = document.getElementById("targetrasterselect").value;
+        const valLow = document.getElementById("vectorizeRasterByDataValueLow").value;
+        const valHigh = document.getElementById("vectorizeRasterByDataValueHigh").value;
+        if(targetRaster === ''){
+            alert("Please select a target raster layer.");
+            hideWorking();
         }
-        if(f.elements[h].name === "cat[]" && f.elements[h].checked){
-            formVerified = true;
-            break;
+        else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
+            alert("Please enter high and low numbers for the value range.");
+            hideWorking();
         }
-    }
-    if(formVerified){
-        for(let i=0; i<f.length; i++){
-            if(f.elements[i].name === "cat[]" && f.elements[i].checked){
-                const childrenEle = document.getElementById('cat-' + f.elements[i].value).children;
-                for(let j=0; j<childrenEle.length; j++){
-                    if(childrenEle[j].tagName === "DIV"){
-                        const divChildren = childrenEle[j].children;
-                        for(let k=0; k<divChildren.length; k++){
-                            const divChildren2 = divChildren[k].children;
-                            for(let l=0; l<divChildren2.length; l++){
-                                if(divChildren2[l].tagName === "INPUT"){
-                                    divChildren2[l].checked = false;
-                                }
-                            }
+        else{
+            const geoJSONFormat = new ol.format.GeoJSON();
+            const dataIndex = targetRaster + 'Data';
+            const dataObj = layersArr[dataIndex];
+            const box = [dataObj['bbox'][0],dataObj['bbox'][1] - (dataObj['bbox'][3] - dataObj['bbox'][1]), dataObj['bbox'][2], dataObj['bbox'][1]];
+            dataObj['data'].forEach(function(item, index) {
+                if(Number(item) >= Number(valLow) && Number(item) <= Number(valHigh)){
+                    const xyArr = getRasterXYFromDataIndex(index,dataObj['imageWidth']);
+                    const lat = box[3] - (((box[3] - box[1]) / dataObj['imageHeight']) * xyArr[1]);
+                    const long = box[0] + (((box[2] - box[0]) / dataObj['imageWidth']) * xyArr[0]);
+                    turfFeatureArr.push(turf.point([long,lat]));
+                }
+            });
+            const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
+            let concavepoly = '';
+            try{
+                const options = {units: 'kilometers', maxEdge: dataObj['resolution']};
+                concavepoly = turf.concave(turfFeatureCollection,options);
+            }
+            catch(e){}
+            if(concavepoly){
+                const cnvepoly = geoJSONFormat.readFeature(concavepoly);
+                cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
+                selectsource.addFeature(cnvepoly);
+            }
+            hideWorking();
+        }
+    }, 50);
+}
+
+function vectorizeRasterByGrid(){
+    showWorking();
+    setTimeout(function() {
+        let selectedClone;
+        const turfFeatureArr = [];
+        const targetRaster = document.getElementById("targetrasterselect").value;
+        const valLow = document.getElementById("vectorizeRasterByGridValueLow").value;
+        const valHigh = document.getElementById("vectorizeRasterByGridValueHigh").value;
+        const resolutionVal = Number(document.getElementById("vectorizeRasterByGridResolution").value);
+        if(targetRaster === ''){
+            alert("Please select a target raster layer.");
+            hideWorking();
+        }
+        else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
+            alert("Please enter high and low numbers for the value range.");
+            hideWorking();
+        }
+        else{
+            rasterAnalysisInteraction.getFeatures().forEach((feature) => {
+                selectedClone = feature.clone();
+            });
+            if(selectedClone){
+                const geoJSONFormat = new ol.format.GeoJSON();
+                const selectiongeometry = selectedClone.getGeometry();
+                selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
+                const featCoords = JSON.parse(geojsonStr).coordinates;
+                const extentBBox = turf.bbox(turf.polygon(featCoords));
+                const gridPoints = turf.pointGrid(extentBBox, resolutionVal, {units: 'kilometers',mask: turf.polygon(featCoords)});
+                const gridPointFeatures = geoJSONFormat.readFeatures(gridPoints);
+                const dataIndex = targetRaster + 'Data';
+                gridPointFeatures.forEach(function(feature){
+                    const coords = feature.getGeometry().getCoordinates();
+                    const x = Math.floor(layersArr[dataIndex]['imageWidth']*(coords[0] - layersArr[dataIndex]['x_min'])/(layersArr[dataIndex]['x_max'] - layersArr[dataIndex]['x_min']));
+                    const y = layersArr[dataIndex]['imageHeight']-Math.ceil(layersArr[dataIndex]['imageHeight']*(coords[1] - layersArr[dataIndex]['y_max'])/(layersArr[dataIndex]['y_min'] - layersArr[dataIndex]['y_max']));
+                    const rasterDataIndex = (Number(layersArr[dataIndex]['imageWidth']) * y) + x;
+                    if(coords[0] >= layersArr[dataIndex]['x_min'] && coords[0] <= layersArr[dataIndex]['x_max'] && coords[1] <= layersArr[dataIndex]['y_min'] && coords[1] >= layersArr[dataIndex]['y_max']){
+                        if(Number(layersArr[dataIndex]['data'][rasterDataIndex]) >= Number(valLow) && Number(layersArr[dataIndex]['data'][rasterDataIndex]) <= Number(valHigh)){
+                            turfFeatureArr.push(turf.point(coords));
                         }
                     }
+                });
+                const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
+                let concavepoly = '';
+                try{
+                    const maxEdgeVal = Number(resolutionVal) + (Number(resolutionVal) / 2);
+                    const options = {units: 'kilometers', maxEdge: maxEdgeVal};
+                    concavepoly = turf.concave(turfFeatureCollection,options);
                 }
+                catch(e){}
+                if(concavepoly){
+                    const cnvepoly = geoJSONFormat.readFeature(concavepoly);
+                    cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
+                    selectsource.addFeature(cnvepoly);
+                }
+                hideWorking();
+            }
+            else{
+                hideWorking();
+                alert('Click the Show Target button and then click and drag the Target to the area you would like to vectorize. Then click the Grid-Based Vectorize button.');
             }
         }
-    }
-    return formVerified;
+    }, 50);
 }
 
 function writeMySQLWktString(type,geocoords) {

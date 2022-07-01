@@ -304,14 +304,14 @@ function verifyElevValue(inputObj){
 	}
 }
 
-function verifyImageSize(inputObj){
+function verifyImageSize(inputObj,maxSize){
 	if (!window.FileReader) {
 		return;
 	}
 
 	const file = inputObj.files[0];
-	if(file.size > 4000000){
-		alert("Image "+file.name+" file size ("+Math.round(file.size/100000)/10+"mb) is larger than is allowed ("+(4000000/1000000)+"mb)");
+	if(file.size > (maxSize * 1000 * 1000)){
+		alert("Image "+file.name+" file size ("+Math.round(file.size/100000)/10+"MB) is larger than is allowed ("+maxSize+"MB)");
     }
 }
 
