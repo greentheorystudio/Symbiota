@@ -141,16 +141,16 @@ if($isEditor){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - View User Profile</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
-    <script src="../js/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/jquery.js"></script>
-    <script type="text/javascript" src="../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/tiny_mce/tiny_mce.js"></script>
+    <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
+    <script src="../js/external/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../js/external/jquery.js"></script>
+    <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+    <script type="text/javascript" src="../js/external/tiny_mce/tiny_mce.js"></script>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
-    <script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=20210313"></script>
-    <script type="text/javascript" src="../js/symb/shared.js?ver=20220310"></script>
+    <script type="text/javascript" src="../js/profile.viewprofile.js?ver=20210313"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20220310"></script>
 </head>
 <body>
 <?php

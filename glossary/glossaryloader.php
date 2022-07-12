@@ -60,12 +60,12 @@ if($isEditor){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Term Loader</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script src="../js/jquery.manifest.js" type="text/javascript"></script>
-	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../js/symb/glossary.index.js?ver=20220113"></script>
+	<link href="../css/external/jquery-ui.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="../js/external/jquery.js"></script>
+	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
+	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../js/glossary.index.js?ver=20220113"></script>
 	<script type="text/javascript">
         const taxArr = [];
 
@@ -272,7 +272,6 @@ if($isEditor){
 								If the file upload step fails without displaying an error message, it is possible that the 
 								file size exceeds the file upload limits set within your PHP installation (see your php configuration file).
 							</div>
-							<input type='hidden' name='MAX_FILE_SIZE' value='100000000' />
 							<div>
 								<div class="overrideopt">
 									<b>Enter Taxonomic Groups:</b>

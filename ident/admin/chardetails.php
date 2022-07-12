@@ -76,11 +76,11 @@ $headingAdminUrl = 'headingadmin.php';
     <title>Character Admin</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../../js/symb/shared.js?ver=20220310"></script>
+	<link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../js/external/jquery.js"></script>
+	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
+	<script type="text/javascript" src="../../js/shared.js?ver=20220310"></script>
 	<script type="text/javascript">
 		let tabIndex = <?php echo $tabIndex; ?>;
 
@@ -446,7 +446,6 @@ $headingAdminUrl = 'headingadmin.php';
 												<div style="padding-top:2px;">
 													<b>File Upload: </b>
 													<input name="urlupload" type="file" size="50" />
-													<input name="MAX_FILE_SIZE" type="hidden" value="1000000" />
 												</div>
 												<div style="padding-top:2px;">
 													<b>Notes:</b> 

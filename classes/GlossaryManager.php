@@ -50,8 +50,8 @@ class GlossaryManager{
 		if($GLOBALS['IMG_WEB_WIDTH']){
 			$this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
 		}
-		if($GLOBALS['IMG_FILE_SIZE_LIMIT']){
-			$this->webFileSizeLimit = $GLOBALS['IMG_FILE_SIZE_LIMIT'];
+		if($GLOBALS['MAX_UPLOAD_FILESIZE']){
+			$this->webFileSizeLimit = $GLOBALS['MAX_UPLOAD_FILESIZE'];
 		}
  	}
  	
