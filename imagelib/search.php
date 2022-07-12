@@ -40,14 +40,14 @@ if($stArrJson){
 <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Search</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <script src="../js/all.min.js" type="text/javascript"></script>
-	<script src="../js/jquery.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../js/jquery.manifest.js" type="text/javascript"></script>
-	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
-	<script src="../js/symb/images.index.js?ver=20210810" type="text/javascript"></script>
-    <script src="../js/symb/search.term.manager.js?ver=20220330" type="text/javascript"></script>
+	<link href="../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../js/external/all.min.js" type="text/javascript"></script>
+	<script src="../js/external/jquery.js" type="text/javascript"></script>
+	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
+	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
+	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
+	<script src="../js/images.index.js?ver=20210810" type="text/javascript"></script>
+    <script src="../js/search.term.manager.js?ver=20220330" type="text/javascript"></script>
 	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
         $('html').hide();

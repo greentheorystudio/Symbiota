@@ -40,8 +40,8 @@ $headingArr = $charManager->getHeadingArr();
 	<title>Heading Administration</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/symb/shared.js?ver=20220310"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20220310"></script>
 	<script type="text/javascript">
 		function validateHeadingForm(f){
 			if(f.headingname.value === ""){

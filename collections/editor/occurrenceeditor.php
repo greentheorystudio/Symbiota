@@ -494,7 +494,7 @@ else{
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
-    <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
     <?php
     if($crowdSourceMode === 1){
         ?>
@@ -517,10 +517,10 @@ else{
         }
     }
     ?>
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-    <script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
-    <script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
-    <script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery.js?ver=140310" type="text/javascript"></script>
+    <script src="../../js/external/jquery-ui.js?ver=140310" type="text/javascript"></script>
+    <script src="../../js/external/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
     <script type="text/javascript">
         const collId = "<?php echo $collId; ?>";
         const csMode = "<?php echo $crowdSourceMode; ?>";
@@ -553,11 +553,11 @@ else{
             });
         }
     </script>
-    <script type="text/javascript" src="../../js/symb/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20220503"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20220110"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditorimgtools.js?ver=20220407"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
+    <script type="text/javascript" src="../../js/collections.coordinateValidation.js?ver=20210218"></script>
+    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20220503"></script>
+    <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20220110"></script>
+    <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20220407"></script>
+    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210901"></script>
 </head>
 <body>
 <div id="innertext">

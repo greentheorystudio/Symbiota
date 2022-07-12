@@ -56,7 +56,7 @@ if($collMap){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Observation Submission</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
+	<link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript">
 		<?php 
 		$maxUpload = ini_get('upload_max_filesize');
@@ -67,11 +67,11 @@ if($collMap){
 		echo 'var maxUpload = '.$maxUpload.";\n";
 		?>
 	</script>
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
-	<script src="../../js/symb/collections.observationsubmit.js?ver=20220624" type="text/javascript"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+	<script src="../../js/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
+	<script src="../../js/collections.observationsubmit.js?ver=20220624" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");

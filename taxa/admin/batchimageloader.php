@@ -20,11 +20,11 @@ $taxaUtilities = new TaxonomyUtilities();
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxa Batch Image Loader</title>
-    <link href="../../css/bootstrap.min.css?ver=20220225"  rel="stylesheet" />
+    <link href="../../css/external/bootstrap.min.css?ver=20220225" rel="stylesheet" />
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/jquery.fileupload.css" type="text/css" rel="stylesheet" />
-    <link href="../../css/jquery.fileupload-ui.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery.fileupload.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery.fileupload-ui.css" type="text/css" rel="stylesheet" />
     <style type="text/css">
         #fileDropZone {
             border: 3px solid black;
@@ -52,19 +52,19 @@ $taxaUtilities = new TaxonomyUtilities();
             color: #a9a9a9;
         }
     </style>
-    <script src="../../js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="../../js/jquery.js"></script>
-    <script src="../../js/jquery.ui.widget.js"></script>
-    <script src="../../js/tmpl.min.js"></script>
-    <script src="../../js/all.min.js"></script>
-    <script src="../../js/load-image.all.min.js"></script>
-    <script src="../../js/jquery.fileupload.js"></script>
-    <script src="../../js/jquery.fileupload-process.js"></script>
-    <script src="../../js/jquery.fileupload-image.js"></script>
-    <script src="../../js/jquery.fileupload-audio.js"></script>
-    <script src="../../js/jquery.fileupload-video.js"></script>
-    <script src="../../js/jquery.fileupload-validate.js"></script>
-    <script src="../../js/jquery.fileupload-ui.js"></script>
+    <script src="../../js/shared.js?ver=20220310" type="text/javascript"></script>
+    <script src="../../js/external/jquery.js"></script>
+    <script src="../../js/external/jquery.ui.widget.js"></script>
+    <script src="../../js/external/tmpl.min.js"></script>
+    <script src="../../js/external/all.min.js"></script>
+    <script src="../../js/external/load-image.all.min.js"></script>
+    <script src="../../js/external/jquery.fileupload.js"></script>
+    <script src="../../js/external/jquery.fileupload-process.js"></script>
+    <script src="../../js/external/jquery.fileupload-image.js"></script>
+    <script src="../../js/external/jquery.fileupload-audio.js"></script>
+    <script src="../../js/external/jquery.fileupload-video.js"></script>
+    <script src="../../js/external/jquery.fileupload-validate.js"></script>
+    <script src="../../js/external/jquery.fileupload-ui.js"></script>
     <script id="template-upload" type="text/x-tmpl">
         {% for (var i=0, file; file=o.files[i]; i++) { %}
             <tr class="template-upload fade{%=o.options.loadImageFileTypes.test(file.type)?' image':''%}">
