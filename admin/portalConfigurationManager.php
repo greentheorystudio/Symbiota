@@ -536,7 +536,7 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Enable Email Encryption:</span>
                     <span class="field-elem">
-                        <input type="checkbox" id="SMTP_ENCRYPTION" value="1" onchange="processCheckConfigurationChange('SMTP_ENCRYPTION');" <?php echo (array_key_exists('SMTP_ENCRYPTION',$coreConfArr) && $coreConfArr['SMTP_ENCRYPTION']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="SMTP_ENCRYPTION" value="1" onchange="processCheckConfigurationChange('SMTP_ENCRYPTION');processTextConfigurationChange('SMTP_ENCRYPTION_MECHANISM','<?php echo (array_key_exists('SMTP_ENCRYPTION_MECHANISM',$coreConfArr)?$coreConfArr['SMTP_ENCRYPTION_MECHANISM']:''); ?>',false);" <?php echo (array_key_exists('SMTP_ENCRYPTION',$coreConfArr) && $coreConfArr['SMTP_ENCRYPTION']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
