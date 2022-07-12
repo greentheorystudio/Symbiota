@@ -71,15 +71,15 @@ if($editable){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxon Editor: ' .$tid; ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../js/external/jquery.js"></script>
+	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script>
 		let tid = <?php echo $taxonEditorObj->getTid(); ?>;
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script src="../../js/symb/taxa.taxonomyeditor.js?ver=20220201"></script>
+	<script src="../../js/taxa.taxonomyeditor.js?ver=20220201"></script>
 </head>
 <body>
 <?php

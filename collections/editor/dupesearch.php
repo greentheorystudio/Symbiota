@@ -53,7 +53,7 @@ if(!$GLOBALS['IS_ADMIN']){
     <style type="text/css">
         table.styledtable td { white-space: nowrap; }
     </style>
-    <script src="../../js/all.min.js" type="text/javascript"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         const occArr = [];
         <?php

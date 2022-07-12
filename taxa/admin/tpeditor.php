@@ -127,12 +127,12 @@ if($editable && $action){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxon Editor: ' .$tEditor->getSciName(); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/shared.js?ver=20220310"></script>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../../js/tiny_mce/tiny_mce.js"></script>
+	<link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../js/shared.js?ver=20220310"></script>
+	<script type="text/javascript" src="../../js/external/jquery.js"></script>
+	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
+    <script type="text/javascript" src="../../js/external/tiny_mce/tiny_mce.js"></script>
 	<script type="text/javascript">
         tinyMCE.init({
             mode : "textareas",
@@ -167,8 +167,8 @@ if($editable && $action){
 		function submitAddImageForm(){
             const fileBox = document.getElementById("imgfile");
             const file = fileBox.files[0];
-            if(file.size>2000000){
-				alert("The image you are trying to upload is too big, please reduce the file size to less than 2MB");
+            if(file.size > <?php echo ($GLOBALS['MAX_UPLOAD_FILESIZE'] * 1000 * 1000); ?>){
+				alert("The image you are trying to upload is too big. The maximum file size allowed is <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>MB");
 				return false;
 			}
 		}

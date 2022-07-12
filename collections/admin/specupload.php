@@ -167,11 +167,11 @@ $duManager->loadFieldMap();
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Uploader</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/shared.js?ver=20220310" type="text/javascript"></script>
+	<link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20220310" type="text/javascript"></script>
 	<script>
 
 		function verifyFileUploadForm(f){
@@ -215,21 +215,9 @@ $duManager->loadFieldMap();
 
 		function verifyImageSize(inputObj){
 			inputObj.form.ulfnoverride.value = '';
-			if (!window.FileReader) {
-				return;
-			}
-
-			<?php
-			$maxUpload = ini_get('upload_max_filesize');
-			$maxUpload = str_replace('M', '000000', $maxUpload);
-			if($maxUpload > 100000000) {
-                $maxUpload = 100000000;
-            }
-			echo 'var maxUpload = '.$maxUpload.";\n";
-			?>
-            const file = inputObj.files[0];
-            if(file.size > 100000000){
-                let msg = "Import file " + file.name + " (" + Math.round(file.size / 100000) / 10 + "MB) is larger than is allowed (current limit: " + (100000000 / 1000000) + "MB).";
+			const file = inputObj.files[0];
+            if(file.size > <?php echo ($GLOBALS['MAX_UPLOAD_FILESIZE'] * 1000 * 1000); ?>){
+                let msg = "Import file " + file.name + " (" + Math.round(file.size / 100000) / 10 + "MB) is larger than is allowed (current limit: <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>MB).";
                 if(file.name.slice(-3) !== "zip") {
                     msg = msg + " Note that import file size can be reduced by compressing within a zip file. ";
                 }
@@ -573,7 +561,6 @@ $duManager->loadFieldMap();
                                     <input name="uspid" type="hidden" value="<?php echo $uspid;?>" />
                                     <input name="collid" type="hidden" value="<?php echo $collid;?>" />
                                     <input name="uploadtype" type="hidden" value="<?php echo $uploadType;?>" />
-                                    <input name="MAX_FILE_SIZE" type="hidden" value="100000000" />
                                 </div>
                             </div>
                         </fieldset>
