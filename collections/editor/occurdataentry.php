@@ -50,17 +50,17 @@ if($GLOBALS['SYMB_UID']){
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
-	<link href="../../css/jquery-ui.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/external/jquery-ui.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/occureditor.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
         const collId = "<?php echo $collid; ?>";
     </script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20220503"></script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20220110"></script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
+	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20220503"></script>
+	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20220110"></script>
+	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210901"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");

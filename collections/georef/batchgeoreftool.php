@@ -107,11 +107,11 @@ if($editor && $submitAction){
 		<title>Georeferencing Tools</title>
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-		<link type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" rel="stylesheet" />
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
-		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js"></script>
-		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js"></script>
-		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=20210420"></script>
+		<link type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css" rel="stylesheet" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js"></script>
+		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js"></script>
+		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.georef.batchgeoreftool.js?ver=20210420"></script>
         <script type="text/javascript">
             function openSpatialInputWindow(type) {
                 let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");

@@ -234,11 +234,11 @@ if($action !== 'Update Statistics'){
 			<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Statistics</title>
 			<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 			<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-			<link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" />
-            <script src="../../js/all.min.js" type="text/javascript"></script>
-            <script type="text/javascript" src="../../js/jquery.js"></script>
-			<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-			<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20220330"></script>
+			<link rel="stylesheet" href="../../css/external/jquery-ui.css" type="text/css" />
+            <script src="../../js/external/all.min.js" type="text/javascript"></script>
+            <script type="text/javascript" src="../../js/external/jquery.js"></script>
+			<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
+			<script type="text/javascript" src="../../js/search.term.manager.js?ver=20220330"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
