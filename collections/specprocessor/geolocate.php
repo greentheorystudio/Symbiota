@@ -45,9 +45,9 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		<title>Occurrence Export Manager</title>
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-		<script src="../../js/jquery.js" type="text/javascript"></script>
-		<script src="../../js/symb/shared.js?ver=20220310" type="text/javascript"></script>
-		<script src="../../js/symb/geolocate.js?ver=1.0" type="text/javascript"></script>
+		<script src="../../js/external/jquery.js" type="text/javascript"></script>
+		<script src="../../js/shared.js?ver=20220310" type="text/javascript"></script>
+		<script src="../../js/geolocate.js?ver=1.0" type="text/javascript"></script>
 	</head>
 	<body>
 		<div id="innertext" style="background-color:white;">

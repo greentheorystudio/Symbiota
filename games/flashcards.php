@@ -25,7 +25,7 @@ $sciArr = array();
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-    <script src="../js/all.min.js" type="text/javascript"></script>
+    <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
         const imageArr = [];
         const sciNameArr = [];

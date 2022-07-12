@@ -79,7 +79,7 @@ if($collid){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' ' .($collid?$collData['collectionname']: '') ; ?> Collection Profiles</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+	<link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
     <style type="text/css">
         fieldset {
             background-color: #f9f9f9;
@@ -97,10 +97,10 @@ if($collid){
             font-weight: bold;
         }
     </style>
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/tiny_mce/tiny_mce.js"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/external/tiny_mce/tiny_mce.js"></script>
 	<script>
         tinyMCE.init({
             mode : "textareas",

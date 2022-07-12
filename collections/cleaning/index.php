@@ -36,7 +36,7 @@ if($collMap['colltype'] === 'General Observations'){
 		table.styledtable td { white-space: nowrap; }
 		h3 { text-decoration:underline }
 	</style>
-    <script src="../../js/all.min.js" type="text/javascript"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
 </head>
 <body>
 	<?php

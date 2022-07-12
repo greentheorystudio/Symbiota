@@ -504,7 +504,7 @@ class ProfileManager extends Manager{
             if($loginStr){
                 $subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
                 $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' login name is: '.$loginStr.' ';
-                if($GLOBALS['ADMIN_EMAIL']){
+                if(isset($GLOBALS['ADMIN_EMAIL'])){
                     $bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                 }
                 $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
