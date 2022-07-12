@@ -97,7 +97,7 @@ if($editorCode){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Institution Editor</title>
 	<link type="text/css" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
 	<link type="text/css" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script>
 		function toggle(target){
             const tDiv = document.getElementById(target);

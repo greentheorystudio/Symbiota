@@ -26,8 +26,7 @@ $specImgArr = $occManager->getImageMap();
 						<div style="font-weight:bold;font-size:110%;margin-bottom:5px;">
 							Select an image file located on your computer that you want to upload:
 						</div>
-				    	<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
-						<div>
+				    	<div>
 							<input name='imgfile' type='file' size='70'/>
 						</div>
 						<div style="float:right;text-decoration:underline;font-weight:bold;">

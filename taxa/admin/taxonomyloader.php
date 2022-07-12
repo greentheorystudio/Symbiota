@@ -30,10 +30,10 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxon Loader: </title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-	<script src="../../js/symb/taxa.taxonomyloader.js?ver=20210313"></script>
+	<link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
+	<script type="text/javascript" src="../../js/external/jquery.js"></script>
+	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
+	<script src="../../js/taxa.taxonomyloader.js?ver=20210313"></script>
 </head>
 <body>
 <?php

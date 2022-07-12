@@ -18,14 +18,17 @@ $coreConfArr = $fullConfArr['core'];
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Spatial Configuration Manager</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jscolor/jscolor.js?ver=13" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20220310" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.nestedSortable.js?ver=20220624" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jscolor/jscolor.js?ver=13" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220310" type="text/javascript"></script>
     <style type="text/css">
         .map {
             width:95%;
@@ -33,15 +36,77 @@ $coreConfArr = $fullConfArr['core'];
             margin-left: auto;
             margin-right: auto;
         }
-
         #mapinfo, #mapscale_us, #mapscale_metric {
             display: none;
         }
+        .placeholder {
+            outline: 1px dashed #4183C4;
+        }
+        .layer-group-header {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-content: center;
+            align-items: center;
+        }
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-content: center;
+            align-items: center;
+        }
+        .layer-group-container, .layerContent{
+            background: #FFF;
+        }
+        .layer-group-container{
+            padding: 10px;
+        }
+        .layerContent{
+            padding: 5px;
+        }
+        ol.sortable{
+            padding: 0 10px;
+        }
+        ol.sortable, ol.sortable ol {
+            list-style-type: none;
+        }
+
+        ol.sortable li, ol.sortable ol li {
+            display: list-item;
+        }
+        ol.sortable li, ol.sortable li ol li {
+            border: 1px solid #d4d4d4;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            cursor: move;
+            border-color: #D4D4D4 #D4D4D4 #BCBCBC;
+            background: #EBEBEB;
+            margin: 10px 0;
+        }
+        li.group {
+            padding: 0 5px 5px 5px;
+        }
+        li.layer {
+            padding: 5px 5px 5px 5px;
+        }
+        ol.sortable li ol {
+            padding: 10px;
+        }
     </style>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220215" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220332" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.js?ver=20220622" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.spatial.js?ver=20220626" type="text/javascript"></script>
     <script type="text/javascript">
+        const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
+        let serverayerArrObject;
+        let layerArr;
+        let layerData = {};
+
         $(document).ready(function() {
+            $( "#addLayerDateAquired" ).datepicker({ dateFormat: 'yy-mm-dd' });
+            $( "#editLayerDateAquired" ).datepicker({ dateFormat: 'yy-mm-dd' });
             $('#tabs').tabs({
                 beforeLoad: function( event, ui ) {
                     $(ui.panel).html("<p>Loading...</p>");
@@ -106,17 +171,42 @@ $coreConfArr = $fullConfArr['core'];
                 numberFormat: "n"
             });
             jscolor.init();
-        });
 
-        function formatPath(path){
-            if(path.charAt(path.length - 1) === '/'){
-                path = path.substring(0, path.length - 1);
-            }
-            if(path.charAt(0) !== '/'){
-                path = '/' + path;
-            }
-            return path;
-        }
+            $('ol.sortable').nestedSortable({
+                doNotClear: true,
+                forcePlaceholderSize: true,
+                handle: 'div',
+                helper: 'clone',
+                items: 'li',
+                opacity: .6,
+                placeholder: 'placeholder',
+                revert: 250,
+                tabSize: 0,
+                tolerance: 'pointer',
+                toleranceElement: '> div',
+                maxLevels: 2,
+                expandOnHover: 700,
+                startCollapsed: false,
+                isAllowed: function (placeholder, placeholderParent, currentItem) {
+                    if(!placeholderParent || !currentItem[0].id.startsWith("layerGroup-")){
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+            });
+            $('#layergroupeditwindow').popup({
+                transition: 'all 0.3s',
+                scrolllock: true,
+                blur: false
+            });
+            $('#layereditwindow').popup({
+                transition: 'all 0.3s',
+                scrolllock: true,
+                blur: false
+            });
+        });
     </script>
 </head>
 <body>
@@ -124,10 +214,12 @@ $coreConfArr = $fullConfArr['core'];
 include(__DIR__ . '/../header.php');
 ?>
 <div id="innertext">
+    <div id="statusStr" style="margin:20px;font-weight:bold;color:red;"></div>
     <div id="tabs" style="width:95%;">
         <ul>
             <li><a href='#mapwindow'>Map Window</a></li>
             <li><a href="#symbology">Symbology</a></li>
+            <li><a href="#layers" onclick="setLayersList();">Layers</a></li>
         </ul>
 
         <div id="mapwindow">
@@ -201,7 +293,7 @@ include(__DIR__ . '/../header.php');
                             <input id="shapesPointRadius" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Opacity: </span>
+                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill Opacity: </span>
                             <input id="shapesOpacity" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_OPACITY']; ?>" />
                         </div>
                     </div>
@@ -228,9 +320,43 @@ include(__DIR__ . '/../header.php');
                 </div>
             </fieldset>
             <fieldset style="margin: 10px 0;">
-                <legend><b>Drag and Dropped Vector Layers</b></legend>
+                <legend><b>Drag and Dropped Layers</b></legend>
                 <div style="padding:5px;margin-top:5px;display:flex;flex-direction:column;width:90%;margin-left:auto;margin-right:auto;">
                     <div style="display:flex;justify-content:space-evenly;">
+                        <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
+                            <div style="display:flex;align-items:center;">
+                                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Raster color scale: </span>
+                                <select id="dragDropRasterColorScale">
+                                    <option value="autumn" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'autumn'?'selected':''); ?>>Autumn</option>
+                                    <option value="blackbody" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'blackbody'?'selected':''); ?>>Blackbody</option>
+                                    <option value="bluered" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'bluered'?'selected':''); ?>>Bluered</option>
+                                    <option value="bone" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'bone'?'selected':''); ?>>Bone</option>
+                                    <option value="cool" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'cool'?'selected':''); ?>>Cool</option>
+                                    <option value="copper" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'copper'?'selected':''); ?>>Copper</option>
+                                    <option value="earth" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'earth'?'selected':''); ?>>Earth</option>
+                                    <option value="electric" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'electric'?'selected':''); ?>>Electric</option>
+                                    <option value="greens" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'greens'?'selected':''); ?>>Greens</option>
+                                    <option value="greys" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'greys'?'selected':''); ?>>Greys</option>
+                                    <option value="hot" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'hot'?'selected':''); ?>>Hot</option>
+                                    <option value="hsv" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'hsv'?'selected':''); ?>>Hsv</option>
+                                    <option value="inferno" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'inferno'?'selected':''); ?>>Inferno</option>
+                                    <option value="jet" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'jet'?'selected':''); ?>>Jet</option>
+                                    <option value="magma" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'magma'?'selected':''); ?>>Magma</option>
+                                    <option value="picnic" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'picnic'?'selected':''); ?>>Picnic</option>
+                                    <option value="plasma" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'plasma'?'selected':''); ?>>Plasma</option>
+                                    <option value="portland" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'portland'?'selected':''); ?>>Portland</option>
+                                    <option value="rainbow" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'rainbow'?'selected':''); ?>>Rainbow</option>
+                                    <option value="rdbu" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'rdbu'?'selected':''); ?>>Rdbu</option>
+                                    <option value="spring" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'spring'?'selected':''); ?>>Spring</option>
+                                    <option value="summer" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'summer'?'selected':''); ?>>Summer</option>
+                                    <option value="turbo" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'turbo'?'selected':''); ?>>Turbo</option>
+                                    <option value="viridis" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'viridis'?'selected':''); ?>>Viridis</option>
+                                    <option value="winter" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'winter'?'selected':''); ?>>Winter</option>
+                                    <option value="ylgnbu" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'ylgnbu'?'selected':''); ?>>Ylgnbu</option>
+                                    <option value="ylorrd" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'ylorrd'?'selected':''); ?>>Ylorrd</option>
+                                </select>
+                            </div>
+                        </div>
                         <div style="display:flex;align-items:center;">
                             <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
                             <input id="dragDropBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']; ?>" />
@@ -250,7 +376,7 @@ include(__DIR__ . '/../header.php');
                             <input id="dragDropPointRadius" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Opacity: </span>
+                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill Opacity: </span>
                             <input id="dragDropOpacity" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>" />
                         </div>
                     </div>
@@ -263,147 +389,246 @@ include(__DIR__ . '/../header.php');
                 </div>
             </div>
         </div>
+
+        <div id="layers">
+            <fieldset style="margin: 10px 0;padding:15px;">
+                <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;">
+                    <div style="width:95%;display:flex;justify-content:space-between;margin:auto;">
+                        <div style="display:flex;justify-content:flex-start;gap:10px;">
+                            <div>
+                                <button type="button" onclick="showAddLayer();">Add Layer</button>
+                            </div>
+                            <div>
+                                <button type="button" onclick="showAddLayerGroup();">Add Layer Group</button>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" onclick="saveLayerConfigChanges();">Save Changes</button>
+                        </div>
+                    </div>
+                    <div id="addLayerGroupDiv" style="width:95%;display:none;">
+                        <fieldset style="margin: 10px 0;padding:10px;">
+                            <legend><b>Add Layer Group</b></legend>
+                            <div style="display:flex;justify-content: space-between;">
+                                <div>
+                                    <span style="font-weight:bold;margin-right:10px;font-size:14px;">Group Name: </span>
+                                    <input type="text" id="addLayerGroupName" style="width:400px;" value="" />
+                                </div>
+                                <div style="display:flex;justify-content: flex-end;gap:10px;">
+                                    <button type="button" onclick="hideAddLayerGroup();">Cancel</button>
+                                    <button type="button" onclick="createLayerGroup();">Add</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div id="addLayerDiv" style="width:95%;display:none;">
+                        <fieldset style="margin: 10px 0;padding:10px;">
+                            <legend><b>Add Layer</b></legend>
+                            <div style="display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">File:</div>
+                                <div style="width:550px;display:flex;justify-content:flex-start;">
+                                    <input id='addLayerFile' type='file' onchange="validateFileUpload('add');" />
+                                </div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Layer Name:</div>
+                                <div><input type="text" id="addLayerName" style="width:550px;" value="" /></div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Description:</div>
+                                <div>
+                                    <textarea id="addLayerDescription" style="width:550px;height:60px;resize:vertical;"></textarea>
+                                </div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Provided By:</div>
+                                <div><input type="text" id="addLayerProvidedBy" style="width:550px;" value="" /></div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Source URL:</div>
+                                <div><input type="text" id="addLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL('add');" /></div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
+                                <div style="width:550px;display:flex;justify-content:flex-start;">
+                                    <input type="text" id="addLayerDateAquired" style="width:100px;" />
+                                </div>
+                            </div>
+                            <div style="margin-top:8px;display:flex;justify-content: flex-end;gap:10px;">
+                                <button type="button" onclick="hideAddLayer();">Cancel</button>
+                                <button type="button" onclick="uploadLayerFile();">Add</button>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div>
+                    <ol id="layerList" class="sortable"></ol>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+<div id="layergroupeditwindow" data-role="popup" class="well" style="width:60%;min-width:425px;height:150px;font-size:14px;">
+    <fieldset style="padding:15px;">
+        <div>
+            <span style="font-weight:bold;margin-right:10px;font-size:14px;">Group Name: </span>
+            <input type="text" id="editLayerGroupName" style="width:400px;" value="" />
+            <input type="hidden" id="editLayerGroupId" value="" />
+        </div>
+    </fieldset>
+    <div style="margin-top:15px;width:95%;margin: 15px auto;padding: 0 10px;display:flex;justify-content: space-between;">
+        <div>
+            <button onclick="closePopup('layergroupeditwindow');">Cancel</button>
+        </div>
+        <div style="display:flex;gap:15px;">
+            <div>
+                <button onclick="deleteLayerGroup();">Delete Layer Group</button>
+            </div>
+            <div>
+                <button onclick="saveLayerGroupEdits();">Save Edits</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="layereditwindow" data-role="popup" class="well" style="width:60%;min-width:800px;min-height:300px;font-size:14px;">
+    <fieldset style="padding:15px;">
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Layer Name:</div>
+            <div>
+                <input type="text" id="editLayerName" style="width:550px;" value="" />
+                <input type="hidden" id="editLayerId" value="" />
+            </div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Description:</div>
+            <div>
+                <textarea id="editLayerDescription" style="width:550px;height:60px;resize:vertical;"></textarea>
+            </div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Provided By:</div>
+            <div><input type="text" id="editLayerProvidedBy" style="width:550px;" value="" /></div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Source URL:</div>
+            <div><input type="text" id="editLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL('edit');" /></div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
+            <div style="width:550px;display:flex;justify-content:flex-start;">
+                <input type="text" id="editLayerDateAquired" style="width:100px;" />
+            </div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Uploaded:</div>
+            <div id="editLayerDateUploaded" style="width:550px;display:flex;justify-content:flex-start;"></div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">File:</div>
+            <div id="editLayerFile" style="width:550px;display:flex;justify-content:flex-start;"></div>
+        </div>
+    </fieldset>
+    <fieldset id="editVectorSymbology" style="display:none;margin-top:10px;padding:15px;flex-direction:column;">
+        <legend><b>Symbology</b></legend>
+        <div style="display:flex;justify-content:space-evenly;">
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
+                <input id="editLayerBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" />
+            </div>
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill color: </span>
+                <input id="editLayerFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" />
+            </div>
+        </div>
+        <div style="display:flex;justify-content:space-evenly;margin-top:10px;">
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border width (px): </span>
+                <input id="editLayerBorderWidth" style="width:25px;" />
+            </div>
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Point radius (px): </span>
+                <input id="editLayerPointRadius" style="width:25px;" />
+            </div>
+            <div style="display:flex;align-items:center;">
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill Opacity: </span>
+                <input id="editLayerOpacity" style="width:25px;" />
+            </div>
+        </div>
+    </fieldset>
+    <fieldset id="editRasterSymbology" style="display:none;margin-top:10px;padding:15px;flex-direction:column;">
+        <legend><b>Symbology</b></legend>
+        <div style="display:flex;justify-content:center;align-items:center;">
+            <div>
+                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Raster color scale: </span>
+                <select id="editLayerColorScale">
+                    <option value="autumn">Autumn</option>
+                    <option value="blackbody">Blackbody</option>
+                    <option value="bluered">Bluered</option>
+                    <option value="bone">Bone</option>
+                    <option value="cool">Cool</option>
+                    <option value="copper">Copper</option>
+                    <option value="earth">Earth</option>
+                    <option value="electric">Electric</option>
+                    <option value="greens">Greens</option>
+                    <option value="greys">Greys</option>
+                    <option value="hot">Hot</option>
+                    <option value="hsv">Hsv</option>
+                    <option value="inferno">Inferno</option>
+                    <option value="jet">Jet</option>
+                    <option value="magma">Magma</option>
+                    <option value="picnic">Picnic</option>
+                    <option value="plasma">Plasma</option>
+                    <option value="portland">Portland</option>
+                    <option value="rainbow">Rainbow</option>
+                    <option value="rdbu">Rdbu</option>
+                    <option value="spring">Spring</option>
+                    <option value="summer">Summer</option>
+                    <option value="turbo">Turbo</option>
+                    <option value="viridis">Viridis</option>
+                    <option value="winter">Winter</option>
+                    <option value="ylgnbu">Ylgnbu</option>
+                    <option value="ylorrd">Ylorrd</option>
+                </select>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset id="updateLayerFileBox" style="display:none;margin-top:10px;padding:15px;flex-direction:column;">
+        <div style="display:flex;justify-content:flex-start;align-content:center;align-items:center;gap:15px;">
+            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Update File:</div>
+            <div>
+                <input id='layerFileUpdate' type='file' onchange="validateFileUpload('edit');" />
+            </div>
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:flex-end;align-content:center;align-items:center;">
+            <div>
+                <button onclick="uploadLayerUpdateFile();">Update</button>
+            </div>
+        </div>
+    </fieldset>
+    <div style="margin-top:15px;width:95%;margin: 15px auto;padding: 0 10px;display:flex;justify-content: space-between;">
+        <div>
+            <button onclick="closePopup('layereditwindow');">Cancel</button>
+        </div>
+        <div style="display:flex;gap:15px;">
+            <div>
+                <button onclick="deleteLayer();">Delete Layer</button>
+            </div>
+            <div>
+                <button onclick="openUpdateFileUpload();">Update Layer File</button>
+            </div>
+            <div>
+                <button onclick="saveLayerEdits();">Save Edits</button>
+            </div>
+        </div>
     </div>
 </div>
 <?php
 include(__DIR__ . '/../footer.php');
 ?>
-<script type="text/javascript">
-    function processSaveDisplaySettings(){
-        const data = {};
-        const baseLayerValue = document.getElementById('base-map').value;
-        const zoomValue = map.getView().getZoom();
-        const centerPoint = map.getView().getCenter();
-        const centerPointFixed = ol.proj.transform(centerPoint, 'EPSG:3857', 'EPSG:4326');
-        const centerPointValue = '[' + centerPointFixed.toString() + ']';
-        data['SPATIAL_INITIAL_BASE_LAYER'] = baseLayerValue;
-        data['SPATIAL_INITIAL_ZOOM'] = zoomValue;
-        data['SPATIAL_INITIAL_CENTER'] = centerPointValue;
-        const jsonData = JSON.stringify(data);
-        const http = new XMLHttpRequest();
-        const url = "rpc/configurationModelController.php";
-        let params = 'action=update&data='+jsonData;
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                location.reload();
-            }
-        };
-        http.send(params);
-    }
-
-    function processSaveSymbologySettings(){
-        const data = {};
-        const pointsBorderColorValue = document.getElementById('pointsBorderColor').value;
-        const pointsFillColorValue = document.getElementById('pointsFillColor').value;
-        const pointsBorderWidthValue = $('#pointsBorderWidth').spinner( "value" );
-        const pointsPointRadiusValue = $('#pointsPointRadius').spinner( "value" );
-        const pointsSelectionsBorderColorValue = document.getElementById('pointsSelectionsBorderColor').value;
-        const pointsSelectionsBorderWidthValue = $('#pointsSelectionsBorderWidth').spinner( "value" );
-        const shapesBorderColorValue = document.getElementById('shapesBorderColor').value;
-        const shapesFillColorValue = document.getElementById('shapesFillColor').value;
-        const shapesBorderWidthValue = $('#shapesBorderWidth').spinner( "value" );
-        const shapesPointRadiusValue = $('#shapesPointRadius').spinner( "value" );
-        const shapesOpacityValue = $('#shapesOpacity').spinner( "value" );
-        const shapesSelectionsBorderColorValue = document.getElementById('shapesSelectionsBorderColor').value;
-        const shapesSelectionsFillColorValue = document.getElementById('shapesSelectionsFillColor').value;
-        const shapesSelectionsBorderWidthValue = $('#shapesSelectionsBorderWidth').spinner( "value" );
-        const shapesSelectionsOpacityValue = $('#shapesSelectionsOpacity').spinner( "value" );
-        const dragDropBorderColorValue = document.getElementById('dragDropBorderColor').value;
-        const dragDropFillColorValue = document.getElementById('dragDropFillColor').value;
-        const dragDropBorderWidthValue = $('#dragDropBorderWidth').spinner( "value" );
-        const dragDropPointRadiusValue = $('#dragDropPointRadius').spinner( "value" );
-        const dragDropOpacityValue = $('#dragDropOpacity').spinner( "value" );
-        data['SPATIAL_POINT_FILL_COLOR'] = '';
-        data['SPATIAL_POINT_BORDER_COLOR'] = '';
-        data['SPATIAL_POINT_BORDER_WIDTH'] = '';
-        data['SPATIAL_POINT_POINT_RADIUS'] = '';
-        data['SPATIAL_POINT_SELECTIONS_BORDER_COLOR'] = '';
-        data['SPATIAL_POINT_SELECTIONS_BORDER_WIDTH'] = '';
-        data['SPATIAL_SHAPES_BORDER_COLOR'] = '';
-        data['SPATIAL_SHAPES_FILL_COLOR'] = '';
-        data['SPATIAL_SHAPES_BORDER_WIDTH'] = '';
-        data['SPATIAL_SHAPES_POINT_RADIUS'] = '';
-        data['SPATIAL_SHAPES_OPACITY'] = '';
-        data['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR'] = '';
-        data['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] = '';
-        data['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH'] = '';
-        data['SPATIAL_SHAPES_SELECTIONS_OPACITY'] = '';
-        data['SPATIAL_DRAGDROP_BORDER_COLOR'] = '';
-        data['SPATIAL_DRAGDROP_FILL_COLOR'] = '';
-        data['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '';
-        data['SPATIAL_DRAGDROP_POINT_RADIUS'] = '';
-        data['SPATIAL_DRAGDROP_OPACITY'] = '';
-        const deleteJsonData = JSON.stringify(data);
-        const http = new XMLHttpRequest();
-        const url = "rpc/configurationModelController.php";
-        let params = 'action=delete&data='+deleteJsonData;
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                data['SPATIAL_POINT_FILL_COLOR'] = pointsFillColorValue;
-                data['SPATIAL_POINT_BORDER_COLOR'] = pointsBorderColorValue;
-                data['SPATIAL_POINT_BORDER_WIDTH'] = pointsBorderWidthValue;
-                data['SPATIAL_POINT_POINT_RADIUS'] = pointsPointRadiusValue;
-                data['SPATIAL_POINT_SELECTIONS_BORDER_COLOR'] = pointsSelectionsBorderColorValue;
-                data['SPATIAL_POINT_SELECTIONS_BORDER_WIDTH'] = pointsSelectionsBorderWidthValue;
-                data['SPATIAL_SHAPES_BORDER_COLOR'] = shapesBorderColorValue;
-                data['SPATIAL_SHAPES_FILL_COLOR'] = shapesFillColorValue;
-                data['SPATIAL_SHAPES_BORDER_WIDTH'] = shapesBorderWidthValue;
-                data['SPATIAL_SHAPES_POINT_RADIUS'] = shapesPointRadiusValue;
-                data['SPATIAL_SHAPES_OPACITY'] = shapesOpacityValue;
-                data['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR'] = shapesSelectionsBorderColorValue;
-                data['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] = shapesSelectionsFillColorValue;
-                data['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH'] = shapesSelectionsBorderWidthValue;
-                data['SPATIAL_SHAPES_SELECTIONS_OPACITY'] = shapesSelectionsOpacityValue;
-                data['SPATIAL_DRAGDROP_BORDER_COLOR'] = dragDropBorderColorValue;
-                data['SPATIAL_DRAGDROP_FILL_COLOR'] = dragDropFillColorValue;
-                data['SPATIAL_DRAGDROP_BORDER_WIDTH'] = dragDropBorderWidthValue;
-                data['SPATIAL_DRAGDROP_POINT_RADIUS'] = dragDropPointRadiusValue;
-                data['SPATIAL_DRAGDROP_OPACITY'] = dragDropOpacityValue;
-                const addJsonData = JSON.stringify(data);
-                let params = 'action=add&data='+addJsonData;
-                //console.log(url+'?'+params);
-                http.open("POST", url, true);
-                http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                http.onreadystatechange = function() {
-                    if(http.readyState === 4 && http.status === 200) {
-                        location.reload();
-                    }
-                };
-                http.send(params);
-            }
-        };
-        http.send(params);
-    }
-
-    function processSetDefaultSettings(){
-        document.getElementById('pointsBorderColor').value = '000000';
-        document.getElementById('pointsFillColor').value = 'E69E67';
-        $('#pointsBorderWidth').spinner( "value", 1 );
-        $('#pointsPointRadius').spinner( "value", 7 );
-        document.getElementById('pointsSelectionsBorderColor').value = '10D8E6';
-        $('#pointsSelectionsBorderWidth').spinner( "value", 2 );
-        document.getElementById('shapesBorderColor').value = '3399CC';
-        document.getElementById('shapesFillColor').value = 'FFFFFF';
-        $('#shapesBorderWidth').spinner( "value", 2 );
-        $('#shapesPointRadius').spinner( "value", 5 );
-        $('#shapesOpacity').spinner( "value", 0.4 );
-        document.getElementById('shapesSelectionsBorderColor').value = '0099FF';
-        document.getElementById('shapesSelectionsFillColor').value = 'FFFFFF';
-        $('#shapesSelectionsBorderWidth').spinner( "value", 5 );
-        $('#shapesSelectionsOpacity').spinner( "value", 0.5 );
-        document.getElementById('dragDropBorderColor').value = '000000';
-        document.getElementById('dragDropFillColor').value = 'AAAAAA';
-        $('#dragDropBorderWidth').spinner( "value", 2 );
-        $('#dragDropPointRadius').spinner( "value", 5 );
-        $('#dragDropOpacity').spinner( "value", 0.3 );
-        processSaveSymbologySettings();
-    }
-</script>
+<div class="loadingModal">
+    <div id="loaderAnimation"></div>
+</div>
 </body>
 </html>

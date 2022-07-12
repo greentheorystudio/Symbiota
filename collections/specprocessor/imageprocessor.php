@@ -31,11 +31,11 @@ if($spprid) {
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <style type="text/css">.profileDiv{ clear:both; margin:2px 0 } </style>
-    <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-    <script src="../../js/jquery.js" type="text/javascript"></script>
-    <script src="../../js/jquery-ui.js" type="text/javascript"></script>
-    <script src="../../js/symb/shared.js?ver=20220310" type="text/javascript"></script>
+    <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="../../js/shared.js?ver=20220310" type="text/javascript"></script>
     <script>
         $(function() {
             const dialogArr = ["speckeypattern", "patternreplace", "replacestr", "sourcepath", "targetpath", "imgurl", "webpixwidth", "tnpixwidth", "lgpixwidth", "jpgcompression"];
@@ -520,7 +520,6 @@ if($spprid) {
                             <div id="chooseFileDiv" class="profileDiv" style="clear:both;padding:15px 0;display:none">
                                 <b>Select image data file:</b>
                                 <div style="margin:5px 15px;">
-                                    <input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
                                     <input name='uploadfile' type='file' size='70' value="Choose File" />
                                 </div>
                             </div>
@@ -568,7 +567,6 @@ if($spprid) {
                                     ?>
                                     <div style="font-weight:bold;">Select iDigBio Image Appliance output file</div>
                                     <div style="" title="Upload output file created by iDigBio Image Upload Appliance here.">
-                                        <input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
                                         <input name='idigbiofile' id='idigbiofile' type='file' size='70' value="Choose image alliance output file" />
                                     </div>
                                     <?php

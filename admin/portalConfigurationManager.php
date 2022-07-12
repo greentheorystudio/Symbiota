@@ -20,7 +20,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Portal Configuration Manager</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
     <style type="text/css">
         fieldset {
             background-color: #f9f9f9;
@@ -45,10 +45,10 @@ $databaseProperties = $confManager->getDatabasePropArr();
             font-weight: bold;
         }
     </style>
-    <script src="../js/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/jquery.js?ver=20130917"></script>
-    <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
-    <script type="text/javascript" src="../js/symb/shared.js?ver=20220310"></script>
+    <script src="../js/external/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../js/external/jquery.js?ver=20130917"></script>
+    <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20220310"></script>
     <script type="text/javascript">
         const maxPostSize = <?php echo $confManager->getServerMaxPostSize(); ?>;
         const maxUploadSize = <?php echo $confManager->getServerMaxUploadFilesize(); ?>;
@@ -439,12 +439,6 @@ include(__DIR__ . '/../header.php');
                     </span>
                 </div>
                 <div class="field-block">
-                    <span class="field-label">Maximum Media Upload Filesize (Mb):  <button type="button" onclick="enableProtectedEditing('IMG_FILE_SIZE_LIMIT');">Edit</button></span>
-                    <span class="field-elem">
-                        <input type="text" id="IMG_FILE_SIZE_LIMIT" value="<?php echo (array_key_exists('IMG_FILE_SIZE_LIMIT',$coreConfArr)?$coreConfArr['IMG_FILE_SIZE_LIMIT']:''); ?>" style="width:600px;" onchange="processUploadFilesizeConfigurationChange('IMG_FILE_SIZE_LIMIT','<?php echo (array_key_exists('IMG_FILE_SIZE_LIMIT',$coreConfArr)?$coreConfArr['IMG_FILE_SIZE_LIMIT']:''); ?>');" disabled />
-                    </span>
-                </div>
-                <div class="field-block">
                     <span class="field-label">Portal GUID:  <button type="button" onclick="enableProtectedEditing('PORTAL_GUID');">Edit</button></span>
                     <span class="field-elem">
                         <input type="text" id="PORTAL_GUID" value="<?php echo (array_key_exists('PORTAL_GUID',$coreConfArr)?$coreConfArr['PORTAL_GUID']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('PORTAL_GUID','<?php echo (array_key_exists('PORTAL_GUID',$coreConfArr)?$coreConfArr['PORTAL_GUID']:''); ?>',true);" disabled />
@@ -542,7 +536,7 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Enable Email Encryption:</span>
                     <span class="field-elem">
-                        <input type="checkbox" id="SMTP_ENCRYPTION" value="1" onchange="processCheckConfigurationChange('SMTP_ENCRYPTION');" <?php echo (array_key_exists('SMTP_ENCRYPTION',$coreConfArr) && $coreConfArr['SMTP_ENCRYPTION']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="SMTP_ENCRYPTION" value="1" onchange="processCheckConfigurationChange('SMTP_ENCRYPTION');processTextConfigurationChange('SMTP_ENCRYPTION_MECHANISM','<?php echo (array_key_exists('SMTP_ENCRYPTION_MECHANISM',$coreConfArr)?$coreConfArr['SMTP_ENCRYPTION_MECHANISM']:''); ?>',false);" <?php echo (array_key_exists('SMTP_ENCRYPTION',$coreConfArr) && $coreConfArr['SMTP_ENCRYPTION']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
