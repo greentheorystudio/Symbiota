@@ -16,15 +16,15 @@ class PluginsManager {
         $initialPlaceholder = ($this->quickSearchDefaultSetting === 'sciname'?$this->quickSearchScinamePlaceholder:$this->quickSearchCommonPlaceholder);
         $clientRoot = $GLOBALS['CLIENT_ROOT'];
 return <<<EOD
-    <link href="$clientRoot/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="$clientRoot/css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
     <script type='text/javascript'>
         if(!window.jQuery){
             const jqresource = document.createElement("script");
-            jqresource.src = "$clientRoot/js/jquery.js";
+            jqresource.src = "$clientRoot/js/external/jquery.js";
             document.getElementsByTagName("head")[0].appendChild(jqresource);
             jqresource.onload = function(){
                 const jquiresource = document.createElement("script");
-                jquiresource.src = "$clientRoot/js/jquery-ui.js";
+                jquiresource.src = "$clientRoot/js/external/jquery-ui.js";
                 document.getElementsByTagName("head")[0].appendChild(jquiresource);
                 jquiresource.onload = function() {
                     initializeQuickSearch();
