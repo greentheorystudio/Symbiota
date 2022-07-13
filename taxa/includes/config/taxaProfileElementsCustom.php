@@ -155,7 +155,7 @@ ob_start();
 ?>
     <div id="img-div">
         <?php
-        $taxonManager->echoImages(1,0,1,'sciname');
+        $taxonManager->echoImages(0,0,1,'sciname');
         ?>
     </div>
 <?php
