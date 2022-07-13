@@ -276,10 +276,10 @@ ob_start();
 <div id="img-div">
     <?php
     if(!$showAllImages && ($taxonManager->getImageCount() > 100)){
-        $taxonManager->echoImages(1, 100);
+        $taxonManager->echoImages(0, 100);
     }
     else{
-        $taxonManager->echoImages(1);
+        $taxonManager->echoImages(0);
     }
     ?>
 </div>
@@ -288,7 +288,7 @@ $imgDiv = ob_get_clean();
 
 ob_start();
 ?>
-<div id="img-tab-div" style="clear:both;display:<?php echo ((($taxonManager->getImageCount() > 6) && !$showAllImages)?'block':'none');?>;">
+<div id="img-tab-div" style="clear:both;display:<?php echo ((($taxonManager->getImageCount() > 0) && !$showAllImages)?'block':'none');?>;">
     <?php
     if($taxonManager->getImageCount() > 100){
         if($taxonRank < 140){
