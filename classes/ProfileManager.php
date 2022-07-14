@@ -63,7 +63,7 @@ class ProfileManager extends Manager{
             $result = $this->conn->query($this->authSql);
             if($row = $result->fetch_object()){
                 $this->uid = $row->uid;
-                $this->validated = (int)$row->validated;
+                $this->validated = $row->validated ? (int)$row->validated : 0;
                 $this->displayName = $row->firstname;
                 if(strlen($this->displayName) > 15) {
                     $this->displayName = $this->userName;
