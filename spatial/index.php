@@ -1,14 +1,9 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
-include_once(__DIR__ . '/../classes/OccurrenceManager.php');
-include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 180);
 
-$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
-$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $windowType = array_key_exists('windowtype',$_REQUEST)?$_REQUEST['windowtype']:'analysis';
 $clusterPoints = !(array_key_exists('clusterpoints', $_REQUEST) && $_REQUEST['clusterpoints'] === 'false');
 
@@ -16,8 +11,6 @@ $inputWindowMode = false;
 $inputWindowModeTools = array();
 $inputWindowSubmitText = '';
 $displayWindowMode = false;
-$stArr = array();
-$validStArr = false;
 
 if(strncmp($windowType, 'input', 5) === 0){
     $inputWindowMode = true;
@@ -35,33 +28,6 @@ if(strncmp($windowType, 'input', 5) === 0){
         $inputWindowSubmitText = 'Criteria';
     }
 }
-
-if(file_exists(__DIR__ . '/../config/includes/searchVarCustom.php')){
-    include(__DIR__ . '/../config/includes/searchVarCustom.php');
-}
-
-$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
-if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = $GLOBALS['DEFAULTCATID'];
-}
-
-$occManager = new OccurrenceManager();
-$spatialManager = new SpatialModuleManager();
-
-if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
-    if($occManager->validateSearchTermsArr($stArr)){
-        $validStArr = true;
-    }
-}
-
-$collList = $occManager->getFullCollectionList($catId);
-$specArr = ($collList['spec'] ?? null);
-$obsArr = ($collList['obs'] ?? null);
-
-$datasetArr = $occManager->getDatasetArr();
-
-$dbArr = array();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -76,7 +42,7 @@ $dbArr = array();
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css" type="text/css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220626" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220713" type="text/css" rel="stylesheet" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
@@ -94,175 +60,9 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.js?ver=20220622" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220622" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20220330" type="text/javascript"></script>
-    <script type="text/javascript">
-        let searchTermsArr = {};
-
-        $(function() {
-            let winHeight = $(window).height();
-            winHeight = winHeight + "px";
-            document.getElementById('spatialpanel').style.height = winHeight;
-
-            $("#sidepanel-accordion").accordion({
-                icons: null,
-                collapsible: true,
-                heightStyle: "fill"
-            });
-        });
-
-        $(window).resize(function(){
-            let winHeight = $(window).height();
-            winHeight = winHeight + "px";
-            document.getElementById('spatialpanel').style.height = winHeight;
-            $("#sidepanel-accordion").accordion("refresh");
-        });
-
-        $(document).on("pageloadfailed", function(event){
-            event.preventDefault();
-        });
-
-        $(document).ready(function() {
-            setLayersController();
-            if(document.getElementById("taxa")){
-                $( "#taxa" )
-                    .bind( "keydown", function( event ) {
-                        if ( event.keyCode == $.ui.keyCode.TAB &&
-                            $( this ).data( "autocomplete" ).menu.active ) {
-                            event.preventDefault();
-                        }
-                    })
-                    .autocomplete({
-                        source: function( request, response ) {
-                            const t = Number(document.getElementById("taxontype").value);
-                            let rankLow = '';
-                            let rankHigh = '';
-                            let rankLimit = '';
-                            let source = '';
-                            if(t === 5){
-                                source = '../webservices/autofillvernacular.php';
-                            }
-                            else{
-                                source = '../webservices/autofillsciname.php';
-                            }
-                            if(t === 4){
-                                rankLow = 21;
-                                rankHigh = 139;
-                            }
-                            else if(t === 2){
-                                rankLimit = 140;
-                            }
-                            else if(t === 3){
-                                rankLow = 141;
-                            }
-                            else{
-                                rankLow = 140;
-                            }
-                            //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
-                            $.getJSON( source, {
-                                term: extractLast( request.term ),
-                                rlow: rankLow,
-                                rhigh: rankHigh,
-                                rlimit: rankLimit,
-                                hideauth: true,
-                                limit: 20
-                            }, response );
-                        },
-                        appendTo: "#taxa_autocomplete",
-                        search: function() {
-                            const term = extractLast( this.value );
-                            if ( term.length < 4 ) {
-                                return false;
-                            }
-                        },
-                        focus: function() {
-                            return false;
-                        },
-                        select: function( event, ui ) {
-                            const terms = split( this.value );
-                            terms.pop();
-                            terms.push( ui.item.value );
-                            this.value = terms.join( ", " );
-                            processTaxaParamChange();
-                            return false;
-                        }
-                    },{});
-            }
-
-            spatialModuleInitialising = true;
-            initializeSearchStorage(<?php echo $queryId; ?>);
-
-            $('#criteriatab').tabs({
-                beforeLoad: function( event, ui ) {
-                    $(ui.panel).html("<p>Loading...</p>");
-                }
-            });
-            $('#recordstab').tabs({
-                beforeLoad: function( event, ui ) {
-                    $(ui.panel).html("<p>Loading...</p>");
-                }
-            });
-            $('#vectortoolstab').tabs({
-                beforeLoad: function( event, ui ) {
-                    $(ui.panel).html("<p>Loading...</p>");
-                }
-            });
-            $('#addLayers').popup({
-                transition: 'all 0.3s',
-                scrolllock: true,
-                blur: false
-            });
-            $('#infopopup').popup({
-                transition: 'all 0.3s'
-            });
-            $('#datasetmanagement').popup({
-                transition: 'all 0.3s',
-                scrolllock: true
-            });
-            $('#csvoptions').popup({
-                transition: 'all 0.3s',
-                scrolllock: true
-            });
-            $('#mapsettings').popup({
-                transition: 'all 0.3s',
-                scrolllock: true
-            });
-            $('#layerqueryselector').popup({
-                transition: 'all 0.3s',
-                scrolllock: true,
-                closetransitionend: function(event, ui) {
-                    clearLayerQuerySelector();
-                }
-            });
-
-            <?php
-            if(!$clusterPoints){
-                echo 'deactivateClustering();';
-            }
-            if($inputWindowMode){
-                echo 'loadInputParentParams();';
-            }
-            if($queryId || $validStArr){
-                if($validStArr){
-                    ?>
-                    initializeSearchStorage(<?php echo $queryId; ?>);
-                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-                    <?php
-                }
-                ?>
-                searchTermsArr = getSearchTermsArr();
-                if(validateSearchTermsArr(searchTermsArr)){
-                    setInputFormBySearchTermsArr();
-                    createShapesFromSearchTermsArr();
-                    setCollectionForms();
-                    loadPoints();
-                }
-                <?php
-            }
-            ?>
-            spatialModuleInitialising = false;
-        });
-    </script>
+    <?php include_once(__DIR__ . '/includes/spatialinitialize.php'); ?>
 </head>
 <body class="mapbody">
 <div data-role="page" id="page1">
@@ -297,32 +97,11 @@ $dbArr = array();
     <?php include_once(__DIR__ . '/includes/controlpanel.php'); ?>
 </div>
 
+<?php include_once(__DIR__ . '/includes/spatialvars.php'); ?>
 <script type="text/javascript">
-    const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
     const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
-    const pointLayerFillColor = '<?php echo $GLOBALS['SPATIAL_POINT_FILL_COLOR']; ?>';
-    const pointLayerBorderColor = '<?php echo $GLOBALS['SPATIAL_POINT_BORDER_COLOR']; ?>';
-    const pointLayerBorderWidth = <?php echo $GLOBALS['SPATIAL_POINT_BORDER_WIDTH']; ?>;
-    const pointLayerPointRadius = <?php echo $GLOBALS['SPATIAL_POINT_POINT_RADIUS']; ?>;
-    const pointLayerSelectionsBorderColor = '<?php echo $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_COLOR']; ?>';
-    const pointLayerSelectionsBorderWidth = <?php echo $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_WIDTH']; ?>;
-    const shapesFillColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_FILL_COLOR']; ?>';
-    const shapesBorderColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR']; ?>';
-    const shapesBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH']; ?>;
-    const shapesPointRadius = <?php echo $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']; ?>;
-    const shapesOpacity = '<?php echo $GLOBALS['SPATIAL_SHAPES_OPACITY']; ?>';
-    const shapesSelectionsBorderColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR']; ?>';
-    const shapesSelectionsFillColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR']; ?>';
-    const shapesSelectionsBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH']; ?>;
-    const shapesSelectionsOpacity = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY']; ?>';
-    const dragDropFillColor = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR']; ?>';
-    const dragDropBorderColor = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']; ?>';
-    const dragDropBorderWidth = <?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH']; ?>;
-    const dragDropPointRadius = <?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>;
-    const dragDropOpacity = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>';
-    const dragDropRasterColorScale = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']; ?>';
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');
@@ -425,16 +204,7 @@ $dbArr = array();
         zIndex: 10,
         source: pointvectorsource,
         weight: function (feature) {
-            let showPoint = true;
-            if (dateSliderActive) {
-                showPoint = validateFeatureDate(feature);
-            }
-            if (showPoint) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
+            return 1;
         },
         gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
         blur: parseInt(heatMapBlur.toString(), 10),
@@ -804,11 +574,11 @@ $dbArr = array();
     });
 
     const mapView = new ol.View({
-        zoom: <?php echo $GLOBALS['SPATIAL_INITIAL_ZOOM']; ?>,
+        zoom: initialMapZoom,
         projection: 'EPSG:3857',
         minZoom: 2.5,
         maxZoom: 19,
-        center: ol.proj.transform(<?php echo $GLOBALS['SPATIAL_INITIAL_CENTER']; ?>, 'EPSG:4326', 'EPSG:3857'),
+        center: ol.proj.transform(initialMapCenter, 'EPSG:4326', 'EPSG:3857'),
     });
 
     const map = new ol.Map({
@@ -1029,7 +799,6 @@ $dbArr = array();
         let infoHTML;
         if(evt.originalEvent.altKey){
             if(activeLayer === 'pointv'){
-                infoHTML = '';
                 let targetFeature = '';
                 let iFeature = '';
                 if(clickedFeatures.length === 1){
@@ -1047,26 +816,7 @@ $dbArr = array();
                     return;
                 }
                 if(iFeature){
-                    infoHTML += '<b>occid:</b> '+iFeature.get('occid')+'<br />';
-                    infoHTML += '<b>CollectionName:</b> '+(iFeature.get('CollectionName')?iFeature.get('CollectionName'):'')+'<br />';
-                    infoHTML += '<b>catalogNumber:</b> '+(iFeature.get('catalogNumber')?iFeature.get('catalogNumber'):'')+'<br />';
-                    infoHTML += '<b>otherCatalogNumbers:</b> '+(iFeature.get('otherCatalogNumbers')?iFeature.get('otherCatalogNumbers'):'')+'<br />';
-                    infoHTML += '<b>family:</b> '+(iFeature.get('family')?iFeature.get('family'):'')+'<br />';
-                    infoHTML += '<b>sciname:</b> '+(iFeature.get('sciname')?iFeature.get('sciname'):'')+'<br />';
-                    infoHTML += '<b>recordedBy:</b> '+(iFeature.get('recordedBy')?iFeature.get('recordedBy'):'')+'<br />';
-                    infoHTML += '<b>recordNumber:</b> '+(iFeature.get('recordNumber')?iFeature.get('recordNumber'):'')+'<br />';
-                    infoHTML += '<b>eventDate:</b> '+(iFeature.get('displayDate')?iFeature.get('displayDate'):'')+'<br />';
-                    infoHTML += '<b>habitat:</b> '+(iFeature.get('habitat')?iFeature.get('habitat'):'')+'<br />';
-                    infoHTML += '<b>associatedTaxa:</b> '+(iFeature.get('associatedTaxa')?iFeature.get('associatedTaxa'):'')+'<br />';
-                    infoHTML += '<b>country:</b> '+(iFeature.get('country')?iFeature.get('country'):'')+'<br />';
-                    infoHTML += '<b>StateProvince:</b> '+(iFeature.get('StateProvince')?iFeature.get('StateProvince'):'')+'<br />';
-                    infoHTML += '<b>county:</b> '+(iFeature.get('county')?iFeature.get('county'):'')+'<br />';
-                    infoHTML += '<b>locality:</b> '+(iFeature.get('locality')?iFeature.get('locality'):'')+'<br />';
-                    if(iFeature.get('thumbnailurl')){
-                        const thumburl = iFeature.get('thumbnailurl');
-                        infoHTML += '<img src="'+thumburl+'" style="height:150px" />';
-                    }
-                    popupcontent.innerHTML = infoHTML;
+                    popupcontent.innerHTML = getPointFeatureInfoHtml(iFeature);
                     popupoverlay.setPosition(evt.coordinate);
                 }
                 else{
@@ -1187,8 +937,6 @@ $dbArr = array();
     setTransformHandleStyle();
 </script>
 
-<?php include_once(__DIR__ . '/includes/datasetmanagement.php'); ?>
-
 <?php include_once(__DIR__ . '/includes/mapsettings.php'); ?>
 
 <?php include_once(__DIR__ . '/includes/layerqueryselector.php'); ?>
@@ -1197,42 +945,10 @@ $dbArr = array();
 
 <?php include_once(__DIR__ . '/includes/layercontroller.php'); ?>
 
-<?php include_once(__DIR__ . '/../collections/csvoptions.php'); ?>
-
-<!-- Data Download Form -->
-<div style="display:none;">
-    <form name="datadownloadform" id="datadownloadform" action="../collections/rpc/datadownloader.php" method="post">
-        <input id="starrjson" name="starrjson" type="hidden" />
-        <input id="dh-q" name="dh-q" type="hidden" />
-        <input id="dh-fq" name="dh-fq" type="hidden" />
-        <input id="dh-fl" name="dh-fl" type="hidden" />
-        <input id="dh-rows" name="dh-rows" type="hidden" />
-        <input id="dh-type" name="dh-type" type="hidden" />
-        <input id="dh-filename" name="dh-filename" type="hidden" />
-        <input id="dh-contentType" name="dh-contentType" type="hidden" />
-        <input id="dh-selections" name="dh-selections" type="hidden" />
-        <input id="schemacsv" name="schemacsv" type="hidden" />
-        <input id="identificationscsv" name="identificationscsv" type="hidden" />
-        <input id="imagescsv" name="imagescsv" type="hidden" />
-        <input id="formatcsv" name="formatcsv" type="hidden" />
-        <input id="zipcsv" name="zipcsv" type="hidden" />
-        <input id="csetcsv" name="csetcsv" type="hidden" />
-    </form>
-</div>
-
-<!-- Dataset Form -->
-<div style="display:none;">
-    <form name="datasetform" id="datasetform" action="../collections/datasets/datasetHandler.php" method="post" target="_blank">
-        <input id="dsstarrjson" name="dsstarrjson" type="hidden" />
-        <input id="selectedtargetdatasetid" name="targetdatasetid" type="hidden" />
-        <input id="occarrjson" name="occarrjson" type="hidden" />
-        <input id="datasetformaction" name="action" type="hidden" />
-    </form>
-</div>
+<?php include_once(__DIR__ . '/includes/spatialfooter.php'); ?>
 
 <div class="loadingModal">
     <div id="loaderAnimation"></div>
 </div>
-<input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />
 </body>
 </html>

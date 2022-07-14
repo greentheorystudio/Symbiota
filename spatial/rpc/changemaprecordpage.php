@@ -123,11 +123,11 @@ if($occArr){
 		$infoBoxLabel = "'".($recArr['c'] ?: 'Not available')."'";
 		$recordListHtml .= '<tr '.(($trCnt%2)?'class="alt"':'').' id="tr'.$occId.'" >';
 		$recordListHtml .= '<td style="width:10px;">';
-		$recordListHtml .= '<input type="checkbox" class="occcheck" id="ch'.$occId.'" name="occid[]" value="'.$occId.'" onchange="processCheckSelection(this);" '.(in_array($occId, $selections, true) ? 'checked' : '').' />';
+		$recordListHtml .= '<input type="checkbox" class="reccheck" id="ch'.$occId.'" name="occid[]" value="'.$occId.'" onchange="processCheckSelection(this);" '.(in_array($occId, $selections, true) ? 'checked' : '').' />';
 		$recordListHtml .= '</td>';
 		$recordListHtml .= '<td id="cat'.$occId.'" >'.wordwrap($recArr['cat'], 7, "<br />\n", true).'</td>';
 		$recordListHtml .= '<td id="label'.$occId.'" >';
-		$recordListHtml .= '<a href="#" onmouseover="openOccidInfoBox('.$occId.','.$infoBoxLabel. ')" onmouseout="closeOccidInfoBox();" onclick="openIndPopup(' .$occId.'); return false;">'.($recArr['c']?wordwrap($recArr['c'], 12, "<br />\n", true): 'Not available').'</a>';
+		$recordListHtml .= '<a href="#" onmouseover="openRecordInfoBox('.$occId.','.$infoBoxLabel. ')" onmouseout="closeRecordInfoBox();" onclick="openIndPopup(' .$occId.'); return false;">'.($recArr['c']?wordwrap($recArr['c'], 12, "<br />\n", true): 'Not available').'</a>';
 		$recordListHtml .= '</td>';
 		$recordListHtml .= '<td id="e'.$occId.'" >'.wordwrap($recArr['e'], 10, "<br />\n", true).'</td>';
 		$recordListHtml .= '<td id="s'.$occId.'" >';

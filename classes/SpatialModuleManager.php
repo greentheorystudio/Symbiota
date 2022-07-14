@@ -121,7 +121,7 @@ class SpatialModuleManager{
             $geoArr['properties']['coll_year'] = utf8_encode($row->year);
             $geoArr['properties']['tidinterpreted'] = utf8_encode($row->tidinterpreted);
             $geoArr['properties']['coll_day'] = utf8_encode($row->day);
-            $geoArr['properties']['occid'] = utf8_encode($row->occid);
+            $geoArr['properties']['id'] = utf8_encode($row->occid);
             $geoArr['properties']['CollectionName'] = utf8_encode($row->CollectionName);
             $geoArr['properties']['sciname'] = utf8_encode($row->sciname);
             $geoArr['properties']['family'] = utf8_encode($row->family);

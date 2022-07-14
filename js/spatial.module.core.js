@@ -10,24 +10,17 @@ let rasterLayersArr = [];
 let layerOrderArr = [];
 let mouseCoords = [];
 let selections = [];
-let collSymbology = [];
-let taxaSymbology = [];
-let collKeyArr = [];
-let taxaKeyArr = [];
 let queryRecCnt = 0;
 let draw;
 let clustersource;
 let loadPointsEvent = false;
 let toggleSelectedPoints = false;
-let taxaCnt = 0;
 let lazyLoadCnt = 20000;
 let clusterDistance = 50;
 let clusterPoints = true;
 let showHeatMap = false;
 let heatMapRadius = 5;
 let heatMapBlur = 15;
-let mapSymbology = 'coll';
-let clusterKey = 'CollectionName';
 let maxFeatureCount;
 let currentResolution;
 let activeLayer = 'none';
@@ -44,25 +37,8 @@ let dragDrop4 = false;
 let dragDrop5 = false;
 let dragDrop6 = false;
 let dragDropTarget = '';
-let dsOldestDate = '';
-let dsNewestDate = '';
-let tsOldestDate = '';
-let tsNewestDate = '';
-let dateSliderActive = false;
-let sliderdiv = '';
 let loadingComplete = true;
 let returnClusters = false;
-let dsAnimDuration = '';
-let dsAnimTime = '';
-let dsAnimImageSave = false;
-let dsAnimReverse = false;
-let dsAnimDual = false;
-let dsAnimLow = '';
-let dsAnimHigh = '';
-let dsAnimStop = true;
-let dsAnimation = '';
-let zipFile = '';
-let zipFolder = '';
 let transformStartAngle = 0;
 let transformD = [0,0];
 let transformFirstPoint = false;
@@ -140,13 +116,6 @@ function addLayerToSelList(layer,title,active){
     }
 }
 
-function addQueryToDataset(){
-    document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
-    document.getElementById("dsstarrjson").value = JSON.stringify(searchTermsArr);
-    document.getElementById("datasetformaction").value = 'addAllToDataset';
-    document.getElementById("datasetform").submit();
-}
-
 function addRasterLayerToTargetList(layerId,title){
     let selectionList = document.getElementById("targetrasterselect").innerHTML;
     const newOption = '<option value="' + layerId + '">' + title + '</option>';
@@ -158,13 +127,6 @@ function addRasterLayerToTargetList(layerId,title){
         document.getElementById("rastertoolspanel").style.display = "block";
         document.getElementById("rastertoolstab").style.display = "block";
     }
-}
-
-function addSelectionsToDataset(){
-    document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
-    document.getElementById("occarrjson").value = JSON.stringify(selections);
-    document.getElementById("datasetformaction").value = 'addSelectedToDataset';
-    document.getElementById("datasetform").submit();
 }
 
 function adjustSelectionsTab(){
@@ -179,153 +141,6 @@ function adjustSelectionsTab(){
             $('#recordstab').tabs({active:0});
         }
     }
-}
-
-function animateDS(){
-    if(!dsAnimStop){
-        let calcHighDate, lowDateValStr, highDateValStr;
-        const lowDate = document.getElementById("datesliderearlydate").value;
-        const highDate = document.getElementById("datesliderlatedate").value;
-        let lowDateVal = new Date(lowDate);
-        lowDateVal = new Date(lowDateVal.setTime(lowDateVal.getTime()+86400000));
-        let highDateVal = new Date(highDate);
-        highDateVal = new Date(highDateVal.setTime(highDateVal.getTime()+86400000));
-        if(dsAnimReverse){
-            if(dsAnimDual){
-                if(lowDateVal.getTime() !== highDateVal.getTime()) highDateVal = new Date(highDateVal.setDate(highDateVal.getDate() - dsAnimDuration));
-                const calcLowDate = new Date(lowDateVal.setDate(lowDateVal.getDate() - dsAnimDuration));
-                if(calcLowDate.getTime() > dsAnimLow.getTime()){
-                    lowDateVal = calcLowDate;
-                }
-                else{
-                    lowDateVal = dsAnimLow;
-                    dsAnimStop = true;
-                }
-            }
-            else{
-                calcHighDate = new Date(highDateVal.setDate(highDateVal.getDate() - dsAnimDuration));
-                if(calcHighDate.getTime() > dsAnimLow.getTime()){
-                    highDateVal = calcHighDate;
-                }
-                else{
-                    dsAnimStop = true;
-                }
-            }
-        }
-        else{
-            if(dsAnimDual && (lowDateVal.getTime() !== highDateVal.getTime())) lowDateVal = new Date(lowDateVal.setDate(lowDateVal.getDate() + dsAnimDuration));
-            calcHighDate = new Date(highDateVal.setDate(highDateVal.getDate() + dsAnimDuration));
-            if(calcHighDate.getTime() < dsAnimHigh.getTime()){
-                highDateVal = calcHighDate;
-            }
-            else{
-                highDateVal = dsAnimHigh;
-                dsAnimStop = true;
-            }
-        }
-        tsOldestDate = lowDateVal;
-        tsNewestDate = highDateVal;
-        lowDateValStr = getISOStrFromDateObj(lowDateVal);
-        highDateValStr = getISOStrFromDateObj(highDateVal);
-        $("#sliderdiv").slider('values',0,tsOldestDate.getTime());
-        $("#sliderdiv").slider('values',1,tsNewestDate.getTime());
-        $("#custom-label-min").text(lowDateValStr);
-        $("#custom-label-max").text(highDateValStr);
-        document.getElementById("datesliderearlydate").value = lowDateValStr;
-        document.getElementById("datesliderlatedate").value = highDateValStr;
-        layersArr['pointv'].getSource().changed();
-        if(dsAnimImageSave){
-            const filename = lowDateValStr + '-to-' + highDateValStr + '.png';
-            exportMapPNG(filename,true);
-        }
-        if(!dsAnimStop){
-            dsAnimation = setTimeout(animateDS,dsAnimTime);
-        }
-        else{
-            tsOldestDate = dsAnimLow;
-            tsNewestDate = dsAnimHigh;
-            lowDateValStr = getISOStrFromDateObj(dsAnimLow);
-            highDateValStr = getISOStrFromDateObj(dsAnimHigh);
-            $("#sliderdiv").slider('values',0,tsOldestDate.getTime());
-            $("#sliderdiv").slider('values',1,tsNewestDate.getTime());
-            $("#custom-label-min").text(lowDateValStr);
-            $("#custom-label-max").text(highDateValStr);
-            document.getElementById("datesliderearlydate").value = lowDateValStr;
-            document.getElementById("datesliderlatedate").value = highDateValStr;
-            layersArr['pointv'].getSource().changed();
-            dsAnimation = '';
-        }
-    }
-}
-
-function autoColorColl(){
-    document.getElementById("randomColorColl").disabled = true;
-    changeMapSymbology('coll');
-    const usedColors = [];
-    for(let i in collSymbology){
-        if(collSymbology.hasOwnProperty(i)){
-            let randColor = generateRandColor();
-            while (usedColors.indexOf(randColor) > -1) {
-                randColor = generateRandColor();
-            }
-            usedColors.push(randColor);
-            changeCollColor(randColor,i);
-            const keyName = 'keyColor' + i;
-            document.getElementById(keyName).color.fromString(randColor);
-        }
-    }
-    document.getElementById("randomColorColl").disabled = false;
-}
-
-function autoColorTaxa(){
-    document.getElementById("randomColorTaxa").disabled = true;
-    changeMapSymbology('taxa');
-    const usedColors = [];
-    for(let i in taxaSymbology){
-        if(taxaSymbology.hasOwnProperty(i)){
-            let randColor = generateRandColor();
-            while (usedColors.indexOf(randColor) > -1) {
-                randColor = generateRandColor();
-            }
-            usedColors.push(randColor);
-            changeTaxaColor(randColor,i);
-            const keyName = 'taxaColor' + i;
-            if(document.getElementById(keyName)){
-                document.getElementById(keyName).color.fromString(randColor);
-            }
-        }
-    }
-    document.getElementById("randomColorTaxa").disabled = false;
-}
-
-function buildCollKey(){
-    for(let i in collSymbology){
-        if(collSymbology.hasOwnProperty(i)){
-            buildCollKeyPiece(i);
-        }
-    }
-    keyHTML = '';
-    const sortedKeys = arrayIndexSort(collKeyArr).sort();
-    for(let i in sortedKeys) {
-        if(sortedKeys.hasOwnProperty(i)){
-            keyHTML += collKeyArr[sortedKeys[i]];
-        }
-    }
-    document.getElementById("symbologykeysbox").innerHTML = keyHTML;
-    jscolor.init();
-}
-
-function buildCollKeyPiece(key){
-    keyHTML = '';
-    keyLabel = "'"+key+"'";
-    const color = collSymbology[key]['color'];
-    keyHTML += '<div style="display:table-row;">';
-    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="keyColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0;" value="'+color+'" onchange="changeCollColor(this.value,'+keyLabel+');" /></div>';
-    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-left:8px;"> = </div>';
-    keyHTML += '<div style="display:table-cell;width:250px;vertical-align:middle;padding-left:8px;">'+key+'</div>';
-    keyHTML += '</div>';
-    keyHTML += '<div style="display:table-row;height:8px;"></div>';
-    collKeyArr[key] = keyHTML;
 }
 
 function buildLayerControllerLayerDateElement(lArr){
@@ -618,74 +433,6 @@ function buildLayerControllerLayerVectorSymbologyElement(lArr){
     return layerSymbologyDiv;
 }
 
-function buildTaxaKey(){
-    document.getElementById("taxaCountNum").innerHTML = taxaCnt;
-    for(let i in taxaSymbology){
-        if(taxaSymbology.hasOwnProperty(i)){
-            const family = taxaSymbology[i]['family'];
-            const tidinterpreted = taxaSymbology[i]['tidinterpreted'];
-            const sciname = taxaSymbology[i]['sciname'];
-            buildTaxaKeyPiece(i,family,tidinterpreted,sciname);
-        }
-    }
-    keyHTML = '';
-    let famUndefinedArr = [];
-    if(taxaKeyArr['undefined']){
-        famUndefinedArr = taxaKeyArr['undefined'];
-        const undIndex = taxaKeyArr.indexOf('undefined');
-        taxaKeyArr.splice(undIndex,1);
-    }
-    const fsortedKeys = arrayIndexSort(taxaKeyArr).sort();
-    for(let f in fsortedKeys){
-        if(fsortedKeys.hasOwnProperty(f)){
-            let scinameArr = [];
-            scinameArr = taxaKeyArr[fsortedKeys[f]];
-            const ssortedKeys = arrayIndexSort(scinameArr).sort();
-            keyHTML += "<div style='margin-left:5px;'><h3 style='margin-top:8px;margin-bottom:5px;'>"+fsortedKeys[f]+"</h3></div>";
-            keyHTML += "<div style='display:table;'>";
-            for(let s in ssortedKeys){
-                if(ssortedKeys.hasOwnProperty(s)){
-                    keyHTML += taxaKeyArr[fsortedKeys[f]][ssortedKeys[s]];
-                }
-            }
-            keyHTML += "</div>";
-        }
-    }
-    if(famUndefinedArr.length > 0){
-        const usortedKeys = arrayIndexSort(famUndefinedArr).sort();
-        keyHTML += "<div style='margin-left:5px;'><h3 style='margin-top:8px;margin-bottom:5px;'>Family Not Defined</h3></div>";
-        keyHTML += "<div style='display:table;'>";
-        for(let u in usortedKeys){
-            if(usortedKeys.hasOwnProperty(u)){
-                keyHTML += taxaKeyArr[usortedKeys[u]];
-            }
-        }
-    }
-    document.getElementById("taxasymbologykeysbox").innerHTML = keyHTML;
-    jscolor.init();
-}
-
-function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
-    let keyHTML = '';
-    let keyLabel = "'" + key + "'";
-    const color = taxaSymbology[key]['color'];
-    keyHTML += '<div id="'+key+'keyrow">';
-    keyHTML += '<div style="display:table-row;">';
-    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="taxaColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0;" value="'+color+'" onchange="changeTaxaColor(this.value,'+keyLabel+');" /></div>';
-    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-left:8px;"> = </div>';
-    if(!tidinterpreted){
-        keyHTML += "<div style='display:table-cell;vertical-align:middle;padding-left:8px;'><i>"+sciname+"</i></div>";
-    }
-    else{
-        keyHTML += "<div style='display:table-cell;vertical-align:middle;padding-left:8px;'><i><a target='_blank' href='../taxa/index.php?taxon="+sciname+"'>"+sciname+"</a></i></div>";
-    }
-    keyHTML += '</div></div>';
-    if(!taxaKeyArr[family]){
-        taxaKeyArr[family] = [];
-    }
-    taxaKeyArr[family][key] = keyHTML;
-}
-
 function changeBaseMap(){
     let blsource;
     const selection = document.getElementById('base-map').value;
@@ -793,34 +540,13 @@ function changeClusterDistance(){
 }
 
 function changeClusterSetting(){
-    if(document.getElementById("sliderdiv")){
-        document.getElementById("clusterswitch").checked = clusterPoints;
-        alert('You cannot change the cluster setting while the Date Slider is active.');
+    clusterPoints = document.getElementById("clusterswitch").checked;
+    if(clusterPoints){
+        removeDateSlider();
+        loadPointsLayer(0);
     }
     else{
-        clusterPoints = document.getElementById("clusterswitch").checked;
-        if(clusterPoints){
-            removeDateSlider();
-            loadPointWFSLayer(0);
-        }
-        else{
-            layersArr['pointv'].setSource(pointvectorsource);
-        }
-    }
-}
-
-function changeCollColor(color,key){
-    changeMapSymbology('coll');
-    collSymbology[key]['color'] = color;
-    layersArr['pointv'].getSource().changed();
-    if(spiderCluster){
-        const spiderFeatures = layersArr['spider'].getSource().getFeatures();
-        for(let f in spiderFeatures){
-            if(spiderFeatures.hasOwnProperty(f)){
-                const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
-                spiderFeatures[f].setStyle(style);
-            }
-        }
+        layersArr['pointv'].setSource(pointvectorsource);
     }
 }
 
@@ -951,48 +677,6 @@ function changeLayerOrder(layerId, value) {
     setLayersOrder();
 }
 
-function changeMapSymbology(symbology){
-    if(symbology !== mapSymbology){
-        if(spiderCluster){
-            const source = layersArr['spider'].getSource();
-            source.clear();
-            const blankSource = new ol.source.Vector({
-                features: new ol.Collection(),
-                useSpatialIndex: true
-            });
-            layersArr['spider'].setSource(blankSource);
-            for(let i in hiddenClusters){
-                if(hiddenClusters.hasOwnProperty(i)){
-                    showFeature(hiddenClusters[i]);
-                }
-            }
-            hiddenClusters = [];
-            spiderCluster = '';
-            layersArr['pointv'].getSource().changed();
-        }
-    }
-    if(symbology === 'coll'){
-        if(mapSymbology === 'taxa'){
-            clearTaxaSymbology();
-            clusterKey = 'CollectionName';
-            mapSymbology = 'coll';
-            if(clusterPoints){
-                loadPointWFSLayer(0);
-            }
-        }
-    }
-    if(symbology === 'taxa'){
-        if(mapSymbology === 'coll'){
-            resetMainSymbology();
-            clusterKey = 'namestring';
-            mapSymbology = 'taxa';
-            if(clusterPoints){
-                loadPointWFSLayer(0);
-            }
-        }
-    }
-}
-
 function changePointRadius(layerId,value) {
     if(document.getElementById(('layerVisible-' + layerId)).checked === true){
         const borderColor = document.getElementById(('borderColor-' + layerId)).value;
@@ -1029,175 +713,6 @@ function changeRasterColorScale(layerId,value){
     layersArr[layerId].setSource(layersArr[sourceIndex]);
     map.addLayer(layersArr[layerId]);
     setLayersOrder();
-}
-
-function changeRecordPage(page){
-    let params;
-    document.getElementById("queryrecords").innerHTML = "<p>Loading...</p>";
-    const selJson = JSON.stringify(selections);
-    const http = new XMLHttpRequest();
-    const url = "rpc/changemaprecordpage.php";
-    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
-    if(SOLRMODE){
-        params = 'starr=' + jsonStarr + '&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
-    }
-    else{
-        params = 'starr='+jsonStarr+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
-    }
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState === 4 && http.status === 200) {
-            document.getElementById("queryrecords").innerHTML = http.responseText;
-        }
-    };
-    http.send(params);
-}
-
-function changeTaxaColor(color,tidcode){
-    changeMapSymbology('taxa');
-    taxaSymbology[tidcode]['color'] = color;
-    layersArr['pointv'].getSource().changed();
-}
-
-function checkDateSliderType(){
-    if(dateSliderActive){
-        document.body.removeChild(sliderdiv);
-        sliderdiv = '';
-        const dual = document.getElementById("dsdualtype").checked;
-        createDateSlider(dual);
-    }
-}
-
-function checkDSAnimDuration(){
-    let lowDate, hLowDate, highDate, hHighDate, difference, diffYears;
-    const duration = document.getElementById("datesliderinterduration").value;
-    const imageSave = document.getElementById("dateslideranimimagesave").checked;
-    if(duration){
-        if(!isNaN(duration) && duration > 0){
-            lowDate = document.getElementById("datesliderearlydate").value;
-            hLowDate = new Date(lowDate);
-            hLowDate = new Date(hLowDate.setTime(hLowDate.getTime()+86400000));
-            highDate = document.getElementById("datesliderlatedate").value;
-            hHighDate = new Date(highDate);
-            hHighDate = new Date(hHighDate.setTime(hHighDate.getTime()+86400000));
-            difference = (hHighDate-hLowDate)/1000;
-            difference /= (60*60*24);
-            diffYears = Math.abs(difference/365.25);
-            if(duration >= diffYears){
-                alert("Interval duration must less than the difference between the earliest and latest dates in years: "+diffYears.toFixed(4));
-                document.getElementById("datesliderinterduration").value = '';
-            }
-            else if(imageSave){
-                lowDate = document.getElementById("datesliderearlydate").value;
-                hLowDate = new Date(lowDate);
-                hLowDate = new Date(hLowDate.setTime(hLowDate.getTime()+86400000));
-                highDate = document.getElementById("datesliderlatedate").value;
-                hHighDate = new Date(highDate);
-                hHighDate = new Date(hHighDate.setTime(hHighDate.getTime()+86400000));
-                difference = (hHighDate - hLowDate)/1000;
-                difference /= (60*60*24);
-                diffYears = difference/365.25;
-                const imageCount = Math.ceil(diffYears / duration);
-                if(!confirm("You have Save Images checked. With the current interval duration and date settings, this will produce "+imageCount+" images. Click OK to continue.")){
-                    document.getElementById("dateslideranimimagesave").checked = false;
-                }
-            }
-        }
-        else{
-            alert("Interval duration must be a number greater than zero.");
-            document.getElementById("datesliderinterduration").value = '';
-        }
-    }
-}
-
-function checkDSAnimTime(){
-    const animtime = Number(document.getElementById("datesliderintertime").value);
-    if(animtime && (isNaN(animtime) || animtime < 0.1 || animtime > 5)){
-        alert("Interval time must be a number greater than or equal to .1, and less than or equal to 5.");
-        document.getElementById("datesliderintertime").value = '';
-    }
-}
-
-function checkDSHighDate(){
-    const maxDate = dsNewestDate.getTime();
-    const hMaxDate = new Date(maxDate);
-    const hMaxDateStr = getISOStrFromDateObj(hMaxDate);
-    const currentHighSetting = new Date($("#sliderdiv").slider("values", 1));
-    const currentHighSettingStr = getISOStrFromDateObj(currentHighSetting);
-    const highDate = document.getElementById("datesliderlatedate").value;
-    if(highDate){
-        if(formatCheckDate(highDate)){
-            const currentLowSetting = new Date($("#sliderdiv").slider("values", 0));
-            const currentLowSettingStr = getISOStrFromDateObj(currentLowSetting);
-            const hHighDate = new Date(highDate);
-            if(hHighDate < hMaxDate && hHighDate < currentLowSetting){
-                alert("Date cannot be earlier than the currently set earliest date: "+currentLowSettingStr+'.');
-                document.getElementById("datesliderlatedate").value = currentHighSettingStr;
-            }
-            else{
-                alert("Date cannot be later than the latest date on slider: "+hMaxDateStr+'.');
-                document.getElementById("datesliderlatedate").value = currentHighSettingStr;
-            }
-        }
-    }
-    else{
-        document.getElementById("datesliderlatedate").value = currentHighSettingStr;
-    }
-}
-
-function checkDSLowDate(){
-    const minDate = dsOldestDate.getTime();
-    const hMinDate = new Date(minDate);
-    const hMinDateStr = getISOStrFromDateObj(hMinDate);
-    const currentLowSetting = new Date($("#sliderdiv").slider("values", 0));
-    const currentLowSettingStr = getISOStrFromDateObj(currentLowSetting);
-    const lowDate = document.getElementById("datesliderearlydate").value;
-    if(lowDate){
-        if(formatCheckDate(lowDate)){
-            const currentHighSetting = new Date($("#sliderdiv").slider("values", 1));
-            const currentHighSettingStr = getISOStrFromDateObj(currentHighSetting);
-            const hLowDate = new Date(lowDate);
-            if(hLowDate > hMinDate && hLowDate > currentHighSetting){
-                alert("Date cannot be after the currently set latest date: "+currentHighSettingStr+'.');
-                document.getElementById("datesliderearlydate").value = currentLowSettingStr;
-            }
-            else{
-                alert("Date cannot be earlier than the earliest date on slider: "+hMinDateStr+'.');
-                document.getElementById("datesliderearlydate").value = currentLowSettingStr;
-            }
-        }
-    }
-    else{
-        document.getElementById("datesliderearlydate").value = currentLowSettingStr;
-    }
-}
-
-function checkDSSaveImage(){
-    const imageSave = document.getElementById("dateslideranimimagesave").checked;
-    const duration = document.getElementById("datesliderinterduration").value;
-    if(imageSave){
-        if(duration){
-            const lowDate = document.getElementById("datesliderearlydate").value;
-            let hLowDate = new Date(lowDate);
-            hLowDate = new Date(hLowDate.setTime(hLowDate.getTime()+86400000));
-            const highDate = document.getElementById("datesliderlatedate").value;
-            let hHighDate = new Date(highDate);
-            hHighDate = new Date(hHighDate.setTime(hHighDate.getTime()+86400000));
-            let difference = (hHighDate - hLowDate) / 1000;
-            difference /= (60*60*24);
-            const diffYears = difference / 365.25;
-            const imageCount = Math.ceil(diffYears / duration);
-            if(!confirm("With the current interval duration and date settings, this will produce "+imageCount+" images. Click OK to continue.")){
-                document.getElementById("dateslideranimimagesave").checked = false;
-            }
-        }
-        else{
-            alert("Please enter an interval duration before selecting to save images.");
-            document.getElementById("dateslideranimimagesave").checked = false;
-        }
-    }
 }
 
 function checkLoading(){
@@ -1250,7 +765,7 @@ function clearSelections(){
     selections = [];
     for(let i in selpoints){
         if(selpoints.hasOwnProperty(i) && !clusterPoints){
-            const point = findOccPoint(selpoints[i]);
+            const point = findRecordPoint(selpoints[i]);
             const style = setSymbol(point);
             point.setStyle(style);
         }
@@ -1260,19 +775,7 @@ function clearSelections(){
     document.getElementById("selectiontbody").innerHTML = '';
 }
 
-function clearTaxaSymbology(){
-    for(let i in taxaSymbology){
-        if(taxaSymbology.hasOwnProperty(i)){
-            taxaSymbology[i]['color'] = pointLayerFillColor;
-            const keyName = 'taxaColor' + i;
-            if(document.getElementById(keyName)){
-                document.getElementById(keyName).color.fromString(pointLayerFillColor);
-            }
-        }
-    }
-}
-
-function closeOccidInfoBox(){
+function closeRecordInfoBox(){
     finderpopupcloser.onclick();
 }
 
@@ -1518,93 +1021,6 @@ function createConvexPoly(){
         alert('There must be at least 3 points on the map to calculate polygon.');
     }
     document.getElementById('convexpolysource').value = 'all';
-}
-
-function createDateSlider(dual){
-    if(dsOldestDate && dsNewestDate){
-        sliderdiv = document.createElement('div');
-        sliderdiv.setAttribute("id","sliderdiv");
-        sliderdiv.setAttribute("style","width:calc(95% - 250px);height:30px;bottom:10px;left:50px;display:block;position:absolute;z-index:3;");
-        const minhandlediv = document.createElement('div');
-        minhandlediv.setAttribute("id","custom-handle-min");
-        minhandlediv.setAttribute("class","ui-slider-handle");
-        const minlabeldiv = document.createElement('div');
-        minlabeldiv.setAttribute("id","custom-label-min");
-        minlabeldiv.setAttribute("class","custom-label");
-        const minlabelArrowdiv = document.createElement('div');
-        minlabelArrowdiv.setAttribute("id","custom-label-min-arrow");
-        minlabelArrowdiv.setAttribute("class","label-arrow");
-        minhandlediv.appendChild(minlabeldiv);
-        minhandlediv.appendChild(minlabelArrowdiv);
-        sliderdiv.appendChild(minhandlediv);
-        const maxhandlediv = document.createElement('div');
-        maxhandlediv.setAttribute("id","custom-handle-max");
-        maxhandlediv.setAttribute("class","ui-slider-handle");
-        const maxlabeldiv = document.createElement('div');
-        maxlabeldiv.setAttribute("id","custom-label-max");
-        maxlabeldiv.setAttribute("class","custom-label");
-        maxhandlediv.appendChild(maxlabeldiv);
-        const maxlabelArrowdiv = document.createElement('div');
-        maxlabelArrowdiv.setAttribute("class","label-arrow");
-        maxhandlediv.appendChild(maxlabeldiv);
-        maxhandlediv.appendChild(maxlabelArrowdiv);
-        sliderdiv.appendChild(maxhandlediv);
-        document.body.appendChild(sliderdiv);
-
-        const minDate = dsOldestDate.getTime();
-        const maxDate = dsNewestDate.getTime();
-        tsOldestDate = dsOldestDate;
-        tsNewestDate = dsNewestDate;
-        const hMinDate = new Date(minDate);
-        const minDateStr = getISOStrFromDateObj(hMinDate);
-        const hMaxDate = new Date(maxDate);
-        const maxDateStr = getISOStrFromDateObj(hMaxDate);
-
-        const minhandle = $("#custom-handle-min");
-        const maxhandle = $("#custom-handle-max");
-        $("#sliderdiv").slider({
-            range: true,
-            min: minDate,
-            max: maxDate,
-            values: [minDate,maxDate],
-            create: function() {
-                if(dual){
-                    const mintextbox = $("#custom-label-min");
-                    mintextbox.text(minDateStr);
-                }
-                const maxtextbox = $("#custom-label-max");
-                maxtextbox.text(maxDateStr);
-            },
-            step: 1000 * 60 * 60 * 24,
-            slide: function(event, ui) {
-                if(dual){
-                    const mintextbox = $("#custom-label-min");
-                    tsOldestDate = new Date(ui.values[0]);
-                    const newMinDateStr = getISOStrFromDateObj(tsOldestDate);
-                    mintextbox.text(newMinDateStr);
-                    document.getElementById("datesliderearlydate").value = newMinDateStr;
-                }
-                const maxtextbox = $("#custom-label-max");
-                tsNewestDate = new Date(ui.values[1]);
-                const newMaxDateStr = getISOStrFromDateObj(tsNewestDate);
-                maxtextbox.text(newMaxDateStr);
-                document.getElementById("datesliderlatedate").value = newMaxDateStr;
-                layersArr['pointv'].getSource().changed();
-            }
-        });
-        if(!dual){
-            document.getElementById("custom-handle-min").style.display = 'none';
-            document.getElementById("custom-handle-min").style.position = 'absolute';
-            document.getElementById("custom-handle-min").style.left = '-9999px';
-        }
-        document.getElementById("datesliderearlydate").value = minDateStr;
-        document.getElementById("datesliderlatedate").value = maxDateStr;
-        document.getElementById("dateslidercontrol").style.display = 'block';
-        document.getElementById("maptoolcontainer").style.top = 'initial';
-        document.getElementById("maptoolcontainer").style.left = 'initial';
-        document.getElementById("maptoolcontainer").style.bottom = '100px';
-        document.getElementById("maptoolcontainer").style.right = '-190px';
-    }
 }
 
 function createPolyDifference(){
@@ -2063,51 +1479,23 @@ function exportMapPNG(filename,zip){
     }
 }
 
-function exportTaxaCSV(){
-    let csvContent = '';
-    csvContent = '"ScientificName","Family","RecordCount"'+"\n";
-    const sortedTaxa = arrayIndexSort(taxaSymbology).sort();
-    for(let i in sortedTaxa){
-        if(sortedTaxa.hasOwnProperty(i)){
-            let family = taxaSymbology[sortedTaxa[i]]['family'].toLowerCase();
-            family = family.charAt(0).toUpperCase()+family.slice(1);
-            const row = taxaSymbology[sortedTaxa[i]]['sciname'] + ',' + family + ',' + taxaSymbology[sortedTaxa[i]]['count'] + "\n";
-            csvContent += row;
-        }
-    }
-    const filename = 'taxa_list.csv';
-    const filetype = 'text/csv; charset=utf-8';
-    const blob = new Blob([csvContent], {type: filetype});
-    if(window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveBlob(blob,filename);
-    }
-    else{
-        const elem = window.document.createElement('a');
-        elem.href = window.URL.createObjectURL(blob);
-        elem.download = filename;
-        document.body.appendChild(elem);
-        elem.click();
-        document.body.removeChild(elem);
-    }
-}
-
-function findOccCluster(occid){
+function findRecordCluster(id){
     const clusters = layersArr['pointv'].getSource().getFeatures();
     for(let c in clusters){
         if(clusters.hasOwnProperty(c)){
             const clusterindex = clusters[c].get('identifiers');
-            if(clusterindex.indexOf(Number(occid)) !== -1){
+            if(clusterindex.indexOf(Number(id)) !== -1){
                 return clusters[c];
             }
         }
     }
 }
 
-function findOccClusterPosition(occid){
+function findRecordClusterPosition(id){
     if(spiderCluster){
         const spiderPoints = layersArr['spider'].getSource().getFeatures();
         for(let p in spiderPoints){
-            if(spiderPoints.hasOwnProperty(p) && Number(spiderPoints[p].get('features')[0].get('occid')) === occid){
+            if(spiderPoints.hasOwnProperty(p) && Number(spiderPoints[p].get('features')[0].get('id')) === id){
                 return spiderPoints[p].getGeometry().getCoordinates();
             }
         }
@@ -2117,7 +1505,7 @@ function findOccClusterPosition(occid){
         for(let c in clusters){
             if(clusters.hasOwnProperty(c)){
                 const clusterindex = clusters[c].get('identifiers');
-                if(clusterindex.indexOf(occid) !== -1){
+                if(clusterindex.indexOf(id) !== -1){
                     return clusters[c].getGeometry().getCoordinates();
                 }
             }
@@ -2126,127 +1514,29 @@ function findOccClusterPosition(occid){
     else{
         const features = layersArr['pointv'].getSource().getFeatures();
         for(let f in features){
-            if(features.hasOwnProperty(f) && Number(features[f].get('occid')) === occid){
+            if(features.hasOwnProperty(f) && Number(features[f].get('id')) === id){
                 return features[f].getGeometry().getCoordinates();
             }
         }
     }
 }
 
-function findOccPoint(occid){
+function findRecordPoint(id){
     const features = layersArr['pointv'].getSource().getFeatures();
     for(let f in features){
-        if(features.hasOwnProperty(f) && Number(features[f].get('occid')) === occid){
+        if(features.hasOwnProperty(f) && Number(features[f].get('id')) === id){
             return features[f];
         }
     }
 }
 
-function findOccPointInCluster(cluster,occid){
+function findRecordPointInCluster(cluster,id){
     const cFeatures = cluster.get('features');
     for (let f in cFeatures) {
-        if(cFeatures.hasOwnProperty(f) && Number(cFeatures[f].get('occid')) === occid){
+        if(cFeatures.hasOwnProperty(f) && Number(cFeatures[f].get('id')) === id){
             return cFeatures[f];
         }
     }
-}
-
-function generateReclassifySLD(valueArr,layername){
-    let sldContent = '';
-    sldContent += '<?xml version="1.0" encoding="UTF-8"?>';
-    sldContent += '<StyledLayerDescriptor version="1.0.0" ';
-    sldContent += 'xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd" ';
-    sldContent += 'xmlns="http://www.opengis.net/sld" ';
-    sldContent += 'xmlns:ogc="http://www.opengis.net/ogc" ';
-    sldContent += 'xmlns:xlink="http://www.w3.org/1999/xlink" ';
-    sldContent += 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
-    sldContent += '<NamedLayer>';
-    sldContent += '<Name>'+layername+'</Name>';
-    sldContent += '<UserStyle>';
-    sldContent += '<FeatureTypeStyle>';
-    sldContent += '<Rule>';
-    sldContent += '<Name>reclassify_style</Name>';
-    sldContent += '<RasterSymbolizer>';
-    sldContent += '<Opacity>1.0</Opacity>';
-    sldContent += '<ColorMap type="intervals">';
-    sldContent += '<ColorMapEntry color="#FFFFFF" quantity="'+valueArr['rasmin']+'"/>';
-    sldContent += '<ColorMapEntry color="#'+valueArr['color']+'" quantity="'+valueArr['rasmax']+'"/>';
-    sldContent += '</ColorMap>';
-    sldContent += '</RasterSymbolizer>';
-    sldContent += '</Rule>';
-    sldContent += '</FeatureTypeStyle>';
-    sldContent += '</UserStyle>';
-    sldContent += '</NamedLayer>';
-    sldContent += '</StyledLayerDescriptor>';
-    return sldContent;
-}
-
-function generateWPSPolyExtractXML(valueArr,layername,geojsonstr){
-    let xmlContent = '';
-    xmlContent += '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="1.0.0" service="WPS" ';
-    xmlContent += 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" ';
-    xmlContent += 'xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" ';
-    xmlContent += 'xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" ';
-    xmlContent += 'xmlns:ogc="http://www.opengis.net/ogc" xmlns:wcs="http://www.opengis.net/wcs/1.1.1" ';
-    xmlContent += 'xmlns:xlink="http://www.w3.org/1999/xlink" ';
-    xmlContent += 'xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">';
-    xmlContent += '<ows:Identifier>ras:PolygonExtraction</ows:Identifier>';
-    xmlContent += '<wps:DataInputs>';
-    xmlContent += '<wps:Input>';
-    xmlContent += '<ows:Identifier>data</ows:Identifier>';
-    xmlContent += '<wps:Reference mimeType="image/tiff" xlink:href="http://geoserver/wcs" method="POST">';
-    xmlContent += '<wps:Body>';
-    xmlContent += '<wcs:GetCoverage service="WCS" version="1.1.1">';
-    xmlContent += '<ows:Identifier>'+layername+'</ows:Identifier>';
-    xmlContent += '<wcs:DomainSubset>';
-    xmlContent += '<ows:BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326">';
-    xmlContent += '<ows:LowerCorner>-180.0 -90.0</ows:LowerCorner>';
-    xmlContent += '<ows:UpperCorner>180.0 90.0</ows:UpperCorner>';
-    xmlContent += '</ows:BoundingBox>';
-    xmlContent += '</wcs:DomainSubset>';
-    xmlContent += '<wcs:Output format="image/tiff"/>';
-    xmlContent += '</wcs:GetCoverage>';
-    xmlContent += '</wps:Body>';
-    xmlContent += '</wps:Reference>';
-    xmlContent += '</wps:Input>';
-    xmlContent += '<wps:Input>';
-    xmlContent += '<ows:Identifier>band</ows:Identifier>';
-    xmlContent += '<wps:Data>';
-    xmlContent += '<wps:LiteralData>0</wps:LiteralData>';
-    xmlContent += '</wps:Data>';
-    xmlContent += '</wps:Input>';
-    xmlContent += '<wps:Input>';
-    xmlContent += '<ows:Identifier>insideEdges</ows:Identifier>';
-    xmlContent += '<wps:Data>';
-    xmlContent += '<wps:LiteralData>0</wps:LiteralData>';
-    xmlContent += '</wps:Data>';
-    xmlContent += '</wps:Input>';
-    xmlContent += '<wps:Input>';
-    xmlContent += '<ows:Identifier>roi</ows:Identifier>';
-    xmlContent += '<wps:Data>';
-    xmlContent += '<wps:ComplexData mimeType="application/json"><![CDATA['+geojsonstr+']]></wps:ComplexData>';
-    xmlContent += '</wps:Data>';
-    xmlContent += '</wps:Input>';
-    xmlContent += '<wps:Input>';
-    xmlContent += '<ows:Identifier>nodata</ows:Identifier>';
-    xmlContent += '<wps:Data>';
-    xmlContent += '<wps:LiteralData>0</wps:LiteralData>';
-    xmlContent += '</wps:Data>';
-    xmlContent += '</wps:Input>';
-    xmlContent += '<wps:Input>';
-    xmlContent += '<ows:Identifier>ranges</ows:Identifier>';
-    xmlContent += '<wps:Data>';
-    xmlContent += '<wps:LiteralData>('+valueArr['rasmin']+';'+valueArr['rasmax']+')</wps:LiteralData>';
-    xmlContent += '</wps:Data>';
-    xmlContent += '</wps:Input>';
-    xmlContent += '</wps:DataInputs>';
-    xmlContent += '<wps:ResponseForm>';
-    xmlContent += '<wps:RawDataOutput mimeType="application/json">';
-    xmlContent += '<ows:Identifier>result</ows:Identifier>';
-    xmlContent += '</wps:RawDataOutput>';
-    xmlContent += '</wps:ResponseForm>';
-    xmlContent += '</wps:Execute>';
-    return xmlContent;
 }
 
 function getArrayBuffer(file) {
@@ -2376,25 +1666,6 @@ function getGeographyParams(){
     }
 }
 
-function getPointInfoArr(cluster){
-    const feature = (cluster.get('features') ? cluster.get('features')[0] : cluster);
-    const infoArr = [];
-    infoArr['occid'] = Number(feature.get('occid'));
-    infoArr['institutioncode'] = (feature.get('InstitutionCode')?feature.get('InstitutionCode'):'');
-    infoArr['catalognumber'] = (feature.get('catalogNumber')?feature.get('catalogNumber'):'');
-    const recordedby = (feature.get('recordedBy') ? feature.get('recordedBy') : '');
-    const recordnumber = (feature.get('recordNumber') ? feature.get('recordNumber') : '');
-    infoArr['collector'] = (recordedby?recordedby:'')+(recordedby&&recordnumber?' ':'')+(recordnumber?recordnumber:'');
-    infoArr['eventdate'] = (feature.get('displayDate')?feature.get('displayDate'):'');
-    infoArr['sciname'] = (feature.get('sciname')?feature.get('sciname'):'');
-    //var country = (feature.get('country')?feature.get('country'):'');
-    //var stateProvince = (feature.get('StateProvince')?feature.get('StateProvince'):'');
-    //var county = (feature.get('county')?feature.get('county'):'');
-    //infoArr['locality'] = (country?country:'')+(country&&stateProvince?'; ':'')+(stateProvince?stateProvince:'')+(country||stateProvince?'; ':'')+(county?county:'');
-
-    return infoArr;
-}
-
 function getPointStyle(feature) {
     let style = '';
     if(clusterPoints){
@@ -2404,48 +1675,6 @@ function getPointStyle(feature) {
         style = setSymbol(feature);
     }
     return style;
-}
-
-function getQueryRecCnt(callback){
-    let params;
-    let url;
-    let http;
-    queryRecCnt = 0;
-    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
-    if(SOLRMODE){
-        let qStr = '';
-        http = new XMLHttpRequest();
-        url = "rpc/SOLRConnector.php";
-        params = 'starr=' + jsonStarr + '&rows=0&start=0&wt=json';
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                const resArr = JSON.parse(http.responseText);
-                queryRecCnt = resArr['response']['numFound'];
-                document.getElementById("dh-rows").value = queryRecCnt;
-                callback(1);
-            }
-        };
-        http.send(params);
-    }
-    else{
-        http = new XMLHttpRequest();
-        url = "rpc/MYSQLConnector.php";
-        params = 'starr=' + jsonStarr + '&rows=0&start=0&type=reccnt';
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                queryRecCnt = http.responseText;
-                document.getElementById("dh-rows").value = queryRecCnt;
-                callback(1);
-            }
-        };
-        http.send(params);
-    }
 }
 
 function getRasterXYFromDataIndex(index,rasterWidth){
@@ -2517,11 +1746,11 @@ function getTurfPointFeaturesetSelected(){
         if(selections.hasOwnProperty(i)){
             let point = '';
             if(clusterPoints){
-                const cluster = findOccCluster(selections[i]);
-                point = findOccPointInCluster(cluster,selections[i]);
+                const cluster = findRecordCluster(selections[i]);
+                point = findRecordPointInCluster(cluster,selections[i]);
             }
             else{
-                point = findOccPoint(selections[i]);
+                point = findRecordPoint(selections[i]);
             }
             if(point){
                 const selectedClone = point.clone();
@@ -2604,46 +1833,6 @@ function hideVectorizeRasterByGridTargetPolygon(){
     document.getElementById("vectorizeRasterByGridTargetPolyHideButton").style.display = "none";
 }
 
-function lazyLoadPoints(index,callback){
-    let params;
-    let url;
-    let startindex = 0;
-    loadingComplete = true;
-    if(index > 0) {
-        startindex = index * lazyLoadCnt;
-    }
-    const http = new XMLHttpRequest();
-    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
-    if(SOLRMODE){
-        url = "rpc/SOLRConnector.php";
-        params = 'starr=' + jsonStarr + '&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                loadingComplete = false;
-                callback(http.responseText);
-            }
-        };
-        http.send(params);
-    }
-    else{
-        url = "rpc/MYSQLConnector.php";
-        params = 'starr=' + jsonStarr + '&rows=' + lazyLoadCnt + '&start=' + startindex + '&type=geoquery';
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                loadingComplete = false;
-                callback(http.responseText);
-            }
-        };
-        http.send(params);
-    }
-}
-
 function loadInputParentParams(){
     if(opener.document.getElementById('upperlat') && opener.document.getElementById('upperlat').value && INPUTTOOLSARR.includes('box')){
         processInputParentBoxParams();
@@ -2665,63 +1854,7 @@ function loadInputParentParams(){
     }
 }
 
-function loadPoints(){
-    searchTermsArr = getSearchTermsArr();
-    if(validateSearchTermsArr(searchTermsArr)){
-        taxaCnt = 0;
-        collSymbology = [];
-        taxaSymbology = [];
-        selections = [];
-        dsOldestDate = '';
-        dsNewestDate = '';
-        removeDateSlider();
-        showWorking();
-        pointvectorsource.clear(true);
-        layersArr['pointv'].setSource(pointvectorsource);
-        getQueryRecCnt(function() {
-            if(queryRecCnt > 0){
-                loadPointsEvent = true;
-                setCopySearchUrlDiv();
-                loadPointWFSLayer(0);
-                //cleanSelectionsLayer();
-                setRecordsTab();
-                changeRecordPage(1);
-                $('#recordstab').tabs({active: 1});
-                $("#sidepanel-accordion").accordion("option","active",1);
-                //selectInteraction.getFeatures().clear();
-                if(!pointActive){
-                    const infoArr = [];
-                    infoArr['id'] = 'pointv';
-                    infoArr['type'] = 'userLayer';
-                    infoArr['fileType'] = 'vector';
-                    infoArr['layerName'] = 'Points';
-                    infoArr['layerDescription'] = "This layer contains all of the occurrence points that have been loaded onto the map.",
-                    infoArr['removable'] = true;
-                    infoArr['sortable'] = false;
-                    infoArr['symbology'] = false;
-                    infoArr['query'] = false;
-                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
-                    pointActive = true;
-                }
-            }
-            else{
-                setRecordsTab();
-                if(pointActive){
-                    removeLayerToSelList('pointv');
-                    pointActive = false;
-                }
-                loadPointsEvent = false;
-                hideWorking();
-                alert('There were no records matching your query.');
-            }
-        });
-    }
-    else{
-        alert('Please enter search criteria.');
-    }
-}
-
-function loadPointWFSLayer(index){
+function loadPointsLayer(index){
     pointvectorsource.clear();
     let processed = 0;
     do{
@@ -2732,8 +1865,8 @@ function loadPointWFSLayer(index){
             });
             if(toggleSelectedPoints){
                 features = features.filter(function (feature){
-                    const occid = Number(feature.get('occid'));
-                    return (selections.indexOf(occid) !== -1);
+                    const id = Number(feature.get('id'));
+                    return (selections.indexOf(id) !== -1);
                 });
             }
             primeSymbologyData(features);
@@ -2752,19 +1885,9 @@ function loadPointWFSLayer(index){
         distance: clusterDistance,
         source: pointvectorsource,
         clusterkey: clusterKey,
-        indexkey: 'occid',
+        indexkey: 'id',
         geometryFunction: function(feature){
-            if(dateSliderActive){
-                if(validateFeatureDate(feature)){
-                    return feature.getGeometry();
-                }
-                else{
-                    return null;
-                }
-            }
-            else{
-                return feature.getGeometry();
-            }
+            return feature.getGeometry();
         }
     });
 
@@ -2930,14 +2053,10 @@ function loadServerLayer(id,name,file){
     toggleLayerDisplayMessage();
 }
 
-function openIndPopup(occid){
-    openPopup('../collections/individual/index.php?occid=' + occid);
-}
-
-function openOccidInfoBox(occid,label){
-    const occpos = findOccClusterPosition(occid);
+function openRecordInfoBox(id,label){
+    const idpos = findRecordClusterPosition(id);
     finderpopupcontent.innerHTML = label;
-    finderpopupoverlay.setPosition(occpos);
+    finderpopupoverlay.setPosition(idpos);
 }
 
 function primeLayerQuerySelectorFields(layerId) {
@@ -2976,65 +2095,6 @@ function primeLayerQuerySelectorFields(layerId) {
         blankSelectorOption.setAttribute("value","");
         blankSelectorOption.innerHTML = 'Layer does not include data';
         fieldSelector.appendChild(blankSelectorOption);
-    }
-}
-
-function primeSymbologyData(features){
-    const currentDate = new Date();
-    for(let f in features) {
-        if(features.hasOwnProperty(f)){
-            if(features[f].get('coll_year')){
-                const fyear = Number(features[f].get('coll_year'));
-                if(fyear.toString().length === 4 && fyear > 1500){
-                    const fmonth = (features[f].get('coll_month') ? Number(features[f].get('coll_month')) : 1);
-                    const fday = (features[f].get('coll_day') ? Number(features[f].get('coll_day')) : 1);
-                    const fDate = new Date();
-                    fDate.setFullYear(fyear, fmonth - 1, fday);
-                    if(currentDate > fDate){
-                        if(!dsOldestDate || (fDate < dsOldestDate)){
-                            dsOldestDate = fDate;
-                        }
-                        if(!dsNewestDate || (fDate > dsNewestDate)){
-                            dsNewestDate = fDate;
-                        }
-                    }
-                }
-            }
-            const collName = features[f].get('CollectionName');
-            const collid = features[f].get('collid');
-            const tidinterpreted = features[f].get('tidinterpreted');
-            const sciname = features[f].get('sciname');
-            let family = (features[f].get('accFamily') ? features[f].get('accFamily') : features[f].get('family'));
-            if(family){
-                family = family.toUpperCase();
-            }
-            else{
-                family = 'undefined';
-            }
-            //var namestring = (sciname?sciname:'')+(tidinterpreted?tidinterpreted:'');
-            let namestring = (sciname ? sciname : '');
-            namestring = namestring.replaceAll(" ","");
-            namestring = namestring.toLowerCase();
-            namestring = namestring.replaceAll(/[^A-Za-z0-9 ]/g,'');
-            if(!collSymbology[collName]){
-                collSymbology[collName] = [];
-                collSymbology[collName]['collid'] = collid;
-                collSymbology[collName]['color'] = pointLayerFillColor;
-            }
-            if(!taxaSymbology[namestring]){
-                taxaCnt++;
-                taxaSymbology[namestring] = [];
-                taxaSymbology[namestring]['sciname'] = sciname;
-                taxaSymbology[namestring]['tidinterpreted'] = tidinterpreted;
-                taxaSymbology[namestring]['family'] = family;
-                taxaSymbology[namestring]['color'] = pointLayerFillColor;
-                taxaSymbology[namestring]['count'] = 1;
-            }
-            else{
-                taxaSymbology[namestring]['count'] = taxaSymbology[namestring]['count'] + 1;
-            }
-            features[f].set('namestring',namestring,true);
-        }
     }
 }
 
@@ -3148,7 +2208,7 @@ function processCheckSelection(c){
     if(c.checked === true){
         activeTab = $('#recordstab').tabs("option","active");
         if(activeTab === 1){
-            if($('.occcheck:checked').length === $('.occcheck').length){
+            if($('.reccheck:checked').length === $('.reccheck').length){
                 document.getElementById("selectallcheck").checked = true;
             }
         }
@@ -3535,16 +2595,16 @@ function processMapPNGDownload(){
 
 function processPointSelection(sFeature){
     const feature = (sFeature.get('features') ? sFeature.get('features')[0] : sFeature);
-    const occid = Number(feature.get('occid'));
-    if(selections.indexOf(occid) < 0){
-        selections.push(occid);
+    const id = Number(feature.get('id'));
+    if(selections.indexOf(id) < 0){
+        selections.push(id);
         const infoArr = getPointInfoArr(sFeature);
-        updateSelections(occid,infoArr);
+        updateSelections(id,infoArr);
     }
     else{
-        const index = selections.indexOf(occid);
+        const index = selections.indexOf(id);
         selections.splice(index, 1);
-        removeSelectionRecord(occid);
+        removeSelectionRecord(id);
     }
     const style = (sFeature.get('features') ? setClusterSymbol(sFeature) : setSymbol(sFeature));
     sFeature.setStyle(style);
@@ -3598,7 +2658,7 @@ function processSpatialQueryOperatorSelectorChange(value) {
 function processToggleSelectedChange(){
     toggleSelectedPoints = document.getElementById("toggleselectedswitch").checked;
     if(clusterPoints){
-        loadPointWFSLayer(0);
+        loadPointsLayer(0);
     }
     else{
         layersArr['pointv'].setSource(pointvectorsource);
@@ -3632,35 +2692,6 @@ function refreshLayerOrder(){
     layersArr['pointv'].setZIndex(layerCount-2);
     layersArr['heat'].setZIndex(layerCount-1);
     layersArr['spider'].setZIndex(layerCount);
-}
-
-function removeDateSlider(){
-    if(document.getElementById("sliderdiv")){
-        document.body.removeChild(sliderdiv);
-        sliderdiv = '';
-        document.getElementById("datesliderswitch").checked = false;
-        dateSliderActive = false;
-    }
-    if(returnClusters && !showHeatMap){
-        returnClusters = false;
-        document.getElementById("clusterswitch").checked = true;
-        changeClusterSetting();
-    }
-    tsOldestDate = '';
-    tsNewestDate = '';
-    document.getElementById("dateslidercontrol").style.display = 'none';
-    document.getElementById("maptoolcontainer").style.top = '10px';
-    document.getElementById("maptoolcontainer").style.left = '50%';
-    document.getElementById("maptoolcontainer").style.bottom = 'initial';
-    document.getElementById("maptoolcontainer").style.right = 'initial';
-    document.getElementById("datesliderearlydate").value = '';
-    document.getElementById("datesliderlatedate").value = '';
-    dsAnimDuration = document.getElementById("datesliderinterduration").value = '';
-    dsAnimTime = document.getElementById("datesliderintertime").value = '';
-    dsAnimImageSave = document.getElementById("dateslideranimimagesave").checked = false;
-    dsAnimReverse = document.getElementById("dateslideranimreverse").checked = false;
-    dsAnimDual = document.getElementById("dateslideranimdual").checked = false;
-    layersArr['pointv'].getSource().changed();
 }
 
 function removeLayerFromLayerOrderArr(layerId) {
@@ -3698,9 +2729,9 @@ function removeRasterLayerFromTargetList(layerId){
 
 function removeSelection(c){
     if(c.checked === false){
-        const occid = c.value;
-        const chbox = 'ch' + occid;
-        removeSelectionRecord(occid);
+        const id = c.value;
+        const chbox = 'ch' + id;
+        removeSelectionRecord(id);
         if(document.getElementById(chbox)){
             document.getElementById(chbox).checked = false;
         }
@@ -3710,7 +2741,7 @@ function removeSelection(c){
         if(spiderCluster){
             const spiderFeatures = layersArr['spider'].getSource().getFeatures();
             for(let f in spiderFeatures){
-                if(spiderFeatures.hasOwnProperty(f) && spiderFeatures[f].get('features')[0].get('occid') === Number(c.value)){
+                if(spiderFeatures.hasOwnProperty(f) && spiderFeatures[f].get('features')[0].get('id') === Number(c.value)){
                     const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
                     spiderFeatures[f].setStyle(style);
                 }
@@ -3800,42 +2831,6 @@ function removeUserLayer(layerID,raster){
     toggleLayerDisplayMessage();
 }
 
-function resetMainSymbology(){
-    for(let i in collSymbology){
-        if(collSymbology.hasOwnProperty(i)){
-            collSymbology[i]['color'] = pointLayerFillColor;
-            const keyName = 'keyColor' + i;
-            if(document.getElementById(keyName)){
-                document.getElementById(keyName).color.fromString(pointLayerFillColor);
-            }
-        }
-    }
-}
-
-function resetSymbology(){
-    document.getElementById("symbolizeReset1").disabled = true;
-    document.getElementById("symbolizeReset2").disabled = true;
-    changeMapSymbology('coll');
-    resetMainSymbology();
-    for(let i in collSymbology){
-        if(collSymbology.hasOwnProperty(i)){
-            buildCollKeyPiece(i);
-        }
-    }
-    layersArr['pointv'].getSource().changed();
-    if(spiderCluster){
-        const spiderFeatures = layersArr['spider'].getSource().getFeatures();
-        for(let f in spiderFeatures){
-            if(spiderFeatures.hasOwnProperty(f)){
-                const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
-                spiderFeatures[f].setStyle(style);
-            }
-        }
-    }
-    document.getElementById("symbolizeReset1").disabled = false;
-    document.getElementById("symbolizeReset2").disabled = false;
-}
-
 function runQuerySelectorQuery(layerId,fieldValue,operatorValue,singleVal,doubleVal1,doubleVal2) {
     const addFeatures = [];
     const layerFeatures = layersArr[layerId].getSource().getFeatures();
@@ -3867,24 +2862,6 @@ function runQuerySelectorQuery(layerId,fieldValue,operatorValue,singleVal,double
     selectsource.addFeatures(addFeatures);
 }
 
-function saveKeyImage(){
-    const keyElement = (mapSymbology === 'coll' ? document.getElementById("collSymbologyKey") : document.getElementById("taxasymbologykeysbox"));
-    let keyClone = keyElement.cloneNode(true);
-    document.body.appendChild(keyClone);
-    html2canvas(keyClone).then(function(canvas) {
-        if (navigator.msSaveBlob) {
-            navigator.msSaveBlob(canvas.msToBlob(),'mapkey.png');
-        }
-        else {
-            canvas.toBlob(function(blob) {
-                saveAs(blob,'mapkey.png');
-            });
-        }
-        document.body.removeChild(keyClone);
-        keyClone = '';
-    });
-}
-
 function setActiveLayer(){
     const selectDropDown = document.getElementById("selectlayerselect");
     activeLayer = selectDropDown.options[selectDropDown.selectedIndex].value;
@@ -3913,85 +2890,6 @@ function setBaseLayerSource(urlTemplate){
         }),
         crossOrigin: 'anonymous'
     });
-}
-
-function setClusterSymbol(feature) {
-    let clusterindex, hexcolor, radius;
-    let style = '';
-    let stroke = '';
-    let selected = false;
-    if(feature.get('features')){
-        const size = feature.get('features').length;
-        if(size > 1){
-            if(selections.length > 0){
-                clusterindex = feature.get('identifiers');
-                for(let i in selections){
-                    if(selections.hasOwnProperty(i)){
-                        if(clusterindex.indexOf(selections[i]) !== -1) {
-                            selected = true;
-                        }
-                    }
-                }
-            }
-            clusterindex = feature.get('identifiers');
-            const cKey = feature.get('clusterkey');
-            if(mapSymbology === 'coll'){
-                hexcolor = '#'+collSymbology[cKey]['color'];
-            }
-            else if(mapSymbology === 'taxa'){
-                hexcolor = '#'+taxaSymbology[cKey]['color'];
-            }
-            const colorArr = hexToRgb(hexcolor);
-            if(size < 10) {
-                radius = (pointLayerPointRadius + 5);
-            }
-            else if(size < 100) {
-                radius = (pointLayerPointRadius + 10);
-            }
-            else if(size < 1000) {
-                radius = (pointLayerPointRadius + 15);
-            }
-            else if(size < 10000) {
-                radius = (pointLayerPointRadius + 20);
-            }
-            else if(size < 100000) {
-                radius = (pointLayerPointRadius + 25);
-            }
-            else {
-                radius = (pointLayerPointRadius + 30);
-            }
-
-            if(selected) {
-                stroke = new ol.style.Stroke({color: ('#' + pointLayerSelectionsBorderColor), width: pointLayerSelectionsBorderWidth})
-            }
-
-            style = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: radius,
-                    stroke: stroke,
-                    fill: new ol.style.Fill({
-                        color: [colorArr['r'],colorArr['g'],colorArr['b'],0.8]
-                    })
-                }),
-                text: new ol.style.Text({
-                    scale: 1,
-                    text: size.toString(),
-                    fill: new ol.style.Fill({
-                        color: '#fff'
-                    }),
-                    stroke: new ol.style.Stroke({
-                        color: 'rgba(0, 0, 0, 0.6)',
-                        width: 3
-                    })
-                })
-            });
-        }
-        else{
-            const originalFeature = feature.get('features')[0];
-            style = setSymbol(originalFeature);
-        }
-    }
-    return style;
 }
 
 function setCopySearchUrlDiv(){
@@ -4119,141 +3017,6 @@ function setRasterDragDropTarget(){
     }
 }
 
-function setDSAnimation(){
-    dsAnimDuration = document.getElementById("datesliderinterduration").value;
-    dsAnimTime = document.getElementById("datesliderintertime").value;
-    if(dsAnimDuration && dsAnimTime){
-        dsAnimStop = false;
-        dsAnimDuration = dsAnimDuration*365.25;
-        dsAnimTime = dsAnimTime*1000;
-        dsAnimImageSave = document.getElementById("dateslideranimimagesave").checked;
-        dsAnimReverse = document.getElementById("dateslideranimreverse").checked;
-        dsAnimDual = document.getElementById("dateslideranimdual").checked;
-        const lowDate = document.getElementById("datesliderearlydate").value;
-        const highDate = document.getElementById("datesliderlatedate").value;
-        dsAnimLow = new Date(lowDate);
-        dsAnimLow = new Date(dsAnimLow.setTime(dsAnimLow.getTime()+86400000));
-        dsAnimHigh = new Date(highDate);
-        dsAnimHigh = new Date(dsAnimHigh.setTime(dsAnimHigh.getTime()+86400000));
-        let lowDateVal = dsAnimLow;
-        let highDateVal = dsAnimHigh;
-        if(dsAnimReverse){
-            if(dsAnimDual) lowDateVal = highDateVal;
-        }
-        else{
-            highDateVal = lowDateVal;
-        }
-        tsOldestDate = lowDateVal;
-        tsNewestDate = highDateVal;
-        const lowDateValStr = getISOStrFromDateObj(lowDateVal);
-        const highDateValStr = getISOStrFromDateObj(highDateVal);
-        $("#sliderdiv").slider('values',0,tsOldestDate.getTime());
-        $("#sliderdiv").slider('values',1,tsNewestDate.getTime());
-        $("#custom-label-min").text(lowDateValStr);
-        $("#custom-label-max").text(highDateValStr);
-        document.getElementById("datesliderearlydate").value = lowDateValStr;
-        document.getElementById("datesliderlatedate").value = highDateValStr;
-        layersArr['pointv'].getSource().changed();
-        if(dsAnimImageSave){
-            zipFile = new JSZip();
-            zipFolder = zipFile.folder("images");
-        }
-        animateDS();
-    }
-    else{
-        dsAnimDuration = '';
-        dsAnimTime = '';
-        alert("Please enter an interval duration and interval time.");
-    }
-}
-
-function setDSValues(){
-    const lowDate = document.getElementById("datesliderearlydate").value;
-    tsOldestDate = new Date(lowDate);
-    tsOldestDate = new Date(tsOldestDate.setTime(tsOldestDate.getTime()+86400000));
-    const hLowDateStr = getISOStrFromDateObj(tsOldestDate);
-    const highDate = document.getElementById("datesliderlatedate").value;
-    tsNewestDate = new Date(highDate);
-    tsNewestDate = new Date(tsNewestDate.setTime(tsNewestDate.getTime()+86400000));
-    const hHighDateStr = getISOStrFromDateObj(tsNewestDate);
-    $("#sliderdiv").slider('values',0,tsOldestDate.getTime());
-    $("#sliderdiv").slider('values',1,tsNewestDate.getTime());
-    $("#custom-label-min").text(hLowDateStr);
-    $("#custom-label-max").text(hHighDateStr);
-    layersArr['pointv'].getSource().changed();
-}
-
-function setInputFormBySearchTermsArr(){
-    if(searchTermsArr.hasOwnProperty('taxa')){
-        document.getElementById("taxa").value = searchTermsArr['taxa'];
-        document.getElementById("taxontype").value = searchTermsArr['taxontype'];
-        if(searchTermsArr.hasOwnProperty('thes')){
-            document.getElementById("thes").checked = true;
-        }
-    }
-    if(searchTermsArr.hasOwnProperty('country')){
-        document.getElementById("country").value = searchTermsArr['country'];
-    }
-    if(searchTermsArr.hasOwnProperty('state')){
-        document.getElementById("state").value = searchTermsArr['state'];
-    }
-    if(searchTermsArr.hasOwnProperty('county')){
-        document.getElementById("county").value = searchTermsArr['county'];
-    }
-    if(searchTermsArr.hasOwnProperty('locality')){
-        document.getElementById("locality").value = searchTermsArr['locality'];
-    }
-    if(searchTermsArr.hasOwnProperty('elevlow')){
-        document.getElementById("elevlow").value = searchTermsArr['elevlow'];
-    }
-    if(searchTermsArr.hasOwnProperty('elevhigh')){
-        document.getElementById("elevhigh").value = searchTermsArr['elevhigh'];
-    }
-    if(searchTermsArr.hasOwnProperty('collector')){
-        document.getElementById("collector").value = searchTermsArr['collector'];
-    }
-    if(searchTermsArr.hasOwnProperty('collnum')){
-        document.getElementById("collnum").value = searchTermsArr['collnum'];
-    }
-    if(searchTermsArr.hasOwnProperty('eventdate1')){
-        document.getElementById("eventdate1").value = searchTermsArr['eventdate1'];
-    }
-    if(searchTermsArr.hasOwnProperty('eventdate2')){
-        document.getElementById("eventdate2").value = searchTermsArr['eventdate2'];
-    }
-    if(searchTermsArr.hasOwnProperty('occurrenceRemarks')){
-        document.getElementById("occurrenceRemarks").value = searchTermsArr['occurrenceRemarks'];
-    }
-    if(searchTermsArr.hasOwnProperty('catnum')){
-        document.getElementById("catnum").value = searchTermsArr['catnum'];
-    }
-    if(searchTermsArr.hasOwnProperty('othercatnum')){
-        document.getElementById("othercatnum").checked = true;
-    }
-    if(searchTermsArr.hasOwnProperty('typestatus')){
-        document.getElementById("typestatus").checked = true;
-    }
-    if(searchTermsArr.hasOwnProperty('hasaudio')){
-        document.getElementById("hasaudio").checked = true;
-    }
-    if(searchTermsArr.hasOwnProperty('hasimages')){
-        document.getElementById("hasimages").checked = true;
-    }
-    if(searchTermsArr.hasOwnProperty('hasvideo')){
-        document.getElementById("hasvideo").checked = true;
-    }
-    if(searchTermsArr.hasOwnProperty('hasmedia')){
-        document.getElementById("hasmedia").checked = true;
-    }
-    if(searchTermsArr.hasOwnProperty('hasgenetic')){
-        document.getElementById("hasgenetic").checked = true;
-    }
-    if(searchTermsArr.hasOwnProperty('upperlat') || searchTermsArr.hasOwnProperty('pointlat') || searchTermsArr.hasOwnProperty('circleArr') || searchTermsArr.hasOwnProperty('polyArr')){
-        document.getElementById("noshapecriteria").style.display = "none";
-        document.getElementById("shapecriteria").style.display = "block";
-    }
-}
-
 function setLayersController(){
     const http = new XMLHttpRequest();
     const url = "rpc/getlayersconfig.php";
@@ -4313,69 +3076,6 @@ function setSpatialParamBox(){
     }
 }
 
-function setSymbol(feature){
-    let fill;
-    let color;
-    let showPoint = true;
-    if(dateSliderActive){
-        showPoint = validateFeatureDate(feature);
-    }
-    let style;
-    let stroke;
-    let selected = false;
-    const cKey = feature.get(clusterKey);
-    let recType = feature.get('CollType');
-    if(!recType) recType = 'observation';
-    if(selections.length > 0){
-        const occid = Number(feature.get('occid'));
-        if(selections.indexOf(occid) !== -1) {
-            selected = true;
-        }
-    }
-    if(mapSymbology === 'coll'){
-        color = '#'+collSymbology[cKey]['color'];
-    }
-    else if(mapSymbology === 'taxa'){
-        color = '#' + taxaSymbology[cKey]['color'];
-    }
-
-    if(showPoint){
-        if(selected) {
-            stroke = new ol.style.Stroke({color: ('#' + pointLayerSelectionsBorderColor), width: pointLayerSelectionsBorderWidth});
-        }
-        else {
-            stroke = new ol.style.Stroke({color: ('#' + pointLayerBorderColor), width: pointLayerBorderWidth});
-        }
-        fill = new ol.style.Fill({color: color});
-    }
-    else{
-        stroke = new ol.style.Stroke({color: 'rgba(255, 255, 255, 0.01)', width: 0});
-        fill = new ol.style.Fill({color: 'rgba(255, 255, 255, 0.01)'});
-    }
-
-    if(recType.toLowerCase().indexOf('observation') !== -1){
-        style = new ol.style.Style({
-            image: new ol.style.RegularShape({
-                fill: fill,
-                stroke: stroke,
-                points: 3,
-                radius: pointLayerPointRadius
-            })
-        });
-    }
-    else{
-        style = new ol.style.Style({
-            image: new ol.style.Circle({
-                radius: pointLayerPointRadius,
-                fill: fill,
-                stroke: stroke
-            })
-        });
-    }
-
-    return style;
-}
-
 function setTransformHandleStyle(){
     if(!transformInteraction instanceof ol.interaction.Transform){
         return;
@@ -4430,16 +3130,6 @@ function setTransformHandleStyle(){
     }));
     transformInteraction.style.scalev2 = transformInteraction.style.scalev;
     transformInteraction.set('translate', transformInteraction.get('translate'));
-}
-
-function showDatasetManagementPopup(){
-    if(selections.length > 0){
-        document.getElementById("datasetselecteddiv").style.display = "block";
-    }
-    else{
-        document.getElementById("datasetselecteddiv").style.display = "none";
-    }
-    $("#datasetmanagement").popup("show");
 }
 
 function showFeature(feature){
@@ -4530,60 +3220,6 @@ function spiderifyPoints(features){
     }
 }
 
-function stopDSAnimation(){
-    dsAnimStop = true;
-    /*tsOldestDate = dsAnimLow;
-    tsNewestDate = dsAnimHigh;
-    var lowDateValStr = getISOStrFromDateObj(dsAnimLow);
-    var highDateValStr = getISOStrFromDateObj(dsAnimHigh);
-    $("#sliderdiv").slider('values',0,tsOldestDate.getTime());
-    $("#sliderdiv").slider('values',1,tsNewestDate.getTime());
-    $("#custom-label-min").text(lowDateValStr);
-    $("#custom-label-max").text(highDateValStr);
-    document.getElementById("datesliderearlydate").value = lowDateValStr;
-    document.getElementById("datesliderlatedate").value = highDateValStr;
-    layersArr['pointv'].getSource().changed();*/
-    dsAnimDuration = '';
-    dsAnimTime = '';
-    dsAnimImageSave = false;
-    dsAnimReverse = false;
-    dsAnimDual = false;
-    dsAnimLow = '';
-    dsAnimHigh = '';
-    dsAnimation = '';
-}
-
-function toggleDateSlider(){
-    dateSliderActive = document.getElementById("datesliderswitch").checked;
-    if(dateSliderActive){
-        if(dsOldestDate && dsNewestDate){
-            if(dsOldestDate !== dsNewestDate){
-                if(!clusterPoints){
-                    //var dual = document.getElementById("dsdualtype").checked;
-                    createDateSlider(true);
-                }
-                else{
-                    returnClusters = true;
-                    document.getElementById("clusterswitch").checked = false;
-                    changeClusterSetting();
-                    createDateSlider(true);
-                }
-            }
-            else{
-                alert('The current records on the map do not have a range of dates for the Date Slider to populate.');
-            }
-        }
-        else{
-            document.getElementById("datesliderswitch").checked = false;
-            dateSliderActive = false;
-            alert('Points must be loaded onto the map to use the Date Slider.');
-        }
-    }
-    else{
-        removeDateSlider();
-    }
-}
-
 function toggleHeatMap(){
     showHeatMap = document.getElementById("heatmapswitch").checked;
     if(showHeatMap){
@@ -4591,7 +3227,7 @@ function toggleHeatMap(){
         layersArr['heat'].setVisible(true);
     }
     else{
-        if(returnClusters && !dateSliderActive){
+        if(returnClusters){
             returnClusters = false;
             document.getElementById("clusterswitch").checked = true;
             changeClusterSetting();
@@ -4684,71 +3320,6 @@ function toggleUserLayerVisibility(id,name,visible){
             removeLayerFromLayerOrderArr(id);
         }
     }
-}
-
-function updateSelections(seloccid,infoArr){
-    let selectionList = '';
-    let trfragment = '';
-    let selcat = '';
-    let sellabel = '';
-    let sele = '';
-    let sels = '';
-    selectionList += document.getElementById("selectiontbody").innerHTML;
-    const divid = "sel" + seloccid;
-    const trid = "tr" + seloccid;
-    if(infoArr){
-        selcat = infoArr['catalognumber'];
-        const mouseOverLabel = "openOccidInfoBox(" + seloccid + ",'" + infoArr['collector'] + "');";
-        let labelHTML = '<a href="#" onmouseover="' + mouseOverLabel + '" onmouseout="closeOccidInfoBox();" onclick="openIndPopup(' + seloccid + '); return false;">';
-        labelHTML += infoArr['collector'];
-        labelHTML += '</a>';
-        sellabel = labelHTML;
-        sele = infoArr['eventdate'];
-        sels = infoArr['sciname'];
-    }
-    else if(document.getElementById(trid)){
-        const catid = "cat" + seloccid;
-        const labelid = "label" + seloccid;
-        const eid = "e" + seloccid;
-        const sid = "s" + seloccid;
-        selcat = document.getElementById(catid).innerHTML;
-        sellabel = document.getElementById(labelid).innerHTML;
-        sele = document.getElementById(eid).innerHTML;
-        sels = document.getElementById(sid).innerHTML;
-    }
-    if(!document.getElementById(divid)){
-        trfragment = '';
-        trfragment += '<tr id="sel'+seloccid+'" >';
-        trfragment += '<td>';
-        trfragment += '<input type="checkbox" id="selch'+seloccid+'" name="occid[]" value="'+seloccid+'" onchange="removeSelection(this);" checked />';
-        trfragment += '</td>';
-        trfragment += '<td id="selcat'+seloccid+'"  style="width:200px;" >'+selcat+'</td>';
-        trfragment += '<td id="sellabel'+seloccid+'"  style="width:200px;" >';
-        trfragment += sellabel;
-        trfragment += '</td>';
-        trfragment += '<td id="sele'+seloccid+'"  style="width:200px;" >'+sele+'</td>';
-        trfragment += '<td id="sels'+seloccid+'"  style="width:200px;" >'+sels+'</td>';
-        trfragment += '</tr>';
-        selectionList += trfragment;
-    }
-    document.getElementById("selectiontbody").innerHTML = selectionList;
-}
-
-function validateFeatureDate(feature){
-    let valid = false;
-    if(feature.get('coll_year')){
-        const fyear = Number(feature.get('coll_year'));
-        if(fyear.toString().length === 4 && fyear > 1500){
-            const fmonth = (feature.get('coll_month') ? Number(feature.get('coll_month')) : 1);
-            const fday = (feature.get('coll_day') ? Number(feature.get('coll_day')) : 1);
-            const fDate = new Date();
-            fDate.setFullYear(fyear, fmonth - 1, fday);
-            if(fDate > tsOldestDate && fDate < tsNewestDate){
-                valid = true;
-            }
-        }
-    }
-    return valid;
 }
 
 function vectorizeRasterByData(){
@@ -4919,11 +3490,11 @@ function zoomToSelections(){
         if(selections.hasOwnProperty(i)){
             let point = '';
             if(clusterPoints){
-                const cluster = findOccCluster(selections[i]);
-                point = findOccPointInCluster(cluster,selections[i]);
+                const cluster = findRecordCluster(selections[i]);
+                point = findRecordPointInCluster(cluster,selections[i]);
             }
             else{
-                point = findOccPoint(selections[i]);
+                point = findRecordPoint(selections[i]);
             }
             if(point){
                 ol.extent.extend(extent, point.getGeometry().getExtent());

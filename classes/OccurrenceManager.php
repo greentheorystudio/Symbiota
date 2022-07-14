@@ -703,11 +703,8 @@ class OccurrenceManager{
         }
     }
 
-    public function getFullCollectionList($catId = null): array
+    public function getFullCollectionList(): array
     {
-        if($catId && !is_numeric($catId)) {
-            $catId = '';
-        }
         $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
             'cat.category, cat.icon AS caticon, cat.acronym '.
             'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
@@ -749,13 +746,15 @@ class OccurrenceManager{
         $result->free();
 
         $retArr = array();
-        if(isset($collArr['spec']['cat'][$catId])){
-            $retArr['spec']['cat'][$catId] = $collArr['spec']['cat'][$catId];
-            unset($collArr['spec']['cat'][$catId]);
-        }
-        elseif(isset($collArr['obs']['cat'][$catId])){
-            $retArr['obs']['cat'][$catId] = $collArr['obs']['cat'][$catId];
-            unset($collArr['obs']['cat'][$catId]);
+        if(isset($GLOBALS['DEFAULTCATID'])){
+            if(isset($collArr['spec']['cat'][$GLOBALS['DEFAULTCATID']])){
+                $retArr['spec']['cat'][$GLOBALS['DEFAULTCATID']] = $collArr['spec']['cat'][$GLOBALS['DEFAULTCATID']];
+                unset($collArr['spec']['cat'][$GLOBALS['DEFAULTCATID']]);
+            }
+            elseif(isset($collArr['obs']['cat'][$GLOBALS['DEFAULTCATID']])){
+                $retArr['obs']['cat'][$GLOBALS['DEFAULTCATID']] = $collArr['obs']['cat'][$GLOBALS['DEFAULTCATID']];
+                unset($collArr['obs']['cat'][$GLOBALS['DEFAULTCATID']]);
+            }
         }
         foreach($collArr as $t => $tArr){
             foreach($tArr as $g => $gArr){
