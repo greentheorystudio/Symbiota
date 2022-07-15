@@ -73,7 +73,7 @@ else{
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/external/jquery-ui.css" rel="stylesheet" type="text/css" />
-	<style type="text/css">
+	<style>
 		#tabs a{
 			outline-color: transparent;
 			font-size: 12px;

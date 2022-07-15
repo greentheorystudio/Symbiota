@@ -11,7 +11,6 @@ if(!$GLOBALS['IS_ADMIN']) {
 $confManager = new ConfigurationManager();
 
 $fullConfArr = $confManager->getConfigurationsArr();
-$coreConfArr = $fullConfArr['core'];
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -29,7 +28,7 @@ $coreConfArr = $fullConfArr['core'];
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jscolor/jscolor.js?ver=13" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220310" type="text/javascript"></script>
-    <style type="text/css">
+    <style>
         .map {
             width:95%;
             height:650px;

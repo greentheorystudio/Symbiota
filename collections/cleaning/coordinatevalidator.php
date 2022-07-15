@@ -45,7 +45,7 @@ if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 	</script>
-	<style type="text/css">
+	<style>
 		table.styledtable {  width: 300px }
 		table.styledtable td { white-space: nowrap; }
 	</style>

@@ -29,7 +29,7 @@ if($stArrJson){
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search Results Table</title>
-    <style type="text/css">
+    <style>
         table.styledtable td {
             white-space: nowrap;
         }

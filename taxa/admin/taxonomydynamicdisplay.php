@@ -29,7 +29,7 @@ if($target){
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" media="screen">
-    <style type="text/css">
+    <style>
         .dijitLeaf,
         .dijitIconLeaf,
         .dijitFolderClosed,

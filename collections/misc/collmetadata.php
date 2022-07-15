@@ -80,7 +80,7 @@ if($collid){
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <style type="text/css">
+    <style>
         fieldset {
             background-color: #f9f9f9;
             padding:15px;

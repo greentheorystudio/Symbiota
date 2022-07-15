@@ -135,7 +135,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
     <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <style type="text/css">
+    <style>
         .map {
             width: 100%;
             height: 600px;
