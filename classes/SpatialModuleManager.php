@@ -26,7 +26,7 @@ class SpatialModuleManager{
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
-            $occArr[] = $data['properties']['occid'];
+            $occArr[] = $data['properties']['id'];
         }
         return implode(',',$occArr);
     }
