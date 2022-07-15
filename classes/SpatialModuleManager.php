@@ -21,14 +21,14 @@ class SpatialModuleManager{
         }
     }
 
-    public function getOccStrFromGeoJSON($json): string{
-        $occArr = array();
+    public function getIdStrFromGeoJSON($json): string{
+        $idArr = array();
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
-            $occArr[] = $data['properties']['id'];
+            $idArr[] = $data['properties']['id'];
         }
-        return implode(',',$occArr);
+        return implode(',',$idArr);
     }
 
     public function getLayersConfigJSON(): string

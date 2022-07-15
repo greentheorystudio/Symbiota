@@ -134,7 +134,7 @@ else{
             $occStr = $selections;
         }
         else{
-            $occStr = $spatialManager->getOccStrFromGeoJSON($jsonContent);
+            $occStr = $spatialManager->getIdStrFromGeoJSON($jsonContent);
         }
         $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
     }
