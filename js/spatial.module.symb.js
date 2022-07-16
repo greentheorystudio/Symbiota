@@ -510,6 +510,22 @@ function primeSymbologyData(features){
     }
 }
 
+function refreshLayerOrder(){
+    const layerCount = map.getLayers().getArray().length;
+    layersObj['dragdrop1'].setZIndex(layerCount-11);
+    layersObj['dragdrop2'].setZIndex(layerCount-10);
+    layersObj['dragdrop3'].setZIndex(layerCount-9);
+    layersObj['dragdrop4'].setZIndex(layerCount-8);
+    layersObj['dragdrop5'].setZIndex(layerCount-7);
+    layersObj['dragdrop6'].setZIndex(layerCount-6);
+    layersObj['uncertainty'].setZIndex(layerCount-5);
+    layersObj['rasteranalysis'].setZIndex(layerCount-4);
+    layersObj['select'].setZIndex(layerCount-3);
+    layersObj['pointv'].setZIndex(layerCount-2);
+    layersObj['heat'].setZIndex(layerCount-1);
+    layersObj['spider'].setZIndex(layerCount);
+}
+
 function resetMainSymbology(){
     for(let i in collSymbology){
         if(collSymbology.hasOwnProperty(i)){

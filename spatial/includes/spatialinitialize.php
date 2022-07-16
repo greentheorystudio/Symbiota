@@ -18,7 +18,7 @@ if($stArrJson){
     }
 }
 ?>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220715" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220716" type="text/javascript"></script>
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     let searchTermsArr = {};
@@ -127,6 +127,11 @@ if($stArrJson){
             }
         });
         $('#vectortoolstab').tabs({
+            beforeLoad: function( event, ui ) {
+                $(ui.panel).html("<p>Loading...</p>");
+            }
+        });
+        $('#rastertoolstab').tabs({
             beforeLoad: function( event, ui ) {
                 $(ui.panel).html("<p>Loading...</p>");
             }

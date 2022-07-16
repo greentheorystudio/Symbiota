@@ -2685,17 +2685,6 @@ function processVectorizeRasterByGridResolutionChange(){
     }
 }
 
-function refreshLayerOrder(){
-    const layerCount = map.getLayers().getArray().length;
-    layersObj['dragdrop1'].setZIndex(layerCount-6);
-    layersObj['dragdrop2'].setZIndex(layerCount-5);
-    layersObj['dragdrop3'].setZIndex(layerCount-4);
-    layersObj['select'].setZIndex(layerCount-3);
-    layersObj['pointv'].setZIndex(layerCount-2);
-    layersObj['heat'].setZIndex(layerCount-1);
-    layersObj['spider'].setZIndex(layerCount);
-}
-
 function removeLayerFromLayerOrderArr(layerId) {
     const index = layerOrderArr.indexOf(layerId);
     layerOrderArr.splice(index,1);
