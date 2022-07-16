@@ -163,9 +163,9 @@ function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
 function changeCollColor(color,key){
     changeMapSymbology('coll');
     collSymbology[key]['color'] = color;
-    layersArr['pointv'].getSource().changed();
+    layersObj['pointv'].getSource().changed();
     if(spiderCluster){
-        const spiderFeatures = layersArr['spider'].getSource().getFeatures();
+        const spiderFeatures = layersObj['spider'].getSource().getFeatures();
         for(let f in spiderFeatures){
             if(spiderFeatures.hasOwnProperty(f)){
                 const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
@@ -178,13 +178,13 @@ function changeCollColor(color,key){
 function changeMapSymbology(symbology){
     if(symbology !== mapSymbology){
         if(spiderCluster){
-            const source = layersArr['spider'].getSource();
+            const source = layersObj['spider'].getSource();
             source.clear();
             const blankSource = new ol.source.Vector({
                 features: new ol.Collection(),
                 useSpatialIndex: true
             });
-            layersArr['spider'].setSource(blankSource);
+            layersObj['spider'].setSource(blankSource);
             for(let i in hiddenClusters){
                 if(hiddenClusters.hasOwnProperty(i)){
                     showFeature(hiddenClusters[i]);
@@ -192,7 +192,7 @@ function changeMapSymbology(symbology){
             }
             hiddenClusters = [];
             spiderCluster = '';
-            layersArr['pointv'].getSource().changed();
+            layersObj['pointv'].getSource().changed();
         }
     }
     if(symbology === 'coll'){
@@ -244,7 +244,7 @@ function changeRecordPage(page){
 function changeTaxaColor(color,tidcode){
     changeMapSymbology('taxa');
     taxaSymbology[tidcode]['color'] = color;
-    layersArr['pointv'].getSource().changed();
+    layersObj['pointv'].getSource().changed();
 }
 
 function clearTaxaSymbology(){
@@ -421,7 +421,7 @@ function loadPoints(){
         selections = [];
         showWorking();
         pointvectorsource.clear(true);
-        layersArr['pointv'].setSource(pointvectorsource);
+        layersObj['pointv'].setSource(pointvectorsource);
         getQueryRecCnt(function() {
             if(queryRecCnt > 0){
                 loadPointsEvent = true;
@@ -532,9 +532,9 @@ function resetSymbology(){
             buildCollKeyPiece(i);
         }
     }
-    layersArr['pointv'].getSource().changed();
+    layersObj['pointv'].getSource().changed();
     if(spiderCluster){
-        const spiderFeatures = layersArr['spider'].getSource().getFeatures();
+        const spiderFeatures = layersObj['spider'].getSource().getFeatures();
         for(let f in spiderFeatures){
             if(spiderFeatures.hasOwnProperty(f)){
                 const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));

@@ -5,6 +5,7 @@ let geoPolyArr = [];
 let geoCircleArr = [];
 let geoBoundingBoxArr = {};
 let geoPointArr = [];
+let layersObj = {};
 let layersArr = [];
 let rasterLayersArr = [];
 let layerOrderArr = [];
@@ -90,9 +91,10 @@ for (let z = 0; z < 16; ++z) {
     resolutions[z] = maxResolution / Math.pow(2, z);
 }
 
-const baselayer = new ol.layer.Tile({
+layersObj['base'] = new ol.layer.Tile({
     zIndex: 0
 });
+layersArr.push(layersObj['base']);
 
 function addLayerToLayerOrderArr(layerId) {
     layerOrderArr.push(layerId);
@@ -519,7 +521,7 @@ function changeBorderColor(layerId,value) {
         const pointRadius = document.getElementById(('pointRadius-' + layerId)).value;
         const opacity = document.getElementById(('opacity-' + layerId)).value;
         const style = getVectorLayerStyle(fillColor, value, borderWidth, pointRadius, opacity);
-        layersArr[layerId].setStyle(style);
+        layersObj[layerId].setStyle(style);
     }
 }
 
@@ -530,7 +532,7 @@ function changeBorderWidth(layerId,value) {
         const pointRadius = document.getElementById(('pointRadius-' + layerId)).value;
         const opacity = document.getElementById(('opacity-' + layerId)).value;
         const style = getVectorLayerStyle(fillColor, borderColor, value, pointRadius, opacity);
-        layersArr[layerId].setStyle(style);
+        layersObj[layerId].setStyle(style);
     }
 }
 
@@ -546,7 +548,7 @@ function changeClusterSetting(){
         loadPointsLayer(0);
     }
     else{
-        layersArr['pointv'].setSource(pointvectorsource);
+        layersObj['pointv'].setSource(pointvectorsource);
     }
 }
 
@@ -644,18 +646,18 @@ function changeFillColor(layerId,value) {
         const pointRadius = document.getElementById(('pointRadius-' + layerId)).value;
         const opacity = document.getElementById(('opacity-' + layerId)).value;
         const style = getVectorLayerStyle(value, borderColor, borderWidth, pointRadius, opacity);
-        layersArr[layerId].setStyle(style);
+        layersObj[layerId].setStyle(style);
     }
 }
 
 function changeHeatMapBlur(){
     heatMapBlur = document.getElementById("heatmapblur").value;
-    layersArr['heat'].setBlur(parseInt(heatMapBlur, 10));
+    layersObj['heat'].setBlur(parseInt(heatMapBlur, 10));
 }
 
 function changeHeatMapRadius(){
     heatMapRadius = document.getElementById("heatmapradius").value;
-    layersArr['heat'].setRadius(parseInt(heatMapRadius, 10));
+    layersObj['heat'].setRadius(parseInt(heatMapRadius, 10));
 }
 
 function changeLayerOpacity(layerId,value) {
@@ -665,7 +667,7 @@ function changeLayerOpacity(layerId,value) {
         const borderWidth = document.getElementById(('borderWidth-' + layerId)).value;
         const pointRadius = document.getElementById(('pointRadius-' + layerId)).value;
         const style = getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, value);
-        layersArr[layerId].setStyle(style);
+        layersObj[layerId].setStyle(style);
     }
 }
 
@@ -684,34 +686,34 @@ function changePointRadius(layerId,value) {
         const borderWidth = document.getElementById(('borderWidth-' + layerId)).value;
         const opacity = document.getElementById(('opacity-' + layerId)).value;
         const style = getVectorLayerStyle(fillColor, borderColor, borderWidth, value, opacity);
-        layersArr[layerId].setStyle(style);
+        layersObj[layerId].setStyle(style);
     }
 }
 
 function changeRasterColorScale(layerId,value){
-    map.removeLayer(layersArr[layerId]);
-    layersArr[layerId].setSource(null);
+    map.removeLayer(layersObj[layerId]);
+    layersObj[layerId].setSource(null);
     const sourceIndex = layerId + 'Source';
     const dataIndex = layerId + 'Data';
-    delete layersArr[sourceIndex];
+    delete layersObj[sourceIndex];
     const canvasElement = document.createElement('canvas');
-    const box = [layersArr[dataIndex]['bbox'][0],layersArr[dataIndex]['bbox'][1] - (layersArr[dataIndex]['bbox'][3] - layersArr[dataIndex]['bbox'][1]), layersArr[dataIndex]['bbox'][2], layersArr[dataIndex]['bbox'][1]];
+    const box = [layersObj[dataIndex]['bbox'][0],layersObj[dataIndex]['bbox'][1] - (layersObj[dataIndex]['bbox'][3] - layersObj[dataIndex]['bbox'][1]), layersObj[dataIndex]['bbox'][2], layersObj[dataIndex]['bbox'][1]];
     const plot = new plotty.plot({
         canvas: canvasElement,
-        data: layersArr[dataIndex]['data'],
-        width: layersArr[dataIndex]['imageWidth'],
-        height: layersArr[dataIndex]['imageHeight'],
-        domain: [layersArr[dataIndex]['minValue'], layersArr[dataIndex]['maxValue']],
+        data: layersObj[dataIndex]['data'],
+        width: layersObj[dataIndex]['imageWidth'],
+        height: layersObj[dataIndex]['imageHeight'],
+        domain: [layersObj[dataIndex]['minValue'], layersObj[dataIndex]['maxValue']],
         colorScale: value
     });
     plot.render();
-    layersArr[sourceIndex] = new ol.source.ImageStatic({
+    layersObj[sourceIndex] = new ol.source.ImageStatic({
         url: canvasElement.toDataURL("image/png"),
         imageExtent: box,
         projection: 'EPSG:4326'
     });
-    layersArr[layerId].setSource(layersArr[sourceIndex]);
-    map.addLayer(layersArr[layerId]);
+    layersObj[layerId].setSource(layersObj[sourceIndex]);
+    map.addLayer(layersObj[layerId]);
     setLayersOrder();
 }
 
@@ -740,11 +742,11 @@ function checkPointToolSource(selector){
 }
 
 function cleanSelectionsLayer(){
-    const selLayerFeatures = layersArr['select'].getSource().getFeatures();
+    const selLayerFeatures = layersObj['select'].getSource().getFeatures();
     const currentlySelected = selectInteraction.getFeatures().getArray();
     for(let i in selLayerFeatures){
         if(selLayerFeatures.hasOwnProperty(i) && currentlySelected.indexOf(selLayerFeatures[i]) === -1){
-            layersArr['select'].getSource().removeFeature(selLayerFeatures[i]);
+            layersObj['select'].getSource().removeFeature(selLayerFeatures[i]);
         }
     }
 }
@@ -770,7 +772,7 @@ function clearSelections(){
             point.setStyle(style);
         }
     }
-    layersArr['pointv'].getSource().changed();
+    layersObj['pointv'].getSource().changed();
     adjustSelectionsTab();
     document.getElementById("selectiontbody").innerHTML = '';
 }
@@ -1334,10 +1336,10 @@ function deactivateClustering(){
 
 function deleteSelections(){
     selectInteraction.getFeatures().forEach(function(feature){
-        layersArr['select'].getSource().removeFeature(feature);
+        layersObj['select'].getSource().removeFeature(feature);
     });
     selectInteraction.getFeatures().clear();
-    if(layersArr['select'].getSource().getFeatures().length < 1){
+    if(layersObj['select'].getSource().getFeatures().length < 1){
         removeUserLayer('select');
     }
 }
@@ -1394,7 +1396,7 @@ function downloadShapesLayer(){
         format = new ol.format.GeoJSON();
         filetype = 'application/vnd.geo+json';
     }
-    const features = layersArr['select'].getSource().getFeatures();
+    const features = layersObj['select'].getSource().getFeatures();
     const fixedFeatures = setDownloadFeatures(features);
     let exportStr = format.writeFeatures(fixedFeatures, {
         'dataProjection': wgs84Projection,
@@ -1480,7 +1482,7 @@ function exportMapPNG(filename,zip){
 }
 
 function findRecordCluster(id){
-    const clusters = layersArr['pointv'].getSource().getFeatures();
+    const clusters = layersObj['pointv'].getSource().getFeatures();
     for(let c in clusters){
         if(clusters.hasOwnProperty(c)){
             const clusterindex = clusters[c].get('identifiers');
@@ -1493,7 +1495,7 @@ function findRecordCluster(id){
 
 function findRecordClusterPosition(id){
     if(spiderCluster){
-        const spiderPoints = layersArr['spider'].getSource().getFeatures();
+        const spiderPoints = layersObj['spider'].getSource().getFeatures();
         for(let p in spiderPoints){
             if(spiderPoints.hasOwnProperty(p) && Number(spiderPoints[p].get('features')[0].get('id')) === id){
                 return spiderPoints[p].getGeometry().getCoordinates();
@@ -1501,7 +1503,7 @@ function findRecordClusterPosition(id){
         }
     }
     else if(clusterPoints){
-        const clusters = layersArr['pointv'].getSource().getFeatures();
+        const clusters = layersObj['pointv'].getSource().getFeatures();
         for(let c in clusters){
             if(clusters.hasOwnProperty(c)){
                 const clusterindex = clusters[c].get('identifiers');
@@ -1512,7 +1514,7 @@ function findRecordClusterPosition(id){
         }
     }
     else{
-        const features = layersArr['pointv'].getSource().getFeatures();
+        const features = layersObj['pointv'].getSource().getFeatures();
         for(let f in features){
             if(features.hasOwnProperty(f) && Number(features[f].get('id')) === id){
                 return features[f].getGeometry().getCoordinates();
@@ -1522,7 +1524,7 @@ function findRecordClusterPosition(id){
 }
 
 function findRecordPoint(id){
-    const features = layersArr['pointv'].getSource().getFeatures();
+    const features = layersObj['pointv'].getSource().getFeatures();
     for(let f in features){
         if(features.hasOwnProperty(f) && Number(features[f].get('id')) === id){
             return features[f];
@@ -1701,7 +1703,7 @@ function getTurfPointFeaturesetAll(){
     const turfFeatureArr = [];
     const geoJSONFormat = new ol.format.GeoJSON();
     if(clusterPoints){
-        const clusters = layersArr['pointv'].getSource().getFeatures();
+        const clusters = layersObj['pointv'].getSource().getFeatures();
         for(let c in clusters){
             if(clusters.hasOwnProperty(c)){
                 const cFeatures = clusters[c].get('features');
@@ -1719,7 +1721,7 @@ function getTurfPointFeaturesetAll(){
         }
     }
     else{
-        const features = layersArr['pointv'].getSource().getFeatures();
+        const features = layersObj['pointv'].getSource().getFeatures();
         for(f in features){
             if(features.hasOwnProperty(f)){
                 selectedClone = features[f].clone();
@@ -1891,16 +1893,16 @@ function loadPointsLayer(index){
         }
     });
 
-    layersArr['pointv'].setStyle(getPointStyle);
+    layersObj['pointv'].setStyle(getPointStyle);
     if(clusterPoints){
-        layersArr['pointv'].setSource(clustersource);
+        layersObj['pointv'].setSource(clustersource);
     }
     else{
-        layersArr['pointv'].setSource(pointvectorsource);
+        layersObj['pointv'].setSource(pointvectorsource);
     }
-    layersArr['heat'].setSource(pointvectorsource);
+    layersObj['heat'].setSource(pointvectorsource);
     if(showHeatMap){
-        layersArr['heat'].setVisible(true);
+        layersObj['heat'].setVisible(true);
     }
 }
 
@@ -1915,7 +1917,7 @@ function loadServerLayer(id,name,file){
         const borderWidth = document.getElementById(('borderWidth-' + id)).value;
         const pointRadius = document.getElementById(('pointRadius-' + id)).value;
         const opacity = document.getElementById(('opacity-' + id)).value;
-        layersArr[id] = new ol.layer.Vector({
+        layersObj[id] = new ol.layer.Vector({
             source: new ol.source.Vector({
                 wrapX: true
             }),
@@ -1924,35 +1926,35 @@ function loadServerLayer(id,name,file){
         });
     }
     else{
-        layersArr[id] = new ol.layer.Image({
+        layersObj[id] = new ol.layer.Image({
             zIndex: zIndex,
         });
     }
     if(fileType === 'geojson'){
-        layersArr[id].setSource(new ol.source.Vector({
+        layersObj[id].setSource(new ol.source.Vector({
             url: ('../content/spatial/' + file),
             format: new ol.format.GeoJSON(),
             wrapX: true
         }));
-        layersArr[id].getSource().on('addfeature', function(evt) {
-            map.getView().fit(layersArr[id].getSource().getExtent());
+        layersObj[id].getSource().on('addfeature', function(evt) {
+            map.getView().fit(layersObj[id].getSource().getExtent());
         });
-        layersArr[id].on('postrender', function(evt) {
+        layersObj[id].on('postrender', function(evt) {
             hideWorking();
         });
     }
     else if(fileType === 'kml'){
-        layersArr[id].setSource(new ol.source.Vector({
+        layersObj[id].setSource(new ol.source.Vector({
             url: ('../content/spatial/' + file),
             format: new ol.format.KML({
                 extractStyles: false,
             }),
             wrapX: true
         }));
-        layersArr[id].getSource().on('addfeature', function(evt) {
-            map.getView().fit(layersArr[id].getSource().getExtent());
+        layersObj[id].getSource().on('addfeature', function(evt) {
+            map.getView().fit(layersObj[id].getSource().getExtent());
         });
-        layersArr[id].on('postrender', function(evt) {
+        layersObj[id].on('postrender', function(evt) {
             hideWorking();
         });
     }
@@ -1965,12 +1967,12 @@ function loadServerLayer(id,name,file){
                         const features = format.readFeatures(geojson, {
                             featureProjection: 'EPSG:3857'
                         });
-                        layersArr[id].setSource(new ol.source.Vector({
+                        layersObj[id].setSource(new ol.source.Vector({
                             features: features,
                             wrapX: true
                         }));
-                        map.getView().fit(layersArr[id].getSource().getExtent());
-                        layersArr[id].on('postrender', function(evt) {
+                        map.getView().fit(layersObj[id].getSource().getExtent());
+                        layersObj[id].on('postrender', function(evt) {
                             hideWorking();
                         });
                     });
@@ -2007,18 +2009,18 @@ function loadServerLayer(id,name,file){
                             maxValue = item;
                         }
                     });
-                    layersArr[dataIndex] = {};
-                    layersArr[dataIndex]['data'] = bands[0];
-                    layersArr[dataIndex]['bbox'] = rawBox;
-                    layersArr[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
-                    layersArr[dataIndex]['x_min'] = x_min;
-                    layersArr[dataIndex]['x_max'] = x_max;
-                    layersArr[dataIndex]['y_min'] = y_min;
-                    layersArr[dataIndex]['y_max'] = y_max;
-                    layersArr[dataIndex]['imageWidth'] = imageWidth;
-                    layersArr[dataIndex]['imageHeight'] = imageHeight;
-                    layersArr[dataIndex]['minValue'] = minValue;
-                    layersArr[dataIndex]['maxValue'] = maxValue;
+                    layersObj[dataIndex] = {};
+                    layersObj[dataIndex]['data'] = bands[0];
+                    layersObj[dataIndex]['bbox'] = rawBox;
+                    layersObj[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
+                    layersObj[dataIndex]['x_min'] = x_min;
+                    layersObj[dataIndex]['x_max'] = x_max;
+                    layersObj[dataIndex]['y_min'] = y_min;
+                    layersObj[dataIndex]['y_max'] = y_max;
+                    layersObj[dataIndex]['imageWidth'] = imageWidth;
+                    layersObj[dataIndex]['imageHeight'] = imageHeight;
+                    layersObj[dataIndex]['minValue'] = minValue;
+                    layersObj[dataIndex]['maxValue'] = maxValue;
                     const canvasElement = document.createElement('canvas');
                     const plot = new plotty.plot({
                         canvas: canvasElement,
@@ -2029,7 +2031,7 @@ function loadServerLayer(id,name,file){
                         colorScale: colorScale
                     });
                     plot.render();
-                    layersArr[id].setSource(new ol.source.ImageStatic({
+                    layersObj[id].setSource(new ol.source.ImageStatic({
                         url: canvasElement.toDataURL("image/png"),
                         imageExtent: box,
                         projection: 'EPSG:4326'
@@ -2049,7 +2051,7 @@ function loadServerLayer(id,name,file){
             });
         });
     }
-    map.addLayer(layersArr[id]);
+    map.addLayer(layersObj[id]);
     toggleLayerDisplayMessage();
 }
 
@@ -2062,7 +2064,7 @@ function openRecordInfoBox(id,label){
 function primeLayerQuerySelectorFields(layerId) {
     const fieldArr = [];
     const fieldSelector = document.getElementById('spatialQueryFieldSelector');
-    const layerFeatures = layersArr[layerId].getSource().getFeatures();
+    const layerFeatures = layersObj[layerId].getSource().getFeatures();
     for(let f in layerFeatures){
         if(layerFeatures.hasOwnProperty(f)){
             const properties = layerFeatures[f].getKeys();
@@ -2170,7 +2172,7 @@ function processAddLayerControllerElement(lArr,parentElement,active){
 function processAddLayerControllerGroup(lArr,parentElement){
     const layerGroupdDivId = 'layerGroup-' + lArr['id'] + '-accordion';
     if(!document.getElementById(layerGroupdDivId)){
-        const layersArr = lArr['layers'];
+        const layersObj = lArr['layers'];
         const layerGroupContainerId = 'layerGroup-' + lArr['id'] + '-layers';
         const layerGroupDiv = document.createElement('div');
         layerGroupDiv.setAttribute("id",layerGroupdDivId);
@@ -2190,13 +2192,13 @@ function processAddLayerControllerGroup(lArr,parentElement){
             active: false,
             heightStyle: "content"
         });
-        for(let i in layersArr){
-            if(layersArr.hasOwnProperty(i)){
-                layersArr[i]['removable'] = false;
-                layersArr[i]['sortable'] = true;
-                layersArr[i]['symbology'] = true;
-                layersArr[i]['query'] = true;
-                processAddLayerControllerElement(layersArr[i],layerGroupContainerDiv,false)
+        for(let i in layersObj){
+            if(layersObj.hasOwnProperty(i)){
+                layersObj[i]['removable'] = false;
+                layersObj[i]['sortable'] = true;
+                layersObj[i]['symbology'] = true;
+                layersObj[i]['query'] = true;
+                processAddLayerControllerElement(layersObj[i],layerGroupContainerDiv,false)
             }
         }
     }
@@ -2213,7 +2215,7 @@ function processCheckSelection(c){
             }
         }
         selections.push(Number(c.value));
-        layersArr['pointv'].getSource().changed();
+        layersObj['pointv'].getSource().changed();
         updateSelections(Number(c.value),false);
     }
     else if(c.checked === false){
@@ -2223,7 +2225,7 @@ function processCheckSelection(c){
         }
         const index = selections.indexOf(Number(c.value));
         selections.splice(index, 1);
-        layersArr['pointv'].getSource().changed();
+        layersObj['pointv'].getSource().changed();
         removeSelectionRecord(Number(c.value));
     }
     adjustSelectionsTab();
@@ -2661,7 +2663,7 @@ function processToggleSelectedChange(){
         loadPointsLayer(0);
     }
     else{
-        layersArr['pointv'].setSource(pointvectorsource);
+        layersObj['pointv'].setSource(pointvectorsource);
     }
 }
 
@@ -2685,13 +2687,13 @@ function processVectorizeRasterByGridResolutionChange(){
 
 function refreshLayerOrder(){
     const layerCount = map.getLayers().getArray().length;
-    layersArr['dragdrop1'].setZIndex(layerCount-6);
-    layersArr['dragdrop2'].setZIndex(layerCount-5);
-    layersArr['dragdrop3'].setZIndex(layerCount-4);
-    layersArr['select'].setZIndex(layerCount-3);
-    layersArr['pointv'].setZIndex(layerCount-2);
-    layersArr['heat'].setZIndex(layerCount-1);
-    layersArr['spider'].setZIndex(layerCount);
+    layersObj['dragdrop1'].setZIndex(layerCount-6);
+    layersObj['dragdrop2'].setZIndex(layerCount-5);
+    layersObj['dragdrop3'].setZIndex(layerCount-4);
+    layersObj['select'].setZIndex(layerCount-3);
+    layersObj['pointv'].setZIndex(layerCount-2);
+    layersObj['heat'].setZIndex(layerCount-1);
+    layersObj['spider'].setZIndex(layerCount);
 }
 
 function removeLayerFromLayerOrderArr(layerId) {
@@ -2737,9 +2739,9 @@ function removeSelection(c){
         }
         const index = selections.indexOf(Number(c.value));
         selections.splice(index, 1);
-        layersArr['pointv'].getSource().changed();
+        layersObj['pointv'].getSource().changed();
         if(spiderCluster){
-            const spiderFeatures = layersArr['spider'].getSource().getFeatures();
+            const spiderFeatures = layersObj['spider'].getSource().getFeatures();
             for(let f in spiderFeatures){
                 if(spiderFeatures.hasOwnProperty(f) && spiderFeatures[f].get('features')[0].get('id') === Number(c.value)){
                     const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
@@ -2760,13 +2762,13 @@ function removeSelectionRecord(sel){
 }
 
 function removeServerLayer(id){
-    map.removeLayer(layersArr[id]);
+    map.removeLayer(layersObj[id]);
     const dataIndex = id + 'Data';
-    if(layersArr.hasOwnProperty(dataIndex)){
+    if(layersObj.hasOwnProperty(dataIndex)){
         removeRasterLayerFromTargetList(id);
-        delete layersArr[dataIndex];
+        delete layersObj[dataIndex];
     }
-    delete layersArr[id];
+    delete layersObj[id];
 }
 
 function removeUserLayer(layerID,raster){
@@ -2777,7 +2779,7 @@ function removeUserLayer(layerID,raster){
     }
     if(layerID === 'select'){
         selectInteraction.getFeatures().clear();
-        layersArr[layerID].getSource().clear(true);
+        layersObj[layerID].getSource().clear(true);
         shapeActive = false;
     }
     else if(layerID === 'pointv'){
@@ -2785,7 +2787,7 @@ function removeUserLayer(layerID,raster){
         adjustSelectionsTab();
         removeDateSlider();
         pointvectorsource.clear(true);
-        layersArr['heat'].setVisible(false);
+        layersObj['heat'].setVisible(false);
         clustersource = '';
         $('#criteriatab').tabs({active: 0});
         $("#sidepanel-accordion").accordion("option","active",0);
@@ -2793,9 +2795,9 @@ function removeUserLayer(layerID,raster){
     }
     else{
         if(layerID === 'dragdrop1' || layerID === 'dragdrop2' || layerID === 'dragdrop3'){
-            layersArr[layerID].setSource(blankdragdropsource);
+            layersObj[layerID].setSource(blankdragdropsource);
             const sourceIndex = dragDropTarget + 'Source';
-            delete layersArr[sourceIndex];
+            delete layersObj[sourceIndex];
             if(layerID === 'dragdrop1') {
                 dragDrop1 = false;
             }
@@ -2807,12 +2809,12 @@ function removeUserLayer(layerID,raster){
             }
         }
         else if(layerID === 'dragdrop4' || layerID === 'dragdrop5' || layerID === 'dragdrop6') {
-            map.removeLayer(layersArr[layerID]);
-            layersArr[layerID].setSource(null);
+            map.removeLayer(layersObj[layerID]);
+            layersObj[layerID].setSource(null);
             const sourceIndex = dragDropTarget + 'Source';
             const dataIndex = dragDropTarget + 'Data';
-            delete layersArr[sourceIndex];
-            delete layersArr[dataIndex];
+            delete layersObj[sourceIndex];
+            delete layersObj[dataIndex];
             if(layerID === 'dragdrop4') {
                 dragDrop4 = false;
             }
@@ -2833,7 +2835,7 @@ function removeUserLayer(layerID,raster){
 
 function runQuerySelectorQuery(layerId,fieldValue,operatorValue,singleVal,doubleVal1,doubleVal2) {
     const addFeatures = [];
-    const layerFeatures = layersArr[layerId].getSource().getFeatures();
+    const layerFeatures = layersObj[layerId].getSource().getFeatures();
     for(let f in layerFeatures){
         if(layerFeatures.hasOwnProperty(f) && layerFeatures[f].get(fieldValue)){
             let add = false;
@@ -2959,38 +2961,38 @@ function setDragDropTarget(){
 }
 
 function setLayersOrder() {
-    const layersArrKeys = Object.keys(layersArr);
-    const layersArrLength = layersArrKeys.length;
+    const layersObjKeys = Object.keys(layersObj);
+    const layersObjLength = layersObjKeys.length;
     for(let i in layerOrderArr){
         if(layerOrderArr.hasOwnProperty(i)){
             const index = (layerOrderArr.indexOf(layerOrderArr[i])) + 1;
-            layersArr[layerOrderArr[i]].setZIndex(index);
+            layersObj[layerOrderArr[i]].setZIndex(index);
             const sortingScrollerId = 'layerOrder-' + layerOrderArr[i];
             $( ('#' + sortingScrollerId) ).spinner( "value", index );
             $( ('#' + sortingScrollerId) ).spinner( "option", "max", layerOrderArr.length );
         }
     }
-    layersArr['base'].setZIndex(0);
-    if(layersArr.hasOwnProperty('uncertainty')){
-        layersArr['uncertainty'].setZIndex((layersArrLength - 4));
+    layersObj['base'].setZIndex(0);
+    if(layersObj.hasOwnProperty('uncertainty')){
+        layersObj['uncertainty'].setZIndex((layersObjLength - 4));
     }
-    if(layersArr.hasOwnProperty('select')){
-        layersArr['select'].setZIndex((layersArrLength - 3));
+    if(layersObj.hasOwnProperty('select')){
+        layersObj['select'].setZIndex((layersObjLength - 3));
     }
-    if(layersArr.hasOwnProperty('pointv')){
-        layersArr['pointv'].setZIndex((layersArrLength - 2));
+    if(layersObj.hasOwnProperty('pointv')){
+        layersObj['pointv'].setZIndex((layersObjLength - 2));
     }
-    if(layersArr.hasOwnProperty('heat')){
-        layersArr['heat'].setZIndex((layersArrLength - 1));
+    if(layersObj.hasOwnProperty('heat')){
+        layersObj['heat'].setZIndex((layersObjLength - 1));
     }
-    if(layersArr.hasOwnProperty('spider')){
-        layersArr['spider'].setZIndex(layersArrLength);
+    if(layersObj.hasOwnProperty('spider')){
+        layersObj['spider'].setZIndex(layersObjLength);
     }
-    if(layersArr.hasOwnProperty('radius')){
-        layersArr['radius'].setZIndex((layersArrLength - 1));
+    if(layersObj.hasOwnProperty('radius')){
+        layersObj['radius'].setZIndex((layersObjLength - 1));
     }
-    if(layersArr.hasOwnProperty('vector')){
-        layersArr['vector'].setZIndex(layersArrLength);
+    if(layersObj.hasOwnProperty('vector')){
+        layersObj['vector'].setZIndex(layersObjLength);
     }
 }
 
@@ -3171,7 +3173,7 @@ function spiderifyPoints(features){
         }
     }
 
-    const source = layersArr['spider'].getSource();
+    const source = layersObj['spider'].getSource();
     source.clear();
 
     const center = features[0].getGeometry().getCoordinates();
@@ -3223,8 +3225,8 @@ function spiderifyPoints(features){
 function toggleHeatMap(){
     showHeatMap = document.getElementById("heatmapswitch").checked;
     if(showHeatMap){
-        layersArr['pointv'].setVisible(false);
-        layersArr['heat'].setVisible(true);
+        layersObj['pointv'].setVisible(false);
+        layersObj['heat'].setVisible(true);
     }
     else{
         if(returnClusters){
@@ -3232,8 +3234,8 @@ function toggleHeatMap(){
             document.getElementById("clusterswitch").checked = true;
             changeClusterSetting();
         }
-        layersArr['heat'].setVisible(false);
-        layersArr['pointv'].setVisible(true);
+        layersObj['heat'].setVisible(false);
+        layersObj['pointv'].setVisible(true);
     }
 }
 
@@ -3307,14 +3309,14 @@ function toggleUserLayerVisibility(id,name,visible){
         layerId = 'heat';
     }
     if(visible === true){
-        layersArr[layerId].setVisible(true);
+        layersObj[layerId].setVisible(true);
         addLayerToSelList(id,name,false);
         if(!coreLayers.includes(id)){
             addLayerToLayerOrderArr(id);
         }
     }
     else{
-        layersArr[layerId].setVisible(false);
+        layersObj[layerId].setVisible(false);
         removeLayerToSelList(id);
         if(!coreLayers.includes(id)){
             removeLayerFromLayerOrderArr(id);
@@ -3340,7 +3342,7 @@ function vectorizeRasterByData(){
         else{
             const geoJSONFormat = new ol.format.GeoJSON();
             const dataIndex = targetRaster + 'Data';
-            const dataObj = layersArr[dataIndex];
+            const dataObj = layersObj[dataIndex];
             const box = [dataObj['bbox'][0],dataObj['bbox'][1] - (dataObj['bbox'][3] - dataObj['bbox'][1]), dataObj['bbox'][2], dataObj['bbox'][1]];
             dataObj['data'].forEach(function(item, index) {
                 if(Number(item) >= Number(valLow) && Number(item) <= Number(valHigh)){
@@ -3400,11 +3402,11 @@ function vectorizeRasterByGrid(){
                 const dataIndex = targetRaster + 'Data';
                 gridPointFeatures.forEach(function(feature){
                     const coords = feature.getGeometry().getCoordinates();
-                    const x = Math.floor(layersArr[dataIndex]['imageWidth']*(coords[0] - layersArr[dataIndex]['x_min'])/(layersArr[dataIndex]['x_max'] - layersArr[dataIndex]['x_min']));
-                    const y = layersArr[dataIndex]['imageHeight']-Math.ceil(layersArr[dataIndex]['imageHeight']*(coords[1] - layersArr[dataIndex]['y_max'])/(layersArr[dataIndex]['y_min'] - layersArr[dataIndex]['y_max']));
-                    const rasterDataIndex = (Number(layersArr[dataIndex]['imageWidth']) * y) + x;
-                    if(coords[0] >= layersArr[dataIndex]['x_min'] && coords[0] <= layersArr[dataIndex]['x_max'] && coords[1] <= layersArr[dataIndex]['y_min'] && coords[1] >= layersArr[dataIndex]['y_max']){
-                        if(Number(layersArr[dataIndex]['data'][rasterDataIndex]) >= Number(valLow) && Number(layersArr[dataIndex]['data'][rasterDataIndex]) <= Number(valHigh)){
+                    const x = Math.floor(layersObj[dataIndex]['imageWidth']*(coords[0] - layersObj[dataIndex]['x_min'])/(layersObj[dataIndex]['x_max'] - layersObj[dataIndex]['x_min']));
+                    const y = layersObj[dataIndex]['imageHeight']-Math.ceil(layersObj[dataIndex]['imageHeight']*(coords[1] - layersObj[dataIndex]['y_max'])/(layersObj[dataIndex]['y_min'] - layersObj[dataIndex]['y_max']));
+                    const rasterDataIndex = (Number(layersObj[dataIndex]['imageWidth']) * y) + x;
+                    if(coords[0] >= layersObj[dataIndex]['x_min'] && coords[0] <= layersObj[dataIndex]['x_max'] && coords[1] <= layersObj[dataIndex]['y_min'] && coords[1] >= layersObj[dataIndex]['y_max']){
+                        if(Number(layersObj[dataIndex]['data'][rasterDataIndex]) >= Number(valLow) && Number(layersObj[dataIndex]['data'][rasterDataIndex]) <= Number(valHigh)){
                             turfFeatureArr.push(turf.point(coords));
                         }
                     }

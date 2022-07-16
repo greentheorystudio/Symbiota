@@ -18,7 +18,7 @@ if($stArrJson){
     }
 }
 ?>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220622" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220715" type="text/javascript"></script>
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     let searchTermsArr = {};
@@ -186,4 +186,125 @@ if($stArrJson){
         ?>
         spatialModuleInitialising = false;
     });
+
+    const blankdragdropsource = new ol.source.Vector({
+        wrapX: true
+    });
+    layersObj['dragdrop1'] = new ol.layer.Vector({
+        zIndex: 1,
+        source: blankdragdropsource,
+        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+    });
+    layersArr.push(layersObj['dragdrop1']);
+    layersObj['dragdrop2'] = new ol.layer.Vector({
+        zIndex: 2,
+        source: blankdragdropsource,
+        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+    });
+    layersArr.push(layersObj['dragdrop2']);
+    layersObj['dragdrop3'] = new ol.layer.Vector({
+        zIndex: 3,
+        source: blankdragdropsource,
+        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+    });
+    layersArr.push(layersObj['dragdrop3']);
+    layersObj['dragdrop4'] = new ol.layer.Image({
+        zIndex: 4,
+    });
+    layersArr.push(layersObj['dragdrop4']);
+    layersObj['dragdrop5'] = new ol.layer.Image({
+        zIndex: 5,
+    });
+    layersArr.push(layersObj['dragdrop5']);
+    layersObj['dragdrop6'] = new ol.layer.Image({
+        zIndex: 6,
+    });
+    layersArr.push(layersObj['dragdrop6']);
+
+    let uncertaintycirclesource = new ol.source.Vector({
+        wrapX: true
+    });
+    layersObj['uncertainty'] = new ol.layer.Vector({
+        zIndex: 7,
+        source: uncertaintycirclesource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,0,0.3)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#000000',
+                width: 1
+            }),
+            image: new ol.style.Circle({
+                radius: 7,
+                stroke: new ol.style.Stroke({
+                    color: '#000000',
+                    width: 1
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255,0,0)'
+                })
+            })
+        })
+    });
+    layersArr.push(layersObj['uncertainty']);
+
+    let rasteranalysissource = new ol.source.Vector({
+        wrapX: true
+    });
+    layersObj['rasteranalysis'] = new ol.layer.Vector({
+        zIndex: 7,
+        source: rasteranalysissource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,0,0.3)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: 'rgba(255,0,0,1)',
+                width: 5
+            })
+        })
+    });
+    layersArr.push(layersObj['rasteranalysis']);
+
+    const selectsource = new ol.source.Vector({
+        wrapX: true
+    });
+    layersObj['select'] = new ol.layer.Vector({
+        zIndex: 8,
+        source: selectsource,
+        style: getVectorLayerStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesPointRadius, shapesOpacity)
+    });
+    layersArr.push(layersObj['select']);
+
+    let pointvectorsource = new ol.source.Vector({
+        wrapX: true
+    });
+    layersObj['pointv'] = new ol.layer.Vector({
+        zIndex: 9,
+        source: pointvectorsource
+    });
+    layersArr.push(layersObj['pointv']);
+
+    layersObj['heat'] = new ol.layer.Heatmap({
+        zIndex: 10,
+        source: pointvectorsource,
+        weight: function (feature) {
+            return 1;
+        },
+        gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
+        blur: parseInt(heatMapBlur.toString(), 10),
+        radius: parseInt(heatMapRadius.toString(), 10),
+        visible: false
+    });
+    layersArr.push(layersObj['heat']);
+
+    layersObj['spider'] = new ol.layer.Vector({
+        zIndex: 11,
+        source: new ol.source.Vector({
+            features: new ol.Collection(),
+            useSpatialIndex: true
+        })
+    });
+    layersArr.push(layersObj['spider']);
 </script>

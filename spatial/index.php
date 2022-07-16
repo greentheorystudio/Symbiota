@@ -59,8 +59,9 @@ if(strncmp($windowType, 'input', 5) === 0){
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220622" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220715" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20220330" type="text/javascript"></script>
+    <?php include_once(__DIR__ . '/includes/spatialvars.php'); ?>
     <?php include_once(__DIR__ . '/includes/spatialinitialize.php'); ?>
 </head>
 <body class="mapbody">
@@ -96,7 +97,6 @@ if(strncmp($windowType, 'input', 5) === 0){
     <?php include_once(__DIR__ . '/includes/controlpanel.php'); ?>
 </div>
 
-<?php include_once(__DIR__ . '/includes/spatialvars.php'); ?>
 <script type="text/javascript">
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
@@ -138,155 +138,32 @@ if(strncmp($windowType, 'input', 5) === 0){
         return false;
     };
 
-    const selectsource = new ol.source.Vector({
-        wrapX: true
-    });
-    const selectlayer = new ol.layer.Vector({
-        zIndex: 8,
-        source: selectsource,
-        style: getVectorLayerStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesPointRadius, shapesOpacity)
-    });
-
-    let uncertaintycirclesource = new ol.source.Vector({
-        wrapX: true
-    });
-    const uncertaintycirclelayer = new ol.layer.Vector({
-        zIndex: 7,
-        source: uncertaintycirclesource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(255,0,0,0.3)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#000000',
-                width: 1
-            }),
-            image: new ol.style.Circle({
-                radius: 7,
-                stroke: new ol.style.Stroke({
-                    color: '#000000',
-                    width: 1
-                }),
-                fill: new ol.style.Fill({
-                    color: 'rgba(255,0,0)'
-                })
-            })
-        })
-    });
-
-    let rasteranalysissource = new ol.source.Vector({
-        wrapX: true
-    });
-    const rasteranalysislayer = new ol.layer.Vector({
-        zIndex: 7,
-        source: rasteranalysissource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(255,0,0,0.3)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: 'rgba(255,0,0,1)',
-                width: 5
-            })
-        })
-    });
-
-    let pointvectorsource = new ol.source.Vector({
-        wrapX: true
-    });
-    const pointvectorlayer = new ol.layer.Vector({
-        zIndex: 9,
-        source: pointvectorsource
-    });
-
-    const heatmaplayer = new ol.layer.Heatmap({
-        zIndex: 10,
-        source: pointvectorsource,
-        weight: function (feature) {
-            return 1;
-        },
-        gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
-        blur: parseInt(heatMapBlur.toString(), 10),
-        radius: parseInt(heatMapRadius.toString(), 10),
-        visible: false
-    });
-
-    const blankdragdropsource = new ol.source.Vector({
-        wrapX: true
-    });
-    const dragdroplayer1 = new ol.layer.Vector({
-        zIndex: 1,
-        source: blankdragdropsource,
-        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
-    });
-    const dragdroplayer2 = new ol.layer.Vector({
-        zIndex: 2,
-        source: blankdragdropsource,
-        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
-    });
-    const dragdroplayer3 = new ol.layer.Vector({
-        zIndex: 3,
-        source: blankdragdropsource,
-        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
-    });
-    const dragdroplayer4 = new ol.layer.Image({
-        zIndex: 4,
-    });
-    const dragdroplayer5 = new ol.layer.Image({
-        zIndex: 5,
-    });
-    const dragdroplayer6 = new ol.layer.Image({
-        zIndex: 6,
-    });
-
-    const spiderLayer = new ol.layer.Vector({
-        zIndex: 11,
-        source: new ol.source.Vector({
-            features: new ol.Collection(),
-            useSpatialIndex: true
-        })
-    });
-
-    layersArr['base'] = baselayer;
-    layersArr['dragdrop1'] = dragdroplayer1;
-    layersArr['dragdrop2'] = dragdroplayer2;
-    layersArr['dragdrop3'] = dragdroplayer3;
-    layersArr['dragdrop4'] = dragdroplayer4;
-    layersArr['dragdrop5'] = dragdroplayer5;
-    layersArr['dragdrop6'] = dragdroplayer6;
-    layersArr['uncertainty'] = uncertaintycirclelayer;
-    layersArr['rasteranalysis'] = rasteranalysislayer;
-    layersArr['select'] = selectlayer;
-    layersArr['pointv'] = pointvectorlayer;
-    layersArr['heat'] = heatmaplayer;
-    layersArr['spider'] = spiderLayer;
-
-    layersArr['dragdrop1'].on('postrender', function(evt) {
+    layersObj['dragdrop1'].on('postrender', function(evt) {
         hideWorking();
     });
 
-    layersArr['dragdrop2'].on('postrender', function(evt) {
+    layersObj['dragdrop2'].on('postrender', function(evt) {
         hideWorking();
     });
 
-    layersArr['dragdrop3'].on('postrender', function(evt) {
+    layersObj['dragdrop3'].on('postrender', function(evt) {
         hideWorking();
     });
 
-    layersArr['select'].on('postrender', function(evt) {
+    layersObj['select'].on('postrender', function(evt) {
         hideWorking();
     });
 
-    layersArr['pointv'].on('postrender', function(evt) {
+    layersObj['pointv'].on('postrender', function(evt) {
         checkLoading();
     });
 
-    layersArr['heat'].on('postrender', function(evt) {
+    layersObj['heat'].on('postrender', function(evt) {
         checkLoading();
     });
 
     const selectInteraction = new ol.interaction.Select({
-        layers: [layersArr['select']],
+        layers: [layersObj['select']],
         condition: function (evt) {
             return (evt.type === 'click' && activeLayer === 'select' && !evt.originalEvent.altKey && !evt.originalEvent.shiftKey);
         },
@@ -313,7 +190,7 @@ if(strncmp($windowType, 'input', 5) === 0){
     });
 
     const rasterAnalysisInteraction = new ol.interaction.Select({
-        layers: [layersArr['rasteranalysis']],
+        layers: [layersObj['rasteranalysis']],
         style: new ol.style.Style({
             fill: new ol.style.Fill({
                 color: 'rgba(255,0,0,0.3)'
@@ -330,14 +207,14 @@ if(strncmp($windowType, 'input', 5) === 0){
     });
 
     const pointInteraction = new ol.interaction.Select({
-        layers: [layersArr['pointv'], layersArr['spider']],
+        layers: [layersObj['pointv'], layersObj['spider']],
         condition: function (evt) {
             if (evt.type === 'click' && activeLayer === 'pointv') {
                 if (!evt.originalEvent.altKey) {
                     if (spiderCluster) {
                         const spiderclick = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
                             spiderFeature = feature;
-                            if (feature && layer === layersArr['spider']) {
+                            if (feature && layer === layersObj['spider']) {
                                 return feature;
                             }
                         });
@@ -346,7 +223,7 @@ if(strncmp($windowType, 'input', 5) === 0){
                                 features: new ol.Collection(),
                                 useSpatialIndex: true
                             });
-                            layersArr['spider'].setSource(blankSource);
+                            layersObj['spider'].setSource(blankSource);
                             for (const i in hiddenClusters) {
                                 if(hiddenClusters.hasOwnProperty(i)){
                                     showFeature(hiddenClusters[i]);
@@ -355,17 +232,17 @@ if(strncmp($windowType, 'input', 5) === 0){
                             hiddenClusters = [];
                             spiderCluster = false;
                             spiderFeature = '';
-                            layersArr['pointv'].getSource().changed();
+                            layersObj['pointv'].getSource().changed();
                         }
                     }
                     return true;
                 } else if (evt.originalEvent.altKey) {
                     map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
                         if (feature) {
-                            if (spiderCluster && layer === layersArr['spider']) {
+                            if (spiderCluster && layer === layersObj['spider']) {
                                 clickedFeatures.push(feature);
                                 return feature;
-                            } else if (layer === layersArr['pointv']) {
+                            } else if (layer === layersObj['pointv']) {
                                 clickedFeatures.push(feature);
                                 return feature;
                             }
@@ -389,7 +266,7 @@ if(strncmp($windowType, 'input', 5) === 0){
             return (activeLayer === 'select' && evt.originalEvent.shiftKey);
         },
         addCondition: ol.events.condition.shiftKeyOnly,
-        layers: [selectlayer],
+        layers: [layersObj['select']],
         hitTolerance: 2,
         translateFeature: false,
         scale: true,
@@ -437,12 +314,12 @@ if(strncmp($windowType, 'input', 5) === 0){
                         const geoJSONFormat = new ol.format.GeoJSON();
                         features = geoJSONFormat.readFeatures(geoJSONFormat.writeFeatures(features));
                     }
-                    layersArr[sourceIndex] = new ol.source.Vector({
+                    layersObj[sourceIndex] = new ol.source.Vector({
                         features: features
                     });
-                    layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
+                    layersObj[dragDropTarget].setSource(layersObj[sourceIndex]);
                     processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
-                    map.getView().fit(layersArr[sourceIndex].getExtent());
+                    map.getView().fit(layersObj[sourceIndex].getExtent());
                     toggleLayerDisplayMessage();
                 }
             }
@@ -470,12 +347,12 @@ if(strncmp($windowType, 'input', 5) === 0){
                             const features = format.readFeatures(geojson, {
                                 featureProjection: 'EPSG:3857'
                             });
-                            layersArr[sourceIndex] = new ol.source.Vector({
+                            layersObj[sourceIndex] = new ol.source.Vector({
                                 features: features
                             });
-                            layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
+                            layersObj[dragDropTarget].setSource(layersObj[sourceIndex]);
                             processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
-                            map.getView().fit(layersArr[sourceIndex].getExtent());
+                            map.getView().fit(layersObj[sourceIndex].getExtent());
                             hideWorking();
                             toggleLayerDisplayMessage();
                         });
@@ -520,18 +397,18 @@ if(strncmp($windowType, 'input', 5) === 0){
                                 maxValue = item;
                             }
                         });
-                        layersArr[dataIndex] = {};
-                        layersArr[dataIndex]['data'] = bands[0];
-                        layersArr[dataIndex]['bbox'] = image.getBoundingBox();
-                        layersArr[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
-                        layersArr[dataIndex]['x_min'] = x_min;
-                        layersArr[dataIndex]['x_max'] = x_max;
-                        layersArr[dataIndex]['y_min'] = y_min;
-                        layersArr[dataIndex]['y_max'] = y_max;
-                        layersArr[dataIndex]['imageWidth'] = imageWidth;
-                        layersArr[dataIndex]['imageHeight'] = imageHeight;
-                        layersArr[dataIndex]['minValue'] = minValue;
-                        layersArr[dataIndex]['maxValue'] = maxValue;
+                        layersObj[dataIndex] = {};
+                        layersObj[dataIndex]['data'] = bands[0];
+                        layersObj[dataIndex]['bbox'] = image.getBoundingBox();
+                        layersObj[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
+                        layersObj[dataIndex]['x_min'] = x_min;
+                        layersObj[dataIndex]['x_max'] = x_max;
+                        layersObj[dataIndex]['y_min'] = y_min;
+                        layersObj[dataIndex]['y_max'] = y_max;
+                        layersObj[dataIndex]['imageWidth'] = imageWidth;
+                        layersObj[dataIndex]['imageHeight'] = imageHeight;
+                        layersObj[dataIndex]['minValue'] = minValue;
+                        layersObj[dataIndex]['maxValue'] = maxValue;
                         const canvasElement = document.createElement('canvas');
                         const plot = new plotty.plot({
                             canvas: canvasElement,
@@ -542,13 +419,13 @@ if(strncmp($windowType, 'input', 5) === 0){
                             colorScale: dragDropRasterColorScale
                         });
                         plot.render();
-                        layersArr[sourceIndex] = new ol.source.ImageStatic({
+                        layersObj[sourceIndex] = new ol.source.ImageStatic({
                             url: canvasElement.toDataURL("image/png"),
                             imageExtent: box,
                             projection: 'EPSG:4326'
                         });
-                        layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                        map.addLayer(layersArr[dragDropTarget]);
+                        layersObj[dragDropTarget].setSource(layersObj[sourceIndex]);
+                        map.addLayer(layersObj[dragDropTarget]);
                         processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                         addRasterLayerToTargetList(dragDropTarget,filename);
                         toggleLayerDisplayMessage();
@@ -587,18 +464,7 @@ if(strncmp($windowType, 'input', 5) === 0){
         controls: ol.control.defaults().extend([
             new ol.control.FullScreen()
         ]),
-        layers: [
-            layersArr['base'],
-            layersArr['dragdrop1'],
-            layersArr['dragdrop2'],
-            layersArr['dragdrop3'],
-            layersArr['uncertainty'],
-            layersArr['rasteranalysis'],
-            layersArr['select'],
-            layersArr['pointv'],
-            layersArr['heat'],
-            layersArr['spider']
-        ],
+        layers: layersArr,
         overlays: [popupoverlay,finderpopupoverlay]
     });
 
@@ -646,13 +512,13 @@ if(strncmp($windowType, 'input', 5) === 0){
 
     map.getView().on('change:resolution', function() {
         if(spiderCluster){
-            const source = layersArr['spider'].getSource();
+            const source = layersObj['spider'].getSource();
             source.clear();
             const blankSource = new ol.source.Vector({
                 features: new ol.Collection(),
                 useSpatialIndex: true
             });
-            layersArr['spider'].setSource(blankSource);
+            layersObj['spider'].setSource(blankSource);
             for(const i in hiddenClusters){
                 if(hiddenClusters.hasOwnProperty(i)){
                     showFeature(hiddenClusters[i]);
@@ -660,7 +526,7 @@ if(strncmp($windowType, 'input', 5) === 0){
             }
             hiddenClusters = [];
             spiderCluster = '';
-            layersArr['pointv'].getSource().changed();
+            layersObj['pointv'].getSource().changed();
         }
     });
 
@@ -823,21 +689,21 @@ if(strncmp($windowType, 'input', 5) === 0){
                 }
                 clickedFeatures = [];
             }
-            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6' || layersArr[activeLayer] instanceof ol.layer.Image){
+            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6' || layersObj[activeLayer] instanceof ol.layer.Image){
                 infoHTML = '';
                 const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
                 const dataIndex = activeLayer + 'Data';
-                const x = Math.floor(layersArr[dataIndex]['imageWidth']*(coords[0] - layersArr[dataIndex]['x_min'])/(layersArr[dataIndex]['x_max'] - layersArr[dataIndex]['x_min']));
-                const y = layersArr[dataIndex]['imageHeight']-Math.ceil(layersArr[dataIndex]['imageHeight']*(coords[1] - layersArr[dataIndex]['y_max'])/(layersArr[dataIndex]['y_min'] - layersArr[dataIndex]['y_max']));
-                const rasterDataIndex = (Number(layersArr[dataIndex]['imageWidth']) * y) + x;
-                infoHTML += '<b>Value:</b> '+layersArr[dataIndex]['data'][rasterDataIndex]+'<br />';
+                const x = Math.floor(layersObj[dataIndex]['imageWidth']*(coords[0] - layersObj[dataIndex]['x_min'])/(layersObj[dataIndex]['x_max'] - layersObj[dataIndex]['x_min']));
+                const y = layersObj[dataIndex]['imageHeight']-Math.ceil(layersObj[dataIndex]['imageHeight']*(coords[1] - layersObj[dataIndex]['y_max'])/(layersObj[dataIndex]['y_min'] - layersObj[dataIndex]['y_max']));
+                const rasterDataIndex = (Number(layersObj[dataIndex]['imageWidth']) * y) + x;
+                infoHTML += '<b>Value:</b> '+layersObj[dataIndex]['data'][rasterDataIndex]+'<br />';
                 popupcontent.innerHTML = infoHTML;
                 popupoverlay.setPosition(evt.coordinate);
             }
-            else if(layersArr[activeLayer] instanceof ol.layer.Vector){
+            else if(layersObj[activeLayer] instanceof ol.layer.Vector){
                 infoHTML = '';
                 const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-                    if (layer === layersArr[activeLayer]) {
+                    if (layer === layersObj[activeLayer]) {
                         return feature;
                     }
                 });
@@ -857,9 +723,9 @@ if(strncmp($windowType, 'input', 5) === 0){
         }
         else{
             if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv'){
-                if(layersArr[activeLayer] instanceof ol.layer.Vector){
+                if(layersObj[activeLayer] instanceof ol.layer.Vector){
                     map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
-                        if(layer === layersArr[activeLayer]){
+                        if(layer === layersObj[activeLayer]){
                             if(!selectsource.hasFeature(feature)){
                                 const featureClone = feature.clone();
                                 selectsource.addFeature(featureClone);
@@ -878,7 +744,7 @@ if(strncmp($windowType, 'input', 5) === 0){
             let idArr = [];
             map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
                 for(let i = 0; i<selectobject.length; i++){
-                    if(layer === layersArr[selectobject.options[i].value] && !idArr.includes(selectobject.options[i].value)){
+                    if(layer === layersObj[selectobject.options[i].value] && !idArr.includes(selectobject.options[i].value)){
                         idArr.push(selectobject.options[i].value);
                         if(infoHTML){
                             infoHTML += '<br />';
