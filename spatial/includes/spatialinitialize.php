@@ -18,7 +18,7 @@ if($stArrJson){
     }
 }
 ?>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220716" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220717" type="text/javascript"></script>
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     let searchTermsArr = {};
@@ -216,15 +216,12 @@ if($stArrJson){
     layersObj['dragdrop4'] = new ol.layer.Image({
         zIndex: 4,
     });
-    layersArr.push(layersObj['dragdrop4']);
     layersObj['dragdrop5'] = new ol.layer.Image({
         zIndex: 5,
     });
-    layersArr.push(layersObj['dragdrop5']);
     layersObj['dragdrop6'] = new ol.layer.Image({
         zIndex: 6,
     });
-    layersArr.push(layersObj['dragdrop6']);
 
     let uncertaintycirclesource = new ol.source.Vector({
         wrapX: true
