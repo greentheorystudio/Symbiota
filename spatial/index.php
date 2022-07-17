@@ -29,7 +29,7 @@ if(strncmp($windowType, 'input', 5) === 0){
     }
 }
 ?>
-<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>" style="background-color:white;">
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Spatial Module</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
