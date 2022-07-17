@@ -31,7 +31,7 @@ if($collMap['colltype'] === 'General Observations'){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Cleaner</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<style type="text/css">
+	<style>
 		table.styledtable {  width: 300px }
 		table.styledtable td { white-space: nowrap; }
 		h3 { text-decoration:underline }

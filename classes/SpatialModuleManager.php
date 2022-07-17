@@ -21,14 +21,14 @@ class SpatialModuleManager{
         }
     }
 
-    public function getOccStrFromGeoJSON($json): string{
-        $occArr = array();
+    public function getIdStrFromGeoJSON($json): string{
+        $idArr = array();
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
-            $occArr[] = $data['properties']['occid'];
+            $idArr[] = $data['properties']['id'];
         }
-        return implode(',',$occArr);
+        return implode(',',$idArr);
     }
 
     public function getLayersConfigJSON(): string
@@ -41,8 +41,8 @@ class SpatialModuleManager{
     }
 
     public function writeGPXFromGeoJSON($json): string{
-        $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
-            'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
+        $returnStr = '<gpx xmlns="https://www.topografix.com/GPX/1/1" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" '.
+            'xsi:schemaLocation="https://www.topografix.com/GPX/1/1 https://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
@@ -55,8 +55,8 @@ class SpatialModuleManager{
     }
 
     public function writeKMLFromGeoJSON($json): string{
-        $returnStr = '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
-            'xsi:schemaLocation="http://www.opengis.net/kml/2.2 https://developers.google.com/kml/schema/kml22gx.xsd">';
+        $returnStr = '<kml xmlns="https://www.opengis.net/kml/2.2" xmlns:gx="https://www.google.com/kml/ext/2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
+            'xsi:schemaLocation="https://www.opengis.net/kml/2.2 https://developers.google.com/kml/schema/kml22gx.xsd">';
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         $returnStr .= '<Document>';
@@ -121,7 +121,7 @@ class SpatialModuleManager{
             $geoArr['properties']['coll_year'] = utf8_encode($row->year);
             $geoArr['properties']['tidinterpreted'] = utf8_encode($row->tidinterpreted);
             $geoArr['properties']['coll_day'] = utf8_encode($row->day);
-            $geoArr['properties']['occid'] = utf8_encode($row->occid);
+            $geoArr['properties']['id'] = utf8_encode($row->occid);
             $geoArr['properties']['CollectionName'] = utf8_encode($row->CollectionName);
             $geoArr['properties']['sciname'] = utf8_encode($row->sciname);
             $geoArr['properties']['family'] = utf8_encode($row->family);

@@ -79,7 +79,7 @@ if(!$researchList && !$editMode){
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
-    <style type="text/css">
+    <style>
         a.boxclose{
             float:right;
             width:36px;
