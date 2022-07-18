@@ -240,7 +240,7 @@ if($clArray['locality']){
         <?php
     }
     ?>
-    <style type="text/css">
+    <style>
         #sddm{margin:0;padding:0;z-index:30;}
         #sddm:hover {background-color:#EAEBD8;}
         #sddm img{padding:3px;}

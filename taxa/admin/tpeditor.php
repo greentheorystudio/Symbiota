@@ -180,7 +180,7 @@ if($editable && $action){
             }
 		}
 	</script>
-	<style type="text/css">
+	<style>
 		input{margin:3px;}
 	</style>
 </head>

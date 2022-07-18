@@ -404,7 +404,7 @@ else{
 	<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
 			<title><?php echo $identifier; ?> Invoice</title>
-			<style type="text/css">
+			<style>
 				<?php 
 					include_once(__DIR__ . '/../../../css/main.css');
 				?>

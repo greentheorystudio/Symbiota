@@ -46,7 +46,7 @@ if($action === 'Create Account'){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - New User Profile</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <style type="text/css">
+    <style>
         canvas {
             border: 1px solid #000;
             height: 50px;

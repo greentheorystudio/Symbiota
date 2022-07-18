@@ -5,15 +5,10 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
-$catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
-
-if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = (int)$GLOBALS['DEFAULTCATID'];
-}
 
 $collManager = new OccurrenceManager();
 
-$collList = $collManager->getFullCollectionList($catId);
+$collList = $collManager->getFullCollectionList();
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
 $otherCatArr = $collManager->getOccurVoucherProjects();

@@ -25,7 +25,7 @@ $taxaUtilities = new TaxonomyUtilities();
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/external/jquery.fileupload.css" type="text/css" rel="stylesheet" />
     <link href="../../css/external/jquery.fileupload-ui.css" type="text/css" rel="stylesheet" />
-    <style type="text/css">
+    <style>
         #fileDropZone {
             border: 3px solid black;
             border-radius: 25px;

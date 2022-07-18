@@ -122,7 +122,7 @@ if($isEditor){
         $statusStr = $pHandler->addUserTaxonomy($_POST['taxon'], $_POST['editorstatus'], $_POST['geographicscope'], $_POST['notes']);
     }
     elseif($action === 'resendconfirmationemail'){
-        $pHandler->addUserTaxonomy($_POST['taxon'], $_POST['editorstatus'], $_POST['geographicscope'], $_POST['notes']);
+        $pHandler->sendConfirmationEmail($userId);
         $statusStr = 'Resent confirmation email!';
     }
     $person = $pHandler->getPerson();

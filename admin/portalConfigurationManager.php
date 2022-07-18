@@ -21,7 +21,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
-    <style type="text/css">
+    <style>
         fieldset {
             background-color: #f9f9f9;
             padding:15px;
