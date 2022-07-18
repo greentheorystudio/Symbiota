@@ -50,7 +50,7 @@ if(!$GLOBALS['IS_ADMIN']){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - Duplicate Record Search</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <style type="text/css">
+    <style>
         table.styledtable td { white-space: nowrap; }
     </style>
     <script src="../../js/external/all.min.js" type="text/javascript"></script>

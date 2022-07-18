@@ -88,7 +88,7 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
 	<link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
-	<style type="text/css">
+	<style>
 		.nowrap { white-space: nowrap; }
 	</style>
     <script src="../../js/external/all.min.js" type="text/javascript"></script>

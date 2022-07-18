@@ -10,16 +10,11 @@ $target = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']):'';
 $cntPerPage = array_key_exists('cntperpage',$_REQUEST)?(int)$_REQUEST['cntperpage']:100;
 $pageNumber = array_key_exists('page',$_REQUEST)?(int)$_REQUEST['page']:1;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
-$catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
-
-if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = (int)$GLOBALS['DEFAULTCATID'];
-}
 
 $imgLibManager = new ImageLibraryManager();
 $collManager = new OccurrenceManager();
 
-$collList = $collManager->getFullCollectionList($catId);
+$collList = $collManager->getFullCollectionList();
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
 $otherCatArr = $collManager->getOccurVoucherProjects();

@@ -32,7 +32,7 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
-        <style type="text/css">
+        <style>
             .map {
                 height: 600px;
                 overflow: hidden;
@@ -43,7 +43,7 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220310" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.js?ver=20220622" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220717" type="text/javascript"></script>
 		<script type="text/javascript">
             $(document).ready(function() {
                 const cloneArr = JSON.parse('<?php echo json_encode($clones); ?>');

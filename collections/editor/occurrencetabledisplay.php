@@ -202,7 +202,7 @@ else{
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Table View</title>
-    <style type="text/css">
+    <style>
 		table.styledtable td {
 		    white-space: nowrap;
 		}
