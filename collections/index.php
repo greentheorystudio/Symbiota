@@ -21,7 +21,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		<link href="../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script src="../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
-		<script src="../js/shared.js?ver=20220310" type="text/javascript"></script>
+		<script src="../js/shared.js?ver=20220718" type="text/javascript"></script>
         <script src="../js/search.term.manager.js?ver=20220330" type="text/javascript"></script>
         <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
         <script type="text/javascript">

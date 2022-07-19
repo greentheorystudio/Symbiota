@@ -161,7 +161,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 			}
 		</script>
 		<script src="../../js/collections.traitattr.js" type="text/javascript"></script>
-		<script src="../../js/shared.js?ver=20220310" type="text/javascript"></script>
+		<script src="../../js/shared.js?ver=20220718" type="text/javascript"></script>
 	</head>
 	<body style="width:900px">
 		<?php
