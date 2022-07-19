@@ -61,7 +61,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/collections.imageoccursubmit.js?ver=20111118" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20220310" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20220718" type="text/javascript"></script>
 	<script type="text/javascript">
 	function validateImgOccurForm(f){
 		if(f.imgfile.value === "" && f.imgurl.value === ""){

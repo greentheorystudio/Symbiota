@@ -717,6 +717,30 @@ function changeRasterColorScale(layerId,value){
     setLayersOrder();
 }
 
+function changeRecordPage(page){
+    let params;
+    document.getElementById("queryrecords").innerHTML = "<p>Loading...</p>";
+    const selJson = JSON.stringify(selections);
+    const http = new XMLHttpRequest();
+    const url = "rpc/changemaprecordpage.php";
+    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
+    if(SOLRMODE){
+        params = 'starr=' + jsonStarr + '&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
+    }
+    else{
+        params = 'starr='+jsonStarr+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
+    }
+    //console.log(url+'?'+params);
+    http.open("POST", url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    http.onreadystatechange = function() {
+        if(http.readyState === 4 && http.status === 200) {
+            document.getElementById("queryrecords").innerHTML = http.responseText;
+        }
+    };
+    http.send(params);
+}
+
 function checkLoading(){
     if(!loadingComplete){
         loadingComplete = true;
@@ -1679,6 +1703,48 @@ function getPointStyle(feature) {
     return style;
 }
 
+function getQueryRecCnt(callback){
+    let params;
+    let url;
+    let http;
+    queryRecCnt = 0;
+    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
+    if(SOLRMODE){
+        let qStr = '';
+        http = new XMLHttpRequest();
+        url = "rpc/SOLRConnector.php";
+        params = 'starr=' + jsonStarr + '&rows=0&start=0&wt=json';
+        //console.log(url+'?'+params);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState === 4 && http.status === 200) {
+                const resArr = JSON.parse(http.responseText);
+                queryRecCnt = resArr['response']['numFound'];
+                document.getElementById("dh-rows").value = queryRecCnt;
+                callback(1);
+            }
+        };
+        http.send(params);
+    }
+    else{
+        http = new XMLHttpRequest();
+        url = "rpc/MYSQLConnector.php";
+        params = 'starr=' + jsonStarr + '&rows=0&start=0&type=reccnt';
+        //console.log(url+'?'+params);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState === 4 && http.status === 200) {
+                queryRecCnt = http.responseText;
+                document.getElementById("dh-rows").value = queryRecCnt;
+                callback(1);
+            }
+        };
+        http.send(params);
+    }
+}
+
 function getRasterXYFromDataIndex(index,rasterWidth){
     let xyArr = [];
     if(index < rasterWidth){
@@ -1833,6 +1899,46 @@ function hideVectorizeRasterByGridTargetPolygon(){
     rasterAnalysisInteraction.getFeatures().clear();
     document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").style.display = "block";
     document.getElementById("vectorizeRasterByGridTargetPolyHideButton").style.display = "none";
+}
+
+function lazyLoadPoints(index,callback){
+    let params;
+    let url;
+    let startindex = 0;
+    loadingComplete = true;
+    if(index > 0) {
+        startindex = index * lazyLoadCnt;
+    }
+    const http = new XMLHttpRequest();
+    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
+    if(SOLRMODE){
+        url = "rpc/SOLRConnector.php";
+        params = 'starr=' + jsonStarr + '&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
+        //console.log(url+'?'+params);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState === 4 && http.status === 200) {
+                loadingComplete = false;
+                callback(http.responseText);
+            }
+        };
+        http.send(params);
+    }
+    else{
+        url = "rpc/MYSQLConnector.php";
+        params = 'starr=' + jsonStarr + '&rows=' + lazyLoadCnt + '&start=' + startindex + '&type=geoquery';
+        //console.log(url+'?'+params);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState === 4 && http.status === 200) {
+                loadingComplete = false;
+                callback(http.responseText);
+            }
+        };
+        http.send(params);
+    }
 }
 
 function loadInputParentParams(){
