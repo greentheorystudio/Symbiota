@@ -90,8 +90,8 @@
         if(in_array('uncertainty', $inputWindowModeTools, true) || in_array('radius', $inputWindowModeTools, true)){
             $labelText = in_array('uncertainty', $inputWindowModeTools, true) ? 'Coordinate uncertainty' : 'Radius';
             ?>
-            <div style="margin-top:8px;clear:both;color:white;">
-                <span class="maptext"><?php echo $labelText; ?> in meters: </span>
+            <div style="margin-top:8px;clear:both;">
+                <span class="maptext" style="color:white;"><?php echo $labelText; ?> in meters: </span>
                 <input data-role="none" id="inputpointuncertainty" type="text" style="width:100px;" name="inputpointuncertainty" onchange="processInputPointUncertaintyChange();" title="Coordinate uncertainty in meters" />
             </div>
             <?php

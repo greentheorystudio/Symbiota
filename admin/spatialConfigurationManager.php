@@ -27,7 +27,7 @@ $fullConfArr = $confManager->getConfigurationsArr();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.nestedSortable.js?ver=20220624" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jscolor/jscolor.js?ver=13" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220310" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220718" type="text/javascript"></script>
     <style>
         .map {
             width:95%;

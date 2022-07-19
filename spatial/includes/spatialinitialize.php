@@ -39,7 +39,9 @@ if($stArrJson){
         let winHeight = $(window).height();
         winHeight = winHeight + "px";
         document.getElementById('spatialpanel').style.height = winHeight;
-        $("#sidepanel-accordion").accordion("refresh");
+        if(document.getElementById('sidepanel-accordion')){
+            $("#sidepanel-accordion").accordion("refresh");
+        }
     });
 
     $(document).on("pageloadfailed", function(event){
