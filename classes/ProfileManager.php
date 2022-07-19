@@ -42,28 +42,36 @@ class ProfileManager extends Manager{
         unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
     }
 
+    public function clearOldUnregisteredUsers(): void
+    {
+        $sql = 'DELETE ua.*, u.* '.
+            'FROM users AS u LEFT JOIN useraccesstokens AS ua ON u.uid = ua.uid '.
+            'WHERE u.InitialTimeStamp < DATE_SUB(NOW(), INTERVAL 30 DAY) AND (ISNULL(u.validated) OR u.validated <> 1) ';
+        $this->conn->query($sql);
+    }
+
     public function authenticate($pwdStr = null): bool
     {
         $authStatus = false;
         unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
         if($this->userName){
             if(!$this->authSql){
-                $this->authSql = 'SELECT u.uid, u.firstname, u.lastname, u.validated '.
-                    'FROM users AS u '.
-                    'WHERE (u.username = "'.$this->userName.'") ';
+                $this->authSql = 'SELECT uid, firstname, lastname, validated '.
+                    'FROM users '.
+                    'WHERE (username = "'.$this->userName.'") ';
                 if($pwdStr) {
                     if($this->encryption === 'password'){
-                        $this->authSql .= 'AND (u.password = PASSWORD("' . Sanitizer::cleanInStr($pwdStr) . '")) ';
+                        $this->authSql .= 'AND (password = PASSWORD("' . Sanitizer::cleanInStr($pwdStr) . '")) ';
                     }
                     if($this->encryption === 'sha2'){
-                        $this->authSql .= 'AND (u.password = SHA2("' . Sanitizer::cleanInStr($pwdStr) . '", 224)) ';
+                        $this->authSql .= 'AND (password = SHA2("' . Sanitizer::cleanInStr($pwdStr) . '", 224)) ';
                     }
                 }
             }
             $result = $this->conn->query($this->authSql);
             if($row = $result->fetch_object()){
                 $this->uid = $row->uid;
-                $this->validated = (int)$row->validated;
+                $this->validated = $row->validated ? (int)$row->validated : 0;
                 $this->displayName = $row->firstname;
                 if(strlen($this->displayName) > 15) {
                     $this->displayName = $this->userName;
@@ -224,12 +232,12 @@ class ProfileManager extends Manager{
             if($isSelf){
                 $sqlTest = '';
                 if($this->encryption === 'password'){
-                    $sqlTest = 'SELECT u.uid FROM users u WHERE (u.uid = '.$this->uid.') '.
-                        'AND (u.password = PASSWORD("'.Sanitizer::cleanInStr($oldPwd).'"))';
+                    $sqlTest = 'SELECT uid FROM users WHERE (uid = '.$this->uid.') '.
+                        'AND (password = PASSWORD("'.Sanitizer::cleanInStr($oldPwd).'"))';
                 }
                 if($this->encryption === 'sha2'){
-                    $sqlTest = 'SELECT u.uid FROM users u WHERE (u.uid = '.$this->uid.') '.
-                        'AND (u.password = SHA2("'.Sanitizer::cleanInStr($oldPwd).'", 224))';
+                    $sqlTest = 'SELECT uid FROM users WHERE (uid = '.$this->uid.') '.
+                        'AND (password = SHA2("'.Sanitizer::cleanInStr($oldPwd).'", 224))';
                 }
                 $rsTest = $editCon->query($sqlTest);
                 if(!$rsTest->num_rows) {
@@ -320,6 +328,9 @@ class ProfileManager extends Manager{
 
     public function register($postArr): bool
     {
+        if($GLOBALS['EMAIL_CONFIGURED']){
+            $this->clearOldUnregisteredUsers();
+        }
         $status = false;
         $manager = new Manager();
         $firstName = Sanitizer::cleanInStr($postArr['firstname']);
@@ -504,7 +515,7 @@ class ProfileManager extends Manager{
             if($loginStr){
                 $subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
                 $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' login name is: '.$loginStr.' ';
-                if($GLOBALS['ADMIN_EMAIL']){
+                if(isset($GLOBALS['ADMIN_EMAIL'])){
                     $bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                 }
                 $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
@@ -579,9 +590,9 @@ class ProfileManager extends Manager{
             return false;
         }
         $status = true;
-        $sql = 'SELECT u.email, u.username '.
-            'FROM users u '.
-            'WHERE (u.username = "'.$this->userName.'" OR u.email = "'.$email.'" )';
+        $sql = 'SELECT email, username '.
+            'FROM users '.
+            'WHERE (username = "'.$this->userName.'" OR email = "'.$email.'" )';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $status = false;
@@ -642,7 +653,7 @@ class ProfileManager extends Manager{
     {
         $retCnt = 0;
         $sql = 'SELECT count(c.comid) AS reccnt '.
-            'FROM omoccurrences o INNER JOIN omoccurcomments c ON o.occid = c.occid '.
+            'FROM omoccurrences AS o INNER JOIN omoccurcomments AS c ON o.occid = c.occid '.
             'WHERE (o.observeruid = '.$GLOBALS['SYMB_UID'].') AND (o.collid = '.$collid.') AND (c.reviewstatus < 3)';
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
@@ -657,7 +668,7 @@ class ProfileManager extends Manager{
     {
         $sql = 'SELECT ut.idusertaxonomy, t.tid, t.sciname, '.
             'ut.editorstatus, ut.geographicscope, ut.notes, ut.modifieduid, ut.modifiedtimestamp '.
-            'FROM usertaxonomy ut INNER JOIN taxa t ON ut.tid = t.tid '.
+            'FROM usertaxonomy AS ut INNER JOIN taxa AS t ON ut.tid = t.tid '.
             'WHERE ut.uid = ?';
         $id = 0;
         $tid = 0;
@@ -845,8 +856,7 @@ class ProfileManager extends Manager{
     public function setTokenAuthSql(): void
     {
         $this->authSql = 'SELECT u.uid, u.firstname, u.lastname '.
-            'FROM users AS u '.
-            'INNER JOIN useraccesstokens AS ut ON u.uid = ut.uid '.
+            'FROM users AS u INNER JOIN useraccesstokens AS ut ON u.uid = ut.uid '.
             'WHERE (u.username = "'.$this->userName.'") AND (ut.token = "'.$this->token.'") ';
     }
 

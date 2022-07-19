@@ -77,8 +77,8 @@ if($collMetadata['colltype'] === 'General Observations') {
 			return true;
 		}
 	</script>
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/shared.js?ver=20220310"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../js/shared.js?ver=20220310"></script>
 </head>
 <body>
 	<?php

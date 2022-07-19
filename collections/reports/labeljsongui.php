@@ -8,14 +8,14 @@ header('X-Frame-Options: DENY');
     <title>Label Content Format Visual Editor</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link href="../../css/jquery.mobile-1.4.0.min.css?ver=20210817" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery.mobile-1.4.0.min.css?ver=20210817" type="text/css" rel="stylesheet" />
     <link href="../../css/jsongui.css?ver=20220617" type="text/css" rel="stylesheet" />
-    <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-    <script src="../../js/jquery.js" type="text/javascript"></script>
-    <script src="../../js/jquery-ui.js" type="text/javascript"></script>
-    <script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
+    <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery.popupoverlay.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('#fieldoptions').popup({
@@ -370,7 +370,7 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('qrcodeoptions');">Close</button>
     </div>
 </div>
-<script src="../../js/symb/collections.labeljsongui.js?ver=26"></script>
+<script src="../../js/collections.labeljsongui.js?ver=26"></script>
 <script type="text/javascript">
     createFields(fieldProps, fieldListDiv);
     refreshLineState();

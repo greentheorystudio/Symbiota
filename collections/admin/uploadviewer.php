@@ -45,7 +45,7 @@ if($GLOBALS['SYMB_UID']){
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title>Record Upload Preview</title>
-    <style type="text/css">
+    <style>
 		table.styledtable td {
 		    white-space: nowrap;
 		}

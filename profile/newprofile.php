@@ -23,8 +23,7 @@ if($emailAddr && !$pHandler->validateEmailAddress($emailAddr)) {
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-
-if($action === 'Create Login'){
+if($action === 'Create Account'){
     if($pHandler->checkLogin($emailAddr)){
         if($pHandler->register($_POST)){
             header('Location: viewprofile.php');
@@ -47,14 +46,14 @@ if($action === 'Create Login'){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - New User Profile</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <style type="text/css">
+    <style>
         canvas {
             border: 1px solid #000;
             height: 50px;
             width: 400px;
         }
     </style>
-    <script src="../js/jquery.js" type="text/javascript"></script>
+    <script src="../js/external/jquery.js" type="text/javascript"></script>
 	<script type="text/javascript">
         let randNumber = 0;
 

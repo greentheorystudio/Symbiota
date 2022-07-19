@@ -77,9 +77,9 @@ if(!$researchList && !$editMode){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Inventory Projects</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
-    <style type="text/css">
+    <link href="../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
+    <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
+    <style>
         a.boxclose{
             float:right;
             width:36px;
@@ -90,10 +90,10 @@ if(!$researchList && !$editMode){
             cursor:pointer;
         }
     </style>
-    <script src="../js/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/jquery.js"></script>
-    <script type="text/javascript" src="../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
+    <script src="../js/external/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../js/external/jquery.js"></script>
+    <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+    <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;

@@ -27,9 +27,9 @@ if($target){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxonomy Explorer: ' .$taxonDisplayObj->getTargetStr(); ?></title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
+    <link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" media="screen">
-    <style type="text/css">
+    <style>
         .dijitLeaf,
         .dijitIconLeaf,
         .dijitFolderClosed,
@@ -41,9 +41,9 @@ if($target){
             height: 0;
         }
     </style>
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/jquery.js"></script>
-    <script type="text/javascript" src="../../js/jquery-ui.js"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/external/jquery.js"></script>
+    <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js" data-dojo-config="async: true"></script>
     <script type="text/javascript">
         $(document).ready(function() {

@@ -102,18 +102,18 @@ if($glossId){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Management</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
-	<style type="text/css">
+	<link href="../css/external/jquery-ui.css" rel="stylesheet" type="text/css" />
+	<style>
 		#tabs a{
 			outline-color: transparent;
 			font-size: 12px;
 			font-weight: normal;
 		}
 	</style>
-    <script src="../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../js/symb/glossary.index.js?ver=20220113"></script>
+    <script src="../js/external/all.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../js/external/jquery.js"></script>
+	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+	<script type="text/javascript" src="../js/glossary.index.js?ver=20220113"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			<?php 
