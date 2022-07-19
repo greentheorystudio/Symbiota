@@ -19,10 +19,7 @@ class Manager  {
 	}
 
  	public function __destruct(){
- 		if(!($this->conn === null)) {
-			$this->conn->close();
-		}
-		if($this->logFH){
+ 		if($this->logFH){
 			fclose($this->logFH);
 		}
 	}

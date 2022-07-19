@@ -58,7 +58,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Label Format Manager</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
     <style>
         fieldset{ width:850px; padding:15px; }
         fieldset legend{ font-weight:bold; }
@@ -70,9 +70,9 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
         .field-block{ margin:3px 0px }
         .labelFormat{ font-weight: bold; }
     </style>
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-    <script src="../../js/jquery.js" type="text/javascript"></script>
-    <script src="../../js/jquery-ui.js" type="text/javascript"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript">
         function toggleEditDiv(classTag){
             $('#display-'+classTag).toggle();

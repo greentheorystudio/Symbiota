@@ -202,17 +202,17 @@ else{
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Table View</title>
-    <style type="text/css">
+    <style>
 		table.styledtable td {
 		    white-space: nowrap;
 		}
     </style>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
+    <script src="../../js/external/all.min.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery.js" type="text/javascript"></script>
+	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210901"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;border:0;">
 	<div>

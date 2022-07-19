@@ -39,11 +39,11 @@ if($formSubmit !== 'Search References'){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Reference Management</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
-    <script src="../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../js/symb/references.index.js?ver=20220113"></script>
+	<link href="../css/external/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../js/external/all.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../js/external/jquery.js"></script>
+	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+	<script type="text/javascript" src="../js/references.index.js?ver=20220113"></script>
 </head>
 <body>
 	<?php

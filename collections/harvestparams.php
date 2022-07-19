@@ -15,14 +15,14 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
     <title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.$GLOBALS['SEARCHTEXT']['PAGE_TITLE']; ?></title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <script src="../js/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/jquery.js"></script>
-    <script type="text/javascript" src="../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/symb/shared.js?ver=20220310"></script>
-    <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=20211104"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20220330"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220615" type="text/javascript"></script>
+    <link href="../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../js/external/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../js/external/jquery.js"></script>
+    <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20220310"></script>
+    <script type="text/javascript" src="../js/collections.harvestparams.js?ver=20211104"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220330"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';

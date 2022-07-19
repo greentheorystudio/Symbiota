@@ -8,9 +8,9 @@ header('X-Frame-Options: SAMEORIGIN');
 	<title>Associated Species Entry Aid</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
+	<script type="text/javascript" src="../../js/external/jquery.js"></script>
+	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript">
         $(document).ready(function() {
 			$("#taxonname").autocomplete({ source: "rpc/getassocspp.php" },
