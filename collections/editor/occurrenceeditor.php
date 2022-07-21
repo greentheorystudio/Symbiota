@@ -494,7 +494,7 @@ else{
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
-    <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
     <?php
     if($crowdSourceMode === 1){
         ?>
