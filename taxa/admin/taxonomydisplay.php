@@ -26,7 +26,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxonomy Display: ' .$taxonDisplayObj->getTargetStr(); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
+	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
