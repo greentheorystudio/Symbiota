@@ -114,7 +114,7 @@ if($isEditor){
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
     <style>
         a.boxclose{
             float:right;
