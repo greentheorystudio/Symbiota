@@ -9,9 +9,9 @@ header('X-Frame-Options: DENY');
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link href="../../css/external/jquery.mobile-1.4.0.min.css?ver=20210817" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery.mobile-1.4.0.min.css?ver=20220720" type="text/css" rel="stylesheet" />
     <link href="../../css/jsongui.css?ver=20220617" type="text/css" rel="stylesheet" />
-    <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>

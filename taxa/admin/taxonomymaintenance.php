@@ -47,7 +47,7 @@ if($isEditor){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxonomy Maintenance '; ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/external/jquery-ui.css" rel="stylesheet" />
+	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript">
