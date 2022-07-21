@@ -69,7 +69,7 @@ if($GLOBALS['SYMB_UID']){
 	<meta name="keywords" content="Natural history collections,<?php echo ($collid?$collData[$collid]['collectionname']: ''); ?>" />
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/external/jquery-ui.css" rel="stylesheet" type="text/css" />
+	<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js?ver=20130917" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js?ver=20130917" type="text/javascript"></script>
