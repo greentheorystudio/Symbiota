@@ -43,7 +43,7 @@ if($imgArr){
 	$imgUrl = $imgArr['url'];
 	$origUrl = $imgArr['originalurl'];
 	$metaUrl = $imgArr['url'];
-	if($GLOBALS['IMAGE_DOMAIN']){
+	if(isset($GLOBALS['IMAGE_DOMAIN'])){
 		if(strncmp($imgUrl, '/', 1) === 0){
 			$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 			$metaUrl = $GLOBALS['IMAGE_DOMAIN'].$metaUrl;
