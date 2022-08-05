@@ -635,9 +635,8 @@ if(!$printMode){
                 }
                 $prevfam = '';
                 if($showImages){
-                    echo '<div style="clear:both;">&nbsp;</div>';
+                    echo '<div style="clear:both;display:flex;flex-direction:row;flex-wrap:wrap;gap:20px;">';
                     foreach($taxaArray as $tid => $sppArr){
-                        $family = $sppArr['family'];
                         $tu = (array_key_exists('tnurl',$sppArr)?$sppArr['tnurl']:'');
                         $u = (array_key_exists('url',$sppArr)?$sppArr['url']:'');
                         $imgSrc = ($tu?:$u);
@@ -677,19 +676,12 @@ if(!$printMode){
                                 if(array_key_exists('vern',$sppArr)){
                                     echo "<div style='font-weight:bold;'>".$sppArr['vern']. '</div>';
                                 }
-                                if(!$showAlphaTaxa && $family !== $prevfam) {
-                                    ?>
-                                    <div class="familydiv" id="<?php echo $family; ?>">
-                                        [<?php echo $family; ?>]
-                                    </div>
-                                    <?php
-                                    $prevfam = $family;
-                                }
                                 ?>
                             </div>
                         </div>
                         <?php
                     }
+                    echo '</div>';
                 }
                 else{
                     $voucherArr = $clManager->getVoucherArr();

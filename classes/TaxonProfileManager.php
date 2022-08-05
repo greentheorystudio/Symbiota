@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class TaxonProfileManager {
 
@@ -450,10 +451,10 @@ class TaxonProfileManager {
                 }
                 $this->imageArr[$row->imgid]['url'] = $imgUrl;
                 $this->imageArr[$row->imgid]['thumbnailurl'] = $row->thumbnailurl;
-                $this->imageArr[$row->imgid]['photographer'] = $row->photographer;
-                $this->imageArr[$row->imgid]['caption'] = $row->caption;
+                $this->imageArr[$row->imgid]['photographer'] = Sanitizer::cleanOutStr($row->photographer);
+                $this->imageArr[$row->imgid]['caption'] = Sanitizer::cleanOutStr($row->caption);
                 $this->imageArr[$row->imgid]['occid'] = $row->occid;
-                $this->imageArr[$row->imgid]['owner'] = $row->owner;
+                $this->imageArr[$row->imgid]['owner'] = Sanitizer::cleanOutStr($row->owner);
                 $this->imageArr[$row->imgid]['sciname'] = $row->sciname;
             }
             $result->free();
