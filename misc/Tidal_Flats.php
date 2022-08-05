@@ -101,6 +101,12 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                             <span class="cd-label">Tidal Flat Species</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="#further-reading-section" data-number="6">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Further Reading</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -257,6 +263,184 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                 <li>
                     <i>Epibenthos</i> are large, predatory and grazing species including crabs, mollusks, fish, rays, wading
                     birds and mammals.
+                </li>
+            </ul>
+        </div>
+        <div id="further-reading-section" class="cd-section">
+            <h4>Further Reading</h4>
+            <ul class="further-reading-list">
+                <li>
+                    Ambrose, W. G. 1984. Role of predatory infauna in structuring marine soft-bottom communities. Mar. Ecol. Prog. Ser. 17(2): 109-115.
+                </li>
+                <li>
+                    Amos, C. L. 1995. Siliciclastic tidal flats. In: Perillo, G. M. (Ed.), Geomorphology and Sedimentology of Estuaries.
+                    Elsevier, Amsterdam. pp. 273-306.
+                </li>
+                <li>
+                    Bell, S. and B. Coull 1978. Field evidence that shrimp predation regulates meiofauna. Oecologia 35: 141-148.
+                </li>
+                <li>
+                    Beyer, F. 1958. A new, bottom-living trachymedusa from the Oslo fjord. Nytt Mag. Zool. 6: 121-143.
+                </li>
+                <li>
+                    Bertness, M. D. 1999. The Ecology of Atlantic Shorelines. Sinauer Associates, Inc., Sunderland. 417 pp.
+                </li>
+                <li>
+                    Black, K. S., T. J. Tolhurst, S. E. Hagerthey and D. M. Paterson. 2002. Working with natural cohesive sediments.
+                    J. Hydraulic Eng. Forum 128: 1-7.
+                </li>
+                <li>
+                    Bottom, M. L. 1984. The importance of predation by horseshoe crabs, <i>Limulus polyphemus</i>, to an intertidal
+                    sand flat community. J. Mar. Res. 42: 139-161.
+                </li>
+                <li>
+                    Coelho, V. D., R. A. Cooper and S. Rodrigues. 2000. Burrow morphology and behavior of the mud shrimp <i>Upogebia omissa</i>
+                    (Decapoda: Thalassinidea: Upogebiidae). Mar. Ecol. Prog. Ser. 200: 229-240.
+                </li>
+                <li>
+                    Commito, J. A. and W. G. Ambrose. 1985. Multiple trophic levels in soft-bottom communities. Mar. Ecol. Prog. Ser. 26: 289-293.
+                </li>
+                <li>
+                    Coull, B. C. 2009. Role of meiofauna in estuarine soft-bottom habitats. Austral Ecol. 24(4): 327-343.
+                </li>
+                <li>
+                    de Brouwer, J. F. and L. J. Stal. 2001. Short-term dynamics in microphytobenthos distribution and associated extracellular
+                    carbohydrates in surface sediments of an intertidal mudflat. Mar. Ecol. Prog. Ser. 218: 33-44.
+                </li>
+                <li>
+                    Dyer, K. R. (Ed.), 1979. Estuarine Hydrography and Sedimentation. Estuarine and Brackish Water Sciences Association.
+                    Cambridge University Press, Cambridge. 230 pp.
+                </li>
+                <li>
+                    Dyer, K .R., M.C. Christe and E. W. Wright. 2000. The classification of mudflats. Cont. Shelf Res. 20: 1061-1078.
+                </li>
+                <li>
+                    Felder, D. L. and R. B. Manning. 1986. A new genus and two new species of Alpheid shrimps (Decapoda: Caridea) from
+                    south Florida. J. Crust. Biol. 6(3): 497-508.
+                </li>
+                <li>
+                    Giere, O. 2009. Meiobenthology. The microscopic motile fauna of aquatic sediments. Springer-Verlag, Berlin. 527 pp.
+                </li>
+                <li>
+                    Hendler G., J. E. Miller, D. L. Pawson , and P. M. Kier. 1995. Sea Stars, Sea Urchins, and Allies. Smithsonian
+                    Institution Press, Washington, D. C. 390 pp.
+                </li>
+                <li>
+                    Higgins, R. P. and H. Thiel. 1988. Introduction to the study of meiofauna. Smithsonian Institution Press, Washington, D. C. 488 pp.
+                </li>
+                <li>
+                    Holligan, P. M. and W. A. Reiners. 1992. Predicting the responses of the coastal zone to global change. Adv. Ecol. Res. 22: 211-215.
+                </li>
+                <li>
+                    Koulouri, P. Preliminary study of hyperbenthos in Heraklion Bay (Cretan Sea). Accessed 5 April 2010. Available
+                    at: <a href="https://www.biomareweb.org/3.6.html" target="_blank">https://www.biomareweb.org/3.6.html</a>.
+                </li>
+                <li>
+                    Little, C. 2000. The Biology of Soft Shores and Estuaries. Oxford University Press, Oxford. 252 pp.
+                </li>
+                <li>
+                    MacIntyre, H. L., R. J. Geider and D. C. Miller. 1996. Microphytobenthos: the ecological role of the “Secret Garden” of
+                    unvegetated, shallow-water marine habitats. I. Distribution, abundance and primary production. Estuaries 19: 186-201.
+                </li>
+                <li>
+                    McIntyre, A. D. 1968. The macrofauna and meiofauna of some tropical beaches. J. Zool. 156: 377-392.
+                </li>
+                <li>
+                    Mees, J. and M. B. Jones. 1997. The hyperbenthos. Ocean. Mar. Biol.Ann. Rev.35: 221-255. Mitbavkar, S. and A. C.
+                    Anil. Diatoms of the microphytobenthic community: population structure in a tropical intertidal sand flat. Mar.
+                    Bio. 140: 41-57.
+                </li>
+                <li>
+                    Myers, R. L. and J. J. Ewel (Eds.), 1990. Ecosystems of Florida. U. of Central Florida Press, Orlando. 765 pp.
+                </li>
+                <li>
+                    Nielsen, C. 2001. Animal Evolution: Interrelationships of the Living Phyla. Oxford University Press, Oxford. 578 pp.
+                </li>
+                <li>
+                    Nybaken, J. W. and M. D. Bertness. 2005. Marine Biology: an Ecological Approach. Benjamin Cummings Publishers,
+                    San Francisco. 579 pp.
+                </li>
+                <li>
+                    Olafsson, E. B. , C. W. Peterson and W. G. Ambrose. 1994. Does recruitment limitation structure populations and
+                    communities of macro-invertebrates in marine soft sediments? The relative significance of pre- and post-settlement
+                    processes. Ocean. Mar. Biol. Ann. Rev. 32: 65-109.
+                </li>
+                <li>
+                    Orth, R. J. 1975. Destruction of eelgrass, <i>Zostera bonasus</i>, in Cesapeake Bay. Chesapeake Sci. 16: 205-208.
+                </li>
+                <li>
+                    Paterson, D. M., R. J. Aspden and K. S. Black. 2009. Intertidal flats: ecosystem functioning of soft sediment systems. In:
+                    Perillo, G. M., E. Wolanski, D. R. Cahoon and M. M. Brinson (Eds.), Coastal Wetlands An Integrated Approach. Elsevier,
+                    Amsterdam. Pp. 317-343.
+                </li>
+                <li>
+                    Peterson, C. H. 1979. Predation, competitive exclusion, and diversity in the soft-sediment benthic communities of
+                    estuaries and lagoons. In: Livingston, R. J. (Ed.), Ecological Processes in Coastal Marine Systems. Plenum Press,
+                    New York. 548 pp.
+                </li>
+                <li>
+                    Posey, M. H., B. R. Dumbauld and D. A. Armstrong. 1991. Effects of burrowing mud shrimp, <i>Upogebia pugettensis</i> (Dana), on
+                    abundances of macro-infauna. J. Exp. Mar. Biol. Ecol. 148: 283-294.
+                </li>
+                <li>
+                    Quammen, M. L. 1982. Influence of subtle substrate differences on feeding by shorebirds on intertidal mudflats.
+                    Mar. Biol. 71: 339-343.
+                </li>
+                <li>
+                    Rice, M. E., J. Piraino & H. F. Reicherdt. 1995. A survey of the Sipuncula of the Indian River Lagoon. Bu. Mar.
+                    Sci. 57(1): 128-135.
+                </li>
+                <li>
+                    Robertson, A. I. 1988 Decomposition of mangrove leaf litter in tropical Australia. J. Exp. Mar. Biol. Ecol. 116: 236-247.
+                </li>
+                <li>
+                    Ruiz, G. M., J. T. Carlton, E. D. Grosholz, and A. H. Hines. 1997. Global invasions of marine and estuarine habitats by
+                    non-indigenous species: mechanisms, extent, and consequences. Am. Zool. 37: 621-632.
+                </li>
+                <li>
+                    Schmalzer, P.A. 1995. Biodiversity of saline and brackish marshes of the Indian River Lagoon: historic and current
+                    patterns. Bull. Mar. Sci. 57(1): 37-48.
+                </li>
+                <li>
+                    Sibert, J. R. 1981. Intertidal hyperbenthic populations in the Nanaimo Estuary. Mar. Biol. 64: 259-265.
+                </li>
+                <li>
+                    Stal, L. J. 2003. Microphytobenthos, their extracellular polymeric substances, and the morphogenesis of intertidal
+                    sediments. Geomicrobio. J. 20 (5): 463-478.
+                </li>
+                <li>
+                    Stal, L. J. and F. C. de Brouwer. 2003. Biofilm formation by benthic diatoms and their influence on the stabilization of
+                    intertidal mudflats. Berichte -Forschungszentrum Terramare 12: 109-111.
+                </li>
+                <li>
+                    Stanley, S. M., 1970. Relation of shell form to life habits of the bivalve molluscs. Geol. Soc. Am. Monographs. 125: 1-296.
+                </li>
+                <li>
+                    Stutz, M. L. and O. H. Pilkey. 2002. Global distribution and morphology of deltaic barrier island systems. J.
+                    Coast. Res. 36: 694-707.
+                </li>
+                <li>
+                    Thrush, S. F., R. D. Pridmore, R. G. Bell, V. J. Cummings, P. K. Dayton, R. Ford, J. Grant, M. O. Green, J. E. Hewitt, A. H.
+                    Hines, M. T. Hume, S. M. Lawrie, P. Legendre, B. H. McArdle, D. Morrisey, D. C, Schneider, S. J. Turner, R. A. Walters,
+                    R. B. Whitlatch and M. R. Wilkinson. 1997. The sandflat habitat: scaling from experiments to conclusions. J. Exp. Mar.
+                    Biol. Ecol. 216: 1-9.
+                </li>
+                <li>
+                    Van der Wal, D., P. M. Herman, R. M. Forster, T. Ysebaret, F. Rossi, E. Knaeps, Y. M. Plancke and S. J. Ides. 2008. Distribution
+                    and dynamics of intertidal macrobenthos predicted from remote sensing: response to microphytobenthos and environment. Mar.
+                    Ecol. Prog. Ser. 367: 57-72.
+                </li>
+                <li>
+                    Virnstein, R. W. 1977. The importance of predation by crabs and fishes on benthic infauna in Chesapeake Bay. Ecol. 58: 1199-1217.
+                </li>
+                <li>
+                    Watzin, M. 1983. The effects of meiofauna on settling macrofauna: meiofauna may structure macrofaunal communities.
+                    Oecologia 59: 163-166.
+                </li>
+                <li>
+                    Winkler, G. and W. Greve. 2004. Trophodynamics of two interacting species of estuarine mysids, <i>Praunus flexuosus</i>
+                    and <i>Neomysis integer</i>, and their predation on the calanoid copepod <i>Eurytemora affinis</i>. J. Exp. Mar.
+                    Biol. Ecol. 308: 127-146.
                 </li>
             </ul>
         </div>

@@ -111,6 +111,20 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
     </div>
     <div id="innertext">
         <div id="intro-section" class="cd-section">
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <figcaption style="clear:both;width:900px;text-align: center;margin-bottom:10px;font-weight: bold;">
+                        Watch: How does pollution reach the Lagoon?
+                    </figcaption>
+                    <video width="900" controls>
+                        <source src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/IRL_Non_Point_Source_Pollution.mp4" type="video/mp4">
+                    </video>
+                    <figcaption style="width:900px;text-align: center;margin-top:10px;font-style: italic;">
+                        Smithsonian Marine Station technician Woody Lee demonstrates with a simple diorama how common sources of non-point source
+                        pollution reach the waters of the Indian River Lagoon.
+                    </figcaption>
+                </figure>
+            </div>
             <p>
                 Below are six proactive ways in which lagoon-area residents and visitors can help improve water quality—and
                 the overall Indian River Lagoon estuary system.

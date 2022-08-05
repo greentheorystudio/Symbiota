@@ -96,6 +96,12 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                             <span class="cd-label">Threats and Restoration</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="#further-reading-section" data-number="5">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Further Reading</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -245,6 +251,28 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                 restoration efforts have also focused on installing artificial reef lines made of natural oyster shells to
                 protect shorelines and provide areas for oyster larvae to colonize.
             </p>
+        </div>
+        <div id="further-reading-section" class="cd-section">
+            <h4>Further Reading</h4>
+            <ul class="further-reading-list">
+                <li>
+                    Bahr, L.M. and W.P. Lanier. 1981. The Ecology of Intertidal Oyster Reefs of the South Atlantic Coast: a Community Profile.
+                    U.S. Fish and Wildlife Service, Blot. Program, Washington D.C. FWS/OBS 81/15. 105 pp.
+                </li>
+                <li>
+                    Burrell, V.G. 1986. Species Profiles: Life Histories and Environmental Requirements of Coastal Fishes and
+                    Invertebrates (South Atlantic): American Oyster. U.S. Fish and Wildlife Service. Biological Report 82(11.57).
+                    U.S. Army Corps of Engineers. TR EL-82-4. 17 pp.
+                </li>
+                <li>
+                    Livingston, Robert J. 1990. Inshore Marine Habitats. In: Ecosystems of Florida, Ronald L. Myers and John J. Ewel,
+                    Eds. University of Central Florida Press, Orlando, FL. Pp. 549-573.
+                </li>
+                <li>
+                    Lunz, G.R., Jr. 1960. Intertidal Oysters. Wards Natl. Sci. Bull. 34(1): 3-7 Wells, H.W. 1961. The Fauna of Oyster
+                    Beds with Special Reference to the Salinity Factor. Ecological Monographs 31(3): 239-266.
+                </li>
+            </ul>
         </div>
     </div>
 </div>

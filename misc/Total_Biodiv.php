@@ -49,8 +49,8 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
     </div>
     <div class="top-text-container">
         <h3>
-            Home to over 4,200 species of plants, birds, fish and mammals, the Indian River Lagoon is considered to be one
-            of the most biodiverse estuaries in North America.
+            The Indian River Lagoon’s diverse montage of habitats creates a broad variety of opportunities for life in the estuary.
+            Thousands of species of plants, birds, fish and mammals call the lagoon home.
         </h3>
     </div>
     <div class="photo-credit-container">
@@ -86,6 +86,12 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                             <span class="cd-label">Threats to Biodiversity</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="#further-reading-section" data-number="5">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Further Reading</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -93,9 +99,31 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
     <div id="innertext">
         <div id="intro-section" class="cd-section">
             <p>
-                An estimated 2,100 species of plants and more than 2,200 animal species live within the watershed, including
-                nearly 700 species of fish and 370 species of birds. Ongoing research continues to discover and catalog numerous
-                species of invertebrates, crustaceans, microscopic diatoms, sponges and algae.
+                The IRL Species Inventory is an effort to document organisms that have been present in the Lagoon at some point in time –
+                but is certainly an incomplete record of the total diversity in the Indian River Lagoon. However, to date, the Inventory
+                contains documentation for 4,460 individual species, including an estimated 2,100 species of plants and more than 2,200
+                animal species.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/old_IRL_bidiversity_pie_chart.jpg" />
+                </figure>
+            </div>
+            <p>
+                The original IRL Species Inventory, first compiled in 1995, listed a total of 2,493 different species of plants, animals and
+                protists. Of these, animals comprised the greatest proportion of species in the inventory (71.4 percent), with 1,779 species
+                grouped into 20 phyla. Plants were grouped into four phyla, consisting of 289 different species. Protista (17 percent) consisted
+                of 425 species in four phyla. No data are available for Kingdom Monera (bacteria).
+            </p>
+            <p>
+                Sampling of some taxa are more complete and thoroughly documented than others, including fishes, birds, mollusks, chrysophytes,
+                dinoflagellates, rhizopods, ectoprocts, sipunculids, echinoderms, and mammals. Other taxonomic groups, including vascular plants,
+                amphibians and reptiles, and marine macroalgae are relatively complete but could benefit from increased sampling over wider areas
+                of the lagoon. Other taxa are, at the very best, partial lists, for example sponges and chaetognaths.
+            </p>
+            <p>
+                Ongoing research continues to discover and catalog numerous species of invertebrates, crustaceans, microscopic diatoms, sponges
+                and algae.
             </p>
         </div>
         <div id="location-section" class="cd-section">
@@ -157,10 +185,21 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                 </figure>
             </div>
             <p>
-                Populations with greater genetic diversity are far better equipped to cope with environmental change, and
+                <b>Genetic Diversity:</b> Populations with greater genetic diversity are far better equipped to cope with environmental change, and
                 are able to reproduce more successfully than populations with low genetic diversity. Populations with low
                 genetic diversity can become so well adapted to local conditions that any environmental disturbance may be
                 enough to reduce their numbers dramatically, or even destroy them entirely.
+            </p>
+            <p>
+                <b>Species Richness:</b> Another measure of biodiversity is <i>species diversity</i>. One measure of this is <i>richness</i>, the
+                number of species which occur within a particular taxonomic level (species, genus, family) in a geographic area. In marine
+                ecosystems, species diversity tends to vary widely depending upon latitudinal and longitudinal location. Tropical areas
+                tend to have higher species richness, for example. The lowest species diversity is found in the eastern Atlantic.
+            </p>
+            <p>
+                <b>Ecosystem Diversity:</b> Ecosystems are the collection of all the plants and animals within a particular area, each
+                differing in species composition, physical structure and function. Ecosystem diversity refers to the number of ecosystems in
+                a geographic area; the Indian River Lagoon is an example of a collection of ecosystems, each of them highly diverse.
             </p>
         </div>
         <div id="threats-section" class="cd-section">
@@ -184,6 +223,24 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                 coastal and estuarine ecosystems. Habitat degradation which occurs as the result of these problems inevitably
                 leads to loss of species from an ecosystem, and thus, a loss of biodiversity.
             </p>
+        </div>
+        <div id="further-reading-section" class="cd-section">
+            <h4>Further Reading</h4>
+            <ul class="further-reading-list">
+                <li>
+                    Norse, Elliot A. 1993. Global Marine Biological Diversity: A Strategy for Building Conservation Into Decision Making.
+                    Island Press, Washington, D.C. 384 pp.
+                </li>
+                <li>
+                    Swain, H., P. A. Schamlzer, D. R. Breininger, K. Root, S. Boyle, S. Bergen, S. MacCaffree. 1995. Appendix B Biological
+                    Consultant's Report. Brevard County Scrub Conservation and Development Plan. Dept. Bio. Sci., Florida Institute of
+                    Technology., Melbourne, FL.
+                </li>
+                <li>
+                    Thorne-Miller, Boyce, and J. Catena. 1991. The Living Ocean: Understanding and Protecting Marine Biodiversity.
+                    Island press, Washington D.C. 180 pp.
+                </li>
+            </ul>
         </div>
     </div>
 </div>

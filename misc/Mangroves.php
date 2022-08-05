@@ -126,6 +126,12 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                             <span class="cd-label">Associated Plants and Animals</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="#further-reading-section" data-number="10">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Further Reading</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -492,6 +498,188 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                 like gray foxes, deer and bobcats reside. Many of these animals enter mangrove forests daily for feeding,
                 but return to the upland community at other times.
             </p>
+        </div>
+        <div id="further-reading-section" class="cd-section">
+            <h4>Further Reading</h4>
+            <ul class="further-reading-list">
+                <li>
+                    Atkinson, MR, Findlay, GP, Hope, AB, Pitman, MG, Sadler, HDW & HR West. 1967. Salt regulation in the mangroves
+                    <i>Rhizophora mangle</i> Lam. and <i>Aerialitis annulata</i> R. <i>Australian J. Biol. Sci.</i> 20: 589-599.
+                </li>
+                <li>
+                    Brockmeyer, RE, Rey, JR, Virnstein, RW, Gilmore, Jr., RG & L Earnest. 1997. Rehabilitation of impounded estuarine
+                    wetlands by hydrologic reconnection to the Indian River Lagoon, Florida. <i>J. Wetlands Ecol. Manag.</i> 4: 93-109.
+                </li>
+                <li>
+                    Carlson, PR & LA Yarbro. 1987. Physical and biological control of mangrove pore water chemistry. In: Hook, DD et al., eds.
+                    <i>The Ecology and Management of Wetlands.</i> 112-132. Croom Helm. London, UK.
+                </li>
+                <li>
+                    Carlton, JM. 1974. Land-building and stabilization by mangroves. <i>Env. Conserv.</i> 1: 285-294.
+                </li>
+                <li>
+                    Carlton, JM. 1975. <i>A guide to common salt marsh and mangrove vegetation.</i> Florida Marine Resources Publications 6.
+                </li>
+                <li>
+                    Carlton,JM. 1977. <i>A survey of selected coastal vegetation communities of Florida.</i> Florida Marine Research Publications 30.
+                </li>
+                <li>
+                    Cintron, G, Lugo, AE, Pool, DJ, & G Morris. 1978. Mangroves of arid environments in Puerto Rico and adjacent islands.
+                    <i>Biotropica.</i> 10: 110-121.
+                </li>
+                <li>
+                    Feller, IC, ed. 1996. <i>Mangrove Ecology Workshop Manual. A Field Manual for the Mangrove Education and Training Programme
+                    for Belize.</i> Marine Research Center, University College of Belize. Calabash Cay, Turneffe Islands. Smithsonian Institution,
+                    Washington DC.
+                </li>
+                <li>
+                    Gilmore, Jr., RG, Cooke, DW & CJ Donahue. 1982. A comparison of the fish populations and habitat in open and closed salt marsh
+                    impoundments in east central Florida. <i>NE Gulf Sci.</i> 5: 25-37.
+                </li>
+                <li>
+                    Gilmore, Jr., RG & SC Snedaker. 1993. Chapter 5: Mangrove Forests. In: Martin, WH, Boyce, SG & AC Echternacht, eds. <i>Biodiversity
+                    of the Southeastern United States: Lowland Terrestrial Communities.</i> John Wiley & Sons, Inc. Publishers. New York, NY. 502 pp.
+                </li>
+                <li>
+                    Harrington, RW & ES Harrington. 1961. Food selection among fishes invading a high subtropical salt marsh; from onset of flooding
+                    through the progress of a mosquito brood. <i>Ecology.</i> 42: 646-666.
+                </li>
+                <li>
+                    Heald, EJ. 1969. <i>The production of organic detritus in a south Florida estuary.</i> Ph.D. Thesis, University of Miami. Coral Gables, FL.
+                </li>
+                <li>
+                    Heald, EJ & WE Odum. 1970. The contribution of mangrove swamps to Florida fisheries. <i>Proc. Gulf Caribbean Fish. Inst.</i> 22: 130-135.
+                </li>
+                <li>
+                    Heald, EJ, Roessler, MA & GL Beardsley. 1979. Litter production in a southwest Florida black mangrove community.
+                    <i>Proc. FL Anti-Mosquito Assoc. 50th Meeting.</i> 24-33.
+                </li>
+                <li>
+                    Hull, JB & WE Dove. 1939. Experimental diking for control of sand fly and mosquito breeding in Florida saltwater marshes.
+                    <i>J. Econ. Entomology.</i> 32: 309-312.
+                </li>
+                <li>
+                    Lahmann, E. 1988. <i>Effects of different hydrologic regimes on the productivity of</i> Rhizophora mangle <i>L. A case study of
+                    mosquito control impoundments in Hutchinson Island, St. Lucie County, Florida.</i> Ph.D. dissertation, University of Miami.
+                    Coral Gables, FL.
+                </li>
+                <li>
+                    Lewis, III, RR, Gilmore, Jr., RG, Crewz, DW & WE Odum. 1985. Mangrove habitat and fishery resources of Florida. <i>In</i>: Seaman,
+                    Jr., W, ed. <i>Florida Aquatic Habitat and Fishery Resources.</i> American Fisheries Society, Florida Chapter. Kissimmee, FL.
+                </li>
+                <li>
+                    Lugo, AE. 1980. Mangrove ecosystems: successional or steady state? <i>Biotropica.</i> 12:65-73.
+                </li>
+                <li>
+                    Lugo, AE & SC Snedaker. 1974. The ecology of mangroves. <i>Ann. Rev. Ecol. Syst.</i> 5: 39-64.
+                </li>
+                <li>
+                    Lugo, AE, Sell, M & SC Snedaker. 1976. Mangrove ecosystem analysis. In: Patten, BC, ed. <i>Systems Analysis
+                    and Simulation in Ecology.</i> 113-145. Academic Press. New York, NY. USA
+                </li>
+                <li>
+                    Lugo, AE & Patterson-Zucca, C. 1977. The impact of low temperature stress on mangrove structure and growth. <i>Trop. Ecol.</i> 18: 149-161.
+                </li>
+                <li>
+                    Miller, PC. 1972. Bioclimate, leaf temperature, and primary production in red mangrove canopies in South Florida. <i>Ecology.</i> 53: 22-45.
+                </li>
+                <li>
+                    Odum, WE. 1970. <i>Pathways of energy flow in a south Florida estuary.</i> Ph.D. Thesis, University of Miami. Coral Gables, FL.
+                </li>
+                <li>
+                    Odum, WE & CC McIvor. 1990. Mangroves. In: Myers, RL & JJ Ewel, eds. <i>Ecosystems of Florida.</i> 517 - 548.
+                    University of Central Florida Press. Orlando, FL.
+                </li>
+                <li>
+                    Odum, WE, McIvor, CC & TJ Smith III. 1982. <i>The ecology of the mangroves of south Florida: a community profile.</i> U.S. Fish and
+                    Wildlife Service, Office of Biological Services. FWS/OBS-81-24.
+                </li>
+                <li>
+                    Odum, WE & EJ Heald. 1972. Trophic analyses of an estuarine mangrove community. <i>Bull. Mar. Sci.</i> 22: 671-738.
+                </li>
+                <li>
+                    Onuf, CP, Teal, JM & I Valiela. 1977. Interactions of nutrients, plant growth and herbivory in a mangrove ecosystem. <i>Ecology.</i> 58: 514-526.
+                </li>
+                <li>
+                    Platts, NG, Shields, SE & JB Hull. 1943. Diking and pumping for control of sand flies and mosquitoes in Florida salt
+                    marshes. <i>J. Econ. Entomology.</i> 36: 409-412.
+                </li>
+                <li>
+                    Pool, DJ, Lugo, AE & SC Snedaker.1975. Litter production in mangrove forests of southern Florida and Puerto Rico. <i>Proc. Int.
+                    Symp. Biol. Manag. Mangroves.</i> 213-237. University of Florida Press, Gainesville, FL.
+                </li>
+                <li>
+                    Pool, DJ, Snedaker, SC & AE Lugo. 1977. Structure of mangrove forests in Florida, Puerto Rico, Mexico, and Central America. <i>Biotropica.</i> 9: 195-212.
+                </li>
+                <li>
+                    Provost, MW. 1976. Tidal datum planes circumscribing salt marshes. <i>Bull. Mar. Sci.</i> 26: 558-563.
+                </li>
+                <li>
+                    Rabinowitz, D. 1978a. Dispersal properties of mangrove propagules. <i>Biotropica.</i> 10: 47-57.
+                </li>
+                <li>
+                    Rabinowitz, D. 1978b. Early growth of mangrove seedlings in Panama, and a hypothesis concerning the
+                    relationship of dispersal and zonation. <i>J. Biogeography.</i> 5: 113-133.
+                </li>
+                <li>
+                    Rey, JR & T Kain. 1990. <i>Guide to the salt marsh impoundments of Florida.</i> Florida Medical Entomology Laboratory Publications. Vero Beach, FL.
+                </li>
+                <li>
+                    Rey, JR, Schaffer, J, Tremain, D, Crossman, RA & T Kain. 1990. Effects of reestablishing tidal connections in two
+                    impounded tropical marshes on fishes and physical conditions. <i>Wetlands.</i> 10: 27-47.
+                </li>
+                <li>
+                    Rey, JR, Peterson, MS, Kain, T, Vose, FE & RA Crossman. 1990. Fish populations and physical conditions in ditched and
+                    impounded marshes in east-central Florida. <i>N.E. Gulf Science.</i> 11: 163-170.
+                </li>
+                <li>
+                    Rey, JR, Crossman, RA, Peterson, M, Shaffer, J & F Vose. 1991. Zooplankton of impounded marshes and shallow areas
+                    of a subtropical lagoon. <i>FL Sci.</i> 54: 191-203.
+                </li>
+                <li>
+                    Rey, JR, Crossman, RA, Kain, T & J Schaffer. 1991. Surface water chemistry of wetlands and the Indian River Lagoon,
+                    Florida, USA. <i>J. FL Mosquito Con. Assoc.</i> 62: 25-36.
+                </li>
+                <li>
+                    Rey, JR, Kain, T & R Stahl. 1991. Wetland impoundments of east-central Florida. <i>FL Sci.</i> 54: 33-40.
+                </li>
+                <li>
+                    Rey, JR & CR Rutledge. 2001. <i>Mosquito Control Impoundments.</i> Document # ENY-648, Entomology and Nematology Department, Florida
+                    Cooperative Extension Service, Institute of Food and Agricultural Sciences, University of Florida. Available
+                    online at: <a href="https://edis.ifas.ufl.edu" target="_blank">https://edis.ifas.ufl.edu</a>.
+                </li>
+                <li>
+                    Savage, T. 1972. <i>Florida mangroves as shoreline stabilizers.</i> Florida Department of Natural Resources Professional Papers 19.
+                </li>
+                <li>
+                    Scholander, PF, van Dam, L & SI Scholander. 1955. Gas exchange in the roots of mangroves. <i>Amer. J. Botany.</i> 42: 92-98.
+                </li>
+                <li>
+                    Simberloff, DS. 1983. Mangroves. In: Janzen, DH., ed. <i>Costa Rican Natural History.</i> 273-276. University of Chicago Press. Chicago, IL.
+                </li>
+                <li>
+                    Snedaker, SC. 1989. Overview of mangroves and information needs for Florida Bay. <i>Bull. Mar. Sci.</i> 44: 341-347.
+                </li>
+                <li>
+                    Snedaker, S C & AE Lugo. 1973. <i>The role of mangrove ecosystems in the maintenance of environmental quality and a high
+                    productivity of desirable fisheries.</i> Final report to the Bureau of Sport Fisheries and Wildlife in fulfillment of
+                    Contract no. 14-16-008-606. Center for Aquatic Sciences. Gainesville, FL.
+                </li>
+                <li>
+                    Snelson, FF. 1976. <i>A study of a diverse coastal ecosystem on the Atlantic coast of Florida. Vol. 1: Ichthyological Studies.</i>
+                    NGR-10-019-004 NASA. Kennedy Space Center, Florida. USA.
+                </li>
+                <li>
+                    Thayer, GW, Colby, DR & WF Hettler Jr. 1987. Utilization of the red mangrove prop roots habitat by fishes in South Florida.
+                    <i>Mar. Ecol. Prog. Ser.</i> 35: 25-38.
+                </li>
+                <li>
+                    Tomlinson, PB. 1986. <i>The botany of mangroves.</i> Cambridge University Press. London.
+                </li>
+                <li>
+                    Waisel, Y. 1972. <i>The biology of halophytes.</i> Academic Press. New York, NY.
+                </li>
+            </ul>
         </div>
     </div>
 </div>

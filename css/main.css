@@ -1040,3 +1040,7 @@ ol.report-caterories li p.heading {
 	padding-left: 5px;
 	font-size: 12px;
 }
+
+ul.further-reading-list li {
+	padding: 5px;
+}
