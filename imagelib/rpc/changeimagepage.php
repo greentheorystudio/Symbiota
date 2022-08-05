@@ -54,7 +54,7 @@ if($collManager->validateSearchTermsArr($stArr)){
             $endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
             $onclick = 'changeImagePage("","thumbnail",';
             $hrefPrefix = "<a href='#' onclick='".$onclick;
-            $pageBar = '<div style="float:left" >';
+            $pageBar = '<div style="display:flex;justify-content:space-between;margin-top:4px;margin-bottom:8px;"><div>';
             if($startPage > 1){
                 $pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix."1); return false;'>First</a></span>";
                 $pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix.(($pageNumber - 10) < 1 ?1:$pageNumber - 10)."); return false;'>&lt;&lt;</a></span>";
@@ -71,20 +71,20 @@ if($collManager->validateSearchTermsArr($stArr)){
                 $pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10))."); return false;'>&gt;&gt;</a></span>";
                 $pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.$lastPage."); return false;'>Last</a></span>";
             }
-            $pageBar .= "</div><div style='float:right;margin-top:4px;margin-bottom:8px;'>";
+            $pageBar .= "</div><div>";
             $beginNum = ($pageNumber - 1)*$cntPerPage + 1;
             $endNum = $beginNum + $cntPerPage - 1;
             if($endNum > $recordCnt) {
                 $endNum = $recordCnt;
             }
-            $pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt. '</div>';
+            $pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt. '</div></div>';
             $paginationStr = $pageBar;
             $recordListHtml .= '<div style="width:100%;">';
             $recordListHtml .= $paginationStr;
             $recordListHtml .= '</div>';
             $recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
         }
-        $recordListHtml .= '<div style="width:98%;margin-left:auto;margin-right:auto;">';
+        $recordListHtml .= '<div style="width:98%;margin-left:auto;margin-right:auto;display:flex;flex-direction:row;flex-wrap:wrap;gap:15px;">';
         if($imageArr){
             foreach($imageArr as $imgArr){
                 $imgId = $imgArr['imgid'];
@@ -96,7 +96,7 @@ if($collManager->validateSearchTermsArr($stArr)){
                 elseif($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0){
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                 }
-                $recordListHtml .= '<div class="tndiv" style="margin-bottom:15px;margin-top:15px;">';
+                $recordListHtml .= '<div class="tndiv">';
                 $recordListHtml .= '<div class="tnimg">';
                 if($imgArr['occid']){
                     $recordListHtml .= '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
