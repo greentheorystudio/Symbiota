@@ -36,7 +36,7 @@ $GLOBALS['SOLR_MODE'] = (isset($GLOBALS['SOLR_URL']) && $GLOBALS['SOLR_URL']);
 $GLOBALS['CHECKLIST_FG_EXPORT'] = (isset($GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']) && $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']);
 $GLOBALS['BROADGEOREFERENCE'] = (isset($GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']) && $GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']);
 
-$GLOBALS['RIGHTS_TERMS_DEFS'] = array(
+$GLOBALS['RIGHTS_TERMS'] = array(
     'http://creativecommons.org/publicdomain/zero/1.0/' => array(
         'title' => 'CC0 1.0 (Public-domain)',
         'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
