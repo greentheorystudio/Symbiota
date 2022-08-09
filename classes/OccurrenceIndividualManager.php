@@ -38,7 +38,7 @@ class OccurrenceIndividualManager extends Manager{
     }
 
     public function setGuid($guid){
-        $guid = Sanitizer::cleanInStr($guid);
+        $guid = Sanitizer::cleanInStr($this->conn,$guid);
         if(!$this->occid){
             $sql = 'SELECT occid FROM guidoccurrences WHERE guid = "'.$guid.'"';
             $rs = $this->conn->query($sql);
@@ -335,7 +335,7 @@ class OccurrenceIndividualManager extends Manager{
         $status = false;
         if($GLOBALS['SYMB_UID']){
             $sql = 'INSERT INTO omoccurcomments(occid,comment,uid,reviewstatus) '.
-                'VALUES('.$this->occid.',"'.Sanitizer::cleanInStr($commentStr).'",'.$GLOBALS['SYMB_UID'].',1)';
+                'VALUES('.$this->occid.',"'.Sanitizer::cleanInStr($this->conn,$commentStr).'",'.$GLOBALS['SYMB_UID'].',1)';
             //echo 'sql: '.$sql;
             if($this->conn->query($sql)){
                 $status = true;
@@ -542,8 +542,8 @@ class OccurrenceIndividualManager extends Manager{
         if($this->occid && $postArr['vtid'] && is_numeric($postArr['vclid']) && is_numeric($postArr['vtid'])){
             $sql = 'INSERT INTO fmvouchers(occid,clid,tid,notes,editornotes) '.
                 'VALUES('.$this->occid.','.(int)$postArr['vclid'].','.($postArr['vtid']?(int)$postArr['vtid']:'NULL').','.
-                ($postArr['vnotes']?'"'.Sanitizer::cleanInStr($postArr['vnotes']).'"':'NULL').','.
-                ($postArr['veditnotes']?'"'.Sanitizer::cleanInStr($postArr['veditnotes']).'"':'NULL').')';
+                ($postArr['vnotes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['vnotes']).'"':'NULL').','.
+                ($postArr['veditnotes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['veditnotes']).'"':'NULL').')';
             if(!$this->conn->query($sql)){
                 $this->errorMessage = 'ERROR linking voucher to checklist.';
                 $status = false;
@@ -637,7 +637,7 @@ class OccurrenceIndividualManager extends Manager{
                     $dsName = substr($dsName, 0, 100);
                 }
                 $sql1 = 'INSERT INTO omoccurdatasets(name,uid,collid) '.
-                    'VALUES("'.Sanitizer::cleanInStr($dsName).'",'.$GLOBALS['SYMB_UID'].','.$this->collid.')';
+                    'VALUES("'.Sanitizer::cleanInStr($this->conn,$dsName).'",'.$GLOBALS['SYMB_UID'].','.$this->collid.')';
                 if($this->conn->query($sql1)){
                     $dsid = $this->conn->insert_id;
                 }
@@ -648,7 +648,7 @@ class OccurrenceIndividualManager extends Manager{
             }
             if($dsid && is_numeric($dsid)){
                 $sql2 = 'INSERT INTO omoccurdatasetlink(datasetid,occid,notes) '.
-                    'VALUES('.$dsid.','.$this->occid.',"'.Sanitizer::cleanInStr($notes).'")';
+                    'VALUES('.$dsid.','.$this->occid.',"'.Sanitizer::cleanInStr($this->conn,$notes).'")';
                 if(!$this->conn->query($sql2)){
                     $this->errorMessage = 'ERROR linking to dataset.';
                     $status = false;
@@ -744,10 +744,10 @@ class OccurrenceIndividualManager extends Manager{
                     if($tok && (count($tok) > 1) && strlen($tok[0]) > 2) {
                         $taxon = $tok[0];
                     }
-                    $sql .= 'AND (t.sciname = "'.Sanitizer::cleanInStr($taxon).'") ';
+                    $sql .= 'AND (t.sciname = "'.Sanitizer::cleanInStr($this->conn,$taxon).'") ';
                 }
                 elseif($this->occArr['family']){
-                    $sql .= 'AND (t.sciname = "'.Sanitizer::cleanInStr($this->occArr['family']).'") ';
+                    $sql .= 'AND (t.sciname = "'.Sanitizer::cleanInStr($this->conn,$this->occArr['family']).'") ';
                 }
             }
             if($sql){

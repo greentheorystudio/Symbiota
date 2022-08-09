@@ -310,7 +310,7 @@ class OccurrenceDownload{
 				$cond = 'EQUALS';
 			}
 			if($value || ($cond === 'NULL' || $cond === 'NOTNULL')){
-				$this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($value);
+				$this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($this->conn,$value);
 			}
 		}
 	}

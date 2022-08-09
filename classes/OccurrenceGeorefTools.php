@@ -140,7 +140,7 @@ class OccurrenceGeorefTools {
 	{
 		if($this->collStr && is_numeric($geoRefArr['decimallatitude']) && is_numeric($geoRefArr['decimallongitude'])) {
 			set_time_limit(1000);
-			$localStr =  Sanitizer::cleanInStr(implode(',',$geoRefArr['locallist']));
+			$localStr =  Sanitizer::cleanInStr($this->conn,implode(',',$geoRefArr['locallist']));
 			unset($geoRefArr['locallist']);
 			$geoRefArr = Sanitizer::cleanInArray($geoRefArr);
 			if($localStr){
@@ -265,10 +265,10 @@ class OccurrenceGeorefTools {
 			}
 		}
 		else{
-			$sqlWhere .= 'AND o.locality = "'.trim(Sanitizer::cleanInStr($locality), ' .').'" ';
+			$sqlWhere .= 'AND o.locality = "'.trim(Sanitizer::cleanInStr($this->conn,$locality), ' .').'" ';
 		}
 		if($country){
-			$country = Sanitizer::cleanInStr($country);
+			$country = Sanitizer::cleanInStr($this->conn,$country);
 			$synArr = array('usa','u.s.a', 'united states','united states of america','u.s.');
 			if(in_array(strtolower($country), $synArr, true)) {
 				$country = implode('","', $synArr);
@@ -276,11 +276,11 @@ class OccurrenceGeorefTools {
 			$sqlWhere .= 'AND (o.country IN("'.$country.'")) ';
 		}
 		if($state){
-			$sqlWhere .= 'AND (o.stateprovince = "'.Sanitizer::cleanInStr($state).'") ';
+			$sqlWhere .= 'AND (o.stateprovince = "'.Sanitizer::cleanInStr($this->conn,$state).'") ';
 		}
 		if($county){
 			$county = str_ireplace(array(' county',' parish'),'',$county);
-			$sqlWhere .= 'AND (o.county LIKE "'.Sanitizer::cleanInStr($county).'%") ';
+			$sqlWhere .= 'AND (o.county LIKE "'.Sanitizer::cleanInStr($this->conn,$county).'%") ';
 		}
 		$sql .= $sqlWhere;
 		$sql .= 'GROUP BY o.decimallatitude, o.decimallongitude LIMIT 25';
@@ -317,7 +317,7 @@ class OccurrenceGeorefTools {
 
 	public function setQueryVariables($k,$v): void
 	{
-		$this->qryVars[$k] = Sanitizer::cleanInStr($v);
+		$this->qryVars[$k] = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function getCollName(){
