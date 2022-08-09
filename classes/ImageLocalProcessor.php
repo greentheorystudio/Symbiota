@@ -1119,7 +1119,7 @@ class ImageLocalProcessor {
 										$updateValueArr = array();
 										$occRemarkArr = array();
 										foreach($activeFields as $activeField){
-											$activeValue = Sanitizer::cleanInStr($recMap[$activeField]);
+											$activeValue = Sanitizer::cleanInStr($this->conn,$recMap[$activeField]);
 											if(!trim($r[$activeField])){
 												$type = (array_key_exists('type',$symbMap[$activeField])?$symbMap[$activeField]['type']:'string');
 												$size = (array_key_exists('size',$symbMap[$activeField])?$symbMap[$activeField]['size']:0);
@@ -1177,7 +1177,7 @@ class ImageLocalProcessor {
 								$sqlIns2 = 'VALUES ('.$this->activeCollid.',"'.$catNum.'","unprocessed","'.date('Y-m-d H:i:s').'"';
 								foreach($activeFields as $aField){
 									$sqlIns1 .= ','.$aField;
-									$value = Sanitizer::cleanInStr($recMap[$aField]);
+									$value = Sanitizer::cleanInStr($this->conn,$recMap[$aField]);
 									$type = (array_key_exists('type',$symbMap[$aField])?$symbMap[$aField]['type']:'string');
 									$size = (array_key_exists('size',$symbMap[$aField])?$symbMap[$aField]['size']:0);
 									if($type === 'numeric'){

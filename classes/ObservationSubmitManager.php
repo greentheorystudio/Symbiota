@@ -65,34 +65,34 @@ class ObservationSubmitManager {
 				'stateProvince, county, locality, localitySecurity, decimalLatitude, decimalLongitude, '.
 				'geodeticDatum, coordinateUncertaintyInMeters, georeferenceRemarks, minimumElevationInMeters, observeruid, dateEntered) '.
 
-			'VALUES ('.$this->collId.',"HumanObservation",'.($postArr['family']?'"'.Sanitizer::cleanInStr($postArr['family']).'"':'NULL').','.
-			'"'.Sanitizer::cleanInStr($postArr['sciname']).'","'.
-			Sanitizer::cleanInStr($postArr['sciname'].' '.$postArr['scientificnameauthorship']).'",'.
-			($postArr['scientificnameauthorship']?'"'.Sanitizer::cleanInStr($postArr['scientificnameauthorship']).'"':'NULL').','.
-			($tid?:'NULL').','.($postArr['taxonremarks']?'"'.Sanitizer::cleanInStr($postArr['taxonremarks']).'"':'NULL').','.
-			($postArr['identifiedby']?'"'.Sanitizer::cleanInStr($postArr['identifiedby']).'"':'NULL').','.
-			($postArr['dateidentified']?'"'.Sanitizer::cleanInStr($postArr['dateidentified']).'"':'NULL').','.
-			($postArr['identificationreferences']?'"'.Sanitizer::cleanInStr($postArr['identificationreferences']).'"':'NULL').','.
-			'"'.Sanitizer::cleanInStr($postArr['recordedby']).'",'.
-			($postArr['recordnumber']?'"'.Sanitizer::cleanInStr($postArr['recordnumber']).'"':'NULL').','.
-			($postArr['associatedcollectors']?'"'.Sanitizer::cleanInStr($postArr['associatedcollectors']).'"':'NULL').','.
+			'VALUES ('.$this->collId.',"HumanObservation",'.($postArr['family']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['family']).'"':'NULL').','.
+			'"'.Sanitizer::cleanInStr($this->conn,$postArr['sciname']).'","'.
+			Sanitizer::cleanInStr($this->conn,$postArr['sciname'].' '.$postArr['scientificnameauthorship']).'",'.
+			($postArr['scientificnameauthorship']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['scientificnameauthorship']).'"':'NULL').','.
+			($tid?:'NULL').','.($postArr['taxonremarks']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['taxonremarks']).'"':'NULL').','.
+			($postArr['identifiedby']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['identifiedby']).'"':'NULL').','.
+			($postArr['dateidentified']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['dateidentified']).'"':'NULL').','.
+			($postArr['identificationreferences']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['identificationreferences']).'"':'NULL').','.
+			'"'.Sanitizer::cleanInStr($this->conn,$postArr['recordedby']).'",'.
+			($postArr['recordnumber']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['recordnumber']).'"':'NULL').','.
+			($postArr['associatedcollectors']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['associatedcollectors']).'"':'NULL').','.
 			'"'.$postArr['eventdate'].'",'.$eventYear.','.$eventMonth.','.$eventDay.','.$startDay.','.
-			($postArr['habitat']?'"'.Sanitizer::cleanInStr($postArr['habitat']).'"':'NULL').','.
-			($postArr['substrate']?'"'.Sanitizer::cleanInStr($postArr['substrate']).'"':'NULL').','.
-			($postArr['occurrenceremarks']?'"'.Sanitizer::cleanInStr($postArr['occurrenceremarks']).'"':'NULL').','.
-			($postArr['associatedtaxa']?'"'.Sanitizer::cleanInStr($postArr['associatedtaxa']).'"':'NULL').','.
-			($postArr['verbatimattributes']?'"'.Sanitizer::cleanInStr($postArr['verbatimattributes']).'"':'NULL').','.
-			($postArr['reproductivecondition']?'"'.Sanitizer::cleanInStr($postArr['reproductivecondition']).'"':'NULL').','.
+			($postArr['habitat']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['habitat']).'"':'NULL').','.
+			($postArr['substrate']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['substrate']).'"':'NULL').','.
+			($postArr['occurrenceremarks']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['occurrenceremarks']).'"':'NULL').','.
+			($postArr['associatedtaxa']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['associatedtaxa']).'"':'NULL').','.
+			($postArr['verbatimattributes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['verbatimattributes']).'"':'NULL').','.
+			($postArr['reproductivecondition']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['reproductivecondition']).'"':'NULL').','.
 			(array_key_exists('cultivationstatus',$postArr)?'1':'0').','.
-			($postArr['establishmentmeans']?'"'.Sanitizer::cleanInStr($postArr['establishmentmeans']).'"':'NULL').','.
-			'"'.Sanitizer::cleanInStr($postArr['country']).'",'.
-			($postArr['stateprovince']?'"'.Sanitizer::cleanInStr($postArr['stateprovince']).'"':'NULL').','.
-			($postArr['county']?'"'.Sanitizer::cleanInStr($postArr['county']).'"':'NULL').','.
-			'"'.Sanitizer::cleanInStr($postArr['locality']).'",'.$localitySecurity.','.
+			($postArr['establishmentmeans']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['establishmentmeans']).'"':'NULL').','.
+			'"'.Sanitizer::cleanInStr($this->conn,$postArr['country']).'",'.
+			($postArr['stateprovince']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['stateprovince']).'"':'NULL').','.
+			($postArr['county']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['county']).'"':'NULL').','.
+			'"'.Sanitizer::cleanInStr($this->conn,$postArr['locality']).'",'.$localitySecurity.','.
 			$postArr['decimallatitude'].','.$postArr['decimallongitude'].','.
-			($postArr['geodeticdatum']?'"'.Sanitizer::cleanInStr($postArr['geodeticdatum']).'"':'NULL').','.
+			($postArr['geodeticdatum']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['geodeticdatum']).'"':'NULL').','.
 			($postArr['coordinateuncertaintyinmeters']?'"'.$postArr['coordinateuncertaintyinmeters'].'"':'NULL').','.
-			($postArr['georeferenceremarks']?'"'.Sanitizer::cleanInStr($postArr['georeferenceremarks']).'"':'NULL').','.
+			($postArr['georeferenceremarks']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['georeferenceremarks']).'"':'NULL').','.
 			($postArr['minimumelevationinmeters']?:'NULL').','.
 				$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'") ';
 			//echo $sql;

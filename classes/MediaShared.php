@@ -410,12 +410,12 @@ class MediaShared{
 
 	public function setTitle($v): void
 	{
-		$this->title = Sanitizer::cleanInStr($v);
+		$this->title = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setCreator($v): void
 	{
-		$this->creator = Sanitizer::cleanInStr($v);
+		$this->creator = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setCreatorUid($v): void
@@ -427,7 +427,7 @@ class MediaShared{
 
 	public function setDescription($v): void
 	{
-		$this->description = Sanitizer::cleanInStr($v);
+		$this->description = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function getTargetPath(): string
@@ -441,47 +441,47 @@ class MediaShared{
 
 	public function setOwner($v): void
 	{
-		$this->owner = Sanitizer::cleanInStr($v);
+		$this->owner = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setType($v): void
 	{
-		$this->type = Sanitizer::cleanInStr($v);
+		$this->type = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
     public function setFormat($v): void
     {
-        $this->format = Sanitizer::cleanInStr($v);
+        $this->format = Sanitizer::cleanInStr($this->conn,$v);
     }
 
     public function setUsageTerms($v): void
     {
-        $this->usageterms = Sanitizer::cleanInStr($v);
+        $this->usageterms = Sanitizer::cleanInStr($this->conn,$v);
     }
 
     public function setRights($v): void
     {
-        $this->rights = Sanitizer::cleanInStr($v);
+        $this->rights = Sanitizer::cleanInStr($this->conn,$v);
     }
 
     public function setPublisher($v): void
     {
-        $this->publisher = Sanitizer::cleanInStr($v);
+        $this->publisher = Sanitizer::cleanInStr($this->conn,$v);
     }
 
     public function setContributor($v): void
     {
-        $this->contributor = Sanitizer::cleanInStr($v);
+        $this->contributor = Sanitizer::cleanInStr($this->conn,$v);
     }
 
     public function setBibliographicCitation($v): void
     {
-        $this->bibliographiccitation = Sanitizer::cleanInStr($v);
+        $this->bibliographiccitation = Sanitizer::cleanInStr($this->conn,$v);
     }
 
     public function setFurtherInformationURL($v): void
     {
-        $this->furtherinformationurl = Sanitizer::cleanInStr($v);
+        $this->furtherinformationurl = Sanitizer::cleanInStr($this->conn,$v);
     }
 
     public function setOccid($v): void
@@ -504,7 +504,7 @@ class MediaShared{
 
 	public function setLanguage($v): void
 	{
-		$this->language = Sanitizer::cleanInStr($v);
+		$this->language = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setSortSequence($v): void
@@ -516,7 +516,7 @@ class MediaShared{
 
 	public function setLocationCreated($v): void
 	{
-		$this->locationcreated = Sanitizer::cleanInStr($v);
+		$this->locationcreated = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function getErrArr(): array

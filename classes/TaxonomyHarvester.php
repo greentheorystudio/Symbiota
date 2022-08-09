@@ -932,7 +932,7 @@ class TaxonomyHarvester extends Manager{
                     $familyStr = $taxonArr['family'];
                 }
                 if($familyStr){
-                    $sqlFam = 'SELECT tid FROM taxa WHERE (sciname = "'.Sanitizer::cleanInStr($this->defaultFamily).'") AND (rankid = 140)';
+                    $sqlFam = 'SELECT tid FROM taxa WHERE (sciname = "'.Sanitizer::cleanInStr($this->conn,$this->defaultFamily).'") AND (rankid = 140)';
                     //echo $sqlFam;
                     $rs = $this->conn->query($sqlFam);
                     if($r = $rs->fetch_object()){
@@ -968,7 +968,7 @@ class TaxonomyHarvester extends Manager{
 	public function getCloseMatch($taxonStr): array
 	{
 		$retArr = array();
-		$taxonStr = Sanitizer::cleanInStr($taxonStr);
+		$taxonStr = Sanitizer::cleanInStr($this->conn,$taxonStr);
 		if($taxonStr){
 			$infraArr = array('subsp','ssp','var','f');
 			$taxonStringArr = explode(' ',$taxonStr);
@@ -1062,7 +1062,7 @@ class TaxonomyHarvester extends Manager{
 		if(isset($taxonArr['sciname']) && $taxonArr['sciname']){
 			$sciname = $taxonArr['sciname'];
 			$tidArr = array();
-			$sql = 'SELECT tid, author, rankid FROM taxa WHERE (sciname = "'.Sanitizer::cleanInStr($sciname).'") ';
+			$sql = 'SELECT tid, author, rankid FROM taxa WHERE (sciname = "'.Sanitizer::cleanInStr($this->conn,$sciname).'") ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$tidArr[$r->tid]['author'] = $r->author;

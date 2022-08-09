@@ -24,21 +24,21 @@ class OccurrenceEditorMedia extends OccurrenceEditorManager {
 	 	$url = $_REQUEST['accessuri'];
 	 	$occId = $_REQUEST['occid'];
         $tId = $this->occurrenceMap[$this->occid]['tidinterpreted'];
-		$title = Sanitizer::cleanInStr($_REQUEST['title']);
-		$creator = Sanitizer::cleanInStr($_REQUEST['creator']);
+		$title = Sanitizer::cleanInStr($this->conn,$_REQUEST['title']);
+		$creator = Sanitizer::cleanInStr($this->conn,$_REQUEST['creator']);
 		$creatoruid = (array_key_exists('creatoruid',$_REQUEST)?(int)$_REQUEST['creatoruid']:'');
-		$description = Sanitizer::cleanInStr($_REQUEST['description']);
-		$locationcreated = Sanitizer::cleanInStr($_REQUEST['locationcreated']);
-        $language = Sanitizer::cleanInStr($_REQUEST['language']);
-        $type = Sanitizer::cleanInStr($_REQUEST['type']);
-        $format = Sanitizer::cleanInStr($_REQUEST['format']);
-        $usageterms = Sanitizer::cleanInStr($_REQUEST['usageterms']);
-        $rights = Sanitizer::cleanInStr($_REQUEST['rights']);
-        $owner = Sanitizer::cleanInStr($_REQUEST['owner']);
-        $publisher = Sanitizer::cleanInStr($_REQUEST['publisher']);
-        $contributor = Sanitizer::cleanInStr($_REQUEST['contributor']);
-        $bibliographiccitation = Sanitizer::cleanInStr($_REQUEST['bibliographiccitation']);
-        $furtherinformationurl = Sanitizer::cleanInStr($_REQUEST['furtherinformationurl']);
+		$description = Sanitizer::cleanInStr($this->conn,$_REQUEST['description']);
+		$locationcreated = Sanitizer::cleanInStr($this->conn,$_REQUEST['locationcreated']);
+        $language = Sanitizer::cleanInStr($this->conn,$_REQUEST['language']);
+        $type = Sanitizer::cleanInStr($this->conn,$_REQUEST['type']);
+        $format = Sanitizer::cleanInStr($this->conn,$_REQUEST['format']);
+        $usageterms = Sanitizer::cleanInStr($this->conn,$_REQUEST['usageterms']);
+        $rights = Sanitizer::cleanInStr($this->conn,$_REQUEST['rights']);
+        $owner = Sanitizer::cleanInStr($this->conn,$_REQUEST['owner']);
+        $publisher = Sanitizer::cleanInStr($this->conn,$_REQUEST['publisher']);
+        $contributor = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributor']);
+        $bibliographiccitation = Sanitizer::cleanInStr($this->conn,$_REQUEST['bibliographiccitation']);
+        $furtherinformationurl = Sanitizer::cleanInStr($this->conn,$_REQUEST['furtherinformationurl']);
 		$sortsequence = (is_numeric($_REQUEST['sortsequence'])?(int)$_REQUEST['sortsequence']:'');
 
 		if($GLOBALS['IMAGE_DOMAIN'] && strncmp($url, '/', 1) === 0) {

@@ -42,7 +42,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
                         $ocrSource .= ': ' . date('Y-m-d');
                     }
                     $sql = 'INSERT INTO specprocessorrawlabels(imgid, rawstr, source) '.
-                        'VALUES('.$this->activeImgId.',"'.Sanitizer::cleanInStr($rawStr).'","'.Sanitizer::cleanInStr($ocrSource).'")';
+                        'VALUES('.$this->activeImgId.',"'.Sanitizer::cleanInStr($this->conn,$rawStr).'","'.Sanitizer::cleanInStr($this->conn,$ocrSource).'")';
                     if(!$this->conn->query($sql)){
                         $this->errorStr = 'ERROR loading OCR text block.';
                     }
@@ -110,13 +110,13 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 	 		}
 		}
 		$occId = $_REQUEST['occid'];
-		$caption = Sanitizer::cleanInStr($_REQUEST['caption']);
-		$photographer = Sanitizer::cleanInStr($_REQUEST['photographer']);
+		$caption = Sanitizer::cleanInStr($this->conn,$_REQUEST['caption']);
+		$photographer = Sanitizer::cleanInStr($this->conn,$_REQUEST['photographer']);
 		$photographerUid = (array_key_exists('photographeruid',$_REQUEST)?$_REQUEST['photographeruid']:'');
-		$notes = Sanitizer::cleanInStr($_REQUEST['notes']);
-		$copyRight = Sanitizer::cleanInStr($_REQUEST['copyright']);
+		$notes = Sanitizer::cleanInStr($this->conn,$_REQUEST['notes']);
+		$copyRight = Sanitizer::cleanInStr($this->conn,$_REQUEST['copyright']);
 		$sortSeq = (is_numeric($_REQUEST['sortsequence'])?$_REQUEST['sortsequence']:'');
-		$sourceUrl = Sanitizer::cleanInStr($_REQUEST['sourceurl']);
+		$sourceUrl = Sanitizer::cleanInStr($this->conn,$_REQUEST['sourceurl']);
 
 		if($GLOBALS['IMAGE_DOMAIN']){
     		if(strncmp($url, '/', 1) === 0){

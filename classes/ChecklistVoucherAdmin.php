@@ -82,7 +82,7 @@ class ChecklistVoucherAdmin {
 				$jsonArr[$fieldName] = $postArr[$fieldName];
 			}
 		}
-		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = '.($jsonArr?'"'.Sanitizer::cleanInStr(json_encode($jsonArr)).'"':'NULL').' WHERE (c.clid = '.$this->clid.')';
+		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = '.($jsonArr?'"'.Sanitizer::cleanInStr($this->conn,json_encode($jsonArr)).'"':'NULL').' WHERE (c.clid = '.$this->clid.')';
 		//echo $sql; exit;
 		$this->conn->query($sql);
 	}
@@ -137,11 +137,11 @@ class ChecklistVoucherAdmin {
 	{
 		$sqlFrag = '';
 		if(isset($this->queryVariablesArr['country']) && $this->queryVariablesArr['country']){
-			$countryStr = str_replace(';',',',Sanitizer::cleanInStr($this->queryVariablesArr['country']));
+			$countryStr = str_replace(';',',',Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['country']));
 			$sqlFrag = 'AND (o.country IN("'.$countryStr.'")) ';
 		}
 		if(isset($this->queryVariablesArr['state']) && $this->queryVariablesArr['state']){
-			$stateStr = str_replace(';',',',Sanitizer::cleanInStr($this->queryVariablesArr['state']));
+			$stateStr = str_replace(';',',',Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['state']));
 			$sqlFrag .= 'AND (o.stateprovince = "'.$stateStr.'") ';
 		}
 		if(isset($this->queryVariablesArr['county']) && $this->queryVariablesArr['county']){
@@ -149,7 +149,7 @@ class ChecklistVoucherAdmin {
 			$cArr = explode(',', $countyStr);
 			$cStr = '';
 			foreach($cArr as $str){
-				$cStr .= 'OR (o.county LIKE "'.Sanitizer::cleanInStr($str).'%") ';
+				$cStr .= 'OR (o.county LIKE "'.Sanitizer::cleanInStr($this->conn,$str).'%") ';
 			}
 			$sqlFrag .= 'AND ('.substr($cStr, 2).') ';
 		}
@@ -158,7 +158,7 @@ class ChecklistVoucherAdmin {
 			$locArr = explode(',', $localityStr);
 			$locStr = '';
 			foreach($locArr as $str){
-				$str = Sanitizer::cleanInStr($str);
+				$str = Sanitizer::cleanInStr($this->conn,$str);
 				if(strlen($str) > 4){
 					$locStr .= 'OR (MATCH(f.locality) AGAINST("'.$str.'")) ';
 				}
@@ -169,7 +169,7 @@ class ChecklistVoucherAdmin {
 			$sqlFrag .= 'AND ('.substr($locStr, 2).') ';
 		}
 		if(isset($this->queryVariablesArr['taxon']) && $this->queryVariablesArr['taxon']){
-			$tStr = Sanitizer::cleanInStr($this->queryVariablesArr['taxon']);
+			$tStr = Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['taxon']);
 			$tidPar = $this->getTid($tStr);
 			if($tidPar){
 				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT tid FROM taxaenumtree WHERE parenttid = '.$tidPar.')) ';
@@ -204,10 +204,10 @@ class ChecklistVoucherAdmin {
 			$tempArr = array();
 			foreach($collArr as $str => $postArr){
 				if(strlen($str) < 4 || strtolower($str) === 'best'){
-					$tempArr[] = '(o.recordedby LIKE "%'.Sanitizer::cleanInStr($postArr['recordedby']).'%")';
+					$tempArr[] = '(o.recordedby LIKE "%'.Sanitizer::cleanInStr($this->conn,$postArr['recordedby']).'%")';
 				}
 				else{
-					$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.Sanitizer::cleanInStr($str).'"))';
+					$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.Sanitizer::cleanInStr($this->conn,$str).'"))';
 				}
 			}
 			$sqlFrag .= 'AND ('.implode(' OR ', $tempArr).') ';
@@ -887,7 +887,7 @@ class ChecklistVoucherAdmin {
 	private function getTid($sciname): int
 	{
 		$tidRet = 0;
-		$sql = 'SELECT tid FROM taxa WHERE sciname = ("'.Sanitizer::cleanInStr($sciname).'")';
+		$sql = 'SELECT tid FROM taxa WHERE sciname = ("'.Sanitizer::cleanInStr($this->conn,$sciname).'")';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$tidRet = $r->tid;

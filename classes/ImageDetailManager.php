@@ -130,16 +130,16 @@ class ImageDetailManager {
 				 }
 	 		}
 		}
-	 	$caption = Sanitizer::cleanInStr($postArr['caption']);
-		$photographer = Sanitizer::cleanInStr($postArr['photographer']);
+	 	$caption = Sanitizer::cleanInStr($this->conn,$postArr['caption']);
+		$photographer = Sanitizer::cleanInStr($this->conn,$postArr['photographer']);
 		$photographerUid = $postArr['photographeruid'];
-		$owner = Sanitizer::cleanInStr($postArr['owner']);
-		$locality = Sanitizer::cleanInStr($postArr['locality']);
+		$owner = Sanitizer::cleanInStr($this->conn,$postArr['owner']);
+		$locality = Sanitizer::cleanInStr($this->conn,$postArr['locality']);
 		$occId = $postArr['occid'];
-		$notes = Sanitizer::cleanInStr($postArr['notes']);
-		$sourceUrl = Sanitizer::cleanInStr($postArr['sourceurl']);
-		$copyRight = Sanitizer::cleanInStr($postArr['copyright']);
-		$rights = Sanitizer::cleanInStr($postArr['rights']);
+		$notes = Sanitizer::cleanInStr($this->conn,$postArr['notes']);
+		$sourceUrl = Sanitizer::cleanInStr($this->conn,$postArr['sourceurl']);
+		$copyRight = Sanitizer::cleanInStr($this->conn,$postArr['copyright']);
+		$rights = Sanitizer::cleanInStr($this->conn,$postArr['rights']);
 		$sortSequence = (array_key_exists('sortsequence',$postArr)?$postArr['sortsequence']:0);
 		
 		$sql = 'UPDATE images '.

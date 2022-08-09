@@ -1,5 +1,4 @@
 <?php
-
 class PluginsManager {
 
 	private $conn;

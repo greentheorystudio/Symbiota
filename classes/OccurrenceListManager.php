@@ -179,7 +179,7 @@ class OccurrenceListManager extends OccurrenceManager{
     public function getCloseTaxaMatch($name): array
     {
         $retArr = array();
-        $searchName = Sanitizer::cleanInStr($name);
+        $searchName = Sanitizer::cleanInStr($this->conn,$name);
         $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex(?)';
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('s', $searchName);

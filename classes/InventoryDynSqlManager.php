@@ -39,7 +39,7 @@ class InventoryDynSqlManager {
 	
 	public function testSql($strFrag): bool
 	{
-		$sql = 'SELECT * FROM omoccurrences o WHERE '.Sanitizer::cleanInStr($strFrag);
+		$sql = 'SELECT * FROM omoccurrences o WHERE '.Sanitizer::cleanInStr($this->conn,$strFrag);
 		if($this->conn->query($sql)){
 			return true;
 		}
@@ -48,7 +48,7 @@ class InventoryDynSqlManager {
 	
 	public function saveSql($sqlFrag): void
 	{
-		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = "'.Sanitizer::cleanInStr($sqlFrag).'" WHERE (c.clid = '.$this->clid.')';
+		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = "'.Sanitizer::cleanInStr($this->conn,$sqlFrag).'" WHERE (c.clid = '.$this->clid.')';
 		$this->conn->query($sql);
 	}
 

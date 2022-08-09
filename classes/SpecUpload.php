@@ -325,7 +325,7 @@ class SpecUpload{
 
     public function editUploadProfile($profileArr): bool
 	{
-    	$sql = 'UPDATE uploadspecparameters SET title = "'.Sanitizer::cleanInStr($profileArr['title']).'"'.
+    	$sql = 'UPDATE uploadspecparameters SET title = "'.Sanitizer::cleanInStr($this->conn,$profileArr['title']).'"'.
 			', platform = '.($profileArr['platform']?'"'.$profileArr['platform'].'"':'NULL').
 			', server = '.($profileArr['server']?'"'.$profileArr['server'].'"':'NULL').
 			', port = '.($profileArr['port']?:'NULL').
@@ -335,8 +335,8 @@ class SpecUpload{
 			', code = '.($profileArr['code']?'"'.$profileArr['code'].'"':'NULL').
 			', path = '.($profileArr['path']?'"'.$profileArr['path'].'"':'NULL').
 			', pkfield = '.($profileArr['pkfield']?'"'.$profileArr['pkfield'].'"':'NULL').
-			', querystr = '.($profileArr['querystr']?'"'.Sanitizer::cleanInStr($profileArr['querystr']).'"':'NULL').
-            ', existingrecords = '.($profileArr['existingrecords']?'"'.Sanitizer::cleanInStr($profileArr['existingrecords']).'"':'"update"').
+			', querystr = '.($profileArr['querystr']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['querystr']).'"':'NULL').
+            ', existingrecords = '.($profileArr['existingrecords']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['existingrecords']).'"':'"update"').
 			', cleanupsp = '.($profileArr['cleanupsp']?'"'.$profileArr['cleanupsp'].'"':'NULL').' '.
 			'WHERE (uspid = '.$this->uspid.')';
 		//echo $sql;
@@ -350,19 +350,19 @@ class SpecUpload{
     public function createUploadProfile($profileArr){
 		$sql = 'INSERT INTO uploadspecparameters(collid, uploadtype, title, platform, server, port, code, path, '.
 			'pkfield, username, password, schemaname, cleanupsp, existingrecords, querystr) VALUES ('.$this->collId.','.
-			$profileArr['uploadtype'].',"'.Sanitizer::cleanInStr($profileArr['title']).'",'.
-			(isset($profileArr['platform'])&&$profileArr['platform']?'"'.Sanitizer::cleanInStr($profileArr['platform']).'"':'NULL').','.
-			(isset($profileArr['server'])&&$profileArr['platform']?'"'.Sanitizer::cleanInStr($profileArr['server']).'"':'NULL').','.
+			$profileArr['uploadtype'].',"'.Sanitizer::cleanInStr($this->conn,$profileArr['title']).'",'.
+			(isset($profileArr['platform'])&&$profileArr['platform']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['platform']).'"':'NULL').','.
+			(isset($profileArr['server'])&&$profileArr['platform']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['server']).'"':'NULL').','.
 			(isset($profileArr['port'])&&is_numeric($profileArr['port'])?$profileArr['port']:'NULL').','.
-			(isset($profileArr['code'])&&$profileArr['code']?'"'.Sanitizer::cleanInStr($profileArr['code']).'"':'NULL').','.
-			(isset($profileArr['path'])&&$profileArr['path']?'"'.Sanitizer::cleanInStr($profileArr['path']).'"':'NULL').','.
-			(isset($profileArr['pkfield'])&&$profileArr['pkfield']?'"'.Sanitizer::cleanInStr($profileArr['pkfield']).'"':'NULL').','.
-			(isset($profileArr['username'])&&$profileArr['username']?'"'.Sanitizer::cleanInStr($profileArr['username']).'"':'NULL').','.
-			(isset($profileArr['password'])&&$profileArr['password']?'"'.Sanitizer::cleanInStr($profileArr['password']).'"':'NULL').','.
-			(isset($profileArr['schemaname'])&&$profileArr['schemaname']?'"'.Sanitizer::cleanInStr($profileArr['schemaname']).'"':'NULL').','.
-			(isset($profileArr['cleanupsp'])&&$profileArr['cleanupsp']?'"'.Sanitizer::cleanInStr($profileArr['cleanupsp']).'"':'NULL').','.
-            (isset($profileArr['existingrecords'])&&$profileArr['existingrecords']?'"'.Sanitizer::cleanInStr($profileArr['existingrecords']).'"':'"update"').','.
-			(isset($profileArr['querystr'])&&$profileArr['querystr']?'"'.Sanitizer::cleanInStr($profileArr['querystr']).'"':'NULL').')';
+			(isset($profileArr['code'])&&$profileArr['code']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['code']).'"':'NULL').','.
+			(isset($profileArr['path'])&&$profileArr['path']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['path']).'"':'NULL').','.
+			(isset($profileArr['pkfield'])&&$profileArr['pkfield']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['pkfield']).'"':'NULL').','.
+			(isset($profileArr['username'])&&$profileArr['username']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['username']).'"':'NULL').','.
+			(isset($profileArr['password'])&&$profileArr['password']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['password']).'"':'NULL').','.
+			(isset($profileArr['schemaname'])&&$profileArr['schemaname']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['schemaname']).'"':'NULL').','.
+			(isset($profileArr['cleanupsp'])&&$profileArr['cleanupsp']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['cleanupsp']).'"':'NULL').','.
+            (isset($profileArr['existingrecords'])&&$profileArr['existingrecords']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['existingrecords']).'"':'"update"').','.
+			(isset($profileArr['querystr'])&&$profileArr['querystr']?'"'.Sanitizer::cleanInStr($this->conn,$profileArr['querystr']).'"':'NULL').')';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			return $this->conn->insert_id;
