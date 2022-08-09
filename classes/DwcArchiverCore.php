@@ -118,8 +118,8 @@ class DwcArchiverCore extends Manager{
 
     public function setCollArr($collTarget, $collTypeStr = null): void
     {
-        $collTarget = Sanitizer::cleanInStr($collTarget);
-        $collType = Sanitizer::cleanInStr($collTypeStr);
+        $collTarget = Sanitizer::cleanInStr($this->conn,$collTarget);
+        $collType = Sanitizer::cleanInStr($this->conn,$collTypeStr);
         $sqlWhere = '';
         if($collType === 'specimens'){
             $sqlWhere = '(c.colltype = "Preserved Specimens") ';
@@ -197,7 +197,7 @@ class DwcArchiverCore extends Manager{
                     $this->conditionArr[$field][$cond] = Sanitizer::cleanInArray($value);
                 }
                 else{
-                    $this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($value);
+                    $this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($this->conn,$value);
                 }
             }
         }

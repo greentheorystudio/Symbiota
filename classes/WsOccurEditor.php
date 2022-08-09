@@ -117,15 +117,15 @@ class WsOccurEditor extends WebServiceBase{
 			}
 			
 			$sql3 = 'INSERT INTO omoccurrevisions(occid,oldValues,newValues,externalSource,externalEditor,reviewStatus,appliedStatus,externalTimestamp) '.
-				'VALUES('.$occid.',"'.Sanitizer::cleanInStr(json_encode($vettedOldValues)).'","'.Sanitizer::cleanInStr($newValueJson).'",'.
-				($this->source?'"'.Sanitizer::cleanInStr($this->source).'"':'NULL').','.($this->editor?'"'.Sanitizer::cleanInStr($this->editor).'"':'NULL').
-				',1,'.$appliedStatus.','.($this->origTimestamp?'"'.Sanitizer::cleanInStr($this->origTimestamp).'"':'NULL').')';
+				'VALUES('.$occid.',"'.Sanitizer::cleanInStr($this->conn,json_encode($vettedOldValues)).'","'.Sanitizer::cleanInStr($this->conn,$newValueJson).'",'.
+				($this->source?'"'.Sanitizer::cleanInStr($this->conn,$this->source).'"':'NULL').','.($this->editor?'"'.Sanitizer::cleanInStr($this->conn,$this->editor).'"':'NULL').
+				',1,'.$appliedStatus.','.($this->origTimestamp?'"'.Sanitizer::cleanInStr($this->conn,$this->origTimestamp).'"':'NULL').')';
 			//echo $sql2; exit;
 			if($this->conn->query($sql3)){
 				if($appliedStatus){
 					$sqlIns = '';
 					foreach($vettedNewValues as $k => $v){
-						$sqlIns .= ', '.$k.' = "'.Sanitizer::cleanInStr($v).'" ';
+						$sqlIns .= ', '.$k.' = "'.Sanitizer::cleanInStr($this->conn,$v).'" ';
 					}
 					$sql4 = 'UPDATE omoccurrences SET'.substr($sqlIns, 1).'WHERE occid = '.$occid;
 					//echo $sql3; exit;

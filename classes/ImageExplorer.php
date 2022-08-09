@@ -90,7 +90,7 @@ class ImageExplorer{
 		}
 		
 		if (isset($searchCriteria['text']) && $searchCriteria['text']) {
-			$sqlWhere .= 'AND o.scientificName like "%'.Sanitizer::cleanInStr($searchCriteria['text'][0]).'%" ';
+			$sqlWhere .= 'AND o.scientificName like "%'.Sanitizer::cleanInStr($this->conn,$searchCriteria['text'][0]).'%" ';
 		}
 
 		if(isset($searchCriteria['country']) && $searchCriteria['country']){

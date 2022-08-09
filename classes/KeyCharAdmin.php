@@ -68,16 +68,16 @@ class KeyCharAdmin{
 	public function createCharacter($pArr,$un): string
 	{
 		$statusStr = 'SUCCESS: character added to database';
-		$dRank = Sanitizer::cleanInStr($pArr['difficultyrank']);
+		$dRank = Sanitizer::cleanInStr($this->conn,$pArr['difficultyrank']);
 		if(!$dRank) {
 			$dRank = 1;
 		}
-		$hid = Sanitizer::cleanInStr($pArr['hid']);
+		$hid = Sanitizer::cleanInStr($this->conn,$pArr['hid']);
 		if(!$hid) {
 			$hid = 'NULL';
 		}
 		$sql = 'INSERT INTO kmcharacters(charname,chartype,difficultyrank,hid,enteredby,sortsequence) '.
-			'VALUES("'.Sanitizer::cleanInStr($pArr['charname']).'","'.Sanitizer::cleanInStr($pArr['chartype']).'",'.
+			'VALUES("'.Sanitizer::cleanInStr($this->conn,$pArr['charname']).'","'.Sanitizer::cleanInStr($this->conn,$pArr['chartype']).'",'.
 			$dRank.','.$hid.',"'.$un.'",'.(is_numeric($pArr['sortsequence'])?$pArr['sortsequence']:1000).') ';
 		//echo $sql;
 		if($this->conn->query($sql)){
@@ -107,7 +107,7 @@ class KeyCharAdmin{
 		$sql = '';
 		foreach($pArr as $k => $v){
 			if(in_array($k, $targetArr, true)){
-				$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
+				$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
 			}
 		}
 		$sql = 'UPDATE kmcharacters SET '.substr($sql,1).' WHERE (cid = '.$this->cid.')';
@@ -198,12 +198,12 @@ class KeyCharAdmin{
 				}
 				$rs->free();
 			}
-			$illustrationUrl = Sanitizer::cleanInStr($illUrl);
-			$description = Sanitizer::cleanInStr($desc);
-			$notes = Sanitizer::cleanInStr($n);
-			$sortSequence = Sanitizer::cleanInStr($sort);
+			$illustrationUrl = Sanitizer::cleanInStr($this->conn,$illUrl);
+			$description = Sanitizer::cleanInStr($this->conn,$desc);
+			$notes = Sanitizer::cleanInStr($this->conn,$n);
+			$sortSequence = Sanitizer::cleanInStr($this->conn,$sort);
 			$sql = 'INSERT INTO kmcs(cid,cs,charstatename,implicit,illustrationurl,description,notes,sortsequence,enteredby) '.
-				'VALUES('.$this->cid.',"'.$csValue.'","'.Sanitizer::cleanInStr($csName).'",1,'.
+				'VALUES('.$this->cid.',"'.$csValue.'","'.Sanitizer::cleanInStr($this->conn,$csName).'",1,'.
 				($illustrationUrl?'"'.$illustrationUrl.'"':'NULL').','.
 				($description?'"'.$description.'"':'NULL').','.
 				($notes?'"'.$notes.'"':'NULL').','.
@@ -221,7 +221,7 @@ class KeyCharAdmin{
 		$sql = '';
 		foreach($pArr as $k => $v){
 			if(in_array($k, $targetArr, true)){
-				$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
+				$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
 			}
 		}
 		$sql = 'UPDATE kmcs SET '.substr($sql,1).' WHERE (cid = '.$this->cid.') AND (cs = '.$cs.')';
@@ -297,7 +297,7 @@ class KeyCharAdmin{
                     }
                     if(file_exists($imagePath)){
                         if($this->createNewCsImage($imagePath)){
-                            $notes = Sanitizer::cleanInStr($formArr['notes']);
+                            $notes = Sanitizer::cleanInStr($this->conn,$formArr['notes']);
                             $sql = 'INSERT INTO kmcsimages(cid, cs, url, notes, sortsequence, username) '.
                                 'VALUES('.$formArr['cid'].','.$formArr['cs'].',"'.$GLOBALS['IMAGE_ROOT_URL'].$fileName.'",'.
                                 ($notes?'"'.$notes.'"':'NULL').','.
@@ -410,7 +410,7 @@ class KeyCharAdmin{
 		$statusStr = '';
 		if($this->cid && is_numeric($tid)){
 			$sql = 'INSERT INTO kmchartaxalink(cid,tid,relation,notes) '.
-				'VALUES('.$this->cid.','.$tid.',"'.Sanitizer::cleanInStr($rel).'","'.Sanitizer::cleanInStr($notes).'")';
+				'VALUES('.$this->cid.','.$tid.',"'.Sanitizer::cleanInStr($this->conn,$rel).'","'.Sanitizer::cleanInStr($this->conn,$notes).'")';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR: unable to add Taxon Relevance.';
@@ -521,7 +521,7 @@ class KeyCharAdmin{
 		}
 		else{
 			$sql = 'SELECT langid FROM adminlanguages '.
-				'WHERE langname = "'.Sanitizer::cleanInStr($lang).'" OR iso639_1 = "'.Sanitizer::cleanInStr($lang).'" OR iso639_2 = "'.Sanitizer::cleanInStr($lang).'" ';
+				'WHERE langname = "'.Sanitizer::cleanInStr($this->conn,$lang).'" OR iso639_1 = "'.Sanitizer::cleanInStr($this->conn,$lang).'" OR iso639_2 = "'.Sanitizer::cleanInStr($this->conn,$lang).'" ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$this->langId = $r->langid;
