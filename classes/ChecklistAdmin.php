@@ -72,19 +72,19 @@ class ChecklistAdmin{
         $sql = 'INSERT INTO fmchecklists(name,authors,type,locality,publication,abstract,notes,latcentroid,longcentroid,'.
             'pointradiusmeters,footprintwkt,parentclid,access,uid,defaultsettings) '.
             'VALUES('.
-            ($postArr['name']?'"'.Sanitizer::cleanInStr($postArr['name']).'"':'NULL').','.
-            ($postArr['authors']?'"'.Sanitizer::cleanInStr($postArr['authors']).'"':'NULL').','.
-            ($postArr['type']?'"'.Sanitizer::cleanInStr($postArr['type']).'"':'NULL').','.
-            ($postArr['locality']?'"'.Sanitizer::cleanInStr($postArr['locality']).'"':'NULL').','.
-            ($postArr['publication']?'"'.Sanitizer::cleanInStr($postArr['publication']).'"':'NULL').','.
-            ($postArr['abstract']?'"'.Sanitizer::cleanInStr($postArr['abstract']).'"':'NULL').','.
-            ($postArr['notes']?'"'.Sanitizer::cleanInStr($postArr['notes']).'"':'NULL').','.
-            ($postArr['latcentroid']?Sanitizer::cleanInStr($postArr['latcentroid']):'NULL').','.
-            ($postArr['longcentroid']?Sanitizer::cleanInStr($postArr['longcentroid']):'NULL').','.
-            ($postArr['pointradiusmeters']?Sanitizer::cleanInStr($postArr['pointradiusmeters']):'NULL').','.
-            ($postArr['footprintwkt']?"'".Sanitizer::cleanInStr($postArr['footprintwkt'])."'":'NULL').','.
-            ($postArr['parentclid']?Sanitizer::cleanInStr($postArr['parentclid']):'NULL').','.
-            ($postArr['access']?'"'.Sanitizer::cleanInStr($postArr['access']).'"':'NULL').','.
+            ($postArr['name']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['name']).'"':'NULL').','.
+            ($postArr['authors']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['authors']).'"':'NULL').','.
+            ($postArr['type']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['type']).'"':'NULL').','.
+            ($postArr['locality']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['locality']).'"':'NULL').','.
+            ($postArr['publication']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['publication']).'"':'NULL').','.
+            ($postArr['abstract']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['abstract']).'"':'NULL').','.
+            ($postArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').','.
+            ($postArr['latcentroid']?Sanitizer::cleanInStr($this->conn,$postArr['latcentroid']):'NULL').','.
+            ($postArr['longcentroid']?Sanitizer::cleanInStr($this->conn,$postArr['longcentroid']):'NULL').','.
+            ($postArr['pointradiusmeters']?Sanitizer::cleanInStr($this->conn,$postArr['pointradiusmeters']):'NULL').','.
+            ($postArr['footprintwkt']?"'".Sanitizer::cleanInStr($this->conn,$postArr['footprintwkt'])."'":'NULL').','.
+            ($postArr['parentclid']?Sanitizer::cleanInStr($this->conn,$postArr['parentclid']):'NULL').','.
+            ($postArr['access']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['access']).'"':'NULL').','.
             $GLOBALS['SYMB_UID'].','.
             ($postArr['defaultsettings']?"'".$postArr['defaultsettings']."'":'NULL').
             ')';
@@ -124,17 +124,17 @@ class ChecklistAdmin{
                 $setSql .= ', '.$fieldName." = '".strip_tags($postArr['defaultsettings'], '<i><u><b><a>')."'";
             }
             else{
-                $v = Sanitizer::cleanInStr($postArr[$fieldName]);
+                $v = Sanitizer::cleanInStr($this->conn,$postArr[$fieldName]);
                 if($fieldName !== 'abstract') {
                     $v = strip_tags($v, '<i><u><b><a>');
                 }
 
                 if($v){
                     if($fieldType === 's'){
-                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($v).'"';
+                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($this->conn,$v).'"';
                     }
                     elseif($fieldType === 'n' && is_numeric($v)){
-                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($v).'"';
+                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($this->conn,$v).'"';
                     }
                     else{
                         $setSql .= ', '.$fieldName.' = NULL';
@@ -218,7 +218,7 @@ class ChecklistAdmin{
     {
 		$status = true;
 		if($this->clid){
-			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.Sanitizer::cleanInStr($polygonStr).'"':'NULL').' WHERE (clid = '.$this->clid.')';
+			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.Sanitizer::cleanInStr($this->conn,$polygonStr).'"':'NULL').' WHERE (clid = '.$this->clid.')';
 			if(!$this->conn->query($sql)){
 				echo 'ERROR saving polygon to checklist.';
 				$status = false;
@@ -332,7 +332,7 @@ class ChecklistAdmin{
 					$valueSql .= ','.$v;
 				}
 				else{
-					$valueSql .= ',"'.Sanitizer::cleanInStr($v).'"';
+					$valueSql .= ',"'.Sanitizer::cleanInStr($this->conn,$v).'"';
 				}
 			}
 			else{
@@ -367,7 +367,7 @@ class ChecklistAdmin{
 		$statusStr = '';
 		if(is_numeric($tid) && is_numeric($lat) && is_numeric($lng)){
 			$sql = 'INSERT INTO fmchklstcoordinates(clid,tid,decimallatitude,decimallongitude,notes) '.
-				'VALUES('.$this->clid.','.$tid.','.$lat.','.$lng.',"'.Sanitizer::cleanInStr($notes).'")';
+				'VALUES('.$this->clid.','.$tid.','.$lat.','.$lng.',"'.Sanitizer::cleanInStr($this->conn,$notes).'")';
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR: unable to add point.';
 			}

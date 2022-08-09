@@ -328,7 +328,7 @@ class OccurrenceCleaner extends Manager{
 		$retCnt = array();
 		$sql = 'SELECT COUNT(DISTINCT o.stateprovince) as cnt '.$this->getBadStateSqlBase();
 		if($country) {
-			$sql .= 'AND o.country = "' . Sanitizer::cleanInStr($country) . '" ';
+			$sql .= 'AND o.country = "' . Sanitizer::cleanInStr($this->conn,$country) . '" ';
 		}
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -447,7 +447,7 @@ class OccurrenceCleaner extends Manager{
 		$retCnt = array();
 		$sql = 'SELECT COUNT(DISTINCT o.county) as cnt '.$this->getBadCountySqlFrag();
 		if($state) {
-			$sql .= 'AND o.stateprovince = "' . Sanitizer::cleanInStr($state) . '" ';
+			$sql .= 'AND o.stateprovince = "' . Sanitizer::cleanInStr($this->conn,$state) . '" ';
 		}
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
@@ -608,7 +608,7 @@ class OccurrenceCleaner extends Manager{
 		echo '<li>Starting coordinate crawl...</li>';
 		$sql = 'SELECT occid, country, stateprovince, county, decimallatitude, decimallongitude '.
 			'FROM omoccurrences '.
-			'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL) AND (country = "'.Sanitizer::cleanInStr($queryCountry).'") '.
+			'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL) AND (country = "'.Sanitizer::cleanInStr($this->conn,$queryCountry).'") '.
 			'AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "coordinate")) '.
 			'LIMIT 500';
 		$rs = $this->conn->query($sql);
@@ -743,7 +743,7 @@ class OccurrenceCleaner extends Manager{
 	public function getRankingStats($category): array
 	{
 		$retArr = array();
-		$category = Sanitizer::cleanInStr($category);
+		$category = Sanitizer::cleanInStr($this->conn,$category);
 		$sql = 'SELECT v.category, v.ranking, v.protocol, COUNT(v.occid) as cnt '.
 			'FROM omoccurverification v INNER JOIN omoccurrences o ON v.occid = o.occid '.
 			'WHERE (o.collid = '.$this->collid.') AND v.category = "'.$category.'" '.
@@ -773,7 +773,7 @@ class OccurrenceCleaner extends Manager{
 			$sql = 'SELECT DISTINCT v.occid, l.username, v.initialtimestamp '.
 				'FROM omoccurverification v INNER JOIN omoccurrences o ON v.occid = o.occid '.
 				'INNER JOIN users l ON v.uid = l.uid '.
-				'WHERE (o.collid = '.$this->collid.') AND (v.category = "'.Sanitizer::cleanInStr($category).'") AND (ranking = '.$ranking.')';
+				'WHERE (o.collid = '.$this->collid.') AND (v.category = "'.Sanitizer::cleanInStr($this->conn,$category).'") AND (ranking = '.$ranking.')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->occid]['username'] = $r->username;

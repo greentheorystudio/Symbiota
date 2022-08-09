@@ -136,10 +136,10 @@ class SpecProcessorOcr{
 				$score = 0;
 			}
 			$sql = 'INSERT INTO specprocessorrawlabels(imgid,rawstr,notes,source,score) '.
-				'VALUE ('.$imgId.',"'.Sanitizer::cleanInStr($rawStr).'",'.
-				($notes?'"'.Sanitizer::cleanInStr($notes).'"':'NULL').','.
-				($source?'"'.Sanitizer::cleanInStr($source).'"':'NULL').','.
-				($score?'"'.Sanitizer::cleanInStr($score).'"':'NULL').')';
+				'VALUE ('.$imgId.',"'.Sanitizer::cleanInStr($this->conn,$rawStr).'",'.
+				($notes?'"'.Sanitizer::cleanInStr($this->conn,$notes).'"':'NULL').','.
+				($source?'"'.Sanitizer::cleanInStr($this->conn,$source).'"':'NULL').','.
+				($score?'"'.Sanitizer::cleanInStr($this->conn,$score).'"':'NULL').')';
 			//echo 'SQL: '.$sql."\n";
 			if($this->conn->query($sql)){
                 $retVal = true;
@@ -429,7 +429,7 @@ class SpecProcessorOcr{
 				$imgArr = array();
 				$sql = 'SELECT i.imgid, IFNULL(i.originalurl,i.url) AS url '.
 					'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
-					'WHERE (o.collid = '.$this->collid.') AND (o.catalognumber = "'.Sanitizer::cleanInStr($catNumber).'")';
+					'WHERE (o.collid = '.$this->collid.') AND (o.catalognumber = "'.Sanitizer::cleanInStr($this->conn,$catNumber).'")';
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$imgArr[$r->imgid] = $r->url;
@@ -440,7 +440,7 @@ class SpecProcessorOcr{
 					if(strlen($fileBaseName)>4){
 						$sql = 'SELECT i.imgid, IFNULL(i.originalurl,i.url) AS url '.
 							'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
-							'WHERE (o.collid = '.$this->collid.') AND ((i.originalurl LIKE "%/'.Sanitizer::cleanInStr($fileBaseName).'.jpg") OR (i.url LIKE "%/'.Sanitizer::cleanInStr($fileBaseName).'.jpg"))';
+							'WHERE (o.collid = '.$this->collid.') AND ((i.originalurl LIKE "%/'.Sanitizer::cleanInStr($this->conn,$fileBaseName).'.jpg") OR (i.url LIKE "%/'.Sanitizer::cleanInStr($this->conn,$fileBaseName).'.jpg"))';
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
 							$imgArr[$r->imgid] = $r->url;

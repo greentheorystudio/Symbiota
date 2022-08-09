@@ -129,7 +129,7 @@ class ReferenceManager{
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO referenceobject(title,ReferenceTypeId,ispublished,modifieduid,modifiedtimestamp) '.
-			'VALUES("'.Sanitizer::cleanInStr($pArr['newreftitle']).'","'.Sanitizer::cleanInStr($pArr['newreftype']).'","'.Sanitizer::cleanInStr($pArr['ispublished']).'",'.$GLOBALS['SYMB_UID'].',now()) ';
+			'VALUES("'.Sanitizer::cleanInStr($this->conn,$pArr['newreftitle']).'","'.Sanitizer::cleanInStr($this->conn,$pArr['newreftype']).'","'.Sanitizer::cleanInStr($this->conn,$pArr['ispublished']).'",'.$GLOBALS['SYMB_UID'].',now()) ';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->refId = $this->conn->insert_id;
@@ -404,7 +404,7 @@ class ReferenceManager{
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO referenceauthors(firstname,middlename,lastname,modifieduid,modifiedtimestamp) '.
-			'VALUES("'.Sanitizer::cleanInStr($firstName).'","'.Sanitizer::cleanInStr($middleName).'","'.Sanitizer::cleanInStr($lastName).'",'.$GLOBALS['SYMB_UID'].',now()) ';
+			'VALUES("'.Sanitizer::cleanInStr($this->conn,$firstName).'","'.Sanitizer::cleanInStr($this->conn,$middleName).'","'.Sanitizer::cleanInStr($this->conn,$lastName).'",'.$GLOBALS['SYMB_UID'].',now()) ';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->refAuthId = $this->conn->insert_id;
@@ -459,7 +459,7 @@ class ReferenceManager{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'refid'){
-					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$GLOBALS['SYMB_UID'].',modifiedtimestamp=now() WHERE (refid = '.$refId.')';
@@ -534,7 +534,7 @@ class ReferenceManager{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'authid'){
-					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE referenceauthors SET '.substr($sql,1).',modifieduid='.$GLOBALS['SYMB_UID'].',modifiedtimestamp=now() WHERE (refauthorid = '.$authId.')';

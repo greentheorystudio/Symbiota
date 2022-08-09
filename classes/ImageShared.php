@@ -518,7 +518,7 @@ class ImageShared{
 				($this->locality?'"'.$this->locality.'"':'NULL').','.
 				($this->occid?:'NULL').','.
 				($this->notes?'"'.$this->notes.'"':'NULL').',"'.
-				Sanitizer::cleanInStr($GLOBALS['USERNAME']).'",'.
+				Sanitizer::cleanInStr($this->conn,$GLOBALS['USERNAME']).'",'.
 				($this->sortSeq?:'50').','.
 				($this->sourceIdentifier?'"'.$this->sourceIdentifier.'"':'NULL').','.
 				($this->rights?'"'.$this->rights.'"':'NULL').','.
@@ -559,7 +559,7 @@ class ImageShared{
 				if($v) {
 					$imgArr[$k] = $v;
 				}
-				$imgObj .= '"'.$k.'":"'.Sanitizer::cleanInStr($v).'",';
+				$imgObj .= '"'.$k.'":"'.Sanitizer::cleanInStr($this->conn,$v).'",';
 			}
 			$imgObj = json_encode($imgArr);
 			$sqlArchive = 'UPDATE guidimages '.
@@ -733,12 +733,12 @@ class ImageShared{
 
 	public function setCaption($v): void
 	{
-		$this->caption = Sanitizer::cleanInStr($v);
+		$this->caption = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setPhotographer($v): void
 	{
-		$this->photographer = Sanitizer::cleanInStr($v);
+		$this->photographer = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setPhotographerUid($v): void
@@ -750,7 +750,7 @@ class ImageShared{
 
 	public function setSourceUrl($v): void
 	{
-		$this->sourceUrl = Sanitizer::cleanInStr($v);
+		$this->sourceUrl = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function getTargetPath(): string
@@ -764,12 +764,12 @@ class ImageShared{
 
 	public function setOwner($v): void
 	{
-		$this->owner = Sanitizer::cleanInStr($v);
+		$this->owner = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setLocality($v): void
 	{
-		$this->locality = Sanitizer::cleanInStr($v);
+		$this->locality = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setOccid($v): void
@@ -792,7 +792,7 @@ class ImageShared{
 
 	public function setNotes($v): void
 	{
-		$this->notes = Sanitizer::cleanInStr($v);
+		$this->notes = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setSortSeq($v): void
@@ -804,7 +804,7 @@ class ImageShared{
 
 	public function setCopyright($v): void
 	{
-		$this->copyright = Sanitizer::cleanInStr($v);
+		$this->copyright = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function getErrArr(): array

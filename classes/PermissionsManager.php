@@ -316,7 +316,7 @@ class PermissionsManager{
             else{
                 $sql .= 'WHERE (';
             }
-            $searchTerm = Sanitizer::cleanInStr($searchTermIn);
+            $searchTerm = Sanitizer::cleanInStr($this->conn,$searchTermIn);
 			$sql .= '(lastname LIKE "'.$searchTerm.'%") ';
 			if(strlen($searchTerm) > 1) {
 				$sql .= "OR (username LIKE '" . $searchTerm . "%') ";

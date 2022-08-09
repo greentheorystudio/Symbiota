@@ -78,7 +78,7 @@ class OccurrenceManager{
             $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM omoccurdatasetlink WHERE datasetid = ' .$this->searchTermsArr['dsid']. ')) ';
         }
         if(array_key_exists('db', $this->searchTermsArr) && $this->searchTermsArr['db'] && $this->searchTermsArr['db'] !== 'all') {
-            $sqlWhere .= 'AND (o.collid IN(' .Sanitizer::cleanInStr($this->searchTermsArr['db']). ')) ';
+            $sqlWhere .= 'AND (o.collid IN(' .Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['db']). ')) ';
         }
         if(array_key_exists('taxa',$this->searchTermsArr) && $this->searchTermsArr['taxa']){
             $sqlWhereTaxa = '';
@@ -97,13 +97,13 @@ class OccurrenceManager{
             $this->setSearchTids();
             foreach($this->taxaArr as $key => $valueArray){
                 if($this->taxaSearchType === 4){
-                    $rs1 = $this->conn->query("SELECT ts.tidaccepted FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tid WHERE (t.sciname = '".Sanitizer::cleanInStr($key)."')");
+                    $rs1 = $this->conn->query("SELECT ts.tidaccepted FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tid WHERE (t.sciname = '".Sanitizer::cleanInStr($this->conn,$key)."')");
                     if($r1 = $rs1->fetch_object()){
                         if($image){
                             $sqlWhereTaxa = 'OR (te.parenttid = '.$r1->tidaccepted.' OR te.tid = '.$r1->tidaccepted.') ';
                         }
                         else{
-                            $sqlWhereTaxa = 'OR (te.parenttid = '.$r1->tidaccepted.' OR te.tid = '.$r1->tidaccepted.') OR (ISNULL(o.tidinterpreted) AND o.sciname = "'.Sanitizer::cleanInStr($key).'") ';
+                            $sqlWhereTaxa = 'OR (te.parenttid = '.$r1->tidaccepted.' OR te.tid = '.$r1->tidaccepted.') OR (ISNULL(o.tidinterpreted) AND o.sciname = "'.Sanitizer::cleanInStr($this->conn,$key).'") ';
                         }
                     }
                 }
@@ -124,20 +124,20 @@ class OccurrenceManager{
                     }
                     if($famArr){
                         $famArr = array_unique($famArr);
-                        $sqlWhereTaxa .= 'OR (ts.family IN("'.Sanitizer::cleanInStr(implode('","',$famArr)).'")) OR (ISNULL(o.tidinterpreted) AND o.family IN("'.Sanitizer::cleanInStr(implode('","',$famArr)).'")) ';
+                        $sqlWhereTaxa .= 'OR (ts.family IN("'.Sanitizer::cleanInStr($this->conn,implode('","',$famArr)).'")) OR (ISNULL(o.tidinterpreted) AND o.family IN("'.Sanitizer::cleanInStr($this->conn,implode('","',$famArr)).'")) ';
                     }
                     if(array_key_exists('scinames',$valueArray)){
                         foreach($valueArray['scinames'] as $sciName){
-                            $sqlWhereTaxa .= "OR (o.sciname LIKE '".Sanitizer::cleanInStr($sciName)."%') ";
+                            $sqlWhereTaxa .= "OR (o.sciname LIKE '".Sanitizer::cleanInStr($this->conn,$sciName)."%') ";
                         }
                     }
                 }
                 else{
                     if($this->taxaSearchType === 2 || ($this->taxaSearchType === 1 && (strtolower(substr($key,-5)) === 'aceae' || strtolower(substr($key,-4)) === 'idae'))){
-                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($key)."') OR (ISNULL(o.tidinterpreted) AND (o.family = '".Sanitizer::cleanInStr($key)."' OR o.sciname = '".Sanitizer::cleanInStr($key)."')) ";
+                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$key)."') OR (ISNULL(o.tidinterpreted) AND (o.family = '".Sanitizer::cleanInStr($this->conn,$key)."' OR o.sciname = '".Sanitizer::cleanInStr($this->conn,$key)."')) ";
                     }
                     if($this->taxaSearchType === 3 || ($this->taxaSearchType === 1 && strtolower(substr($key,-5)) !== 'aceae' && strtolower(substr($key,-4)) !== 'idae')){
-                        $sqlWhereTaxa .= "OR (o.sciname LIKE '".Sanitizer::cleanInStr($key)."%') ";
+                        $sqlWhereTaxa .= "OR (o.sciname LIKE '".Sanitizer::cleanInStr($this->conn,$key)."%') ";
                     }
                 }
             }
@@ -145,7 +145,7 @@ class OccurrenceManager{
                 if($this->taxaSearchType === 1 || $this->taxaSearchType === 2 || $this->taxaSearchType === 5){
                     foreach($this->searchSynArr as $synTid => $sciName){
                         if(strpos($sciName,'aceae') || strpos($sciName,'idae')){
-                            $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($sciName)."') OR (ISNULL(o.tidinterpreted) AND o.family = '".Sanitizer::cleanInStr($sciName)."') ";
+                            $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$sciName)."') OR (ISNULL(o.tidinterpreted) AND o.family = '".Sanitizer::cleanInStr($this->conn,$sciName)."') ";
                         }
                     }
                 }
@@ -171,7 +171,7 @@ class OccurrenceManager{
                         $tempArr[] = '(ISNULL(o.Country))';
                     }
                     else{
-                        $tempArr[] = '(o.Country = "'.Sanitizer::cleanInStr($value).'")';
+                        $tempArr[] = '(o.Country = "'.Sanitizer::cleanInStr($this->conn,$value).'")';
                     }
                 }
                 $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
@@ -189,7 +189,7 @@ class OccurrenceManager{
                         $stateAr[$k] = 'State IS NULL';
                     }
                     else{
-                        $tempArr[] = '(o.StateProvince = "'.Sanitizer::cleanInStr($value).'")';
+                        $tempArr[] = '(o.StateProvince = "'.Sanitizer::cleanInStr($this->conn,$value).'")';
                     }
                 }
                 $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
@@ -208,7 +208,7 @@ class OccurrenceManager{
                     }
                     else{
                         $value = trim(str_ireplace(' county',' ',$value));
-                        $tempArr[] = '(o.county LIKE "'.Sanitizer::cleanInStr($value).'%")';
+                        $tempArr[] = '(o.county LIKE "'.Sanitizer::cleanInStr($this->conn,$value).'%")';
                     }
                 }
                 $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
@@ -227,7 +227,7 @@ class OccurrenceManager{
                         $localArr[$k] = 'Locality IS NULL';
                     }
                     else{
-                        $tempArr[] = '(o.municipality LIKE "'.Sanitizer::cleanInStr($value).'%" OR o.Locality LIKE "%'.Sanitizer::cleanInStr($value).'%")';
+                        $tempArr[] = '(o.municipality LIKE "'.Sanitizer::cleanInStr($this->conn,$value).'%" OR o.Locality LIKE "%'.Sanitizer::cleanInStr($this->conn,$value).'%")';
                     }
                 }
                 $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
@@ -251,7 +251,7 @@ class OccurrenceManager{
                 $tempArr = array();
                 foreach($hostAr as $k => $value){
                     if($value !== 'NULL'){
-                        $tempArr[] = '(oas.relationship = "host" AND oas.verbatimsciname LIKE "%'.Sanitizer::cleanInStr($value).'%")';
+                        $tempArr[] = '(oas.relationship = "host" AND oas.verbatimsciname LIKE "%'.Sanitizer::cleanInStr($this->conn,$value).'%")';
                     }
                 }
                 $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
@@ -261,8 +261,8 @@ class OccurrenceManager{
         if((array_key_exists('upperlat',$this->searchTermsArr) && $this->searchTermsArr['upperlat']) || (array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']) || (array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']) || (array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr'])){
             $geoSqlStrArr = array();
             if(array_key_exists('upperlat',$this->searchTermsArr) && $this->searchTermsArr['upperlat']){
-                $geoSqlStrArr[] = '(o.DecimalLatitude BETWEEN ' .Sanitizer::cleanInStr($this->searchTermsArr['bottomlat']). ' AND ' .Sanitizer::cleanInStr($this->searchTermsArr['upperlat']). ' AND ' .
-                    'o.DecimalLongitude BETWEEN ' .Sanitizer::cleanInStr($this->searchTermsArr['leftlong']). ' AND ' .Sanitizer::cleanInStr($this->searchTermsArr['rightlong']). ') ';
+                $geoSqlStrArr[] = '(o.DecimalLatitude BETWEEN ' .Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['bottomlat']). ' AND ' .Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['upperlat']). ' AND ' .
+                    'o.DecimalLongitude BETWEEN ' .Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['leftlong']). ' AND ' .Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['rightlong']). ') ';
                 $this->localSearchArr[] = 'Lat: >' .$this->searchTermsArr['bottomlat']. ', <' .$this->searchTermsArr['upperlat']. '; Long: >' .$this->searchTermsArr['leftlong']. ', <' .$this->searchTermsArr['rightlong'];
             }
             if(array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']){
@@ -317,10 +317,10 @@ class OccurrenceManager{
                     $collValueArr = explode(' ',trim($collectorArr[0]));
                     foreach($collValueArr as $collV){
                         if(strlen($collV) < 4 || strtolower($collV) === 'best'){
-                            $tempInnerArr[] = '(o.recordedBy LIKE "%'.Sanitizer::cleanInStr($collV).'%")';
+                            $tempInnerArr[] = '(o.recordedBy LIKE "%'.Sanitizer::cleanInStr($this->conn,$collV).'%")';
                         }
                         else{
-                            $tempInnerArr[] = '(MATCH(f.recordedby) AGAINST("'.Sanitizer::cleanInStr($collV).'")) ';
+                            $tempInnerArr[] = '(MATCH(f.recordedby) AGAINST("'.Sanitizer::cleanInStr($this->conn,$collV).'")) ';
                         }
                     }
                     $tempArr[] = implode(' AND ', $tempInnerArr);
@@ -329,10 +329,10 @@ class OccurrenceManager{
             elseif(count($collectorArr) > 1){
                 $collStr = current($collectorArr);
                 if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
-                    $tempInnerArr[] = '(o.recordedBy LIKE "%'.Sanitizer::cleanInStr($collStr).'%")';
+                    $tempInnerArr[] = '(o.recordedBy LIKE "%'.Sanitizer::cleanInStr($this->conn,$collStr).'%")';
                 }
                 else{
-                    $tempArr[] = '(MATCH(f.recordedby) AGAINST("'.Sanitizer::cleanInStr($collStr).'")) ';
+                    $tempArr[] = '(MATCH(f.recordedby) AGAINST("'.Sanitizer::cleanInStr($this->conn,$collStr).'")) ';
                 }
             }
             $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
@@ -353,13 +353,13 @@ class OccurrenceManager{
                         if(strlen($term2) > strlen($term1)) {
                             $term1 = str_pad($term1, strlen($term2), '0', STR_PAD_LEFT);
                         }
-                        $catTerm = '(o.recordnumber BETWEEN "'.Sanitizer::cleanInStr($term1).'" AND "'.Sanitizer::cleanInStr($term2).'")';
+                        $catTerm = '(o.recordnumber BETWEEN "'.Sanitizer::cleanInStr($this->conn,$term1).'" AND "'.Sanitizer::cleanInStr($this->conn,$term2).'")';
                         $catTerm .= ' AND (length(o.recordnumber) <= '.strlen($term2).')';
                         $rnWhere .= 'OR ('.$catTerm.')';
                     }
                 }
                 else{
-                    $rnWhere .= 'OR (o.recordNumber = "'.Sanitizer::cleanInStr($v).'") ';
+                    $rnWhere .= 'OR (o.recordNumber = "'.Sanitizer::cleanInStr($this->conn,$v).'") ';
                 }
             }
             if($rnWhere){
@@ -389,16 +389,16 @@ class OccurrenceManager{
                 elseif($eDate1 = $this->formatDate($dateArr[0])){
                     $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
                     if($eDate2){
-                        $sqlWhere .= 'AND (o.eventdate BETWEEN "'.Sanitizer::cleanInStr($eDate1).'" AND "'.Sanitizer::cleanInStr($eDate2).'") ';
+                        $sqlWhere .= 'AND (o.eventdate BETWEEN "'.Sanitizer::cleanInStr($this->conn,$eDate1).'" AND "'.Sanitizer::cleanInStr($this->conn,$eDate2).'") ';
                     }
                     else if(substr($eDate1,-5) === '00-00'){
-                        $sqlWhere .= 'AND (o.eventdate LIKE "'.Sanitizer::cleanInStr(substr($eDate1,0,5)).'%") ';
+                        $sqlWhere .= 'AND (o.eventdate LIKE "'.Sanitizer::cleanInStr($this->conn,substr($eDate1,0,5)).'%") ';
                     }
                     elseif(substr($eDate1,-2) === '00'){
-                        $sqlWhere .= 'AND (o.eventdate LIKE "'.Sanitizer::cleanInStr(substr($eDate1,0,8)).'%") ';
+                        $sqlWhere .= 'AND (o.eventdate LIKE "'.Sanitizer::cleanInStr($this->conn,substr($eDate1,0,8)).'%") ';
                     }
                     else{
-                        $sqlWhere .= 'AND (o.eventdate = "'.Sanitizer::cleanInStr($eDate1).'") ';
+                        $sqlWhere .= 'AND (o.eventdate = "'.Sanitizer::cleanInStr($this->conn,$eDate1).'") ';
                     }
                     $this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
                 }
@@ -416,7 +416,7 @@ class OccurrenceManager{
                         $remarksArr[$k] = 'Occurrence Remarks IS NULL';
                     }
                     else{
-                        $tempArr[] = '(o.occurrenceRemarks LIKE "%'.Sanitizer::cleanInStr($value).'%")';
+                        $tempArr[] = '(o.occurrenceRemarks LIKE "%'.Sanitizer::cleanInStr($this->conn,$value).'%")';
                     }
                 }
                 $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
@@ -435,25 +435,25 @@ class OccurrenceManager{
                     $term1 = trim(substr($v,0,$p));
                     $term2 = trim(substr($v,$p+3));
                     if(is_numeric($term1) && is_numeric($term2)){
-                        $betweenFrag[] = '(o.catalogNumber BETWEEN '.Sanitizer::cleanInStr($term1).' AND '.Sanitizer::cleanInStr($term2).')';
+                        $betweenFrag[] = '(o.catalogNumber BETWEEN '.Sanitizer::cleanInStr($this->conn,$term1).' AND '.Sanitizer::cleanInStr($this->conn,$term2).')';
                         if($includeOtherCatNum){
-                            $betweenFrag[] = '(o.othercatalognumbers BETWEEN '.Sanitizer::cleanInStr($term1).' AND '.Sanitizer::cleanInStr($term2).')';
+                            $betweenFrag[] = '(o.othercatalognumbers BETWEEN '.Sanitizer::cleanInStr($this->conn,$term1).' AND '.Sanitizer::cleanInStr($this->conn,$term2).')';
                         }
                     }
                     else{
-                        $catTerm = 'o.catalogNumber BETWEEN "'.Sanitizer::cleanInStr($term1).'" AND "'.Sanitizer::cleanInStr($term2).'"';
+                        $catTerm = 'o.catalogNumber BETWEEN "'.Sanitizer::cleanInStr($this->conn,$term1).'" AND "'.Sanitizer::cleanInStr($this->conn,$term2).'"';
                         if(strlen($term1) === strlen($term2)) {
-                            $catTerm .= ' AND length(o.catalogNumber) = ' . Sanitizer::cleanInStr(strlen($term2));
+                            $catTerm .= ' AND length(o.catalogNumber) = ' . Sanitizer::cleanInStr($this->conn,strlen($term2));
                         }
                         $betweenFrag[] = '('.$catTerm.')';
                         if($includeOtherCatNum){
-                            $betweenFrag[] = '(o.othercatalognumbers BETWEEN "'.Sanitizer::cleanInStr($term1).'" AND "'.Sanitizer::cleanInStr($term2).'")';
+                            $betweenFrag[] = '(o.othercatalognumbers BETWEEN "'.Sanitizer::cleanInStr($this->conn,$term1).'" AND "'.Sanitizer::cleanInStr($this->conn,$term2).'")';
                         }
                     }
                 }
                 else{
                     $vStr = trim($v);
-                    $inFrag[] = Sanitizer::cleanInStr($vStr);
+                    $inFrag[] = Sanitizer::cleanInStr($this->conn,$vStr);
                     if(is_numeric($vStr) && strncmp($vStr, '0', 1) === 0){
                         $inFrag[] = ltrim($vStr,0);
                     }
@@ -516,16 +516,16 @@ class OccurrenceManager{
             }
         }
         if(array_key_exists('phuid',$this->searchTermsArr) && $this->searchTermsArr['phuid']){
-            $sqlWhere .= 'AND (i.photographeruid IN(' .Sanitizer::cleanInStr($this->searchTermsArr['phuid']). ')) ';
+            $sqlWhere .= 'AND (i.photographeruid IN(' .Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['phuid']). ')) ';
         }
         if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
-            $sqlWhere .= 'AND (it.keyvalue = "'.Sanitizer::cleanInStr($this->searchTermsArr['imagetag']).'") ';
+            $sqlWhere .= 'AND (it.keyvalue = "'.Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['imagetag']).'") ';
         }
         if(array_key_exists('imagekeyword',$this->searchTermsArr) && $this->searchTermsArr['imagekeyword']){
             $keywordArr = explode(';',$this->searchTermsArr['imagekeyword']);
             $tempArr = array();
             foreach($keywordArr as $value){
-                $tempArr[] = "(ik.keyword LIKE '%".trim(Sanitizer::cleanInStr($value))."%')";
+                $tempArr[] = "(ik.keyword LIKE '%".trim(Sanitizer::cleanInStr($this->conn,$value))."%')";
             }
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
         }
@@ -546,16 +546,16 @@ class OccurrenceManager{
             if($dateArr && $eDate1 = $this->formatDate($dateArr[0])){
                 $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
                 if($eDate2){
-                    $sqlWhere .= 'AND (i.InitialTimeStamp BETWEEN "'.Sanitizer::cleanInStr($eDate1).'" AND "'.Sanitizer::cleanInStr($eDate2).'") ';
+                    $sqlWhere .= 'AND (i.InitialTimeStamp BETWEEN "'.Sanitizer::cleanInStr($this->conn,$eDate1).'" AND "'.Sanitizer::cleanInStr($this->conn,$eDate2).'") ';
                 }
                 else if(substr($eDate1,-5) === '00-00'){
-                    $sqlWhere .= 'AND (i.InitialTimeStamp LIKE "'.Sanitizer::cleanInStr(substr($eDate1,0,5)).'%") ';
+                    $sqlWhere .= 'AND (i.InitialTimeStamp LIKE "'.Sanitizer::cleanInStr($this->conn,substr($eDate1,0,5)).'%") ';
                 }
                 elseif(substr($eDate1,-2) === '00'){
-                    $sqlWhere .= 'AND (i.InitialTimeStamp LIKE "'.Sanitizer::cleanInStr(substr($eDate1,0,8)).'%") ';
+                    $sqlWhere .= 'AND (i.InitialTimeStamp LIKE "'.Sanitizer::cleanInStr($this->conn,substr($eDate1,0,8)).'%") ';
                 }
                 else{
-                    $sqlWhere .= 'AND (i.InitialTimeStamp LIKE "'.Sanitizer::cleanInStr($eDate1).'%") ';
+                    $sqlWhere .= 'AND (i.InitialTimeStamp LIKE "'.Sanitizer::cleanInStr($this->conn,$eDate1).'%") ';
                 }
             }
         }
@@ -629,7 +629,7 @@ class OccurrenceManager{
             'LEFT JOIN taxa AS t ON ts.tidaccepted = t.TID ';
         $whereStr = '';
         foreach($this->taxaArr as $key => $value){
-            $whereStr .= "OR v.VernacularName = '".Sanitizer::cleanInStr($key)."' ";
+            $whereStr .= "OR v.VernacularName = '".Sanitizer::cleanInStr($this->conn,$key)."' ";
         }
         $sql .= 'WHERE (' .substr($whereStr,3). ') ORDER BY t.rankid LIMIT 20';
         //echo "<div>sql: ".$sql."</div>";
@@ -659,7 +659,7 @@ class OccurrenceManager{
         foreach($this->taxaArr as $key => $valueArray){
             if($this->taxaSearchType !== 3 && $this->taxaSearchType !== 5){
                 $sql = 'SELECT DISTINCT TID FROM taxa '.
-                    "WHERE SciName = '".Sanitizer::cleanInStr($key)."'";
+                    "WHERE SciName = '".Sanitizer::cleanInStr($this->conn,$key)."'";
                 $rs = $this->conn->query($sql);
                 while($r = $rs->fetch_object()){
                     $this->searchTidArr[] = $r->TID;
@@ -668,7 +668,7 @@ class OccurrenceManager{
             if($this->taxaSearchType === 5 && array_key_exists('scinames',$valueArray)){
                 foreach($valueArray['scinames'] as $sciName){
                     $sql = 'SELECT DISTINCT TID FROM taxa '.
-                        "WHERE SciName LIKE '".Sanitizer::cleanInStr($sciName)."%'";
+                        "WHERE SciName LIKE '".Sanitizer::cleanInStr($this->conn,$sciName)."%'";
                     $rs = $this->conn->query($sql);
                     while($r = $rs->fetch_object()){
                         $this->searchTidArr[] = $r->TID;
@@ -677,7 +677,7 @@ class OccurrenceManager{
             }
             if($this->taxaSearchType === 3 || ($this->taxaSearchType === 1 && strtolower(substr($key,-5)) !== 'aceae' && strtolower(substr($key,-4)) !== 'idae')){
                 $sql = 'SELECT DISTINCT TID FROM taxa '.
-                    "WHERE SciName LIKE '".Sanitizer::cleanInStr($key)."%'";
+                    "WHERE SciName LIKE '".Sanitizer::cleanInStr($this->conn,$key)."%'";
                 $rs = $this->conn->query($sql);
                 while($r = $rs->fetch_object()){
                     $this->searchTidArr[] = $r->TID;
