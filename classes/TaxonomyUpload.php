@@ -125,7 +125,7 @@ class TaxonomyUpload{
                         if(in_array('scinameinput', $fieldMap, true)){
                             $inputArr = array();
                             foreach($uploadTaxaIndexArr as $recIndex => $targetField){
-                                $valIn = Sanitizer::cleanInStr($this->encodeString($recordArr[$recIndex]));
+                                $valIn = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$recIndex]));
                                 if($targetField === 'acceptance' && !is_numeric($valIn)){
                                     $valInTest = strtolower($valIn);
                                     if($valInTest === 'accepted' || $valInTest === 'valid'){
@@ -176,7 +176,7 @@ class TaxonomyUpload{
                                 unset($inputArr['identificationqualifier']);
                                 foreach($inputArr as $k => $v){
                                     $sql1 .= ','.$k;
-                                    $inValue = Sanitizer::cleanInStr($v);
+                                    $inValue = Sanitizer::cleanInStr($this->conn,$v);
                                     $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
                                 }
                                 $sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';

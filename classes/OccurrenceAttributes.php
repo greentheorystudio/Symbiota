@@ -37,7 +37,7 @@ class OccurrenceAttributes extends Manager {
 		}
 		foreach($stateArr as $stateId){
 			if(is_numeric($stateId)){
-				$sql = 'INSERT INTO tmattributes(stateid,occid,notes,createduid) VALUES('.$stateId.','.$this->targetOccid.',"'.Sanitizer::cleanInStr($notes).'",'.$uid.') ';
+				$sql = 'INSERT INTO tmattributes(stateid,occid,notes,createduid) VALUES('.$stateId.','.$this->targetOccid.',"'.Sanitizer::cleanInStr($this->conn,$notes).'",'.$uid.') ';
 				if(!$this->conn->query($sql)){
 					$this->errorMessage .= 'ERROR saving occurrence attribute.';
 					$status = false;
@@ -423,7 +423,7 @@ class OccurrenceAttributes extends Manager {
 			} 
 			
 			$sql = 'UPDATE tmattributes a INNER JOIN tmstates s ON a.stateid = s.stateid '.
-				'SET a.statuscode = '.$setStatus.', a.notes = "'.Sanitizer::cleanInStr($postArr['notes']).'" '.
+				'SET a.statuscode = '.$setStatus.', a.notes = "'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'" '.
 				'WHERE a.occid = '.$this->targetOccid.' AND s.traitid IN('.implode(',',array_keys($this->traitArr)).')';
 			if(!$this->conn->query($sql)){
 				$this->errorMessage = 'ERROR updating occurrence attribute review status.';
@@ -497,7 +497,7 @@ class OccurrenceAttributes extends Manager {
 			$occArr = array();
 			$sql = 'SELECT DISTINCT occid FROM omoccurrences o '.
 				$this->getMiningSqlFrag($traitID, $fieldName, $tidFilter).
-				'AND ('.Sanitizer::cleanInStr($fieldName).' IN("'.implode('","',$fieldArr).'")) ';
+				'AND ('.Sanitizer::cleanInStr($this->conn,$fieldName).' IN("'.implode('","',$fieldArr).'")) ';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -525,12 +525,12 @@ class OccurrenceAttributes extends Manager {
 			$occidChuckArr = array_chunk($occArr, '200000');
 			foreach($occidChuckArr as $oArr){
 				$sqlUpdate = 'UPDATE tmattributes '.
-					'SET source = "Field mining: '.Sanitizer::cleanInStr($fieldName).'", createduid = '.$GLOBALS['SYMB_UID'];
+					'SET source = "Field mining: '.Sanitizer::cleanInStr($this->conn,$fieldName).'", createduid = '.$GLOBALS['SYMB_UID'];
 				if($notes) {
-					$sqlUpdate .= ', notes = "' . Sanitizer::cleanInStr($notes) . '"';
+					$sqlUpdate .= ', notes = "' . Sanitizer::cleanInStr($this->conn,$notes) . '"';
 				}
 				if(is_numeric($reviewStatus)) {
-					$sqlUpdate .= ', statuscode = "' . Sanitizer::cleanInStr($reviewStatus) . '"';
+					$sqlUpdate .= ', statuscode = "' . Sanitizer::cleanInStr($this->conn,$reviewStatus) . '"';
 				}
 				$sqlUpdate .= ' WHERE stateid IN('.implode(',',$stateIDArr).') AND occid IN('.implode(',',$oArr).')';
 				if(!$this->conn->query($sqlUpdate)){
@@ -557,7 +557,7 @@ class OccurrenceAttributes extends Manager {
 			$sql .= 'AND (o.collid IN('.$this->collidStr.')) ';
 		}
 		if($stringFilter){
-			$sql .= 'AND (o.'.$fieldName.' LIKE "%'.Sanitizer::cleanInStr($stringFilter).'%") ';
+			$sql .= 'AND (o.'.$fieldName.' LIKE "%'.Sanitizer::cleanInStr($this->conn,$stringFilter).'%") ';
 		}
 		return $sql;
 	}

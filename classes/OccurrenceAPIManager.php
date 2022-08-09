@@ -228,21 +228,21 @@ class OccurrenceAPIManager{
 
     public function setCollID($val): void
     {
-        $this->collId = Sanitizer::cleanInStr($val);
+        $this->collId = Sanitizer::cleanInStr($this->conn,$val);
     }
 
     public function setOccID($val): void
     {
-        $this->occId = Sanitizer::cleanInStr($val);
+        $this->occId = Sanitizer::cleanInStr($this->conn,$val);
     }
 
     public function setDBPK($val): void
     {
-        $this->dbpk = Sanitizer::cleanInStr($val);
+        $this->dbpk = Sanitizer::cleanInStr($this->conn,$val);
     }
 
     public function setCatNum($val): void
     {
-        $this->catNum = Sanitizer::cleanInStr($val);
+        $this->catNum = Sanitizer::cleanInStr($this->conn,$val);
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 class DwcArchiverOccurrence{
 
 	public static function getOccurrenceArr($schemaType, $extended): array
