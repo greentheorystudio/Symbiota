@@ -343,3 +343,8 @@ a.boxclose{
 	font-weight: normal;
 	color: black;
 }
+
+.tool-warning{
+	font-weight: bold;
+	color: red;
+}
