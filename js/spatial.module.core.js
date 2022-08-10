@@ -15,6 +15,7 @@ let queryRecCnt = 0;
 let draw;
 let clustersource;
 let loadPointsEvent = false;
+let rasterLayersLoaded = false;
 let toggleSelectedPoints = false;
 let lazyLoadCnt = 20000;
 let clusterDistance = 50;
@@ -119,6 +120,7 @@ function addLayerToSelList(layer,title,active){
 }
 
 function addRasterLayerToTargetList(layerId,title){
+    let shapeCount = 0;
     let selectionList = document.getElementById("targetrasterselect").innerHTML;
     const newOption = '<option value="' + layerId + '">' + title + '</option>';
     selectionList += newOption;
@@ -126,8 +128,19 @@ function addRasterLayerToTargetList(layerId,title){
     document.getElementById("targetrasterselect").value = '';
     rasterLayersArr.push(layerId);
     if(rasterLayersArr.length > 0){
-        document.getElementById("rastertoolspanel").style.display = "block";
-        document.getElementById("rastertoolstab").style.display = "block";
+        selectInteraction.getFeatures().forEach(function(feature){
+            selectedClone = feature.clone();
+            const geoType = selectedClone.getGeometry().getType();
+            if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
+                shapeCount++;
+            }
+        });
+        rasterLayersLoaded = true;
+        document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").disabled = false;
+        if(shapeCount === 1){
+            document.getElementById("dataRasterVectorizeButton").disabled = false;
+            document.getElementById("dataRasterVectorizeWarning").style.display = "none";
+        }
     }
 }
 
@@ -894,7 +907,7 @@ function createBuffers(){
     if(bufferSize === '' || isNaN(bufferSize)) {
         alert("Please enter a number for the buffer size.");
     }
-    else if(selectInteraction.getFeatures().getArray().length >= 1){
+    else{
         selectInteraction.getFeatures().forEach(function(feature){
             let turfFeature;
             if(feature){
@@ -935,9 +948,6 @@ function createBuffers(){
             }
         });
         document.getElementById("bufferSize").value = '';
-    }
-    else{
-        alert('You must have at least one shape selected in your Shapes layer to create a buffer polygon.');
     }
 }
 
@@ -1050,53 +1060,40 @@ function createConvexPoly(){
 }
 
 function createPolyDifference(){
-    let shapeCount = 0;
+    const features = [];
+    const geoJSONFormat = new ol.format.GeoJSON();
     selectInteraction.getFeatures().forEach(function(feature){
-        const selectedClone = feature.clone();
-        const geoType = selectedClone.getGeometry().getType();
-        if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
-            shapeCount++;
+        if(feature){
+            const selectedClone = feature.clone();
+            const geoType = selectedClone.getGeometry().getType();
+            const selectiongeometry = selectedClone.getGeometry();
+            const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+            const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+            const featCoords = JSON.parse(geojsonStr).coordinates;
+            if(geoType === 'Polygon'){
+                features.push(turf.polygon(featCoords));
+            }
+            else if(geoType === 'MultiPolygon'){
+                features.push(turf.multiPolygon(featCoords));
+            }
+            else if(geoType === 'Circle'){
+                const center = fixedselectgeometry.getCenter();
+                const radius = fixedselectgeometry.getRadius();
+                const edgeCoordinate = [center[0] + radius, center[1]];
+                let groundRadius = ol.sphere.getDistance(
+                    ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                    ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                );
+                groundRadius = groundRadius/1000;
+                features.push(getWGS84CirclePoly(center,groundRadius));
+            }
         }
     });
-    if(shapeCount === 2){
-        const features = [];
-        const geoJSONFormat = new ol.format.GeoJSON();
-        selectInteraction.getFeatures().forEach(function(feature){
-            if(feature){
-                const selectedClone = feature.clone();
-                const geoType = selectedClone.getGeometry().getType();
-                const selectiongeometry = selectedClone.getGeometry();
-                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
-                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                const featCoords = JSON.parse(geojsonStr).coordinates;
-                if(geoType === 'Polygon'){
-                    features.push(turf.polygon(featCoords));
-                }
-                else if(geoType === 'MultiPolygon'){
-                    features.push(turf.multiPolygon(featCoords));
-                }
-                else if(geoType === 'Circle'){
-                    const center = fixedselectgeometry.getCenter();
-                    const radius = fixedselectgeometry.getRadius();
-                    const edgeCoordinate = [center[0] + radius, center[1]];
-                    let groundRadius = ol.sphere.getDistance(
-                        ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
-                        ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
-                    );
-                    groundRadius = groundRadius/1000;
-                    features.push(getWGS84CirclePoly(center,groundRadius));
-                }
-            }
-        });
-        const difference = turf.difference(features[0], features[1]);
-        if(difference){
-            const diffpoly = geoJSONFormat.readFeature(difference);
-            diffpoly.getGeometry().transform(wgs84Projection,mapProjection);
-            selectsource.addFeature(diffpoly);
-        }
-    }
-    else{
-        alert('You must have two polygons or circles, and only two polygons or circles, selected in your Shapes layer to find the difference.');
+    const difference = turf.difference(features[0], features[1]);
+    if(difference){
+        const diffpoly = geoJSONFormat.readFeature(difference);
+        diffpoly.getGeometry().transform(wgs84Projection,mapProjection);
+        selectsource.addFeature(diffpoly);
     }
 }
 
@@ -1123,97 +1120,84 @@ function createPolygonFromBoundingBox(bbox, selected){
 }
 
 function createPolyIntersect(){
-    let shapeCount = 0;
+    const featuresOne = [];
+    const featuresTwo = [];
+    let pass = 1;
+    let intersection;
+    const geoJSONFormat = new ol.format.GeoJSON();
     selectInteraction.getFeatures().forEach(function(feature){
-        const selectedClone = feature.clone();
-        const geoType = selectedClone.getGeometry().getType();
-        if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
-            shapeCount++;
-        }
-    });
-    if(shapeCount === 2){
-        const featuresOne = [];
-        const featuresTwo = [];
-        let pass = 1;
-        let intersection;
-        const geoJSONFormat = new ol.format.GeoJSON();
-        selectInteraction.getFeatures().forEach(function(feature){
-            if(feature){
-                const selectedClone = feature.clone();
-                const geoType = selectedClone.getGeometry().getType();
-                if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
-                    const selectiongeometry = selectedClone.getGeometry();
-                    const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
-                    const geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
-                    const featCoords = JSON.parse(geojsonStr).coordinates;
-                    if(geoType === 'Polygon'){
-                        if(pass === 1){
-                            featuresOne.push(turf.polygon(featCoords));
-                        }
-                        else{
-                            featuresTwo.push(turf.polygon(featCoords));
-                        }
+        if(feature){
+            const selectedClone = feature.clone();
+            const geoType = selectedClone.getGeometry().getType();
+            if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
+                const selectiongeometry = selectedClone.getGeometry();
+                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
+                const featCoords = JSON.parse(geojsonStr).coordinates;
+                if(geoType === 'Polygon'){
+                    if(pass === 1){
+                        featuresOne.push(turf.polygon(featCoords));
                     }
-                    else if(geoType === 'MultiPolygon'){
-                        for (let e in featCoords) {
-                            if(featCoords.hasOwnProperty(e)){
-                                if(pass === 1){
-                                    featuresOne.push(turf.polygon(featCoords[e]));
-                                }
-                                else{
-                                    featuresTwo.push(turf.polygon(featCoords[e]));
-                                }
-                            }
-                        }
+                    else{
+                        featuresTwo.push(turf.polygon(featCoords));
                     }
-                    else if(geoType === 'Circle'){
-                        const center = fixedselectgeometry.getCenter();
-                        const radius = fixedselectgeometry.getRadius();
-                        const edgeCoordinate = [center[0] + radius, center[1]];
-                        let groundRadius = ol.sphere.getDistance(
-                            ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
-                            ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
-                        );
-                        groundRadius = groundRadius/1000;
-                        if(pass === 1){
-                            featuresOne.push(getWGS84CirclePoly(center,groundRadius));
-                        }
-                        else{
-                            featuresTwo.push(getWGS84CirclePoly(center,groundRadius));
-                        }
-                    }
-                    pass++;
                 }
-            }
-        });
-        for (let i in featuresOne) {
-            if(featuresOne.hasOwnProperty(i)){
-                for (let e in featuresTwo) {
-                    if(featuresTwo.hasOwnProperty(e)){
-                        const tempPoly = turf.intersect(featuresOne[i], featuresTwo[e]);
-                        if(tempPoly){
-                            if(intersection){
-                                intersection = turf.union(intersection,tempPoly);
+                else if(geoType === 'MultiPolygon'){
+                    for (let e in featCoords) {
+                        if(featCoords.hasOwnProperty(e)){
+                            if(pass === 1){
+                                featuresOne.push(turf.polygon(featCoords[e]));
                             }
                             else{
-                                intersection = tempPoly;
+                                featuresTwo.push(turf.polygon(featCoords[e]));
                             }
+                        }
+                    }
+                }
+                else if(geoType === 'Circle'){
+                    const center = fixedselectgeometry.getCenter();
+                    const radius = fixedselectgeometry.getRadius();
+                    const edgeCoordinate = [center[0] + radius, center[1]];
+                    let groundRadius = ol.sphere.getDistance(
+                        ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                        ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                    );
+                    groundRadius = groundRadius/1000;
+                    if(pass === 1){
+                        featuresOne.push(getWGS84CirclePoly(center,groundRadius));
+                    }
+                    else{
+                        featuresTwo.push(getWGS84CirclePoly(center,groundRadius));
+                    }
+                }
+                pass++;
+            }
+        }
+    });
+    for (let i in featuresOne) {
+        if(featuresOne.hasOwnProperty(i)){
+            for (let e in featuresTwo) {
+                if(featuresTwo.hasOwnProperty(e)){
+                    const tempPoly = turf.intersect(featuresOne[i], featuresTwo[e]);
+                    if(tempPoly){
+                        if(intersection){
+                            intersection = turf.union(intersection,tempPoly);
+                        }
+                        else{
+                            intersection = tempPoly;
                         }
                     }
                 }
             }
         }
-        if(intersection){
-            const interpoly = geoJSONFormat.readFeature(intersection);
-            interpoly.getGeometry().transform(wgs84Projection,mapProjection);
-            selectsource.addFeature(interpoly);
-        }
-        else{
-            alert('The two selected shapes do not intersect.');
-        }
+    }
+    if(intersection){
+        const interpoly = geoJSONFormat.readFeature(intersection);
+        interpoly.getGeometry().transform(wgs84Projection,mapProjection);
+        selectsource.addFeature(interpoly);
     }
     else{
-        alert('You must have two polygons or circles, and only two polygons or circles, selected in your Shapes layer to find the intersect.');
+        alert('The selected shapes do not intersect');
     }
 }
 
@@ -1241,61 +1225,48 @@ function createPolysFromPolyArr(polyArr, selected){
 }
 
 function createPolyUnion(){
-    let shapeCount = 0;
+    const features = [];
+    const geoJSONFormat = new ol.format.GeoJSON();
     selectInteraction.getFeatures().forEach(function(feature){
-        const selectedClone = feature.clone();
-        const geoType = selectedClone.getGeometry().getType();
-        if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
-            shapeCount++;
+        if(feature){
+            const selectedClone = feature.clone();
+            const geoType = selectedClone.getGeometry().getType();
+            const selectiongeometry = selectedClone.getGeometry();
+            const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+            const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+            const featCoords = JSON.parse(geojsonStr).coordinates;
+            if(geoType === 'Polygon'){
+                features.push(turf.polygon(featCoords));
+            }
+            else if(geoType === 'MultiPolygon'){
+                features.push(turf.multiPolygon(featCoords));
+            }
+            else if(geoType === 'Circle'){
+                const center = fixedselectgeometry.getCenter();
+                const radius = fixedselectgeometry.getRadius();
+                const edgeCoordinate = [center[0] + radius, center[1]];
+                let groundRadius = ol.sphere.getDistance(
+                    ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                    ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                );
+                groundRadius = groundRadius/1000;
+                features.push(getWGS84CirclePoly(center,groundRadius));
+            }
         }
     });
-    if(shapeCount > 1){
-        const features = [];
-        const geoJSONFormat = new ol.format.GeoJSON();
-        selectInteraction.getFeatures().forEach(function(feature){
-            if(feature){
-                const selectedClone = feature.clone();
-                const geoType = selectedClone.getGeometry().getType();
-                const selectiongeometry = selectedClone.getGeometry();
-                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
-                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                const featCoords = JSON.parse(geojsonStr).coordinates;
-                if(geoType === 'Polygon'){
-                    features.push(turf.polygon(featCoords));
-                }
-                else if(geoType === 'MultiPolygon'){
-                    features.push(turf.multiPolygon(featCoords));
-                }
-                else if(geoType === 'Circle'){
-                    const center = fixedselectgeometry.getCenter();
-                    const radius = fixedselectgeometry.getRadius();
-                    const edgeCoordinate = [center[0] + radius, center[1]];
-                    let groundRadius = ol.sphere.getDistance(
-                        ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
-                        ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
-                    );
-                    groundRadius = groundRadius/1000;
-                    features.push(getWGS84CirclePoly(center,groundRadius));
-                }
-            }
-        });
-        let union = turf.union(features[0], features[1]);
-        for (let f in features){
-            if(features.hasOwnProperty(f) && f > 1){
-                union = turf.union(union,features[f]);
-            }
-        }
-        if(union){
-            deleteSelections();
-            const unionpoly = geoJSONFormat.readFeature(union);
-            unionpoly.getGeometry().transform(wgs84Projection,mapProjection);
-            selectsource.addFeature(unionpoly);
-            document.getElementById("selectlayerselect").value = 'select';
-            setActiveLayer();
+    let union = turf.union(features[0], features[1]);
+    for (let f in features){
+        if(features.hasOwnProperty(f) && f > 1){
+            union = turf.union(union,features[f]);
         }
     }
-    else{
-        alert('You must have at least two polygons or circles selected in your Shapes layer to find the union.');
+    if(union){
+        deleteSelections();
+        const unionpoly = geoJSONFormat.readFeature(union);
+        unionpoly.getGeometry().transform(wgs84Projection,mapProjection);
+        selectsource.addFeature(unionpoly);
+        document.getElementById("selectlayerselect").value = 'select';
+        setActiveLayer();
     }
 }
 
@@ -1402,6 +1373,8 @@ function displayVectorizeRasterByGridTargetPolygon(){
     rasterAnalysisInteraction.getFeatures().push(newPoly);
     document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").style.display = "none";
     document.getElementById("vectorizeRasterByGridTargetPolyHideButton").style.display = "block";
+    document.getElementById("gridRasterVectorizeButton").disabled = false;
+    document.getElementById("gridRasterVectorizeWarning").style.display = "none";
 }
 
 function downloadShapesLayer(){
@@ -1899,6 +1872,8 @@ function hideVectorizeRasterByGridTargetPolygon(){
     rasterAnalysisInteraction.getFeatures().clear();
     document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").style.display = "block";
     document.getElementById("vectorizeRasterByGridTargetPolyHideButton").style.display = "none";
+    document.getElementById("gridRasterVectorizeButton").disabled = true;
+    document.getElementById("gridRasterVectorizeWarning").style.display = "block";
 }
 
 function lazyLoadPoints(index,callback){
@@ -2775,6 +2750,52 @@ function processToggleSelectedChange(){
 
 function processVectorInteraction(){
     if(!spatialModuleInitialising){
+        let featureCount = 0;
+        let polyCount = 0;
+        selectInteraction.getFeatures().forEach(function(feature){
+            selectedClone = feature.clone();
+            const geoType = selectedClone.getGeometry().getType();
+            if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
+                polyCount++;
+            }
+            featureCount++;
+        });
+        if(polyCount === 1 && rasterLayersLoaded){
+            document.getElementById("dataRasterVectorizeButton").disabled = false;
+            document.getElementById("dataRasterVectorizeWarning").style.display = "none";
+        }
+        else{
+            document.getElementById("dataRasterVectorizeButton").disabled = true;
+            document.getElementById("dataRasterVectorizeWarning").style.display = "block";
+        }
+        if(featureCount >= 1){
+            document.getElementById("bufferPolyButton").disabled = false;
+            document.getElementById("bufferPolyWarning").style.display = "none";
+        }
+        else{
+            document.getElementById("bufferPolyButton").disabled = true;
+            document.getElementById("bufferPolyWarning").style.display = "block";
+        }
+        if(polyCount === 2){
+            document.getElementById("differencePolyButton").disabled = false;
+            document.getElementById("intersectPolyButton").disabled = false;
+            document.getElementById("differencePolyWarning").style.display = "none";
+            document.getElementById("intersectPolyWarning").style.display = "none";
+        }
+        else{
+            document.getElementById("differencePolyButton").disabled = true;
+            document.getElementById("intersectPolyButton").disabled = true;
+            document.getElementById("differencePolyWarning").style.display = "block";
+            document.getElementById("intersectPolyWarning").style.display = "block";
+        }
+        if(polyCount >= 2){
+            document.getElementById("unionPolyButton").disabled = false;
+            document.getElementById("unionPolyWarning").style.display = "none";
+        }
+        else{
+            document.getElementById("unionPolyButton").disabled = true;
+            document.getElementById("unionPolyWarning").style.display = "block";
+        }
         if(!INPUTWINDOWMODE){
             setSpatialParamBox();
             getGeographyParams();
@@ -2819,8 +2840,13 @@ function removeRasterLayerFromTargetList(layerId){
     const index = rasterLayersArr.indexOf(layerId);
     rasterLayersArr.splice(index,1);
     if(rasterLayersArr.length === 0){
-        document.getElementById("rastertoolspanel").style.display = "none";
-        document.getElementById("rastertoolstab").style.display = "none";
+        rasterLayersLoaded = false;
+        hideVectorizeRasterByGridTargetPolygon();
+        document.getElementById("dataRasterVectorizeButton").disabled = true;
+        document.getElementById("gridRasterVectorizeButton").disabled = true;
+        document.getElementById("vectorizeRasterByGridTargetPolyDisplayButton").disabled = true;
+        document.getElementById("dataRasterVectorizeWarning").style.display = "block";
+        document.getElementById("gridRasterVectorizeWarning").style.display = "block";
     }
 }
 
@@ -3150,14 +3176,18 @@ function setRecordsTab(){
     if(queryRecCnt > 0){
         document.getElementById("recordsHeader").style.display = "block";
         document.getElementById("recordstab").style.display = "block";
-        document.getElementById("pointToolsNoneDiv").style.display = "none";
-        document.getElementById("pointToolsDiv").style.display = "block";
+        document.getElementById("concavePolyButton").disabled = false;
+        document.getElementById("convexPolyButton").disabled = false;
+        document.getElementById("concavePolyNoPoints").style.display = "none";
+        document.getElementById("convexPolyNoPoints").style.display = "none";
     }
     else{
         document.getElementById("recordsHeader").style.display = "none";
         document.getElementById("recordstab").style.display = "none";
-        document.getElementById("pointToolsNoneDiv").style.display = "block";
-        document.getElementById("pointToolsDiv").style.display = "none";
+        document.getElementById("concavePolyButton").disabled = true;
+        document.getElementById("convexPolyButton").disabled = true;
+        document.getElementById("concavePolyNoPoints").style.display = "block";
+        document.getElementById("convexPolyNoPoints").style.display = "block";
     }
 }
 
@@ -3420,68 +3450,79 @@ function toggleUserLayerVisibility(id,name,visible){
 }
 
 function vectorizeRasterByData(){
-    showWorking();
-    setTimeout(function() {
-        const turfFeatureArr = [];
-        const targetRaster = document.getElementById("targetrasterselect").value;
-        const valLow = document.getElementById("vectorizeRasterByDataValueLow").value;
-        const valHigh = document.getElementById("vectorizeRasterByDataValueHigh").value;
-        if(targetRaster === ''){
-            alert("Please select a target raster layer.");
-            hideWorking();
-        }
-        else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
-            alert("Please enter high and low numbers for the value range.");
-            hideWorking();
-        }
-        else{
-            const geoJSONFormat = new ol.format.GeoJSON();
-            const dataIndex = targetRaster + 'Data';
-            const dataObj = layersObj[dataIndex];
-            const box = [dataObj['bbox'][0],dataObj['bbox'][1] - (dataObj['bbox'][3] - dataObj['bbox'][1]), dataObj['bbox'][2], dataObj['bbox'][1]];
-            dataObj['data'].forEach(function(item, index) {
-                if(Number(item) >= Number(valLow) && Number(item) <= Number(valHigh)){
-                    const xyArr = getRasterXYFromDataIndex(index,dataObj['imageWidth']);
-                    const lat = box[3] - (((box[3] - box[1]) / dataObj['imageHeight']) * xyArr[1]);
-                    const long = box[0] + (((box[2] - box[0]) / dataObj['imageWidth']) * xyArr[0]);
-                    turfFeatureArr.push(turf.point([long,lat]));
+    let selectedClone = null;
+    const turfFeatureArr = [];
+    const targetRaster = document.getElementById("targetrasterselect").value;
+    const valLow = document.getElementById("vectorizeRasterByDataValueLow").value;
+    const valHigh = document.getElementById("vectorizeRasterByDataValueHigh").value;
+    if(targetRaster === ''){
+        alert("Please select a target raster layer.");
+    }
+    else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
+        alert("Please enter high and low numbers for the value range.");
+    }
+    else{
+        showWorking();
+        setTimeout(function() {
+            selectInteraction.getFeatures().forEach(function(feature){
+                selectedClone = feature.clone();
+                const geoType = selectedClone.getGeometry().getType();
+                if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
+                    const geoJSONFormat = new ol.format.GeoJSON();
+                    const selectiongeometry = selectedClone.getGeometry();
+                    selectiongeometry.transform(mapProjection, wgs84Projection);
+                    const geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
+                    const featCoords = JSON.parse(geojsonStr).coordinates;
+                    const turfPoly = turf.polygon(featCoords);
+                    const dataIndex = targetRaster + 'Data';
+                    const dataObj = layersObj[dataIndex];
+                    const box = [dataObj['bbox'][0],dataObj['bbox'][1] - (dataObj['bbox'][3] - dataObj['bbox'][1]), dataObj['bbox'][2], dataObj['bbox'][1]];
+                    dataObj['data'].forEach(function(item, index) {
+                        if(Number(item) >= Number(valLow) && Number(item) <= Number(valHigh)){
+                            const xyArr = getRasterXYFromDataIndex(index,dataObj['imageWidth']);
+                            const lat = box[3] - (((box[3] - box[1]) / dataObj['imageHeight']) * xyArr[1]);
+                            const long = box[0] + (((box[2] - box[0]) / dataObj['imageWidth']) * xyArr[0]);
+                            const turfPoint = turf.point([long,lat]);
+                            if(turf.booleanPointInPolygon(turfPoint, turfPoly)){
+                                turfFeatureArr.push(turfPoint);
+                            }
+                        }
+                    });
+                    const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
+                    let concavepoly = '';
+                    try{
+                        const options = {units: 'kilometers', maxEdge: dataObj['resolution']};
+                        concavepoly = turf.concave(turfFeatureCollection,options);
+                    }
+                    catch(e){}
+                    if(concavepoly){
+                        const cnvepoly = geoJSONFormat.readFeature(concavepoly);
+                        cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
+                        selectsource.addFeature(cnvepoly);
+                    }
+                    hideWorking();
                 }
             });
-            const turfFeatureCollection = turf.featureCollection(turfFeatureArr);
-            let concavepoly = '';
-            try{
-                const options = {units: 'kilometers', maxEdge: dataObj['resolution']};
-                concavepoly = turf.concave(turfFeatureCollection,options);
-            }
-            catch(e){}
-            if(concavepoly){
-                const cnvepoly = geoJSONFormat.readFeature(concavepoly);
-                cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
-                selectsource.addFeature(cnvepoly);
-            }
-            hideWorking();
-        }
-    }, 50);
+        }, 50);
+    }
 }
 
 function vectorizeRasterByGrid(){
-    showWorking();
-    setTimeout(function() {
-        let selectedClone;
-        const turfFeatureArr = [];
-        const targetRaster = document.getElementById("targetrasterselect").value;
-        const valLow = document.getElementById("vectorizeRasterByGridValueLow").value;
-        const valHigh = document.getElementById("vectorizeRasterByGridValueHigh").value;
-        const resolutionVal = Number(document.getElementById("vectorizeRasterByGridResolution").value);
-        if(targetRaster === ''){
-            alert("Please select a target raster layer.");
-            hideWorking();
-        }
-        else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
-            alert("Please enter high and low numbers for the value range.");
-            hideWorking();
-        }
-        else{
+    let selectedClone;
+    const turfFeatureArr = [];
+    const targetRaster = document.getElementById("targetrasterselect").value;
+    const valLow = document.getElementById("vectorizeRasterByGridValueLow").value;
+    const valHigh = document.getElementById("vectorizeRasterByGridValueHigh").value;
+    const resolutionVal = Number(document.getElementById("vectorizeRasterByGridResolution").value);
+    if(targetRaster === ''){
+        alert("Please select a target raster layer.");
+    }
+    else if(valLow === '' || isNaN(valLow) || valHigh === '' || isNaN(valHigh)){
+        alert("Please enter high and low numbers for the value range.");
+    }
+    else{
+        showWorking();
+        setTimeout(function() {
             rasterAnalysisInteraction.getFeatures().forEach((feature) => {
                 selectedClone = feature.clone();
             });
@@ -3525,8 +3566,8 @@ function vectorizeRasterByGrid(){
                 hideWorking();
                 alert('Click the Show Target button and then click and drag the Target to the area you would like to vectorize. Then click the Grid-Based Vectorize button.');
             }
-        }
-    }, 50);
+        }, 50);
+    }
 }
 
 function writeMySQLWktString(type,geocoords) {
