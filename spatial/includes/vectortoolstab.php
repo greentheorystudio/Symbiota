@@ -28,19 +28,23 @@
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createBuffers();" >Buffer</button> Creates a buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" /> km around selected features.
+            <button id="bufferPolyButton" data-role="none" onclick="createBuffers();" disabled>Buffer</button> Creates a buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" /> km around selected features.
+            <span id="bufferPolyWarning" class="tool-warning">At least one feature in the Shapes layer needs to be selected to use this tool.</span>
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createPolyDifference();" >Difference</button> Returns a new polygon with the area of the polygon, box, or circle selected first, excluding the area of the polygon, box, or circle selected second.
+            <button id="differencePolyButton" data-role="none" onclick="createPolyDifference();" disabled>Difference</button> Returns a new polygon with the area of the polygon, box, or circle selected first, excluding the area of the polygon, box, or circle selected second.
+            <span id="differencePolyWarning" class="tool-warning">Two features in the Shapes layer need to be selected to use this tool.</span>
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createPolyIntersect();" >Intersect</button> Returns a new polygon with the overlapping area of two selected polygons, boxes, or circles.
+            <button id="intersectPolyButton" data-role="none" onclick="createPolyIntersect();" disabled>Intersect</button> Returns a new polygon with the overlapping area of two selected polygons, boxes, or circles.
+            <span id="intersectPolyWarning" class="tool-warning">Two features in the Shapes layer need to be selected to use this tool.</span>
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createPolyUnion();" >Union</button> Returns a new polygon with the combined area of two or more selected polygons, boxes, or circles. *Note the new polygon will replace all selected shapes.
+            <button id="unionPolyButton" data-role="none" onclick="createPolyUnion();" disabled>Union</button> Returns a new polygon with the combined area of two or more selected polygons, boxes, or circles. *Note the new polygon will replace all selected shapes.
+            <span id="unionPolyWarning" class="tool-warning">At least two features in the Shapes layer need to be selected to use this tool.</span>
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
     </div>
