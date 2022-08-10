@@ -21,7 +21,7 @@
                 <?php include_once(__DIR__ . '/pointvectortoolstab.php'); ?>
             </div>
 
-            <h3 id="rastertoolspanel" class="tabtitle" style="display:none;">Raster Tools</h3>
+            <h3 class="tabtitle">Raster Tools</h3>
             <div id="rastertoolstab" style="width:379px;padding:0;">
                 <?php include_once(__DIR__ . '/rastertoolstab.php'); ?>
             </div>
