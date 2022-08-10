@@ -219,20 +219,20 @@ class TaxonomyEditorManager{
 	{
 		$statusStr = '';
 		$sql = 'UPDATE taxa SET '.
-			'unitind1 = '.($postArr['unitind1']?'"'.Sanitizer::cleanInStr($postArr['unitind1']).'"':'NULL').', '.
-			'unitname1 = "'.Sanitizer::cleanInStr($postArr['unitname1']).'",'.
-			'unitind2 = '.($postArr['unitind2']?'"'.Sanitizer::cleanInStr($postArr['unitind2']).'"':'NULL').', '.
-			'unitname2 = '.($postArr['unitname2']?'"'.Sanitizer::cleanInStr($postArr['unitname2']).'"':'NULL').', '.
-			'unitind3 = '.($postArr['unitind3']?'"'.Sanitizer::cleanInStr($postArr['unitind3']).'"':'NULL').', '.
-			'unitname3 = '.($postArr['unitname3']?'"'.Sanitizer::cleanInStr($postArr['unitname3']).'"':'NULL').', '.
-			'author = '.($postArr['author']?'"'.Sanitizer::cleanInStr($postArr['author']).'"':'NULL').', '.
+			'unitind1 = '.($postArr['unitind1']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind1']).'"':'NULL').', '.
+			'unitname1 = "'.Sanitizer::cleanInStr($this->conn,$postArr['unitname1']).'",'.
+			'unitind2 = '.($postArr['unitind2']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind2']).'"':'NULL').', '.
+			'unitname2 = '.($postArr['unitname2']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname2']).'"':'NULL').', '.
+			'unitind3 = '.($postArr['unitind3']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind3']).'"':'NULL').', '.
+			'unitname3 = '.($postArr['unitname3']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname3']).'"':'NULL').', '.
+			'author = '.($postArr['author']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['author']).'"':'NULL').', '.
 			'rankid = '.(is_numeric($postArr['rankid'])?$postArr['rankid']:'NULL').', '.
-			'source = '.($postArr['source']?'"'.Sanitizer::cleanInStr($postArr['source']).'"':'NULL').', '.
-			'notes = '.($postArr['notes']?'"'.Sanitizer::cleanInStr($postArr['notes']).'"':'NULL').', '.
+			'source = '.($postArr['source']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', '.
+			'notes = '.($postArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', '.
 			'securitystatus = '.(is_numeric($postArr['securitystatus'])?$postArr['securitystatus']:'0').', '.
 			'modifiedUid = '.$GLOBALS['SYMB_UID'].', '.
 			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'",'.
-			'sciname = "'.Sanitizer::cleanInStr(($postArr['unitind1']?$postArr['unitind1']. ' ' : '').
+			'sciname = "'.Sanitizer::cleanInStr($this->conn,($postArr['unitind1']?$postArr['unitind1']. ' ' : '').
 			$postArr['unitname1'].($postArr['unitind2']? ' ' .$postArr['unitind2']: '').
 			($postArr['unitname2']? ' ' .$postArr['unitname2']: '').
 			($postArr['unitind3']? ' ' .$postArr['unitind3']: '').
@@ -272,8 +272,8 @@ class TaxonomyEditorManager{
 	{
 		$statusStr = '';
 		if(is_numeric($tidAccepted)){
-			$sql = 'UPDATE taxstatus SET unacceptabilityReason = '.($unacceptabilityReason?'"'.Sanitizer::cleanInStr($unacceptabilityReason).'"':'NULL').', '.
-				' notes = '.($notes?'"'.Sanitizer::cleanInStr($notes).'"':'NULL').', sortsequence = '.(is_numeric($sortSeq)?$sortSeq:'NULL').
+			$sql = 'UPDATE taxstatus SET unacceptabilityReason = '.($unacceptabilityReason?'"'.Sanitizer::cleanInStr($this->conn,$unacceptabilityReason).'"':'NULL').', '.
+				' notes = '.($notes?'"'.Sanitizer::cleanInStr($this->conn,$notes).'"':'NULL').', sortsequence = '.(is_numeric($sortSeq)?$sortSeq:'NULL').
 				' WHERE (tid = '.$targetTid.') AND (tidaccepted = '.$tidAccepted.')';
 			//echo $sql; exit();
 			if(!$this->conn->query($sql)){
@@ -515,7 +515,7 @@ class TaxonomyEditorManager{
 			$rsFam2 = $this->conn->query($sqlFam2);
 			if(($rFam2 = $rsFam2->fetch_object()) && $newFam !== $rFam2->family) {
 				$sql = 'UPDATE taxstatus ts INNER JOIN taxaenumtree e ON ts.tid = e.tid '.
-					'SET ts.family = '.($newFam?'"'.Sanitizer::cleanInStr($newFam).'"':'Not assigned').' '.
+					'SET ts.family = '.($newFam?'"'.Sanitizer::cleanInStr($this->conn,$newFam).'"':'Not assigned').' '.
 					'WHERE ((ts.tid = '.$tid.') OR (e.parenttid = '.$tid.'))';
 				//echo $sql;
 				$this->conn->query($sql);
@@ -529,24 +529,24 @@ class TaxonomyEditorManager{
         $tid = 0;
 	    $sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
-			'VALUES ("'.Sanitizer::cleanInStr($dataArr['sciname']).'",'.
-			($dataArr['author']?'"'.Sanitizer::cleanInStr($dataArr['author']).'"':'NULL').','.
+			'VALUES ("'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'",'.
+			($dataArr['author']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['author']).'"':'NULL').','.
 			($dataArr['rankid']?:'NULL').','.
-			($dataArr['unitind1']?'"'.Sanitizer::cleanInStr($dataArr['unitind1']).'"':'NULL').',"'.
-			Sanitizer::cleanInStr($dataArr['unitname1']).'",'.
-			($dataArr['unitind2']?'"'.Sanitizer::cleanInStr($dataArr['unitind2']).'"':'NULL').','.
-			($dataArr['unitname2']?'"'.Sanitizer::cleanInStr($dataArr['unitname2']).'"':'NULL').','.
-			($dataArr['unitind3']?'"'.Sanitizer::cleanInStr($dataArr['unitind3']).'"':'NULL').','.
-			($dataArr['unitname3']?'"'.Sanitizer::cleanInStr($dataArr['unitname3']).'"':'NULL').','.
-			($dataArr['source']?'"'.Sanitizer::cleanInStr($dataArr['source']).'"':'NULL').','.
-			($dataArr['notes']?'"'.Sanitizer::cleanInStr($dataArr['notes']).'"':'NULL').','.
-			Sanitizer::cleanInStr($dataArr['securitystatus']).','.
+			($dataArr['unitind1']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitind1']).'"':'NULL').',"'.
+			Sanitizer::cleanInStr($this->conn,$dataArr['unitname1']).'",'.
+			($dataArr['unitind2']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitind2']).'"':'NULL').','.
+			($dataArr['unitname2']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitname2']).'"':'NULL').','.
+			($dataArr['unitind3']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitind3']).'"':'NULL').','.
+			($dataArr['unitname3']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitname3']).'"':'NULL').','.
+			($dataArr['source']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['source']).'"':'NULL').','.
+			($dataArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['notes']).'"':'NULL').','.
+			Sanitizer::cleanInStr($this->conn,$dataArr['securitystatus']).','.
 			$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'")';
 		//echo "sqlTaxa: ".$sqlTaxa;
 		if($this->conn->query($sqlTaxa)){
 			$tid = $this->conn->insert_id;
 		 	$tidAccepted = ($dataArr['acceptstatus']?$tid:$dataArr['tidaccepted']);
-			$parTid = Sanitizer::cleanInStr($dataArr['parenttid']);
+			$parTid = Sanitizer::cleanInStr($this->conn,$dataArr['parenttid']);
 			if(!$parTid && $dataArr['rankid'] <= 10) {
 				$parTid = $tid;
 			}
@@ -573,8 +573,8 @@ class TaxonomyEditorManager{
 				}
 				
 				$sqlTaxStatus = 'INSERT INTO taxstatus(tid, tidaccepted, family, parenttid, unacceptabilityreason) '.
-					'VALUES ('.$tid.','.$tidAccepted.','.($family?'"'.Sanitizer::cleanInStr($family).'"':'NULL').','.
-					$parTid.','.($dataArr['unacceptabilityreason']?'"'.Sanitizer::cleanInStr($dataArr['unacceptabilityreason']).'"':'NULL').') ';
+					'VALUES ('.$tid.','.$tidAccepted.','.($family?'"'.Sanitizer::cleanInStr($this->conn,$family).'"':'NULL').','.
+					$parTid.','.($dataArr['unacceptabilityreason']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unacceptabilityreason']).'"':'NULL').') ';
 				//echo "sqlTaxStatus: ".$sqlTaxStatus;
 				if($this->conn->query($sqlTaxStatus)) {
                     $sqlEnumTree = 'INSERT INTO taxaenumtree(tid,parenttid) '.
@@ -594,7 +594,7 @@ class TaxonomyEditorManager{
                     if($dataArr['securitystatus'] === 1) {
                         $sql1 .= ',o.localitysecurity = 1 ';
                     }
-                    $sql1 .= 'WHERE (o.sciname = "'.Sanitizer::cleanInStr($dataArr['sciname']).'") ';
+                    $sql1 .= 'WHERE (o.sciname = "'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'") ';
                     if(!$this->conn->query($sql1)){
                         echo 'WARNING: Taxon loaded into taxa, but update occurrences with matching name.';
                     }

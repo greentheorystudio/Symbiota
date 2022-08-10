@@ -1,5 +1,4 @@
 <?php
-
 class Person{
 
     private $uid;

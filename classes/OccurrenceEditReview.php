@@ -507,7 +507,7 @@ class OccurrenceEditReview extends Manager{
 
 	public function setEditorFilter($f): void
     {
-		$this->editorFilter = Sanitizer::cleanInStr($f);
+		$this->editorFilter = Sanitizer::cleanInStr($this->conn,$f);
 	}
 	
 	public function setQueryOccidFilter($num): void

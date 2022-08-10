@@ -19,7 +19,7 @@ $refUrl = '';
 if(array_key_exists('refurl',$_REQUEST)){
 	$refGetStr = '';
 	foreach($_GET as $k => $v){
-		if($k !== 'refurl'){
+		if(!is_array($k) && $k !== 'refurl'){
 			if($k === 'attr' && is_array($v)){
 				foreach($v as $v2){
 					$refGetStr .= '&attr[]=' .$v2;
@@ -29,7 +29,7 @@ if(array_key_exists('refurl',$_REQUEST)){
 				$refGetStr .= '&' .$k. '=' .$v;
 			}
 		}
-	}
+    }
 	$refUrl = str_replace('&amp;', '&',htmlspecialchars($_REQUEST['refurl'], ENT_NOQUOTES));
 	if(substr($refUrl,-4) === '.php'){
 		$refUrl .= '?' .substr($refGetStr,1);

@@ -255,28 +255,28 @@ class OccurrenceCollectionProfile {
     {
         $status = 'Edits saved';
 		if($this->collid){
-			$instCode = Sanitizer::cleanInStr($postArr['institutioncode']);
-			$collCode = Sanitizer::cleanInStr($postArr['collectioncode']);
-            $collGUID = Sanitizer::cleanInStr($postArr['collectionid']);
-			$coleName = Sanitizer::cleanInStr($postArr['collectionname']);
-			$fullDesc = Sanitizer::cleanInStr($postArr['fulldescription']);
-			$homepage = Sanitizer::cleanInStr($postArr['homepage']);
-			$contact = Sanitizer::cleanInStr($postArr['contact']);
-			$email = Sanitizer::cleanInStr($postArr['email']);
+			$instCode = Sanitizer::cleanInStr($this->conn,$postArr['institutioncode']);
+			$collCode = Sanitizer::cleanInStr($this->conn,$postArr['collectioncode']);
+            $collGUID = Sanitizer::cleanInStr($this->conn,$postArr['collectionid']);
+			$coleName = Sanitizer::cleanInStr($this->conn,$postArr['collectionname']);
+			$fullDesc = Sanitizer::cleanInStr($this->conn,$postArr['fulldescription']);
+			$homepage = Sanitizer::cleanInStr($this->conn,$postArr['homepage']);
+			$contact = Sanitizer::cleanInStr($this->conn,$postArr['contact']);
+			$email = Sanitizer::cleanInStr($this->conn,$postArr['email']);
 			$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
 			$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:'NULL');
             $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:'NULL');
 			$guidTarget = (array_key_exists('guidtarget',$postArr)?$postArr['guidtarget']:'');
-			$rights = Sanitizer::cleanInStr($postArr['rights']);
-			$rightsHolder = Sanitizer::cleanInStr($postArr['rightsholder']);
-			$accessRights = Sanitizer::cleanInStr($postArr['accessrights']);
+			$rights = Sanitizer::cleanInStr($this->conn,$postArr['rights']);
+			$rightsHolder = Sanitizer::cleanInStr($this->conn,$postArr['rightsholder']);
+			$accessRights = Sanitizer::cleanInStr($this->conn,$postArr['accessrights']);
 			if($_FILES['iconfile']['name']){
 				$icon = $this->addIconImageFile();
 			}
 			else{
-				$icon = Sanitizer::cleanInStr($postArr['iconurl']);
+				$icon = Sanitizer::cleanInStr($this->conn,$postArr['iconurl']);
 			}
-			$indUrl = Sanitizer::cleanInStr($postArr['individualurl']);
+			$indUrl = Sanitizer::cleanInStr($this->conn,$postArr['individualurl']);
 
 			$sql = 'UPDATE omcollections '.
 				'SET institutioncode = "'.$instCode.'",'.
@@ -333,17 +333,17 @@ class OccurrenceCollectionProfile {
 	}
 
     public function submitCollAdd($postArr){
-		$instCode = Sanitizer::cleanInStr($postArr['institutioncode']);
-		$collCode = Sanitizer::cleanInStr($postArr['collectioncode']);
-        $collGUID = Sanitizer::cleanInStr($postArr['collectionid']);
-		$coleName = Sanitizer::cleanInStr($postArr['collectionname']);
-		$fullDesc = Sanitizer::cleanInStr($postArr['fulldescription']);
-		$homepage = Sanitizer::cleanInStr($postArr['homepage']);
-		$contact = Sanitizer::cleanInStr($postArr['contact']);
-		$email = Sanitizer::cleanInStr($postArr['email']);
-		$rights = Sanitizer::cleanInStr($postArr['rights']);
-		$rightsHolder = Sanitizer::cleanInStr($postArr['rightsholder']);
-		$accessRights = Sanitizer::cleanInStr($postArr['accessrights']);
+		$instCode = Sanitizer::cleanInStr($this->conn,$postArr['institutioncode']);
+		$collCode = Sanitizer::cleanInStr($this->conn,$postArr['collectioncode']);
+        $collGUID = Sanitizer::cleanInStr($this->conn,$postArr['collectionid']);
+		$coleName = Sanitizer::cleanInStr($this->conn,$postArr['collectionname']);
+		$fullDesc = Sanitizer::cleanInStr($this->conn,$postArr['fulldescription']);
+		$homepage = Sanitizer::cleanInStr($this->conn,$postArr['homepage']);
+		$contact = Sanitizer::cleanInStr($this->conn,$postArr['contact']);
+		$email = Sanitizer::cleanInStr($this->conn,$postArr['email']);
+		$rights = Sanitizer::cleanInStr($this->conn,$postArr['rights']);
+		$rightsHolder = Sanitizer::cleanInStr($this->conn,$postArr['rightsholder']);
+		$accessRights = Sanitizer::cleanInStr($this->conn,$postArr['accessrights']);
 		$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
         $gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:0);
         $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:0);
@@ -352,15 +352,15 @@ class OccurrenceCollectionProfile {
 			$icon = $this->addIconImageFile();
 		}
 		else{
-			$icon = array_key_exists('iconurl',$postArr)?Sanitizer::cleanInStr($postArr['iconurl']):'';
+			$icon = array_key_exists('iconurl',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['iconurl']):'';
 		}
-		$managementType = array_key_exists('managementtype',$postArr)?Sanitizer::cleanInStr($postArr['managementtype']):'';
-		$collType = array_key_exists('colltype',$postArr)?Sanitizer::cleanInStr($postArr['colltype']):'';
-		$guid = array_key_exists('collectionguid',$postArr)?Sanitizer::cleanInStr($postArr['collectionguid']):'';
+		$managementType = array_key_exists('managementtype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['managementtype']):'';
+		$collType = array_key_exists('colltype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['colltype']):'';
+		$guid = array_key_exists('collectionguid',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['collectionguid']):'';
 		if(!$guid) {
 			$guid = UuidFactory::getUuidV4();
 		}
-		$indUrl = array_key_exists('individualurl',$postArr)?Sanitizer::cleanInStr($postArr['individualurl']):'';
+		$indUrl = array_key_exists('individualurl',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['individualurl']):'';
 		$sortSeq = array_key_exists('sortseq',$postArr)?$postArr['sortseq']:'';
 
 		$sql = 'INSERT INTO omcollections(institutioncode,collectioncode,collectionname,fulldescription,collectionid,homepage,'.
@@ -668,14 +668,14 @@ class OccurrenceCollectionProfile {
 		if($state){
 			$sql = 'SELECT o.county as termstr, Count(*) AS cnt '.
 				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') '.($country?'AND (o.country = "'.Sanitizer::cleanInStr($country).'") ':'').
-				'AND (o.stateprovince = "'.Sanitizer::cleanInStr($state).'") AND (o.county IS NOT NULL) '.
+				'WHERE (o.CollID = '.$this->collid.') '.($country?'AND (o.country = "'.Sanitizer::cleanInStr($this->conn,$country).'") ':'').
+				'AND (o.stateprovince = "'.Sanitizer::cleanInStr($this->conn,$state).'") AND (o.county IS NOT NULL) '.
 				'GROUP BY o.StateProvince, o.county';
 		}
 		elseif($country){
 			$sql = 'SELECT o.stateprovince as termstr, Count(*) AS cnt '.
 				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') AND (o.StateProvince IS NOT NULL) AND (o.country = "'.Sanitizer::cleanInStr($country).'") '.
+				'WHERE (o.CollID = '.$this->collid.') AND (o.StateProvince IS NOT NULL) AND (o.country = "'.Sanitizer::cleanInStr($this->conn,$country).'") '.
 				'GROUP BY o.StateProvince, o.country';
 		}
 		else{

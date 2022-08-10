@@ -42,7 +42,7 @@ class ImageLibraryManager{
         $sql = 'SELECT DISTINCT t.UnitName1 ';
         $sql .= $this->getImageSql();
         if($inTaxon){
-            $taxon = Sanitizer::cleanInStr($inTaxon);
+            $taxon = Sanitizer::cleanInStr($this->conn,$inTaxon);
             $sql .= "AND (ts.Family = '".$taxon."') ";
         }
         $result = $this->conn->query($sql);
@@ -60,7 +60,7 @@ class ImageLibraryManager{
         $tidArr = array();
         $taxon = '';
         if($inTaxon){
-            $taxon = Sanitizer::cleanInStr($inTaxon);
+            $taxon = Sanitizer::cleanInStr($this->conn,$inTaxon);
             if(strpos($taxon, ' ')) {
                 $tidArr = array_keys(OccurrenceManager::getSynonyms($taxon));
             }
