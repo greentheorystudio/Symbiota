@@ -227,6 +227,15 @@ if($clArray['locality']){
             };
             http.send(params);
         }
+
+        function toggleEditSpp(){
+            if(document.getElementById('showimages').checked === true){
+                alert('Please uncheck Display as Images in the Options box and then click the Rebuild List button in order to edit taxa in this checklist.');
+            }
+            else{
+                toggle('editspp');
+            }
+        }
     </script>
     <script type="text/javascript" src="../js/checklists.checklist.js?ver=20220201"></script>
     <?php
@@ -300,21 +309,19 @@ if(!$printMode){
         if($clValue && $isEditor && !$printMode){
             ?>
             <div style="float:right;width:auto;">
-					<span>
-						<a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Checklist Administration">
-							<i style='width:20px;height:20px;' class="fas fa-cog"></i>
-                        </a>
-					</span>
                 <span>
-						<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Manage Linked Voucher">
-							<i style='width:20px;height:20px;' class="fas fa-link"></i>
-                        </a>
-					</span>
-                <span onclick="toggle('editspp');return false;">
-						<a href="#" style="text-decoration: none;" title="Edit Species List">
-							<i style='width:20px;height:20px;' class="fas fa-clipboard-list"></i>
-                        </a>
-					</span>
+                    <a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Checklist Administration">
+                        <i style='width:20px;height:20px;' class="fas fa-cog"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Manage Linked Voucher">
+                        <i style='width:20px;height:20px;' class="fas fa-link"></i>
+                    </a>
+                </span>
+                <span onclick="toggleEditSpp();">
+                    <i style='width:20px;height:20px;' class="fas fa-clipboard-list" title="Edit Species List"></i>
+                </span>
             </div>
             <?php
         }
@@ -423,40 +430,40 @@ if(!$printMode){
                                 </div>
                                 <div>
                                     <div style="margin-left:10px;">
-                                        <input data-role='none' type='checkbox' name='searchcommon' value='1' <?php echo ($searchCommon? 'checked' : '');?> /> Common Names<br/>
-                                        <input data-role='none' type="checkbox" name="searchsynonyms" value="1" <?php echo ($searchSynonyms? 'checked' : '');?> /> Synonyms
+                                        <input type='checkbox' name='searchcommon' value='1' <?php echo ($searchCommon? 'checked' : '');?> /> Common Names<br/>
+                                        <input type="checkbox" name="searchsynonyms" value="1" <?php echo ($searchSynonyms? 'checked' : '');?> /> Synonyms
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <input data-role='none' id='thesfilter' name='thesfilter' type='checkbox' value='1' <?php echo ($thesFilter ? 'checked' : '');?> /> Filter Through Thesaurus
+                                <input id='thesfilter' name='thesfilter' type='checkbox' value='1' <?php echo ($thesFilter ? 'checked' : '');?> /> Filter Through Thesaurus
                             </div>
                             <div>
-                                <input data-role='none' id='showsynonyms' name='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms ? 'checked' : '');?> /> Display Synonyms
+                                <input id='showsynonyms' name='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms ? 'checked' : '');?> /> Display Synonyms
                             </div>
                             <div>
-                                <input data-role='none' id='showcommon' name='showcommon' type='checkbox' value='1' <?php echo ($showCommon ? 'checked' : '');?> /> Common Names
+                                <input id='showcommon' name='showcommon' type='checkbox' value='1' <?php echo ($showCommon ? 'checked' : '');?> /> Common Names
                             </div>
                             <div>
-                                <input data-role='none' name='showimages' type='checkbox' value='1' <?php echo ($showImages? 'checked' : ''); ?> onclick="showImagesChecked(this.form);" />
+                                <input id='showimages' name='showimages' type='checkbox' value='1' <?php echo ($showImages? 'checked' : ''); ?> onclick="showImagesChecked(this.form);" />
                                 Display as Images
                             </div>
                             <?php
                             if($clValue){
                                 ?>
                                 <div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showvouchersdiv">
-                                    <input data-role='none' name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers? 'checked' : ''); ?> />
+                                    <input name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers? 'checked' : ''); ?> />
                                     Notes &amp; Vouchers
                                 </div>
                                 <?php
                             }
                             ?>
                             <div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showauthorsdiv">
-                                <input data-role='none' name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors? 'checked' : ''); ?> />
+                                <input name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors? 'checked' : ''); ?> />
                                 Taxon Authors
                             </div>
                             <div style='' id="showalphataxadiv">
-                                <input data-role='none' name='showalphataxa' type='checkbox' value='1' <?php echo ($showAlphaTaxa? 'checked' : ''); ?> />
+                                <input name='showalphataxa' type='checkbox' value='1' <?php echo ($showAlphaTaxa? 'checked' : ''); ?> />
                                 Show Taxa Alphabetically
                             </div>
                             <div style="margin:5px 0 0 5px;">
@@ -577,7 +584,7 @@ if(!$printMode){
                 <?php
             }
             ?>
-            <div>
+            <div style="min-height: 450px;">
                 <div style="margin:3px;">
                     <b>Families:</b>
                     <?php echo $clManager->getFamilyCount(); ?>
@@ -793,6 +800,7 @@ if(!$printMode){
     }
     ?>
 </div>
+<div style="clear:both;"></div>
 <?php
 if(!$printMode) {
     include(__DIR__ . '/../footer.php');

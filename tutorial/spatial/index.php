@@ -6,8 +6,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Mapping Tutorial</title>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reveal.css" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220811" rel="stylesheet" id="theme" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reveal.css?ver=20220813" rel="stylesheet" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220813" rel="stylesheet" id="theme" />
         <style>
             .reveal .controls {
                 margin-bottom: 75px;
@@ -17,7 +17,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     <body>
         <div class="reveal">
             <div class="slides">
-                <section id="intro" data-background-iframe="../../spatial/index.php" data-background-interactive>
+                <section id="intro" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:10; width:40%;">
                         <div class="tutorial-frame" style="position:relative;left: -50%;">
                             <h2>Mapping tutorial</h2>
@@ -29,10 +29,11 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                 </section>
-                <section id="main-map-window" data-background-iframe="../../spatial/index.php" data-background-interactive>
+                <section id="main-map-window" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:10;">
                         <div class="tutorial-frame" style="position:relative; left: -50%;">
-                            <h2>Main Map Window</h2>
+                            <div class="slide-title">Main Map Window</div>
+                            <div class="index-link"><a href="index.php">Back to index</a></div>
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -43,7 +44,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Side Panel Toggle</h3>
                         <p>Located in the top-left corner of this window. Click on this to open the Side Panel, and then you
-                        can click on the x button in the top-right corner of the Side Panel to close it.</p>
+                        can click on the x button in the top-right corner of the Side Panel to close it. Give it a try!</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Control Panel</h3>
@@ -54,13 +55,13 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h3>Full Screen Toggle</h3>
                         <p>Located in the top-right corner of this window, above the Zoom Slider. Click this button to toggle
                             the full screen display of the map. Once the full screen display has been toggled, the esc key
-                             can be pressed to exit back to normal display.</p>
+                             can be pressed to exit back to normal display.. Give it a try!</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Zoom Slider</h3>
                         <p>Located along the top-right edge of this window, just below the Full Screen Toggle. Click on either
                             the plus or minus buttons at the top and bottom of the slider, or click and drag the handle in the middle,
-                            to adjust the zoom level of the map.</p>
+                            to adjust the zoom level of the map.. Give it a try!</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Location and Distance Panel</h3>
@@ -76,6 +77,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
             Reveal.initialize({
                 controls: true,
                 controlsTutorial: true,
+                controlsBackArrows: 'visible',
                 progress: true,
                 center: true,
                 hash: true,

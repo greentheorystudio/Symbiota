@@ -32,11 +32,12 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   --r-heading3-size: 1.55em;
   --r-heading4-size: 1em;
   --r-code-font: monospace;
-  --r-link-color: #ac3834;
-  --r-link-color-dark: #564826;
-  --r-link-color-hover: #ac3834;
+  --r-link-color: #268bd2;
+  --r-link-color-dark: #1a6091;
+  --r-link-color-hover: #78b9e6;
   --r-selection-background-color: rgba(79, 64, 28, 0.99);
   --r-selection-color: #fff;
+  --r-navigation-color: #ac3834;
 }
 
 .reveal-viewport {
@@ -93,7 +94,6 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   line-height: var(--r-heading-line-height);
   letter-spacing: var(--r-heading-letter-spacing);
   text-transform: var(--r-heading-text-transform);
-  text-shadow: var(--r-heading-text-shadow);
   word-wrap: break-word;
 }
 
@@ -345,7 +345,7 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
  * NAVIGATION CONTROLS
  *********************************************/
 .reveal .controls {
-  color: var(--r-link-color);
+  color: var(--r-navigation-color);
 }
 
 /*********************************************
@@ -381,4 +381,22 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 .slides section {
   width: 100%;
   height: 100%;
+}
+
+.slide-title {
+  color: var(--r-heading-color);
+  font-family: var(--r-heading-font);
+  font-weight: var(--r-heading-font-weight);
+  line-height: var(--r-heading-line-height);
+  letter-spacing: var(--r-heading-letter-spacing);
+  text-transform: var(--r-heading-text-transform);
+  word-wrap: break-word;
+  font-size: var(--r-heading2-size);
+}
+
+.index-link {
+  display:flex;
+  justify-content: flex-end;
+  font-size: 0.8em;
+  margin-top: 10px;
 }
