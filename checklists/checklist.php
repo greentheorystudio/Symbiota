@@ -227,15 +227,6 @@ if($clArray['locality']){
             };
             http.send(params);
         }
-
-        function toggleEditSpp(){
-            if(document.getElementById('showimages').checked === true){
-                alert('Please uncheck Display as Images in the Options box and then click the Rebuild List button in order to edit taxa in this checklist.');
-            }
-            else{
-                toggle('editspp');
-            }
-        }
     </script>
     <script type="text/javascript" src="../js/checklists.checklist.js?ver=20220201"></script>
     <?php
@@ -319,8 +310,8 @@ if(!$printMode){
                         <i style='width:20px;height:20px;' class="fas fa-link"></i>
                     </a>
                 </span>
-                <span onclick="toggleEditSpp();">
-                    <i style='width:20px;height:20px;' class="fas fa-clipboard-list" title="Edit Species List"></i>
+                <span onclick="toggle('editspp');">
+                    <i style='width:20px;height:20px;cursor:pointer;' class="fas fa-clipboard-list" title="Edit Species List"></i>
                 </span>
             </div>
             <?php
@@ -349,7 +340,7 @@ if(!$printMode){
                 </span>
                 <ul id="sddm">
                     <li>
-					    <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
+                        <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
                             <?php
                             $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon. '&thesfilter=' .$thesFilter. '&showsynonyms=' .$showSynonyms;
                             ?>
@@ -683,6 +674,13 @@ if(!$printMode){
                                 if(array_key_exists('vern',$sppArr)){
                                     echo "<div style='font-weight:bold;'>".$sppArr['vern']. '</div>';
                                 }
+                                if($isEditor){
+                                    ?>
+                                    <span class="editspp" style="display:<?php echo ($editMode?'inline':'none'); ?>;">
+                                        <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');"></i>
+                                    </span>
+                                    <?php
+                                }
                                 ?>
                             </div>
                         </div>
@@ -724,18 +722,14 @@ if(!$printMode){
                         if($isEditor){
                             ?>
                             <span class="editspp" style="display:<?php echo ($editMode?'inline':'none'); ?>;">
-									<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');">
-										<i style='width:13px;height:13px;' title='edit details' class="fas fa-edit"></i>
-									</a>
-								</span>
+                                <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');"></i>
+                            </span>
                             <?php
                             if($showVouchers && array_key_exists('dynamicsql',$clArray) && $clArray['dynamicsql']){
                                 ?>
                                 <span class="editspp" style="display:none;">
-										<a href="#" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>','editorwindow');">
-											<i style='width:13px;height:13px;' title='Link Voucher Occurrences' class="fas fa-link"></i>
-										</a>
-									</span>
+                                    <i style='width:13px;height:13px;cursor:pointer;' title='Link Voucher Occurrences' class="fas fa-link" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>','editorwindow');"></i>
+                                </span>
                                 <?php
                             }
                         }
