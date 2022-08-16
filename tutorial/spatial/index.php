@@ -5,6 +5,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Mapping Tutorial</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reveal.css?ver=20220813" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220813" rel="stylesheet" id="theme" />
@@ -42,6 +43,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="index.php#/using-draw-tool">Using the Draw Tool</a></li>
                             <li><a href="index.php#/loading-map-files">Loading Map Data Files Onto the Map</a></li>
                             <li><a href="index.php#/exploring-map-layer-data">Exploring Map Layer Data</a></li>
+                            <li><a href="index.php#/layers-panel">Layers Panel</a></li>
                         </ul>
                     </div>
                 </section>
@@ -173,7 +175,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Settings Panel can be accessed by clicking on the <a href="index.php#/control-panel/4">Settings Toggle</a>
-                            in the Control Panel. This panel includes settings for how loaded occurrence data will be displayed
+                            in the <a href="index.php#/main-map-window/2">Control Panel</a>. This panel includes settings for how loaded occurrence data will be displayed
                             on the map. The panel can be closed by clicking the close icon in the top-right corner. The settings
                             included in the Settings Panel are:</p>
                     </div>
@@ -214,7 +216,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Draw Tool is activated through the <a href="index.php#/control-panel/1">Draw Selector</a>
-                            in the Control Panel. To activate this tool simply click on the drop-down and select the type of
+                            in the <a href="index.php#/main-map-window/2">Control Panel</a>. To activate this tool simply click on the drop-down and select the type of
                             feature that you would like to draw on the map. To deactivate the draw tool, simply click on the drop-down
                             and select None. The Draw Tool can be used to create new polygon, box, circle, line, and point features
                             on the map. Once the Draw Tool has been activated, follow these steps to create each feature type:</p>
@@ -284,7 +286,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>In order to explore the data or select features from any layer loaded onto the map, the layer must
                             first be activated through the <a href="index.php#/control-panel/3">Active Layer Selector</a> in
-                            the Control Panel.</p>
+                            the <a href="index.php#/main-map-window/2">Control Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>When a vector layer is activated on the map, holding the alt key (option key on Mac) and left-clicking
@@ -303,6 +305,47 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>When there are no layers activated on the map, and the <a href="index.php#/control-panel/3">Active Layer Selector</a> is
                             set to None, hovering over any feature or raster data on the map will open an
                             info window displaying the source layer for that feature or data.</p>
+                    </div>
+                </section>
+                <section id="layers-panel" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Layers Panel</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Layers Panel can be accessed by clicking on the <a href="index.php#/control-panel/5">Layers Toggle</a>
+                            in the <a href="index.php#/main-map-window/2">Control Panel</a>. This panel includes settings for how loaded occurrence data will be displayed
+                            on the map. The panel can be closed by clicking the close icon in the top-right corner. The settings
+                            included in the Settings Panel are:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Cluster Points</h3>
+                        <p>When checked (default) occrrence points loaded onto the map are clustered, based on the cluster
+                            distance setting, into clusters of like records. When not checked, all occurrence records are loaded
+                            as individual points on the map, regardless of proximity.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Cluster Distance</h3>
+                        <p>This setting controls the minimum distance threshold (in pixels) between points or clusters which
+                            determine whether they are clustered when Cluster Points is checked.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Display Heat Map</h3>
+                        <p>When checked occrrence points loaded onto the map are displayed as a heat map, based on the Heat Map
+                            Radius and Heat Map Blur settings. When not checked (default) occurrence points are displayed on
+                            the map as individual points, or clusters of like points.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Heat Map Radius</h3>
+                        <p>This setting controls the radius (in pixels) of occurrence points in the heat map display when Display
+                            Heat Map is checked.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Heat Map Blur</h3>
+                        <p>This setting controls the blur size (in pixels) of points in the heat map display when Display
+                            Heat Map is checked.</p>
                     </div>
                 </section>
             </div>
