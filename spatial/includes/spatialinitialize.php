@@ -25,7 +25,7 @@ if($stArrJson){
 
     $(function() {
         let winHeight = $(window).height();
-        winHeight = winHeight + "px";
+        winHeight = (winHeight - 5) + "px";
         document.getElementById('spatialpanel').style.height = winHeight;
 
         $("#sidepanel-accordion").accordion({
@@ -37,7 +37,7 @@ if($stArrJson){
 
     $(window).resize(function(){
         let winHeight = $(window).height();
-        winHeight = winHeight + "px";
+        winHeight = (winHeight - 5) + "px";
         document.getElementById('spatialpanel').style.height = winHeight;
         if(document.getElementById('sidepanel-accordion')){
             $("#sidepanel-accordion").accordion("refresh");

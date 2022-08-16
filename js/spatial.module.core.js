@@ -205,16 +205,16 @@ function buildLayerControllerLayerElement(lArr,active){
     const layerMainBottomDiv = document.createElement('div');
     layerMainBottomDiv.setAttribute("style","font-size:14px;font-weight:bold;width:100%;display:flex;justify-content:flex-end;align-items:flex-end;margin-top:5px;");
     const dataTypeImageDiv = document.createElement('div');
-    dataTypeImageDiv.setAttribute("style","width:30px;height:30px;background-color:black;margin:0 5px;");
-    const dataTypeImage = document.createElement('img');
-    dataTypeImage.setAttribute("style","width:20px;margin-left:5px;margin-top:5px;");
+    dataTypeImageDiv.setAttribute("style","width:30px;height:30px;border:1px solid black;margin:0 5px;display:flex;justify-content:center;align-items:center;");
+    const dataTypeIcon = document.createElement('i');
+    dataTypeIcon.setAttribute("style","height:20px;width:20px;");
     if(lArr['fileType'] === 'tif' || lArr['fileType'] === 'tiff'){
-        dataTypeImage.setAttribute("src","../images/button_wms.png");
+        dataTypeIcon.setAttribute("class","fas fa-border-all");
     }
     else{
-        dataTypeImage.setAttribute("src","../images/button_wfs.png");
+        dataTypeIcon.setAttribute("class","fas fa-vector-square");
     }
-    dataTypeImageDiv.appendChild(dataTypeImage);
+    dataTypeImageDiv.appendChild(dataTypeIcon);
     layerMainBottomDiv.appendChild(dataTypeImageDiv);
     if(lArr['sortable']){
         layerMainBottomDiv.appendChild(buildLayerControllerLayerSortElement(lArr,active));
