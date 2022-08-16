@@ -39,6 +39,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="index.php#/exploring-map">Exploring the Map</a></li>
                             <li><a href="index.php#/control-panel">Control Panel</a></li>
                             <li><a href="index.php#/settings-panel">Settings Panel</a></li>
+                            <li><a href="index.php#/using-draw-tool">Using the Draw Tool</a></li>
+                            <li><a href="index.php#/loading-map-files">Loading Map Data Files Onto the Map</a></li>
                         </ul>
                     </div>
                 </section>
@@ -116,7 +118,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Located on the left side of the top row of the Control Panel. This selector can be used to activate the draw
                             tool for adding new polygon, box, circle, line, and point features on the map. To use this
                             selector, simply click on the drop-down and select the type of feature that you would like to draw on
-                            the map. This will activate the draw tool. To deactivate any draw tool, simply click on the drop-down
+                            the map. This will activate the draw tool. To deactivate the draw tool, simply click on the drop-down
                             and select None. Using the draw tool to create new map features will be discussed in greater depth in
                             a later topic in this tutorial.</p>
                     </div>
@@ -200,6 +202,75 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h3>Heat Map Blur</h3>
                         <p>This setting controls the blur size (in pixels) of points in the heat map display when Display
                             Heat Map is checked.</p>
+                    </div>
+                </section>
+                <section id="using-draw-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Using the Draw Tool</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Draw Tool is activated through the <a href="index.php#/control-panel/1">Draw Selector</a>
+                            in the Control Panel. To activate this tool simply click on the drop-down and select the type of
+                            feature that you would like to draw on the map. To deactivate the draw tool, simply click on the drop-down
+                            and select None. The Draw Tool can be used to create new polygon, box, circle, line, and point features
+                            on the map. Once the Draw Tool has been activated, follow these steps to create each feature type:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Polygon</h3>
+                        <p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create additional
+                            vertices in the polygon. Click on the original vertex to complete the feature.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Box</h3>
+                        <p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the box. Click
+                            again to complete the feature.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Circle</h3>
+                        <p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the circle. Click
+                            again to complete the feature.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Line</h3>
+                        <p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create
+                            additional vertices in the line. Click twice on the last vertex to complete the feature.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Point</h3>
+                        <p>Click once on the map to create features.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>All features created with the Draw Tool are automatically added to the Shapes Layer on the map, which
+                            will be discussed further in a later topic in this tutorial.</p>
+                    </div>
+                </section>
+                <section id="loading-map-files" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Loading Map Data Files Onto the Map</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Map data files can be added to the map from the following file formats: KML (.kml), GeoJSON (.geojson),
+                            Shapefile (.zip), and GeoTIFF (.tif or .tiff).</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>All map data loaded onto the map must be in either WGS84 or NAD83 projections.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To load a map data file onto the map, simply drag and drop the file anywhere over the map window.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Each layer file added to the map is added to both the <a href="index.php#/control-panel/3">Active Layer Selector</a> and
+                            <a href="index.php#/control-panel/1">Layers Panel</a> under the filename of the original map data file.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>No more than 3 vector files (KML, GeoJSON, or Shapefile) and 3 raster files (GeoTIFF) can be loaded
+                            onto the map at any one time.</p>
                     </div>
                 </section>
             </div>
