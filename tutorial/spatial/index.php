@@ -41,6 +41,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="index.php#/settings-panel">Settings Panel</a></li>
                             <li><a href="index.php#/using-draw-tool">Using the Draw Tool</a></li>
                             <li><a href="index.php#/loading-map-files">Loading Map Data Files Onto the Map</a></li>
+                            <li><a href="index.php#/exploring-map-layer-data">Exploring Map Layer Data</a></li>
                         </ul>
                     </div>
                 </section>
@@ -135,7 +136,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Active Layer Selector</h3>
                         <p>Located in the middle row of the Control Panel. When additional layers are loaded onto the map, this
-                            selector is used to activate any loaded layer in order to inspect features or data within that layer,
+                            selector is used to activate any loaded layer in order to inspect data within that layer,
                             select features within that layer, or edit selected features. While this selector is empty when no
                             additional layers are loaded n the map, once they are, it can be used by simply clicking on the drop-down
                             and selecting the layer you would like to activate. The use of this selector is explained more in
@@ -273,6 +274,37 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             onto the map at any one time.</p>
                     </div>
                 </section>
+                <section id="exploring-map-layer-data" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Exploring Map Layer Data</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>In order to explore the data or select features from any layer loaded onto the map, the layer must
+                            first be activated through the <a href="index.php#/control-panel/3">Active Layer Selector</a> in
+                            the Control Panel.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>When a vector layer is activated on the map, holding the alt key (option key on Mac) and left-clicking
+                            on any feature in that layer will open an info window displaying all of the metadata of that feature.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>When a raster layer is activated on the map, holding the alt key (option key on Mac) and left-clicking
+                            anywhere that layer will open an info window displaying the raster value for the point clicked.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>When a vector layer is activated on the map, left-clicking on any feature in that layer will add
+                            it to the Shapes Layer where it can be used for further processing or searching, which will be
+                            discussed further in a later topic in this tutorial.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>When there are no layers activated on the map, and the <a href="index.php#/control-panel/3">Active Layer Selector</a> is
+                            set to None, hovering over any feature or raster data on the map will open an
+                            info window displaying the source layer for that feature or data.</p>
+                    </div>
+                </section>
             </div>
         </div>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/reveal.js"></script>
@@ -284,6 +316,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                 progress: true,
                 center: true,
                 hash: true,
+                history: true,
                 overview: false,
                 disableLayout: true
             });
