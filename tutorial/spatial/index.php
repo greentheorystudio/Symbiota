@@ -36,8 +36,9 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h2>Index of Topics</h2>
                         <ul style="display:flex;flex-flow: column wrap;height:90%;">
                             <li><a href="index.php#/main-map-window">Main Map Window</a></li>
-                            <li><a href="index.php#/controlling-map">Controlling the Map</a></li>
+                            <li><a href="index.php#/exploring-map">Exploring the Map</a></li>
                             <li><a href="index.php#/control-panel">Control Panel</a></li>
+                            <li><a href="index.php#/settings-panel">Settings Panel</a></li>
                         </ul>
                     </div>
                 </section>
@@ -82,10 +83,10 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             both miles and kilometers according to the current zoom level of the map.</p>
                     </div>
                 </section>
-                <section id="controlling-map" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                <section id="exploring-map" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:10;">
                         <div class="tutorial-frame" style="position:relative; left: -50%;">
-                            <div class="slide-title">Controlling the Map</div>
+                            <div class="slide-title">Exploring the Map</div>
                             <div class="index-link"><a href="index.php#/index">Back to index</a></div>
                         </div>
                     </div>
@@ -141,7 +142,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Settings Toggle</h3>
                         <p>Located on the left side of the bottom row of the Control Panel. This toggle can be clicked to open
-                            the Settings Panel. The Settings Panel will be discussed further in a later topic in this tutorial.</p>
+                            the Settings Panel. The Settings Panel will be discussed further in the next topic in this tutorial.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Layers Toggle</h3>
@@ -158,6 +159,47 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h3>Tutorial Toggle</h3>
                         <p>Located on the right side of the bottom row of the Control Panel. This toggle can be clicked to open
                             the Mapping Tutorial.</p>
+                    </div>
+                </section>
+                <section id="settings-panel" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Settings Panel</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Settings Panel can be accessed by clicking on the <a href="index.php#/control-panel/4">Settings Toggle</a>
+                            in the Control Panel. This panel includes settings for how loaded occurrence data will be displayed
+                            on the map. The panel can be closed by clicking the close icon in the top-right corner. The settings
+                            included in the Settings Panel are:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Cluster Points</h3>
+                        <p>When checked (default) occrrence points loaded onto the map are clustered, based on the cluster
+                            distance setting, into clusters of like records. When not checked, all occurrence records are loaded
+                            as individual points on the map, regardless of proximity.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Cluster Distance</h3>
+                        <p>This setting controls the minimum distance threshold (in pixels) between points or clusters which
+                            determine whether they are clustered when Cluster Points is checked.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Display Heat Map</h3>
+                        <p>When checked occrrence points loaded onto the map are displayed as a heat map, based on the Heat Map
+                            Radius and Heat Map Blur settings. When not checked (default) occurrence points are displayed on
+                            the map as individual points, or clusters of like points.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Heat Map Radius</h3>
+                        <p>This setting controls the radius (in pixels) of occurrence points in the heat map display when Display
+                            Heat Map is checked.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Heat Map Blur</h3>
+                        <p>This setting controls the blur size (in pixels) of points in the heat map display when Display
+                            Heat Map is checked.</p>
                     </div>
                 </section>
             </div>
