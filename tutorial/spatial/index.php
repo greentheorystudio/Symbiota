@@ -47,6 +47,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="index.php#/exploring-map-layer-data">Exploring Map Layer Data</a></li>
                             <li><a href="index.php#/layers-panel">Layers Panel</a></li>
                             <li><a href="index.php#/using-query-selector">Using the Query Selector</a></li>
+                            <li><a href="index.php#/working-with-shapes-layer">Working With the Shapes Layer</a></li>
                         </ul>
                     </div>
                 </section>
@@ -487,6 +488,33 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Finally click the Run Query button to actually run the selection query. All features within the target
                             layer that match the criteria you have specified will automatically be added to
                             the <a href="index.php#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                </section>
+                <section id="working-with-shapes-layer" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Working With the Shapes Layer</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Features included in the Shapes Layer can be both edited and selected for further processing, use
+                            in a search, or to be deleted. In order to edit or select features in the Shapes Layer, be sure
+                            that Shapes is selected in the <a href="index.php#/control-panel/3">Active Layer Selector</a> first.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Editing Features</h3>
+                        <p>To edit any feature in the Shapes Layer, hold down the shift key and click on the feature to activate
+                            it for editing. A red dashed bounding box will appear over the feature with arrow and box handles
+                            for scaling, moving, and rotating that feature. While holding down the shift key, click and drag on any of
+                            the arrow or box handles to scale, move, and rotate the feature. While holding down the shift key, click
+                            anywhere outside of the red dashed bounding box to complete editing.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Selecting Features</h3>
+                        <p>Selecting (or deselecting) any feature in the Shapes Layer can be done by simply clicking on the
+                            feature. It is necessary to select features that are to be used as criteria in a occurrence search,
+                            or used with any of the processing tools.</p>
                     </div>
                 </section>
             </div>
