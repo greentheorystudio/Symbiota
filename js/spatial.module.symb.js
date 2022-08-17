@@ -345,7 +345,7 @@ function loadPoints(){
             else{
                 setRecordsTab();
                 if(pointActive){
-                    removeLayerToSelList('pointv');
+                    removeLayerFromSelList('pointv');
                     pointActive = false;
                 }
                 loadPointsEvent = false;

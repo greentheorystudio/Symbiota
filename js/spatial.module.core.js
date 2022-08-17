@@ -203,7 +203,7 @@ function buildLayerControllerLayerElement(lArr,active){
         }
     }
     const layerMainBottomDiv = document.createElement('div');
-    layerMainBottomDiv.setAttribute("style","font-size:14px;font-weight:bold;width:100%;display:flex;justify-content:flex-end;align-items:flex-end;margin-top:5px;");
+    layerMainBottomDiv.setAttribute("style","font-size:14px;font-weight:bold;width:100%;display:flex;justify-content:space-between;align-items:flex-end;margin-top:5px;");
     const dataTypeImageDiv = document.createElement('div');
     dataTypeImageDiv.setAttribute("style","width:30px;height:30px;border:1px solid black;margin:0 5px;display:flex;justify-content:center;align-items:center;");
     const dataTypeIcon = document.createElement('i');
@@ -216,17 +216,19 @@ function buildLayerControllerLayerElement(lArr,active){
     }
     dataTypeImageDiv.appendChild(dataTypeIcon);
     layerMainBottomDiv.appendChild(dataTypeImageDiv);
+    const layerControlsDiv = document.createElement('div');
+    layerControlsDiv.setAttribute("style","display:flex;justify-content:flex-end;align-items:flex-end;");
     if(lArr['sortable']){
-        layerMainBottomDiv.appendChild(buildLayerControllerLayerSortElement(lArr,active));
+        layerControlsDiv.appendChild(buildLayerControllerLayerSortElement(lArr,active));
     }
     if(lArr['symbology']){
-        layerMainBottomDiv.appendChild(buildLayerControllerLayerSymbologyButtonElement(lArr,active));
+        layerControlsDiv.appendChild(buildLayerControllerLayerSymbologyButtonElement(lArr,active));
     }
     if(lArr['query'] && !raster){
-        layerMainBottomDiv.appendChild(buildLayerControllerLayerQueryButtonElement(lArr,active));
+        layerControlsDiv.appendChild(buildLayerControllerLayerQueryButtonElement(lArr,active));
     }
     if(lArr['removable']){
-        layerMainBottomDiv.appendChild(buildLayerControllerLayerRemoveButtonElement(lArr));
+        layerControlsDiv.appendChild(buildLayerControllerLayerRemoveButtonElement(lArr));
     }
     const visibilityCheckbox = document.createElement('input');
     const visibilityCheckboxId = 'layerVisible-' + lArr['id'];
@@ -244,7 +246,8 @@ function buildLayerControllerLayerElement(lArr,active){
     if(active || lArr['id'] === 'select'){
         visibilityCheckbox.checked = true;
     }
-    layerMainBottomDiv.appendChild(visibilityCheckbox);
+    layerControlsDiv.appendChild(visibilityCheckbox);
+    layerMainBottomDiv.appendChild(layerControlsDiv);
     layerMainDiv.appendChild(layerMainBottomDiv);
     layerDiv.appendChild(layerMainDiv);
     return layerDiv;
@@ -2822,7 +2825,7 @@ function removeLayerFromLayerOrderArr(layerId) {
     setLayersOrder();
 }
 
-function removeLayerToSelList(layer){
+function removeLayerFromSelList(layer){
     const selectobject = document.getElementById("selectlayerselect");
     for (let i = 0; i<selectobject.length; i++){
         if(selectobject.options[i].value === layer){
@@ -2949,7 +2952,7 @@ function removeUserLayer(layerID,raster){
         }
     }
     document.getElementById("selectlayerselect").value = 'none';
-    removeLayerToSelList(layerID);
+    removeLayerFromSelList(layerID);
     setActiveLayer();
     toggleLayerDisplayMessage();
 }
@@ -3086,11 +3089,11 @@ function setLayersOrder() {
     const layersObjLength = layersObjKeys.length;
     for(let i in layerOrderArr){
         if(layerOrderArr.hasOwnProperty(i)){
-            const index = (layerOrderArr.indexOf(layerOrderArr[i])) + 1;
+            const index = Number(layerOrderArr.indexOf(layerOrderArr[i])) + 1;
             layersObj[layerOrderArr[i]].setZIndex(index);
             const sortingScrollerId = 'layerOrder-' + layerOrderArr[i];
-            $( ('#' + sortingScrollerId) ).spinner( "value", index );
             $( ('#' + sortingScrollerId) ).spinner( "option", "max", layerOrderArr.length );
+            $( ('#' + sortingScrollerId) ).spinner( "value", index );
         }
     }
     layersObj['base'].setZIndex(0);
@@ -3423,17 +3426,29 @@ function toggleServerLayerVisibility(id,name,file,visible){
             document.getElementById(queryButtonId).style.display = 'none';
         }
         removeServerLayer(id);
-        removeLayerToSelList(id);
+        removeLayerFromSelList(id);
         removeLayerFromLayerOrderArr(id);
     }
 }
 
 function toggleUserLayerVisibility(id,name,visible){
     let layerId = id;
+    const sortingScrollerDivId = 'layerOrderDiv-' + id;
+    const symbologyButtonId = 'layerSymbologyButton-' + id;
+    const queryButtonId = 'layerQueryButton-' + id;
     if(id === 'pointv' && showHeatMap) {
         layerId = 'heat';
     }
     if(visible === true){
+        if(document.getElementById(sortingScrollerDivId)){
+            document.getElementById(sortingScrollerDivId).style.display = 'flex';
+        }
+        if(document.getElementById(symbologyButtonId)){
+            document.getElementById(symbologyButtonId).style.display = 'block';
+        }
+        if(document.getElementById(queryButtonId)){
+            document.getElementById(queryButtonId).style.display = 'block';
+        }
         layersObj[layerId].setVisible(true);
         addLayerToSelList(id,name,false);
         if(!coreLayers.includes(id)){
@@ -3441,8 +3456,17 @@ function toggleUserLayerVisibility(id,name,visible){
         }
     }
     else{
+        if(document.getElementById(sortingScrollerDivId)){
+            document.getElementById(sortingScrollerDivId).style.display = 'none';
+        }
+        if(document.getElementById(symbologyButtonId)){
+            document.getElementById(symbologyButtonId).style.display = 'none';
+        }
+        if(document.getElementById(queryButtonId)){
+            document.getElementById(queryButtonId).style.display = 'none';
+        }
         layersObj[layerId].setVisible(false);
-        removeLayerToSelList(id);
+        removeLayerFromSelList(id);
         if(!coreLayers.includes(id)){
             removeLayerFromLayerOrderArr(id);
         }

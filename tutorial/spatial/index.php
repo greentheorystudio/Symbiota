@@ -9,6 +9,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reveal.css?ver=20220813" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220813" rel="stylesheet" id="theme" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <style>
             .reveal .controls {
                 margin-bottom: 75px;
@@ -316,9 +317,47 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Layers Panel can be accessed by clicking on the <a href="index.php#/control-panel/5">Layers Toggle</a>
-                            in the <a href="index.php#/main-map-window/2">Control Panel</a>. This panel includes settings for how loaded occurrence data will be displayed
-                            on the map. The panel can be closed by clicking the close icon in the top-right corner. The settings
-                            included in the Settings Panel are:</p>
+                            in the <a href="index.php#/main-map-window/2">Control Panel</a>. This panel includes controls for any
+                            layer that has been loaded onto the map as well as layers that have been preconfigured. The types
+                            of controls available for any layer can vary depending on whether the layer is currently loaded on the map,
+                            whether the layer has raster or vector type data, and whether if it is a preconfigured layer
+                            or if it is either the Shapes or Points layers (to be discussed further in a later topic).</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Preconfigured layers may be arranged individually or in groups. If layer groups have been configured, there
+                            will be an expansion bar in the Layers Panel with the layer group name, which can be clicked to view
+                            all of the layers included in the group.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Layers are arranged in the Layers Panel in the following order: the Shapes and Points layers (if loaded
+                            on the map) appear at the top, any layers that you have loaded onto the map appear next, and then
+                            all preconfigured layers and layer groups appear last. If no layers have been loaded on the map,
+                            and no layers have been preconfigured, there will be no layers in the Layers Panel.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Each layer is depicted in a box within the Layers Panel. In the top-left of the box is the layer name,
+                            which corresponds with the layer name in the <a href="index.php#/control-panel/3">Active Layer Selector</a> if
+                            the layer is visible. Any metadata that has been configured with layer, including description, who
+                            provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In
+                            the bottom-left corner of the box will be an icon to indicate whether the layer contains vector or raster
+                            data, with <i style="height:20px;width:20px;" class="fas fa-vector-square"></i> for vector data
+                            and <i style="height:20px;width:20px;" class="fas fa-border-all"></i> for raster data.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Each layer is depicted in a box within the Layers Panel. In the top-left of the box is the layer name,
+                            which corresponds with the layer name in the <a href="index.php#/control-panel/3">Active Layer Selector</a> if
+                            the layer is visible. Any metadata that has been configured with layer, including description, who
+                            provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In
+                            the bottom-left corner of the box will be an icon to indicate whether the layer contains vector or raster
+                            data, with <i style="height:20px;width:20px;" class="fas fa-vector-square"></i> for vector data
+                            and <i style="height:20px;width:20px;" class="fas fa-border-all"></i> for raster data.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>In the far bottom-right corner of each layer box in the Layers Panel is the checkbox to toggle whether
+                            the layer is visible on the map. If this box is checked, and the layer is visible, other controls
+                            will also be availble to the left of this checkbox. Checking this checkbox will show the layer on the
+                            map, and unchecking it will hide the layer. It is important to note that this checkbox simply
+                            toggles the visibility of a layer and does not affect the layer data.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Cluster Points</h3>
