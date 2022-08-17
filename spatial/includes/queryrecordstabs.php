@@ -162,10 +162,10 @@ $obsArr = ($collList['obs'] ?? null);
 <h3 id="recordsHeader" class="tabtitle" style="display:none;">Records and Taxa</h3>
 <div id="recordstab" style="display:none;width:379px;padding:0;">
     <ul>
-        <li><a href='#symbology' onclick='buildCollKey();'>Collections</a></li>
         <li><a href='#queryrecordsdiv' onclick='changeRecordPage(1);'>Records</a></li>
-        <li><a href='#maptaxalist' onclick='buildTaxaKey();'>Taxa</a></li>
         <li style="display:none;" id="selectionstab" ><a href='#selectionslist'>Selections</a></li>
+        <li><a href='#symbology' onclick='buildCollKey();'>Collections</a></li>
+        <li><a href='#maptaxalist' onclick='buildTaxaKey();'>Taxa</a></li>
     </ul>
     <div id="symbology">
         <div style="margin-bottom:15px;">

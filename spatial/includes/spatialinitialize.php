@@ -18,7 +18,7 @@ if($stArrJson){
     }
 }
 ?>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220816" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220817" type="text/javascript"></script>
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     let searchTermsArr = {};

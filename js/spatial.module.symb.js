@@ -324,7 +324,7 @@ function loadPoints(){
                 //cleanSelectionsLayer();
                 setRecordsTab();
                 changeRecordPage(1);
-                $('#recordstab').tabs({active: 1});
+                $('#recordstab').tabs({active: 0});
                 $("#sidepanel-accordion").accordion("option","active",1);
                 //selectInteraction.getFeatures().clear();
                 if(!pointActive){
