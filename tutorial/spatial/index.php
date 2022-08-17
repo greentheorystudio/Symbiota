@@ -48,6 +48,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="index.php#/layers-panel">Layers Panel</a></li>
                             <li><a href="index.php#/using-query-selector">Using the Query Selector</a></li>
                             <li><a href="index.php#/working-with-shapes-layer">Working With the Shapes Layer</a></li>
+                            <li><a href="index.php#/side-panel">Side Panel</a></li>
+                            <li><a href="index.php#/search-criteria-panel">Search Criteria Panel</a></li>
                         </ul>
                     </div>
                 </section>
@@ -65,8 +67,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Side Panel Toggle</h3>
-                        <p>Located in the top-left corner of this window. Click on this to open the Side Panel, and then you
-                        can click on the x button in the top-right corner of the Side Panel to close it.</p>
+                        <p>Located in the top-left corner of this window. Click on this to open the <a href="index.php#/side-panel">Side Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Control Panel</h3>
@@ -230,7 +231,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Settings Panel can be accessed by clicking on the <a href="index.php#/control-panel/4">Settings Toggle</a>
+                        <p>The Settings Panel is accessed by clicking on the <a href="index.php#/control-panel/4">Settings Toggle</a>
                             in the <a href="index.php#/main-map-window/2">Control Panel</a>. This panel includes settings for how loaded occurrence data will be displayed
                             on the map. The panel can be closed by clicking the close icon in the top-right corner. The settings
                             included in the Settings Panel are:</p>
@@ -371,7 +372,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Layers Panel can be accessed by clicking on the <a href="index.php#/control-panel/5">Layers Toggle</a>
+                        <p>The Layers Panel is accessed by clicking on the <a href="index.php#/control-panel/5">Layers Toggle</a>
                             in the <a href="index.php#/main-map-window/2">Control Panel</a>. This panel includes controls for any
                             layer that has been loaded onto the map as well as layers that have been preconfigured. The types
                             of controls available for any layer can vary depending on whether the layer is currently loaded on the map,
@@ -508,13 +509,47 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             it for editing. A red dashed bounding box will appear over the feature with arrow and box handles
                             for scaling, moving, and rotating that feature. While holding down the shift key, click and drag on any of
                             the arrow or box handles to scale, move, and rotate the feature. While holding down the shift key, click
-                            anywhere outside of the red dashed bounding box to complete editing.</p>
+                            anywhere outside of the red dashed bounding box to finish editing.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Selecting Features</h3>
                         <p>Selecting (or deselecting) any feature in the Shapes Layer can be done by simply clicking on the
                             feature. It is necessary to select features that are to be used as criteria in a occurrence search,
                             or used with any of the processing tools.</p>
+                    </div>
+                </section>
+                <section id="side-panel" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Side Panel</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Side Panel is accessed by clicking on the <a href="index.php#/main-map-window/1">Side Panel Toggle</a>. Once
+                            opened, clicking on the close button in the top-right corner of the panel will close it.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Side Panel contains expansion panels for Search Criteria, Records and Taxa (when occurrence records
+                            have been loaded), Vector Tools, and Raster Tools. Clicking on the name of any of the expansion
+                            panels will either expand or contract the panel.</p>
+                    </div>
+                </section>
+                <section id="search-criteria-panel" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Search Criteria Panel</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Search Criteria Panel is accessed by opening the <a href="index.php#/side-panel">Side Panel</a> and
+                            clicking on Search Criteria to expand the panel (if it isn't already expanded).</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Search Criteria Panel has two tabs: Criteria and Collections, each with a Reset button, to reset
+                            the module to its initial state, and a Load Records button to initiate an occurrence search based
+                            on any criteria entered or selected in either tab, and/or features that may be selected in the <a href="index.php#/map-layers/5">Shapes Layer</a>.</p>
                     </div>
                 </section>
             </div>

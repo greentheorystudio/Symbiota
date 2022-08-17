@@ -20,6 +20,13 @@ $obsArr = ($collList['obs'] ?? null);
     <div id="searchcollections">
         <div class="mapinterface">
             <form name="spatialcollsearchform" id="spatialcollsearchform" data-ajax="false" action="index.php" method="get">
+                <div style="height:25px;">
+                    <div style="float:right;">
+                        <button data-role="none" type="button" onclick='window.open("index.php", "_self");' >Reset</button>
+                        <button data-role="none" type="button" onclick='loadPoints();' >Load Records</button>
+                    </div>
+                </div>
+                <div style="margin:5px 0 5px 0;"><hr /></div>
                 <div>
                     <h1 style="margin:0 0 8px 0;font-size:15px;">Collections to be Searched</h1>
                 </div>
@@ -54,8 +61,8 @@ $obsArr = ($collList['obs'] ?? null);
         <div id="spatialcriteriasearchform">
             <div style="height:25px;">
                 <div style="float:right;">
-                    <button data-role="none" type=button id="resetform" name="resetform" onclick='window.open("index.php", "_self");' >Reset</button>
-                    <button data-role="none" id="display2" name="display2" onclick='loadPoints();' >Load Records</button>
+                    <button data-role="none" type="button" onclick='window.open("index.php", "_self");' >Reset</button>
+                    <button data-role="none" type="button" onclick='loadPoints();' >Load Records</button>
                 </div>
             </div>
             <div style="margin:5px 0 5px 0;"><hr /></div>
