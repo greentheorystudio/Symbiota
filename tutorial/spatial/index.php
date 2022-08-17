@@ -549,7 +549,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Search Criteria Panel has two tabs: Criteria and Collections, each with a Reset button, to reset
                             the module to its initial state, and a Load Records button to initiate an occurrence search based
-                            on any criteria entered or selected in either tab, and/or features that may be selected in the <a href="index.php#/map-layers/5">Shapes Layer</a>.</p>
+                            on any criteria entered or selected in either tab, and/or features that may be <a href="index.php#/working-with-shapes-layer/2">selected in the Shapes Layer</a>.</p>
                     </div>
                 </section>
             </div>
