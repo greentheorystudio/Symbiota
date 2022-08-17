@@ -322,7 +322,7 @@ function buildLayerControllerLayerRemoveButtonElement(lArr){
     const removeOnclickVal = "removeUserLayer('" + lArr['id'] + "');";
     removeButton.setAttribute("type","button");
     removeButton.setAttribute("style","margin:0 5px;padding:2px;height:25px;width:25px;");
-    removeButton.setAttribute("title","Remove layer");
+    removeButton.setAttribute("title","Delete Layer");
     removeButton.setAttribute("onclick",removeOnclickVal);
     const removeIcon = document.createElement('i');
     removeIcon.setAttribute("style","height:15px;width:15px;");
@@ -2165,7 +2165,7 @@ function primeLayerQuerySelectorFields(layerId) {
         });
         const blankSelectorOption = document.createElement('option');
         blankSelectorOption.setAttribute("value","");
-        blankSelectorOption.innerHTML = 'Select data point';
+        blankSelectorOption.innerHTML = 'Select attribute';
         fieldSelector.appendChild(blankSelectorOption);
         for(let f in fieldArr){
             if(fieldArr.hasOwnProperty(f)){

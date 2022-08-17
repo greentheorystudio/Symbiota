@@ -39,12 +39,14 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <ul style="display:flex;flex-flow: column wrap;height:90%;">
                             <li><a href="index.php#/main-map-window">Main Map Window</a></li>
                             <li><a href="index.php#/exploring-map">Exploring the Map</a></li>
+                            <li><a href="index.php#/map-layers">Map Layers</a></li>
                             <li><a href="index.php#/control-panel">Control Panel</a></li>
                             <li><a href="index.php#/settings-panel">Settings Panel</a></li>
                             <li><a href="index.php#/using-draw-tool">Using the Draw Tool</a></li>
                             <li><a href="index.php#/loading-map-files">Loading Map Data Files Onto the Map</a></li>
                             <li><a href="index.php#/exploring-map-layer-data">Exploring Map Layer Data</a></li>
                             <li><a href="index.php#/layers-panel">Layers Panel</a></li>
+                            <li><a href="index.php#/using-query-selector">Using the Query Selector</a></li>
                         </ul>
                     </div>
                 </section>
@@ -105,6 +107,58 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h3>Pan</h3>
                         <p>To pan the map in any direction, simply click and drag on any area of the map to move it in the
                             direction you wish.</p>
+                    </div>
+                </section>
+                <section id="map-layers" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Map Layers</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The map initially loads without any additional layers included. As layers get added to the map, they
+                            are added in a stacking fashion, much like sheets being stacked on a pile of paper.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Additional layers of two data types can be optionally loaded onto the map: <b>vector</b> layers can
+                            be added, which include data based on discrete features (points, lines, or polygons), that can
+                            have any number of data attributes associated with them; and <b>raster</b> layers can be added, which
+                            include data arranged in a grid with each grid cell (or pixel) associated with a single data value.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>While there are tools for analyzing both raster and vector data, only vector data can be used as
+                            search criteria for occurrence records. Raster data can be used however to create vector features
+                            based on a value, or value range.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Each additional layer loaded onto the map can be interacted with individually. For most layers interaction
+                            is limited to exploring the data they contain, whether it be viewing the data attributes of specific
+                            features within a vector layer, or viewing the data value at a specific point in a raster layer.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>There are two additional layers that are added automatically to the map, and allow for a greater
+                            amount of interaction. These two layers are relied upon for creating, editing, and using vector data
+                            to search for occurrence records, and to further analyze points assocated with occurrence records
+                            returned from a search. Both layers will be introduced here, but will be discussed in greater depth
+                            in further topics in this tutorial:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Shapes Layer</h3>
+                        <p>The Shapes Layer is a vector layer that is automatically added to the map when new features are created
+                            using the <a href="index.php#/using-draw-tool">Draw Tool</a> (to be discussed in a later topic), or vector features are selected from an
+                            additional layer added to the map. Features included in the Shapes Layer can be edited, selected, deleted,
+                            processed further using the Vector Tools, or used to search for occurrence records. The contents of
+                            the Shapes Layer can also be downloaded in multiple geospatial formats for further use.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Points Layer</h3>
+                        <p>The Points Layer is a vector layer that is automatically added to the map when occurrence records
+                            are loaded from a search. The point features included in this layer can be rendered as individual
+                            points, clustered points, or as a heat map. Additionally they allow for a greater degree of symbology
+                            options based on the collections and taxonomy of the associated occurrence data. Point features in
+                            this layer can be individually selected, and downloads can be prepared of either the entire dataset,
+                            or a selected subset, in a variety of export formats.</p>
                     </div>
                 </section>
                 <section id="control-panel" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
@@ -247,7 +301,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Click once on the map to create features.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>All features created with the Draw Tool are automatically added to the Shapes Layer on the map, which
+                        <p>All features created with the Draw Tool are automatically added to the <a href="index.php#/map-layers/5">Shapes Layer</a> on the map, which
                             will be discussed further in a later topic in this tutorial.</p>
                     </div>
                 </section>
@@ -299,7 +353,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>When a vector layer is activated on the map, left-clicking on any feature in that layer will add
-                            it to the Shapes Layer where it can be used for further processing or searching, which will be
+                            it to the <a href="index.php#/map-layers/5">Shapes Layer</a> where it can be used for further processing or searching, which will be
                             discussed further in a later topic in this tutorial.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -321,7 +375,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             layer that has been loaded onto the map as well as layers that have been preconfigured. The types
                             of controls available for any layer can vary depending on whether the layer is currently loaded on the map,
                             whether the layer has raster or vector type data, and whether if it is a preconfigured layer
-                            or if it is either the Shapes or Points layers (to be discussed further in a later topic).</p>
+                            or if it is either the <a href="index.php#/map-layers/5">Shapes</a> or <a href="index.php#/map-layers/6">Points</a> Layers (to be discussed further in a later topic).</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>Preconfigured layers may be arranged individually or in groups. If layer groups have been configured, there
@@ -329,7 +383,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             all of the layers included in the group.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>Layers are arranged in the Layers Panel in the following order: the Shapes and Points layers (if loaded
+                        <p>Layers are arranged in the Layers Panel in the following order: the <a href="index.php#/map-layers/5">Shapes</a> and <a href="index.php#/map-layers/6">Points</a> Layers (if loaded
                             on the map) appear at the top, any layers that you have loaded onto the map appear next, and then
                             all preconfigured layers and layer groups appear last. If no layers have been loaded on the map,
                             and no layers have been preconfigured, there will be no layers in the Layers Panel.</p>
@@ -369,21 +423,21 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Delete Layer Button</h3>
-                        <p><b>Available for the Shapes and Points layers and any layers that you have loaded onto the map, both
+                        <p><b>Available for the <a href="index.php#/map-layers/5">Shapes</a> and <a href="index.php#/map-layers/6">Points</a> Layers and any layers that you have loaded onto the map, both
                             when visible and hidden.</b> Clicking this button will completely remove the layer, and all of its data,
-                            from the map. If this layer is the Shapes layer, this means that all features included in that layer
-                            will be deleted. If this layer is the Points layer, this means that all search results will be
+                            from the map. If this layer is the <a href="index.php#/map-layers/5">Shapes Layer</a>, this means that all features included in that layer
+                            will be deleted. If this layer is the <a href="index.php#/map-layers/6">Points Layer</a>, this means that all search results will be
                             removed from the map and the Records Panel. Clicing this button cannot be undone.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Query Selector Toggle Button</h3>
                         <p><b>Available for vector layers when visible.</b> Clicking this will close the Layers Panel and open
                             the Query Selector for the layer. The Query Selector allows you to select features within a given
-                            layer based on attribute values and will be discussed further in a later topic.</p>
+                            layer based on their attribute values and will be discussed further in a later topic.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Symbology Toggle Button</h3>
-                        <p><b>Available for all layers, except the Shapes and Points Layers, when visible.</b> Clicking this
+                        <p><b>Available for all layers, except the <a href="index.php#/map-layers/5">Shapes</a> and <a href="index.php#/map-layers/6">Points</a> Layers, when visible.</b> Clicking this
                             button will open and close the layer's symbology settings, where you can adjust how the layer is
                             symbolized on the map. For vector layers, these settings include: border color, fill color, border
                             width, point radius (for point features), and opacity. To adjust border color and fill color, simply
@@ -394,7 +448,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Order Adjuster</h3>
-                        <p><b>Available for all layers, except the Shapes and Points Layers, when visible.</b> This will indicate,
+                        <p><b>Available for all layers, except the <a href="index.php#/map-layers/5">Shapes</a> and <a href="index.php#/map-layers/6">Points</a> Layers, when visible.</b> This will indicate,
                             and allow you to adjust, the order in which the layer is located within the stack of layers currently
                             visible on the map. As layers are added to the map, they are added over previously added layers and
                             have incrementally higher order numbers in the stack of layers. Layers with lower order numbers apeear
@@ -403,23 +457,36 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             on the map.</p>
                     </div>
                 </section>
-                <section id="query-selector" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                <section id="using-query-selector" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:10;">
                         <div class="tutorial-frame" style="position:relative; left: -50%;">
-                            <div class="slide-title">Query Selector</div>
+                            <div class="slide-title">Using the Query Selector</div>
                             <div class="index-link"><a href="index.php#/index">Back to index</a></div>
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>Within the Query Selector, the Select attribute drop-down contains
-                            all of the attributes applied to features within that layer. Select the attribute you would like to
-                            use to base your query. Then select the operator in the next drop-down, out of EQUALS, CONTAINS,
-                            GREATER THAN, LESS THAN, and BETWEEN. Both the EQUALS and CONTAINS operators can compare text or
-                            numeric values, but the remaining operators can only compare numeric values. Then enter a value in
-                            the next box, or value range if the BETWEEN operator is selected. Then click the Run Query button
-                            to actually run the query. This will select all features within the layer that match the criteria
-                            you have specified and automatically add them to the Shapes Layer (to be discussed further in the
-                            next topic).</p>
+                        <p>The Query Selector for any layer is accessed by clicking on the <a href="index.php#/layers-panel/8">Query Selector Toggle Button</a>
+                            in the layer's frame in the <a href="index.php#/layers-panel">Layers Panel</a>. This tool allows you to select features within a given
+                            layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Select attribute drop-down contains all of the attributes applied to features within that layer. Select
+                            the attribute you would like to use to base your selection query.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>In the next drop-down select the comparator you would like to use in your query, out of EQUALS, CONTAINS,
+                            GREATER THAN, LESS THAN, and BETWEEN. Both the EQUALS and CONTAINS comparators can compare text or
+                            numeric values, but the remaining comparators can only compare numeric values.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>If the BETWEEN comparator is selected, enter the low and high values in the approprite boxes for the
+                            comparison query. If any other comparator is selected, enter the single value in the remaining box for the
+                            comparison query.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Finally click the Run Query button to actually run the selection query. All features within the target
+                            layer that match the criteria you have specified will automatically be added to
+                            the <a href="index.php#/map-layers/5">Shapes Layer</a>.</p>
                     </div>
                 </section>
             </div>
