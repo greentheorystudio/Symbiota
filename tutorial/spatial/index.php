@@ -50,6 +50,9 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="index.php#/working-with-shapes-layer">Working With the Shapes Layer</a></li>
                             <li><a href="index.php#/side-panel">Side Panel</a></li>
                             <li><a href="index.php#/search-criteria-panel">Search Criteria Panel</a></li>
+                            <li><a href="index.php#/loading-occurrence-records">Loading Occurrence Records</a></li>
+                            <li><a href="index.php#/working-with-points-layer">Working With the Points Layer</a></li>
+                            <li><a href="index.php#/records-taxa-panel">Records and Taxa Panel</a></li>
                         </ul>
                     </div>
                 </section>
@@ -346,15 +349,15 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             the <a href="index.php#/main-map-window/2">Control Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>When a vector layer is activated on the map, holding the alt key (option key on Mac) and left-clicking
+                        <p>When a vector layer is activated on the map, holding the alt key (option key on Mac) and clicking
                             on any feature in that layer will open an info window displaying all of the metadata of that feature.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>When a raster layer is activated on the map, holding the alt key (option key on Mac) and left-clicking
+                        <p>When a raster layer is activated on the map, holding the alt key (option key on Mac) and clicking
                             anywhere that layer will open an info window displaying the raster value for the point clicked.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>When a vector layer is activated on the map, left-clicking on any feature in that layer will add
+                        <p>When a vector layer is activated on the map, clicking on any feature in that layer will add
                             it to the <a href="index.php#/map-layers/5">Shapes Layer</a> where it can be used for further processing or searching, which will be
                             discussed further in a later topic in this tutorial.</p>
                     </div>
@@ -545,6 +548,86 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Search Criteria Panel is accessed by opening the <a href="index.php#/side-panel">Side Panel</a> and
                             clicking on Search Criteria to expand the panel (if it isn't already expanded).</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Search Criteria Panel has two tabs: Criteria and Collections, each with a Reset button, to reset
+                            the module to its initial state, and a Load Records button to initiate an occurrence search based
+                            on any criteria entered or selected in either tab, and/or features that may be <a href="index.php#/working-with-shapes-layer/2">selected in the Shapes Layer</a>.</p>
+                    </div>
+                </section>
+                <section id="loading-occurrence-records" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Loading Occurrence Records</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>A search for occurrence records can be run when at least one polygon, box, or circle feature
+                            is <a href="index.php#/working-with-shapes-layer/2">selected in the Shapes Layer</a>, or search
+                            criteria has been entered in either the Criteria or Collections tabs in
+                            the <a href="index.php#/search-criteria-panell">Search Criteria Panel</a> of
+                            the <a href="index.php#/side-panel">Side Panel</a>, or both.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>If polygon, box, or circle features are <a href="index.php#/working-with-shapes-layer/2">selected in the Shapes Layer</a> the
+                            search will find occurrence records occurring within all selected features.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To run an occurrence search, click the Load Records button in either the Criteria or Collections tabs
+                            in the <a href="index.php#/search-criteria-panell">Search Criteria Panel</a> of
+                            the <a href="index.php#/side-panel">Side Panel</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Occurrence records loaded onto the map are automatically added to the <a href="index.php#/map-layers/6">Points Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>When occurrence records are loaded, the <a href="index.php#/records-taxa-panel">Records and Taxa Panel</a> (to
+                            be discussed in a later topic) becomes available in the <a href="index.php#/side-panel">Side Panel</a> with
+                            tabs showing the collections and taxa represented in the search return, and the occurrence records themselves.</p>
+                    </div>
+                </section>
+                <section id="working-with-points-layer" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Working With the Points Layer</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Occurrence records loaded on the map are automatically added to the Points Layer. In order to work
+                            with occurrence records in the Points Layer, be sure that Points is selected in
+                            the <a href="index.php#/control-panel/3">Active Layer Selector</a> first.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Clusters</h3>
+                        <p>When <a href="index.php#/settings-panel/1">Cluster Points</a> is activated in the <a href="index.php#/settings-panel">Settings Panel</a> (default
+                            setting), occurrence clusters will appear as wider circles on the map with a number indicating the
+                            amount of records included in that cluster. Click on any cluster to zoom further in to see the
+                            individual occurrence records included.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Selecting Records</h3>
+                        <p>Selecting (or deselecting) any occurrence record in the Points Layer can be done by simply clicking on the
+                            individual occurrence record.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Viewing Record Data</h3>
+                        <p>Holding the alt key (option key on Mac) and clicking on any individual occurrence record will open
+                            an info window displaying all of the data for that record.</p>
+                    </div>
+                </section>
+                <section id="records-taxa-panel" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Records and Taxa Panel</div>
+                            <div class="index-link"><a href="index.php#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Records and Taxa Panel becomes available in the <a href="index.php#/side-panel">Side Panel</a> when
+                            occurrence records are loaded. It is accessed by opening the <a href="index.php#/side-panel">Side Panel</a> and
+                            clicking on Records and Taxa to expand the panel (if it isn't already expanded).</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Search Criteria Panel has two tabs: Criteria and Collections, each with a Reset button, to reset
