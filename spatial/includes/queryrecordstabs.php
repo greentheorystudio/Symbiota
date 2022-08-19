@@ -175,7 +175,7 @@ $obsArr = ($collList['obs'] ?? null);
                         <g>
                             <circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
                         </g>
-                    </svg> = Collection
+                    </svg> = Specimen
                 </div>
                 <div style="margin-top:5px;" >
                     <svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
@@ -240,7 +240,7 @@ $obsArr = ($collList['obs'] ?? null);
                         <g>
                             <circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
                         </g>
-                    </svg> = Collection
+                    </svg> = Specimen
                 </div>
                 <div style="margin-top:5px;" >
                     <svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">

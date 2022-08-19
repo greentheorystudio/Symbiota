@@ -723,10 +723,42 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             points on the map according to the collection it represents. To go through each part of this tab:</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Copy Search URL Button</h3>
-                        <p>When the search does not include a complex shape, to the right of the Image Display Button is the Copy Search URL Button <button class="icon-button" title="Copy Search URL"><i style="height:15px;width:15px;" class="fas fa-link"></i></button>. You
-                            can click on this button to copy a url to your computer's clipboard that will load the same search.
-                            This url can be used at any time to quickly reload the same search at a different time.</p>
+                        <h3>Occurrence Symbol Key</h3>
+                        <p>In the top-left corner of the Collections Tab is the Occurrence Symbol Key, which simply shows the
+                            symbols used to distinguish individual records representing specimens, from those representing
+                            observations.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Reset Symbology Button</h3>
+                        <p>In the top-right corner of the Collections Tab is the Reset Symbology Button. Clicking this button
+                            will reset the symbology for all of the occurrence records on the map back to the original, default
+                            state of being symbolized based on the collection they represent and all collections being symbolized
+                            with the same color.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Auto Color Button</h3>
+                        <p>Below the Reset Symbology Button is the Auto Color Button. Clicking this button
+                            will set the symbology for all of the occurrence records on the map to be symbolized based on
+                            the collection they represent, if they are not already, and will assign each collection a random,
+                            unique color for its symbology.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Save Symbology Button</h3>
+                        <p>Below the Auto Color Button is the Save Symbology Button. Clicking this button will generate a png
+                            image file of the collection list in this tab and all of the symbology colors assigned to each
+                            collection.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Collection List</h3>
+                        <p>Below the symbol key and symbology buttons is the Collection List. This list includes all of the
+                            collections represented in the occurrence records returned in the search. If the occurrence records
+                            on the map are being symbolized based on the collection they represent, the colored box to the
+                            left of each collection in the list indicates the color that is being used to represent that
+                            collection's records on the map. Each box can be clicked to open a color picker to select
+                            a different color to represent that collection. Changing the color for any collection immediately sets
+                            the symbology for all of the occurrence records on the map to be symbolized based on
+                            the collection they represent, if they are not already, and updates the symbology to include the
+                            newly selected color.</p>
                     </div>
                 </section>
             </div>
