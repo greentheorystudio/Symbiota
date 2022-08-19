@@ -619,8 +619,12 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Selecting Records</h3>
-                        <p>Selecting (or deselecting) any occurrence record in the Points Layer can be done by simply clicking on the
-                            individual occurrence record.</p>
+                        <p>Selecting or deselecting any occurrence record in the Points Layer can be done by simply clicking on the
+                            individual occurrence record. Selecting occurrence records on the map both adds them to the <a href="#/selections-tab">Selections Tab</a>,
+                            and selects them in the <a href="#/records-tab">Records Tab</a>, in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel">Side Panel</a>. Deselecting occurrence records on the map both removes them from the <a href="#/selections-tab">Selections Tab</a>, and
+                            deselects them in the <a href="#/records-tab">Records Tab</a>, in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel">Side Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Viewing Record Data</h3>
@@ -668,23 +672,23 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>List Display Button</h3>
-                        <p>To the right of the Download Type Selection and Button is the List Display Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. You
+                        <p>To the right of the Download Type Selection and Button is the List Display Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
                             can click on this button to go to the list display for the occurrence records search.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Table Display Button</h3>
-                        <p>To the right of the List Display Button is the Table Display Button <button class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button>. You
-                            can click on this button to go to the table display for the occurrence records search.</p>
+                        <p>To the right of the List Display Button is the Table Display Button <button class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button>. This
+                            can be clicked to go to the table display for the occurrence records search.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Image Display Button</h3>
-                        <p>To the right of the Table Display Button is the Image Display Button <button class="icon-button" title="Image Display"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button>. You
-                            can click on this button to go to the image display for the occurrence records search.</p>
+                        <p>To the right of the Table Display Button is the Image Display Button <button class="icon-button" title="Image Display"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button>. This
+                            can be clicked to go to the image display for the occurrence records search.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Copy Search URL Button</h3>
-                        <p>When the search does not include a complex shape, to the right of the Image Display Button is the Copy Search URL Button <button class="icon-button" title="Copy Search URL"><i style="height:15px;width:15px;" class="fas fa-link"></i></button>. You
-                            can click on this button to copy a url to your computer's clipboard that will load the same search.
+                        <p>When the search does not include a complex shape, to the right of the Image Display Button is the Copy Search URL Button <button class="icon-button" title="Copy Search URL"><i style="height:15px;width:15px;" class="fas fa-link"></i></button>. This
+                            can be clicked to copy a url to your computer's clipboard that will load the same search.
                             This url can be used at any time to quickly reload the same search at a different time.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -700,8 +704,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h3>Select/Deselect All Checkbox</h3>
                         <p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can
                             be used to select and deselect all of the occurrence records in the current table. When selected,
-                            records will be both added to the Selections Tab (to be discussed in a following topic) as well as
-                            selected on the map. Deselecting records will both remove them from the Selections Tab and delselect
+                            records will be both added to the <a href="#/selections-tab">Selections Tab</a> as well as
+                            selected on the map. Deselecting records will both remove them from the <a href="#/selections-tab">Selections Tab</a> and delselect
                             them on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -709,9 +713,10 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Below the Select/Deselect All Checkbox is the Occurrence Record Table displaying a paginated table
                             of the occurrence records returned from the search. There are columns for Catalog Number, Collector,
                             Date, and Scientific Name for each record. In the far left column there is a checkbox to select
-                            and deselect individual records in the table. The text in the Collector column for each record
-                            can be clicked to open a popup window displaying the complete data for that record. Additionally,
-                            the <i style="height:20px;width:20px;" class="fas fa-search-location"></i> icon in the Collector column
+                            and deselect individual records in the table. This will also select or deselect the record on
+                            the map, and add it to, or remove it from, the <a href="#/selections-tab">Selections Tab</a>. The
+                            text in the Collector column for each record can be clicked to open a popup window displaying
+                            the complete data for that record. Additionally, the <i style="height:20px;width:20px;" class="fas fa-search-location"></i> icon in the Collector column
                             can be clicked to pan the map to that record's location on the map and add a temporary marker.
                             If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be
                             clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>
@@ -852,49 +857,29 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Clear Selections Button</h3>
                         <p>Below the Download Type Selection and Button is the Clear Selections Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
-                            can be clicked to deselect all of the currently selected occurrence records.</p>
+                            can be clicked to deselect all of the currently selected occurrence records, removing all records from
+                            this tab and the tab itself, deselecting all occurrence records on the map, and deselecting all
+                            records in the Records Tab.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Table Display Button</h3>
-                        <p>To the right of the List Display Button is the Table Display Button <button class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button>. You
-                            can click on this button to go to the table display for the occurrence records search.</p>
+                        <h3>Zoom to Selections Button</h3>
+                        <p>To the right of the Clear Selections Button is the Zoom to Selections Button. This can be clicked
+                            to automatically zoom and pan the map so that all of the selected records are visible on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Image Display Button</h3>
-                        <p>To the right of the Table Display Button is the Image Display Button <button class="icon-button" title="Image Display"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button>. You
-                            can click on this button to go to the image display for the occurrence records search.</p>
+                        <h3>Show Only Selected Points Checkbox</h3>
+                        <p>This checkbox can be used to limit the occurrence records displayed on the map to only those selected. When checked,
+                            only the selected occurrence records will be displayed on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Copy Search URL Button</h3>
-                        <p>When the search does not include a complex shape, to the right of the Image Display Button is the Copy Search URL Button <button class="icon-button" title="Copy Search URL"><i style="height:15px;width:15px;" class="fas fa-link"></i></button>. You
-                            can click on this button to copy a url to your computer's clipboard that will load the same search.
-                            This url can be used at any time to quickly reload the same search at a different time.</p>
-                    </div>
-                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Pagination and Record Count Bar</h3>
-                        <p>Below the options and display links is the Pagination and Record Count Bar. If more than 100 occurrence
-                            records are returned in a search, the records will be divided into pages of 100 and this bar will
-                            have links to each record page in the top row, and indicate the current page and record range
-                            in the bottom row. If 100 occurrence records or less are returned in a search, this bar will
-                            simply indicate the amount of records returned. This same bar is also displayed at the bottom of
-                            the Records Tab.</p>
-                    </div>
-                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Select/Deselect All Checkbox</h3>
-                        <p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can
-                            be used to select and deselect all of the occurrence records in the current table. When selected,
-                            records will be both added to the Selections Tab (to be discussed in a following topic) as well as
-                            selected on the map. Deselecting records will both remove them from the Selections Tab and delselect
-                            them on the map.</p>
-                    </div>
-                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Occurrence Record Table</h3>
-                        <p>Below the Select/Deselect All Checkbox is the Occurrence Record Table displaying a paginated table
-                            of the occurrence records returned from the search. There are columns for Catalog Number, Collector,
-                            Date, and Scientific Name for each record. In the far left column there is a checkbox to select
-                            and deselect individual records in the table. The text in the Collector column for each record
-                            can be clicked to open a popup window displaying the complete data for that record. Additionally,
-                            the <i style="height:20px;width:20px;" class="fas fa-search-location"></i> icon in the Collector column
+                        <h3>Selected Occurrence Record Table</h3>
+                        <p>Below the Show Only Selected Points Checkbox is the Selected Occurrence Record Table displaying a table
+                            of all of the currently selected occurrence records. There are columns for Catalog Number, Collector,
+                            Date, and Scientific Name for each record. In the far left column there is a checkbox to deselect
+                            individual records in the table, which removes them from this table, deselects them on the map, and
+                            deselects them in the <a href="#/records-tab">Records Tab</a>. The text in the Collector column
+                            for each record can be clicked to open a popup window displaying the complete data for that record.
+                            Additionally, the <i style="height:20px;width:20px;" class="fas fa-search-location"></i> icon in the Collector column
                             can be clicked to pan the map to that record's location on the map and add a temporary marker.
                             If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be
                             clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>
