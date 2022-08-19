@@ -84,6 +84,15 @@
             <div id="mapPngDownloadDiv">
                 <button data-role="none" type="button" onclick='processMapPNGDownload();'>Download Map Image</button>
             </div>
+            <?php
+            if(!$inputWindowMode){
+                ?>
+                <div onclick="openTutorialWindow('../tutorial/spatial/index.php');" title="Open Tutorial Window">
+                    <i style="height:20px;width:20px;cursor:pointer;color:white;" class="far fa-question-circle"></i>
+                </div>
+                <?php
+            }
+            ?>
         </div>
         <div style="clear:both;"></div>
         <?php
