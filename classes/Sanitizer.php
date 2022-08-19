@@ -14,7 +14,7 @@ class Sanitizer {
         $newArray = array();
         foreach($arr as $key => $value){
             if(is_array($value)){
-                $newArray[self::cleanInStr($conn,$key)] = self::cleanInArray($value);
+                $newArray[self::cleanInStr($conn,$key)] = self::cleanInArray($conn,$value);
             }
             else{
                 $newArray[self::cleanInStr($conn,$key)] = self::cleanInStr($conn,$value);
