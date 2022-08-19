@@ -315,14 +315,14 @@ $obsArr = ($collList['obs'] ?? null);
             </div>
         </div>
         <div style="clear:both;height:10px;"></div>
-        <table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;">
+        <table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;width:360px;">
             <thead>
             <tr>
-                <th style="width:15px;"></th>
-                <th>Catalog #</th>
-                <th>Collector</th>
-                <th style="width:40px;">Date</th>
-                <th>Scientific Name</th>
+                <th style="width:10px;"></th>
+                <th style="width:70px;">Catalog #</th>
+                <th style="width:75px;">Collector</th>
+                <th style="width:80px;">Date</th>
+                <th style="width:125px;">Scientific Name</th>
             </tr>
             </thead>
             <tbody id="selectiontbody"></tbody>

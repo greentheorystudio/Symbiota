@@ -703,10 +703,11 @@ function updateSelections(seloccid,infoArr){
     const trid = "tr" + seloccid;
     if(infoArr){
         selcat = infoArr['catalognumber'];
-        const mouseOverLabel = "openRecordInfoBox(" + seloccid + ",'" + infoArr['collector'] + "');";
-        let labelHTML = '<a href="#" onmouseover="' + mouseOverLabel + '" onmouseout="closeRecordInfoBox();" onclick="openIndPopup(' + seloccid + '); return false;">';
+        const onClickLabel = "openRecordInfoBox(" + seloccid + ",'" + infoArr['collector'] + "');";
+        let labelHTML = '<div><a href="#" onclick="openIndPopup(' + seloccid + '); return false;">';
         labelHTML += infoArr['collector'];
-        labelHTML += '</a>';
+        labelHTML += '</a></div>';
+        labelHTML += '<div><i style="height:15px;width:15px;cursor:pointer;" class="fas fa-search-location" title="See Location on Map" onclick="' + onClickLabel + '"></i></div>';
         sellabel = labelHTML;
         sele = infoArr['eventdate'];
         sels = infoArr['sciname'];
@@ -723,16 +724,16 @@ function updateSelections(seloccid,infoArr){
     }
     if(!document.getElementById(divid)){
         trfragment = '';
-        trfragment += '<tr id="sel'+seloccid+'" >';
-        trfragment += '<td>';
+        trfragment += '<tr id="sel'+seloccid+'">';
+        trfragment += '<td style="width:10px;">';
         trfragment += '<input type="checkbox" id="selch'+seloccid+'" name="occid[]" value="'+seloccid+'" onchange="removeSelection(this);" checked />';
         trfragment += '</td>';
-        trfragment += '<td id="selcat'+seloccid+'"  style="width:200px;" >'+selcat+'</td>';
-        trfragment += '<td id="sellabel'+seloccid+'"  style="width:200px;" >';
+        trfragment += '<td id="selcat'+seloccid+'" style="width:70px;">'+selcat+'</td>';
+        trfragment += '<td id="sellabel'+seloccid+'" style="width:75px;"><div style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:2px;">';
         trfragment += sellabel;
-        trfragment += '</td>';
-        trfragment += '<td id="sele'+seloccid+'"  style="width:200px;" >'+sele+'</td>';
-        trfragment += '<td id="sels'+seloccid+'"  style="width:200px;" >'+sels+'</td>';
+        trfragment += '</div></td>';
+        trfragment += '<td id="sele'+seloccid+'" style="width:80px;">'+sele+'</td>';
+        trfragment += '<td id="sels'+seloccid+'" style="width:125px;">'+sels+'</td>';
         trfragment += '</tr>';
         selectionList += trfragment;
     }

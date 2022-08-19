@@ -2143,6 +2143,10 @@ function openRecordInfoBox(id,label){
     const idpos = findRecordClusterPosition(id);
     finderpopupcontent.innerHTML = label;
     finderpopupoverlay.setPosition(idpos);
+    map.getView().setCenter(idpos);
+    setTimeout(function() {
+        closeRecordInfoBox();
+    }, 2000 );
 }
 
 function primeLayerQuerySelectorFields(layerId) {

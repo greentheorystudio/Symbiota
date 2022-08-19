@@ -109,13 +109,13 @@ if($occArr){
 	$recordListHtml .= '<input name="" id="selectallcheck" value="" type="checkbox" onclick="selectAll(this);" '.($allSelected === true? 'checked' : '').' />';
 	$recordListHtml .= 'Select/Deselect All Records';
 	$recordListHtml .= '</div>';
-	$recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;">';
+	$recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;width:360px;">';
 	$recordListHtml .= '<tr>';
 	$recordListHtml .= '<th style="width:10px;"></th>';
-	$recordListHtml .= '<th>Catalog #</th>';
-	$recordListHtml .= '<th>Collector</th>';
-	$recordListHtml .= '<th>Date</th>';
-	$recordListHtml .= '<th>Scientific Name</th>';
+	$recordListHtml .= '<th style="width:70px;">Catalog #</th>';
+	$recordListHtml .= '<th style="width:75px;">Collector</th>';
+	$recordListHtml .= '<th style="width:80px;">Date</th>';
+	$recordListHtml .= '<th style="width:125px;">Scientific Name</th>';
 	$recordListHtml .= '</tr>';
 	$trCnt = 0;
 	foreach($occArr as $occId => $recArr){
@@ -125,16 +125,17 @@ if($occArr){
 		$recordListHtml .= '<td style="width:10px;">';
 		$recordListHtml .= '<input type="checkbox" class="reccheck" id="ch'.$occId.'" name="occid[]" value="'.$occId.'" onchange="processCheckSelection(this);" '.(in_array($occId, $selections, true) ? 'checked' : '').' />';
 		$recordListHtml .= '</td>';
-		$recordListHtml .= '<td id="cat'.$occId.'" >'.wordwrap($recArr['cat'], 7, "<br />\n", true).'</td>';
-		$recordListHtml .= '<td id="label'.$occId.'" >';
-		$recordListHtml .= '<a href="#" onmouseover="openRecordInfoBox('.$occId.','.$infoBoxLabel. ')" onmouseout="closeRecordInfoBox();" onclick="openIndPopup(' .$occId.'); return false;">'.($recArr['c']?wordwrap($recArr['c'], 12, "<br />\n", true): 'Not available').'</a>';
-		$recordListHtml .= '</td>';
-		$recordListHtml .= '<td id="e'.$occId.'" >'.wordwrap($recArr['e'], 10, "<br />\n", true).'</td>';
-		$recordListHtml .= '<td id="s'.$occId.'" >';
+		$recordListHtml .= '<td id="cat'.$occId.'" style="width:70px;">'.wordwrap($recArr['cat'], 9, "<br />\n", true).'</td>';
+		$recordListHtml .= '<td id="label'.$occId.'" style="width:75px;"><div style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:2px;">';
+		$recordListHtml .= '<div><a href="#" onclick="openIndPopup(' .$occId.'); return false;">'.($recArr['c']?wordwrap($recArr['c'], 12, "<br />\n", true): 'Not available').'</a></div>';
+        $recordListHtml .= '<div><i style="height:15px;width:15px;cursor:pointer;" class="fas fa-search-location" title="See Location on Map" onclick="openRecordInfoBox('.$occId.','.$infoBoxLabel. ')"></i></div>';
+		$recordListHtml .= '</div></td>';
+		$recordListHtml .= '<td id="e'.$occId.'" style="width:80px;">'.wordwrap($recArr['e'], 10, "<br />\n", true).'</td>';
+		$recordListHtml .= '<td id="s'.$occId.'" style="width:125px;">';
         if($recArr['tid']){
             $recordListHtml .= '<a style="color:black;" href="../taxa/index.php?taxon='.$recArr['s'].'" target="_blank">';
         }
-        $recordListHtml .= wordwrap($recArr['s'], 12, "<br />\n", true);
+        $recordListHtml .= wordwrap($recArr['s'], 15, "<br />\n", true);
         if($recArr['tid']){
             $recordListHtml .= '</a>';
         }
