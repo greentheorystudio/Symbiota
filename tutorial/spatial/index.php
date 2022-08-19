@@ -56,6 +56,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/records-taxa-panel">Records and Taxa Panel</a></li>
                             <li><a href="#/records-tab">Records Tab</a></li>
                             <li><a href="#/collections-tab">Collections Tab</a></li>
+                            <li><a href="#/taxa-tab">Taxa Tab</a></li>
                         </ul>
                     </div>
                 </section>
@@ -589,6 +590,12 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             be discussed in a later topic) becomes available in the <a href="#/side-panel">Side Panel</a> with
                             tabs showing the collections and taxa represented in the search return, and the occurrence records themselves.</p>
                     </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Occurrence records are initially loaded symbolized based on the collection they represent and all
+                            collections being symbolized with the same color. The symbology for occurrence records can be
+                            changed in either the <a href="#/collections-tab">Collections Tab</a> or <a href="#/taxa-tab">Taxa Tab</a> in
+                            the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in the <a href="#/side-panel">Side Panel</a>.</p>
+                    </div>
                 </section>
                 <section id="working-with-points-layer" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:10;">
@@ -753,11 +760,70 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Below the symbol key and symbology buttons is the Collection List. This list includes all of the
                             collections represented in the occurrence records returned in the search. If the occurrence records
                             on the map are being symbolized based on the collection they represent, the colored box to the
-                            left of each collection in the list indicates the color that is being used to represent that
+                            left of each collection in this list indicates the color that is being used to represent that
                             collection's records on the map. Each box can be clicked to open a color picker to select
                             a different color to represent that collection. Changing the color for any collection immediately sets
                             the symbology for all of the occurrence records on the map to be symbolized based on
                             the collection they represent, if they are not already, and updates the symbology to include the
+                            newly selected color.</p>
+                    </div>
+                </section>
+                <section id="taxa-tab" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Taxa Tab</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Taxa Tab is accessed in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel">Side Panel</a>. It contains a list of the distinct taxa represented in
+                            the occurrence records returned in the search and options for symbolizing the associated occurrence
+                            points on the map according to the taxon it represents. To go through each part of this tab:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Occurrence Symbol Key</h3>
+                        <p>In the top-left corner of the Taxa Tab is the Occurrence Symbol Key, which simply shows the
+                            symbols used to distinguish individual records representing specimens, from those representing
+                            observations.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Reset Symbology Button</h3>
+                        <p>In the top-right corner of the Taxa Tab is the Reset Symbology Button. Clicking this button
+                            will reset the symbology for all of the occurrence records on the map back to the original, default
+                            state of being symbolized based on the collection they represent and all collections being symbolized
+                            with the same color.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Auto Color Button</h3>
+                        <p>Below the Reset Symbology Button is the Auto Color Button. Clicking this button
+                            will set the symbology for all of the occurrence records on the map to be symbolized based on
+                            the taxon they represent, if they are not already, and will assign each taxon a random,
+                            unique color for its symbology.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Save Symbology Button</h3>
+                        <p>Below the Auto Color Button is the Save Symbology Button. Clicking this button will generate a png
+                            image file of the taxa list in this tab and all of the symbology colors assigned to each
+                            taxon.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Taxa Count and Download Bar</h3>
+                        <p>Below the symbol key and symbology buttons is the Taxa Count and Download Bar. On the left side
+                            of this bar is the total count of distinct taxa represented in the occurrence records returned
+                            in the search. The button on the right side of this bar <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button> can
+                            be clicked to download a csv files containing all of the distinct taxa in the taxa list in this tab.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Taxa List</h3>
+                        <p>Below the Taxa Count and Download Bar is the Taxa List. This list includes all of the
+                            distinct taxa represented in the occurrence records returned in the search, arranged taxonomically
+                            by family. If the occurrence records on the map are being symbolized based on the taxon they
+                            represent, the colored box to the left of each taxon in this list indicates the color that is
+                            being used to represent records on the map identified to that taxon. Each box can be clicked to
+                            open a color picker to select a different color to represent that taxon. Changing the color for
+                            any taxon immediately sets the symbology for all of the occurrence records on the map to be symbolized based on
+                            the taxon they represent, if they are not already, and updates the symbology to include the
                             newly selected color.</p>
                     </div>
                 </section>

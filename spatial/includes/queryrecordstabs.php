@@ -266,7 +266,7 @@ $obsArr = ($collList['obs'] ?? null);
         <div style="margin-bottom:30px;">
             <div style='font-weight:bold;float:left;margin-bottom:5px;'>Taxa Count: <span id="taxaCountNum">0</span></div>
             <div style="float:right;margin-bottom:5px;">
-                <button data-role="none" id="taxacsvdownload" class="icon-button" title="Download CSV" onclick="exportTaxaCSV();"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>
+                <button data-role="none" id="taxacsvdownload" class="icon-button" title="Download" onclick="exportTaxaCSV();"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>
             </div>
         </div>
         <div style="margin:5px 0 5px 0;clear:both;"><hr /></div>
