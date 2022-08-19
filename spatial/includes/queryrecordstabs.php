@@ -20,6 +20,13 @@ $obsArr = ($collList['obs'] ?? null);
     <div id="searchcollections">
         <div class="mapinterface">
             <form name="spatialcollsearchform" id="spatialcollsearchform" data-ajax="false" action="index.php" method="get">
+                <div style="height:25px;">
+                    <div style="float:right;">
+                        <button data-role="none" type="button" onclick='window.open("index.php", "_self");' >Reset</button>
+                        <button data-role="none" type="button" onclick='loadPoints();' >Load Records</button>
+                    </div>
+                </div>
+                <div style="margin:5px 0 5px 0;"><hr /></div>
                 <div>
                     <h1 style="margin:0 0 8px 0;font-size:15px;">Collections to be Searched</h1>
                 </div>
@@ -54,8 +61,8 @@ $obsArr = ($collList['obs'] ?? null);
         <div id="spatialcriteriasearchform">
             <div style="height:25px;">
                 <div style="float:right;">
-                    <button data-role="none" type=button id="resetform" name="resetform" onclick='window.open("index.php", "_self");' >Reset</button>
-                    <button data-role="none" id="display2" name="display2" onclick='loadPoints();' >Load Records</button>
+                    <button data-role="none" type="button" onclick='window.open("index.php", "_self");' >Reset</button>
+                    <button data-role="none" type="button" onclick='loadPoints();' >Load Records</button>
                 </div>
             </div>
             <div style="margin:5px 0 5px 0;"><hr /></div>
@@ -155,10 +162,10 @@ $obsArr = ($collList['obs'] ?? null);
 <h3 id="recordsHeader" class="tabtitle" style="display:none;">Records and Taxa</h3>
 <div id="recordstab" style="display:none;width:379px;padding:0;">
     <ul>
-        <li><a href='#symbology' onclick='buildCollKey();'>Collections</a></li>
         <li><a href='#queryrecordsdiv' onclick='changeRecordPage(1);'>Records</a></li>
-        <li><a href='#maptaxalist' onclick='buildTaxaKey();'>Taxa</a></li>
         <li style="display:none;" id="selectionstab" ><a href='#selectionslist'>Selections</a></li>
+        <li><a href='#symbology' onclick='buildCollKey();'>Collections</a></li>
+        <li><a href='#maptaxalist' onclick='buildTaxaKey();'>Taxa</a></li>
     </ul>
     <div id="symbology">
         <div style="margin-bottom:15px;">
@@ -219,8 +226,8 @@ $obsArr = ($collList['obs'] ?? null);
                 ?>
                 <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');"><button data-role="none" class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>
                 <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/listtabledisplay.php');"><button data-role="none" class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button></a></div>
-                <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../imagelib/search.php');"><button data-role="none" class="icon-button" title="Image Search"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button></a></div>
-                <div id="copySearchUrlDiv" style="display:block;"><button data-role="none" class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>
+                <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../imagelib/search.php');"><button data-role="none" class="icon-button" title="Image Display"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button></a></div>
+                <div id="copySearchUrlDiv" style="display:block;"><button data-role="none" class="icon-button" title="Copy Search URL" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>
             </div>
         </div>
         <div id="queryrecords"></div>
@@ -303,19 +310,19 @@ $obsArr = ($collList['obs'] ?? null);
             <div style="clear:both;height:8px;"></div>
             <div>
                 <div style="width:100%;display:flex;justify-content:flex-start;align-items:center;">
-                    <span><input data-role="none" type='checkbox' id='toggleselectedswitch' onchange="processToggleSelectedChange();">Show Only Selected Points</span>
+                    <span><input data-role="none" type='checkbox' id='toggleselectedswitch' style="margin-right:5px;" onchange="processToggleSelectedChange();">Show Only Selected Points</span>
                 </div>
             </div>
         </div>
         <div style="clear:both;height:10px;"></div>
-        <table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;">
+        <table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;width:360px;">
             <thead>
             <tr>
-                <th style="width:15px;"></th>
-                <th>Catalog #</th>
-                <th>Collector</th>
-                <th style="width:40px;">Date</th>
-                <th>Scientific Name</th>
+                <th style="width:10px;"></th>
+                <th style="width:70px;">Catalog #</th>
+                <th style="width:75px;">Collector</th>
+                <th style="width:80px;">Date</th>
+                <th style="width:125px;">Scientific Name</th>
             </tr>
             </thead>
             <tbody id="selectiontbody"></tbody>

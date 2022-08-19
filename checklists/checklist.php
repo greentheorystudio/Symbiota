@@ -644,7 +644,7 @@ if(!$printMode){
                                 <?php
                                 $spUrl = "../taxa/index.php?taxon=$tid&cl=".$clid;
                                 if($imgSrc){
-                                    $imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
+                                    $imgSrc = (isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
                                     if(!$printMode) {
                                         echo "<a href='" . $spUrl . "' target='_blank'>";
                                     }

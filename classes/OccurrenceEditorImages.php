@@ -118,7 +118,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		$sortSeq = (is_numeric($_REQUEST['sortsequence'])?$_REQUEST['sortsequence']:'');
 		$sourceUrl = Sanitizer::cleanInStr($this->conn,$_REQUEST['sourceurl']);
 
-		if($GLOBALS['IMAGE_DOMAIN']){
+		if(isset($GLOBALS['IMAGE_DOMAIN'])){
     		if(strncmp($url, '/', 1) === 0){
 	    		$url = 'http://'.$_SERVER['HTTP_HOST'].$url;
     		}

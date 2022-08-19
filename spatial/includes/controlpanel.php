@@ -82,7 +82,7 @@
             }
             ?>
             <div id="mapPngDownloadDiv">
-                <button data-role="none" type="button" onclick='processMapPNGDownload();' >Download Map PNG</button>
+                <button data-role="none" type="button" onclick='processMapPNGDownload();'>Download Map Image</button>
             </div>
         </div>
         <div style="clear:both;"></div>

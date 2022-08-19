@@ -156,7 +156,7 @@ class SpecProcessorOcr{
 		$status = false;
 		if($imgUrl){
 			if(strncmp($imgUrl, '/', 1) === 0){
-				if($GLOBALS['IMAGE_DOMAIN']){
+				if(isset($GLOBALS['IMAGE_DOMAIN'])){
 					$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 				}
 				else{
