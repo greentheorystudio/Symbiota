@@ -806,13 +806,25 @@ function clearSelections(){
     const selpoints = selections;
     selections = [];
     for(let i in selpoints){
-        if(selpoints.hasOwnProperty(i) && !clusterPoints){
-            const point = findRecordPoint(selpoints[i]);
+        if(selpoints.hasOwnProperty(i)){
+            const checkboxid = 'ch' + selpoints[i];
+            let point = '';
+            if(clusterPoints){
+                const cluster = findRecordCluster(Number(selpoints[i]));
+                point = findRecordPointInCluster(cluster,Number(selpoints[i]));
+            }
+            else{
+                point = findRecordPoint(Number(selpoints[i]));
+            }
             const style = setSymbol(point);
             point.setStyle(style);
+            if(document.getElementById(checkboxid)){
+                document.getElementById(checkboxid).checked = false;
+            }
         }
     }
-    layersObj['pointv'].getSource().changed();
+    document.getElementById("toggleselectedswitch").checked = false;
+    processToggleSelectedChange();
     adjustSelectionsTab();
     document.getElementById("selectiontbody").innerHTML = '';
 }
@@ -2305,7 +2317,6 @@ function processCheckSelection(c){
             }
         }
         selections.push(Number(c.value));
-        layersObj['pointv'].getSource().changed();
         updateSelections(Number(c.value),false);
     }
     else if(c.checked === false){
@@ -2315,9 +2326,18 @@ function processCheckSelection(c){
         }
         const index = selections.indexOf(Number(c.value));
         selections.splice(index, 1);
-        layersObj['pointv'].getSource().changed();
         removeSelectionRecord(Number(c.value));
     }
+    let point = '';
+    if(clusterPoints){
+        const cluster = findRecordCluster(Number(c.value));
+        point = findRecordPointInCluster(cluster,Number(c.value));
+    }
+    else{
+        point = findRecordPoint(Number(c.value));
+    }
+    const style = setSymbol(point);
+    point.setStyle(style);
     adjustSelectionsTab();
 }
 
@@ -2688,15 +2708,22 @@ function processMapPNGDownload(){
 function processPointSelection(sFeature){
     const feature = (sFeature.get('features') ? sFeature.get('features')[0] : sFeature);
     const id = Number(feature.get('id'));
+    const checkboxid = 'ch' + id;
     if(selections.indexOf(id) < 0){
         selections.push(id);
         const infoArr = getPointInfoArr(sFeature);
         updateSelections(id,infoArr);
+        if(document.getElementById(checkboxid)){
+            document.getElementById(checkboxid).checked = true;
+        }
     }
     else{
         const index = selections.indexOf(id);
         selections.splice(index, 1);
         removeSelectionRecord(id);
+        if(document.getElementById(checkboxid)){
+            document.getElementById(checkboxid).checked = false;
+        }
     }
     const style = (sFeature.get('features') ? setClusterSymbol(sFeature) : setSymbol(sFeature));
     sFeature.setStyle(style);
@@ -2860,27 +2887,34 @@ function removeRasterLayerFromTargetList(layerId){
 }
 
 function removeSelection(c){
-    if(c.checked === false){
-        const id = c.value;
-        const chbox = 'ch' + id;
-        removeSelectionRecord(id);
-        if(document.getElementById(chbox)){
-            document.getElementById(chbox).checked = false;
-        }
-        const index = selections.indexOf(Number(c.value));
-        selections.splice(index, 1);
-        layersObj['pointv'].getSource().changed();
-        if(spiderCluster){
-            const spiderFeatures = layersObj['spider'].getSource().getFeatures();
-            for(let f in spiderFeatures){
-                if(spiderFeatures.hasOwnProperty(f) && spiderFeatures[f].get('features')[0].get('id') === Number(c.value)){
-                    const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
-                    spiderFeatures[f].setStyle(style);
-                }
+    const id = c.value;
+    const chbox = 'ch' + id;
+    removeSelectionRecord(id);
+    if(document.getElementById(chbox)){
+        document.getElementById(chbox).checked = false;
+    }
+    const index = selections.indexOf(Number(id));
+    selections.splice(index, 1);
+    if(spiderCluster){
+        const spiderFeatures = layersObj['spider'].getSource().getFeatures();
+        for(let f in spiderFeatures){
+            if(spiderFeatures.hasOwnProperty(f) && spiderFeatures[f].get('features')[0].get('id') === Number(c.value)){
+                const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
+                spiderFeatures[f].setStyle(style);
             }
         }
-        adjustSelectionsTab();
     }
+    let point = '';
+    if(clusterPoints){
+        const cluster = findRecordCluster(Number(id));
+        point = findRecordPointInCluster(cluster,Number(id));
+    }
+    else{
+        point = findRecordPoint(Number(id));
+    }
+    const style = setSymbol(point);
+    point.setStyle(style);
+    adjustSelectionsTab();
 }
 
 function removeSelectionRecord(sel){
