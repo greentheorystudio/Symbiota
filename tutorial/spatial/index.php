@@ -680,8 +680,33 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             This url can be used at any time to quickly reload the same search at a different time.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Pagination and Record Index Bar</h3>
-                        <p>Below the options and display links is the Pagination and Record Index Bar. </p>
+                        <h3>Pagination and Record Count Bar</h3>
+                        <p>Below the options and display links is the Pagination and Record Count Bar. If more than 100 occurrence
+                            records are returned in a search, the records will be divided into pages of 100 and this bar will
+                            have links to each record page in the top row, and indicate the current page and record range
+                            in the bottom row. If 100 occurrence records or less are returned in a search, this bar will
+                            simply indicate the amount of records returned. This same bar is also displayed at the bottom of
+                            the Records Tab.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Select/Deselect All Checkbox</h3>
+                        <p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can
+                            be used to select and deselect all of the occurrence records in the current table. When selected,
+                            records will be both added to the Selections Tab (to be discussed in a following topic) as well as
+                            selected on the map. Deselecting records will both remove them from the Selections Tab and delselect
+                            them on the map.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Occurrence Record Table</h3>
+                        <p>Below the Select/Deselect All Checkbox is the Occurrence Record Table displaying a paginated table
+                            of the occurrence records returned from the search. There are columns for Catalog Number, Collector,
+                            Date, and Scientific Name for each record. In the far left column there is a checkbox to select
+                            and deselect individual records in the table. The text in the Collector column for each record
+                            can be clicked to open a popup window displaying the complete data for that record. Additionally,
+                            the <i style="height:20px;width:20px;" class="fas fa-search-location"></i> icon in the Collector column
+                            can be clicked to pan the map to that record's location on the map and add a temporary marker.
+                            If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be
+                            clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>
                     </div>
                 </section>
             </div>
