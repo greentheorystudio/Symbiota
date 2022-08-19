@@ -142,7 +142,7 @@ class OccurrenceGeorefTools {
 			set_time_limit(1000);
 			$localStr =  Sanitizer::cleanInStr($this->conn,implode(',',$geoRefArr['locallist']));
 			unset($geoRefArr['locallist']);
-			$geoRefArr = Sanitizer::cleanInArray($geoRefArr);
+			$geoRefArr = Sanitizer::cleanInArray($this->conn,$geoRefArr);
 			if($localStr){
 				$this->addOccurEdits('decimallatitude',$geoRefArr['decimallatitude'],$localStr);
 				$this->addOccurEdits('decimallongitude',$geoRefArr['decimallongitude'],$localStr);
