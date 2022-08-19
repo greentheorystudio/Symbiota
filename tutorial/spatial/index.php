@@ -55,6 +55,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/working-with-points-layer">Working With the Points Layer</a></li>
                             <li><a href="#/records-taxa-panel">Records and Taxa Panel</a></li>
                             <li><a href="#/records-tab">Records Tab</a></li>
+                            <li><a href="#/collections-tab">Collections Tab</a></li>
                         </ul>
                     </div>
                 </section>
@@ -648,8 +649,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>The Records Tab is accessed in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
                             the <a href="#/side-panel">Side Panel</a>. It contains download options for the occurrence records
                             returned in the search, links to other options to view the records, and a paginated list of the records
-                            themselves, with the ability for selecting records of interest. Each part of this tab will be discussed
-                            here:</p>
+                            themselves, with the ability for selecting records of interest. To go through each part of this tab:</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Download Type Selection and Button</h3>
@@ -707,6 +707,26 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             can be clicked to pan the map to that record's location on the map and add a temporary marker.
                             If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be
                             clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>
+                    </div>
+                </section>
+                <section id="collections-tab" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Collections Tab</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Collections Tab is accessed in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel">Side Panel</a>. It contains a list of the collections represented in
+                            the occurrence records returned in the search and options for symbolizing the associated occurrence
+                            points on the map according to the collection it represents. To go through each part of this tab:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Copy Search URL Button</h3>
+                        <p>When the search does not include a complex shape, to the right of the Image Display Button is the Copy Search URL Button <button class="icon-button" title="Copy Search URL"><i style="height:15px;width:15px;" class="fas fa-link"></i></button>. You
+                            can click on this button to copy a url to your computer's clipboard that will load the same search.
+                            This url can be used at any time to quickly reload the same search at a different time.</p>
                     </div>
                 </section>
             </div>
