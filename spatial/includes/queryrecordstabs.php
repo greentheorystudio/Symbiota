@@ -272,8 +272,7 @@ $obsArr = ($collList['obs'] ?? null);
         <div style="margin:5px 0 5px 0;clear:both;"><hr /></div>
         <div id="taxasymbologykeysbox" style="background-color:white;"></div>
     </div>
-
-    <div id="selectionslist" style="">
+    <div id="selectionslist">
         <div>
             <div style="width:100%;margin-top:-10px;display:flex;justify-content:space-around;align-items:center;">
                 <div style="width:120px;display:flex;justify-content:flex-start;align-items:center;">

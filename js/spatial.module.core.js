@@ -151,7 +151,7 @@ function adjustSelectionsTab(){
     else{
         document.getElementById("selectionstab").style.display = "none";
         const activeTab = $('#recordstab').tabs("option", "active");
-        if(activeTab == 3){
+        if(activeTab == 1){
             buildCollKey();
             $('#recordstab').tabs({active:0});
         }

@@ -57,6 +57,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/records-tab">Records Tab</a></li>
                             <li><a href="#/collections-tab">Collections Tab</a></li>
                             <li><a href="#/taxa-tab">Taxa Tab</a></li>
+                            <li><a href="#/selections-tab">Selections Tab</a></li>
                         </ul>
                     </div>
                 </section>
@@ -825,6 +826,78 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             any taxon immediately sets the symbology for all of the occurrence records on the map to be symbolized based on
                             the taxon they represent, if they are not already, and updates the symbology to include the
                             newly selected color.</p>
+                    </div>
+                </section>
+                <section id="selections-tab" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Selections Tab</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Selections Tab is available whenever occurrence records are selected. It is accessed in
+                            the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in the <a href="#/side-panel">Side Panel</a>. It
+                            contains download options for the selected occurrence records, a list of the records themselves, the ability
+                            to clear the current record selections, and the ability adjust the map to show the selections.
+                            To go through each part of this tab:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Download Type Selection and Button</h3>
+                        <p>In the top-left corner of the Selections Tab is the Download Type drop-down selector followed by the Download
+                            Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
+                            can be used to download the selected occurrence records in a csv or zip, kml, geojson, or gpx file format.
+                            Downloading selected occurrence records will be discussed further in a later topic.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Clear Selections Button</h3>
+                        <p>Below the Download Type Selection and Button is the Clear Selections Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
+                            can be clicked to deselect all of the currently selected occurrence records.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Table Display Button</h3>
+                        <p>To the right of the List Display Button is the Table Display Button <button class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button>. You
+                            can click on this button to go to the table display for the occurrence records search.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Image Display Button</h3>
+                        <p>To the right of the Table Display Button is the Image Display Button <button class="icon-button" title="Image Display"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button>. You
+                            can click on this button to go to the image display for the occurrence records search.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Copy Search URL Button</h3>
+                        <p>When the search does not include a complex shape, to the right of the Image Display Button is the Copy Search URL Button <button class="icon-button" title="Copy Search URL"><i style="height:15px;width:15px;" class="fas fa-link"></i></button>. You
+                            can click on this button to copy a url to your computer's clipboard that will load the same search.
+                            This url can be used at any time to quickly reload the same search at a different time.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Pagination and Record Count Bar</h3>
+                        <p>Below the options and display links is the Pagination and Record Count Bar. If more than 100 occurrence
+                            records are returned in a search, the records will be divided into pages of 100 and this bar will
+                            have links to each record page in the top row, and indicate the current page and record range
+                            in the bottom row. If 100 occurrence records or less are returned in a search, this bar will
+                            simply indicate the amount of records returned. This same bar is also displayed at the bottom of
+                            the Records Tab.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Select/Deselect All Checkbox</h3>
+                        <p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can
+                            be used to select and deselect all of the occurrence records in the current table. When selected,
+                            records will be both added to the Selections Tab (to be discussed in a following topic) as well as
+                            selected on the map. Deselecting records will both remove them from the Selections Tab and delselect
+                            them on the map.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Occurrence Record Table</h3>
+                        <p>Below the Select/Deselect All Checkbox is the Occurrence Record Table displaying a paginated table
+                            of the occurrence records returned from the search. There are columns for Catalog Number, Collector,
+                            Date, and Scientific Name for each record. In the far left column there is a checkbox to select
+                            and deselect individual records in the table. The text in the Collector column for each record
+                            can be clicked to open a popup window displaying the complete data for that record. Additionally,
+                            the <i style="height:20px;width:20px;" class="fas fa-search-location"></i> icon in the Collector column
+                            can be clicked to pan the map to that record's location on the map and add a temporary marker.
+                            If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be
+                            clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>
                     </div>
                 </section>
             </div>
