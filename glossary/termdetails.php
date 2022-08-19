@@ -650,7 +650,7 @@ if($glossId){
 										<div style="float:left;">
 											<?php
 											$imgUrl = $imgArr['url'];
-											if($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0) {
+											if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) {
                                                 $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                                             }
 											$displayUrl = $imgUrl;

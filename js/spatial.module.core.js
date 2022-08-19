@@ -2140,11 +2140,13 @@ function loadServerLayer(id,name,file){
 }
 
 function openRecordInfoBox(id,label){
+    closeRecordInfoBox();
+    finderpopuptimeout = null;
     const idpos = findRecordClusterPosition(id);
     finderpopupcontent.innerHTML = label;
     finderpopupoverlay.setPosition(idpos);
     map.getView().setCenter(idpos);
-    setTimeout(function() {
+    finderpopuptimeout = setTimeout(function() {
         closeRecordInfoBox();
     }, 2000 );
 }

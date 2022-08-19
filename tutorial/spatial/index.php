@@ -5,6 +5,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Mapping Tutorial</title>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reveal.css?ver=20220813" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220813" rel="stylesheet" id="theme" />
@@ -241,7 +243,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Cluster Points</h3>
-                        <p>When checked (default) occrrence points loaded onto the map are clustered, based on the cluster
+                        <p>When checked occrrence points loaded onto the map are clustered, based on the cluster
                             distance setting, into clusters of like records. When not checked, all occurrence records are loaded
                             as individual points on the map, regardless of proximity.</p>
                     </div>
@@ -601,8 +603,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Clusters</h3>
-                        <p>When <a href="#/settings-panel/1">Cluster Points</a> is activated in the <a href="#/settings-panel">Settings Panel</a> (default
-                            setting), occurrence clusters will appear as wider circles on the map with a number indicating the
+                        <p>When <a href="#/settings-panel/1">Cluster Points</a> is activated in the <a href="#/settings-panel">Settings Panel</a>,
+                            occurrence clusters will appear as wider circles on the map with a number indicating the
                             amount of records included in that cluster. Click on any cluster to zoom further in to see the
                             individual occurrence records included.</p>
                     </div>
@@ -627,11 +629,11 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Records and Taxa Panel becomes available in the <a href="#/side-panel">Side Panel</a> when
                             occurrence records are loaded. It is accessed by opening the <a href="#/side-panel">Side Panel</a> and
-                            clicking on Records and Taxa to expand the panel (if it isn't already expanded).</p>
+                            clicking on Records and Taxa to expand the panel, if it isn't already expanded.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Records and Taxa Panel includes the tabs: Records, Collections, Taxa, and Selections (only visible
-                            when occurrence records are selected). Each of these tabs will be discussed more thouroughly in
+                        <p>The Records and Taxa Panel includes the tabs: Records, Collections, Taxa, and Selections (when
+                            occurrence records are selected). Each of these tabs will be discussed more thouroughly in
                             the following topics.</p>
                     </div>
                 </section>
@@ -643,14 +645,43 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Records and Taxa Panel becomes available in the <a href="#/side-panel">Side Panel</a> when
-                            occurrence records are loaded. It is accessed by opening the <a href="#/side-panel">Side Panel</a> and
-                            clicking on Records and Taxa to expand the panel (if it isn't already expanded).</p>
+                        <p>The Records Tab is accessed in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel">Side Panel</a>. It contains download options for the occurrence records
+                            returned in the search, links to other options to view the records, and a paginated list of the records
+                            themselves, with the ability for selecting records of interest. Each part of this tab will be discussed
+                            here:</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Records and Taxa Panel includes the tabs: Records, Collections, Taxa, and Selections (only visible
-                            when occurrence records are selected). Each of these tabs will be discussed more thouroughly in
-                            the following topics.</p>
+                        <h3>Download Type Selection and Button</h3>
+                        <p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download
+                            Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
+                            can be used to download the occurrence records in a csv or zip, kml, geojson, or gpx file format.
+                            Downloading occurrence records will be discussed further in a later topic.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>List Display Button</h3>
+                        <p>To the right of the Download Type Selection and Button is the List Display Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. You
+                            can click on this button to go to the list display for the occurrence records search.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Table Display Button</h3>
+                        <p>To the right of the List Display Button is the Table Display Button <button class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button>. You
+                            can click on this button to go to the table display for the occurrence records search.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Image Display Button</h3>
+                        <p>To the right of the Table Display Button is the Image Display Button <button class="icon-button" title="Image Display"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button>. You
+                            can click on this button to go to the image display for the occurrence records search.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Copy Search URL Button</h3>
+                        <p>When the search does not include a complex shape, to the right of the Image Display Button is the Copy Search URL Button <button class="icon-button" title="Copy Search URL"><i style="height:15px;width:15px;" class="fas fa-link"></i></button>. You
+                            can click on this button to copy a url to your computer's clipboard that will load the same search.
+                            This url can be used at any time to quickly reload the same search at a different time.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Pagination and Record Index Bar</h3>
+                        <p>Below the options and display links is the Pagination and Record Index Bar. </p>
                     </div>
                 </section>
             </div>

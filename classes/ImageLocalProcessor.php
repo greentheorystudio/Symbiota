@@ -153,7 +153,7 @@ class ImageLocalProcessor {
 		if(!$this->imgUrlBase){
 			$this->imgUrlBase = $GLOBALS['IMAGE_ROOT_URL'];
 		}
-		if($GLOBALS['IMAGE_DOMAIN'] && strncmp($this->imgUrlBase, 'http://', 7) !== 0 && strncmp($this->imgUrlBase, 'https://', 8) !== 0) {
+		if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($this->imgUrlBase, 'http://', 7) !== 0 && strncmp($this->imgUrlBase, 'https://', 8) !== 0) {
 			$urlPrefix = 'http://';
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 				$urlPrefix = 'https://';
@@ -1676,7 +1676,7 @@ class ImageLocalProcessor {
 		$exists = false;
 		$localUrl = '';
 		if(strncmp($url, '/', 1) === 0){
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
 			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){

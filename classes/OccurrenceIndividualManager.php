@@ -204,7 +204,7 @@ class OccurrenceIndividualManager extends Manager{
             while($row = $result->fetch_object()){
                 $medId = $row->mediaid;
                 $url = $row->accessuri;
-                if($GLOBALS['IMAGE_DOMAIN'] && strncmp($url, '/', 1) === 0) {
+                if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($url, '/', 1) === 0) {
                     $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
                 }
                 $this->occArr['media'][$medId]['accessuri'] = $url;

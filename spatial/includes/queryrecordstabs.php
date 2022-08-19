@@ -226,8 +226,8 @@ $obsArr = ($collList['obs'] ?? null);
                 ?>
                 <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');"><button data-role="none" class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>
                 <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/listtabledisplay.php');"><button data-role="none" class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button></a></div>
-                <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../imagelib/search.php');"><button data-role="none" class="icon-button" title="Image Search"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button></a></div>
-                <div id="copySearchUrlDiv" style="display:block;"><button data-role="none" class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>
+                <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../imagelib/search.php');"><button data-role="none" class="icon-button" title="Image Display"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button></a></div>
+                <div id="copySearchUrlDiv" style="display:block;"><button data-role="none" class="icon-button" title="Copy Search URL" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>
             </div>
         </div>
         <div id="queryrecords"></div>
@@ -310,7 +310,7 @@ $obsArr = ($collList['obs'] ?? null);
             <div style="clear:both;height:8px;"></div>
             <div>
                 <div style="width:100%;display:flex;justify-content:flex-start;align-items:center;">
-                    <span><input data-role="none" type='checkbox' id='toggleselectedswitch' onchange="processToggleSelectedChange();">Show Only Selected Points</span>
+                    <span><input data-role="none" type='checkbox' id='toggleselectedswitch' style="margin-right:5px;" onchange="processToggleSelectedChange();">Show Only Selected Points</span>
                 </div>
             </div>
         </div>

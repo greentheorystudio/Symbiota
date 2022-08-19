@@ -68,45 +68,50 @@ if($selections && !array_diff($pageOccids, $selections)) {
 $recordListHtml = '';
 $lastPage = (int) ($recordCnt / $cntPerPage) + 1;
 $startPage = ($pageNumber > 4?$pageNumber - 4:1);
+$paginationStr = "<div><div style='clear:both;margin:5px 0 5px 0;'><hr /></div>";
+$pageBar = '';
 if($lastPage > $startPage){
-	$endPage = (($lastPage > ($startPage + 9))?($startPage + 9):$lastPage);
-	$paginationStr = "<div><div style='clear:both;margin:5px 0 5px 0;'><hr /></div><div style='float:left;'>\n";
-	$hrefPrefix = "<a href='#' onclick='changeRecordPage(";
-	$pageBar = '';
-	if($startPage > 1){
-		$pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix."1); return false;'>First</a></span>";
-		$pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix.(($pageNumber - 10) < 1 ?1:$pageNumber - 10)."); return false;'>&lt;&lt;</a></span>";
-	}
-	for($x = $startPage; $x <= $endPage; $x++){
-		if($pageNumber !== $x){
-			$pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x. '</a></span>';
-		}
-		else{
-			$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x. '</span>';
-		}
-	}
-	if(($lastPage - $startPage) >= 10){
-		$pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10))."); return false;'>&gt;&gt;</a></span>";
-		$pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.$lastPage."); return false;'>Last</a></span>";
-	}
-	$pageBar .= "</div><div style='clear:both;float:left;margin-top:4px;margin-bottom:8px;'>";
-	$beginNum = ($pageNumber - 1)*$cntPerPage + 1;
-	$endNum = $beginNum + $cntPerPage - 1;
-	if($endNum > $recordCnt) {
+    $pageBar .= "<div style='float:left;'>";
+    $endPage = (($lastPage > ($startPage + 9))?($startPage + 9):$lastPage);
+    $hrefPrefix = "<a href='#' onclick='changeRecordPage(";
+    if($startPage > 1){
+        $pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix."1); return false;'>First</a></span>";
+        $pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix.(($pageNumber - 10) < 1 ?1:$pageNumber - 10)."); return false;'>&lt;&lt;</a></span>";
+    }
+    for($x = $startPage; $x <= $endPage; $x++){
+        if($pageNumber !== $x){
+            $pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x. '</a></span>';
+        }
+        else{
+            $pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x. '</span>';
+        }
+    }
+    if(($lastPage - $startPage) >= 10){
+        $pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10))."); return false;'>&gt;&gt;</a></span>";
+        $pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.$lastPage."); return false;'>Last</a></span>";
+    }
+    $pageBar .= "</div><div style='clear:both;float:left;margin-top:4px;margin-bottom:8px;'>";
+    $beginNum = ($pageNumber - 1)*$cntPerPage + 1;
+    $endNum = $beginNum + $cntPerPage - 1;
+    if($endNum > $recordCnt) {
         $endNum = $recordCnt;
     }
-	$pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt;
-	$paginationStr .= $pageBar;
-	$paginationStr .= "</div><div style='clear:both;margin:5px 0 5px 0;'><hr /></div></div>";
-
-	$recordListHtml = '<div>';
-	$recordListHtml .= $paginationStr;
-	$recordListHtml .= '</div>';
+    $pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt;
 }
+else{
+    $pageBar .= "<div style='clear:both;float:left;margin-top:4px;margin-bottom:8px;'>";
+    $pageBar .= 'Records 1-' .$recordCnt. ' of ' .$recordCnt;
+}
+$paginationStr .= $pageBar;
+$paginationStr .= "</div><div style='clear:both;margin:5px 0 5px 0;'><hr /></div></div>";
+
+$recordListHtml = '<div>';
+$recordListHtml .= $paginationStr;
+$recordListHtml .= '</div>';
 if($occArr){
 	$recordListHtml .= '<form name="selectform" id="selectform" action="" method="post" onsubmit="" target="_blank">';
 	$recordListHtml .= '<div style="margin-bottom:5px;clear:both;">';
-	$recordListHtml .= '<input name="" id="selectallcheck" value="" type="checkbox" onclick="selectAll(this);" '.($allSelected === true? 'checked' : '').' />';
+	$recordListHtml .= '<input name="" id="selectallcheck" value="" type="checkbox" style="margin-right:5px;" onclick="selectAll(this);" '.($allSelected === true? 'checked' : '').' />';
 	$recordListHtml .= 'Select/Deselect All Records';
 	$recordListHtml .= '</div>';
 	$recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;width:360px;">';
@@ -144,9 +149,7 @@ if($occArr){
 	}
 	$recordListHtml .= '</table>';
 	$recordListHtml .= '</form>';
-	if($lastPage > $startPage){
-		$recordListHtml .= '<div style="">'.$paginationStr.'</div>';
-	}
+    $recordListHtml .= '<div>'.$paginationStr.'</div>';
     $recordListHtml .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px">'.$copyURL.'</textarea>';
 }
 else{
