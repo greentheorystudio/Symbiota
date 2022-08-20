@@ -42,23 +42,25 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/exploring-map">Exploring the Map</a></li>
                             <li><a href="#/map-layers">Map Layers</a></li>
                             <li><a href="#/control-panel">Control Panel</a></li>
-                            <li><a href="#/settings-panel">Settings Panel</a></li>
+                            <li><a href="#/settings-panel/0">Settings Panel</a></li>
                             <li><a href="#/using-draw-tool">Using the Draw Tool</a></li>
                             <li><a href="#/loading-map-files">Loading Map Data Files Onto the Map</a></li>
                             <li><a href="#/exploring-map-layer-data">Exploring Map Layer Data</a></li>
-                            <li><a href="#/layers-panel">Layers Panel</a></li>
+                            <li><a href="#/layers-panel/0">Layers Panel</a></li>
                             <li><a href="#/using-query-selector">Using the Query Selector</a></li>
                             <li><a href="#/working-with-shapes-layer">Working With the Shapes Layer</a></li>
-                            <li><a href="#/side-panel">Side Panel</a></li>
+                            <li><a href="#/side-panel/0">Side Panel</a></li>
                             <li><a href="#/search-criteria-panel">Search Criteria Panel</a></li>
                             <li><a href="#/loading-occurrence-records">Loading Occurrence Records</a></li>
                             <li><a href="#/working-with-points-layer">Working With the Points Layer</a></li>
-                            <li><a href="#/records-taxa-panel">Records and Taxa Panel</a></li>
-                            <li><a href="#/records-tab">Records Tab</a></li>
-                            <li><a href="#/collections-tab">Collections Tab</a></li>
-                            <li><a href="#/taxa-tab">Taxa Tab</a></li>
-                            <li><a href="#/selections-tab">Selections Tab</a></li>
+                            <li><a href="#/records-taxa-panel/0">Records and Taxa Panel</a></li>
+                            <li><a href="#/records-tab/0">Records Tab</a></li>
+                            <li><a href="#/collections-tab/0">Collections Tab</a></li>
+                            <li><a href="#/taxa-tab/0">Taxa Tab</a></li>
+                            <li><a href="#/selections-tab/0">Selections Tab</a></li>
                             <li><a href="#/downloading-occurrence-data">Downloading Occurrence Data</a></li>
+                            <li><a href="#/using-heat-map-display">Using the Heat Map Display</a></li>
+                            <li><a href="#/downloading-map-image">Downloading a Map Image</a></li>
                         </ul>
                     </div>
                 </section>
@@ -76,7 +78,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Side Panel Toggle</h3>
-                        <p>Located in the top-left corner of this window. Click on this to open the <a href="#/side-panel">Side Panel</a>.</p>
+                        <p>Located in the top-left corner of this window. Click on this to open the <a href="#/side-panel/0">Side Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Control Panel</h3>
@@ -157,7 +159,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Shapes Layer</h3>
                         <p>The Shapes Layer is a vector layer that is automatically added to the map when new features are created
-                            using the <a href="#/using-draw-tool">Draw Tool</a> (to be discussed in a later topic), or vector features are selected from an
+                            using the <a href="#/using-draw-tool/0">Draw Tool</a> (to be discussed in a later topic), or vector features are selected from an
                             additional layer added to the map. Features included in the Shapes Layer can be edited, selected, deleted,
                             processed further using the Vector Tools, or used to search for occurrence records. The contents of
                             the Shapes Layer can also be downloaded in multiple geospatial formats for further use.</p>
@@ -477,7 +479,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Query Selector for any layer is accessed by clicking on the <a href="#/layers-panel/8">Query Selector Toggle Button</a>
-                            in the layer's frame in the <a href="#/layers-panel">Layers Panel</a>. This tool allows you to select features within a given
+                            in the layer's frame in the <a href="#/layers-panel/0">Layers Panel</a>. This tool allows you to select features within a given
                             layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -552,7 +554,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Search Criteria Panel is accessed by opening the <a href="#/side-panel">Side Panel</a> and
+                        <p>The Search Criteria Panel is accessed by opening the <a href="#/side-panel/0">Side Panel</a> and
                             clicking on Search Criteria to expand the panel (if it isn't already expanded).</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -572,8 +574,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>A search for occurrence records can be run when at least one polygon, box, or circle feature
                             is <a href="#/working-with-shapes-layer/2">selected in the Shapes Layer</a>, or search
                             criteria has been entered in either the Criteria or Collections tabs in
-                            the <a href="#/search-criteria-panell">Search Criteria Panel</a> of
-                            the <a href="#/side-panel">Side Panel</a>, or both.</p>
+                            the <a href="#/search-criteria-panel/0">Search Criteria Panel</a> of
+                            the <a href="#/side-panel/0">Side Panel</a>, or both.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>If polygon, box, or circle features are <a href="#/working-with-shapes-layer/2">selected in the Shapes Layer</a> the
@@ -581,22 +583,22 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>To run an occurrence search, click the Load Records button in either the Criteria or Collections tabs
-                            in the <a href="#/search-criteria-panell">Search Criteria Panel</a> of
-                            the <a href="#/side-panel">Side Panel</a>.</p>
+                            in the <a href="#/search-criteria-panel/0">Search Criteria Panel</a> of
+                            the <a href="#/side-panel/0">Side Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>Occurrence records loaded onto the map are automatically added to the <a href="#/map-layers/6">Points Layer</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>When occurrence records are loaded, the <a href="#/records-taxa-panel">Records and Taxa Panel</a> (to
-                            be discussed in a later topic) becomes available in the <a href="#/side-panel">Side Panel</a> with
+                        <p>When occurrence records are loaded, the <a href="#/records-taxa-panel/0">Records and Taxa Panel</a> (to
+                            be discussed in a later topic) becomes available in the <a href="#/side-panel/0">Side Panel</a> with
                             tabs showing the collections and taxa represented in the search return, and the occurrence records themselves.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>Occurrence records are initially loaded symbolized based on the collection they represent and all
                             collections being symbolized with the same color. The symbology for occurrence records can be
-                            changed in either the <a href="#/collections-tab">Collections Tab</a> or <a href="#/taxa-tab">Taxa Tab</a> in
-                            the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in the <a href="#/side-panel">Side Panel</a>.</p>
+                            changed in either the <a href="#/collections-tab/0">Collections Tab</a> or <a href="#/taxa-tab/0">Taxa Tab</a> in
+                            the <a href="#/records-taxa-panel/0">Records and Taxa Panel</a> in the <a href="#/side-panel/0">Side Panel</a>.</p>
                     </div>
                 </section>
                 <section id="working-with-points-layer" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
@@ -613,7 +615,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Clusters</h3>
-                        <p>When <a href="#/settings-panel/1">Cluster Points</a> is activated in the <a href="#/settings-panel">Settings Panel</a>,
+                        <p>When <a href="#/settings-panel/1">Cluster Points</a> is activated in the <a href="#/settings-panel/0">Settings Panel</a>,
                             occurrence clusters will appear as wider circles on the map with a number indicating the
                             amount of records included in that cluster. Click on any cluster to zoom further in to see the
                             individual occurrence records included.</p>
@@ -621,11 +623,11 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Selecting Records</h3>
                         <p>Selecting or deselecting any occurrence record in the Points Layer can be done by simply clicking on the
-                            individual occurrence record. Selecting occurrence records on the map both adds them to the <a href="#/selections-tab">Selections Tab</a>,
-                            and selects them in the <a href="#/records-tab">Records Tab</a>, in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
-                            the <a href="#/side-panel">Side Panel</a>. Deselecting occurrence records on the map both removes them from the <a href="#/selections-tab">Selections Tab</a>, and
-                            deselects them in the <a href="#/records-tab">Records Tab</a>, in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
-                            the <a href="#/side-panel">Side Panel</a>.</p>
+                            individual occurrence record. Selecting occurrence records on the map both adds them to the <a href="#/selections-tab/0">Selections Tab</a>,
+                            and selects them in the <a href="#/records-tab/0">Records Tab</a>, in the <a href="#/records-taxa-panel/0">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>. Deselecting occurrence records on the map both removes them from the <a href="#/selections-tab/0">Selections Tab</a>, and
+                            deselects them in the <a href="#/records-tab/0">Records Tab</a>, in the <a href="#/records-taxa-panel/0">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Viewing Record Data</h3>
@@ -641,8 +643,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Records and Taxa Panel becomes available in the <a href="#/side-panel">Side Panel</a> when
-                            occurrence records are loaded. It is accessed by opening the <a href="#/side-panel">Side Panel</a> and
+                        <p>The Records and Taxa Panel becomes available in the <a href="#/side-panel/0">Side Panel</a> when
+                            occurrence records are loaded. It is accessed by opening the <a href="#/side-panel/0">Side Panel</a> and
                             clicking on Records and Taxa to expand the panel, if it isn't already expanded.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -659,8 +661,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Records Tab is accessed in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
-                            the <a href="#/side-panel">Side Panel</a>. It contains download options for the occurrence records
+                        <p>The Records Tab is accessed in the <a href="#/records-taxa-panel/0">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>. It contains download options for the occurrence records
                             returned in the search, links to other options to view the records, and a paginated list of the records
                             themselves, with the ability for selecting records of interest. To go through each part of this tab:</p>
                     </div>
@@ -705,8 +707,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h3>Select/Deselect All Checkbox</h3>
                         <p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can
                             be used to select and deselect all of the occurrence records in the current table. When selected,
-                            records will be both added to the <a href="#/selections-tab">Selections Tab</a> as well as
-                            selected on the map. Deselecting records will both remove them from the <a href="#/selections-tab">Selections Tab</a> and delselect
+                            records will be both added to the <a href="#/selections-tab/0">Selections Tab</a> as well as
+                            selected on the map. Deselecting records will both remove them from the <a href="#/selections-tab/0">Selections Tab</a> and delselect
                             them on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -715,7 +717,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             of the occurrence records returned from the search. There are columns for Catalog Number, Collector,
                             Date, and Scientific Name for each record. In the far left column there is a checkbox to select
                             and deselect individual records in the table. This will also select or deselect the record on
-                            the map, and add it to, or remove it from, the <a href="#/selections-tab">Selections Tab</a>. The
+                            the map, and add it to, or remove it from, the <a href="#/selections-tab/0">Selections Tab</a>. The
                             text in the Collector column for each record can be clicked to open a popup window displaying
                             the complete data for that record. Additionally, the <i style="height:20px;width:20px;" class="fas fa-search-location"></i> icon in the Collector column
                             can be clicked to pan the map to that record's location on the map and add a temporary marker.
@@ -731,8 +733,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Collections Tab is accessed in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
-                            the <a href="#/side-panel">Side Panel</a>. It contains a list of the collections represented in
+                        <p>The Collections Tab is accessed in the <a href="#/records-taxa-panel/0">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>. It contains a list of the collections represented in
                             the occurrence records returned in the search and options for symbolizing the associated occurrence
                             points on the map according to the collection it represents. To go through each part of this tab:</p>
                     </div>
@@ -783,8 +785,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Taxa Tab is accessed in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
-                            the <a href="#/side-panel">Side Panel</a>. It contains a list of the distinct taxa represented in
+                        <p>The Taxa Tab is accessed in the <a href="#/records-taxa-panel/0">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>. It contains a list of the distinct taxa represented in
                             the occurrence records returned in the search and options for symbolizing the associated occurrence
                             points on the map according to the taxon it represents. To go through each part of this tab:</p>
                     </div>
@@ -843,7 +845,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Selections Tab is available whenever occurrence records are selected. It is accessed in
-                            the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in the <a href="#/side-panel">Side Panel</a>. It
+                            the <a href="#/records-taxa-panel/0">Records and Taxa Panel</a> in the <a href="#/side-panel/0">Side Panel</a>. It
                             contains download options for the selected occurrence records, a list of the records themselves, the ability
                             to clear the current record selections, and the ability adjust the map to show the selections.
                             To go through each part of this tab:</p>
@@ -860,7 +862,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Below the Download Type Selector and Button is the Clear Selections Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
                             can be clicked to deselect all of the currently selected occurrence records, removing all records from
                             this tab and the tab itself, deselecting all occurrence records on the map, and deselecting all
-                            records in the <a href="#/records-tab">Records Tab</a>.</p>
+                            records in the <a href="#/records-tab/0">Records Tab</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Zoom to Selections Button</h3>
@@ -878,7 +880,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             of all of the currently selected occurrence records. There are columns for Catalog Number, Collector,
                             Date, and Scientific Name for each record. In the far left column there is a checkbox to deselect
                             individual records in the table, which removes them from this table, deselects them on the map, and
-                            deselects them in the <a href="#/records-tab">Records Tab</a>. The text in the Collector column
+                            deselects them in the <a href="#/records-tab/0">Records Tab</a>. The text in the Collector column
                             for each record can be clicked to open a popup window displaying the complete data for that record.
                             Additionally, the <i style="height:20px;width:20px;" class="fas fa-search-location"></i> icon in the Collector column
                             can be clicked to pan the map to that record's location on the map and add a temporary marker.
@@ -894,14 +896,14 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>Occurrence data can be downloaded from both the <a href="#/records-tab">Records Tab</a> and
-                            the <a href="#/selections-tab">Selections Tab</a> in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
-                            the <a href="#/side-panel">Side Panel</a>. Downloading occurrence data from the <a href="#/records-tab">Records Tab</a> will
-                            download all of the records returned in a search. Downloading occurrence data from the <a href="#/selections-tab">Selections Tab</a> will
+                        <p>Occurrence data can be downloaded from both the <a href="#/records-tab/0">Records Tab</a> and
+                            the <a href="#/selections-tab/0">Selections Tab</a> in the <a href="#/records-taxa-panel/0">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>. Downloading occurrence data from the <a href="#/records-tab/0">Records Tab</a> will
+                            download all of the records returned in a search. Downloading occurrence data from the <a href="#/selections-tab/0">Selections Tab</a> will
                             download only the selected records from a search.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>In either the <a href="#/records-tab">Records Tab</a> or the <a href="#/selections-tab">Selections Tab</a>, 
+                        <p>In either the <a href="#/records-tab/0">Records Tab</a> or the <a href="#/selections-tab/0">Selections Tab</a>, 
                             the Download Type Selector can be used to select the download format for the occurrence data.
                             The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click
                             the Download Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button> to
@@ -914,6 +916,41 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             image extensions, whether the file be an archive, and other file formatting. Once these further
                             options have been set, or if the default settings are preferred, click the Download Data Button
                             to proceed with the download.</p>
+                    </div>
+                </section>
+                <section id="using-heat-map-display" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Using the Heat Map Display</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>When occurrence records have been loaded on the map, the heat map display can be activated to display
+                            the occurrence data as a heat map instead of points.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To activate or deactivate the heat map display, check or uncheck <a href="#/settings-panel/3">Display Heat Map</a> in
+                            the <a href="#/settings-panel/0">Settings Panel</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Adjusting the <a href="#/settings-panel/4">Heat Map Radius</a> and <a href="#/settings-panel/5">Heat Map Blur</a> settings,
+                            also in the <a href="#/settings-panel/0">Settings Panel</a>, will further adjust how occurrence
+                            points are rendered in the heat map display.</p>
+                    </div>
+                </section>
+                <section id="downloading-map-image" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Downloading a Map Image</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>A png image of the map in the current view, including all layers that have been loaded, all occurrence
+                            data that has been loaded, and all symbology adjustments that have been made, can be downloaded
+                            at any time by clicking the <a href="#/control-panel/6">Download Map Image Button</a> in
+                            the <a href="#/control-panel/0">Control Panel</a>.</p>
                     </div>
                 </section>
             </div>
