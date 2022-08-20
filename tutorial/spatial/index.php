@@ -62,6 +62,13 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/using-heat-map-display">Using the Heat Map Display</a></li>
                             <li><a href="#/downloading-map-image">Downloading a Map Image</a></li>
                             <li><a href="#/vector-tools-panel">Vector Tools Panel</a></li>
+                            <li><a href="#/shapes-tab">Shapes Tab</a></li>
+                            <li><a href="#/downloading-features-from-shapes-layer">Downloading Features From the Shapes Layer</a></li>
+                            <li><a href="#/buffer-tool">Buffer Tool</a></li>
+                            <li><a href="#/difference-tool">Difference Tool</a></li>
+                            <li><a href="#/intersect-tool">Intersect Tool</a></li>
+                            <li><a href="#/union-tool">Union Tool</a></li>
+                            <li><a href="#/points-tab">Points Tab</a></li>
                         </ul>
                     </div>
                 </section>
@@ -671,13 +678,13 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h3>Download Type Selector and Button</h3>
                         <p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download
                             Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
-                            can be used to download the occurrence records in a csv or zip, kml, geojson, or gpx file format.
+                            can be used to download the occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format.
                             <a href="#/downloading-occurrence-data/0">Downloading occurrence records</a> will be discussed further in a later topic.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>List Display Button</h3>
                         <p>To the right of the Download Type Selector and Button is the List Display Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
-                            can click on this button to go to the list display for the occurrence records search.</p>
+                            can be clicked to go to the list display for the occurrence records search.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Table Display Button</h3>
@@ -855,7 +862,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h3>Download Type Selector and Button</h3>
                         <p>In the top-left corner of the Selections Tab is the Download Type drop-down selector followed by the Download
                             Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
-                            can be used to download the selected occurrence records in a csv or zip, kml, geojson, or gpx file format.
+                            can be used to download the selected occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format.
                             <a href="#/downloading-occurrence-data/0">Downloading selected occurrence records</a> will be discussed further in a later topic.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -968,6 +975,240 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The Vector Tools Panel includes two tabs: Shapes and Points. Each of these tabs will be
                             discussed more thouroughly in the following topics.</p>
+                    </div>
+                </section>
+                <section id="shapes-tab" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Shapes Tab</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Shapes Tab is accessed in the <a href="#/vector-tools-panel/0">Vector Tools Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>. It contains download options, means for deleting,
+                            and several analysis tools for features in the <a href="#/map-layers/5">Shapes Layer</a>. The
+                            top portion of the Shapes Tab will be covered here, while the analysis tools available in the
+                            lower portion of the tab will be covered individually in following topics.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Selected Area Display</h3>
+                        <p>At the top of the Shapes Tab is the Selected Area Display. This display shows the total area, in
+                            sq/km, of all of the features currently selected in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Download Type Selector and Button</h3>
+                        <p>Below the Selected Area Display on the left side is the Download Type drop-down selector followed by the Download
+                            Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
+                            can be used to download all of the features currently in the <a href="#/map-layers/5">Shapes Layer</a> in
+                            a KML or GeoJSON file format.<a href="#/downloading-occurrence-data/0">Downloading features from the Shapes Layer</a> will
+                            be discussed further in the next topic.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Delete Selected Features Button</h3>
+                        <p>To the right of the Download Type Selector and Button is the Delete Selected Features Button. This
+                            can be clicked to go to delete all features that are currently selected in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                </section>
+                <section id="downloading-features-from-shapes-layer" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Downloading Features From the Shapes Layer</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The <a href="#/shapes-tab/2">Download Type Selector and Button</a> in the <a href="#/shapes-tab/0">Shapes Tab</a> in
+                            the <a href="#/vector-tools-panel/0">Vector Tools Panel</a> in the <a href="#/side-panel/0">Side Panel</a> can
+                            be used to download all of the features currently in the <a href="#/map-layers/5">Shapes Layer</a> in
+                            either KML or GeoJSON formats.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Both download formats can be used in many other geoprocessing applications.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To download simply select either KML or GeoJSON in the <a href="#/shapes-tab/2">Download Type Selector</a>, and
+                            then click the <a href="#/shapes-tab/2">Download Button</a> in the <a href="#/shapes-tab/0">Shapes Tab</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Downloaded files can simply be dragged and dropped anywhere over the map window to reload the
+                            doanloaded features at a later time.</p>
+                    </div>
+                </section>
+                <section id="buffer-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Buffer Tool</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Buffer Tool is accessable in the <a href="#/shapes-tab/0">Shapes Tab</a> in
+                            the <a href="#/vector-tools-panel/0">Vector Tools Panel</a> in the <a href="#/side-panel/0">Side Panel</a>. It
+                            can be used to create a buffer polygon of a specified size (in km) around selected features in
+                            the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Before using the Buffer Tool, there must already be at least one feature in the <a href="#/map-layers/5">Shapes Layer</a> on
+                            which to base the buffer polygon. Features can be <a href="#/using-draw-tool/0">created using the Draw Tool</a>,
+                            or <a href="#/exploring-map-layer-data/3">added from other vector layers loaded onto the map</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To use the Buffer Tool, follow these steps:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 1</h3>
+                        <p>Make sure that Shapes is selected in the <a href="#/control-panel/3">Active Layer Selector</a> in
+                            the <a href="#/main-map-window/2">Control Panel</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 2</h3>
+                        <p>Select the features on which you would like to create the buffer in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 3</h3>
+                        <p>Enter the width the buffer should be (in km) in the box in the Buffer Tool: <input data-role="none" type="text" id="bufferSize" style="width:50px;" /> km</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 4</h3>
+                        <p>Click the Buffer Button in the Buffer Tool: <button data-role="none">Buffer</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>All created buffer features are added to the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                </section>
+                <section id="difference-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Difference Tool</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Difference Tool is accessable in the <a href="#/shapes-tab/0">Shapes Tab</a> in
+                            the <a href="#/vector-tools-panel/0">Vector Tools Panel</a> in the <a href="#/side-panel/0">Side Panel</a>. It
+                            can be used to create a polygon with the area representing the difference of one selected
+                            polygon, box, or circle from another selected polygon, box, or circle in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Before using the Difference Tool, there must already be the two features in the <a href="#/map-layers/5">Shapes Layer</a> on
+                            which to base the difference polygon. Features can be <a href="#/using-draw-tool/0">created using the Draw Tool</a>,
+                            or <a href="#/exploring-map-layer-data/3">added from other vector layers loaded onto the map</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To use the Difference Tool, follow these steps:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 1</h3>
+                        <p>Make sure that Shapes is selected in the <a href="#/control-panel/3">Active Layer Selector</a> in
+                            the <a href="#/main-map-window/2">Control Panel</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 2</h3>
+                        <p>Select the feature from which the area of the second selected feature will be subtracted in
+                            the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 3</h3>
+                        <p>Select the second feature to subtract from the first feature in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 4</h3>
+                        <p>Click the Difference Button in the Difference Tool: <button data-role="none">Difference</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The created difference feature is added to the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                </section>
+                <section id="intersect-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Intersect Tool</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Intersect Tool is accessable in the <a href="#/shapes-tab/0">Shapes Tab</a> in
+                            the <a href="#/vector-tools-panel/0">Vector Tools Panel</a> in the <a href="#/side-panel/0">Side Panel</a>. It
+                            can be used to create a polygon with the overlapping area of two selected polygons, boxes, or circles in
+                            the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Before using the Intersect Tool, there must already be the two features in the <a href="#/map-layers/5">Shapes Layer</a> on
+                            which to base the intersect polygon. Features can be <a href="#/using-draw-tool/0">created using the Draw Tool</a>,
+                            or <a href="#/exploring-map-layer-data/3">added from other vector layers loaded onto the map</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To use the Intersect Tool, follow these steps:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 1</h3>
+                        <p>Make sure that Shapes is selected in the <a href="#/control-panel/3">Active Layer Selector</a> in
+                            the <a href="#/main-map-window/2">Control Panel</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 2</h3>
+                        <p>Select the two features on which to base the intersect polygon in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 4</h3>
+                        <p>Click the Intersect Button in the Intersect Tool: <button data-role="none">Intersect</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The created intersect feature is added to the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                </section>
+                <section id="union-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Union Tool</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Union Tool is accessable in the <a href="#/shapes-tab/0">Shapes Tab</a> in
+                            the <a href="#/vector-tools-panel/0">Vector Tools Panel</a> in the <a href="#/side-panel/0">Side Panel</a>. It
+                            can be used to create a polygon with the combined area of two or more selected polygons, boxes,
+                            or circles in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Before using the Union Tool, there must already be at least two features in the <a href="#/map-layers/5">Shapes Layer</a> on
+                            which to base the union polygon. Features can be <a href="#/using-draw-tool/0">created using the Draw Tool</a>,
+                            or <a href="#/exploring-map-layer-data/3">added from other vector layers loaded onto the map</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To use the Union Tool, follow these steps:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 1</h3>
+                        <p>Make sure that Shapes is selected in the <a href="#/control-panel/3">Active Layer Selector</a> in
+                            the <a href="#/main-map-window/2">Control Panel</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 2</h3>
+                        <p>Select the features on which to base the union polygon in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 4</h3>
+                        <p>Click the Union Button in the Union Tool: <button data-role="none">Union</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The created union feature is added to the <a href="#/map-layers/5">Shapes Layer</a> and
+                            replaces the originally selected features.</p>
+                    </div>
+                </section>
+                <section id="points-tab" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Points Tab</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Points Tab is accessed in the <a href="#/vector-tools-panel/0">Vector Tools Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>. It contains analysis tools for occurrence points
+                            in the <a href="#/map-layers/6">Points Layer</a>. These analysis tools will be covered individually
+                            in the next topics.</p>
                     </div>
                 </section>
             </div>
