@@ -61,6 +61,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/downloading-occurrence-data">Downloading Occurrence Data</a></li>
                             <li><a href="#/using-heat-map-display">Using the Heat Map Display</a></li>
                             <li><a href="#/downloading-map-image">Downloading a Map Image</a></li>
+                            <li><a href="#/vector-tools-panel">Vector Tools Panel</a></li>
                         </ul>
                     </div>
                 </section>
@@ -671,7 +672,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download
                             Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
                             can be used to download the occurrence records in a csv or zip, kml, geojson, or gpx file format.
-                            Downloading occurrence records will be discussed further in a later topic.</p>
+                            <a href="#/downloading-occurrence-data/0">Downloading occurrence records</a> will be discussed further in a later topic.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>List Display Button</h3>
@@ -855,7 +856,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>In the top-left corner of the Selections Tab is the Download Type drop-down selector followed by the Download
                             Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
                             can be used to download the selected occurrence records in a csv or zip, kml, geojson, or gpx file format.
-                            Downloading selected occurrence records will be discussed further in a later topic.</p>
+                            <a href="#/downloading-occurrence-data/0">Downloading selected occurrence records</a> will be discussed further in a later topic.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Clear Selections Button</h3>
@@ -951,6 +952,22 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             data that has been loaded, and all symbology adjustments that have been made, can be downloaded
                             at any time by clicking the <a href="#/control-panel/6">Download Map Image Button</a> in
                             the <a href="#/control-panel/0">Control Panel</a>.</p>
+                    </div>
+                </section>
+                <section id="vector-tools-panel" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Vector Tools Panel</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Vector Tools Panel is accessed by opening the <a href="#/side-panel/0">Side Panel</a> and
+                            clicking on Vector Tools to expand the panel.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Vector Tools Panel includes two tabs: Shapes and Points. Each of these tabs will be
+                            discussed more thouroughly in the following topics.</p>
                     </div>
                 </section>
             </div>
