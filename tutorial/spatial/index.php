@@ -58,6 +58,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/collections-tab">Collections Tab</a></li>
                             <li><a href="#/taxa-tab">Taxa Tab</a></li>
                             <li><a href="#/selections-tab">Selections Tab</a></li>
+                            <li><a href="#/downloading-occurrence-data">Downloading Occurrence Data</a></li>
                         </ul>
                     </div>
                 </section>
@@ -664,7 +665,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             themselves, with the ability for selecting records of interest. To go through each part of this tab:</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Download Type Selection and Button</h3>
+                        <h3>Download Type Selector and Button</h3>
                         <p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download
                             Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
                             can be used to download the occurrence records in a csv or zip, kml, geojson, or gpx file format.
@@ -672,7 +673,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>List Display Button</h3>
-                        <p>To the right of the Download Type Selection and Button is the List Display Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
+                        <p>To the right of the Download Type Selector and Button is the List Display Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
                             can click on this button to go to the list display for the occurrence records search.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -848,7 +849,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             To go through each part of this tab:</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Download Type Selection and Button</h3>
+                        <h3>Download Type Selector and Button</h3>
                         <p>In the top-left corner of the Selections Tab is the Download Type drop-down selector followed by the Download
                             Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
                             can be used to download the selected occurrence records in a csv or zip, kml, geojson, or gpx file format.
@@ -856,10 +857,10 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Clear Selections Button</h3>
-                        <p>Below the Download Type Selection and Button is the Clear Selections Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
+                        <p>Below the Download Type Selector and Button is the Clear Selections Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
                             can be clicked to deselect all of the currently selected occurrence records, removing all records from
                             this tab and the tab itself, deselecting all occurrence records on the map, and deselecting all
-                            records in the Records Tab.</p>
+                            records in the <a href="#/records-tab">Records Tab</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Zoom to Selections Button</h3>
@@ -883,6 +884,36 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             can be clicked to pan the map to that record's location on the map and add a temporary marker.
                             If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be
                             clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>
+                    </div>
+                </section>
+                <section id="downloading-occurrence-data" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Downloading Occurrence Data</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Occurrence data can be downloaded from both the <a href="#/records-tab">Records Tab</a> and
+                            the <a href="#/selections-tab">Selections Tab</a> in the <a href="#/records-taxa-panel">Records and Taxa Panel</a> in
+                            the <a href="#/side-panel">Side Panel</a>. Downloading occurrence data from the <a href="#/records-tab">Records Tab</a> will
+                            download all of the records returned in a search. Downloading occurrence data from the <a href="#/selections-tab">Selections Tab</a> will
+                            download only the selected records from a search.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>In either the <a href="#/records-tab">Records Tab</a> or the <a href="#/selections-tab">Selections Tab</a>, 
+                            the Download Type Selector can be used to select the download format for the occurrence data.
+                            The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click
+                            the Download Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button> to
+                            initiate the download.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>If the download type CSV/ZIP is selected, an additional window will open allowing for further
+                            options as to the structure and formatting of the download. These options include whether the
+                            structure the data in the Symbiota or Darwin Core format, whether to include determination or
+                            image extensions, whether the file be an archive, and other file formatting. Once these further
+                            options have been set, or if the default settings are preferred, click the Download Data Button
+                            to proceed with the download.</p>
                     </div>
                 </section>
             </div>
