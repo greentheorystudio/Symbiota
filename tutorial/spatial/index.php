@@ -71,6 +71,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/points-tab">Points Tab</a></li>
                             <li><a href="#/concave-hull-polygon-tool">Concave Hull Polygon Tool</a></li>
                             <li><a href="#/convex-hull-polygon-tool">Convex Hull Polygon Tool</a></li>
+                            <li><a href="#/raster-tools-panel">Raster Tools Panel</a></li>
                         </ul>
                     </div>
                 </section>
@@ -1283,6 +1284,22 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>The created convex hull feature is added to the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                </section>
+                <section id="raster-tools-panel" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Raster Tools Panel</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Raster Tools Panel is accessed by opening the <a href="#/side-panel/0">Side Panel</a> and
+                            clicking on Raster Tools to expand the panel.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Raster Tools Panel contains analysis tools for raster layers loaded onto the map. These analysis
+                            tools will be covered individually in the next topics.</p>
                     </div>
                 </section>
             </div>

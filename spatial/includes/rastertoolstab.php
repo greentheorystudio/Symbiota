@@ -3,7 +3,7 @@
 ?>
 <div id="rastertoolstab" style="width:379px;padding:0;">
     <div style="padding:10px;">
-        <div style="margin-top:10px;">
+        <div style="margin-bottom:10px;">
             <b>Target Raster Layer</b> <select data-role="none" id="targetrasterselect" style="width:275px;">
                 <option value="">None</option>
             </select>
