@@ -84,7 +84,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                 </section>
-                <section id="intro" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                <section data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:20%; width:40%;">
                         <div class="tutorial-frame" style="position:relative;left: -50%;">
                             <h3><a href="main-map-window.php">Start Tutorial</a></h3>
