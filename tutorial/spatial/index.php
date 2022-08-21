@@ -72,6 +72,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/concave-hull-polygon-tool">Concave Hull Polygon Tool</a></li>
                             <li><a href="#/convex-hull-polygon-tool">Convex Hull Polygon Tool</a></li>
                             <li><a href="#/raster-tools-panel">Raster Tools Panel</a></li>
+                            <li><a href="#/data-vectorize-tool">Data-Based Vectorize Tool</a></li>
+                            <li><a href="#/grid-vectorize-tool">Grid-Based Vectorize Tool</a></li>
                         </ul>
                     </div>
                 </section>
@@ -1301,6 +1303,119 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>The Raster Tools Panel contains analysis tools for raster layers loaded onto the map and the Target
                             Raster Layer Selector, which is used with the tools. These analysis tools will be covered individually
                             in the next topics.</p>
+                    </div>
+                </section>
+                <section id="data-vectorize-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Data-Based Vectorize Tool</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Data-Based Vectorize Tool is accessable in the <a href="#/raster-tools-panel/0">Raster Tools Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>. It can be used to create vector polygon features for
+                            all areas within a selected polygon, box, or circle in the <a href="#/map-layers/5">Shapes Layer</a>, that
+                            have raster data values within a defined value range, based on the data values within the raster layer itself.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Data-Based Vectorize Tool compares to the Grid-Based Vectorize Tool in that it can analyze larger
+                            areas, and is faster. The Grid-Based Vectorize Tool however, can have a much greater level of
+                            resolution in the vector features it produces, and is more accurate.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Before using the Data-Based Vectorize Tool, at least one raster layer needs to be loaded on the
+                            map and there must already be at least one polygon, box, or circle feature in
+                            the <a href="#/map-layers/5">Shapes Layer</a> to serve as the bounds for the vectorization
+                            process.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To use the Data-Based Vectorize Tool, follow these steps:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 1</h3>
+                        <p>Make sure that Shapes is selected in the <a href="#/control-panel/3">Active Layer Selector</a> in
+                            the <a href="#/main-map-window/2">Control Panel</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 2</h3>
+                        <p>Select the one polygon, box, or circle feature to serve as the bounds for the vectorization process
+                            in the <a href="#/map-layers/5">Shapes Layer</a>. *Note that this feature must overlap with the
+                            raster layer to be vectorized.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 3</h3>
+                        <p>Using the Target Raster Layer Selector, at the top of the <a href="#/raster-tools-panel/0">Raster Tools Panel</a>,
+                            select the raster layer to be vectorized.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 4</h3>
+                        <p>Enter the low and high values for the value range in the appropriate boxes in the Data-Based
+                            Vectorize Tool: <input data-role="none" type="text" style="margin-top:3px;width:50px;" /> and <input data-role="none" type="text" style="margin-top:3px;width:50px;" /></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 5</h3>
+                        <p>Click the Data-Based Vectorize Button in the Data-Based Vectorize Tool: <button data-role="none">Data-Based Vectorize</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>All polygon features that are created are added to the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                </section>
+                <section id="grid-vectorize-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Grid-Based Vectorize Tool</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Grid-Based Vectorize Tool is accessable in the <a href="#/raster-tools-panel/0">Raster Tools Panel</a> in
+                            the <a href="#/side-panel/0">Side Panel</a>. It can be used to create vector polygon features for
+                            all areas within a target box positioned on the map, that have raster data values within a defined
+                            value range, based on a grid analysis performed at either a 25, 50, 100, 250, or 500 meter resolution.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Grid-Based Vectorize Tool compares to the Data-Based Vectorize Tool in that its raster analysis
+                            can be more accurate and it can produce vector features that have a much greater level of resolution.
+                            The Data-Based Vectorize Tool however, can be run on much larger areas and can be a significantly
+                            faster to run.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Before using the Grid-Based Vectorize Tool, at least one raster layer needs to be loaded on the
+                            map.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To use the Grid-Based Vectorize Tool, follow these steps:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 1</h3>
+                        <p>Using the Target Raster Layer Selector, at the top of the <a href="#/raster-tools-panel/0">Raster Tools Panel</a>,
+                            select the raster layer to be vectorized.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 2</h3>
+                        <p>Enter the low and high values for the value range in the appropriate boxes in the Grid-Based
+                            Vectorize Tool: <input data-role="none" type="text" style="margin-top:3px;width:50px;" /> and <input data-role="none" type="text" style="margin-top:3px;width:50px;" /></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 3</h3>
+                        <p>Select the resolution of the grid analysis, or leave it at the default value of 25, in the Grid-Based
+                            Vectorize Tool: resolution of <select data-role="none" style="margin-top:3px;"><option value="0.025">25</option></select> meters</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 4</h3>
+                        <p>Click the Display Target Box Button in the Grid-Based Vectorize Tool to display the red target box on the map: <button data-role="none">Display Target Box</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 5</h3>
+                        <p>Click and drag the red target box on the map to position it on the area to be vectorized.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 6</h3>
+                        <p>Click the Grid-Based Vectorize Button in the Grid-Based Vectorize Tool: <button data-role="none">Grid-Based Vectorize</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>All polygon features that are created are added to the <a href="#/map-layers/5">Shapes Layer</a>.</p>
                     </div>
                 </section>
             </div>

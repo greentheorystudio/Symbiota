@@ -27,7 +27,7 @@
                 <option value="0.5">500</option>
             </select> meters.
             <div style="margin-top:5px;">
-                <button data-role="none" id="vectorizeRasterByGridTargetPolyDisplayButton" onclick="displayVectorizeRasterByGridTargetPolygon();" disabled>Display Target Polygon</button>
+                <button data-role="none" id="vectorizeRasterByGridTargetPolyDisplayButton" onclick="displayVectorizeRasterByGridTargetPolygon();" disabled>Display Target Box</button>
                 <button data-role="none" id="vectorizeRasterByGridTargetPolyHideButton" onclick="hideVectorizeRasterByGridTargetPolygon();" style="display:none;">Hide Target Polygon</button>
             </div>
             <span id="gridRasterVectorizeWarning" class="tool-warning">At least one raster layer needs to be loaded on the map and the Target Polygon needs to be displayed to use this tool.</span>
