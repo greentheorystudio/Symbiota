@@ -1298,8 +1298,9 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             clicking on Raster Tools to expand the panel.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <p>The Raster Tools Panel contains analysis tools for raster layers loaded onto the map. These analysis
-                            tools will be covered individually in the next topics.</p>
+                        <p>The Raster Tools Panel contains analysis tools for raster layers loaded onto the map and the Target
+                            Raster Layer Selector, which is used with the tools. These analysis tools will be covered individually
+                            in the next topics.</p>
                     </div>
                 </section>
             </div>
