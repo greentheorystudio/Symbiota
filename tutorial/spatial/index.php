@@ -1417,6 +1417,10 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Click the Grid-Based Vectorize Button in the Grid-Based Vectorize Tool: <button data-role="none">Grid-Based Vectorize</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 7</h3>
+                        <p>Click the Hide Target Box Button in the Grid-Based Vectorize Tool to remove the red target box from the map: <button data-role="none">Hide Target Box</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <p>All polygon features that are created are added to the <a href="#/map-layers/5">Shapes Layer</a>.</p>
                     </div>
                 </section>
