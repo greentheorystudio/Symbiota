@@ -1408,7 +1408,9 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Step 5</h3>
-                        <p>Click and drag the red target box on the map to position it on the area to be vectorized.</p>
+                        <p>Click and drag the red target box on the map to position it on the area to be vectorized. Note that
+                            the target box is different sizes, based on the resolution selected in Step 3, and it may be
+                            necessary to zoom in on the map in order to position it.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
                         <h3>Step 6</h3>
