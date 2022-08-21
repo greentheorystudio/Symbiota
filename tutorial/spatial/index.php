@@ -69,6 +69,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             <li><a href="#/intersect-tool">Intersect Tool</a></li>
                             <li><a href="#/union-tool">Union Tool</a></li>
                             <li><a href="#/points-tab">Points Tab</a></li>
+                            <li><a href="#/concave-hull-polygon-tool">Concave Hull Polygon Tool</a></li>
+                            <li><a href="#/convex-hull-polygon-tool">Convex Hull Polygon Tool</a></li>
                         </ul>
                     </div>
                 </section>
@@ -1151,7 +1153,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Select the two features on which to base the intersect polygon in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Step 4</h3>
+                        <h3>Step 3</h3>
                         <p>Click the Intersect Button in the Intersect Tool: <button data-role="none">Intersect</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -1189,7 +1191,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Select the features on which to base the union polygon in the <a href="#/map-layers/5">Shapes Layer</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
-                        <h3>Step 4</h3>
+                        <h3>Step 3</h3>
                         <p>Click the Union Button in the Union Tool: <button data-role="none">Union</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
@@ -1209,6 +1211,78 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             the <a href="#/side-panel/0">Side Panel</a>. It contains analysis tools for occurrence points
                             in the <a href="#/map-layers/6">Points Layer</a>. These analysis tools will be covered individually
                             in the next topics.</p>
+                    </div>
+                </section>
+                <section id="concave-hull-polygon-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Concave Hull Polygon Tool</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Concave Hull Polygon Tool is accessable in the <a href="#/points-tab/0">Points Tab</a> in
+                            the <a href="#/vector-tools-panel/0">Vector Tools Panel</a> in the <a href="#/side-panel/0">Side Panel</a>. It
+                            can be used to create a concave hull polygon or multi-polygon around either all, or only the selected,
+                            occurrence record points with a maximum edge length of a specified length (in km).</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Before using the Concave Hull Polygon Tool, <a href="#/loading-occurrence-records/0">occurrence records must already be loaded on the map</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To use the Concave Hull Polygon Tool, follow these steps:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 1</h3>
+                        <p>If the concave hull polygon should be created based on only the selected occurrence record points,
+                            select “selected”, otherwise leave the default of “all” selected in the Concave Hull Polygon Tool.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 2</h3>
+                        <p>Enter the value (in km) of the maximum edge length for the concave hull polygon: <input data-role="none" type="text" style="width:75px;margin-top:3px;" /> kilometers</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 3</h3>
+                        <p>Click the Concave Hull Polygon Button in the Concave Hull Polygon Tool: <button data-role="none">Concave Hull Polygon</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The created concave hull feature is added to the <a href="#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                </section>
+                <section id="convex-hull-polygon-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                    <div style="position:absolute;left: 50%; bottom:10;">
+                        <div class="tutorial-frame" style="position:relative; left: -50%;">
+                            <div class="slide-title">Convex Hull Polygon Tool</div>
+                            <div class="index-link"><a href="#/index">Back to index</a></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The Convex Hull Polygon Tool is accessable in the <a href="#/points-tab/0">Points Tab</a> in
+                            the <a href="#/vector-tools-panel/0">Vector Tools Panel</a> in the <a href="#/side-panel/0">Side Panel</a>. It
+                            can be used to create a convex hull polygon around either all, or only the selected, occurrence
+                            record points.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>A convex hull polygon differs from a concave hull polygon in that all interior angles are less than
+                            180 degrees.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>Before using the Convex Hull Polygon Tool, <a href="#/loading-occurrence-records/0">occurrence records must already be loaded on the map</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>To use the Convex Hull Polygon Tool, follow these steps:</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 1</h3>
+                        <p>If the convex hull polygon should be created based on only the selected occurrence record points,
+                            select “selected”, otherwise leave the default of “all” selected in the Convex Hull Polygon Tool.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <h3>Step 2</h3>
+                        <p>Click the Convex Hull Polygon Button in the Convex Hull Polygon Tool: <button data-role="none">Convex Hull Polygon</button></p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out" style="width: 25%; right: 5%; top: 25%;">
+                        <p>The created convex hull feature is added to the <a href="#/map-layers/5">Shapes Layer</a>.</p>
                     </div>
                 </section>
             </div>
