@@ -54,7 +54,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Display Heat Map</h3>
-                        <p>When checked occrrence points loaded onto the map are displayed as a heat map, based on the Heat Map
+                        <p>When checked occurrence points loaded onto the map are displayed as a heat map, based on the Heat Map
                             Radius and Heat Map Blur settings. When not checked (default) occurrence points are displayed on
                             the map as individual points, or clusters of like points.</p>
                     </div>
