@@ -54,18 +54,18 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Display Heat Map</h3>
-                        <p>When checked occurrence points loaded onto the map are displayed as a heat map, based on the Heat Map
-                            Radius and Heat Map Blur settings. When not checked (default) occurrence points are displayed on
+                        <p>When checked occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map
+                            Radius and Heat Map Blur settings. When not checked (default) occurrence records are displayed on
                             the map as individual points, or clusters of like points.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Heat Map Radius</h3>
-                        <p>This setting controls the radius (in pixels) of occurrence points in the heat map display when Display
+                        <p>This setting controls the radius (in pixels) of occurrence record points in the heat map display when Display
                             Heat Map is checked.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Heat Map Blur</h3>
-                        <p>This setting controls the blur size (in pixels) of points in the heat map display when Display
+                        <p>This setting controls the blur size (in pixels) of occurrence record points in the heat map display when Display
                             Heat Map is checked.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
