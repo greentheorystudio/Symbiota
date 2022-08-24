@@ -36,7 +36,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
-                        <p>Occurrence records loaded on the map are automatically added to the Points Layer. In order to work
+                        <p>Occurrence records loaded on the map are automatically added into the Points Layer. In order to work
                             with occurrence records in the Points Layer, be sure that Points is selected in
                             the <a href="control-panel.php#/control-panel/3">Active Layer Selector</a> first.</p>
                     </div>

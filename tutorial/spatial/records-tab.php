@@ -38,7 +38,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>The Records Tab is accessed in the <a href="records-taxa-panel.php#/records-taxa-panel/0">Records and Taxa Panel</a> in
                             the <a href="side-panel.php#/side-panel/0">Side Panel</a>. It contains download options for the occurrence records
-                            returned in the search, links to other options to view the records, and a paginated list of the records
+                            returned in a search, links to other options to view the records, and a paginated list of the records
                             themselves, with the ability for selecting records of interest. To go through each part of this tab:</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
