@@ -80,6 +80,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                                 <li><a href="raster-tools-panel.php">Raster Tools Panel</a></li>
                                 <li><a href="data-vectorize-tool.php">Data-Based Vectorize Tool</a></li>
                                 <li><a href="grid-vectorize-tool.php">Grid-Based Vectorize Tool</a></li>
+                                <li><a href="walkthrough-1.php">Walkthrough #1</a></li>
                             </ul>
                         </div>
                     </div>

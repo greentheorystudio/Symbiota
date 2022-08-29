@@ -90,6 +90,9 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>All polygon features that are created are added to the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>
                     </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3><a href="walkthrough-1.php">Go To Next Topic</a></h3>
+                    </div>
                 </section>
             </div>
         </div>
