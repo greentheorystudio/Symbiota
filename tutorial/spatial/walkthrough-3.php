@@ -48,7 +48,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Download the US county shapefile from the <a href="https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html" target="_blank">TIGER/Line data from the United States Census Bureau</a>.
                             This can be found in the COUNTY directory of their <a href="https://www2.census.gov/geo/tiger/TIGER2021/" target="_blank">FTP Archive</a>.
                             You can also <a href="https://www2.census.gov/geo/tiger/TIGER2021/COUNTY/tl_2021_us_county.zip">click this link to download it directly</a>.
-                            <b>Be sure to note the location the file is downloaded to on your computer.</b></p>
+                            <b>Be sure to note the location the file is downloaded on your computer.</b></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 2</h3>
@@ -102,7 +102,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 10</h3>
                         <p>Select the US county data layer in the <a href="control-panel.php#/control-panel/3">Active Layer Selector</a>
-                            (this should be tl_2021_us_county if you downloaded the file in step 1) in the <a href="main-map-window.php#/main-map-window/2">Control Panel</a>
+                            (this should be tl_2021_us_county if you downloaded the file specified in step 1) in the <a href="main-map-window.php#/main-map-window/2">Control Panel</a>
                             to activate it.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">

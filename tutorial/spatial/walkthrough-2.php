@@ -78,7 +78,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 7</h3>
-                        <p>In the Buffer Tool of the <a href="shapes-tab.php#/shapes-tab/0">Shapes Tab</a>, enter the width
+                        <p>In the <a href="buffer-tool.php#/buffer-tool/0">Buffer Tool</a> in the <a href="shapes-tab.php#/shapes-tab/0">Shapes Tab</a>, enter the width
                             the buffer should be (in km) in the box and click the Buffer button to create the buffer polygon.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
