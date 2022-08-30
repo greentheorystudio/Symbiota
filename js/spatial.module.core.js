@@ -2486,12 +2486,13 @@ function processInputSelections(){
         let area;
         let areaFeat;
         if(feature){
+            const featureProps = feature.getProperties();
             const selectedClone = feature.clone();
             const geoType = selectedClone.getGeometry().getType();
             const wktFormat = new ol.format.WKT();
             const geoJSONFormat = new ol.format.GeoJSON();
             if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
-                const boxType = (selectedClone.values_.hasOwnProperty('geoType') && selectedClone.values_.geoType === 'Box');
+                const boxType = (featureProps.hasOwnProperty('geoType') && featureProps['geoType'] === 'Box');
                 const selectiongeometry = selectedClone.getGeometry();
                 const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
                 const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
@@ -2798,13 +2799,15 @@ function processVectorInteraction(){
             }
             featureCount++;
         });
-        if(polyCount === 1 && rasterLayersLoaded){
-            document.getElementById("dataRasterVectorizeButton").disabled = false;
-            document.getElementById("dataRasterVectorizeWarning").style.display = "none";
-        }
-        else{
-            document.getElementById("dataRasterVectorizeButton").disabled = true;
-            document.getElementById("dataRasterVectorizeWarning").style.display = "block";
+        if(document.getElementById("dataRasterVectorizeButton")){
+            if(polyCount === 1 && rasterLayersLoaded){
+                document.getElementById("dataRasterVectorizeButton").disabled = false;
+                document.getElementById("dataRasterVectorizeWarning").style.display = "none";
+            }
+            else{
+                document.getElementById("dataRasterVectorizeButton").disabled = true;
+                document.getElementById("dataRasterVectorizeWarning").style.display = "block";
+            }
         }
         if(featureCount >= 1){
             document.getElementById("bufferPolyButton").disabled = false;
