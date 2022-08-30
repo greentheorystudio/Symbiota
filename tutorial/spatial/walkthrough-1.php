@@ -55,7 +55,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 3</h3>
                         <p>Click the Load Records button to run the search. If a message pops up stating that there were no
-                            records matching the query, check different collections, and do this step over until occurrence records are loaded.</p>
+                            records matching the query, repeat step 2, but check different collections, and do this step over
+                            until occurrence records are loaded.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 4</h3>

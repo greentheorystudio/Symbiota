@@ -94,7 +94,12 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             to load the occurrence records occurring in the buffer polygon.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
-                        <h3><a href="working-with-points-layer.php">Go To Next Topic</a></h3>
+                        <h3>Step 10</h3>
+                        <p>If you receive a message after step 9 stating that there were no records matching the query, try
+                            repeatinging steps 7, 8, and 9, but using a higher value for buffer width in step 7.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3><a href="walkthrough-3.php">Go To Next Topic</a></h3>
                     </div>
                 </section>
             </div>

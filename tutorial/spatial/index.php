@@ -82,6 +82,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                                 <li><a href="grid-vectorize-tool.php">Grid-Based Vectorize Tool</a></li>
                                 <li><a href="walkthrough-1.php">Walkthrough #1</a></li>
                                 <li><a href="walkthrough-2.php">Walkthrough #2</a></li>
+                                <li><a href="walkthrough-3.php">Walkthrough #3</a></li>
                             </ul>
                         </div>
                     </div>
