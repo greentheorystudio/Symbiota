@@ -802,7 +802,7 @@ function clearLayerQuerySelector() {
     document.getElementById('spatialQuerySelectorLayerId').value = '';
 }
 
-function clearSelections(){
+function clearSelections(resetToggle){
     const selpoints = selections;
     selections = [];
     for(let i in selpoints){
@@ -824,7 +824,9 @@ function clearSelections(){
         }
     }
     document.getElementById("toggleselectedswitch").checked = false;
-    processToggleSelectedChange();
+    if(resetToggle){
+        processToggleSelectedChange();
+    }
     adjustSelectionsTab();
     document.getElementById("selectiontbody").innerHTML = '';
 }
@@ -2947,7 +2949,7 @@ function removeUserLayer(layerID,raster){
         shapeActive = false;
     }
     else if(layerID === 'pointv'){
-        clearSelections();
+        clearSelections(false);
         adjustSelectionsTab();
         removeDateSlider();
         pointvectorsource.clear(true);

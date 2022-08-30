@@ -307,7 +307,7 @@ function getPointInfoArr(cluster){
 }
 
 function loadPoints(){
-    clearSelections();
+    clearSelections(false);
     searchTermsArr = getSearchTermsArr();
     if(validateSearchTermsArr(searchTermsArr)){
         taxaCnt = 0;
@@ -315,19 +315,17 @@ function loadPoints(){
         taxaSymbology = [];
         selections = [];
         showWorking();
-        pointvectorsource.clear(true);
-        layersObj['pointv'].setSource(pointvectorsource);
         getQueryRecCnt(function() {
             if(queryRecCnt > 0){
                 loadPointsEvent = true;
+                pointvectorsource.clear(true);
+                layersObj['pointv'].setSource(pointvectorsource);
                 setCopySearchUrlDiv();
                 loadPointsLayer(0);
-                //cleanSelectionsLayer();
                 setRecordsTab();
                 changeRecordPage(1);
                 $('#recordstab').tabs({active: 0});
                 $("#sidepanel-accordion").accordion("option","active",1);
-                //selectInteraction.getFeatures().clear();
                 if(!pointActive){
                     const infoArr = [];
                     infoArr['id'] = 'pointv';
@@ -335,7 +333,7 @@ function loadPoints(){
                     infoArr['fileType'] = 'vector';
                     infoArr['layerName'] = 'Points';
                     infoArr['layerDescription'] = "This layer contains all of the occurrence points that have been loaded onto the map.",
-                        infoArr['removable'] = true;
+                    infoArr['removable'] = true;
                     infoArr['sortable'] = false;
                     infoArr['symbology'] = false;
                     infoArr['query'] = false;

@@ -294,7 +294,7 @@ $obsArr = ($collList['obs'] ?? null);
                 </div>
             </div>
             <div style="display:flex;justify-content:space-between;">
-                <button data-role="none" id="clearselectionsbut" onclick="clearSelections();">Clear Selections</button>
+                <button data-role="none" id="clearselectionsbut" onclick="clearSelections(true);">Clear Selections</button>
                 <button data-role="none" id="zoomtoselectionsbut" onclick="zoomToSelections();">Zoom to Selections</button>
             </div>
             <div style="width:100%;display:flex;justify-content:flex-start;align-items:center;margin-top:8px;">
