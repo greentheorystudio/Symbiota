@@ -9,7 +9,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reveal.css?ver=20220813" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220823" rel="stylesheet" id="theme" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220829" rel="stylesheet" id="theme" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/tutorial.js" type="text/javascript"></script>
         <style>
@@ -29,7 +29,6 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="topic-title-slide">
                         <div class="tutorial-frame topic-title-slide-inner">
                             <div class="slide-title">Walkthrough #1</div>
-                            <h3>Basic Occurrence Search</h3>
                             <div class="topic-nav-links">
                                 <div><a href="grid-vectorize-tool.php">Previous Topic</a></div>
                                 <div><a href="index.php#/index">Index of Topics</a></div>
@@ -46,7 +45,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Click on the <a href="main-map-window.php#/main-map-window/1">Side Panel Toggle</a> to open
                             the <a href="side-panel.php#/side-panel/0">Side Panel</a>, click on Search Criteria to
                             expand the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a> (if it
-                            isn't already expanded), and then click on the Collections Tab.</p>
+                            isn't already expanded), and then click on the Collections Tab to select it.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 2</h3>
@@ -60,7 +59,47 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 4</h3>
-                        <p>Click the Display Target Box Button in the Grid-Based Vectorize Tool to display the red target box on the map: <button data-role="none">Display Target Box</button></p>
+                        <p>When occurrence records are loaded on the map, the <a href="records-taxa-panel.php#/records-taxa-panel/0">Records and Taxa Panel</a> should
+                            automatically expand with the <a href="records-tab.php#/records-tab/0">Records Tab</a> selected. Scroll
+                            up and down over the records to view them. Click the <i style="height:20px;width:20px;" class="fas fa-search-location"></i> icon
+                            in the Collector column of records to pan the map to that record's location on the map and add
+                            a temporary marker. Check the checkbox in the far left column of the <a href="records-tab.php#/records-tab/8">Occurrence Record Table</a> for
+                            a few records to select them.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 5</h3>
+                        <p>Click the <a href="selections-tab.php#/selections-tab/0">Selections Tab</a> to select it, and then check
+                            the <a href="selections-tab.php#/selections-tab/4">Show Only Selected Points Checkbox</a> so that
+                            only the selected records are displayed on the map. If the selected records aren't readily visible,
+                            click the <a href="selections-tab.php#/selections-tab/3">Zoom to Selections Button</a> to pan and
+                            zoom the map to the records. Uncheck the <a href="selections-tab.php#/selections-tab/4">Show Only Selected Points Checkbox</a> so
+                            that all records are visible on the map again.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 6</h3>
+                        <p>Click the <a href="records-tab.php#/records-tab/0">Records Tab</a> to select it again and make note
+                            of one of the scientific names in the Scientific Name column of the <a href="records-tab.php#/records-tab/8">Occurrence Record Table</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 7</h3>
+                        <p>Click on Search Criteria to expand the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a> again
+                            and click on the Collections Tab to select it. In the Collections Tab, check the Select/Deselect All
+                            checkbox to select all collections.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 8</h3>
+                        <p>Click the Criteria Tab to select it, and then enter the scientific name noted in Step 6 into the
+                            Taxa box, leaving the Taxa Type Selector above the Taxa box set to Family or Scientific Name.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 9</h3>
+                        <p>Click the Load Records button to load all occurrence records identified to the scientific name you entered.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 10</h3>
+                        <p>Click on Search Criteria to expand the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a> again
+                            and click on the Criteria Tab to select it again. Try entering other criteria into the other options
+                            in this tab and loading occurrence records.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3><a href="working-with-points-layer.php">Go To Next Topic</a></h3>

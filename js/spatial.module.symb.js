@@ -307,6 +307,7 @@ function getPointInfoArr(cluster){
 }
 
 function loadPoints(){
+    clearSelections();
     searchTermsArr = getSearchTermsArr();
     if(validateSearchTermsArr(searchTermsArr)){
         taxaCnt = 0;
