@@ -21,7 +21,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     <body>
         <div class="reveal">
             <div class="slides">
-                <section id="grid-vectorize-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                <section id="walkthrough-1" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
                     <div class="tutorial-frame tutorial-display-toggle-slide">
                         <div id="hideToggle" class="index-link tutorial-display-toggle"><a style="cursor:pointer;" onclick="hideTutorial();">Hide Tutorial</a></div>
                         <div id="showToggle" class="index-link tutorial-display-toggle" style="display:none;"><a style="cursor:pointer;" onclick="showTutorial();">Show Tutorial</a></div>
@@ -82,7 +82,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 7</h3>
-                        <p>Click on Search Criteria to expand the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a> again
+                        <p>Click on Search Criteria to expand the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a>
                             and click on the Collections Tab to select it. In the Collections Tab, check the Select/Deselect All
                             checkbox to select all collections.</p>
                     </div>
@@ -97,12 +97,12 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 10</h3>
-                        <p>Click on Search Criteria to expand the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a> again
-                            and click on the Criteria Tab to select it again. Try entering other criteria into the other options
+                        <p>Click on Search Criteria to expand the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a>
+                            and click on the Criteria Tab to select it. Try entering other criteria into the other options
                             in this tab and loading occurrence records.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
-                        <h3><a href="working-with-points-layer.php">Go To Next Topic</a></h3>
+                        <h3><a href="walkthrough-2.php">Go To Next Topic</a></h3>
                     </div>
                 </section>
             </div>
