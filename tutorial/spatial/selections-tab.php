@@ -45,20 +45,20 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Download Type Selector and Button</h3>
                         <p>In the top-left corner of the Selections Tab is the Download Type drop-down selector followed by the Download
-                            Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
+                            button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
                             can be used to download the selected occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format.
                             <a href="downloading-occurrence-data.php#/downloading-occurrence-data/0">Downloading selected occurrence records</a> will be discussed further in a later topic.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Clear Selections Button</h3>
-                        <p>Below the Download Type Selector and Button is the Clear Selections Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
+                        <p>Below the Download Type Selector and button is the Clear Selections button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
                             can be clicked to deselect all of the currently selected occurrence records, removing all records from
                             this tab and the tab itself, deselecting all occurrence records on the map, and deselecting all
                             records in the <a href="records-tab.php#/records-tab/0">Records Tab</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Zoom to Selections Button</h3>
-                        <p>To the right of the Clear Selections Button is the Zoom to Selections Button. This can be clicked
+                        <p>To the right of the Clear Selections button is the Zoom to Selections button. This can be clicked
                             to automatically zoom and pan the map so that all of the selected records are visible on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">

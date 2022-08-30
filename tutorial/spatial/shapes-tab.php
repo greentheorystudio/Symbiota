@@ -50,14 +50,14 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Download Type Selector and Button</h3>
                         <p>Below the Selected Area Display on the left side is the Download Type drop-down selector followed by the Download
-                            Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
+                            button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
                             can be used to download all of the features currently in the <a href="map-layers.php#/map-layers/5">Shapes Layer</a> in
                             a KML or GeoJSON file format.<a href="downloading-occurrence-data.php#/downloading-occurrence-data/0">Downloading features from the Shapes Layer</a> will
                             be discussed further in the next topic.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Delete Selected Features Button</h3>
-                        <p>To the right of the Download Type Selector and Button is the Delete Selected Features Button. This
+                        <p>To the right of the Download Type Selector and button is the Delete Selected Features button. This
                             can be clicked to go to delete all features that are currently selected in the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">

@@ -36,7 +36,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
-                        <p>The <a href="shapes-tab.php#/shapes-tab/2">Download Type Selector and Button</a> in the <a href="shapes-tab.php#/shapes-tab/0">Shapes Tab</a> in
+                        <p>The <a href="shapes-tab.php#/shapes-tab/2">Download Type Selector and button</a> in the <a href="shapes-tab.php#/shapes-tab/0">Shapes Tab</a> in
                             the <a href="vector-tools-panel.php#/vector-tools-panel/0">Vector Tools Panel</a> in the <a href="side-panel.php#/side-panel/0">Side Panel</a> can
                             be used to download all of the features currently in the <a href="map-layers.php#/map-layers/5">Shapes Layer</a> in
                             either KML or GeoJSON formats.</p>
@@ -46,7 +46,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>To download simply select either KML or GeoJSON in the <a href="shapes-tab.php#/shapes-tab/2">Download Type Selector</a>, and
-                            then click the <a href="shapes-tab.php#/shapes-tab/2">Download Button</a> in the <a href="shapes-tab.php#/shapes-tab/0">Shapes Tab</a>.</p>
+                            then click the <a href="shapes-tab.php#/shapes-tab/2">Download button</a> in the <a href="shapes-tab.php#/shapes-tab/0">Shapes Tab</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>Downloaded files can simply be dragged and dropped anywhere over the map window to reload the

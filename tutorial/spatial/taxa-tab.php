@@ -49,21 +49,21 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Reset Symbology Button</h3>
-                        <p>In the top-right corner of the Taxa Tab is the Reset Symbology Button. Clicking this button
+                        <p>In the top-right corner of the Taxa Tab is the Reset Symbology button. Clicking this button
                             will reset the symbology for all of the occurrence records on the map back to the original, default
                             state of being symbolized based on the collection they represent and all collections being symbolized
                             with the same color.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Auto Color Button</h3>
-                        <p>Below the Reset Symbology Button is the Auto Color Button. Clicking this button
+                        <p>Below the Reset Symbology button is the Auto Color button. Clicking this button
                             will set the symbology for all of the occurrence records on the map to be symbolized based on
                             the taxon they represent, if they are not already, and will assign each taxon a random,
                             unique color for its symbology.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Save Symbology Button</h3>
-                        <p>Below the Auto Color Button is the Save Symbology Button. Clicking this button will generate a png
+                        <p>Below the Auto Color button is the Save Symbology button. Clicking this button will generate a png
                             image file of the taxa list in this tab and all of the symbology colors assigned to each
                             taxon.</p>
                     </div>

@@ -60,7 +60,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 3</h3>
-                        <p>Click the Union Button in the Union Tool: <button data-role="none">Union</button></p>
+                        <p>Click the Union button in the Union Tool: <button data-role="none">Union</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>The created union feature is added to the <a href="map-layers.php#/map-layers/5">Shapes Layer</a> and

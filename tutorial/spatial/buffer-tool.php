@@ -64,7 +64,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 4</h3>
-                        <p>Click the Buffer Button in the Buffer Tool: <button data-role="none">Buffer</button></p>
+                        <p>Click the Buffer button in the Buffer Tool: <button data-role="none">Buffer</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>All created buffer features are added to the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>

@@ -58,7 +58,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 2</h3>
-                        <p>Click the Convex Hull Polygon Button in the Convex Hull Polygon Tool: <button data-role="none">Convex Hull Polygon</button></p>
+                        <p>Click the Convex Hull Polygon button in the Convex Hull Polygon Tool: <button data-role="none">Convex Hull Polygon</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>The created convex hull feature is added to the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>

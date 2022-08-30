@@ -60,7 +60,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 3</h3>
-                        <p>Click the Intersect Button in the Intersect Tool: <button data-role="none">Intersect</button></p>
+                        <p>Click the Intersect button in the Intersect Tool: <button data-role="none">Intersect</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>The created intersect feature is added to the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>

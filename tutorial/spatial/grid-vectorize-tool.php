@@ -71,7 +71,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 4</h3>
-                        <p>Click the Display Target Box Button in the Grid-Based Vectorize Tool to display the red target box on the map: <button data-role="none">Display Target Box</button></p>
+                        <p>Click the Display Target Box button in the Grid-Based Vectorize Tool to display the red target box on the map: <button data-role="none">Display Target Box</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 5</h3>
@@ -81,11 +81,11 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 6</h3>
-                        <p>Click the Grid-Based Vectorize Button in the Grid-Based Vectorize Tool: <button data-role="none">Grid-Based Vectorize</button></p>
+                        <p>Click the Grid-Based Vectorize button in the Grid-Based Vectorize Tool: <button data-role="none">Grid-Based Vectorize</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 7</h3>
-                        <p>Click the Hide Target Box Button in the Grid-Based Vectorize Tool to remove the red target box from the map: <button data-role="none">Hide Target Box</button></p>
+                        <p>Click the Hide Target Box button in the Grid-Based Vectorize Tool to remove the red target box from the map: <button data-role="none">Hide Target Box</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>All polygon features that are created are added to the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>

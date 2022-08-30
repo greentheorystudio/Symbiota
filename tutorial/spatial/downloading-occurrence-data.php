@@ -46,7 +46,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>In either the <a href="records-tab.php#/records-tab/0">Records Tab</a> or the <a href="selections-tab.php#/selections-tab/0">Selections Tab</a>,
                             the Download Type Selector can be used to select the download format for the occurrence data.
                             The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click
-                            the Download Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button> to
+                            the Download button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button> to
                             initiate the download.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
@@ -54,7 +54,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             options as to the structure and formatting of the download. These options include whether the
                             structure the data in the Symbiota or Darwin Core format, whether to include determination or
                             image extensions, whether the file be an archive, and other file formatting. Once these further
-                            options have been set, or if the default settings are preferred, click the Download Data Button
+                            options have been set, or if the default settings are preferred, click the Download Data button
                             to proceed with the download.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">

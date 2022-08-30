@@ -38,7 +38,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>A png image of the map in the current view, including all layers that have been loaded, all occurrence
                             data that has been loaded, and all symbology adjustments that have been made, can be downloaded
-                            at any time by clicking the <a href="control-panel.php#/control-panel/6">Download Map Image Button</a> in
+                            at any time by clicking the <a href="control-panel.php#/control-panel/6">Download Map Image button</a> in
                             the <a href="control-panel.php#/control-panel/0">Control Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">

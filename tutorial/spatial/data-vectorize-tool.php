@@ -78,7 +78,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 5</h3>
-                        <p>Click the Data-Based Vectorize Button in the Data-Based Vectorize Tool: <button data-role="none">Data-Based Vectorize</button></p>
+                        <p>Click the Data-Based Vectorize button in the Data-Based Vectorize Tool: <button data-role="none">Data-Based Vectorize</button></p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>All polygon features that are created are added to the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>

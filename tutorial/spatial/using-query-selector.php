@@ -36,7 +36,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
-                        <p>The Query Selector for any layer is accessed by clicking on the <a href="layers-panel.php#/layers-panel/8">Query Selector Toggle Button</a>
+                        <p>The Query Selector for any layer is accessed by clicking on the <a href="layers-panel.php#/layers-panel/8">Query Selector Toggle button</a>
                             in the layer's frame in the <a href="layers-panel.php#/layers-panel/0">Layers Panel</a>. This tool allows you to select features within a given
                             layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>
                     </div>

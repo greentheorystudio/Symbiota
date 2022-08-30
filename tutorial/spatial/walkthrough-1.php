@@ -71,7 +71,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Click the <a href="selections-tab.php#/selections-tab/0">Selections Tab</a> to select it, and then check
                             the <a href="selections-tab.php#/selections-tab/4">Show Only Selected Points Checkbox</a> so that
                             only the selected records are displayed on the map. If the selected records aren't readily visible,
-                            click the <a href="selections-tab.php#/selections-tab/3">Zoom to Selections Button</a> to pan and
+                            click the <a href="selections-tab.php#/selections-tab/3">Zoom to Selections button</a> to pan and
                             zoom the map to the records. Uncheck the <a href="selections-tab.php#/selections-tab/4">Show Only Selected Points Checkbox</a> so
                             that all records are visible on the map again.</p>
                     </div>

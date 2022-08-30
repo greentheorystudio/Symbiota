@@ -79,7 +79,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 7</h3>
                         <p>In the Buffer Tool of the <a href="shapes-tab.php#/shapes-tab/0">Shapes Tab</a>, enter the width
-                            the buffer should be (in km) in the box and click the Buffer Button to create the buffer polygon.</p>
+                            the buffer should be (in km) in the box and click the Buffer button to create the buffer polygon.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 8</h3>
@@ -88,8 +88,10 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 9</h3>
-                        <p>Click once on the new buffer polygon feature created in the previous step to select it in
-                            the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>
+                        <p>Click on Search Criteria in the <a href="side-panel.php#/side-panel/0">Side Panel</a> to expand
+                            the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a>, and
+                            then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected)
+                            to load the occurrence records occurring in the buffer polygon.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3><a href="working-with-points-layer.php">Go To Next Topic</a></h3>

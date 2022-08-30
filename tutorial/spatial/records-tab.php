@@ -44,28 +44,28 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Download Type Selector and Button</h3>
                         <p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download
-                            Button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
+                            button <button class="icon-button" title="Download"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>. These
                             can be used to download the occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format.
                             <a href="downloading-occurrence-data.php#/downloading-occurrence-data/0">Downloading occurrence records</a> will be discussed further in a later topic.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>List Display Button</h3>
-                        <p>To the right of the Download Type Selector and Button is the List Display Button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
+                        <p>To the right of the Download Type Selector and button is the List Display button <button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button>. This
                             can be clicked to go to the list display for the occurrence records search.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Table Display Button</h3>
-                        <p>To the right of the List Display Button is the Table Display Button <button class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button>. This
+                        <p>To the right of the List Display button is the Table Display button <button class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button>. This
                             can be clicked to go to the table display for the occurrence records search.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Image Display Button</h3>
-                        <p>To the right of the Table Display Button is the Image Display Button <button class="icon-button" title="Image Display"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button>. This
+                        <p>To the right of the Table Display button is the Image Display button <button class="icon-button" title="Image Display"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button>. This
                             can be clicked to go to the image display for the occurrence records search.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Copy Search URL Button</h3>
-                        <p>When the search does not include a complex shape, to the right of the Image Display Button is the Copy Search URL Button <button class="icon-button" title="Copy Search URL"><i style="height:15px;width:15px;" class="fas fa-link"></i></button>. This
+                        <p>When the search does not include a complex shape, to the right of the Image Display button is the Copy Search URL button <button class="icon-button" title="Copy Search URL"><i style="height:15px;width:15px;" class="fas fa-link"></i></button>. This
                             can be clicked to copy a url to your computer's clipboard that will load the same search.
                             This url can be used at any time to quickly reload the same search at a different time.</p>
                     </div>
