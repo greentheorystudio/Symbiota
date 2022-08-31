@@ -39,7 +39,6 @@ let dragDrop4 = false;
 let dragDrop5 = false;
 let dragDrop6 = false;
 let dragDropTarget = '';
-let loadingComplete = true;
 let returnClusters = false;
 let transformStartAngle = 0;
 let transformD = [0,0];
@@ -735,7 +734,7 @@ function changeRasterColorScale(layerId,value){
 
 function changeRecordPage(page){
     let params;
-    document.getElementById("queryrecords").innerHTML = "<p>Loading...</p>";
+    document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
     const selJson = JSON.stringify(selections);
     const http = new XMLHttpRequest();
     const url = "rpc/changemaprecordpage.php";
@@ -755,14 +754,6 @@ function changeRecordPage(page){
         }
     };
     http.send(params);
-}
-
-function checkLoading(){
-    if(!loadingComplete){
-        loadingComplete = true;
-        loadPointsEvent = false;
-        hideWorking();
-    }
 }
 
 function checkObjectNotEmpty(obj){
@@ -1897,7 +1888,6 @@ function lazyLoadPoints(index,callback){
     let params;
     let url;
     let startindex = 0;
-    loadingComplete = true;
     if(index > 0) {
         startindex = index * lazyLoadCnt;
     }
@@ -1911,7 +1901,6 @@ function lazyLoadPoints(index,callback){
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
             if(http.readyState === 4 && http.status === 200) {
-                loadingComplete = false;
                 callback(http.responseText);
             }
         };
@@ -1925,7 +1914,6 @@ function lazyLoadPoints(index,callback){
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
             if(http.readyState === 4 && http.status === 200) {
-                loadingComplete = false;
                 callback(http.responseText);
             }
         };
@@ -1955,7 +1943,8 @@ function loadInputParentParams(){
 }
 
 function loadPointsLayer(index){
-    pointvectorsource.clear();
+    loadPointsEvent = true;
+    pointvectorsource.clear(true);
     let processed = 0;
     do{
         lazyLoadPoints(index,function(res){
@@ -1971,10 +1960,6 @@ function loadPointsLayer(index){
             }
             primeSymbologyData(features);
             pointvectorsource.addFeatures(features);
-            if(loadPointsEvent){
-                const pointextent = pointvectorsource.getExtent();
-                map.getView().fit(pointextent,map.getSize());
-            }
         });
         processed = processed + lazyLoadCnt;
         index++;

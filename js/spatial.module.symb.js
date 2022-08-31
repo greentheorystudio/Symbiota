@@ -317,29 +317,7 @@ function loadPoints(){
         showWorking();
         getQueryRecCnt(function() {
             if(queryRecCnt > 0){
-                loadPointsEvent = true;
-                pointvectorsource.clear(true);
-                layersObj['pointv'].setSource(pointvectorsource);
-                setCopySearchUrlDiv();
                 loadPointsLayer(0);
-                setRecordsTab();
-                changeRecordPage(1);
-                $('#recordstab').tabs({active: 0});
-                $("#sidepanel-accordion").accordion("option","active",1);
-                if(!pointActive){
-                    const infoArr = [];
-                    infoArr['id'] = 'pointv';
-                    infoArr['type'] = 'userLayer';
-                    infoArr['fileType'] = 'vector';
-                    infoArr['layerName'] = 'Points';
-                    infoArr['layerDescription'] = "This layer contains all of the occurrence points that have been loaded onto the map.",
-                    infoArr['removable'] = true;
-                    infoArr['sortable'] = false;
-                    infoArr['symbology'] = false;
-                    infoArr['query'] = false;
-                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
-                    pointActive = true;
-                }
             }
             else{
                 setRecordsTab();
@@ -347,7 +325,6 @@ function loadPoints(){
                     removeLayerFromSelList('pointv');
                     pointActive = false;
                 }
-                loadPointsEvent = false;
                 hideWorking();
                 alert('There were no records matching your query.');
             }
@@ -356,6 +333,32 @@ function loadPoints(){
     else{
         alert('Please enter search criteria.');
     }
+}
+
+function loadPointsPostrender(){
+    setCopySearchUrlDiv();
+    changeRecordPage(1);
+    setRecordsTab();
+    $('#recordstab').tabs({active: 0});
+    $("#sidepanel-accordion").accordion("option","active",1);
+    const pointextent = pointvectorsource.getExtent();
+    map.getView().fit(pointextent,map.getSize());
+    if(!pointActive){
+        const infoArr = [];
+        infoArr['id'] = 'pointv';
+        infoArr['type'] = 'userLayer';
+        infoArr['fileType'] = 'vector';
+        infoArr['layerName'] = 'Points';
+        infoArr['layerDescription'] = "This layer contains all of the occurrence points that have been loaded onto the map.",
+        infoArr['removable'] = true;
+        infoArr['sortable'] = false;
+        infoArr['symbology'] = false;
+        infoArr['query'] = false;
+        processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
+        pointActive = true;
+    }
+    loadPointsEvent = false;
+    hideWorking();
 }
 
 function openIndPopup(occid){
