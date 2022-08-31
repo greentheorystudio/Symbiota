@@ -175,7 +175,7 @@ $obsArr = ($collList['obs'] ?? null);
                         <g>
                             <circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
                         </g>
-                    </svg> = Collection
+                    </svg> = Specimen
                 </div>
                 <div style="margin-top:5px;" >
                     <svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
@@ -240,7 +240,7 @@ $obsArr = ($collList['obs'] ?? null);
                         <g>
                             <circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
                         </g>
-                    </svg> = Collection
+                    </svg> = Specimen
                 </div>
                 <div style="margin-top:5px;" >
                     <svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
@@ -266,20 +266,19 @@ $obsArr = ($collList['obs'] ?? null);
         <div style="margin-bottom:30px;">
             <div style='font-weight:bold;float:left;margin-bottom:5px;'>Taxa Count: <span id="taxaCountNum">0</span></div>
             <div style="float:right;margin-bottom:5px;">
-                <button data-role="none" id="taxacsvdownload" class="icon-button" title="Download CSV" onclick="exportTaxaCSV();"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>
+                <button data-role="none" id="taxacsvdownload" class="icon-button" title="Download" onclick="exportTaxaCSV();"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>
             </div>
         </div>
         <div style="margin:5px 0 5px 0;clear:both;"><hr /></div>
         <div id="taxasymbologykeysbox" style="background-color:white;"></div>
     </div>
-
-    <div id="selectionslist" style="">
+    <div id="selectionslist">
         <div>
             <div style="width:100%;margin-top:-10px;display:flex;justify-content:space-around;align-items:center;">
-                <div style="width:120px;display:flex;justify-content:flex-start;align-items:center;">
+                <div style="display:flex;justify-content:flex-start;align-items:center;">
                     <select data-role="none" id="selectdownloadselect">
-                        <option value="">Download Type</option>
-                        <option value="csv">CSV</option>
+                        <option>Download Type</option>
+                        <option value="csv">CSV/ZIP</option>
                         <option value="kml">KML</option>
                         <option value="geojson">GeoJSON</option>
                         <option value="gpx">GPX</option>
@@ -294,24 +293,12 @@ $obsArr = ($collList['obs'] ?? null);
                     ?>
                 </div>
             </div>
-
-            <div>
-                <div style="float:left;">
-                    <div>
-                        <button data-role="none" id="clearselectionsbut" onclick='clearSelections();' >Clear Selections</button>
-                    </div>
-                </div>
-                <div id="" style='margin-right:15px;float:right;' >
-                    <div>
-                        <button data-role="none" id="zoomtoselectionsbut" onclick='zoomToSelections();' >Zoom to Selections</button>
-                    </div>
-                </div>
+            <div style="display:flex;justify-content:space-between;">
+                <button data-role="none" id="clearselectionsbut" onclick="clearSelections(true);">Clear Selections</button>
+                <button data-role="none" id="zoomtoselectionsbut" onclick="zoomToSelections();">Zoom to Selections</button>
             </div>
-            <div style="clear:both;height:8px;"></div>
-            <div>
-                <div style="width:100%;display:flex;justify-content:flex-start;align-items:center;">
-                    <span><input data-role="none" type='checkbox' id='toggleselectedswitch' style="margin-right:5px;" onchange="processToggleSelectedChange();">Show Only Selected Points</span>
-                </div>
+            <div style="width:100%;display:flex;justify-content:flex-start;align-items:center;margin-top:8px;">
+                <span><input data-role="none" type='checkbox' id='toggleselectedswitch' style="margin-right:5px;" onchange="processToggleSelectedChange();">Show Only Selected Points</span>
             </div>
         </div>
         <div style="clear:both;height:10px;"></div>

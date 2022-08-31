@@ -32,6 +32,7 @@ let spiderCluster;
 let spiderFeature;
 let hiddenClusters = [];
 let clickedFeatures = [];
+let selectedPolyError = false;
 let dragDrop1 = false;
 let dragDrop2 = false;
 let dragDrop3 = false;
@@ -39,7 +40,6 @@ let dragDrop4 = false;
 let dragDrop5 = false;
 let dragDrop6 = false;
 let dragDropTarget = '';
-let loadingComplete = true;
 let returnClusters = false;
 let transformStartAngle = 0;
 let transformD = [0,0];
@@ -151,7 +151,7 @@ function adjustSelectionsTab(){
     else{
         document.getElementById("selectionstab").style.display = "none";
         const activeTab = $('#recordstab').tabs("option", "active");
-        if(activeTab == 3){
+        if(activeTab == 1){
             buildCollKey();
             $('#recordstab').tabs({active:0});
         }
@@ -735,7 +735,7 @@ function changeRasterColorScale(layerId,value){
 
 function changeRecordPage(page){
     let params;
-    document.getElementById("queryrecords").innerHTML = "<p>Loading...</p>";
+    document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
     const selJson = JSON.stringify(selections);
     const http = new XMLHttpRequest();
     const url = "rpc/changemaprecordpage.php";
@@ -755,14 +755,6 @@ function changeRecordPage(page){
         }
     };
     http.send(params);
-}
-
-function checkLoading(){
-    if(!loadingComplete){
-        loadingComplete = true;
-        loadPointsEvent = false;
-        hideWorking();
-    }
 }
 
 function checkObjectNotEmpty(obj){
@@ -802,17 +794,31 @@ function clearLayerQuerySelector() {
     document.getElementById('spatialQuerySelectorLayerId').value = '';
 }
 
-function clearSelections(){
+function clearSelections(resetToggle){
     const selpoints = selections;
     selections = [];
     for(let i in selpoints){
-        if(selpoints.hasOwnProperty(i) && !clusterPoints){
-            const point = findRecordPoint(selpoints[i]);
+        if(selpoints.hasOwnProperty(i)){
+            const checkboxid = 'ch' + selpoints[i];
+            let point = '';
+            if(clusterPoints){
+                const cluster = findRecordCluster(Number(selpoints[i]));
+                point = findRecordPointInCluster(cluster,Number(selpoints[i]));
+            }
+            else{
+                point = findRecordPoint(Number(selpoints[i]));
+            }
             const style = setSymbol(point);
             point.setStyle(style);
+            if(document.getElementById(checkboxid)){
+                document.getElementById(checkboxid).checked = false;
+            }
         }
     }
-    layersObj['pointv'].getSource().changed();
+    document.getElementById("toggleselectedswitch").checked = false;
+    if(resetToggle){
+        processToggleSelectedChange();
+    }
     adjustSelectionsTab();
     document.getElementById("selectiontbody").innerHTML = '';
 }
@@ -1348,19 +1354,19 @@ function displayVectorizeRasterByGridTargetPolygon(){
     let polyOffset = 0;
     const resolutionVal = Number(document.getElementById("vectorizeRasterByGridResolution").value);
     if(resolutionVal === 0.025){
-        polyOffset = 15000;
+        polyOffset = 10000;
     }
     else if(resolutionVal === 0.05){
-        polyOffset = 30000;
+        polyOffset = 25000;
     }
     else if(resolutionVal === 0.1){
-        polyOffset = 60000;
+        polyOffset = 55000;
     }
     else if(resolutionVal === 0.25){
-        polyOffset = 150000;
+        polyOffset = 145000;
     }
     else if(resolutionVal === 0.5){
-        polyOffset = 300000;
+        polyOffset = 295000;
     }
     const geoJSONFormat = new ol.format.GeoJSON();
     const mapCenterPoint = map.getView().getCenter();
@@ -1655,7 +1661,14 @@ function getGeographyParams(){
         document.getElementById("polyarea").value = totalArea.toFixed(2);
     }
     if(geoPolyArr.length > 0){
-        setSearchTermsArrKeyValue('polyArr',JSON.stringify(geoPolyArr));
+        const jsonPolyArr = JSON.stringify(geoPolyArr);
+        if(jsonPolyArr.length < 5000000){
+            setSearchTermsArrKeyValue('polyArr',jsonPolyArr);
+            selectedPolyError = false;
+        }
+        else{
+            selectedPolyError = true;
+        }
     }
     else{
         clearSearchTermsArrKey('polyArr');
@@ -1883,7 +1896,6 @@ function lazyLoadPoints(index,callback){
     let params;
     let url;
     let startindex = 0;
-    loadingComplete = true;
     if(index > 0) {
         startindex = index * lazyLoadCnt;
     }
@@ -1897,7 +1909,6 @@ function lazyLoadPoints(index,callback){
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
             if(http.readyState === 4 && http.status === 200) {
-                loadingComplete = false;
                 callback(http.responseText);
             }
         };
@@ -1911,7 +1922,6 @@ function lazyLoadPoints(index,callback){
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
             if(http.readyState === 4 && http.status === 200) {
-                loadingComplete = false;
                 callback(http.responseText);
             }
         };
@@ -1941,7 +1951,8 @@ function loadInputParentParams(){
 }
 
 function loadPointsLayer(index){
-    pointvectorsource.clear();
+    loadPointsEvent = true;
+    pointvectorsource.clear(true);
     let processed = 0;
     do{
         lazyLoadPoints(index,function(res){
@@ -1957,10 +1968,6 @@ function loadPointsLayer(index){
             }
             primeSymbologyData(features);
             pointvectorsource.addFeatures(features);
-            if(loadPointsEvent){
-                const pointextent = pointvectorsource.getExtent();
-                map.getView().fit(pointextent,map.getSize());
-            }
         });
         processed = processed + lazyLoadCnt;
         index++;
@@ -2305,7 +2312,6 @@ function processCheckSelection(c){
             }
         }
         selections.push(Number(c.value));
-        layersObj['pointv'].getSource().changed();
         updateSelections(Number(c.value),false);
     }
     else if(c.checked === false){
@@ -2315,9 +2321,18 @@ function processCheckSelection(c){
         }
         const index = selections.indexOf(Number(c.value));
         selections.splice(index, 1);
-        layersObj['pointv'].getSource().changed();
         removeSelectionRecord(Number(c.value));
     }
+    let point = '';
+    if(clusterPoints){
+        const cluster = findRecordCluster(Number(c.value));
+        point = findRecordPointInCluster(cluster,Number(c.value));
+    }
+    else{
+        point = findRecordPoint(Number(c.value));
+    }
+    const style = setSymbol(point);
+    point.setStyle(style);
     adjustSelectionsTab();
 }
 
@@ -2464,12 +2479,13 @@ function processInputSelections(){
         let area;
         let areaFeat;
         if(feature){
+            const featureProps = feature.getProperties();
             const selectedClone = feature.clone();
             const geoType = selectedClone.getGeometry().getType();
             const wktFormat = new ol.format.WKT();
             const geoJSONFormat = new ol.format.GeoJSON();
             if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
-                const boxType = (selectedClone.values_.hasOwnProperty('geoType') && selectedClone.values_.geoType === 'Box');
+                const boxType = (featureProps.hasOwnProperty('geoType') && featureProps['geoType'] === 'Box');
                 const selectiongeometry = selectedClone.getGeometry();
                 const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
                 const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
@@ -2688,15 +2704,22 @@ function processMapPNGDownload(){
 function processPointSelection(sFeature){
     const feature = (sFeature.get('features') ? sFeature.get('features')[0] : sFeature);
     const id = Number(feature.get('id'));
+    const checkboxid = 'ch' + id;
     if(selections.indexOf(id) < 0){
         selections.push(id);
         const infoArr = getPointInfoArr(sFeature);
         updateSelections(id,infoArr);
+        if(document.getElementById(checkboxid)){
+            document.getElementById(checkboxid).checked = true;
+        }
     }
     else{
         const index = selections.indexOf(id);
         selections.splice(index, 1);
         removeSelectionRecord(id);
+        if(document.getElementById(checkboxid)){
+            document.getElementById(checkboxid).checked = false;
+        }
     }
     const style = (sFeature.get('features') ? setClusterSymbol(sFeature) : setSymbol(sFeature));
     sFeature.setStyle(style);
@@ -2769,13 +2792,15 @@ function processVectorInteraction(){
             }
             featureCount++;
         });
-        if(polyCount === 1 && rasterLayersLoaded){
-            document.getElementById("dataRasterVectorizeButton").disabled = false;
-            document.getElementById("dataRasterVectorizeWarning").style.display = "none";
-        }
-        else{
-            document.getElementById("dataRasterVectorizeButton").disabled = true;
-            document.getElementById("dataRasterVectorizeWarning").style.display = "block";
+        if(document.getElementById("dataRasterVectorizeButton")){
+            if(polyCount === 1 && rasterLayersLoaded){
+                document.getElementById("dataRasterVectorizeButton").disabled = false;
+                document.getElementById("dataRasterVectorizeWarning").style.display = "none";
+            }
+            else{
+                document.getElementById("dataRasterVectorizeButton").disabled = true;
+                document.getElementById("dataRasterVectorizeWarning").style.display = "block";
+            }
         }
         if(featureCount >= 1){
             document.getElementById("bufferPolyButton").disabled = false;
@@ -2860,27 +2885,34 @@ function removeRasterLayerFromTargetList(layerId){
 }
 
 function removeSelection(c){
-    if(c.checked === false){
-        const id = c.value;
-        const chbox = 'ch' + id;
-        removeSelectionRecord(id);
-        if(document.getElementById(chbox)){
-            document.getElementById(chbox).checked = false;
-        }
-        const index = selections.indexOf(Number(c.value));
-        selections.splice(index, 1);
-        layersObj['pointv'].getSource().changed();
-        if(spiderCluster){
-            const spiderFeatures = layersObj['spider'].getSource().getFeatures();
-            for(let f in spiderFeatures){
-                if(spiderFeatures.hasOwnProperty(f) && spiderFeatures[f].get('features')[0].get('id') === Number(c.value)){
-                    const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
-                    spiderFeatures[f].setStyle(style);
-                }
+    const id = c.value;
+    const chbox = 'ch' + id;
+    removeSelectionRecord(id);
+    if(document.getElementById(chbox)){
+        document.getElementById(chbox).checked = false;
+    }
+    const index = selections.indexOf(Number(id));
+    selections.splice(index, 1);
+    if(spiderCluster){
+        const spiderFeatures = layersObj['spider'].getSource().getFeatures();
+        for(let f in spiderFeatures){
+            if(spiderFeatures.hasOwnProperty(f) && spiderFeatures[f].get('features')[0].get('id') === Number(c.value)){
+                const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
+                spiderFeatures[f].setStyle(style);
             }
         }
-        adjustSelectionsTab();
     }
+    let point = '';
+    if(clusterPoints){
+        const cluster = findRecordCluster(Number(id));
+        point = findRecordPointInCluster(cluster,Number(id));
+    }
+    else{
+        point = findRecordPoint(Number(id));
+    }
+    const style = setSymbol(point);
+    point.setStyle(style);
+    adjustSelectionsTab();
 }
 
 function removeSelectionRecord(sel){
@@ -2913,7 +2945,7 @@ function removeUserLayer(layerID,raster){
         shapeActive = false;
     }
     else if(layerID === 'pointv'){
-        clearSelections();
+        clearSelections(false);
         adjustSelectionsTab();
         removeDateSlider();
         pointvectorsource.clear(true);
