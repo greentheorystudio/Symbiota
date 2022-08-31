@@ -600,7 +600,7 @@ class TaxonProfileManager {
             $result = $this->con->query($sql);
             if($row = $result->fetch_object()){
                 $imgUrl = $row->url;
-                if($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0){
+                if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0){
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                 }
                 $maps[] = $imgUrl;

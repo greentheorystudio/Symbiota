@@ -9,15 +9,15 @@ class Sanitizer {
         return $newStr;
     }
 
-    public static function cleanInArray($arr): array
+    public static function cleanInArray($conn,$arr): array
     {
         $newArray = array();
         foreach($arr as $key => $value){
             if(is_array($value)){
-                $newArray[self::cleanInStr($key)] = self::cleanInArray($value);
+                $newArray[self::cleanInStr($conn,$key)] = self::cleanInArray($conn,$value);
             }
             else{
-                $newArray[self::cleanInStr($key)] = self::cleanInStr($value);
+                $newArray[self::cleanInStr($conn,$key)] = self::cleanInStr($conn,$value);
             }
         }
         return $newArray;

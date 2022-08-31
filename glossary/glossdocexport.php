@@ -226,7 +226,7 @@ elseif($exportType === 'singlelanguage'){
 				foreach($imageArr as $img => $imgArr){
 					$imgSrc = $imgArr['url'];
 					if(strncmp($imgSrc, '/', 1) === 0){
-						if($GLOBALS['IMAGE_DOMAIN']){
+						if(isset($GLOBALS['IMAGE_DOMAIN'])){
 							$imgSrc = $GLOBALS['IMAGE_DOMAIN'].$imgSrc;
 						}
 						else{

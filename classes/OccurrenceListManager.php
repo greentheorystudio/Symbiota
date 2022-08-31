@@ -129,7 +129,7 @@ class OccurrenceListManager extends OccurrenceManager{
                 if($r->occid !== $previousOccid){
                     $tnUrl = $r->thumbnailurl;
                     if($tnUrl){
-                        if($GLOBALS['IMAGE_DOMAIN'] && $tnUrl && strncmp($tnUrl, '/', 1) === 0) {
+                        if(isset($GLOBALS['IMAGE_DOMAIN']) && $tnUrl && strncmp($tnUrl, '/', 1) === 0) {
                             $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                         }
                         $returnArr[$r->occid]['img'] = $tnUrl;

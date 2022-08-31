@@ -856,7 +856,7 @@ class GlossaryManager{
 		$exists = false;
 		$localUrl = '';
 		if(strncmp($url, '/', 1) === 0){
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
 			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){
@@ -981,7 +981,7 @@ class GlossaryManager{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if($GLOBALS['IMAGE_DOMAIN']){
+		if(isset($GLOBALS['IMAGE_DOMAIN'])){
 			$urlBase = $this->getServerDomain().$urlBase;
     	}
 		return $urlBase;
