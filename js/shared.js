@@ -249,3 +249,7 @@ function imagePostFunction(image, src) {
 function split(val) {
 	return val.split( /,\s*/ );
 }
+
+function openTutorialWindow(url) {
+	window.open(url, '_blank');
+}

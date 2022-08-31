@@ -222,7 +222,7 @@ $occMediaArr = $occManager->getMediaMap();
 							<?php
 							$medUrl = $medArr['accessuri'];
                             $medFormat = $medArr['format'];
-							if($GLOBALS['IMAGE_DOMAIN'] && strncmp($medUrl, '/', 1) === 0) {
+							if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($medUrl, '/', 1) === 0) {
                                 $medUrl = $GLOBALS['IMAGE_DOMAIN'].$medUrl;
                             }
 

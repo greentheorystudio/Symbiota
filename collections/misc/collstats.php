@@ -238,7 +238,7 @@ if($action !== 'Update Statistics'){
             <script src="../../js/external/all.min.js" type="text/javascript"></script>
             <script type="text/javascript" src="../../js/external/jquery.js"></script>
 			<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-			<script type="text/javascript" src="../../js/search.term.manager.js?ver=20220330"></script>
+			<script type="text/javascript" src="../../js/search.term.manager.js?ver=20220430"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});

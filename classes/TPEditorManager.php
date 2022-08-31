@@ -153,7 +153,7 @@ class TPEditorManager {
 	
 	public function editVernacular($inArray): string
 	{
-		$editArr = Sanitizer::cleanInArray($inArray);
+		$editArr = Sanitizer::cleanInArray($this->taxonCon,$inArray);
 		$vid = $editArr['vid'];
 		unset($editArr['vid']);
 		$setFrag = '';
@@ -171,7 +171,7 @@ class TPEditorManager {
 	
 	public function addVernacular($inArray): string
 	{
-		$newVerns = Sanitizer::cleanInArray($inArray);
+		$newVerns = Sanitizer::cleanInArray($this->taxonCon,$inArray);
 		$sql = 'INSERT INTO taxavernaculars (tid,'.implode(',',array_keys($newVerns)).') VALUES ('.$this->getTid().',"'.implode('","',$newVerns).'")';
 		//echo $sql;
 		$status = '';

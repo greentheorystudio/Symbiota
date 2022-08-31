@@ -37,7 +37,7 @@ if($collManager->validateSearchTermsArr($stArr)){
     $recordListHtml .= '<div><a href="../collections/listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><i style="width:15px;height:15px;" class="fas fa-table"></i></button></a></div>';
     $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="width:15px;height:15px;" class="fas fa-globe"></i></button></a></div>';
     if(strlen($stArrJson) <= 1800){
-        $recordListHtml .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';
+        $recordListHtml .= '<div><button class="icon-button" title="Copy Search URL" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';
     }
     $recordListHtml .= '</div>';
     $recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
@@ -54,36 +54,39 @@ if($collManager->validateSearchTermsArr($stArr)){
             $endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
             $onclick = 'changeImagePage("","thumbnail",';
             $hrefPrefix = "<a href='#' onclick='".$onclick;
-            $pageBar = '<div style="display:flex;justify-content:space-between;margin-top:4px;margin-bottom:8px;"><div>';
+            $paginationStr = '<div style="display:flex;justify-content:space-between;margin-top:4px;margin-bottom:8px;"><div>';
             if($startPage > 1){
-                $pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix."1); return false;'>First</a></span>";
-                $pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix.(($pageNumber - 10) < 1 ?1:$pageNumber - 10)."); return false;'>&lt;&lt;</a></span>";
+                $paginationStr .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix."1); return false;'>First</a></span>";
+                $paginationStr .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix.(($pageNumber - 10) < 1 ?1:$pageNumber - 10)."); return false;'>&lt;&lt;</a></span>";
             }
             for($x = $startPage; $x <= $endPage; $x++){
                 if($pageNumber !== $x){
-                    $pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x. '</a></span>';
+                    $paginationStr .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x. '</a></span>';
                 }
                 else{
-                    $pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x. '</span>';
+                    $paginationStr .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x. '</span>';
                 }
             }
             if(($lastPage - $startPage) >= 10){
-                $pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10))."); return false;'>&gt;&gt;</a></span>";
-                $pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.$lastPage."); return false;'>Last</a></span>";
+                $paginationStr .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10))."); return false;'>&gt;&gt;</a></span>";
+                $paginationStr .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.$lastPage."); return false;'>Last</a></span>";
             }
-            $pageBar .= "</div><div>";
+            $paginationStr .= "</div><div>";
             $beginNum = ($pageNumber - 1)*$cntPerPage + 1;
             $endNum = $beginNum + $cntPerPage - 1;
             if($endNum > $recordCnt) {
                 $endNum = $recordCnt;
             }
-            $pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt. '</div></div>';
-            $paginationStr = $pageBar;
-            $recordListHtml .= '<div style="width:100%;">';
-            $recordListHtml .= $paginationStr;
-            $recordListHtml .= '</div>';
-            $recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
+            $paginationStr .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt. '</div></div>';
         }
+        elseif($recordCnt > 0){
+            $paginationStr = '<div style="display:flex;justify-content:flex-end;margin-top:4px;margin-bottom:8px;"><div>';
+            $paginationStr .= 'Records 1-' .$recordCnt. ' of ' .$recordCnt. '</div></div>';
+        }
+        $recordListHtml .= '<div style="width:100%;">';
+        $recordListHtml .= $paginationStr;
+        $recordListHtml .= '</div>';
+        $recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
         $recordListHtml .= '<div style="width:98%;margin-left:auto;margin-right:auto;display:flex;flex-direction:row;flex-wrap:wrap;gap:15px;">';
         if($imageArr){
             foreach($imageArr as $imgArr){
@@ -91,9 +94,9 @@ if($collManager->validateSearchTermsArr($stArr)){
                 $imgUrl = $imgArr['url'];
                 $imgTn = $imgArr['thumbnailurl'];
                 if($imgTn){
-                    $imgUrl = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0) ? $GLOBALS['IMAGE_DOMAIN'].$imgTn : $imgTn;
+                    $imgUrl = (isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) ? $GLOBALS['IMAGE_DOMAIN'].$imgTn : $imgTn;
                 }
-                elseif($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0){
+                elseif(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0){
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                 }
                 $recordListHtml .= '<div class="tndiv">';
@@ -140,10 +143,8 @@ if($collManager->validateSearchTermsArr($stArr)){
                 $recordListHtml .= '</div>';
             }
             $recordListHtml .= '</div>';
-            if($lastPage > $startPage){
-                $recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
-                $recordListHtml .= '<div style="width:100%;">'.$paginationStr.'</div>';
-            }
+            $recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
+            $recordListHtml .= '<div style="width:100%;">'.$paginationStr.'</div>';
             $recordListHtml .= '<div style="clear:both;"></div>';
         }
         else{

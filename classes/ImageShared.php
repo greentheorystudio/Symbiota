@@ -199,7 +199,7 @@ class ImageShared{
 		$status = false;
 		$url = str_replace(' ','%20',$url);
 		if(strncmp($url, '/', 1) === 0){
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
 			else{
@@ -687,7 +687,7 @@ class ImageShared{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if($GLOBALS['IMAGE_DOMAIN']){
+		if(isset($GLOBALS['IMAGE_DOMAIN'])){
 			$urlPrefix = 'http://';
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 				$urlPrefix = 'https://';
@@ -865,7 +865,7 @@ class ImageShared{
 					$exists = true;
 				}
 			}
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$uri = $GLOBALS['IMAGE_DOMAIN'].$uri;
 			}
 			else{

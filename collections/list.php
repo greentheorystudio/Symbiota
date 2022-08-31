@@ -48,7 +48,7 @@ if($stArrJson){
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/collections.search.js?ver=20210621"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220330"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220430"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};

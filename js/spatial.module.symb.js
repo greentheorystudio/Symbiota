@@ -307,56 +307,63 @@ function getPointInfoArr(cluster){
 }
 
 function loadPoints(){
-    searchTermsArr = getSearchTermsArr();
-    if(validateSearchTermsArr(searchTermsArr)){
-        taxaCnt = 0;
-        collSymbology = [];
-        taxaSymbology = [];
-        selections = [];
-        showWorking();
-        pointvectorsource.clear(true);
-        layersObj['pointv'].setSource(pointvectorsource);
-        getQueryRecCnt(function() {
-            if(queryRecCnt > 0){
-                loadPointsEvent = true;
-                setCopySearchUrlDiv();
-                loadPointsLayer(0);
-                //cleanSelectionsLayer();
-                setRecordsTab();
-                changeRecordPage(1);
-                $('#recordstab').tabs({active: 1});
-                $("#sidepanel-accordion").accordion("option","active",1);
-                //selectInteraction.getFeatures().clear();
-                if(!pointActive){
-                    const infoArr = [];
-                    infoArr['id'] = 'pointv';
-                    infoArr['type'] = 'userLayer';
-                    infoArr['fileType'] = 'vector';
-                    infoArr['layerName'] = 'Points';
-                    infoArr['layerDescription'] = "This layer contains all of the occurrence points that have been loaded onto the map.",
-                        infoArr['removable'] = true;
-                    infoArr['sortable'] = false;
-                    infoArr['symbology'] = false;
-                    infoArr['query'] = false;
-                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
-                    pointActive = true;
+    if(!selectedPolyError){
+        clearSelections(false);
+        searchTermsArr = getSearchTermsArr();
+        if(validateSearchTermsArr(searchTermsArr)){
+            taxaCnt = 0;
+            collSymbology = [];
+            taxaSymbology = [];
+            selections = [];
+            showWorking();
+            getQueryRecCnt(function() {
+                if(queryRecCnt > 0){
+                    loadPointsLayer(0);
                 }
-            }
-            else{
-                setRecordsTab();
-                if(pointActive){
-                    removeLayerToSelList('pointv');
-                    pointActive = false;
+                else{
+                    setRecordsTab();
+                    if(pointActive){
+                        removeLayerFromSelList('pointv');
+                        pointActive = false;
+                    }
+                    hideWorking();
+                    alert('There were no records matching your query.');
                 }
-                loadPointsEvent = false;
-                hideWorking();
-                alert('There were no records matching your query.');
-            }
-        });
+            });
+        }
+        else{
+            alert('Please enter search criteria.');
+        }
     }
     else{
-        alert('Please enter search criteria.');
+        alert('You have too many complex polygons selected. Please deselect one or more polygons in order to Load Records.');
     }
+}
+
+function loadPointsPostrender(){
+    setCopySearchUrlDiv();
+    changeRecordPage(1);
+    setRecordsTab();
+    $('#recordstab').tabs({active: 0});
+    $("#sidepanel-accordion").accordion("option","active",1);
+    const pointextent = pointvectorsource.getExtent();
+    map.getView().fit(pointextent,map.getSize());
+    if(!pointActive){
+        const infoArr = [];
+        infoArr['id'] = 'pointv';
+        infoArr['type'] = 'userLayer';
+        infoArr['fileType'] = 'vector';
+        infoArr['layerName'] = 'Points';
+        infoArr['layerDescription'] = "This layer contains all of the occurrence points that have been loaded onto the map.",
+        infoArr['removable'] = true;
+        infoArr['sortable'] = false;
+        infoArr['symbology'] = false;
+        infoArr['query'] = false;
+        processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
+        pointActive = true;
+    }
+    loadPointsEvent = false;
+    hideWorking();
 }
 
 function openIndPopup(occid){
@@ -410,11 +417,11 @@ function refreshLayerOrder(){
     layersObj['dragdrop2'].setZIndex(layerCount-7);
     layersObj['dragdrop3'].setZIndex(layerCount-6);
     layersObj['uncertainty'].setZIndex(layerCount-5);
-    layersObj['rasteranalysis'].setZIndex(layerCount-4);
-    layersObj['select'].setZIndex(layerCount-3);
-    layersObj['pointv'].setZIndex(layerCount-2);
-    layersObj['heat'].setZIndex(layerCount-1);
-    layersObj['spider'].setZIndex(layerCount);
+    layersObj['select'].setZIndex(layerCount-4);
+    layersObj['pointv'].setZIndex(layerCount-3);
+    layersObj['heat'].setZIndex(layerCount-2);
+    layersObj['spider'].setZIndex(layerCount-1);
+    layersObj['rasteranalysis'].setZIndex(layerCount);
 }
 
 function resetMainSymbology(){
@@ -703,10 +710,11 @@ function updateSelections(seloccid,infoArr){
     const trid = "tr" + seloccid;
     if(infoArr){
         selcat = infoArr['catalognumber'];
-        const mouseOverLabel = "openRecordInfoBox(" + seloccid + ",'" + infoArr['collector'] + "');";
-        let labelHTML = '<a href="#" onmouseover="' + mouseOverLabel + '" onmouseout="closeRecordInfoBox();" onclick="openIndPopup(' + seloccid + '); return false;">';
+        const onClickLabel = "openRecordInfoBox(" + seloccid + ",'" + infoArr['collector'] + "');";
+        let labelHTML = '<div><a href="#" onclick="openIndPopup(' + seloccid + '); return false;">';
         labelHTML += infoArr['collector'];
-        labelHTML += '</a>';
+        labelHTML += '</a></div>';
+        labelHTML += '<div><i style="height:15px;width:15px;cursor:pointer;" class="fas fa-search-location" title="See Location on Map" onclick="' + onClickLabel + '"></i></div>';
         sellabel = labelHTML;
         sele = infoArr['eventdate'];
         sels = infoArr['sciname'];
@@ -723,16 +731,16 @@ function updateSelections(seloccid,infoArr){
     }
     if(!document.getElementById(divid)){
         trfragment = '';
-        trfragment += '<tr id="sel'+seloccid+'" >';
-        trfragment += '<td>';
+        trfragment += '<tr id="sel'+seloccid+'">';
+        trfragment += '<td style="width:10px;">';
         trfragment += '<input type="checkbox" id="selch'+seloccid+'" name="occid[]" value="'+seloccid+'" onchange="removeSelection(this);" checked />';
         trfragment += '</td>';
-        trfragment += '<td id="selcat'+seloccid+'"  style="width:200px;" >'+selcat+'</td>';
-        trfragment += '<td id="sellabel'+seloccid+'"  style="width:200px;" >';
+        trfragment += '<td id="selcat'+seloccid+'" style="width:70px;">'+selcat+'</td>';
+        trfragment += '<td id="sellabel'+seloccid+'" style="width:75px;"><div style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:2px;">';
         trfragment += sellabel;
-        trfragment += '</td>';
-        trfragment += '<td id="sele'+seloccid+'"  style="width:200px;" >'+sele+'</td>';
-        trfragment += '<td id="sels'+seloccid+'"  style="width:200px;" >'+sels+'</td>';
+        trfragment += '</div></td>';
+        trfragment += '<td id="sele'+seloccid+'" style="width:80px;">'+sele+'</td>';
+        trfragment += '<td id="sels'+seloccid+'" style="width:125px;">'+sels+'</td>';
         trfragment += '</tr>';
         selectionList += trfragment;
     }

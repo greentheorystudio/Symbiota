@@ -3,7 +3,7 @@
 ?>
 <div id="rastertoolstab" style="width:379px;padding:0;">
     <div style="padding:10px;">
-        <div style="margin-top:10px;">
+        <div style="margin-bottom:10px;">
             <b>Target Raster Layer</b> <select data-role="none" id="targetrasterselect" style="width:275px;">
                 <option value="">None</option>
             </select>
@@ -27,8 +27,8 @@
                 <option value="0.5">500</option>
             </select> meters.
             <div style="margin-top:5px;">
-                <button data-role="none" id="vectorizeRasterByGridTargetPolyDisplayButton" onclick="displayVectorizeRasterByGridTargetPolygon();" disabled>Display Target Polygon</button>
-                <button data-role="none" id="vectorizeRasterByGridTargetPolyHideButton" onclick="hideVectorizeRasterByGridTargetPolygon();" style="display:none;">Hide Target Polygon</button>
+                <button data-role="none" id="vectorizeRasterByGridTargetPolyDisplayButton" onclick="displayVectorizeRasterByGridTargetPolygon();" disabled>Display Target Box</button>
+                <button data-role="none" id="vectorizeRasterByGridTargetPolyHideButton" onclick="hideVectorizeRasterByGridTargetPolygon();" style="display:none;">Hide Target Box</button>
             </div>
             <span id="gridRasterVectorizeWarning" class="tool-warning">At least one raster layer needs to be loaded on the map and the Target Polygon needs to be displayed to use this tool.</span>
         </div>
