@@ -1354,19 +1354,19 @@ function displayVectorizeRasterByGridTargetPolygon(){
     let polyOffset = 0;
     const resolutionVal = Number(document.getElementById("vectorizeRasterByGridResolution").value);
     if(resolutionVal === 0.025){
-        polyOffset = 15000;
+        polyOffset = 10000;
     }
     else if(resolutionVal === 0.05){
-        polyOffset = 30000;
+        polyOffset = 25000;
     }
     else if(resolutionVal === 0.1){
-        polyOffset = 60000;
+        polyOffset = 55000;
     }
     else if(resolutionVal === 0.25){
-        polyOffset = 150000;
+        polyOffset = 145000;
     }
     else if(resolutionVal === 0.5){
-        polyOffset = 300000;
+        polyOffset = 295000;
     }
     const geoJSONFormat = new ol.format.GeoJSON();
     const mapCenterPoint = map.getView().getCenter();

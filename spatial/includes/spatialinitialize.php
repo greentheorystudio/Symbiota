@@ -18,7 +18,7 @@ if($stArrJson){
     }
 }
 ?>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=202208312" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220901" type="text/javascript"></script>
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     let searchTermsArr = {};
@@ -254,24 +254,6 @@ if($stArrJson){
     });
     layersArr.push(layersObj['uncertainty']);
 
-    let rasteranalysissource = new ol.source.Vector({
-        wrapX: true
-    });
-    layersObj['rasteranalysis'] = new ol.layer.Vector({
-        zIndex: 7,
-        source: rasteranalysissource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(255,0,0,0.3)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: 'rgba(255,0,0,1)',
-                width: 5
-            })
-        })
-    });
-    layersArr.push(layersObj['rasteranalysis']);
-
     const selectsource = new ol.source.Vector({
         wrapX: true
     });
@@ -312,4 +294,22 @@ if($stArrJson){
         })
     });
     layersArr.push(layersObj['spider']);
+
+    let rasteranalysissource = new ol.source.Vector({
+        wrapX: true
+    });
+    layersObj['rasteranalysis'] = new ol.layer.Vector({
+        zIndex: 12,
+        source: rasteranalysissource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,0,0.3)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: 'rgba(255,0,0,1)',
+                width: 5
+            })
+        })
+    });
+    layersArr.push(layersObj['rasteranalysis']);
 </script>

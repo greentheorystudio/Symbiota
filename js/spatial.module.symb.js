@@ -417,11 +417,11 @@ function refreshLayerOrder(){
     layersObj['dragdrop2'].setZIndex(layerCount-7);
     layersObj['dragdrop3'].setZIndex(layerCount-6);
     layersObj['uncertainty'].setZIndex(layerCount-5);
-    layersObj['rasteranalysis'].setZIndex(layerCount-4);
-    layersObj['select'].setZIndex(layerCount-3);
-    layersObj['pointv'].setZIndex(layerCount-2);
-    layersObj['heat'].setZIndex(layerCount-1);
-    layersObj['spider'].setZIndex(layerCount);
+    layersObj['select'].setZIndex(layerCount-4);
+    layersObj['pointv'].setZIndex(layerCount-3);
+    layersObj['heat'].setZIndex(layerCount-2);
+    layersObj['spider'].setZIndex(layerCount-1);
+    layersObj['rasteranalysis'].setZIndex(layerCount);
 }
 
 function resetMainSymbology(){
