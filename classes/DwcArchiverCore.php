@@ -194,7 +194,7 @@ class DwcArchiverCore extends Manager{
             }
             if($value || ($cond === 'NULL' || $cond === 'NOTNULL')){
                 if(is_array($value)){
-                    $this->conditionArr[$field][$cond] = Sanitizer::cleanInArray($value);
+                    $this->conditionArr[$field][$cond] = Sanitizer::cleanInArray($this->conn,$value);
                 }
                 else{
                     $this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($this->conn,$value);

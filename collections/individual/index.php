@@ -150,8 +150,8 @@ $commentArr = $indManager->getCommentArr($isEditor);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220718" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220809" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220809" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220830" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -888,7 +888,7 @@ if($fullWindow){
                                                     <?php
                                                     $medUrl = $medArr['accessuri'];
                                                     $medFormat = $medArr['format'];
-                                                    if($GLOBALS['IMAGE_DOMAIN'] && strncmp($medUrl, '/', 1) === 0) {
+                                                    if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($medUrl, '/', 1) === 0) {
                                                         $medUrl = $GLOBALS['IMAGE_DOMAIN'].$medUrl;
                                                     }
 

@@ -45,7 +45,7 @@ if($GLOBALS['SYMB_UID']){
 		<script type="text/javascript">
 
 		</script>
-		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220718" type="text/javascript"></script>
+		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220809" type="text/javascript"></script>
 	</head>
 	<body>
 		<?php

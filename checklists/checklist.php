@@ -300,21 +300,19 @@ if(!$printMode){
         if($clValue && $isEditor && !$printMode){
             ?>
             <div style="float:right;width:auto;">
-					<span>
-						<a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Checklist Administration">
-							<i style='width:20px;height:20px;' class="fas fa-cog"></i>
-                        </a>
-					</span>
                 <span>
-						<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Manage Linked Voucher">
-							<i style='width:20px;height:20px;' class="fas fa-link"></i>
-                        </a>
-					</span>
-                <span onclick="toggle('editspp');return false;">
-						<a href="#" style="text-decoration: none;" title="Edit Species List">
-							<i style='width:20px;height:20px;' class="fas fa-clipboard-list"></i>
-                        </a>
-					</span>
+                    <a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Checklist Administration">
+                        <i style='width:20px;height:20px;' class="fas fa-cog"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Manage Linked Voucher">
+                        <i style='width:20px;height:20px;' class="fas fa-link"></i>
+                    </a>
+                </span>
+                <span onclick="toggle('editspp');">
+                    <i style='width:20px;height:20px;cursor:pointer;' class="fas fa-clipboard-list" title="Edit Species List"></i>
+                </span>
             </div>
             <?php
         }
@@ -342,7 +340,7 @@ if(!$printMode){
                 </span>
                 <ul id="sddm">
                     <li>
-					    <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
+                        <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
                             <?php
                             $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon. '&thesfilter=' .$thesFilter. '&showsynonyms=' .$showSynonyms;
                             ?>
@@ -423,40 +421,40 @@ if(!$printMode){
                                 </div>
                                 <div>
                                     <div style="margin-left:10px;">
-                                        <input data-role='none' type='checkbox' name='searchcommon' value='1' <?php echo ($searchCommon? 'checked' : '');?> /> Common Names<br/>
-                                        <input data-role='none' type="checkbox" name="searchsynonyms" value="1" <?php echo ($searchSynonyms? 'checked' : '');?> /> Synonyms
+                                        <input type='checkbox' name='searchcommon' value='1' <?php echo ($searchCommon? 'checked' : '');?> /> Common Names<br/>
+                                        <input type="checkbox" name="searchsynonyms" value="1" <?php echo ($searchSynonyms? 'checked' : '');?> /> Synonyms
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <input data-role='none' id='thesfilter' name='thesfilter' type='checkbox' value='1' <?php echo ($thesFilter ? 'checked' : '');?> /> Filter Through Thesaurus
+                                <input id='thesfilter' name='thesfilter' type='checkbox' value='1' <?php echo ($thesFilter ? 'checked' : '');?> /> Filter Through Thesaurus
                             </div>
                             <div>
-                                <input data-role='none' id='showsynonyms' name='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms ? 'checked' : '');?> /> Display Synonyms
+                                <input id='showsynonyms' name='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms ? 'checked' : '');?> /> Display Synonyms
                             </div>
                             <div>
-                                <input data-role='none' id='showcommon' name='showcommon' type='checkbox' value='1' <?php echo ($showCommon ? 'checked' : '');?> /> Common Names
+                                <input id='showcommon' name='showcommon' type='checkbox' value='1' <?php echo ($showCommon ? 'checked' : '');?> /> Common Names
                             </div>
                             <div>
-                                <input data-role='none' name='showimages' type='checkbox' value='1' <?php echo ($showImages? 'checked' : ''); ?> onclick="showImagesChecked(this.form);" />
+                                <input id='showimages' name='showimages' type='checkbox' value='1' <?php echo ($showImages? 'checked' : ''); ?> onclick="showImagesChecked(this.form);" />
                                 Display as Images
                             </div>
                             <?php
                             if($clValue){
                                 ?>
                                 <div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showvouchersdiv">
-                                    <input data-role='none' name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers? 'checked' : ''); ?> />
+                                    <input name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers? 'checked' : ''); ?> />
                                     Notes &amp; Vouchers
                                 </div>
                                 <?php
                             }
                             ?>
                             <div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showauthorsdiv">
-                                <input data-role='none' name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors? 'checked' : ''); ?> />
+                                <input name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors? 'checked' : ''); ?> />
                                 Taxon Authors
                             </div>
                             <div style='' id="showalphataxadiv">
-                                <input data-role='none' name='showalphataxa' type='checkbox' value='1' <?php echo ($showAlphaTaxa? 'checked' : ''); ?> />
+                                <input name='showalphataxa' type='checkbox' value='1' <?php echo ($showAlphaTaxa? 'checked' : ''); ?> />
                                 Show Taxa Alphabetically
                             </div>
                             <div style="margin:5px 0 0 5px;">
@@ -577,7 +575,7 @@ if(!$printMode){
                 <?php
             }
             ?>
-            <div>
+            <div style="min-height: 450px;">
                 <div style="margin:3px;">
                     <b>Families:</b>
                     <?php echo $clManager->getFamilyCount(); ?>
@@ -646,7 +644,7 @@ if(!$printMode){
                                 <?php
                                 $spUrl = "../taxa/index.php?taxon=$tid&cl=".$clid;
                                 if($imgSrc){
-                                    $imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
+                                    $imgSrc = (isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
                                     if(!$printMode) {
                                         echo "<a href='" . $spUrl . "' target='_blank'>";
                                     }
@@ -675,6 +673,13 @@ if(!$printMode){
                                 }
                                 if(array_key_exists('vern',$sppArr)){
                                     echo "<div style='font-weight:bold;'>".$sppArr['vern']. '</div>';
+                                }
+                                if($isEditor){
+                                    ?>
+                                    <span class="editspp" style="display:<?php echo ($editMode?'inline':'none'); ?>;">
+                                        <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');"></i>
+                                    </span>
+                                    <?php
                                 }
                                 ?>
                             </div>
@@ -717,18 +722,14 @@ if(!$printMode){
                         if($isEditor){
                             ?>
                             <span class="editspp" style="display:<?php echo ($editMode?'inline':'none'); ?>;">
-									<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');">
-										<i style='width:13px;height:13px;' title='edit details' class="fas fa-edit"></i>
-									</a>
-								</span>
+                                <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');"></i>
+                            </span>
                             <?php
                             if($showVouchers && array_key_exists('dynamicsql',$clArray) && $clArray['dynamicsql']){
                                 ?>
                                 <span class="editspp" style="display:none;">
-										<a href="#" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>','editorwindow');">
-											<i style='width:13px;height:13px;' title='Link Voucher Occurrences' class="fas fa-link"></i>
-										</a>
-									</span>
+                                    <i style='width:13px;height:13px;cursor:pointer;' title='Link Voucher Occurrences' class="fas fa-link" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>','editorwindow');"></i>
+                                </span>
                                 <?php
                             }
                         }
@@ -793,6 +794,7 @@ if(!$printMode){
     }
     ?>
 </div>
+<div style="clear:both;"></div>
 <?php
 if(!$printMode) {
     include(__DIR__ . '/../footer.php');

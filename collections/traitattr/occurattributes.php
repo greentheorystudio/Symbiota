@@ -233,7 +233,7 @@ if($traitID){
 			}
         </script>
 		<script src="../../js/collections.traitattr.js" type="text/javascript"></script>
-		<script src="../../js/shared.js?ver=20220718" type="text/javascript"></script>
+		<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
 	</head>
 	<body>
 		<?php

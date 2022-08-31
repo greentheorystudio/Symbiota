@@ -18,14 +18,14 @@ if($stArrJson){
     }
 }
 ?>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220830" type="text/javascript"></script>
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     let searchTermsArr = {};
 
     $(function() {
         let winHeight = $(window).height();
-        winHeight = winHeight + "px";
+        winHeight = (winHeight - 5) + "px";
         document.getElementById('spatialpanel').style.height = winHeight;
 
         $("#sidepanel-accordion").accordion({
@@ -37,9 +37,9 @@ if($stArrJson){
 
     $(window).resize(function(){
         let winHeight = $(window).height();
-        winHeight = winHeight + "px";
+        winHeight = (winHeight - 5) + "px";
         document.getElementById('spatialpanel').style.height = winHeight;
-        if(document.getElementById('sidepanel-accordion')){
+        if(!INPUTWINDOWMODE){
             $("#sidepanel-accordion").accordion("refresh");
         }
     });

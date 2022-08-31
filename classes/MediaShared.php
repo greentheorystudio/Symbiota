@@ -137,7 +137,7 @@ class MediaShared{
 		$status = false;
 		$url = str_replace(' ','%20',$url);
 		if(strncmp($url, '/', 1) === 0){
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
 			else{
@@ -379,7 +379,7 @@ class MediaShared{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if($GLOBALS['IMAGE_DOMAIN']){
+		if(isset($GLOBALS['IMAGE_DOMAIN'])){
 			$urlPrefix = 'http://';
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 				$urlPrefix = 'https://';
@@ -577,7 +577,7 @@ class MediaShared{
 					$exists = true;
 				}
 			}
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$uri = $GLOBALS['IMAGE_DOMAIN'].$uri;
 			}
 			else{

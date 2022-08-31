@@ -85,7 +85,7 @@ class ImageExplorer{
 			elseif(count($accArr) > 1){
 				$tidArr = array_merge($this->getTaxaChildren($accArr),$accArr);
 				$tidArr = $this->getTaxaSynonyms($tidArr);
-				$sqlWhere .= 'AND (i.tid IN('.implode(',',Sanitizer::cleanInArray($tidArr)).')) ';
+				$sqlWhere .= 'AND (i.tid IN('.implode(',',Sanitizer::cleanInArray($this->conn,$tidArr)).')) ';
 			}
 		}
 		
@@ -94,7 +94,7 @@ class ImageExplorer{
 		}
 
 		if(isset($searchCriteria['country']) && $searchCriteria['country']){
-			$countryArr = Sanitizer::cleanInArray($searchCriteria['country']);
+			$countryArr = Sanitizer::cleanInArray($this->conn,$searchCriteria['country']);
 			$usaArr = array('usa','united states','united states of america','u.s.a','us');
 			foreach($countryArr as $countryStr){
 				if(in_array(strtolower($countryStr), $usaArr, true)){
@@ -106,23 +106,23 @@ class ImageExplorer{
 		}
 
 		if(isset($searchCriteria['state']) && $searchCriteria['state']){
-			$stateArr = Sanitizer::cleanInArray($searchCriteria['state']);
+			$stateArr = Sanitizer::cleanInArray($this->conn,$searchCriteria['state']);
 			$sqlWhere .= 'AND o.stateProvince IN("'.implode('","',$stateArr).'") ';
 		}
 
 		if(isset($searchCriteria['tags']) && $searchCriteria['tags']){
-			$sqlWhere .= 'AND it.keyvalue IN("'.implode('","',Sanitizer::cleanInArray($searchCriteria['tags'])).'") ';
+			$sqlWhere .= 'AND it.keyvalue IN("'.implode('","',Sanitizer::cleanInArray($this->conn,$searchCriteria['tags'])).'") ';
 		}
 		else{
 			$sqlWhere .= 'AND i.sortsequence < 500 ';
 		}
 		
 		if(isset($searchCriteria['collection']) && $searchCriteria['collection']){
-			$sqlWhere .= 'AND o.collid IN('.implode(',',Sanitizer::cleanInArray($searchCriteria['collection'])).') ';
+			$sqlWhere .= 'AND o.collid IN('.implode(',',Sanitizer::cleanInArray($this->conn,$searchCriteria['collection'])).') ';
 		}
 
 		if(isset($searchCriteria['photographer']) && $searchCriteria['photographer']){
-			$sqlWhere .= 'AND i.photographerUid IN('.implode(',',Sanitizer::cleanInArray($searchCriteria['photographer'])).') ';
+			$sqlWhere .= 'AND i.photographerUid IN('.implode(',',Sanitizer::cleanInArray($this->conn,$searchCriteria['photographer'])).') ';
 		}
 		
 		if (isset($searchCriteria['idToSpecies'], $searchCriteria['idNeeded']) && $searchCriteria['idToSpecies'] && $searchCriteria['idNeeded']) {
