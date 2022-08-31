@@ -307,31 +307,36 @@ function getPointInfoArr(cluster){
 }
 
 function loadPoints(){
-    clearSelections(false);
-    searchTermsArr = getSearchTermsArr();
-    if(validateSearchTermsArr(searchTermsArr)){
-        taxaCnt = 0;
-        collSymbology = [];
-        taxaSymbology = [];
-        selections = [];
-        showWorking();
-        getQueryRecCnt(function() {
-            if(queryRecCnt > 0){
-                loadPointsLayer(0);
-            }
-            else{
-                setRecordsTab();
-                if(pointActive){
-                    removeLayerFromSelList('pointv');
-                    pointActive = false;
+    if(!selectedPolyError){
+        clearSelections(false);
+        searchTermsArr = getSearchTermsArr();
+        if(validateSearchTermsArr(searchTermsArr)){
+            taxaCnt = 0;
+            collSymbology = [];
+            taxaSymbology = [];
+            selections = [];
+            showWorking();
+            getQueryRecCnt(function() {
+                if(queryRecCnt > 0){
+                    loadPointsLayer(0);
                 }
-                hideWorking();
-                alert('There were no records matching your query.');
-            }
-        });
+                else{
+                    setRecordsTab();
+                    if(pointActive){
+                        removeLayerFromSelList('pointv');
+                        pointActive = false;
+                    }
+                    hideWorking();
+                    alert('There were no records matching your query.');
+                }
+            });
+        }
+        else{
+            alert('Please enter search criteria.');
+        }
     }
     else{
-        alert('Please enter search criteria.');
+        alert('You have too many complex polygons selected. Please deselect one or more polygons in order to Load Records.');
     }
 }
 

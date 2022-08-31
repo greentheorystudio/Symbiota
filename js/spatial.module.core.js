@@ -32,6 +32,7 @@ let spiderCluster;
 let spiderFeature;
 let hiddenClusters = [];
 let clickedFeatures = [];
+let selectedPolyError = false;
 let dragDrop1 = false;
 let dragDrop2 = false;
 let dragDrop3 = false;
@@ -1660,7 +1661,14 @@ function getGeographyParams(){
         document.getElementById("polyarea").value = totalArea.toFixed(2);
     }
     if(geoPolyArr.length > 0){
-        setSearchTermsArrKeyValue('polyArr',JSON.stringify(geoPolyArr));
+        const jsonPolyArr = JSON.stringify(geoPolyArr);
+        if(jsonPolyArr.length < 5000000){
+            setSearchTermsArrKeyValue('polyArr',jsonPolyArr);
+            selectedPolyError = false;
+        }
+        else{
+            selectedPolyError = true;
+        }
     }
     else{
         clearSearchTermsArrKey('polyArr');
