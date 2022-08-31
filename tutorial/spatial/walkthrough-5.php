@@ -55,8 +55,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 2</h3>
-                        <p>Download the <a href="https://worldclim.org/data/worldclim21.html" target="_blank">10 minutes Elevation raster data from WorldClim</a>.
-                            You can <a href="https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_10m_elev.zip">click this link to download it directly</a>.
+                        <p>Download the <a href="https://worldclim.org/data/worldclim21.html" target="_blank">5 minutes Elevation raster data from WorldClim</a>.
+                            You can <a href="https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_5m_elev.zip">click this link to download it directly</a>.
                             This file will download as a zip archive. Once downloaded, unzip the archive to access the tif file it contains.
                             <b>Be sure to note the location of the unzipped tif file on your computer.</b></p>
                     </div>
@@ -154,7 +154,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 18</h3>
                         <p>Select the elevation data layer in the Target Raster Layer Selector in the <a href="raster-tools-panel.php#/raster-tools-panel/0">Raster Tools Panel</a>
-                            (this should be wc21_10m_elev if you downloaded the file specified in step 2).</p>
+                            (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 19</h3>
@@ -166,7 +166,9 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <h3>Step 20</h3>
                         <p>In the <a href="data-vectorize-tool.php#/data-vectorize-tool/0">Data-Based Vectorize Tool</a>,
                             click the Data-Based Vectorize button to create vector features of all areas within the state
-                            feature you selected that are within the low and high elevation values you entered.</p>
+                            feature you selected that are within the low and high elevation values you entered.
+                            <b>Ignore any browser popup warnings about the page being unresponsive, the process takes a while,
+                            but will complete on its own.</b></p>
                         <p>The Data-Based Vectorize Tool can vectorize raster data quickly, but can be less accuarte in its
                             processing of larger rasters, such as this one. We will vectorize first using this tool, and then
                             try the <a href="grid-vectorize-tool.php#/grid-vectorize-tool/0">Grid-Based Vectorize Tool</a> to
@@ -183,7 +185,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 22</h3>
                         <p>Select the elevation data layer in the <a href="control-panel.php#/control-panel/3">Active Layer Selector</a> in
-                            the <a href="main-map-window.php#/main-map-window/2">Control Panel</a> to activate it (this should be wc21_10m_elev
+                            the <a href="main-map-window.php#/main-map-window/2">Control Panel</a> to activate it (this should be wc21_5m_elev
                             if you downloaded the file specified in step 2).</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
@@ -201,7 +203,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 25</h3>
                         <p>In the <a href="control-panel.php#/control-panel/1">Layers Panel</a> in the elevation data layer
-                            (this should be titled wc21_10m_elev if you downloaded the file specified in
+                            (this should be titled wc21_5m_elev if you downloaded the file specified in
                             step 2), click the <a href="layers-panel.php#/layers-panel/7">Delete Layer button</a> to remove
                             that layer from the map.</p>
                     </div>
@@ -225,6 +227,144 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a>, and
                             then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected)
                             to load the occurrence records occurring within the new feature.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 30</h3>
+                        <p>Click on Search Criteria in the <a href="side-panel.php#/side-panel/0">Side Panel</a> to expand
+                            the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a> again, and
+                            then click the Reset button, in either the Criteria or Collections Tab (whichever is selected)
+                            to reset the map back to its default state.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 31</h3>
+                        <p>Drag and drop the file downloaded in step 2 over the map to load the elevation data onto the map again.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 32</h3>
+                        <p>Drag and drop the file downloaded in step 10 over the map to load the state feature onto the map again.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 33</h3>
+                        <p>Click on the <a href="main-map-window.php#/main-map-window/1">Side Panel Toggle</a> to open
+                            the <a href="side-panel.php#/side-panel/0">Side Panel</a>, click on Raster Tools in the <a href="side-panel.php#/side-panel/0">Side Panel</a>
+                            to expand the <a href="raster-tools-panel.php#/raster-tools-panel/0">Raster Tools Panel</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 34</h3>
+                        <p>Select the elevation data layer in the Target Raster Layer Selector in the <a href="raster-tools-panel.php#/raster-tools-panel/0">Raster Tools Panel</a>
+                            (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 35</h3>
+                        <p>In the <a href="grid-vectorize-tool.php#/grid-vectorize-tool/0">Grid-Based Vectorize Tool</a> in
+                            the <a href="raster-tools-panel.php#/raster-tools-panel/0">Raster Tools Panel</a>, enter the
+                            low and high elevation values you identified in step 14 into the approprite boxes and select 250 for
+                            the resolution in meters.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 36</h3>
+                        <p>In the <a href="grid-vectorize-tool.php#/grid-vectorize-tool/0">Grid-Based Vectorize Tool</a> in
+                            the <a href="raster-tools-panel.php#/raster-tools-panel/0">Raster Tools Panel</a>, click the
+                            Display Target Box button to display the target polygon on the map.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 37</h3>
+                        <p>Click and drag the target polygon on the map so that it covers as much of the state feature as
+                            possible, any vectorization that happens outside of the state feature will be removed at a later
+                            step.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 38</h3>
+                        <p>Once the target polygon is positioned, in the <a href="grid-vectorize-tool.php#/grid-vectorize-tool/0">Grid-Based Vectorize Tool</a>,
+                            click the Grid-Based Vectorize button to create vector features of all areas within the target polygon
+                            that are within the low and high elevation values you entered. <b>Ignore any browser popup warnings
+                            about the page being unresponsive, the process takes a while, but will complete on its own.</b></p>
+                        <p>The Grid-Based Vectorize Tool is slower, depending on the resolution selected, at vectorizing,
+                            but offers a much higher level of accuracy.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 39</h3>
+                        <p>Once the vectorization process is complete, select the elevation data layer in the <a href="control-panel.php#/control-panel/3">Active Layer Selector</a> in
+                            the <a href="main-map-window.php#/main-map-window/2">Control Panel</a> to activate it (this should be wc21_5m_elev
+                            if you downloaded the file specified in step 2).</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 40</h3>
+                        <p>While holding the alt key (option key on Mac), click on different areas within the new feature to open
+                            an info popup showing the elevation value (elevation values are in meters). You can click the x
+                            icon in the top-right corner of any info popup to close it. Note how well (or not) the vectorization
+                            process was at vectorizing the value range you had specified.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 41</h3>
+                        <p>Repeat steps 37 and 38, repositioning the target polygon over different areas of the state feature
+                            until the entire area of the state feature (and any additional area) has been vectorized.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 42</h3>
+                        <p>Once the entire area of the state feature has been vectorized, in the <a href="grid-vectorize-tool.php#/grid-vectorize-tool/0">Grid-Based Vectorize Tool</a>
+                            in the <a href="raster-tools-panel.php#/raster-tools-panel/0">Raster Tools Panel</a>, click the
+                            Hide Target Box button to remove the target polygon from the map.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 43</h3>
+                        <p>Select Shapes in the <a href="control-panel.php#/control-panel/3">Active Layer Selector</a> in
+                            the <a href="main-map-window.php#/main-map-window/2">Control Panel</a> to activate the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 44</h3>
+                        <p>Click once on each the new features created from the vectorization process to select all of them.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 45</h3>
+                        <p>Click on Vector Tools in the <a href="side-panel.php#/side-panel/0">Side Panel</a> to
+                            expand the <a href="vector-tools-panel.php#/vector-tools-panel/0">Vector Tools Panel</a>, click
+                            on the Shapes Tab to select it (if it isn't already), and then click the Union button in
+                            the <a href="union-tool.php#/union-tool/0">Union Tool</a> to combine all of the selected
+                            features into one.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 46</h3>
+                        <p>Select state feature layer that you added to the map in step 32 in the <a href="control-panel.php#/control-panel/3">Active Layer Selector</a> in
+                            the <a href="main-map-window.php#/main-map-window/2">Control Panel</a> to activate it. It will
+                            be named the same as the filename in the Active Layer Selector.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 47</h3>
+                        <p>Click once on the state feature to add it to the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 48</h3>
+                        <p>Select Shapes in the <a href="control-panel.php#/control-panel/3">Active Layer Selector</a> in
+                            the <a href="main-map-window.php#/main-map-window/2">Control Panel</a> to activate the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 49</h3>
+                        <p>Click once on the state feature and the combined vectorization feature to select them both in
+                            the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 50</h3>
+                        <p>In the <a href="intersect-tool.php#/intersect-tool/0">Intersect Tool</a> in
+                            the <a href="shapes-tab.php#/shapes-tab/0">Shapes Tab</a>, click the Intersect button to create
+                            an intersect feature of the state and combined vectorization features.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 51</h3>
+                        <p>Click the <a href="shapes-tab.php#/shapes-tab/3">Delete Selected Features button</a> in
+                            the <a href="shapes-tab.php#/shapes-tab/0">Shapes Tab</a> to remove the state and combined vectorization features,
+                            leaving only the new intersect features created in the previous step.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 52</h3>
+                        <p>Click once on the intersect feature to select it in the <a href="map-layers.php#/map-layers/5">Shapes Layer</a>.</p>
+                    </div>
+                    <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
+                        <h3>Step 53</h3>
+                        <p>Click on Search Criteria in the <a href="side-panel.php#/side-panel/0">Side Panel</a> to expand
+                            the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a>, and
+                            then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected)
+                            to load the occurrence records occurring within the intersect polygon.</p>
                     </div>
                 </section>
             </div>
