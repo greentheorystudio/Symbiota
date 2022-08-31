@@ -41,7 +41,7 @@ if(strncmp($windowType, 'input', 5) === 0){
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css" type="text/css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220809" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220816" type="text/css" rel="stylesheet" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
@@ -58,14 +58,19 @@ if(strncmp($windowType, 'input', 5) === 0){
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220718" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220809" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20220330" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220809" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220901" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20220430" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/includes/spatialvars.php'); ?>
+    <script type="text/javascript">
+        const WINDOWMODE = '<?php echo $windowType; ?>';
+        const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
+        const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
+    </script>
     <?php include_once(__DIR__ . '/includes/spatialinitialize.php'); ?>
 </head>
 <body class="mapbody">
-<div data-role="page" id="page1">
+<div data-role="page" id="panelcontainer">
     <div role="main" class="ui-content">
         <a href="#defaultpanel" id="panelopenbutton" data-role="button" data-inline="true" data-icon="bars">Open</a>
     </div>
@@ -98,16 +103,13 @@ if(strncmp($windowType, 'input', 5) === 0){
 </div>
 
 <script type="text/javascript">
-    const WINDOWMODE = '<?php echo $windowType; ?>';
-    const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
-    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
-
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');
     const popupcloser = document.getElementById('popup-closer');
     const finderpopupcontainer = document.getElementById('finderpopup');
     const finderpopupcontent = document.getElementById('finderpopup-content');
     const finderpopupcloser = document.getElementById('finderpopup-closer');
+    let finderpopuptimeout;
     const typeSelect = document.getElementById('drawselect');
 
     const popupoverlay = new ol.Overlay({
@@ -139,27 +141,39 @@ if(strncmp($windowType, 'input', 5) === 0){
     };
 
     layersObj['dragdrop1'].on('postrender', function(evt) {
-        hideWorking();
+        if(!loadPointsEvent){
+            hideWorking();
+        }
     });
 
     layersObj['dragdrop2'].on('postrender', function(evt) {
-        hideWorking();
+        if(!loadPointsEvent){
+            hideWorking();
+        }
     });
 
     layersObj['dragdrop3'].on('postrender', function(evt) {
-        hideWorking();
+        if(!loadPointsEvent){
+            hideWorking();
+        }
     });
 
     layersObj['select'].on('postrender', function(evt) {
-        hideWorking();
+        if(!loadPointsEvent){
+            hideWorking();
+        }
     });
 
     layersObj['pointv'].on('postrender', function(evt) {
-        checkLoading();
+        if(loadPointsEvent && pointvectorsource.getFeatures().length === Number(queryRecCnt)){
+            loadPointsPostrender();
+        }
     });
 
     layersObj['heat'].on('postrender', function(evt) {
-        checkLoading();
+        if(loadPointsEvent && pointvectorsource.getFeatures().length === Number(queryRecCnt)){
+            loadPointsPostrender();
+        }
     });
 
     const selectInteraction = new ol.interaction.Select({
@@ -649,7 +663,7 @@ if(strncmp($windowType, 'input', 5) === 0){
             }
             else{
                 if(shapeActive){
-                    removeLayerToSelList('select');
+                    removeLayerFromSelList('select');
                     shapeActive = false;
                 }
             }

@@ -357,7 +357,7 @@ ob_start();
                         $imgUrl = $subArr['thumbnailurl'];
                     }
                     if(strncmp($imgUrl, '/', 1) === 0) {
-                        if($GLOBALS['IMAGE_DOMAIN']){
+                        if(isset($GLOBALS['IMAGE_DOMAIN'])){
                             $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                         }
                         else{
@@ -381,7 +381,7 @@ ob_start();
                 if(array_key_exists('map',$subArr) && $subArr['map']){
                     $mapUrl = $subArr['map'];
                     if(strncmp($mapUrl, '/', 1) === 0) {
-                        if($GLOBALS['IMAGE_DOMAIN']){
+                        if(isset($GLOBALS['IMAGE_DOMAIN'])){
                             $mapUrl = $GLOBALS['IMAGE_DOMAIN'] . $mapUrl;
                         }
                         else{

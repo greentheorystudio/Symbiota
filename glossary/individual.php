@@ -204,7 +204,7 @@ if($glossId){
 						foreach($termImgArr as $imgId => $imgArr){
 							$imgUrl = $imgArr['url'];
 							if(strncmp($imgUrl, '/', 1) === 0){
-								if($GLOBALS['IMAGE_DOMAIN']){
+								if(isset($GLOBALS['IMAGE_DOMAIN'])){
 									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 								}
 								else{

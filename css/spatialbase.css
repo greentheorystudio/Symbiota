@@ -1,3 +1,7 @@
+body{
+	font-size: 16px;
+}
+
 .ui-panel{width:350px;min-height:100%;max-height:none;border-width:0;position:absolute;top:0;display:block}
 .ui-panel-position-left{left:-350px}
 .ui-panel-animate.ui-panel-position-left.ui-panel-display-overlay,.ui-panel-animate.ui-panel-position-left.ui-panel-display-push{left:0;-webkit-transform:translate3d(-350px,0,0);-moz-transform:translate3d(-350px,0,0);transform:translate3d(-350px,0,0)}
@@ -85,6 +89,7 @@
 	border-width: 1px 1px 0 0;
 	background-color: #3c668d;
 	opacity: 0.85;
+	font-size: 12px;
 }
 
 .ui-rangeSlider-label .ui-rangeSlider-leftLabel {
@@ -96,6 +101,7 @@
 	top: 10px;
 	left: 50%;
 	z-index: 3;
+	font-size: 12px;
 }
 
 #maptoolbox {
@@ -182,31 +188,31 @@
 .ol-zoom {
 	top: 42px;
 	left: auto;
-	right: .5em;
+	right: 8px;
 }
 
 .ol-zoom .ol-zoom-out {
-	margin-top: 235px;
+	margin-top: 231px;
 	left: auto;
 	right: 8px;
 }
 .ol-zoomslider {
 	background-color: transparent;
-	top: 5.2em;
+	top: 65px;
 	left: auto;
-	right: .5em;
+	right: 8px;
 	height:235px;
 }
 
 .ol-touch .ol-zoom .ol-zoom-out {
-	margin-top: 252px;
+	margin-top: 231px;
 	left: auto;
-	right: .5em;
+	right: 8px;
 }
 .ol-touch .ol-zoomslider {
-	top: 5.25em;
+	top: 65px;
 	left: auto;
-	right: .5em;
+	right: 8px;
 }
 .ol-popup {
 	position: absolute;
@@ -313,6 +319,10 @@ a.boxclose{
 	padding-left: 20px;
 	z-index: 10;
 	height: 30px;
+}
+
+#panelcontainer{
+	font-size: 12px;
 }
 
 #defaultpanel{
