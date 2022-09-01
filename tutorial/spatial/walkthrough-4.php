@@ -166,7 +166,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         <p>Click on Search Criteria in the <a href="side-panel.php#/side-panel/0">Side Panel</a> to expand
                             the <a href="search-criteria-panel.php#/search-criteria-panel/0">Search Criteria Panel</a>, and
                             then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected)
-                            to load the occurrence records occurring in the intersect polygon.</p>
+                            to load the occurrence records occurring within the intersect polygon.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3><a href="walkthrough-5.php">Go To Next Topic</a></h3>

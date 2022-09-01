@@ -307,55 +307,63 @@ function getPointInfoArr(cluster){
 }
 
 function loadPoints(){
-    clearSelections(false);
-    searchTermsArr = getSearchTermsArr();
-    if(validateSearchTermsArr(searchTermsArr)){
-        taxaCnt = 0;
-        collSymbology = [];
-        taxaSymbology = [];
-        selections = [];
-        showWorking();
-        getQueryRecCnt(function() {
-            if(queryRecCnt > 0){
-                loadPointsEvent = true;
-                pointvectorsource.clear(true);
-                layersObj['pointv'].setSource(pointvectorsource);
-                setCopySearchUrlDiv();
-                loadPointsLayer(0);
-                setRecordsTab();
-                changeRecordPage(1);
-                $('#recordstab').tabs({active: 0});
-                $("#sidepanel-accordion").accordion("option","active",1);
-                if(!pointActive){
-                    const infoArr = [];
-                    infoArr['id'] = 'pointv';
-                    infoArr['type'] = 'userLayer';
-                    infoArr['fileType'] = 'vector';
-                    infoArr['layerName'] = 'Points';
-                    infoArr['layerDescription'] = "This layer contains all of the occurrence points that have been loaded onto the map.",
-                    infoArr['removable'] = true;
-                    infoArr['sortable'] = false;
-                    infoArr['symbology'] = false;
-                    infoArr['query'] = false;
-                    processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
-                    pointActive = true;
+    if(!selectedPolyError){
+        clearSelections(false);
+        searchTermsArr = getSearchTermsArr();
+        if(validateSearchTermsArr(searchTermsArr)){
+            taxaCnt = 0;
+            collSymbology = [];
+            taxaSymbology = [];
+            selections = [];
+            showWorking();
+            getQueryRecCnt(function() {
+                if(queryRecCnt > 0){
+                    loadPointsLayer(0);
                 }
-            }
-            else{
-                setRecordsTab();
-                if(pointActive){
-                    removeLayerFromSelList('pointv');
-                    pointActive = false;
+                else{
+                    setRecordsTab();
+                    if(pointActive){
+                        removeLayerFromSelList('pointv');
+                        pointActive = false;
+                    }
+                    hideWorking();
+                    alert('There were no records matching your query.');
                 }
-                loadPointsEvent = false;
-                hideWorking();
-                alert('There were no records matching your query.');
-            }
-        });
+            });
+        }
+        else{
+            alert('Please enter search criteria.');
+        }
     }
     else{
-        alert('Please enter search criteria.');
+        alert('You have too many complex polygons selected. Please deselect one or more polygons in order to Load Records.');
     }
+}
+
+function loadPointsPostrender(){
+    setCopySearchUrlDiv();
+    changeRecordPage(1);
+    setRecordsTab();
+    $('#recordstab').tabs({active: 0});
+    $("#sidepanel-accordion").accordion("option","active",1);
+    const pointextent = pointvectorsource.getExtent();
+    map.getView().fit(pointextent,map.getSize());
+    if(!pointActive){
+        const infoArr = [];
+        infoArr['id'] = 'pointv';
+        infoArr['type'] = 'userLayer';
+        infoArr['fileType'] = 'vector';
+        infoArr['layerName'] = 'Points';
+        infoArr['layerDescription'] = "This layer contains all of the occurrence points that have been loaded onto the map.",
+        infoArr['removable'] = true;
+        infoArr['sortable'] = false;
+        infoArr['symbology'] = false;
+        infoArr['query'] = false;
+        processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
+        pointActive = true;
+    }
+    loadPointsEvent = false;
+    hideWorking();
 }
 
 function openIndPopup(occid){
@@ -409,11 +417,11 @@ function refreshLayerOrder(){
     layersObj['dragdrop2'].setZIndex(layerCount-7);
     layersObj['dragdrop3'].setZIndex(layerCount-6);
     layersObj['uncertainty'].setZIndex(layerCount-5);
-    layersObj['rasteranalysis'].setZIndex(layerCount-4);
-    layersObj['select'].setZIndex(layerCount-3);
-    layersObj['pointv'].setZIndex(layerCount-2);
-    layersObj['heat'].setZIndex(layerCount-1);
-    layersObj['spider'].setZIndex(layerCount);
+    layersObj['select'].setZIndex(layerCount-4);
+    layersObj['pointv'].setZIndex(layerCount-3);
+    layersObj['heat'].setZIndex(layerCount-2);
+    layersObj['spider'].setZIndex(layerCount-1);
+    layersObj['rasteranalysis'].setZIndex(layerCount);
 }
 
 function resetMainSymbology(){
