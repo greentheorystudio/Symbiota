@@ -33,7 +33,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                                 the bottom-right corner of this screen to progress forwards and backwards. The left and right arrow
                                 keys on your keyboard can also be used for progression, however if anything is clicked outide of
                                 the tutorial windows on any slide, the red arrows will need to be used for the next progression.</p>
-                            <p>On any topic slide there will be a Hide Tutorial link in the bottom-right corner of the screen,
+                            <p>On any topic slide there will be a Hide Tutorial link in the bottom-left corner of the screen,
                                 which can be clicked to hide the tutorial content. Once clicked, a Show Tutorial link in the
                                 same location can be clicked to show the tutorial content again.</p>
                         </div>
