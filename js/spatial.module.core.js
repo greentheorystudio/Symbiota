@@ -15,6 +15,7 @@ let queryRecCnt = 0;
 let draw;
 let clustersource;
 let loadPointsEvent = false;
+let loadPointsError = false;
 let rasterLayersLoaded = false;
 let toggleSelectedPoints = false;
 let lazyLoadCnt = 20000;
@@ -1893,6 +1894,7 @@ function hideVectorizeRasterByGridTargetPolygon(){
 }
 
 function lazyLoadPoints(index,callback){
+    showWorking();
     let params;
     let url;
     let startindex = 0;
@@ -1908,8 +1910,15 @@ function lazyLoadPoints(index,callback){
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                callback(http.responseText);
+            if(loadPointsEvent && http.readyState === 4) {
+                if(http.status === 200) {
+                    callback(http.responseText);
+                }
+                else{
+                    loadPointsError = true;
+                    alert('An error occurred while loading records');
+                    loadPointsPostrender();
+                }
             }
         };
         http.send(params);
@@ -1921,8 +1930,15 @@ function lazyLoadPoints(index,callback){
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                callback(http.responseText);
+            if(loadPointsEvent && http.readyState === 4) {
+                if(http.status === 200) {
+                    callback(http.responseText);
+                }
+                else{
+                    loadPointsError = true;
+                    alert('An error occurred while loading records');
+                    loadPointsPostrender();
+                }
             }
         };
         http.send(params);
@@ -1952,6 +1968,7 @@ function loadInputParentParams(){
 
 function loadPointsLayer(index){
     loadPointsEvent = true;
+    loadPointsError = false;
     pointvectorsource.clear(true);
     let processed = 0;
     do{
@@ -1972,7 +1989,7 @@ function loadPointsLayer(index){
         processed = processed + lazyLoadCnt;
         index++;
     }
-    while(processed < queryRecCnt);
+    while(processed < queryRecCnt && !loadPointsError);
 
     clustersource = new ol.source.PropertyCluster({
         distance: clusterDistance,
