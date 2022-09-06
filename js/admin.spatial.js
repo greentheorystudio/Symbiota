@@ -498,6 +498,11 @@ function processSaveDisplaySettings(){
 
 function processSaveSymbologySettings(){
     const data = {};
+    const pointsClusterValue = document.getElementById('pointsCluster').checked;
+    const pointsClusterDistanceValue = $('#pointsClusterDistance').spinner( "value" );
+    const pointsDisplayHeatMapValue = document.getElementById('pointsDisplayHeatMap').checked;
+    const pointsHeatMapRadiusValue = $('#pointsHeatMapRadius').spinner( "value" );
+    const pointsHeatMapBlurValue = $('#pointsHeatMapBlur').spinner( "value" );
     const pointsBorderColorValue = document.getElementById('pointsBorderColor').value;
     const pointsFillColorValue = document.getElementById('pointsFillColor').value;
     const pointsBorderWidthValue = $('#pointsBorderWidth').spinner( "value" );
@@ -519,6 +524,11 @@ function processSaveSymbologySettings(){
     const dragDropPointRadiusValue = $('#dragDropPointRadius').spinner( "value" );
     const dragDropOpacityValue = $('#dragDropOpacity').spinner( "value" );
     const dragDropRasterColorScaleValue = document.getElementById('dragDropRasterColorScale').value;
+    data['SPATIAL_POINT_CLUSTER'] = '';
+    data['SPATIAL_POINT_CLUSTER_DISTANCE'] = '';
+    data['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = '';
+    data['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '';
+    data['SPATIAL_POINT_HEAT_MAP_BLUR'] = '';
     data['SPATIAL_POINT_FILL_COLOR'] = '';
     data['SPATIAL_POINT_BORDER_COLOR'] = '';
     data['SPATIAL_POINT_BORDER_WIDTH'] = '';
@@ -549,6 +559,11 @@ function processSaveSymbologySettings(){
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
         if(http.readyState === 4 && http.status === 200) {
+            data['SPATIAL_POINT_CLUSTER'] = pointsClusterValue;
+            data['SPATIAL_POINT_CLUSTER_DISTANCE'] = pointsClusterDistanceValue;
+            data['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = pointsDisplayHeatMapValue;
+            data['SPATIAL_POINT_HEAT_MAP_RADIUS'] = pointsHeatMapRadiusValue;
+            data['SPATIAL_POINT_HEAT_MAP_BLUR'] = pointsHeatMapBlurValue;
             data['SPATIAL_POINT_FILL_COLOR'] = pointsFillColorValue;
             data['SPATIAL_POINT_BORDER_COLOR'] = pointsBorderColorValue;
             data['SPATIAL_POINT_BORDER_WIDTH'] = pointsBorderWidthValue;
@@ -590,6 +605,11 @@ function processSaveSymbologySettings(){
 }
 
 function processSetDefaultSettings() {
+    document.getElementById('pointsCluster').checked = true;
+    $('#pointsClusterDistance').spinner("value", 50);
+    document.getElementById('pointsDisplayHeatMap').checked = false;
+    $('#pointsHeatMapRadius').spinner("value", 5);
+    $('#pointsHeatMapBlur').spinner("value", 15);
     document.getElementById('pointsBorderColor').value = '000000';
     document.getElementById('pointsFillColor').value = 'E69E67';
     $('#pointsBorderWidth').spinner("value", 1);

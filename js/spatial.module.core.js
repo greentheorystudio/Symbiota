@@ -19,11 +19,6 @@ let loadPointsError = false;
 let rasterLayersLoaded = false;
 let toggleSelectedPoints = false;
 let lazyLoadCnt = 20000;
-let clusterDistance = 50;
-let clusterPoints = true;
-let showHeatMap = false;
-let heatMapRadius = 5;
-let heatMapBlur = 15;
 let maxFeatureCount;
 let currentResolution;
 let activeLayer = 'none';
@@ -45,6 +40,7 @@ let returnClusters = false;
 let transformStartAngle = 0;
 let transformD = [0,0];
 let transformFirstPoint = false;
+let spinnerSpin = false;
 let rasterColorScales = [
     {value: 'autumn', label: 'Autumn'},
     {value: 'blackbody', label: 'Blackbody'},
@@ -554,8 +550,12 @@ function changeBorderWidth(layerId,value) {
 }
 
 function changeClusterDistance(){
-    clusterDistance = document.getElementById("setclusterdistance").value;
-    clustersource.setDistance(clusterDistance);
+    if(clusterDistance !== $('#setclusterdistance').spinner( "value" )){
+        clusterDistance = $('#setclusterdistance').spinner( "value" );
+        if(clusterPoints && layersObj['pointv'].getSource().getFeatures().length > 0){
+            clustersource.setDistance(clusterDistance);
+        }
+    }
 }
 
 function changeClusterSetting(){
@@ -636,7 +636,7 @@ function changeDraw() {
                 infoArr['opacity'] = shapesOpacity;
                 infoArr['removable'] = true;
                 infoArr['sortable'] = false;
-                infoArr['symbology'] = true;
+                infoArr['symbology'] = false;
                 infoArr['query'] = true;
                 processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),true);
                 shapeActive = true;
@@ -668,13 +668,17 @@ function changeFillColor(layerId,value) {
 }
 
 function changeHeatMapBlur(){
-    heatMapBlur = document.getElementById("heatmapblur").value;
-    layersObj['heat'].setBlur(parseInt(heatMapBlur, 10));
+    if(heatMapBlur !== $('#heatmapblur').spinner( "value" )){
+        heatMapBlur = $('#heatmapblur').spinner( "value" );
+        layersObj['heat'].setBlur(parseInt(heatMapBlur, 10));
+    }
 }
 
 function changeHeatMapRadius(){
-    heatMapRadius = document.getElementById("heatmapradius").value;
-    layersObj['heat'].setRadius(parseInt(heatMapRadius, 10));
+    if(heatMapRadius !== $('#heatmapradius').spinner( "value" )){
+        heatMapRadius = $('#heatmapradius').spinner( "value" );
+        layersObj['heat'].setRadius(parseInt(heatMapRadius, 10));
+    }
 }
 
 function changeLayerOpacity(layerId,value) {
@@ -2236,6 +2240,13 @@ function processAddLayerControllerElement(lArr,parentElement,active){
                 numberFormat: "n",
                 spin: function( event, ui ) {
                     changeLayerOpacity(lArr['id'], ui.value);
+                    spinnerSpin = true;
+                },
+                change: function( event ) {
+                    if(!spinnerSpin){
+                        changeLayerOpacity(lArr['id'], $( symbologyOpacityId ).spinner( "value" ));
+                    }
+                    spinnerSpin = false;
                 }
             });
             $( symbologyBorderWidthId ).spinner({
@@ -2244,6 +2255,13 @@ function processAddLayerControllerElement(lArr,parentElement,active){
                 numberFormat: "n",
                 spin: function( event, ui ) {
                     changeBorderWidth(lArr['id'], ui.value);
+                    spinnerSpin = true;
+                },
+                change: function( event ) {
+                    if(!spinnerSpin){
+                        changeBorderWidth(lArr['id'], $( symbologyBorderWidthId ).spinner( "value" ));
+                    }
+                    spinnerSpin = false;
                 }
             });
             $( symbologyPointRadiusId ).spinner({
@@ -2252,6 +2270,13 @@ function processAddLayerControllerElement(lArr,parentElement,active){
                 numberFormat: "n",
                 spin: function( event, ui ) {
                     changePointRadius(lArr['id'], ui.value);
+                    spinnerSpin = true;
+                },
+                change: function( event ) {
+                    if(!spinnerSpin){
+                        changePointRadius(lArr['id'], $( symbologyPointRadiusId ).spinner( "value" ));
+                    }
+                    spinnerSpin = false;
                 }
             });
             jscolor.init();

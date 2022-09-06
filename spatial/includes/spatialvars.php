@@ -22,4 +22,9 @@
     const dragDropPointRadius = <?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>;
     const dragDropOpacity = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>';
     const dragDropRasterColorScale = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']; ?>';
+    let clusterPoints = <?php echo ($GLOBALS['SPATIAL_POINT_CLUSTER']?'true':'false'); ?>;
+    let clusterDistance = <?php echo $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE']; ?>;
+    let showHeatMap = <?php echo ($GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP']?'true':'false'); ?>;
+    let heatMapRadius = <?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS']; ?>;
+    let heatMapBlur = <?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR']; ?>;
 </script>
