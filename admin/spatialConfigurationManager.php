@@ -95,8 +95,8 @@ $fullConfArr = $confManager->getConfigurationsArr();
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220902" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.spatial.js?ver=20220626" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220907" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.spatial.js?ver=20220804" type="text/javascript"></script>
     <script type="text/javascript">
         const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
         let serverayerArrObject;
@@ -110,6 +110,21 @@ $fullConfArr = $confManager->getConfigurationsArr();
                 beforeLoad: function( event, ui ) {
                     $(ui.panel).html("<p>Loading...</p>");
                 }
+            });
+            $('#pointsClusterDistance').spinner({
+                step: 1,
+                min: 0,
+                numberFormat: "n"
+            });
+            $('#pointsHeatMapRadius').spinner({
+                step: 1,
+                min: 0,
+                numberFormat: "n"
+            });
+            $('#pointsHeatMapBlur').spinner({
+                step: 1,
+                min: 0,
+                numberFormat: "n"
             });
             $('#pointsBorderWidth').spinner({
                 step: 1,
@@ -238,6 +253,31 @@ include(__DIR__ . '/../header.php');
                 <legend><b>Points Layer</b></legend>
                 <div style="padding:5px;margin-top:5px;display:flex;flex-direction:column;width:90%;margin-left:auto;margin-right:auto;">
                     <div style="display:flex;justify-content:space-evenly;">
+                        <div style="display:flex;align-items:center;">
+                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Cluster Points: </span>
+                            <input type='checkbox' id='pointsCluster' <?php echo ($GLOBALS['SPATIAL_POINT_CLUSTER']?'checked':''); ?>>
+                        </div>
+                        <div style="display:flex;align-items:center;">
+                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Cluster Distance (px): </span>
+                            <input id="pointsClusterDistance" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE']; ?>" />
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
+                        <div style="display:flex;align-items:center;">
+                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Display Heat Map: </span>
+                            <input type='checkbox' id='pointsDisplayHeatMap' <?php echo ($GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP']?'checked':''); ?>>
+                        </div>
+                        <div style="display:flex;align-items:center;">
+                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Heat Map Radius (px): </span>
+                            <input id="pointsHeatMapRadius" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS']; ?>" />
+
+                        </div>
+                        <div style="display:flex;align-items:center;">
+                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Heat Map Blur (px): </span>
+                            <input id="pointsHeatMapBlur" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR']; ?>" />
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                         <div style="display:flex;align-items:center;">
                             <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
                             <input id="pointsBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_POINT_BORDER_COLOR']; ?>" />

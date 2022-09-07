@@ -165,6 +165,39 @@ if($stArrJson){
                 clearLayerQuerySelector();
             }
         });
+        $('#setclusterdistance').spinner({
+            step: 1,
+            min: 0,
+            numberFormat: "n",
+            spin: function() {
+                changeClusterDistance();
+            },
+            change: function() {
+                changeClusterDistance();
+            }
+        });
+        $('#heatmapradius').spinner({
+            step: 1,
+            min: 0,
+            numberFormat: "n",
+            spin: function() {
+                changeHeatMapRadius();
+            },
+            change: function() {
+                changeHeatMapRadius();
+            }
+        });
+        $('#heatmapblur').spinner({
+            step: 1,
+            min: 0,
+            numberFormat: "n",
+            spin: function() {
+                changeHeatMapBlur();
+            },
+            change: function() {
+                changeHeatMapBlur();
+            }
+        });
 
         <?php
         if(!$clusterPoints){
