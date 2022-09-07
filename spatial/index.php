@@ -61,7 +61,7 @@ if(strncmp($windowType, 'input', 5) === 0){
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220809" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220902" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220907" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20220430" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/includes/spatialvars.php'); ?>
     <script type="text/javascript">
@@ -669,7 +669,7 @@ if(strncmp($windowType, 'input', 5) === 0){
                     infoArr['opacity'] = shapesOpacity;
                     infoArr['removable'] = true;
                     infoArr['sortable'] = false;
-                    infoArr['symbology'] = true;
+                    infoArr['symbology'] = false;
                     infoArr['query'] = true;
                     processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),false);
                     shapeActive = true;
