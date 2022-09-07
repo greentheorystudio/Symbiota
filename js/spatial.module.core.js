@@ -560,8 +560,7 @@ function changeClusterDistance(){
 
 function changeClusterSetting(){
     clusterPoints = document.getElementById("clusterswitch").checked;
-    if(clusterPoints){
-        removeDateSlider();
+    if(clusterPoints && layersObj['pointv'].getSource().getFeatures().length > 0){
         loadPointsLayer(0);
     }
     else{
@@ -2989,7 +2988,6 @@ function removeUserLayer(layerID,raster){
     else if(layerID === 'pointv'){
         clearSelections(false);
         adjustSelectionsTab();
-        removeDateSlider();
         pointvectorsource.clear(true);
         layersObj['heat'].setVisible(false);
         clustersource = '';
