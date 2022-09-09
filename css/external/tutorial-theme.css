@@ -371,7 +371,7 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 .tutorial-frame {
   position: absolute;
   box-shadow: 0 1px 4px rgba(0,0,0,0.5), 0 5px 25px rgba(0,0,0,0.2);
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
   padding: 20px;
   font-size: 20px;
@@ -434,16 +434,6 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   width: 25%;
   right: 5%;
   top: 5%;
-}
-
-.topic-list-container {
-  position: absolute;
-  left: 50%;
-  bottom:15%;
-  min-width: 650px;
-  min-height: 550px;
-  width:55%;
-  height: 70%;
 }
 
 ul.topic-list {

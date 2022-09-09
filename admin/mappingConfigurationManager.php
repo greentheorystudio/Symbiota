@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ConfigurationManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../index.php');
@@ -14,7 +14,7 @@ $fullConfArr = $confManager->getConfigurationsArr();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Spatial Configuration Manager</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Mapping Configuration Manager</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
@@ -96,7 +96,7 @@ $fullConfArr = $confManager->getConfigurationsArr();
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220907" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.spatial.js?ver=20220804" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.spatial.js?ver=20220909" type="text/javascript"></script>
     <script type="text/javascript">
         const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
         let serverayerArrObject;
@@ -228,7 +228,12 @@ $fullConfArr = $confManager->getConfigurationsArr();
 include(__DIR__ . '/../header.php');
 ?>
 <div id="innertext">
-    <div id="statusStr" style="margin:20px;font-weight:bold;color:red;"></div>
+    <div style="padding: 0 20px 10px;display:flex;justify-content: space-between;">
+        <div id="statusStr" style="font-weight:bold;color:red;"></div>
+        <div onclick="openTutorialWindow('../tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">
+            <i style="height:20px;width:20px;cursor:pointer;" class="far fa-question-circle"></i>
+        </div>
+    </div>
     <div id="tabs" style="width:95%;">
         <ul>
             <li><a href='#mapwindow'>Map Window</a></li>
@@ -237,18 +242,32 @@ include(__DIR__ . '/../header.php');
         </ul>
 
         <div id="mapwindow">
-            <div style="width:95%;margin: 20px auto;">
-                Adjust the Base Layer and zoom level, and move the map below to how you would like maps to open by default within the portal.
-                Then click the Save Spatial Defaults button to save the settings.
-                <div style="display:flex;justify-content: right;">
-                    <button type="button" onclick="processSaveDisplaySettings();">Save Spatial Defaults</button>
+            <fieldset style="margin: 10px 0;padding:15px;">
+                <div style="width:95%;display:flex;justify-content:space-between;align-items:center;margin:auto;">
+                    <div style="width:80%;">
+                        Adjust the Base Layer and zoom level, and move the map below to how you would like map windows to open within the portal.
+                        Then click the Save Settings button to save the settings.
+                    </div>
+                    <div>
+                        <button type="button" onclick="processSaveDisplaySettings();">Save Settings</button>
+                    </div>
                 </div>
-            </div>
+            </fieldset>
             <?php include_once(__DIR__ . '/../spatial/viewerElement.php'); ?>
             <div style="clear:both;width:100%;height:40px;"></div>
         </div>
 
         <div id="symbology">
+            <fieldset style="margin: 10px 0;padding:15px;">
+                <div style="width:95%;display:flex;justify-content:space-between;margin:auto;">
+                    <div>
+                        <button type="button" onclick="processSetDefaultSettings();">Set Default Settings</button>
+                    </div>
+                    <div>
+                        <button type="button" onclick="processSaveSymbologySettings();">Save Settings</button>
+                    </div>
+                </div>
+            </fieldset>
             <fieldset style="margin: 10px 0;">
                 <legend><b>Points Layer</b></legend>
                 <div style="padding:5px;margin-top:5px;display:flex;flex-direction:column;width:90%;margin-left:auto;margin-right:auto;">
@@ -421,12 +440,6 @@ include(__DIR__ . '/../header.php');
                     </div>
                 </div>
             </fieldset>
-            <div style="width:98%;margin: 10px auto;">
-                <div style="display:flex;justify-content:right;gap:15px;">
-                    <button type="button" onclick="processSetDefaultSettings();">Set Default Settings</button>
-                    <button type="button" onclick="processSaveSymbologySettings();">Save Settings</button>
-                </div>
-            </div>
         </div>
 
         <div id="layers">
@@ -442,7 +455,7 @@ include(__DIR__ . '/../header.php');
                             </div>
                         </div>
                         <div>
-                            <button type="button" onclick="saveLayerConfigChanges();">Save Changes</button>
+                            <button type="button" onclick="saveLayerConfigChanges();">Save Settings</button>
                         </div>
                     </div>
                     <div id="addLayerGroupDiv" style="width:95%;display:none;">
@@ -526,7 +539,7 @@ include(__DIR__ . '/../header.php');
                 <button onclick="deleteLayerGroup();">Delete Layer Group</button>
             </div>
             <div>
-                <button onclick="saveLayerGroupEdits();">Save Edits</button>
+                <button onclick="saveLayerGroupEdits();">Save</button>
             </div>
         </div>
     </div>
@@ -570,7 +583,7 @@ include(__DIR__ . '/../header.php');
         </div>
     </fieldset>
     <fieldset id="editVectorSymbology" style="display:none;margin-top:10px;padding:15px;flex-direction:column;">
-        <legend><b>Symbology</b></legend>
+        <legend><b>Initial Symbology</b></legend>
         <div style="display:flex;justify-content:space-evenly;">
             <div style="display:flex;align-items:center;">
                 <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
@@ -597,7 +610,7 @@ include(__DIR__ . '/../header.php');
         </div>
     </fieldset>
     <fieldset id="editRasterSymbology" style="display:none;margin-top:10px;padding:15px;flex-direction:column;">
-        <legend><b>Symbology</b></legend>
+        <legend><b>Initial Symbology</b></legend>
         <div style="display:flex;justify-content:center;align-items:center;">
             <div>
                 <span style="font-weight:bold;margin-right:10px;font-size:12px;">Raster color scale: </span>
@@ -658,7 +671,7 @@ include(__DIR__ . '/../header.php');
                 <button onclick="openUpdateFileUpload();">Update Layer File</button>
             </div>
             <div>
-                <button onclick="saveLayerEdits();">Save Edits</button>
+                <button onclick="saveLayerEdits();">Save</button>
             </div>
         </div>
     </div>

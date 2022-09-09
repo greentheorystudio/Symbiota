@@ -9,7 +9,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reveal.css?ver=20220813" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220829" rel="stylesheet" id="theme" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220908" rel="stylesheet" id="theme" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/tutorial.js" type="text/javascript"></script>
         <style>
@@ -43,7 +43,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Cluster Points</h3>
-                        <p>When checked occrrence points loaded onto the map are clustered, based on the cluster
+                        <p>When checked, occurrence points loaded onto the map are clustered, based on the cluster
                             distance setting, into clusters of like records. When not checked, all occurrence records are loaded
                             as individual points on the map, regardless of proximity.</p>
                     </div>
@@ -54,8 +54,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Display Heat Map</h3>
-                        <p>When checked occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map
-                            Radius and Heat Map Blur settings. When not checked (default) occurrence records are displayed on
+                        <p>When checked, occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map
+                            Radius and Heat Map Blur settings. When not checked occurrence records are displayed on
                             the map as individual points, or clusters of like points.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
