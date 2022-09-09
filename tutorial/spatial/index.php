@@ -9,12 +9,21 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reveal.css?ver=20220813" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220829" rel="stylesheet" id="theme" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220908" rel="stylesheet" id="theme" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/tutorial.js" type="text/javascript"></script>
         <style>
             .reveal .controls {
                 margin-bottom: 75px;
+            }
+            .topic-list-container {
+                position: absolute;
+                left: 50%;
+                bottom:15%;
+                min-width: 650px;
+                min-height: 550px;
+                width:55%;
+                height: 70%;
             }
         </style>
     </head>
@@ -31,7 +40,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                                 component and tool explained as you progress through the topics.</p>
                             <p>Use the red arrows located in
                                 the bottom-right corner of this screen to progress forwards and backwards. The left and right arrow
-                                keys on your keyboard can also be used for progression, however if anything is clicked outide of
+                                keys on your keyboard can also be used for progression, however if anything is clicked outside
                                 the tutorial windows on any slide, the red arrows will need to be used for the next progression.</p>
                             <p>On any topic slide there will be a Hide Tutorial link in the bottom-left corner of the screen,
                                 which can be clicked to hide the tutorial content. Once clicked, a Show Tutorial link in the
@@ -64,9 +73,9 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                                 <li><a href="collections-tab.php">Collections Tab</a></li>
                                 <li><a href="taxa-tab.php">Taxa Tab</a></li>
                                 <li><a href="selections-tab.php">Selections Tab</a></li>
-                                <li><a href="downloading-occurrence-data.php">Downloading Occurrence Data</a></li>
                                 <li><a href="using-heat-map-display.php">Using the Heat Map Display</a></li>
                                 <li><a href="downloading-map-image.php">Downloading a Map Image</a></li>
+                                <li><a href="downloading-occurrence-data.php">Downloading Occurrence Data</a></li>
                                 <li><a href="vector-tools-panel.php">Vector Tools Panel</a></li>
                                 <li><a href="shapes-tab.php">Shapes Tab</a></li>
                                 <li><a href="downloading-features-from-shapes-layer.php">Downloading Features From the Shapes Layer</a></li>
