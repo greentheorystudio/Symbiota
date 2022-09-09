@@ -9,7 +9,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reveal.css?ver=20220813" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220829" rel="stylesheet" id="theme" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/tutorial-theme.css?ver=20220908" rel="stylesheet" id="theme" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/tutorial.js" type="text/javascript"></script>
         <style>
@@ -80,7 +80,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                             clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
-                        <h3><a href="downloading-occurrence-data.php">Go To Next Topic</a></h3>
+                        <h3><a href="using-heat-map-display.php">Go To Next Topic</a></h3>
                     </div>
                 </section>
             </div>
