@@ -160,7 +160,7 @@ include(__DIR__ . '/../header.php');
     <?php
     if($isEditor){
         if($statusStr){
-            echo "<div style='color:#FF0000;margin:10px 0 10px 10px;'>".$statusStr. '</div>';
+            echo "<div style='color:#FF0000;margin:10px 0 10px 10px;'>".$statusStr.'</div>';
         }
         ?>
         <div id="tabs" style="margin:10px;">
@@ -168,7 +168,7 @@ include(__DIR__ . '/../header.php');
                 <?php
                 if($GLOBALS['VALID_USER']){
                     ?>
-                    <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
+                    <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Checklists and Projects</a></li>
                     <li><a href="occurrencemenu.php">Occurrence Management</a></li>
                     <?php
                 }

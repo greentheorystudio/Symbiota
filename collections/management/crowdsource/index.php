@@ -93,7 +93,7 @@ $statusStr = '';
 				else{
 					?>
 					<div>
-						<a href="../../../profile/index.php?refurl=../collections/specprocessor/crowdsource/index.php">Login</a> to View Current Stats
+						<a href="../../../profile/index.php?refurl=../collections/management/crowdsource/index.php">Login</a> to View Current Stats
 					</div>
 					<?php
 				}
