@@ -73,12 +73,15 @@ include($GLOBALS['SERVER_ROOT'].'/header.php');
 <div id='innertext'>
     <form name="mapForm" action="dynamicchecklist.php" method="post" onsubmit="return checkForm();">
         <div style="width:95%;margin-left:auto;margin-right:auto;">
-            Pan, zoom and click on map to capture coordinates, then submit coordinates to build a species list.
+            Click and drag anywhere on the map to pan the map in any direction. Use the + and - buttons in the top-right corner
+            of the map to adjust the zoom level. Adjust the radius value to any value you wish. Click once on the map to create
+            a circle, based on the radius value, which will be used to contruct the taxa list. Click the Build Taxa List button
+            to create the taxa list based on the circle you have created.
         </div>
         <div style="width:95%;margin-left:auto;margin-right:auto;margin-top:5px;">
             <div style="float:left;width:300px;">
                 <div>
-                    <input type="submit" name="buildchecklistbutton" value="Build Checklist" disabled/>
+                    <input type="submit" name="buildchecklistbutton" value="Build Taxa List" disabled/>
                     <input type="hidden" name="interface" value="<?php echo $interface; ?>" />
                     <input type="hidden" id="latbox" name="lat" value="" />
                     <input type="hidden" id="lngbox" name="lng" value="" />
