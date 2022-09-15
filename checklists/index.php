@@ -39,7 +39,7 @@ $clManager->setProj($pid);
 	echo '</div>';
 	?>
 	<div id="innertext">
-		<h1>Species Checklists</h1>
+		<h1>Checklists</h1>
         <div style='margin:20px;'>
 			<?php 
             $researchArr = $clManager->getChecklists();
@@ -78,7 +78,7 @@ $clManager->setProj($pid);
 				}
 			}
 			else{
-				echo '<div><b>No Checklists returned</b></div>';
+				echo '<div><b>There are no checklists available at this time.</b></div>';
 			}
 			?>
 		</div>

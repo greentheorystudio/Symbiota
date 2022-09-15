@@ -36,13 +36,6 @@ $dynClManager = new DynamicChecklistManager();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220907" type="text/javascript"></script>
     <script type="text/javascript">
-        const shapesBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH']; ?>;
-        const shapesPointRadius = <?php echo $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']; ?>;
-        const shapesSelectionsBorderColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR']; ?>';
-        const shapesSelectionsFillColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR']; ?>';
-        const shapesSelectionsBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH']; ?>;
-        const shapesSelectionsOpacity = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY']; ?>';
-
         $(document).ready(function() {
             $( "#taxa" ).autocomplete({
                 source: function( request, response ) {
@@ -130,13 +123,13 @@ include_once($GLOBALS['SERVER_ROOT'].'/footer.php');
 ?>
 <script type="text/javascript">
     const selectInteraction = new ol.interaction.Select({
-        layers: [vectorlayer],
+        layers: layersArr,
         condition: function (evt) {
             return (evt.type === 'click' && activeLayer === 'select' && !evt.originalEvent.altKey && !evt.originalEvent.shiftKey);
         },
         style: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsFillColor),shapesSelectionsOpacity)'
+                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsFillColor),shapesSelectionsOpacity)
             }),
             stroke: new ol.style.Stroke({
                 color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1),

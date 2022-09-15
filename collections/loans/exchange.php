@@ -70,7 +70,7 @@ else{
 					</select>
 				</span>
 				<span>
-					<a href="../admin/institutioneditor.php?emode=1" target="_blank" title="Add a New Institution">
+					<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="Add a New Institution">
 						<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 					</a>
 				</span>
