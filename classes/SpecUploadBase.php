@@ -1052,7 +1052,7 @@ class SpecUploadBase extends SpecUpload{
         $uuidManager->populateGuids();
 
         if($this->imageTransferCount){
-            $this->outputMsg('<li style="margin-left:10px;color:orange">WARNING: Image thumbnails may need to be created using the <a href="../../imagelib/admin/thumbnailbuilder.php?collid='.$this->collId.'">Image Thumbnail Builder</a></li>');
+            $this->outputMsg('<li style="margin-left:10px;color:orange">WARNING: Image thumbnails may need to be created using the <a href="../../collections/management/thumbnailbuilder.php?collid='.$this->collId.'">Image Thumbnail Builder</a></li>');
         }
     }
 

@@ -24,7 +24,7 @@ class SiteMapManager{
 		$adminArr = array();
 		$editorArr = array();
 		$sql = 'SELECT c.collid, CONCAT_WS(":",c.institutioncode, c.collectioncode) AS ccode, c.collectionname, c.colltype '.
-			'FROM omcollections c ';
+			'FROM omcollections AS c ';
 		if(!$GLOBALS['IS_ADMIN']){
 			if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
 				$adminArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
@@ -80,31 +80,10 @@ class SiteMapManager{
 		return $this->genObsArr;
 	}
 
-	public function getChecklistList($clArr): array
-	{
-		$returnArr = array();
-		$sql = 'SELECT clid, name, access FROM fmchecklists ';
-		if(!$GLOBALS['IS_ADMIN'] && $clArr){
-			$sql .= 'WHERE (access LIKE "public%" OR clid IN('.implode(',',$clArr).')) ';
-		}
-		else{
-			$sql .= 'WHERE (access LIKE "public%") ';
-		}
-		$sql .= 'ORDER BY name';
-		//echo "<div>".$sql."</div>";
-		$rs = $this->conn->query($sql);
-		while($row = $rs->fetch_object()){
-			$clName = $row->name.($row->access === 'private'?' (limited access)':'');
-			$returnArr[$row->clid] = $clName;
-		}
-		$rs->close();
-		return $returnArr;
-	}
-
 	public function getProjectList($projArr = null): array
 	{
 		$returnArr = array();
-		$sql = 'SELECT p.pid, p.projname, p.managers FROM fmprojects p '.
+		$sql = 'SELECT p.pid, p.projname, p.managers FROM fmprojects AS p '.
 			'WHERE p.ispublic = 1 ';
 		if($projArr){
 			$sql .= 'AND (p.pid IN('.implode((array)',',$projArr).')) ';

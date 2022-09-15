@@ -153,7 +153,7 @@ foreach($collArr as $id => $collectionArr){
                     <?php
                     if(isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && count(array_diff($GLOBALS['USER_RIGHTS']['CollAdmin'],array_keys($genAdminArr))) > 1){
                         ?>
-                        <li><a href="../collections/cleaning/taxonomycleaner.php">Cross Collection Taxonomy Cleaning Tool</a></li>
+                        <li><a href="../collections/management/taxonomycleaner.php">Cross Collection Taxonomy Cleaning Tool</a></li>
                         <?php
                     }
                 }
