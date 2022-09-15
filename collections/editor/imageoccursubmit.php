@@ -60,7 +60,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/collections.imageoccursubmit.js?ver=20111118" type="text/javascript"></script>
+	<script src="../../js/collections.imageoccursubmit.js?ver=20220915" type="text/javascript"></script>
 	<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
 	<script type="text/javascript">
 	function validateImgOccurForm(f){
