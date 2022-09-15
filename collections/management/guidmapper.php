@@ -22,7 +22,7 @@ $uuidManager = new UuidFactory();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> UUID/GUID Generator</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> GUID/UUID Generator</title>
 	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
     <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 	<script type="text/javascript">
@@ -62,17 +62,14 @@ include(__DIR__ . '/../../header.php');
 	<?php 
 	if($isEditor){
 		?>
-		<h3>GUID Maintenance Control Panel</h3>
-		<div style="margin:10px;">
-			 
-		</div>
-		<?php 
-		if($action === 'Populate Collection GUIDs'){
+		<h3>GUID/UUID Generator</h3>
+		<?php
+		if($action === 'Generate Collection GUIDs/UUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids($collId);
 			echo '</ul>';
 		}
-		elseif($action === 'Populate GUIDs'){
+		elseif($action === 'Generate GUIDs/UUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids();
 			echo '</ul>';
@@ -85,7 +82,7 @@ include(__DIR__ . '/../../header.php');
             echo '<h3>' . $uuidManager->getCollectionName($collId) . '</h3>';
         }
 		?>
-		<div style="font-weight:bold;">Records without GUIDs (UUIDs)</div>
+		<div style="font-weight:bold;">Records without GUIDs/UUIDs</div>
 		<div style="margin:10px;">
 			<div><b>Occurrences: </b><?php echo $occCnt; ?></div>
 			<div><b>Determinations: </b><?php echo $detCnt; ?></div>
@@ -96,10 +93,10 @@ include(__DIR__ . '/../../header.php');
 			?>
 			<form name="guidform" action="guidmapper.php" method="post">
 				<fieldset style="padding:15px;">
-					<legend><b>GUID (UUID) Mapper</b></legend>
+					<legend><b>Generator</b></legend>
 					<div style="clear:both;">
 						<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-						<input type="submit" name="formsubmit" value="Populate Collection GUIDs" />
+						<input type="submit" name="formsubmit" value="Generate Collection GUIDs/UUIDs" />
 					</div>
 				</fieldset>
 			</form>
@@ -113,7 +110,7 @@ include(__DIR__ . '/../../header.php');
 						<legend><b>GUID (UUID) Mapper</b></legend>
 						<div style="clear:both;margin:10px;">
 							<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-							<input type="submit" name="formsubmit" value="Populate GUIDs" />
+							<input type="submit" name="formsubmit" value="Generate GUIDs/UUIDs" />
 						</div>
 					</fieldset>
 				</form>

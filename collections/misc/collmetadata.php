@@ -417,24 +417,15 @@ if($collid){
                                 <span class="field-label">License:</span>
                                 <span class="field-elem">
 									<?php
-                                    if(isset($GLOBALS['RIGHTS_TERMS'])){
+                                    if(isset($GLOBALS['RIGHTS_TERMS']) && $GLOBALS['RIGHTS_TERMS']){
                                         ?>
                                         <select name="rights">
-                                                <?php
-                                                $hasOrphanTerm = true;
-                                                foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
-                                                    $selectedTerm = '';
-                                                    if($collid && strtolower($collData['rights']) === strtolower($v)){
-                                                        $selectedTerm = 'SELECTED';
-                                                        $hasOrphanTerm = false;
-                                                    }
-                                                    echo '<option value="'.$v.'" '.$selectedTerm.'>'.$k.'</option>'."\n";
-                                                }
-                                                if($hasOrphanTerm && array_key_exists('rights',$collData)){
-                                                    echo '<option value="'.$collData['rights'].'" SELECTED>'.$collData['rights'].' [orphaned term]</option>'."\n";
-                                                }
-                                                ?>
-                                            </select>
+                                            <?php
+                                            foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
+                                                echo '<option value="'.$k.'" '.(strtolower($collData['rights']) === strtolower($k)?'SELECTED':'').'>'.$v['title'].'</option>'."\n";
+                                            }
+                                            ?>
+                                        </select>
                                         <?php
                                     }
                                     else{
@@ -690,7 +681,7 @@ if($collid){
                                 echo '<div>';
                                 echo $instArr['institutionname'].($instArr['institutioncode']?' ('.$instArr['institutioncode'].')':'');
                                 ?>
-                                <a href="../admin/institutioneditor.php?emode=1&targetcollid=<?php echo $collid.'&iid='.$instArr['iid']; ?>" title="Edit institution address">
+                                <a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid.'&iid='.$instArr['iid']; ?>" title="Edit institution address">
                                     <i style="height:15px;width:15px;" class="far fa-edit"></i>
                                 </a>
                                 <a href="collmetadata.php?collid=<?php echo $collid.'&removeiid='.$instArr['iid']; ?>" title="Unlink institution address">
@@ -748,7 +739,7 @@ if($collid){
                                     <input name="action" type="submit" value="Link Address" />
                                 </form>
                                 <div style="margin:15px;">
-                                    <a href="../admin/institutioneditor.php?emode=1&targetcollid=<?php echo $collid; ?>" title="Add a new address not on the list">
+                                    <a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid; ?>" title="Add a new address not on the list">
                                         <b>Add an institution not on list</b>
                                     </a>
                                 </div>

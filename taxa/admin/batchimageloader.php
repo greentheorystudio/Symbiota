@@ -78,8 +78,11 @@ $taxaUtilities = new TaxonomyUtilities();
                         <input name="scientificname" value="{%=file.scientificname?file.scientificname:''%}" class="form-control" style="width:250px;" onchange="validateSciNameChange(this.value,'{%=file.name%}');">
                     </label>
                     <div>
-                        <strong class="goodMessage" style="color:green;{%=file.errorMessage?'display:none;':'display:block;'%}">Linked to thesaurus and ready to upload</strong>
-                        <strong class="errorMessage" style="color:red;{%=file.errorMessage?'display:block;':'display:none;'%}width:350px;">Not inked to thesaurus</strong>
+                        <strong class="goodUploadMessage" style="color:green;{%=file.errorMessage?'display:none;':'display:block;'%}">Linked to the thesaurus and ready to upload</strong>
+                        <strong class="errorUploadMessage" style="color:red;{%=file.errorMessage?'display:block;':'display:none;'%}width:350px;">Not linked to the thesaurus</strong>
+                    </div>
+                    <div>
+                        <strong class="linkedDataMessage" style="display:none;">Additional data: </strong><span class="linkedDataDisplay"></span>
                     </div>
                     <input type="hidden" name="tid" value="{%=file.tid?file.tid:''%}">
                     <input type="hidden" name="photographer" value="{%=file.photographer?file.photographer:''%}">
@@ -139,6 +142,9 @@ $taxaUtilities = new TaxonomyUtilities();
                     }
                     else if(fileType === 'jpeg' || fileType === 'jpg' || fileType === 'png'){
                         let imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.toLowerCase());
+                        if(!imageFileData){
+                            imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase());
+                        }
                         if(imageFileData){
                             data.files[0].scientificname = imageFileData.scientificname;
                             if(imageFileData.hasOwnProperty('tid') && imageFileData.tid){
@@ -235,9 +241,9 @@ $taxaUtilities = new TaxonomyUtilities();
                                 const fileNode = fileNodeArr[n];
                                 const nodeFileName = fileNode.getElementsByClassName('name')[0].innerHTML;
                                 if(nodeFileName === fileName){
-                                    fileNode.getElementsByClassName('errorMessage')[0].innerHTML = data._response.jqXHR.responseJSON.files[0].error;
-                                    fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
-                                    fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
+                                    fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = data._response.jqXHR.responseJSON.files[0].error;
+                                    fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'block';
+                                    fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'none';
                                     fileNode.querySelectorAll('button[name="startButton"]')[0].disabled = false;
                                 }
                             }
@@ -323,9 +329,9 @@ $taxaUtilities = new TaxonomyUtilities();
                                             fileNode.querySelectorAll('input[name="scientificname"]')[0].value = value;
                                         }
                                         fileNode.querySelectorAll('input[name="tid"]')[0].value = taxaDataArr[value];
-                                        fileNode.getElementsByClassName('errorMessage')[0].innerHTML = '';
-                                        fileNode.getElementsByClassName('errorMessage')[0].style.display = 'none';
-                                        fileNode.getElementsByClassName('goodMessage')[0].style.display = 'block';
+                                        fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = '';
+                                        fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'none';
+                                        fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'block';
                                         fileNode.querySelectorAll('button[name="startButton"]')[0].classList.remove('disabled');
                                         fileNode.querySelectorAll('button[name="startButton"]')[0].disabled = false;
                                     }
@@ -340,9 +346,9 @@ $taxaUtilities = new TaxonomyUtilities();
                                     const fileNode = fileNodeArr[n];
                                     const nodeFileName = fileNode.getElementsByClassName('name')[0].innerHTML;
                                     if(nodeFileName === fileName){
-                                        fileNode.getElementsByClassName('errorMessage')[0].innerHTML = 'Scientific name not found in taxonomic thesaurus';
-                                        fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
-                                        fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
+                                        fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = 'Scientific name not found in taxonomic thesaurus';
+                                        fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'block';
+                                        fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'none';
                                         fileNode.querySelectorAll('button[name="startButton"]')[0].classList.add('disabled');
                                     }
                                 }
@@ -380,9 +386,13 @@ $taxaUtilities = new TaxonomyUtilities();
             const fileNodeArr = document.getElementById('uploadList').childNodes;
             for(let n in fileNodeArr){
                 if(fileNodeArr.hasOwnProperty(n)){
+                    const dataObj = {};
                     const fileNode = fileNodeArr[n];
                     const fileName = fileNode.getElementsByClassName('name')[0].innerHTML;
                     let imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.toLowerCase());
+                    if(!imageFileData){
+                        imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase());
+                    }
                     if(imageFileData){
                         if(imageFileData.hasOwnProperty('scientificname') && imageFileData.scientificname && !fileNode.querySelectorAll('input[name="scientificname"]')[0].value){
                             fileNode.querySelectorAll('input[name="scientificname"]')[0].value = imageFileData.scientificname;
@@ -392,36 +402,50 @@ $taxaUtilities = new TaxonomyUtilities();
                         }
                         if(imageFileData.hasOwnProperty('photographer') && imageFileData.photographer && !fileNode.querySelectorAll('input[name="photographer"]')[0].value){
                             fileNode.querySelectorAll('input[name="photographer"]')[0].value = imageFileData.photographer;
+                            dataObj['photographer'] = imageFileData.photographer;
                         }
                         if(imageFileData.hasOwnProperty('caption') && imageFileData.caption && !fileNode.querySelectorAll('input[name="caption"]')[0].value){
                             fileNode.querySelectorAll('input[name="caption"]')[0].value = imageFileData.caption;
+                            dataObj['caption'] = imageFileData.caption;
                         }
                         if(imageFileData.hasOwnProperty('owner') && imageFileData.owner && !fileNode.querySelectorAll('input[name="owner"]')[0].value){
                             fileNode.querySelectorAll('input[name="owner"]')[0].value = imageFileData.owner;
+                            dataObj['owner'] = imageFileData.owner;
                         }
                         if(imageFileData.hasOwnProperty('sourceurl') && imageFileData.sourceurl && !fileNode.querySelectorAll('input[name="sourceurl"]')[0].value){
                             fileNode.querySelectorAll('input[name="sourceurl"]')[0].value = imageFileData.sourceurl;
+                            dataObj['sourceurl'] = imageFileData.sourceurl;
                         }
                         if(imageFileData.hasOwnProperty('copyright') && imageFileData.copyright && !fileNode.querySelectorAll('input[name="copyright"]')[0].value){
                             fileNode.querySelectorAll('input[name="copyright"]')[0].value = imageFileData.copyright;
+                            dataObj['copyright'] = imageFileData.copyright;
                         }
                         if(imageFileData.hasOwnProperty('locality') && imageFileData.locality && !fileNode.querySelectorAll('input[name="locality"]')[0].value){
                             fileNode.querySelectorAll('input[name="locality"]')[0].value = imageFileData.locality;
+                            dataObj['locality'] = imageFileData.locality;
                         }
                         if(imageFileData.hasOwnProperty('notes') && imageFileData.notes && !fileNode.querySelectorAll('input[name="notes"]')[0].value){
                             fileNode.querySelectorAll('input[name="notes"]')[0].value = imageFileData.notes;
+                            dataObj['notes'] = imageFileData.notes;
                         }
                         if(imageFileData.hasOwnProperty('errorMessage') && imageFileData.errorMessage){
-                            fileNode.getElementsByClassName('errorMessage')[0].innerHTML = imageFileData.errorMessage;
-                            fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
-                            fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
+                            fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = imageFileData.errorMessage;
+                            fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'block';
+                            fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'none';
                             fileNode.querySelectorAll('button[name="startButton"]')[0].classList.add('disabled');
                         }
                         else{
-                            fileNode.getElementsByClassName('errorMessage')[0].innerHTML = '';
-                            fileNode.getElementsByClassName('errorMessage')[0].style.display = 'none';
-                            fileNode.getElementsByClassName('goodMessage')[0].style.display = 'block';
+                            fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = '';
+                            fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'none';
+                            fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'block';
                             fileNode.querySelectorAll('button[name="startButton"]')[0].classList.remove('disabled');
+                        }
+                        if(dataObj !== {}){
+                            fileNode.getElementsByClassName('linkedDataDisplay')[0].innerHTML = JSON.stringify(dataObj);
+                            fileNode.getElementsByClassName('linkedDataMessage')[0].style.display = 'block';
+                        }
+                        else{
+                            fileNode.getElementsByClassName('linkedDataMessage')[0].style.display = 'none';
                         }
                     }
                 }
@@ -448,9 +472,9 @@ $taxaUtilities = new TaxonomyUtilities();
                     const fileNode = fileNodeArr[n];
                     const nodeFileName = fileNode.getElementsByClassName('name')[0].innerHTML;
                     if(nodeFileName === fileName){
-                        fileNode.getElementsByClassName('errorMessage')[0].innerHTML = 'Validating name...';
-                        fileNode.getElementsByClassName('errorMessage')[0].style.display = 'block';
-                        fileNode.getElementsByClassName('goodMessage')[0].style.display = 'none';
+                        fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = 'Validating name...';
+                        fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'block';
+                        fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'none';
                         fileNode.querySelectorAll('button[name="startButton"]')[0].classList.add('disabled');
                     }
                 }
@@ -531,26 +555,29 @@ if($isEditor){
         </div>
         <form id="fileupload" method="POST" enctype="multipart/form-data">
             <div class="row fileupload-buttonbar">
-                <div class="col-lg-7" style="margin-bottom:15px;">
-                    <span class="btn btn-success fileinput-button">
-                        <i style="height:15px;width:15px;" class="fas fa-plus"></i>
-                        <span>Add files</span>
-                        <input type="file" id="batchUploadedElement" name="imgfile" multiple/>
-                    </span>
-                    <button type="submit" class="btn btn-primary start">
-                        <i style="height:15px;width:15px;" class="fas fa-upload"></i>
-                        <span>Start upload</span>
-                    </button>
-                    <button type="reset" class="btn btn-warning cancel" onclick="resetUploader();">
-                        <i style="height:15px;width:15px;" class="fas fa-ban"></i>
-                        <span>Cancel upload</span>
-                    </button>
-                    <div id="csvDataMessage" style="display:none;">
-                        <strong style="color:red;">CSV Data Uploaded</strong>
+                <div class="col-lg-7">
+                    <div style="display:flex;justify-content:space-between;align-items: center;">
+                        <div style="display:flex;gap:4px;">
+                        <span class="btn btn-success fileinput-button">
+                            <i style="height:15px;width:15px;" class="fas fa-plus"></i>
+                            <span>Add files</span>
+                            <input type="file" id="batchUploadedElement" name="imgfile" multiple/>
+                        </span>
+                            <button type="submit" class="btn btn-primary start">
+                                <i style="height:15px;width:15px;" class="fas fa-upload"></i>
+                                <span>Start upload</span>
+                            </button>
+                            <button type="reset" class="btn btn-warning cancel" onclick="resetUploader();">
+                                <i style="height:15px;width:15px;" class="fas fa-ban"></i>
+                                <span>Cancel upload</span>
+                            </button>
+                        </div>
+                        <div id="csvDataMessage" style="display:none;">
+                            <strong style="color:red;font-size:16px;">CSV Data Uploaded</strong>
+                        </div>
                     </div>
-                    <span class="fileupload-process"></span>
                 </div>
-                <div class="col-lg-5 fileupload-progress fade" style="margin-bottom:0;">
+                <div class="col-lg-5 fileupload-progress fade" style="width:100%;margin: 15px 0;">
                     <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="margin-bottom:0;">
                         <div class="progress-bar progress-bar-success" style="width:0%;"></div>
                     </div>
