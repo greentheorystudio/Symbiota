@@ -58,7 +58,7 @@ if($schema === 'backup'){
 			$archiveFile = $dwcaHandler->createDwcArchive();
 
 			if($archiveFile){
-				header('Content-Description: Symbiota Occurrence Backup File (DwC-Archive data package)');
+				header('Content-Description: Occurrence Backup File (DwC-Archive data package)');
 				header('Content-Type: application/zip');
 				header('Content-Disposition: attachment; filename='.basename($archiveFile));
 				header('Content-Transfer-Encoding: binary');

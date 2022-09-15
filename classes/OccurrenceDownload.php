@@ -54,10 +54,10 @@ class OccurrenceDownload{
 		$fileName = $this->getOutputFileName();
 
 		if($this->schemaType === 'checklist'){
-			$contentDesc = 'Symbiota Checklist File';
+			$contentDesc = 'Checklist File';
 		}
 		elseif($this->schemaType === 'georef'){
-			$contentDesc = 'Symbiota Occurrence Georeference Data';
+			$contentDesc = 'Occurrence Georeference Data';
 		}
 		if($this->zipFile){
 			$zipArchive = null;

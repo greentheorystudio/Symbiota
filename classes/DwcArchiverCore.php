@@ -499,7 +499,7 @@ class DwcArchiverCore extends Manager{
                 }
             }
             else{
-                $fileNameSeed = 'SymbiotaOutput_'.$this->ts;
+                $fileNameSeed = 'OccurrenceDataOutput_'.$this->ts;
             }
         }
         $fileName = str_replace(array(' ','"',"'"),'',$fileNameSeed).'_DwC-A.zip';
@@ -572,7 +572,7 @@ class DwcArchiverCore extends Manager{
         else{
             $errStr = "<span style='color:red;'>FAILED to create archive file due to failure to return occurrence records. ".
                 'Note that OccurrenceID GUID assignments are required for Darwin Core Archive publishing. ' .
-                'Symbiota GUID (recordID) assignments are also required, which can be verified by the portal manager through running the GUID mapping utilitiy available in sitemap</span>';
+                'GUID (recordID) assignments are also required, which can be verified by the portal manager through running the GUID mapping utilitiy available in sitemap</span>';
             $this->logOrEcho($errStr);
             if($collid) {
                 $this->deleteArchive($collid);
