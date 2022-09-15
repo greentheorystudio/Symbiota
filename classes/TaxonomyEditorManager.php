@@ -606,12 +606,6 @@ class TaxonomyEditorManager{
                     if(!$this->conn->query($sql2)){
                         echo 'WARNING: Taxon loaded into taxa, but update occurrence images with matching name.';
                     }
-
-                    $sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude) '.
-                        'SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,3), round(o.decimallongitude,3) '.
-                        'FROM omoccurrences o '.
-                        'WHERE (o.tidinterpreted = '.$tid.') AND (ISNULL(o.cultivationStatus) OR o.cultivationStatus <> 1) AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL';
-                    $this->conn->query($sql3);
                 }
 				else {
                     $retStr = 'ERROR: Taxon loaded into taxa, but failed to load taxstatus.';

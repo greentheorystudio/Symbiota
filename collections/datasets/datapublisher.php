@@ -193,12 +193,11 @@ include(__DIR__ . '/../../header.php');
 		?>
 		<div style="margin:10px;">
 			Use the controls below to publish occurrence data within this collection as a
-			<a href="http://rs.tdwg.org/dwc/terms/guides/text/index.htm">Darwin Core Archive (DwC-A)</a> file.
+			<a href="https://github.com/gbif/ipt/wiki/DwCAHowToGuide" target="_blank">Darwin Core Archive (DwC-A)</a> file.
 			A DwC-A file is a single compressed ZIP file that contains one to several data files along with a meta.xml
 			document that describes the content.
 			The occurrence data file is required, but identifications (determinations) and image metadata are optional.
-			Fields within the occurrences.csv file are defined by the <a href="http://rs.tdwg.org/dwc/terms/index.htm">Darwin Core</a>
-			exchange standard.
+			Fields within the occurrences.csv file are defined by the <a href="https://www.tdwg.org/standards/dwc/" target="_blank">Darwin Core standard</a>.
 		</div>
 		<?php
 	}
@@ -207,12 +206,12 @@ include(__DIR__ . '/../../header.php');
 		<div style="margin:10px;">
 			The following downloads are occurrence data packages from collections
 			that have chosen to publish their complete dataset as a
-			<a href="http://rs.tdwg.org/dwc/terms/guides/text/index.htm">Darwin Core Archive (DwC-A)</a> file.
+			<a href="https://github.com/gbif/ipt/wiki/DwCAHowToGuide" target="_blank">Darwin Core Archive (DwC-A)</a> file.
 			A DwC-A file is a single compressed ZIP file that contains one to several data files along with a meta.xml
 			document that describes the content.
 			The archives below contain three comma separated (CSV) files containing occurrences, identifications (determinations), and image metadata.
-			Fields within the occurrences.csv file are defined by the <a href="http://rs.tdwg.org/dwc/terms/index.htm">Darwin Core</a>
-			exchange standard. The identification and image files follow the DwC extensions for those data types.
+			Fields within the occurrences.csv file are defined by the <a href="https://www.tdwg.org/standards/dwc/" target="_blank">Darwin Core standard</a>.
+            The identification and image files follow the DwC extensions for those data types.
 		</div>
 		<div style="margin:10px;">
 			<h3>Data Usage Policy:</h3>

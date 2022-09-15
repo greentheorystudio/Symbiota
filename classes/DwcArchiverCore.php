@@ -603,7 +603,7 @@ class DwcArchiverCore extends Manager{
         $coreElem->setAttribute('linesTerminatedBy','\n');
         $coreElem->setAttribute('fieldsEnclosedBy','"');
         $coreElem->setAttribute('ignoreHeaderLines','1');
-        $coreElem->setAttribute('rowType','http://rs.tdwg.org/dwc/terms/Occurrence');
+        $coreElem->setAttribute('rowType','https://dwc.tdwg.org/terms/#Occurrence');
 
         $filesElem = $newDoc->createElement('files');
         $filesElem->appendChild($newDoc->createElement('location','occurrences'.$this->fileExt));
@@ -637,7 +637,7 @@ class DwcArchiverCore extends Manager{
             $extElem1->setAttribute('linesTerminatedBy','\n');
             $extElem1->setAttribute('fieldsEnclosedBy','"');
             $extElem1->setAttribute('ignoreHeaderLines','1');
-            $extElem1->setAttribute('rowType','http://rs.tdwg.org/dwc/terms/Identification');
+            $extElem1->setAttribute('rowType','https://dwc.tdwg.org/terms/#Identification');
 
             $filesElem1 = $newDoc->createElement('files');
             $filesElem1->appendChild($newDoc->createElement('location','identifications'.$this->fileExt));
@@ -859,7 +859,7 @@ class DwcArchiverCore extends Manager{
         $rootElem->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
         $rootElem->setAttribute('xsi:schemaLocation','eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.0.1/eml.xsd');
         $rootElem->setAttribute('packageId',UuidFactory::getUuidV4());
-        $rootElem->setAttribute('system','http://symbiota.org');
+        $rootElem->setAttribute('system','https://github.com/greentheorystudio/Symbiota');
         $rootElem->setAttribute('scope','system');
         $rootElem->setAttribute('xml:lang','eng');
 
