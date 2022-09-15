@@ -417,24 +417,15 @@ if($collid){
                                 <span class="field-label">License:</span>
                                 <span class="field-elem">
 									<?php
-                                    if(isset($GLOBALS['RIGHTS_TERMS'])){
+                                    if(isset($GLOBALS['RIGHTS_TERMS']) && $GLOBALS['RIGHTS_TERMS']){
                                         ?>
                                         <select name="rights">
-                                                <?php
-                                                $hasOrphanTerm = true;
-                                                foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
-                                                    $selectedTerm = '';
-                                                    if($collid && strtolower($collData['rights']) === strtolower($v)){
-                                                        $selectedTerm = 'SELECTED';
-                                                        $hasOrphanTerm = false;
-                                                    }
-                                                    echo '<option value="'.$v.'" '.$selectedTerm.'>'.$k.'</option>'."\n";
-                                                }
-                                                if($hasOrphanTerm && array_key_exists('rights',$collData)){
-                                                    echo '<option value="'.$collData['rights'].'" SELECTED>'.$collData['rights'].' [orphaned term]</option>'."\n";
-                                                }
-                                                ?>
-                                            </select>
+                                            <?php
+                                            foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
+                                                echo '<option value="'.$k.'" '.(strtolower($collData['rights']) === strtolower($k)?'SELECTED':'').'>'.$v['title'].'</option>'."\n";
+                                            }
+                                            ?>
+                                        </select>
                                         <?php
                                     }
                                     else{

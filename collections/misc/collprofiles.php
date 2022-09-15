@@ -147,7 +147,7 @@ if($GLOBALS['SYMB_UID']){
 								?>
 								<li>
 									<a href="../editor/observationsubmit.php?collid=<?php echo $collid; ?>">
-                                        Submit an Image Voucher (observation supported by a photo)
+                                        Submit an Image Voucher
 									</a>
 								</li>
 								<?php
@@ -275,7 +275,7 @@ if($GLOBALS['SYMB_UID']){
                                 <?php
                                 if($GLOBALS['SOLR_MODE']){
                                     ?>
-                                    <li style="margin-left:10px;">
+                                    <li>
                                         <a href="collprofiles.php?collid=<?php echo $collid; ?>&action=cleanSOLR">
                                             Clean SOLR Index
                                         </a>
