@@ -116,13 +116,13 @@ $smManager = new SiteMapManager();
                                 </a>
                             </li>
                             <li>
-                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/admin/thumbnailbuilder.php">
-                                    Thumbnail Builder Tool
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/management/thumbnailbuilder.php">
+                                    Build Image Thumbnails
                                 </a>
                             </li>
                             <li>
-                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/admin/guidmapper.php">
-                                    UUID/GUID Generator
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/management/guidmapper.php">
+                                    Generate GUIDs/UUIDs
                                 </a>
                             </li>
                         </ul>
@@ -228,14 +228,6 @@ $smManager = new SiteMapManager();
                     }
                     ?>
 
-                    <h3>Checklists</h3>
-                    <div class="pmargin">
-                        Tools for managing Checklists are available from each checklist display page.
-                        Editing symbols located in the upper right of the page will display
-                        editing options for that checklist. To view the checklists that you currently have
-                        permission to edit, visit your <a href="profile/viewprofile.php">My Profile page</a>.
-                    </div>
-
                     <?php
                     if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']){
                         ?>
@@ -252,28 +244,6 @@ $smManager = new SiteMapManager();
                         <?php
                     }
                     ?>
-
-                    <h3>Collections</h3>
-                    <div class="pmargin">
-                        Tools for managing data specific to a particular collection are available through the collection&#39;s profile page.
-                        Clicking on a collection name in the list below will take you to this page for that given collection.
-                        An additional method to reach this page is by clicking on the collection name within the occurrence search engine.
-                        The editing symbol located in the upper right of Collection Profile page will open
-                        the editing pane and display a list of editing options. To view the collections that you currently have
-                        permission to edit, visit your <a href="profile/viewprofile.php?tabindex=1">My Profile page</a>.
-                    </div>
-
-                    <h3>Observations</h3>
-                    <div class="pmargin">
-                        Data management for observation projects is handled in a similar manner to what is described in the Collections paragraph above.
-                        One difference is the General Observation project. This project serves two central purposes:
-                        1) Allows registered users to submit a image voucherd field observation.
-                        2) Allows collectors to enter their own collection data for label printing and to make the data available
-                        to the collections obtaining the physical specimens through donations or exchange. Visit the
-                        <a href="http://symbiota.org/docs/specimen-data-management/" target="_blank">Symbiota Documentation</a> for more information on occurrence processing capabilities.
-                        Note that observation projects are not activated on all Symbiota data portals. To view the observation projects that you currently have
-                        permission to edit, visit your <a href="profile/viewprofile.php?tabindex=1">My Profile page</a>.
-                    </div>
                 </fieldset>
                 <?php
             }

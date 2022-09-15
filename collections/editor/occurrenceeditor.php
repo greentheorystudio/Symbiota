@@ -599,7 +599,7 @@ else{
                 <?php
                 if($crowdSourceMode){
                     ?>
-                    <a href="../specprocessor/crowdsource/index.php">Crowd Sourcing Central</a> &gt;&gt;
+                    <a href="../management/crowdsource/index.php">Crowd Sourcing Central</a> &gt;&gt;
                     <?php
                 }
                 else if($isGenObs){

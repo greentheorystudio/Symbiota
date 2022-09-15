@@ -100,7 +100,7 @@ elseif($action === 'listdupsrecordedby'){
 		}
 	</script>
 </head>
-<body style="background-color:white;margin-left:0;margin-right:0;">
+<body style="background-color:white;margin-left:0;margin-right:0;border: 0;">
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
