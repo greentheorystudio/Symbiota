@@ -990,15 +990,6 @@ CREATE TABLE `omoccurgenetic` (
   CONSTRAINT `FK_omoccurgenetic` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `omoccurgeoindex` (
-  `tid` int(10) unsigned NOT NULL,
-  `decimallatitude` double NOT NULL,
-  `decimallongitude` double NOT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`tid`,`decimallatitude`,`decimallongitude`),
-  CONSTRAINT `FK_specgeoindex_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE `omoccuridentifiers` (
   `idomoccuridentifiers` int(11) NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
@@ -2485,11 +2476,6 @@ ALTER TABLE `omoccurrevisions`
 ALTER TABLE `omoccuredits`
   ADD COLUMN `guid` VARCHAR(45) NULL AFTER `AppliedStatus`,
   ADD UNIQUE INDEX `guid_UNIQUE` (`guid` ASC);
-
-ALTER TABLE `omoccurgeoindex`
-  DROP FOREIGN KEY `FK_specgeoindex_taxa`;
-ALTER TABLE `omoccurgeoindex`
-  ADD CONSTRAINT `FK_specgeoindex_taxa`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 CREATE TABLE `omcollpuboccurlink` (
   `pubid` INT UNSIGNED NOT NULL,
