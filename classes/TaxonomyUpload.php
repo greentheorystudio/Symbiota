@@ -642,14 +642,7 @@ class TaxonomyUpload{
 			'SET i.tid = o.TidInterpreted '.
 			'WHERE ISNULL(i.tid) AND (o.TidInterpreted IS NOT NULL)';
 		$this->conn->query($sql2);
-
-		$sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude) '.
-			'SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,2), round(o.decimallongitude,2) '.
-			'FROM omoccurrences o '.
-			'WHERE (o.tidinterpreted IS NOT NULL) AND (o.decimallatitude between -180 and 180) AND (o.decimallongitude between -180 and 180) '.
-			'AND (ISNULL(o.cultivationStatus) OR o.cultivationStatus = 0) AND (ISNULL(o.coordinateUncertaintyInMeters) OR o.coordinateUncertaintyInMeters < 10000) ';
-		$this->conn->query($sql3);
-	}
+    }
 
 	private function transferVernaculars($secondRound = null): void
 	{

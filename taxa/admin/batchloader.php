@@ -88,9 +88,7 @@ if($isEditor){
 		<h1>Taxonomic Name Batch Loader</h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
-				This page allows a Taxonomic Administrator to batch upload taxonomic data files.
-				See <a href="http://symbiota.org/docs/loading-taxonomic-data/">Symbiota Documentation</a>
-				pages for more details on the Taxonomic Thesaurus layout.
+				This module provides the ability to batch upload taxonomic data files.
 			</div>
 			<?php
 			if($action === 'Map Input File' || $action === 'Verify Mapping'){

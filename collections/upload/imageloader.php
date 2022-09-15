@@ -1,236 +1,232 @@
 <?php
+/** @var int $collid */
+/** @var int $isEditor */
+/** @var string $action */
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
 
-if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
-}
-
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $spprid = array_key_exists('spprid',$_REQUEST)?(int)$_REQUEST['spprid']:0;
-$fileName = array_key_exists('filename',$_REQUEST)?$_REQUEST['filename']:'';
 
 $specManager = new SpecProcessorManager();
 $specManager->setCollId($collid);
 
-$editable = false;
-if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
-    $editable = true;
+$fileName = '';
+
+if($isEditor){
+    if($action === 'Analyze Image Data File'){
+        if($_POST['projecttype'] === 'file'){
+            $imgProcessor = new ImageProcessor();
+            $fileName = $imgProcessor->loadImageFile();
+        }
+    }
+    elseif($action === 'Save Profile'){
+        if($_POST['spprid']){
+            $specManager->editProject($_POST);
+        }
+        else{
+            $specManager->addProject($_POST);
+        }
+    }
+    elseif($action === 'Delete Profile'){
+        $specManager->deleteProject($_POST['sppriddel']);
+    }
 }
 
 if($spprid) {
     $specManager->setProjVariables($spprid);
 }
 ?>
-<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
-<head>
-    <title>Image Processor</title>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <style>.profileDiv{ clear:both; margin:2px 0 } </style>
-    <link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
-    <script src="../../js/external/jquery.js" type="text/javascript"></script>
-    <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
-    <script>
-        $(function() {
-            const dialogArr = ["speckeypattern", "patternreplace", "replacestr", "sourcepath", "targetpath", "imgurl", "webpixwidth", "tnpixwidth", "lgpixwidth", "jpgcompression"];
-            let dialogStr = "";
-            for(let i=0;i<dialogArr.length;i++){
-                dialogStr = dialogArr[i]+"info";
-                $( "#"+dialogStr+"dialog" ).dialog({
-                    autoOpen: false,
-                    modal: true,
-                    position: { my: "left top", at: "right bottom", of: "#"+dialogStr }
-                });
+<script>
+    $(function() {
+        const dialogArr = ["speckeypattern", "patternreplace", "replacestr", "sourcepath", "targetpath", "imgurl", "webpixwidth", "tnpixwidth", "lgpixwidth", "jpgcompression"];
+        let dialogStr = "";
+        for(let i=0;i<dialogArr.length;i++){
+            dialogStr = dialogArr[i]+"info";
+            $( "#"+dialogStr+"dialog" ).dialog({
+                autoOpen: false,
+                modal: true,
+                position: { my: "left top", at: "right bottom", of: "#"+dialogStr }
+            });
 
-                $( "#"+dialogStr ).click(function() {
-                    $( "#"+this.id+"dialog" ).dialog( "open" );
-                });
-            }
-
-        });
-
-        function uploadTypeChanged(){
-            const uploadType = document.getElementById('projecttype').value;
-            if(uploadType === 'local'){
-                $("div.profileDiv").show();
-                $("#sourcePathInfoIplant").hide();
-                $("#chooseFileDiv").hide();
-                if($("[name='sourcepath']").val() === "-- Use Default Path --") {
-                    $("[name='sourcepath']").val("");
-                }
-                $("#profileEditSubmit").val("Save Profile");
-                $("#submitDiv").show();
-            }
-            else if(uploadType === 'file'){
-                $("div.profileDiv").hide();
-                $("#chooseFileDiv").show();
-                $("#profileEditSubmit").val("Analyze Image Data File");
-                $("#submitDiv").show();
-            }
-            else if(uploadType === 'idigbio'){
-                $("div.profileDiv").hide();
-                $("#specKeyPatternDiv").show();
-                $("#patternReplaceDiv").show();
-                $("#replaceStrDiv").show();
-                if($("[name='sourcepath']").val() === "-- Use Default Path --") {
-                    $("[name='sourcepath']").val("");
-                }
-                $("#profileEditSubmit").val("Save Profile");
-                $("#submitDiv").show();
-            }
-            else if(uploadType === 'iplant'){
-                $("div.profileDiv").hide();
-                $("#specKeyPatternDiv").show();
-                $("#patternReplaceDiv").show();
-                $("#replaceStrDiv").show();
-                $("#sourcePathDiv").show();
-                $("#sourcePathInfoIplant").show();
-                if($("[name='sourcepath']").val() === "") {
-                    $("[name='sourcepath']").val("-- Use Default Path --");
-                }
-                $("#profileEditSubmit").val("Save Profile");
-                $("#submitDiv").show();
-            }
-            else{
-                $("div.profileDiv").hide();
-            }
+            $( "#"+dialogStr ).click(function() {
+                $( "#"+this.id+"dialog" ).dialog( "open" );
+            });
         }
 
-        function validateProjectForm(f){
-            if(f.projecttype.value === ""){
-                alert("Image Mapping/Import type must be selected");
-                return false;
-            }
-            if(f.projecttype.value !== 'file'){
-                if(f.speckeypattern.value === ""){
-                    alert("Pattern matching term must have a value");
-                    return false;
-                }
-                if(f.speckeypattern.value.indexOf("(") < 0 || f.speckeypattern.value.indexOf(")") < 0){
-                    alert("Catalog portion of pattern matching term must be enclosed in parenthesis");
-                    return false;
-                }
-            }
-            if(f.projecttype.value === 'file' && f.uploadfile.value === ""){
-                alert("Select a CSV file to upload");
-                return false;
-            }
-            if(f.projecttype.value === 'local'){
-                if(!isNumeric(f.webpixwidth.value)){
-                    alert("Central image pixel width can only be a numeric value");
-                    return false;
-                }
-                else if(!isNumeric(f.tnpixwidth.value)){
-                    alert("Thumbnail pixel width can only be a numeric value");
-                    return false;
-                }
-                else if(!isNumeric(f.lgpixwidth.value)){
-                    alert("Large image pixel width can only be a numeric value");
-                    return false;
-                }
-                else if(f.title.value === ""){
-                    alert("Title cannot be empty");
-                    return false;
-                }
-                else if(!isNumeric(f.jpgcompression.value) || f.jpgcompression.value < 30 || f.jpgcompression.value > 100){
-                    alert("JPG compression needs to be a numeric value between 30 and 100");
-                    return false;
-                }
-                else if(f.sourcepath.value === ""){
-                    alert("Image source path must have a value");
-                    return false;
-                }
-                else if(f.imgurl.value === ""){
-                    alert("Image URL base must have a value");
-                    return false;
-                }
-            }
-            if(f.patternreplace.value === "-- Optional --") {
-                f.patternreplace.value = "";
-            }
-            if(f.replacestr.value === "-- Optional --") {
-                f.replacestr.value = "";
-            }
-            if(f.sourcepath.value === "-- Use Default Path --") {
-                f.sourcepath.value = "";
-            }
-            return true;
-        }
+    });
 
-        function validateProcForm(f){
-            if(f.projtype.value === 'idigbio'){
-                if(!document.getElementById("idigbiofile").files[0]){
-                    alert("Please select the output file from the iDigBio Image Appliance that will be uploaded into the system");
-                    return false;
-                }
+    function uploadTypeChanged(){
+        const uploadType = document.getElementById('projecttype').value;
+        if(uploadType === 'local'){
+            $("div.profileDiv").show();
+            $("#sourcePathInfoIplant").hide();
+            $("#chooseFileDiv").hide();
+            if($("[name='sourcepath']").val() === "-- Use Default Path --") {
+                $("[name='sourcepath']").val("");
             }
-            else if(f.projtype.value === 'iplant'){
-                const regexObj = /^\d{4}-\d{2}-\d{2}$/;
-                const startDate = f.startdate.value;
-                if(startDate !== "" && !regexObj.test(startDate)){
-                    alert("Processing Start Date needs to be in the format YYYY-MM-DD (e.g. 2015-10-18)");
-                    return false;
-                }
+            $("#profileEditSubmit").val("Save Profile");
+            $("#submitDiv").show();
+        }
+        else if(uploadType === 'file'){
+            $("div.profileDiv").hide();
+            $("#chooseFileDiv").show();
+            $("#profileEditSubmit").val("Analyze Image Data File");
+            $("#submitDiv").show();
+        }
+        else if(uploadType === 'idigbio'){
+            $("div.profileDiv").hide();
+            $("#specKeyPatternDiv").show();
+            $("#patternReplaceDiv").show();
+            $("#replaceStrDiv").show();
+            if($("[name='sourcepath']").val() === "-- Use Default Path --") {
+                $("[name='sourcepath']").val("");
             }
-            if($("[name='matchcatalognumber']").prop("checked") === false && $("[name='matchothercatalognumbers']").prop("checked") === false){
-                alert("At least one of the Match Term checkboxes need to be checked");
+            $("#profileEditSubmit").val("Save Profile");
+            $("#submitDiv").show();
+        }
+        else if(uploadType === 'iplant'){
+            $("div.profileDiv").hide();
+            $("#specKeyPatternDiv").show();
+            $("#patternReplaceDiv").show();
+            $("#replaceStrDiv").show();
+            $("#sourcePathDiv").show();
+            $("#sourcePathInfoIplant").show();
+            if($("[name='sourcepath']").val() === "") {
+                $("[name='sourcepath']").val("-- Use Default Path --");
+            }
+            $("#profileEditSubmit").val("Save Profile");
+            $("#submitDiv").show();
+        }
+        else{
+            $("div.profileDiv").hide();
+        }
+    }
+
+    function validateProjectForm(f){
+        if(f.projecttype.value === ""){
+            alert("Image Mapping/Import type must be selected");
+            return false;
+        }
+        if(f.projecttype.value !== 'file'){
+            if(f.speckeypattern.value === ""){
+                alert("Pattern matching term must have a value");
                 return false;
             }
-            return true;
+            if(f.speckeypattern.value.indexOf("(") < 0 || f.speckeypattern.value.indexOf(")") < 0){
+                alert("Catalog portion of pattern matching term must be enclosed in parenthesis");
+                return false;
+            }
         }
+        if(f.projecttype.value === 'file' && f.uploadfile.value === ""){
+            alert("Select a CSV file to upload");
+            return false;
+        }
+        if(f.projecttype.value === 'local'){
+            if(!isNumeric(f.webpixwidth.value)){
+                alert("Central image pixel width can only be a numeric value");
+                return false;
+            }
+            else if(!isNumeric(f.tnpixwidth.value)){
+                alert("Thumbnail pixel width can only be a numeric value");
+                return false;
+            }
+            else if(!isNumeric(f.lgpixwidth.value)){
+                alert("Large image pixel width can only be a numeric value");
+                return false;
+            }
+            else if(f.title.value === ""){
+                alert("Title cannot be empty");
+                return false;
+            }
+            else if(!isNumeric(f.jpgcompression.value) || f.jpgcompression.value < 30 || f.jpgcompression.value > 100){
+                alert("JPG compression needs to be a numeric value between 30 and 100");
+                return false;
+            }
+            else if(f.sourcepath.value === ""){
+                alert("Image source path must have a value");
+                return false;
+            }
+            else if(f.imgurl.value === ""){
+                alert("Image URL base must have a value");
+                return false;
+            }
+        }
+        if(f.patternreplace.value === "-- Optional --") {
+            f.patternreplace.value = "";
+        }
+        if(f.replacestr.value === "-- Optional --") {
+            f.replacestr.value = "";
+        }
+        if(f.sourcepath.value === "-- Use Default Path --") {
+            f.sourcepath.value = "";
+        }
+        return true;
+    }
 
-        function validateFileUploadForm(f){
-            const sfArr = [];
-            const tfArr = [];
-            for(let i=0; i<f.length; i++){
-                const obj = f.elements[i];
-                if(obj.value !== ""){
-                    if(obj.name.indexOf("tf[") === 0){
-                        if(tfArr.indexOf(obj.value) > -1){
-                            alert("ERROR: Target field names must be unique (duplicate field: "+obj.value+")");
-                            return false;
-                        }
-                        tfArr[tfArr.length] = obj.value;
+    function validateProcForm(f){
+        if(f.projtype.value === 'idigbio'){
+            if(!document.getElementById("idigbiofile").files[0]){
+                alert("Please select the output file from the iDigBio Image Appliance that will be uploaded into the system");
+                return false;
+            }
+        }
+        else if(f.projtype.value === 'iplant'){
+            const regexObj = /^\d{4}-\d{2}-\d{2}$/;
+            const startDate = f.startdate.value;
+            if(startDate !== "" && !regexObj.test(startDate)){
+                alert("Processing Start Date needs to be in the format YYYY-MM-DD (e.g. 2015-10-18)");
+                return false;
+            }
+        }
+        if($("[name='matchcatalognumber']").prop("checked") === false && $("[name='matchothercatalognumbers']").prop("checked") === false){
+            alert("At least one of the Match Term checkboxes need to be checked");
+            return false;
+        }
+        return true;
+    }
+
+    function validateFileUploadForm(f){
+        const sfArr = [];
+        const tfArr = [];
+        for(let i=0; i<f.length; i++){
+            const obj = f.elements[i];
+            if(obj.value !== ""){
+                if(obj.name.indexOf("tf[") === 0){
+                    if(tfArr.indexOf(obj.value) > -1){
+                        alert("ERROR: Target field names must be unique (duplicate field: "+obj.value+")");
+                        return false;
                     }
-                    if(obj.name.indexOf("sf[") === 0){
-                        if(sfArr.indexOf(obj.value) > -1){
-                            alert("ERROR: Source field names must be unique (duplicate field: "+obj.value+")");
-                            return false;
-                        }
-                        sfArr[sfArr.length] = obj.value;
+                    tfArr[tfArr.length] = obj.value;
+                }
+                if(obj.name.indexOf("sf[") === 0){
+                    if(sfArr.indexOf(obj.value) > -1){
+                        alert("ERROR: Source field names must be unique (duplicate field: "+obj.value+")");
+                        return false;
                     }
+                    sfArr[sfArr.length] = obj.value;
                 }
             }
-            if(tfArr.indexOf("catalognumber") < 0 || tfArr.indexOf("originalurl") < 0){
-                alert("Catalog Number and Large Image URL must both be mapped to an incoming field");
-                return false;
-            }
-            return true;
         }
-    </script>
-</head>
-<body>
-<div id="innertext" style="background-color:white;">
+        if(tfArr.indexOf("catalognumber") < 0 || tfArr.indexOf("originalurl") < 0){
+            alert("Catalog Number and Large Image URL must both be mapped to an incoming field");
+            return false;
+        }
+        return true;
+    }
+</script>
+<div>
     <div style="padding:15px;">
         These tools are designed to aid collection managers in batch processing specimen images.
         Contact portal manager for help in setting up a new workflow.
         Once a profile is established, the collection manager can use this form to manually trigger image processing.
-        For more information, see the Symbiota documentation for
-        <b><a href="http://symbiota.org/docs/batch-loading-specimen-images-2/" target="_blank">recommended practices</a></b> for
-        integrating images.
     </div>
     <?php
     if($GLOBALS['SYMB_UID']){
         if($collid){
             if($fileName){
                 ?>
-                <form name="filemappingform" action="processor.php" method="post" onsubmit="return validateFileUploadForm(this)">
+                <form name="filemappingform" action="../management/processor.php" method="post" onsubmit="return validateFileUploadForm(this)">
                     <fieldset>
                         <legend><b>Image File Upload Mapping</b></legend>
                         <div style="margin:15px;">
@@ -257,7 +253,7 @@ if($spprid) {
                     $specProjects = $specManager->getProjects();
                     if($specProjects){
                         ?>
-                        <form name="sppridform" action="index.php" method="post">
+                        <form name="sppridform" action="../management/index.php" method="post">
                             <fieldset>
                                 <legend><b>Saved Image Processing Profiles</b></legend>
                                 <div style="margin:15px;">
@@ -280,7 +276,7 @@ if($spprid) {
                 $projectType = $specManager->getProjectType();
                 ?>
                 <div id="editdiv" style="display:<?php echo ($spprid?'none':'block'); ?>;position:relative;">
-                    <form name="editproj" action="index.php" enctype="multipart/form-data" method="post" onsubmit="return validateProjectForm(this);">
+                    <form name="editproj" action="../management/index.php" enctype="multipart/form-data" method="post" onsubmit="return validateProjectForm(this);">
                         <fieldset style="padding:15px">
                             <legend><b><?php echo ($spprid?'Edit':'New'); ?> Profile</b></legend>
                             <?php
@@ -534,7 +530,7 @@ if($spprid) {
                     <?php
                     if($spprid){
                         ?>
-                        <form id="delform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to delete this image processing profile?')" >
+                        <form id="delform" action="../management/index.php" method="post" onsubmit="return confirm('Are you sure you want to delete this image processing profile?')" >
                             <fieldset style="padding:25px">
                                 <legend><b>Delete Project</b></legend>
                                 <div>
@@ -553,11 +549,11 @@ if($spprid) {
                 if($spprid){
                     ?>
                     <div id="imgprocessdiv" style="position:relative;">
-                        <form name="imgprocessform" action="processor.php" method="post" enctype="multipart/form-data" onsubmit="return validateProcForm(this);">
+                        <form name="imgprocessform" action="../management/processor.php" method="post" enctype="multipart/form-data" onsubmit="return validateProcForm(this);">
                             <fieldset style="padding:15px;">
                                 <legend><b><?php echo $specManager->getTitle(); ?></b></legend>
                                 <div style="position:absolute;top:10px;right:35px;" title="Show all saved profiles or add a new one...">
-                                    <a href="index.php?tabindex=1&collid=<?php echo $collid; ?>"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
+                                    <a href="../management/index.php?tabindex=1&collid=<?php echo $collid; ?>"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
                                 </div>
                                 <div style="position:absolute;top:10px;right:10px;" title="Open Editor">
                                     <a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
@@ -805,5 +801,3 @@ if($spprid) {
     }
     ?>
 </div>
-</body>
-</html>

@@ -314,7 +314,7 @@ if($collid){
                                     </a>
 									<span id="instcodeinfodialog">
 										The name (or acronym) in use by the institution having custody of the occurrence records. This field is required.
-                                        For more details, see <a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">Darwin Core definition</a>
+                                        For more details, see <a href="https://dwc.tdwg.org/terms/#institutionCode" target="_blank">Darwin Core definition</a>
 									</span>
 								</span>
                             </div>
@@ -327,7 +327,7 @@ if($collid){
                                     </a>
 									<span id="collcodeinfodialog">
 										The name, acronym, or code identifying the collection or data set from which the record was derived. This field is optional.
-                                        For more details, see <a href="http://rs.tdwg.org/dwc/terms/index.htm#collectionCode" target="_blank">Darwin Core definition</a>.
+                                        For more details, see <a href="https://dwc.tdwg.org/terms/#collectionCode" target="_blank">Darwin Core definition</a>.
 									</span>
 								</span>
                             </div>
@@ -417,24 +417,15 @@ if($collid){
                                 <span class="field-label">License:</span>
                                 <span class="field-elem">
 									<?php
-                                    if(isset($GLOBALS['RIGHTS_TERMS'])){
+                                    if(isset($GLOBALS['RIGHTS_TERMS']) && $GLOBALS['RIGHTS_TERMS']){
                                         ?>
                                         <select name="rights">
-                                                <?php
-                                                $hasOrphanTerm = true;
-                                                foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
-                                                    $selectedTerm = '';
-                                                    if($collid && strtolower($collData['rights']) === strtolower($v)){
-                                                        $selectedTerm = 'SELECTED';
-                                                        $hasOrphanTerm = false;
-                                                    }
-                                                    echo '<option value="'.$v.'" '.$selectedTerm.'>'.$k.'</option>'."\n";
-                                                }
-                                                if($hasOrphanTerm && array_key_exists('rights',$collData)){
-                                                    echo '<option value="'.$collData['rights'].'" SELECTED>'.$collData['rights'].' [orphaned term]</option>'."\n";
-                                                }
-                                                ?>
-                                            </select>
+                                            <?php
+                                            foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
+                                                echo '<option value="'.$k.'" '.(strtolower($collData['rights']) === strtolower($k)?'SELECTED':'').'>'.$v['title'].'</option>'."\n";
+                                            }
+                                            ?>
+                                        </select>
                                         <?php
                                     }
                                     else{
@@ -449,7 +440,7 @@ if($collid){
 									<span id="rightsinfodialog">
 										A legal document giving official permission to do something with the resource.
                                         This field can be limited to a set of values by modifying the portal's central configuration file.
-                                        For more details, see <a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:license" target="_blank">Darwin Core definition</a>.
+                                        For more details, see <a href="https://dwc.tdwg.org/terms/#dcterms:license" target="_blank">Darwin Core definition</a>.
 									</span>
 								</span>
                             </div>
@@ -462,7 +453,7 @@ if($collid){
                                     </a>
 									<span id="rightsholderinfodialog">
 										The organization or person managing or owning the rights of the resource.
-                                        For more details, see <a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rightsHolder" target="_blank">Darwin Core definition</a>.
+                                        For more details, see <a href="https://dwc.tdwg.org/terms/#dcterms:rightsHolder" target="_blank">Darwin Core definition</a>.
 									</span>
 								</span>
                             </div>
@@ -475,7 +466,7 @@ if($collid){
                                     </a>
 									<span id="accessrightsinfodialog">
 										Informations or a URL link to page with details explaining how one can use the data.
-                                        See <a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:accessRights" target="_blank">Darwin Core definition</a>.
+                                        See <a href="https://dwc.tdwg.org/terms/#dcterms:accessRights" target="_blank">Darwin Core definition</a>.
 									</span>
 								</span>
                             </div>
@@ -542,7 +533,7 @@ if($collid){
 									<span id="guidinfodialog">
 										Occurrence Id is generally used for Snapshot datasets when a Global Unique Identifier (GUID) field
                                         is supplied by the source database (e.g. Specify database) and the GUID is mapped to the
-                                        <a href="http://rs.tdwg.org/dwc/terms/index.htm#occurrenceID" target="_blank">occurrenceId</a> field.
+                                        <a href="https://dwc.tdwg.org/terms/#occurrenceID" target="_blank">occurrenceId</a> field.
                                         The use of the Occurrence Id as the GUID is not recommended for live datasets.
                                         Catalog Number can be used when the value within the catalog number field is globally unique.
                                         The Symbiota Generated GUID (UUID) option will trigger the Symbiota data portal to automatically
@@ -690,7 +681,7 @@ if($collid){
                                 echo '<div>';
                                 echo $instArr['institutionname'].($instArr['institutioncode']?' ('.$instArr['institutioncode'].')':'');
                                 ?>
-                                <a href="../admin/institutioneditor.php?emode=1&targetcollid=<?php echo $collid.'&iid='.$instArr['iid']; ?>" title="Edit institution address">
+                                <a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid.'&iid='.$instArr['iid']; ?>" title="Edit institution address">
                                     <i style="height:15px;width:15px;" class="far fa-edit"></i>
                                 </a>
                                 <a href="collmetadata.php?collid=<?php echo $collid.'&removeiid='.$instArr['iid']; ?>" title="Unlink institution address">
@@ -748,7 +739,7 @@ if($collid){
                                     <input name="action" type="submit" value="Link Address" />
                                 </form>
                                 <div style="margin:15px;">
-                                    <a href="../admin/institutioneditor.php?emode=1&targetcollid=<?php echo $collid; ?>" title="Add a new address not on the list">
+                                    <a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid; ?>" title="Add a new address not on the list">
                                         <b>Add an institution not on list</b>
                                     </a>
                                 </div>

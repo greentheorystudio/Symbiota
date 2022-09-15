@@ -147,7 +147,7 @@ if($GLOBALS['SYMB_UID']){
 								?>
 								<li>
 									<a href="../editor/observationsubmit.php?collid=<?php echo $collid; ?>">
-                                        Submit an Image Voucher (observation supported by a photo)
+                                        Submit an Image Voucher
 									</a>
 								</li>
 								<?php
@@ -212,129 +212,62 @@ if($GLOBALS['SYMB_UID']){
 						<fieldset style="padding: 10px 10px 10px 25px;">
 							<legend><b>Administration Control Panel</b></legend>
 							<ul>
-
+                                <li>
+                                    <a href="collmetadata.php?collid=<?php echo $collid; ?>" >
+                                        Edit Collection Metadata
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="commentlist.php?collid=<?php echo $collid; ?>" >
                                         View Posted Comments
                                     </a>
                                 </li>
-								<li>
-									<a href="collmetadata.php?collid=<?php echo $collid; ?>" >
-                                        Edit Metadata
-									</a>
-								</li>
+                                <li>
+                                    <a href="../reports/accessreport.php?collid=<?php echo $collid; ?>">
+                                        View Access Statistics
+                                    </a>
+                                </li>
 								<li>
 									<a href="collpermissions.php?collid=<?php echo $collid; ?>" >
                                         Manage Permissions
 									</a>
 								</li>
-								<?php
-                                if($collData['colltype'] !== 'General Observations'){
-									?>
-									<li>
-										<a href="#" onclick="$('li.importItem').show(); return false;" >
-                                            Import/Update Occurrence Records
-										</a>
-									</li>
-									<li class="importItem" style="margin-left:10px;display:none;">
-										<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
-                                            Skeletal File Import
-										</a>
-									</li>
-									<li class="importItem" style="margin-left:10px;display:none">
-										<a href="../admin/specupload.php?uploadtype=3&collid=<?php echo $collid; ?>">
-                                            Text File Import
-										</a>
-									</li>
-									<li class="importItem" style="margin-left:10px;display:none;">
-										<a href="../admin/specupload.php?uploadtype=6&collid=<?php echo $collid; ?>">
-                                            DwC-Archive Import
-										</a>
-									</li>
-									<li class="importItem" style="margin-left:10px;display:none;">
-										<a href="../admin/specupload.php?uploadtype=8&collid=<?php echo $collid; ?>">
-                                            IPT Import
-										</a>
-									</li>
-									<li class="importItem" style="margin-left:10px;display:none;">
-                                        <a href="../admin/specupload.php?uploadtype=10&collid=<?php echo $collid; ?>">
-                                            Symbiota Portal
-                                        </a>
-                                    </li>
-                                    <li class="importItem" style="margin-left:10px;display:none;">
-                                        <a href="../admin/specupload.php?uploadtype=9&collid=<?php echo $collid; ?>">
-                                            Notes from Nature Import
-                                        </a>
-                                    </li>
-									<li class="importItem" style="margin-left:10px;display:none;">
-										<a href="../admin/specuploadmanagement.php?collid=<?php echo $collid; ?>">
-                                            Saved Import Profiles
-										</a>
-									</li>
-									<li class="importItem" style="margin-left:10px;display:none;">
-										<a href="../admin/specuploadmanagement.php?action=addprofile&collid=<?php echo $collid; ?>">
-                                            Create a new Import Profile
-										</a>
-									</li>
-									<?php
-									if($collData['managementtype'] !== 'Aggregate'){
-										?>
-										<li>
-											<a href="../specprocessor/index.php?collid=<?php echo $collid; ?>">
-                                                Processing Toolbox
-											</a>
-										</li>
-										<li>
-											<a href="../datasets/datapublisher.php?collid=<?php echo $collid; ?>">
-                                                Darwin Core Archive Publishing
-											</a>
-										</li>
-										<?php
-									}
-									?>
-									<li>
-										<a href="../editor/editreviewer.php?collid=<?php echo $collid; ?>">
-                                            Review/Verify Occurrence Edits
-										</a>
-									</li>
-									<li>
-										<a href="../reports/accessreport.php?collid=<?php echo $collid; ?>">
-                                            View Access Statistics
-										</a>
-									</li>
-									<?php
-								}
-								?>
+                                <li>
+                                    <a href="../editor/editreviewer.php?collid=<?php echo $collid; ?>">
+                                        Review/Verify Occurrence Edits
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../upload/index.php?collid=<?php echo $collid; ?>">
+                                        Import/Update Occurrence Records and Images
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../management/index.php?collid=<?php echo $collid; ?>">
+                                        Data Management Toolbox
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../datasets/datapublisher.php?collid=<?php echo $collid; ?>">
+                                        Darwin Core Archive Publishing
+                                    </a>
+                                </li>
 								<li>
-									<a href="../datasets/duplicatemanager.php?collid=<?php echo $collid; ?>">
-                                        Duplicate Clustering
-									</a>
-								</li>
+                                    <a href="../download/index.php?collid=<?php echo $collid; ?>">
+                                        Data Exporter and Backup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../management/thumbnailbuilder.php?collid=<?php echo $collid; ?>">
+                                        Build Image Thumbnails
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../management/guidmapper.php?collid=<?php echo $collid; ?>" >
+                                        Generate GUIDs/UUIDs
+                                    </a>
+                                </li>
 								<li>
-                                    General Maintenance Tasks
-								</li>
-								<?php
-								if($collData['colltype'] !== 'General Observations'){
-									?>
-									<li style="margin-left:10px;">
-										<a href="../cleaning/index.php?obsuid=0&collid=<?php echo $collid; ?>">
-                                            Data Cleaning Tools
-										</a>
-									</li>
-									<?php
-								}
-								?>
-								<li style="margin-left:10px;">
-									<a href="#" onclick="newWindow = window.open('collbackup.php?collid=<?php echo $collid; ?>','bucollid','scrollbars=1,toolbar=0,resizable=1,width=600,height=250,left=20,top=20');">
-                                        Download Backup Data File
-									</a>
-								</li>
-								<li style="margin-left:10px;">
-									<a href="../../imagelib/admin/thumbnailbuilder.php?collid=<?php echo $collid; ?>">
-                                        Thumbnail Maintenance
-									</a>
-								</li>
-								<li style="margin-left:10px;">
 									<a href="collprofiles.php?collid=<?php echo $collid; ?>&action=UpdateStatistics" >
                                         Update Statistics
 									</a>
@@ -342,7 +275,7 @@ if($GLOBALS['SYMB_UID']){
                                 <?php
                                 if($GLOBALS['SOLR_MODE']){
                                     ?>
-                                    <li style="margin-left:10px;">
+                                    <li>
                                         <a href="collprofiles.php?collid=<?php echo $collid; ?>&action=cleanSOLR">
                                             Clean SOLR Index
                                         </a>
@@ -386,7 +319,7 @@ if($GLOBALS['SYMB_UID']){
 							<?php
 							echo '<div>' .$addrArr['institutionname'];
 							if($editCode > 1) {
-                                echo ' <a href="../admin/institutioneditor.php?emode=1&targetcollid=' . $collid . '&iid=' . $addrArr['iid'] . '" title="Edit institution information"><i style="width:13px;" class="far fa-edit"></i></a>';
+                                echo ' <a href="institutioneditor.php?emode=1&targetcollid=' . $collid . '&iid=' . $addrArr['iid'] . '" title="Edit institution information"><i style="width:13px;" class="far fa-edit"></i></a>';
                             }
 							echo '</div>';
 							if($addrArr['institutionname2']) {

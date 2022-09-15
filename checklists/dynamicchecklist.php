@@ -6,6 +6,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 $lat = (float)$_POST['lat'];
 $lng = (float)$_POST['lng'];
 $radius = (float)$_POST['radius'];
+$groundRadius = (float)$_POST['groundradius'];
 $radiusunits = htmlspecialchars($_POST['radiusunits']);
 $dynamicRadius = ($GLOBALS['DYN_CHECKLIST_RADIUS'] ?? 5);
 $tid = (int)$_POST['tid'];
@@ -13,11 +14,8 @@ $interface = htmlspecialchars($_POST['interface']);
 
 $dynClManager = new DynamicChecklistManager();
 
-if(is_numeric($radius)){
-	$dynClid = $dynClManager->createChecklist($lat, $lng, $radius, $radiusunits, $tid);
-}
-else{
-	$dynClid = $dynClManager->createDynamicChecklist($lat, $lng, $dynamicRadius, $tid);
+if(is_numeric($groundRadius)){
+	$dynClid = $dynClManager->createChecklist($lat, $lng, $radius, $groundRadius, $radiusunits, $tid);
 }
 
 if($interface === 'key'){
