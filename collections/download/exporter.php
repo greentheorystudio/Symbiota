@@ -232,13 +232,13 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
                                 </td>
                                 <td>
                                     <div style="margin:10px 0;">
-                                        <input type="radio" name="schema" value="symbiota" CHECKED />
-                                        Symbiota Native
+                                        <input type="radio" name="schema" value="native" CHECKED />
+                                        Native
                                         <a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
                                             <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                         </a><br/>
                                         <div id="schemanativeinfodialog">
-                                            Symbiota native is very similar to Darwin Core except with the addtion of a few fields
+                                            Native is very similar to Darwin Core except with the addtion of a few fields
                                             such as substrate, associated collectors, verbatim description.
                                         </div>
                                         <input type="radio" name="schema" value="dwc" />

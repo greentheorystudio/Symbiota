@@ -52,7 +52,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>If the download type CSV/ZIP is selected, an additional window will open allowing for further
                             options as to the structure and formatting of the download. These options include whether the
-                            structure the data in the Symbiota or Darwin Core format, whether to include determination or
+                            structure the data in the Native or Darwin Core format, whether to include determination or
                             image extensions, whether the file be an archive, and other file formatting. Once these further
                             options have been set, or if the default settings are preferred, click the Download Data button
                             to proceed with the download.</p>

@@ -8,7 +8,7 @@ class OccurrenceDownload{
 	private $conn;
 	private $redactLocalities = true;
 	private $rareReaderArr = array();
-	private $schemaType = 'symbiota';
+	private $schemaType = 'native';
 	private $extended = 0;
 	private $delimiter = ',';
 	private $charSetSource;

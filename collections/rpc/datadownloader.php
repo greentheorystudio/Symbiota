@@ -161,7 +161,7 @@ else{
         $contentDesc = 'Darwin Core ';
     }
     else{
-        $contentDesc = 'Symbiota ';
+        $contentDesc = 'Native ';
     }
     $contentDesc .= 'Occurrence ';
     if($zip){

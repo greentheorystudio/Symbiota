@@ -20,7 +20,7 @@
                 </td>
                 <td>
                     <div style="margin:10px 0;">
-                        <input data-role="none" type="radio" name="schema" id="csvschemasymb" value="symbiota" checked /> Symbiota Native<br />
+                        <input data-role="none" type="radio" name="schema" id="csvschemasymb" value="native" checked /> Native<br />
                         <input data-role="none" type="radio" name="schema" id="csvschemadwc" value="dwc" /> Darwin Core<br />
                         *<a href='http://rs.tdwg.org/dwc/index.htm' class='bodylink' target='_blank'>What is Darwin Core?</a>
                     </div>

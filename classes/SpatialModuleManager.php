@@ -42,7 +42,7 @@ class SpatialModuleManager{
 
     public function writeGPXFromGeoJSON($json): string{
         $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
-            'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
+            'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="BioSurv">';
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){

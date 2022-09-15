@@ -605,7 +605,7 @@ if($formSubmit === 'dlexsiccati'){
 									echo '<option value="'.$id.'">'.$collName.'</option>';
 								}
 								?>
-								<option value="occid">Symbiota Primary Key (occid)</option>
+								<option value="occid">Primary Key (occid)</option>
 							</select>
 						</div>
 						<div style="margin:10px 0;height:40px;">

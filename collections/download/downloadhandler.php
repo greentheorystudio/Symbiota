@@ -6,7 +6,7 @@ include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 
-$schema = array_key_exists('schema',$_REQUEST)?htmlspecialchars($_REQUEST['schema']):'symbiota';
+$schema = array_key_exists('schema',$_REQUEST)?htmlspecialchars($_REQUEST['schema']):'native';
 $cSet = array_key_exists('cset',$_POST)?htmlspecialchars($_POST['cset']):'';
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
@@ -223,7 +223,7 @@ else{
 				$contentDesc = 'Darwin Core ';
 			}
 			else{
-				$contentDesc = 'Symbiota ';
+				$contentDesc = 'Native ';
 			}
 			$contentDesc .= 'Occurrence ';
 			if($zip){

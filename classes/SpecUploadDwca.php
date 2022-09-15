@@ -83,8 +83,8 @@ class SpecUploadDwca extends SpecUploadBase{
                     }
                 }
                 else{
-                    $this->outputMsg('<li>ERROR: Symbiota URL not in correct format (path: '.$this->path.') </li>');
-                    $this->errorStr = 'ERROR: Symbiota URL not in correct format (path: '.$this->path.')';
+                    $this->outputMsg('<li>ERROR: URL not in correct format (path: '.$this->path.') </li>');
+                    $this->errorStr = 'ERROR: URL not in correct format (path: '.$this->path.')';
                 }
             }
             elseif(copy($this->path,$fullPath)){

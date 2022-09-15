@@ -255,7 +255,7 @@ function cogeGetUserCommunityList(){
 								else{
 									if(uploadType === "Symbiota (DwCA)"){
 										const guid = dataSources[j].guid;
-										htmlOut = htmlOut + 'Symbiota upload [<a href="#" onclick="cogeCheckGeorefStatus(\''+guid+'\');return false;">check status</a>]';
+										htmlOut = htmlOut + 'Direct upload [<a href="#" onclick="cogeCheckGeorefStatus(\''+guid+'\');return false;">check status</a>]';
 									}
 								}
 								const uploadedBy = dataSources[j].uploadedBy;

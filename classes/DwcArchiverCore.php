@@ -1004,7 +1004,7 @@ class DwcArchiverCore extends Manager{
             $datasetElem->appendChild($rightsElem);
         }
 
-        $symbElem = $newDoc->createElement('symbiota');
+        $symbElem = $newDoc->createElement('biosurv');
         $dateElem = $newDoc->createElement('dateStamp');
         $dateElem->appendChild($newDoc->createTextNode(date('c')));
         $symbElem->appendChild($dateElem);
@@ -1670,7 +1670,7 @@ class DwcArchiverCore extends Manager{
             $this->schemaType = $type;
         }
         else{
-            $this->schemaType = 'symbiota';
+            $this->schemaType = 'native';
         }
     }
 

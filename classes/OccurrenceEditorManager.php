@@ -1102,7 +1102,7 @@ class OccurrenceEditorManager {
 
                 $guid = UuidFactory::getUuidV4();
                 if(!$this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("'.$guid.'",'.$this->occid.')')){
-                    $status .= '(WARNING: Symbiota GUID mapping failed) ';
+                    $status .= '(WARNING: GUID mapping failed) ';
                 }
                 if(isset($occArr['ometid'], $occArr['exsnumber'])){
                     $ometid = Sanitizer::cleanInStr($this->conn,$occArr['ometid']);
