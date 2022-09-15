@@ -60,8 +60,7 @@ $smManager = new SiteMapManager();
                     <?php
                 }
                 ?>
-                <li><a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer</a></li>
-				<li><a href="taxa/admin/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
+                <li><a href="taxa/admin/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
                 <li><a href="checklists/index.php">Checklists</a></li>
                 <li><a href="checklists/dynamicmap.php?interface=checklist">Dynamic Checklist</a></li>
                 <?php
@@ -121,6 +120,37 @@ $smManager = new SiteMapManager();
                         <?php
                     }
 
+                    if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']) || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
+                        ?>
+                        <h3>Taxonomy</h3>
+                        <ul>
+                            <?php
+                            if($GLOBALS['IS_ADMIN']){
+                                ?>
+                                <li><a href="profile/usertaxonomymanager.php">Taxonomic Interest User Permissions</a></li>
+                                <?php
+                            }
+                            if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
+                                ?>
+                                <li><a href="taxa/admin/taxonomydisplay.php">Edit Taxonomic Placement</a></li>
+                                <li><a href="taxa/admin/taxonomyloader.php">Add New Taxonomic Name</a></li>
+                                <li><a href="taxa/admin/batchloader.php">Batch Upload a Taxonomic Data File</a></li>
+                                <li><a href="taxa/admin/eolmapper.php">Encyclopedia of Life Linkage Manager</a></li>
+                                <?php
+                            }
+                            if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
+                                ?>
+                                <li><a href="taxa/admin/batchimageloader.php">Batch Upload Taxa Images</a></li>
+                                <li>To edit the synonyms, common names, description, or images for a taxon, click on the editing link located in the upper right of each
+                                    <a href="taxa/admin/tpeditor.php?taxon=">Taxon Profile page</a>
+                                </li>
+                                <?php
+                            }
+                            ?>
+                        </ul>
+                        <?php
+                    }
+
                     if($GLOBALS['KEY_MOD_IS_ACTIVE'] || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
                         ?>
                         <h3>Identification Keys</h3>
@@ -146,33 +176,6 @@ $smManager = new SiteMapManager();
                     <h3>Datasets</h3>
                     <ul>
                         <li><a href="collections/datasets/index.php">Manage Datasets</a></li>
-                    </ul>
-
-                    <h3>Taxonomy</h3>
-                    <ul>
-                        <?php
-                        if($GLOBALS['IS_ADMIN']){
-                            ?>
-                            <li><a href="profile/usertaxonomymanager.php">Taxonomic Interest User Permissions</a></li>
-                            <?php
-                        }
-                        if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
-                            ?>
-                            <li><a href="taxa/admin/taxonomydisplay.php">Edit Taxonomic Placement</a></li>
-                            <li><a href="taxa/admin/taxonomyloader.php">Add New Taxonomic Name</a></li>
-                            <li><a href="taxa/admin/batchloader.php">Batch Upload a Taxonomic Data File</a></li>
-                            <li><a href="taxa/admin/eolmapper.php">Encyclopedia of Life Linkage Manager</a></li>
-                            <?php
-                        }
-                        if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
-                            ?>
-                            <li><a href="taxa/admin/batchimageloader.php">Batch Upload Taxa Images</a></li>
-                            <li>To edit the synonyms, common names, description, or images for a taxon, click on the editing link located in the upper right of each
-                                <a href="taxa/admin/tpeditor.php?taxon=">Taxon Profile page</a>
-                            </li>
-                            <?php
-                        }
-                        ?>
                     </ul>
 
                     <?php

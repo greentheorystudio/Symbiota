@@ -354,6 +354,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
             $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
         }
+        if(!isset($GLOBALS['DYN_CHECKLIST_RADIUS']) || !$GLOBALS['DYN_CHECKLIST_RADIUS']){
+            $GLOBALS['DYN_CHECKLIST_RADIUS'] = '100';
+        }
         $GLOBALS['EMAIL_CONFIGURED'] = (isset($GLOBALS['PORTAL_EMAIL_ADDRESS']) && $GLOBALS['PORTAL_EMAIL_ADDRESS'] && $GLOBALS['SMTP_USERNAME'] && $GLOBALS['SMTP_PASSWORD'] && $GLOBALS['SMTP_HOST'] && $GLOBALS['SMTP_PORT']);
     }
 

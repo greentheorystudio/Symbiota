@@ -1041,10 +1041,9 @@ $specUploadManager->readUploadParameters();
                                     <?php $duManager->echoFieldMapTable($autoMap,'spec'); ?>
                                     <div>
                                         * Unverified mappings are displayed in yellow<br/>
-                                        * To learn more about mapping to Symbiota fields (and Darwin Core):
+                                        * To learn more about mapping to Darwin Core:
                                         <div style="margin-left:15px;">
-                                            <a href="http://symbiota.org/docs/wp-content/uploads/SymbiotaOccurrenceFields.pdf" target="_blank">SymbiotaOccurrenceFields.pdf</a><br/>
-                                            <a href="http://symbiota.org/docs/symbiota-introduction/loading-specimen-data/" target="_blank">Loading Data into Symbiota</a>
+                                            <a href="https://dwc.tdwg.org/terms/" target="_blank">Darwin Core quick reference guide</a><br/>
                                         </div>
                                     </div>
                                     <div style="margin:10px;">
