@@ -34,6 +34,7 @@ $dynClManager = new DynamicChecklistManager();
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220907" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -73,26 +74,15 @@ include($GLOBALS['SERVER_ROOT'].'/header.php');
     <form name="mapForm" action="dynamicchecklist.php" method="post" onsubmit="return checkForm();">
         <div style="width:95%;margin-left:auto;margin-right:auto;">
             Pan, zoom and click on map to capture coordinates, then submit coordinates to build a species list.
-            <span id="moredetails" style="cursor:pointer;color:blue;font-size:80%;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='inline';document.getElementById('lessdetails').style.display='inline';">
-                More Details
-            </span>
-            <span id="moreinfo" style="display:none;">
-                If a radius is defined, species lists are generated using occurrence data collected within the defined area.
-                If a radius is not supplied, the area is sampled in concentric rings until the sample size is determined to
-                best represent the local species diversity. In other words, poorly collected areas will have a larger radius sampled.
-                Setting the taxon filter will limit the return to species found within that taxonomic group.
-            </span>
-            <span id="lessdetails" style="cursor:pointer;color:blue;font-size:80%;display:none;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='none';document.getElementById('moredetails').style.display='inline';">
-                Less Details
-            </span>
         </div>
         <div style="width:95%;margin-left:auto;margin-right:auto;margin-top:5px;">
             <div style="float:left;width:300px;">
                 <div>
-                    <input type="submit" name="buildchecklistbutton" value="Build Checklist" disabled />
+                    <input type="submit" name="buildchecklistbutton" value="Build Checklist" disabled/>
                     <input type="hidden" name="interface" value="<?php echo $interface; ?>" />
                     <input type="hidden" id="latbox" name="lat" value="" />
                     <input type="hidden" id="lngbox" name="lng" value="" />
+                    <input type="hidden" id="groundradiusbox" name="groundradius" value="" />
                 </div>
                 <div style="margin-top:5px;">
                     <b>Click on the map to set a point</b>
@@ -104,8 +94,8 @@ include($GLOBALS['SERVER_ROOT'].'/header.php');
                     <input id="tid" name="tid" type="hidden" value="<?php echo $tid; ?>" />
                 </div>
                 <div style="margin-top:5px;">
-                    <b>Radius (optional):</b>
-                    <input id="radius" name="radius" value="" type="text" style="width:140px;" onchange="setRadiusCircle();" />
+                    <b>Radius:</b>
+                    <input id="radius" name="radius" value="<?php echo $GLOBALS['DYN_CHECKLIST_RADIUS']; ?>" type="text" style="width:140px;" onchange="setRadiusCircle();" />
                     <select id="radiusunits" name="radiusunits" onchange="setRadiusCircle();">
                         <option value="km">Kilometers</option>
                         <option value="mi">Miles</option>
@@ -167,7 +157,6 @@ include_once($GLOBALS['SERVER_ROOT'].'/footer.php');
         document.getElementById("latbox").value = pointCoords[1];
         document.getElementById("lngbox").value = pointCoords[0];
         selectedFeatures.push(evt.feature);
-        document.mapForm.buildchecklistbutton.disabled = false;
         if(document.getElementById("radius").value && !isNaN(document.getElementById("radius").value)){
             setRadiusCircle();
         }
@@ -190,8 +179,18 @@ include_once($GLOBALS['SERVER_ROOT'].'/footer.php');
             const centerCoords = ol.proj.fromLonLat([longVal, latVal]);
             const circle = new ol.geom.Circle(centerCoords);
             circle.setRadius(Number(radius));
+            const edgeCoordinate = [centerCoords[0] + radius, centerCoords[1]];
+            const fixedcenter = ol.proj.transform(centerCoords, 'EPSG:3857', 'EPSG:4326');
+            const fixededgeCoordinate = ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326');
+            const groundRadius = turf.distance([fixedcenter[0], fixedcenter[1]], [fixededgeCoordinate[0], fixededgeCoordinate[1]]);
+            document.getElementById("groundradiusbox").value = groundRadius;
             const circleFeature = new ol.Feature(circle);
             radiuscirclesource.addFeature(circleFeature);
+            document.mapForm.buildchecklistbutton.disabled = false;
+        }
+        else{
+            document.getElementById("groundradiusbox").value = '';
+            document.mapForm.buildchecklistbutton.disabled = true;
         }
     }
 </script>
