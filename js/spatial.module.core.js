@@ -1915,7 +1915,7 @@ function lazyLoadPoints(index,callback){
         http.onreadystatechange = function() {
             if(loadPointsEvent && http.readyState === 4) {
                 if(http.status === 200) {
-                    callback(http.responseText);
+                    callback(http.responseText,index);
                 }
                 else{
                     loadPointsError = true;
@@ -1935,7 +1935,7 @@ function lazyLoadPoints(index,callback){
         http.onreadystatechange = function() {
             if(loadPointsEvent && http.readyState === 4) {
                 if(http.status === 200) {
-                    callback(http.responseText);
+                    callback(http.responseText,index);
                 }
                 else{
                     loadPointsError = true;
@@ -1975,7 +1975,7 @@ function loadPointsLayer(index){
     pointvectorsource.clear(true);
     let processed = 0;
     do{
-        lazyLoadPoints(index,function(res){
+        lazyLoadPoints(index,function(res,index){
             const format = new ol.format.GeoJSON();
             let features = format.readFeatures(res, {
                 featureProjection: 'EPSG:3857'
@@ -1988,6 +1988,10 @@ function loadPointsLayer(index){
             }
             primeSymbologyData(features);
             pointvectorsource.addFeatures(features);
+            if(index === 0){
+                const pointextent = pointvectorsource.getExtent();
+                map.getView().fit(pointextent,map.getSize());
+            }
         });
         processed = processed + lazyLoadCnt;
         index++;

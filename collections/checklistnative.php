@@ -28,7 +28,7 @@ if($GLOBALS['SOLR_MODE']){
     $tidArr = $solrManager->getSOLRTidList($solrArr);
 }
 
-$dynClid = $checklistManager->buildSymbiotaChecklist($taxonFilter,$tidArr);
+$dynClid = $checklistManager->buildOccurrenceChecklist($taxonFilter,$tidArr);
 if($interface === 'key'){
 	header('Location: ../ident/key.php?dynclid=' .$dynClid. '&taxon=All Species');
 }

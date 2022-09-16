@@ -35,7 +35,7 @@ $dynClManager = new DynamicChecklistManager();
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220907" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220913" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $( "#taxa" ).autocomplete({
