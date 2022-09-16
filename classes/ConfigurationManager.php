@@ -234,6 +234,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['CLIENT_ROOT'])){
             $GLOBALS['CLIENT_ROOT'] = '';
         }
+        if(!isset($GLOBALS['ADMIN_EMAIL'])){
+            $GLOBALS['ADMIN_EMAIL'] = '';
+        }
         if(!isset($GLOBALS['TEMP_DIR_ROOT']) || $GLOBALS['TEMP_DIR_ROOT'] === ''){
             $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
         }
