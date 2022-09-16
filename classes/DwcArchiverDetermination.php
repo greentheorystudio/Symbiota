@@ -50,7 +50,7 @@ class DwcArchiverDetermination{
 			$trimArr[] = 'tidInterpreted';
 			$trimArr[] = 'identificationIsCurrent';
 		}
-		elseif($schemaType === 'symbiota'){
+		elseif($schemaType === 'native'){
 			if(!$extended){
 				$trimArr[] = 'identifiedByID';
 				$trimArr[] = 'tidInterpreted';

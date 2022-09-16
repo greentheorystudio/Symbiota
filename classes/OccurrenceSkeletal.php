@@ -68,7 +68,7 @@ class OccurrenceSkeletal {
 				$this->conn->query('UPDATE omcollectionstats SET recordcnt = recordcnt + 1 WHERE collid = '.$this->collid);
 				$guid = UuidFactory::getUuidV4();
 				if(!$this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("'.$guid.'",'.$this->occidArr[0].')')){
-					$this->errorStr = '(WARNING: Symbiota GUID mapping failed) ';
+					$this->errorStr = '(WARNING: GUID mapping failed) ';
 				}
 			}
 			else{

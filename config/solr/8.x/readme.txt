@@ -1,5 +1,5 @@
-The following is a walk-through in configuring Apache SOLR to work with your Symbiota installation.
-SOLR support in Symbiota was developed using Apache SOLR 8.3.
+The following is a walk-through in configuring Apache SOLR to work with your portal installation.
+SOLR support was developed using Apache SOLR 8.3.
 
 Steps for installing and configuring Apache SOLR:
 
@@ -33,7 +33,7 @@ Steps for installing and configuring Apache SOLR:
 4) Download the JTS Topology Suite driver 1.16.1 (jts-core-1.16.1.jar) at https://github.com/locationtech/jts/releases/download/jts-1.16.1/jts-core-1.16.1.jar
     and copy this file into [SOLR BASE DIRECTORY]/server/solr-webapp/webapp/WEB-INF/lib.
 
-5) Start your SOLR installation and run the following command to create a new SOLR core for your Symbiota installation
+5) Start your SOLR installation and run the following command to create a new SOLR core for your portal installation
     replacing [CORE_NAME] with the name you wish to use for this core:
 
     **QUICK START INSTRUCTIONS FOR LINUX SYSTEMS**
@@ -41,7 +41,7 @@ Steps for installing and configuring Apache SOLR:
     *START SOLR
     $ sudo /etc/init.d/solr start
 
-    *CREATE A NEW SOLR CORE FOR YOUR SYMBIOTA INSTALLATION
+    *CREATE A NEW SOLR CORE FOR YOUR PORTAL INSTALLATION
     $ sudo su - solr -c "/opt/solr/bin/solr create -c [CORE_NAME]"
 
 6) Stop your SOLR installation.
@@ -101,7 +101,7 @@ Steps for installing and configuring Apache SOLR:
     *DELETE managed-schema FILE
     $ sudo rm [SOLR DATA DIRECTORY]/[CORE_NAME]/conf/managed-schema
 
-9) Copy the files data-config.xml and schema.xml from [SYMBIOTA BASE DIRECTORY]/config/solr/8.x to
+9) Copy the files data-config.xml and schema.xml from [PORTAL BASE DIRECTORY]/config/solr/8.x to
     [SOLR DATA DIRECTORY]/[CORE_NAME]/conf.
 
 10) On Linux systems, set the owner and group of these two files to solr.
@@ -114,21 +114,21 @@ Steps for installing and configuring Apache SOLR:
 
 11) Edit the file [SOLR DATA DIRECTORY]/[CORE_NAME]/conf/data-config.xml:
 
-    -On line 4, change [Database Host Name] to the host name of your Symbiota database.
+    -On line 4, change [Database Host Name] to the host name of your portal database.
 
-    -On line 4, change [Database Name] to the name of your Symbiota database.
+    -On line 4, change [Database Name] to the name of your portal database.
 
     -On line 6, change [Database Username] to the username of the readonly database connection in the
-        [SYMBIOTA BASE DIRECTORY]/config/dbconnection.php file of your Symbiota installation.
+        [PORTAL BASE DIRECTORY]/config/dbconnection.php file of your portal installation.
 
     -On line 7, change [Database Password] to the password of the readonly database connection in the
-        [SYMBIOTA BASE DIRECTORY]/config/dbconnection.php file of your Symbiota installation.
+        [PORTAL BASE DIRECTORY]/config/dbconnection.php file of your portal installation.
 
     -Save your edits.
 
-12) Start your SOLR installation. Go to the SOLR admin panel at http://localhost:8983/solr/ and select your new Symbiota
+12) Start your SOLR installation. Go to the SOLR admin panel at http://localhost:8983/solr/ and select your new
     core in the Core Selector drop down. Click on DataImport and then click the Execute button to initiate a full import.
-    Note that this step may take a significant amount of time to complete depending on the size of your Symbiota database.
+    Note that this step may take a significant amount of time to complete depending on the size of your portal database.
     You can click on the Refresh Status button to refresh the status information of your import.
 
     **QUICK START INSTRUCTIONS FOR LINUX SYSTEMS**
@@ -136,18 +136,18 @@ Steps for installing and configuring Apache SOLR:
     *INITIATE A FULL IMPORT
     $ curl "http://localhost:8983/solr/[CORE_NAME]/dataimport?command=full-import"
 
-13) Once the full import is complete, edit the [SYMBIOTA BASE DIRECTORY]/config/symbini.php file of your Symbiota installation:
+13) Once the full import is complete, edit the [PORTAL BASE DIRECTORY]/config/symbini.php file of your portal installation:
 
     -Either locate or add the line:
         $GLOBALS['SOLR_URL'] = '';
 
-    -Set the value of this line to the url of your Symbiota SOLR core.
+    -Set the value of this line to the url of your new SOLR core.
         e.g.: $GLOBALS['SOLR_URL'] = 'http://localhost:8983/solr/symbseinet';
 
     -Either locate or add the line:
         $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 0;
 
-    -Change the value of this line to the hour interval you wish to have between whcih your Symbiota installation
+    -Change the value of this line to the hour interval you wish to have between whcih your portal installation
         will initiate a full import refresh of your SOLR core. Records added or edited will automatically be updated
         in your SOLR core without the need for a full import. Deleted records or images will only be updated in the core
         through a full import however, so if your portal has frequent record or image deletions, set this to a lower setting,
@@ -156,4 +156,4 @@ Steps for installing and configuring Apache SOLR:
 
     -Save your edits.
 
-Congratulations! You have now configured your Symbiota installation to work with Apache SOLR! Happy Searching!
+Congratulations! You have now configured your portal installation to work with Apache SOLR! Happy Searching!

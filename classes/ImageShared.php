@@ -528,7 +528,7 @@ class ImageShared{
 				$guid = UuidFactory::getUuidV4();
 				$this->activeImgId = $this->conn->insert_id;
 				if(!$this->conn->query('INSERT INTO guidimages(guid,imgid) VALUES("'.$guid.'",'.$this->activeImgId.')')) {
-					$this->errArr[] = ' Warning: Symbiota GUID mapping failed';
+					$this->errArr[] = ' Warning: GUID mapping failed';
 				}
 			}
 			else{

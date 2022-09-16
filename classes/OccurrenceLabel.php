@@ -236,7 +236,7 @@ class OccurrenceLabel{
             $labelArr = $this->getLabelArray($occidArr);
             if($labelArr){
                 $fileName = 'labeloutput_'.time(). '.csv';
-                header('Content-Description: Symbiota Label Output File');
+                header('Content-Description: Label Output File');
                 header ('Content-Type: text/csv');
                 header ('Content-Disposition: attachment; filename="'.$fileName.'"');
                 header('Content-Transfer-Encoding: '.strtoupper($GLOBALS['CHARSET']));
