@@ -93,7 +93,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$guid = UuidFactory::getUuidV4();
 			$detId = $this->conn->insert_id;
 			if(!$this->conn->query('INSERT INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$detId.')')){
-				$status .= ' (Warning: Symbiota GUID mapping #1 failed)';
+				$status .= ' (Warning: GUID mapping #1 failed)';
 			}
 			if($isCurrent){
 				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
@@ -106,7 +106,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 					$guid = UuidFactory::getUuidV4();
 					$detId = $this->conn->insert_id;
 					if(!$this->conn->query('INSERT INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$detId.')')){
-						$status .= ' (Warning: Symbiota GUID mapping #2 failed)';
+						$status .= ' (Warning: GUID mapping #2 failed)';
 					}
 				}
 

@@ -677,7 +677,7 @@ class ChecklistVoucherAdmin {
 			}
 		}
 		else{
-			$fileName = 'symbiota';
+			$fileName = 'checklist';
 		}
 		$fileName = str_replace(Array('.',' ',':'),'',$fileName);
 		$fileName .= '_'.time();

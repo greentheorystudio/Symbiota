@@ -368,7 +368,7 @@ else{
 				?>
 				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 					<tr>
-						<th>Symbiota ID</th>
+						<th>ID</th>
 						<?php
 						foreach($headerMap as $k => $v){
 							echo '<th>'.$v.'</th>';
@@ -406,7 +406,7 @@ else{
 				<div style="width:790px;">
 					<?php echo $navStr; ?>
 				</div>
-				*Click on the Symbiota identifier in the first column to open the editor.
+				*Click on the identifier in the first column to open the editor.
 				<?php
 			}
 			else{

@@ -37,7 +37,7 @@ function cogeCheckAuthentication(){
 		clearInterval(t);
 		$("#coge-status").html("Unauthorized");
 		$("#coge-status").css("color", "red");
-		alert( "ERROR: it may be that GeoLocate has not been configured to automatically accept files from this Symbiota portal. Please contact your portal adminstrator to setup automated GeoLocate submissions. " );
+		alert( "ERROR: it may be that GeoLocate has not been configured to automatically accept files from this portal. Please contact your portal adminstrator to setup automated GeoLocate submissions. " );
 	});
 }
 
@@ -255,7 +255,7 @@ function cogeGetUserCommunityList(){
 								else{
 									if(uploadType === "Symbiota (DwCA)"){
 										const guid = dataSources[j].guid;
-										htmlOut = htmlOut + 'Symbiota upload [<a href="#" onclick="cogeCheckGeorefStatus(\''+guid+'\');return false;">check status</a>]';
+										htmlOut = htmlOut + 'Direct upload [<a href="#" onclick="cogeCheckGeorefStatus(\''+guid+'\');return false;">check status</a>]';
 									}
 								}
 								const uploadedBy = dataSources[j].uploadedBy;
