@@ -145,7 +145,7 @@ $procManager->setProjVariables('OCR Harvest');
 		}
 		else{
 			echo '<div style="margin:25px"><b>';
-			echo 'The Tesseract OCR engine does not appear to be installed or the tesseractPath variable is not set within the Symbiota configuration file. ';
+			echo 'The Tesseract OCR engine does not appear to be installed or the tesseractPath variable is not set within the portal configuration. ';
 			echo 'Contact your system administrator to resolve these issues. ';
 			echo '</b></div>'; 
 		} 

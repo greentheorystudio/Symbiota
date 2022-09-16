@@ -37,8 +37,8 @@ class ProfileManager extends Manager{
         if($domainName === 'localhost') {
             $domainName = false;
         }
-        setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?:'/'),$domainName,false,true);
-        setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?:'/'));
+        setcookie('BioSurvCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?:'/'),$domainName,false,true);
+        setcookie('BioSurvCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?:'/'));
         unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
     }
 
@@ -112,7 +112,7 @@ class ProfileManager extends Manager{
             if ($domainName === 'localhost') {
                 $domainName = false;
             }
-            setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
+            setcookie('BioSurvCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
         }
     }
 

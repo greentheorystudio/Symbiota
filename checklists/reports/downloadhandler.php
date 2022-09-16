@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 ini_set('max_execution_time', 300);
 
-$schema = array_key_exists('schema',$_POST)?htmlspecialchars($_POST['schema']): 'symbiota';
+$schema = array_key_exists('schema',$_POST)?htmlspecialchars($_POST['schema']): 'native';
 $cSet = array_key_exists('cset',$_POST)?htmlspecialchars($_POST['cset']):'';
 $zip = array_key_exists('zip',$_POST)?(int)$_POST['zip']:0;
 $format = htmlspecialchars($_POST['format']);
@@ -62,7 +62,7 @@ if($outputFile){
 		$contentDesc = 'Darwin Core ';
 	}
 	else{
-		$contentDesc = 'Symbiota ';
+		$contentDesc = 'Native ';
 	}
 	$contentDesc .= 'Occurrence ';
 	if($zip){

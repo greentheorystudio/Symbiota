@@ -298,8 +298,8 @@ include(__DIR__ . '/../../header.php');
 						echo ' <span style="color:red;margin-left:15px;">These records will not be published!</span> ';
 					}
 					else{
-						echo 'Records missing Symbiota GUIDs: '.$recFlagArr['nullGUIDs'].'<br/>';
-						echo 'Please go to the <a href="../admin/guidmapper.php?collid='.$collId.'">Collection GUID Mapper</a> to assign Symbiota GUIDs.';
+						echo 'Records missing GUIDs: '.$recFlagArr['nullGUIDs'].'<br/>';
+						echo 'Please go to the <a href="../admin/guidmapper.php?collid='.$collId.'">Collection GUID Mapper</a> to assign GUIDs.';
 					}
 					echo '</div>';
 				}

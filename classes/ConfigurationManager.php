@@ -234,6 +234,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['CLIENT_ROOT'])){
             $GLOBALS['CLIENT_ROOT'] = '';
         }
+        if(!isset($GLOBALS['ADMIN_EMAIL'])){
+            $GLOBALS['ADMIN_EMAIL'] = '';
+        }
         if(!isset($GLOBALS['TEMP_DIR_ROOT']) || $GLOBALS['TEMP_DIR_ROOT'] === ''){
             $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
         }
@@ -662,8 +665,8 @@ class ConfigurationManager{
 
     public function readClientCookies(): void
     {
-        if((isset($_COOKIE['SymbiotaCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
-            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+        if((isset($_COOKIE['BioSurvCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
+            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['BioSurvCrumb']), true);
             if($tokenArr){
                 $pHandler = new ProfileManager();
                 if($pHandler->setUserName($tokenArr[0])){
@@ -678,8 +681,8 @@ class ConfigurationManager{
             }
         }
 
-        if((isset($_COOKIE['SymbiotaCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
-            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+        if((isset($_COOKIE['BioSurvCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
+            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['BioSurvCrumb']), true);
             if($tokenArr){
                 $pHandler = new ProfileManager();
                 $uid = $pHandler->getUid($tokenArr[0]);

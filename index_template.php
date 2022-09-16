@@ -15,7 +15,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         include(__DIR__ . '/header.php');
         ?>
         <div id="innertext">
-            <h1>Welcome to your Symbiota portal!</h1>
+            <h1>Welcome to your portal!</h1>
 
             <p>
                 Here's where all the great stuff on your homepage goes.

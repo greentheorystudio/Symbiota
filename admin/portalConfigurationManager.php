@@ -185,7 +185,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
             http.onreadystatechange = function() {
                 if(http.readyState === 4 && http.status === 200) {
                     if(http.responseText){
-                        alert('That Configuration Name is used within Symbiota and cannot be set as an additional configuration name. Please enter a different name.');
+                        alert('That Configuration Name is used internally within the software and cannot be set as an additional configuration name. Please enter a different name.');
                         document.getElementById('newConfName').value = '';
                     }
                     else{
@@ -311,7 +311,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
                             }
                         }
                         else{
-                            alert('The path entered is not a valid path to a Symbiota installation on the server.');
+                            alert('The path entered is not a valid path to a portal installation on the server.');
                             document.getElementById(configname).value = oldValue;
                         }
                     }
@@ -350,7 +350,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
                             }
                         }
                         else{
-                            alert('The path entered is not a valid URL path to a Symbiota portal.');
+                            alert('The path entered is not a valid URL path to a portal.');
                             document.getElementById(configname).value = oldValue;
                         }
                     }
