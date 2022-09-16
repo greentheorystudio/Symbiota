@@ -561,7 +561,7 @@ function changeClusterDistance(){
 function changeClusterSetting(){
     clusterPoints = document.getElementById("clusterswitch").checked;
     if(clusterPoints && layersObj['pointv'].getSource().getFeatures().length > 0){
-        loadPointsLayer(0);
+        loadPointsLayer();
     }
     else{
         layersObj['pointv'].setSource(pointvectorsource);
@@ -1896,7 +1896,7 @@ function hideVectorizeRasterByGridTargetPolygon(){
     document.getElementById("gridRasterVectorizeWarning").style.display = "block";
 }
 
-function lazyLoadPoints(index,callback){
+function lazyLoadPoints(index,finalIndex,callback){
     showWorking();
     let params;
     let url;
@@ -1915,7 +1915,7 @@ function lazyLoadPoints(index,callback){
         http.onreadystatechange = function() {
             if(loadPointsEvent && http.readyState === 4) {
                 if(http.status === 200) {
-                    callback(http.responseText,index);
+                    callback(http.responseText,index,finalIndex);
                 }
                 else{
                     loadPointsError = true;
@@ -1935,7 +1935,7 @@ function lazyLoadPoints(index,callback){
         http.onreadystatechange = function() {
             if(loadPointsEvent && http.readyState === 4) {
                 if(http.status === 200) {
-                    callback(http.responseText,index);
+                    callback(http.responseText,index,finalIndex);
                 }
                 else{
                     loadPointsError = true;
@@ -1969,13 +1969,15 @@ function loadInputParentParams(){
     }
 }
 
-function loadPointsLayer(index){
+function loadPointsLayer(){
     loadPointsEvent = true;
     loadPointsError = false;
     pointvectorsource.clear(true);
     let processed = 0;
+    let index = 0;
+    const finalIndex = queryRecCnt > lazyLoadCnt ? Math.ceil(queryRecCnt / lazyLoadCnt) : 0;
     do{
-        lazyLoadPoints(index,function(res,index){
+        lazyLoadPoints(index, finalIndex, function(res,index,finalIndex){
             const format = new ol.format.GeoJSON();
             let features = format.readFeatures(res, {
                 featureProjection: 'EPSG:3857'
@@ -1988,7 +1990,7 @@ function loadPointsLayer(index){
             }
             primeSymbologyData(features);
             pointvectorsource.addFeatures(features);
-            if(index === 0){
+            if(index === finalIndex){
                 const pointextent = pointvectorsource.getExtent();
                 map.getView().fit(pointextent,map.getSize());
             }
@@ -2818,7 +2820,7 @@ function processSpatialQueryOperatorSelectorChange(value) {
 function processToggleSelectedChange(){
     toggleSelectedPoints = document.getElementById("toggleselectedswitch").checked;
     if(clusterPoints){
-        loadPointsLayer(0);
+        loadPointsLayer();
     }
     else{
         layersObj['pointv'].setSource(pointvectorsource);
