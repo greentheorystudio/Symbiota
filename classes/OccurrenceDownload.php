@@ -8,7 +8,7 @@ class OccurrenceDownload{
 	private $conn;
 	private $redactLocalities = true;
 	private $rareReaderArr = array();
-	private $schemaType = 'symbiota';
+	private $schemaType = 'native';
 	private $extended = 0;
 	private $delimiter = ',';
 	private $charSetSource;
@@ -54,10 +54,10 @@ class OccurrenceDownload{
 		$fileName = $this->getOutputFileName();
 
 		if($this->schemaType === 'checklist'){
-			$contentDesc = 'Symbiota Checklist File';
+			$contentDesc = 'Checklist File';
 		}
 		elseif($this->schemaType === 'georef'){
-			$contentDesc = 'Symbiota Occurrence Georeference Data';
+			$contentDesc = 'Occurrence Georeference Data';
 		}
 		if($this->zipFile){
 			$zipArchive = null;

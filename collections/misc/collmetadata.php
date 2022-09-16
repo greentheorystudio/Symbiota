@@ -150,7 +150,7 @@ if($collid){
 				return false;
 			}
 			else if(f.managementtype.value === "Snapshot" && f.guidtarget.value === "symbiotaUUID"){
-				alert("The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
+				alert("The Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
 				return false;
 			}
 			else if(!isNumeric(f.latitudedecimal.value) || !isNumeric(f.longitudedecimal.value)){
@@ -173,7 +173,7 @@ if($collid){
 
 		function mtypeguidChanged(f){
 			if(f.managementtype.value === "Snapshot" && f.guidtarget.value === "symbiotaUUID"){
-				alert("The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
+				alert("The Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
 			}
 			else if(f.managementtype.value === "Aggregate" && f.guidtarget.value !== "" && f.guidtarget.value !== "occurrenceId"){
 				alert("An Aggregate dataset (e.g. occurrences coming from multiple collections) can only have occurrenceID selected for the GUID source");
@@ -509,7 +509,7 @@ if($collid){
                                         </a>
                                         <span id="managementinfodialog">
                                             Use Snapshot when there is a separate in-house database maintained in the collection and the dataset
-                                            within the Symbiota portal is only a periodically updated snapshot of the central database.
+                                            within the portal is only a periodically updated snapshot of the central database.
                                             A Live dataset is when the data is managed directly within the portal and the central database is the portal data.
                                         </span>
                                     </span>
@@ -525,7 +525,7 @@ if($collid){
                                         <option value="">-------------------</option>
                                         <option value="occurrenceId" <?php echo ($collid && $collData['guidtarget'] === 'occurrenceId'?'SELECTED':''); ?>>Occurrence Id</option>
                                         <option value="catalogNumber" <?php echo ($collid && $collData['guidtarget'] === 'catalogNumber'?'SELECTED':''); ?>>Catalog Number</option>
-                                        <option value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] === 'symbiotaUUID'?'SELECTED':''); ?>>Symbiota Generated GUID (UUID)</option>
+                                        <option value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] === 'symbiotaUUID'?'SELECTED':''); ?>>Generated GUID (UUID)</option>
                                     </select>
                                     <a id="guidinfo" href="#" onclick="return false" title="More information about Global Unique Identifier">
                                         <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
@@ -536,7 +536,7 @@ if($collid){
                                         <a href="https://dwc.tdwg.org/terms/#occurrenceID" target="_blank">occurrenceId</a> field.
                                         The use of the Occurrence Id as the GUID is not recommended for live datasets.
                                         Catalog Number can be used when the value within the catalog number field is globally unique.
-                                        The Symbiota Generated GUID (UUID) option will trigger the Symbiota data portal to automatically
+                                        The Generated GUID (UUID) option will trigger the portal to automatically
                                         generate UUID GUIDs for each record. This option is recommended for many for Live Datasets
                                         but not allowed for Snapshot collections that are managed in local management system.
 									</span>

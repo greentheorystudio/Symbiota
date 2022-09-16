@@ -257,7 +257,7 @@ class DwcArchiverOccurrence{
 				'duplicateQuantity','dateEntered','dateLastModified','sourcePrimaryKey-dbpk','host','labelProject','dynamicFields');
 			$retArr = array_diff_key($occurArr,array_flip($trimArr));
 		}
-		elseif($schemaType === 'symbiota'){
+		elseif($schemaType === 'native'){
 			$trimArr = array();
 			if(!$extended){
 				$trimArr = array('collectionID','rights','rightsHolder','accessRights','genericcolumn1','genericcolumn2',

@@ -63,7 +63,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
         return $returnVec;
     }
 
-	public function buildSymbiotaChecklist($taxonAuthorityId,$tidArr){
+	public function buildOccurrenceChecklist($taxonAuthorityId,$tidArr){
 		$expirationTime = date('Y-m-d H:i:s',time()+259200);
 		$tidStr = '';
 		if($tidArr){

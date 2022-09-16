@@ -82,13 +82,13 @@ $clid = (int)$_REQUEST['clid'];
 							</td>
 							<td>
 								<div style="margin:10px 0;">
-									<input type="radio" name="schema" value="symbiota" onclick="georefRadioClicked(this)" CHECKED />
-									Symbiota Native
+									<input type="radio" name="schema" value="native" onclick="georefRadioClicked(this)" CHECKED />
+									Native
 									<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
                                         <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a><br/>
 									<div id="schemanativeinfodialog">
-										Symbiota native is very similar to Darwin Core except with the addtion of a few fields
+										Native is very similar to Darwin Core except with the addtion of a few fields
 										such as substrate, associated collectors, verbatim description.
 									</div>
 									<input type="radio" name="schema" value="dwc" onclick="georefRadioClicked(this)" />
