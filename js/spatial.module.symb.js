@@ -201,7 +201,7 @@ function changeMapSymbology(symbology){
             clusterKey = 'CollectionName';
             mapSymbology = 'coll';
             if(clusterPoints){
-                loadPointsLayer(0);
+                loadPointsLayer();
             }
         }
     }
@@ -211,7 +211,7 @@ function changeMapSymbology(symbology){
             clusterKey = 'namestring';
             mapSymbology = 'taxa';
             if(clusterPoints){
-                loadPointsLayer(0);
+                loadPointsLayer();
             }
         }
     }
@@ -318,7 +318,7 @@ function loadPoints(){
             showWorking();
             getQueryRecCnt(function() {
                 if(queryRecCnt > 0){
-                    loadPointsLayer(0);
+                    loadPointsLayer();
                 }
                 else{
                     setRecordsTab();
