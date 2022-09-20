@@ -49,137 +49,139 @@ if($clValue || $dynClid){
 }
 $activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
 $showDetails = 0;
-if($clValue && $clArray['defaultSettings']){
-    $defaultArr = json_decode($clArray['defaultSettings'], true);
-    $showDetails = $defaultArr['ddetails'];
-    if(!$defaultOverride){
-        if(array_key_exists('thesfilter',$defaultArr)){
-            $thesFilter = $defaultArr['thesfilter'];
+if($clArray){
+    if($clArray['defaultSettings']){
+        $defaultArr = json_decode($clArray['defaultSettings'], true);
+        $showDetails = $defaultArr['ddetails'];
+        if(!$defaultOverride){
+            if(array_key_exists('thesfilter',$defaultArr)){
+                $thesFilter = $defaultArr['thesfilter'];
+            }
+            if(array_key_exists('showsynonyms',$defaultArr)){
+                $showSynonyms = $defaultArr['showsynonyms'];
+            }
+            if(array_key_exists('dcommon',$defaultArr)){
+                $showCommon = $defaultArr['dcommon'];
+            }
+            if(array_key_exists('dimages',$defaultArr)){
+                $showImages = $defaultArr['dimages'];
+            }
+            if(array_key_exists('dvouchers',$defaultArr)){
+                $showVouchers = $defaultArr['dvouchers'];
+            }
+            if(array_key_exists('dauthors',$defaultArr)){
+                $showAuthors = $defaultArr['dauthors'];
+            }
+            if(array_key_exists('dalpha',$defaultArr)){
+                $showAlphaTaxa = $defaultArr['dalpha'];
+            }
         }
-        if(array_key_exists('showsynonyms',$defaultArr)){
-            $showSynonyms = $defaultArr['showsynonyms'];
-        }
-        if(array_key_exists('dcommon',$defaultArr)){
-            $showCommon = $defaultArr['dcommon'];
-        }
-        if(array_key_exists('dimages',$defaultArr)){
-            $showImages = $defaultArr['dimages'];
-        }
-        if(array_key_exists('dvouchers',$defaultArr)){
-            $showVouchers = $defaultArr['dvouchers'];
-        }
-        if(array_key_exists('dauthors',$defaultArr)){
-            $showAuthors = $defaultArr['dauthors'];
-        }
-        if(array_key_exists('dalpha',$defaultArr)){
-            $showAlphaTaxa = $defaultArr['dalpha'];
+        if(isset($defaultArr['activatekey'])) {
+            $activateKey = $defaultArr['activatekey'];
         }
     }
-    if(isset($defaultArr['activatekey'])) {
-        $activateKey = $defaultArr['activatekey'];
+    if($pid) {
+        $clManager->setProj($pid);
     }
-}
-if($pid) {
-    $clManager->setProj($pid);
-}
-elseif(array_key_exists('proj',$_REQUEST)) {
-    $pid = $clManager->setProj($_REQUEST['proj']);
-}
-if($taxonFilter) {
-    $clManager->setTaxonFilter($taxonFilter);
-}
-if($searchCommon){
-    $showCommon = 1;
-    $clManager->setSearchCommon();
-}
-if($searchSynonyms) {
-    $clManager->setSearchSynonyms();
-}
-if($thesFilter) {
-    $clManager->setThesFilter();
-}
-if($showSynonyms) {
-    $clManager->setShowSynonyms();
-}
-if($showAuthors) {
-    $clManager->setShowAuthors();
-}
-if($showCommon) {
-    $clManager->setShowCommon();
-}
-if($showImages) {
-    $clManager->setShowImages();
-}
-if($showVouchers) {
-    $clManager->setShowVouchers();
-}
-if($showAlphaTaxa) {
-    $clManager->setShowAlphaTaxa();
-}
-$clid = $clManager->getClid();
-$pid = $clManager->getPid();
-
-if($action === 'Download List') {
-    $clManager->downloadChecklistCsv();
-    exit();
-}
-
-if($action === 'Print List') {
-    $printMode = 1;
-}
-
-$isEditor = false;
-if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
-    $isEditor = true;
-
-    if(array_key_exists('tidtoadd',$_POST)){
-        $dataArr = array();
-        $dataArr['tid'] = $_POST['tidtoadd'];
-        if($_POST['familyoverride']) {
-            $dataArr['familyoverride'] = $_POST['familyoverride'];
-        }
-        if($_POST['habitat']) {
-            $dataArr['habitat'] = $_POST['habitat'];
-        }
-        if($_POST['abundance']) {
-            $dataArr['abundance'] = $_POST['abundance'];
-        }
-        if($_POST['notes']) {
-            $dataArr['notes'] = $_POST['notes'];
-        }
-        if($_POST['source']) {
-            $dataArr['source'] = $_POST['source'];
-        }
-        if($_POST['internalnotes']) {
-            $dataArr['internalnotes'] = $_POST['internalnotes'];
-        }
-        $setRareSpp = false;
-        if($_POST['cltype'] === 'rarespp') {
-            $setRareSpp = true;
-        }
-        $clAdmin = new ChecklistAdmin();
-        $clAdmin->setClid($clid);
-        $statusStr = $clAdmin->addNewSpecies($dataArr,$setRareSpp);
+    elseif(array_key_exists('proj',$_REQUEST)) {
+        $pid = $clManager->setProj($_REQUEST['proj']);
     }
-}
-$taxaArray = array();
-if($clValue || $dynClid){
-    $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
-    if($GLOBALS['CHECKLIST_FG_EXPORT']){
-        if($clValue){
-            $fgManager->setClValue($clValue);
-        }
-        elseif($dynClid){
-            $fgManager->setDynClid($dynClid);
-        }
-        $fgManager->setSqlVars();
-        $fgManager->primeDataArr();
+    if($taxonFilter) {
+        $clManager->setTaxonFilter($taxonFilter);
     }
-}
-if($clArray['locality']){
-    $locStr = $clArray['locality'];
-    if($clValue && $clArray['latcentroid']) {
-        $locStr .= ' (' . $clArray['latcentroid'] . ', ' . $clArray['longcentroid'] . ')';
+    if($searchCommon){
+        $showCommon = 1;
+        $clManager->setSearchCommon();
+    }
+    if($searchSynonyms) {
+        $clManager->setSearchSynonyms();
+    }
+    if($thesFilter) {
+        $clManager->setThesFilter();
+    }
+    if($showSynonyms) {
+        $clManager->setShowSynonyms();
+    }
+    if($showAuthors) {
+        $clManager->setShowAuthors();
+    }
+    if($showCommon) {
+        $clManager->setShowCommon();
+    }
+    if($showImages) {
+        $clManager->setShowImages();
+    }
+    if($showVouchers) {
+        $clManager->setShowVouchers();
+    }
+    if($showAlphaTaxa) {
+        $clManager->setShowAlphaTaxa();
+    }
+    $clid = $clManager->getClid();
+    $pid = $clManager->getPid();
+
+    if($action === 'Download List') {
+        $clManager->downloadChecklistCsv();
+        exit();
+    }
+
+    if($action === 'Print List') {
+        $printMode = 1;
+    }
+
+    $isEditor = false;
+    if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
+        $isEditor = true;
+
+        if(array_key_exists('tidtoadd',$_POST)){
+            $dataArr = array();
+            $dataArr['tid'] = $_POST['tidtoadd'];
+            if($_POST['familyoverride']) {
+                $dataArr['familyoverride'] = $_POST['familyoverride'];
+            }
+            if($_POST['habitat']) {
+                $dataArr['habitat'] = $_POST['habitat'];
+            }
+            if($_POST['abundance']) {
+                $dataArr['abundance'] = $_POST['abundance'];
+            }
+            if($_POST['notes']) {
+                $dataArr['notes'] = $_POST['notes'];
+            }
+            if($_POST['source']) {
+                $dataArr['source'] = $_POST['source'];
+            }
+            if($_POST['internalnotes']) {
+                $dataArr['internalnotes'] = $_POST['internalnotes'];
+            }
+            $setRareSpp = false;
+            if($_POST['cltype'] === 'rarespp') {
+                $setRareSpp = true;
+            }
+            $clAdmin = new ChecklistAdmin();
+            $clAdmin->setClid($clid);
+            $statusStr = $clAdmin->addNewSpecies($dataArr,$setRareSpp);
+        }
+    }
+    $taxaArray = array();
+    if($clValue || $dynClid){
+        $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
+        if($GLOBALS['CHECKLIST_FG_EXPORT']){
+            if($clValue){
+                $fgManager->setClValue($clValue);
+            }
+            elseif($dynClid){
+                $fgManager->setDynClid($dynClid);
+            }
+            $fgManager->setSqlVars();
+            $fgManager->primeDataArr();
+        }
+    }
+    if($clArray['locality']){
+        $locStr = $clArray['locality'];
+        if($clValue && $clArray['latcentroid']) {
+            $locStr .= ' (' . $clArray['latcentroid'] . ', ' . $clArray['longcentroid'] . ')';
+        }
     }
 }
 ?>
@@ -374,24 +376,23 @@ if(!$printMode){
                 }
                 echo "<div><span style='font-weight:bold;'>Citation:</span> ".$pubStr. '</div>';
             }
-        }
-
-        if(($locStr || ($clValue && ($clArray['latcentroid'] || $clArray['abstract'])) || $clArray['notes'])){
-            ?>
-            <div class="moredetails" style="<?php echo (($showDetails || $printMode)?'display:none;':''); ?>color:blue;cursor:pointer;" onclick="toggle('moredetails')">More Details</div>
-            <div class="moredetails" style="display:<?php echo (($showDetails && !$printMode)?'block':'none'); ?>;color:blue;cursor:pointer;" onclick="toggle('moredetails')">Less Details</div>
-            <div class="moredetails" style="display:<?php echo (($showDetails || $printMode)?'block':'none'); ?>;">
-                <?php
-                if($locStr){
-                    echo "<div><span style='font-weight:bold;'>Locality: </span>".$locStr. '</div>';
-                }
-                if($clValue && $clArray['abstract']){
-                    echo "<div><span style='font-weight:bold;'>Abstract: </span>".$clArray['abstract']. '</div>';
-                }
-                echo ($clValue && $clArray['notes']) ? "<div><span style='font-weight:bold;'>Notes: </span>".$clArray['notes']. '</div>' : '';
+            if(($locStr || $clArray['latcentroid'] || $clArray['abstract'] || $clArray['notes'])){
                 ?>
-            </div>
-            <?php
+                <div class="moredetails" style="<?php echo (($showDetails || $printMode)?'display:none;':''); ?>color:blue;cursor:pointer;" onclick="toggle('moredetails')">More Details</div>
+                <div class="moredetails" style="display:<?php echo (($showDetails && !$printMode)?'block':'none'); ?>;color:blue;cursor:pointer;" onclick="toggle('moredetails')">Less Details</div>
+                <div class="moredetails" style="display:<?php echo (($showDetails || $printMode)?'block':'none'); ?>;">
+                    <?php
+                    if($locStr){
+                        echo "<div><span style='font-weight:bold;'>Locality: </span>".$locStr. '</div>';
+                    }
+                    if($clValue && $clArray['abstract']){
+                        echo "<div><span style='font-weight:bold;'>Abstract: </span>".$clArray['abstract']. '</div>';
+                    }
+                    echo ($clValue && $clArray['notes']) ? "<div><span style='font-weight:bold;'>Notes: </span>".$clArray['notes']. '</div>' : '';
+                    ?>
+                </div>
+                <?php
+            }
         }
         if($statusStr){
             ?>

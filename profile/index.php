@@ -25,7 +25,7 @@ if(array_key_exists('refurl',$_REQUEST)){
 					$refGetStr .= '&attr[]=' .$v2;
 				}
 			}
-			else{
+			elseif(!is_array($v)){
 				$refGetStr .= '&' .$k. '=' .$v;
 			}
 		}
