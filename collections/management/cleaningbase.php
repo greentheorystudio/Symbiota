@@ -37,27 +37,18 @@ if($collMap['colltype'] === 'General Observations'){
             ?>
             <h3>Duplicate Records</h3>
             <div style="margin:0 0 40px 15px;">
-                <div>
-                    This section is meant to assist in searching this collection for duplicate records of the same occurrence.
-                    If duplicate records exist, this feature offers the ability to merge record values, images,
-                    and data relationships into a single record. Click on either of the links in the box below to open the Duplicate Merging Module and
-                    view a list of potential duplicate records based on either the catalog number or other catalog number
-                    fields.
-                </div>
-                <fieldset style="margin:10px 0;padding:5px;width:450px">
-                    <ul>
-                        <li>
-                            <a href="duplicatesearch.php?collid=<?php echo $collid; ?>&action=listdupscatalog">
-                                Catalog Numbers
-                            </a>
-                        </li>
-                        <li>
-                            <a href="duplicatesearch.php?collid=<?php echo $collid; ?>&action=listdupsothercatalog">
-                                Other Catalog Numbers
-                            </a>
-                        </li>
-                    </ul>
-                </fieldset>
+                <ul>
+                    <li>
+                        <a href="duplicatesearch.php?collid=<?php echo $collid; ?>&action=listdupscatalog">
+                            Catalog Numbers
+                        </a>
+                    </li>
+                    <li>
+                        <a href="duplicatesearch.php?collid=<?php echo $collid; ?>&action=listdupsothercatalog">
+                            Other Catalog Numbers
+                        </a>
+                    </li>
+                </ul>
             </div>
             <?php
         }
@@ -65,28 +56,16 @@ if($collMap['colltype'] === 'General Observations'){
 
         <h3>Political Geography</h3>
         <div style="margin:0 0 40px 15px;">
-            <div>
-                This section is meant to help standardize country, state/province, and county designations.
-                It is also useful for locating and correcting misspelled geographical political units,
-                and even mismatched units, such as a state designation that does not match the wrong country. Use the
-                links in the box below to view the current geographic distributions or open the Geography Cleaning Module
-                to correct or standardize geographic names.
-            </div>
-            <fieldset style="margin:10px 0;padding:5px;width:450px">
-                <ul>
-                    <li>
-                        <a href="politicalunits.php?collid=<?php echo $collid; ?>">Open Geography Cleaning Module</a>
-                    </li>
-                </ul>
-            </fieldset>
+            <ul>
+                <li>
+                    <a href="politicalunits.php?collid=<?php echo $collid; ?>">Open Geography Cleaning Module</a>
+                </li>
+            </ul>
         </div>
 
         <h3>Occurrence Coordinates</h3>
         <div style="margin:0 0 40px 15px;">
-            <div>
-                This section is meant to aid collection managers in verifying, ranking, and managing coordinate information associated with occurrence records.
-            </div>
-            <fieldset style="margin:10px 0;padding:5px;width:450px">
+            <fieldset style="margin:10px 0;padding:5px;">
                 <legend style="font-weight:bold">Statistics and Action Panel</legend>
                 <ul>
                     <?php
@@ -144,52 +123,20 @@ if($collMap['colltype'] === 'General Observations'){
                     </li>
                 </ul>
             </fieldset>
-            <div style="margin:10px 0;">
-                <div style="font-weight:bold">Ranking Statistics</div>
-                <?php
-                $coordRankingArr = $cleanManager->getRankingStats('coordinate');
-                $rankArr = $coordRankingArr['coordinate'];
-                echo '<table class="styledtable">';
-                echo '<tr><th>Ranking</th><th>Protocol</th><th>Count</th></tr>';
-                foreach($rankArr as $rank => $protocolArr){
-                    foreach($protocolArr as $protocol => $cnt){
-                        echo '<tr>';
-                        echo '<td>'.$rank.'</td>';
-                        echo '<td>'.$protocol.'</td>';
-                        echo '<td>';
-                        echo '<a href="coordinatevalidator.php?collid='.$collid.'&ranking='.($rank === 'unranked'?'':$rank).'">';
-                        echo $cnt;
-                        echo '</a>';
-                        echo '</td>';
-                        echo '</tr>';
-                    }
-                }
-                echo '</table>';
-                ?>
-            </div>
         </div>
 
         <h3>Taxonomy</h3>
         <div style="margin:0 0 40px 15px;">
-            <div>
-                This section is meant to aid in locating and fixing taxonomic inconsistencies, and reconciling valid taxonomic
-                names within the occurrence records of this collection with the taxonomic thesaurus of this portal. Use the links
-                in the box below to view the current taxonomic distributions or open the Taxonomic Name Resolution Module to resolve
-                taxonomic names within the occurrence records for this collection that are not currently associated with
-                the taxonomic thesaurus of this portal.
-            </div>
-            <fieldset style="margin:10px 0;padding:5px;width:450px">
-                <ul>
-                    <li><a href="taxonomycleaner.php?collid=<?php echo $collid; ?>">Open Taxonomic Name Resolution Module</a></li>
-                    <?php
-                    if($cleanManager->hasDuplicateClusters()){
-                        echo '<li><a href="index.php?collid='.$collid.'&tabindex=3&dupedepth=3&action=listdupeconflicts">';
-                        echo 'View duplicate occurrences with potential identification conflicts...';
-                        echo '</a></li>';
-                    }
-                    ?>
-                </ul>
-            </fieldset>
+            <ul>
+                <li><a href="taxonomycleaner.php?collid=<?php echo $collid; ?>">Open Taxonomic Name Resolution Module</a></li>
+                <?php
+                if($cleanManager->hasDuplicateClusters()){
+                    echo '<li><a href="index.php?collid='.$collid.'&tabindex=3&dupedepth=3&action=listdupeconflicts">';
+                    echo 'View duplicate occurrences with potential identification conflicts...';
+                    echo '</a></li>';
+                }
+                ?>
+            </ul>
         </div>
         <?php
     }
