@@ -20,10 +20,10 @@ class UserTaxonomy {
 	public function getTaxonomyEditors(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT ut.idusertaxonomy, u.uid, CONCAT_WS(", ", lastname, firstname) as fullname, t.sciname, ut.editorstatus, '.
+		$sql = 'SELECT ut.idusertaxonomy, u.uid, CONCAT_WS(", ", u.lastname, u.firstname) AS fullname, t.sciname, ut.editorstatus, '.
 			'ut.geographicscope, ut.notes, u.username '.
-			'FROM usertaxonomy ut INNER JOIN users u ON ut.uid = u.uid '.
-			'INNER JOIN taxa t ON ut.tid = t.tid '.
+			'FROM usertaxonomy AS ut INNER JOIN users AS u ON ut.uid = u.uid '.
+			'INNER JOIN taxa AS t ON ut.tid = t.tid '.
 			'ORDER BY u.lastname, u.firstname, t.sciname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -57,9 +57,9 @@ class UserTaxonomy {
 	public function getUserArr(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname,CONCAT(" (",u.username,")")) as fullname '.
-			'FROM users u '.
-			'ORDER BY lastname,u.firstname,l.username ';
+		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname,CONCAT(" (",u.username,")")) AS fullname '.
+			'FROM users AS u '.
+			'ORDER BY u.lastname,u.firstname,u.username ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->uid] = $r->fullname;

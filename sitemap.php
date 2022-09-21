@@ -127,7 +127,7 @@ $smManager = new SiteMapManager();
                             <?php
                             if($GLOBALS['IS_ADMIN']){
                                 ?>
-                                <li><a href="profile/usertaxonomymanager.php">Taxonomic Interest User Permissions</a></li>
+                                <li><a href="profile/usertaxonomymanager.php">Taxonomic Interest Permissions</a></li>
                                 <?php
                             }
                             if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
