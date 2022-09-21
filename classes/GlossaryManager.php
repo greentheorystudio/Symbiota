@@ -901,10 +901,7 @@ class GlossaryManager{
 				$qualityRating = $this->jpgCompression;
 			}
 			
-	        if($GLOBALS['USE_IMAGE_MAGICK']) {
-				$status = $this->createNewImageImagick($subExt,$targetWidth,$qualityRating);
-			} 
-			elseif(function_exists('gd_info') && extension_loaded('gd')) {
+	        if(function_exists('gd_info') && extension_loaded('gd')) {
 				$status = $this->createNewImageGD($subExt,$targetWidth,$qualityRating);
 			}
 			else{
@@ -914,21 +911,6 @@ class GlossaryManager{
 		return $status;
 	}
 	
-	private function createNewImageImagick($subExt,$newWidth,$qualityRating = null): bool
-	{
-		$targetPath = $this->targetPath.$this->imgName.$subExt.$this->imgExt;
-		if($newWidth < 300){
-			system('convert '.$this->sourcePath.' -thumbnail '.$newWidth.'x'.($newWidth*1.5).' '.$targetPath, $retval);
-		}
-		else{
-			system('convert '.$this->sourcePath.' -resize '.$newWidth.'x'.($newWidth*1.5).($qualityRating?' -quality '.$qualityRating:'').' '.$targetPath, $retval);
-		}
-		if(file_exists($targetPath)){
-			return true;
-		}
-		return false;
-	}
-
 	private function createNewImageGD($subExt, $newWidth, $qualityRating = null): bool
 	{
 		$status = false;

@@ -47,7 +47,6 @@ $collMap = array();
 $occArr = array();
 $imgArr = array();
 $specImgArr = array();
-$fragArr = array();
 $qryCnt = false;
 $statusStr = '';
 $navStr = '';
@@ -107,21 +106,6 @@ if($GLOBALS['SYMB_UID']){
         $statusStr = $occManager->editOccurrence($_POST,($crowdSourceMode?1:$isEditor));
         if($GLOBALS['SOLR_MODE']) {
             $solrManager->updateSOLR();
-        }
-    }
-    if($isEditor === 1 || $isEditor === 2 || $crowdSourceMode){
-        if($action === 'Save OCR'){
-            $statusStr = $occManager->insertTextFragment($_POST['imgid'],$_POST['rawtext'],$_POST['rawnotes'],$_POST['rawsource']);
-            if(is_numeric($statusStr)){
-                $newPrlid = $statusStr;
-                $statusStr = '';
-            }
-        }
-        elseif($action === 'Save OCR Edits'){
-            $statusStr = $occManager->saveTextFragment($_POST['editprlid'],$_POST['rawtext'],$_POST['rawnotes'],$_POST['rawsource']);
-        }
-        elseif($action === 'Delete OCR'){
-            $statusStr = $occManager->deleteTextFragment($_POST['delprlid']);
         }
     }
     if($isEditor){
@@ -480,7 +464,6 @@ if($GLOBALS['SYMB_UID']){
             }
             $imgCnt++;
         }
-        $fragArr = $occManager->getRawTextFragments();
     }
 
     if($occId) {
@@ -727,7 +710,7 @@ else{
                                             <legend><b>Collector Info</b></legend>
                                             <?php
                                             if($occId){
-                                                if($fragArr || $specImgArr){
+                                                if($specImgArr){
                                                     ?>
                                                     <div style="float:right;margin:-7px -4px 0 0;font-weight:bold;">
 														<span id="imgProcOnSpan" style="display:block;">
@@ -1547,7 +1530,7 @@ else{
                         </td>
                         <td id="imgtd" style="display:none;width:430px;vertical-align:top;">
                             <?php
-                            if($occId && ($fragArr || $specImgArr )){
+                            if($occId && $specImgArr){
                                 include_once(__DIR__ . '/includes/imgprocessor.php');
                             }
                             ?>

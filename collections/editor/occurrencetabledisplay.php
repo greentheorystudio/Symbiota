@@ -108,7 +108,6 @@ $headerMapBase = array(
     '`month`'=>'Month',
     'municipality'=>'Municipality',
     'occurrenceremarks'=>'Notes (Occurrence Remarks)',
-    'ocrfragment'=>'OCR Fragment',
     'othercatalognumbers'=>'Other Catalog Numbers',
     'ownerinstitutioncode'=>'Owner Code',
     'preparations'=>'Preparations',
