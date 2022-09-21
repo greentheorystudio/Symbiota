@@ -11,7 +11,7 @@ $sortField1 = $_REQUEST['sortfield1'];
 $sortField2 = $_REQUEST['sortfield2'];
 $sortOrder = $_REQUEST['sortorder'];
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 $copyURL = '';
 $recArr = array();
 
@@ -37,7 +37,7 @@ $targetClid = $collManager->getSearchTerm('targetclid');
 
 if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
     $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/listtabledisplay.php';
-    $urlArgs = '?starr='.$stArrJson.'&occindex='.$occIndex.'&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
+    $urlArgs = '?starr='.str_replace("'", '%squot;',$stArrJson).'&occindex='.$occIndex.'&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
     $copyURL = $urlPrefix.$urlArgs;
 }
 

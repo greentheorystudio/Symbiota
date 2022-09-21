@@ -560,7 +560,7 @@ if(!$printMode){
                         <?php
                     }
                     if(!$showImages && $coordArr = $clManager->getCoordinates(0, true)) {
-                        $url = '../spatial/index.php?starr={"clid":"'.$clid.'","taxonfilter":"'.$taxonFilter.'"}';
+                        $url = '../spatial/index.php?starr={"clid":"'.$clid.'","taxonfilter":"'.str_replace("'", '%squot;',$taxonFilter).'"}';
                         ?>
                         <div style="text-align:center;padding:10px">
                             <div>
