@@ -91,25 +91,6 @@ if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
 				?>
 			</div>
 			<div style="margin:10px">
-				<div style="font-weight:bold">Ranking Statistics</div>
-				<?php
-				$coordRankingArr = $cleanManager->getRankingStats('coordinate');
-				$rankArr = $coordRankingArr['coordinate'];
-				echo '<table class="styledtable">';
-				echo '<tr><th>Ranking</th><th>Protocol</th><th>Count</th></tr>';
-				foreach($rankArr as $rank => $protocolArr){
-					foreach($protocolArr as $protocolStr => $cnt){
-						echo '<tr>';
-						echo '<td>'.$rank.'</td>';
-						echo '<td>'.$protocolStr.'</td>';
-						echo '<td>'.$cnt.'</td>';
-						echo '</tr>';
-					}
-				}
-				echo '</table>';
-				?>
-			</div>
-			<div style="margin:10px">
 				<div style="font-weight:bold">Non-verified by State/Province</div>
 				<?php
 				$countryArr = $cleanManager->getUnverifiedByCountry();

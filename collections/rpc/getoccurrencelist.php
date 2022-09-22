@@ -9,7 +9,7 @@ $targetTid = (int)$_REQUEST['targettid'];
 $pageNumber = (int)$_REQUEST['page'];
 $cntPerPage = 100;
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 $copyURL = '';
 
 $collManager = null;
@@ -34,7 +34,7 @@ else{
 
 if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
     $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
-    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
+    $urlArgs = '?starr='.str_replace("'", '%squot;',$stArrJson).'&page='.$pageNumber;
     $copyURL = $urlPrefix.$urlArgs;
 }
 

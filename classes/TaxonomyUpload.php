@@ -32,35 +32,6 @@ class TaxonomyUpload{
 		}
 	}
 
-	public function setUploadFile($ulFileName = null): void
-	{
-		if($ulFileName){
-			if(file_exists($ulFileName)){
-				$pos = strrpos($ulFileName, '/');
-				if(!$pos) {
-					$pos = strrpos($ulFileName, "\\");
-				}
-				$this->uploadFileName = substr($ulFileName,$pos+1);
-				copy($ulFileName,$this->uploadTargetPath.$this->uploadFileName);
-			}
-		}
-		elseif(array_key_exists('uploadfile',$_FILES)){
-			$this->uploadFileName = $_FILES['uploadfile']['name'];
-			if(is_writable($this->uploadTargetPath)){
-                move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
-            }
-		}
-		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) === '.zip'){
-			$zip = new ZipArchive;
-			$zip->open($this->uploadTargetPath.$this->uploadFileName);
-			$zipFile = $this->uploadTargetPath.$this->uploadFileName;
-			$this->uploadFileName = $zip->getNameIndex(0);
-			$zip->extractTo($this->uploadTargetPath);
-			$zip->close();
-			unlink($zipFile);
-		}
-	}
-
 	public function loadFile($fieldMap): void
 	{
 		$this->outputMsg('Starting Upload');

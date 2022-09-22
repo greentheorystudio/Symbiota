@@ -16,27 +16,12 @@ if(!$action && array_key_exists('submit',$_REQUEST)) {
 }
 
 $refUrl = '';
-if(array_key_exists('refurl',$_REQUEST)){
-	$refGetStr = '';
-	foreach($_GET as $k => $v){
-		if(!is_array($k) && $k !== 'refurl'){
-			if($k === 'attr' && is_array($v)){
-				foreach($v as $v2){
-					$refGetStr .= '&attr[]=' .$v2;
-				}
-			}
-			else{
-				$refGetStr .= '&' .$k. '=' .$v;
-			}
-		}
-    }
-	$refUrl = str_replace('&amp;', '&',htmlspecialchars($_REQUEST['refurl'], ENT_NOQUOTES));
-	if(substr($refUrl,-4) === '.php'){
-		$refUrl .= '?' .substr($refGetStr,1);
-	}
-	else{
-		$refUrl .= $refGetStr;
-	}
+if(strpos($_SERVER['REQUEST_URI'], 'refurl=')){
+    $fullRequest = str_replace('%22', '"',$_SERVER['REQUEST_URI']);
+    $refUrl = substr($fullRequest, strpos($fullRequest, 'refurl=') + 7);
+}
+elseif(array_key_exists('refurl',$_REQUEST)){
+    $refUrl = $_REQUEST['refurl'];
 }
 
 $pHandler = new ProfileManager();
@@ -54,7 +39,7 @@ if($emailAddr && !$pHandler->validateEmailAddress($emailAddr)) {
 if(!is_numeric($resetPwd)) {
     $resetPwd = 0;
 }
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
+if($action && !preg_match('/^[a-zA-Z\d\s_]+$/',$action)) {
     $action = '';
 }
 if($remMe) {
@@ -157,7 +142,7 @@ include(__DIR__ . '/../header.php');
 					Remember me on this computer
 				</div>
 				<div style="margin-right:10px;float:right;">
-					<input type="hidden" name="refurl" value="<?php echo $refUrl; ?>" />
+					<input type="hidden" name="refurl" value='<?php echo $refUrl; ?>' />
 					<input type="hidden" id="resetpwd" name="resetpwd" value="">
 					<input type="submit" value="Login" name="action">
 				</div>

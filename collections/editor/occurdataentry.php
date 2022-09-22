@@ -60,7 +60,7 @@ if($GLOBALS['SYMB_UID']){
     </script>
 	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20220915"></script>
 	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20220110"></script>
-	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210901"></script>
+	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210921"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");

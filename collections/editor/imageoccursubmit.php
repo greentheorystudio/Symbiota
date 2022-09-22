@@ -186,24 +186,6 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							<input id="county" name="county" type="text" value="<?php echo ($_POST['county'] ?? ''); ?>" />
 						</div> 
 					</div>
-					<div style="clear:both;margin:3px;">
-						<?php
-						if(isset($GLOBALS['TESSERACT_PATH']) && $GLOBALS['TESSERACT_PATH']){
-							?>
-							<div style="float:left;">
-								<input name="tessocr" type="checkbox" value=1 <?php echo (isset($_POST['tessocr'])?'checked':''); ?> />
-								OCR Text using Tesseract OCR engine
-							</div>
-							<?php
-						}
-						?>
-						<div style="float:left;margin:8px 0 0 20px;">(<a href="#" onclick="toggle('manualocr')">Manually add OCR</a>)</div>
-					</div>
-					<div id="manualocr" style="clear:both;display:none;margin:3px;">
-						<b>OCR Text</b><br/>
-						<textarea name="ocrblock" style="width:100%;height:100px;"></textarea><br/>
-						<b>Source:</b> <input type="text" name="ocrsource" value="" />
-					</div>
 				</fieldset>
 				<div style="margin:10px;clear:both;">
 					<input type="hidden" name="collid" value="<?php echo $collid; ?>" />

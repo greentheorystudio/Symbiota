@@ -120,7 +120,7 @@ class TaxonomyCleaner extends Manager{
                 if($manualCheck){
                     $thesLink = '';
                     if($isTaxonomyEditor){
-                        $thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/taxonomyloader.php\'); return false;" title="Open Thesaurus New Record Form"><i style="height:15px;width:15px;" class="far fa-edit"></i><b style="font-size:70%;">T</b></a>';
+                        $thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/index.php\'); return false;" title="Open New Taxon Form"><i style="height:15px;width:15px;" class="far fa-edit"></i><b style="font-size:70%;">T</b></a>';
                     }
                     echo '<li style="margin-left:15px;">Checking close matches in thesaurus'.$thesLink.'...</li>';
                     if($matchArr = $taxonHarvester->getCloseMatch($sciname)){

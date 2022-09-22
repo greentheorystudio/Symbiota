@@ -13,7 +13,7 @@ $formAction = array_key_exists('formaction',$_REQUEST)?$_REQUEST['formaction']:'
 
 $procManager = new SpecProcessorManager();
 $procManager->setCollId($collid);
-$tabIndex = 4;
+$tabIndex = 1;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){

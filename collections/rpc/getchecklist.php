@@ -14,7 +14,7 @@ $solrManager = new SOLRManager();
 $checklistManager = new OccurrenceChecklistManager();
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
     if($checklistManager->validateSearchTermsArr($stArr)){
         if($GLOBALS['SOLR_MODE']){
             $solrManager->setSearchTermsArr($stArr);
