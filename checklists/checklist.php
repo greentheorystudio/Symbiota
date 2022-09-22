@@ -283,14 +283,15 @@ if(!$printMode){
     include(__DIR__ . '/../header.php');
     echo '<div class="navpath">';
     if($pid){
-        echo '<a href="../index.php">Home</a> &gt; ';
+        echo '<a href="../index.php">Home</a> &gt;&gt; ';
         echo '<a href="'.$GLOBALS['CLIENT_ROOT'].'/projects/index.php?pid='.$pid.'">';
         echo $clManager->getProjName();
-        echo '</a> &gt; ';
+        echo '</a> &gt;&gt; ';
         echo '<b>'.$clManager->getClName().'</b>';
     }
     else{
         echo '<a href="../index.php">Home</a> &gt;&gt; ';
+        echo '<a href="index.php">Checklists</a> &gt;&gt; ';
         echo ' <b>'.$clManager->getClName().'</b>';
     }
     echo '</div>';
