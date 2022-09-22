@@ -87,13 +87,9 @@ function getSearchTermsArr(){
 function loadSearchTermsArrFromJson(stArrJson){
     const dateId = getDatestringIdentifier();
     const queryId = document.getElementById('queryId').value;
-    try{
-        const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
-        searchTermsArr[dateId][queryId] = JSON.parse(stArrJson);
-        localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
-    }catch (e){
-        return false;
-    }
+    const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
+    searchTermsArr[dateId][queryId] = JSON.parse(stArrJson.replaceAll('%squot;',"'"));
+    localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
 }
 
 function getSearchTermsArrKeyValue(key){

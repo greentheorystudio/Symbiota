@@ -56,7 +56,7 @@ $pManager = new ImageLibraryManager();
                     echo '</div>';
                 }
 
-                $obsList = $collList['obs'];
+                $obsList = array_key_exists('obs',$collList) ? $collList['obs'] : array();
                 if($obsList){
                     echo '<h2>Observations</h2>';
                     echo '<div style="margin-left:15px">';

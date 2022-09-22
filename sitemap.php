@@ -32,7 +32,7 @@ $smManager = new SiteMapManager();
                 }
                 ?>
 				<li>Data Publishing</li>
-                <li style="margin-left:15px"><a href="collections/datasets/rsshandler.php" target="_blank">RSS Feed for Natural History Collections and Observation Projects</a></li>
+                <li style="margin-left:15px"><a href="collections/datasets/rsshandler.php" target="_blank">Collection RSS Feed</a></li>
                 <li style="margin-left:15px"><a href="collections/datasets/datapublisher.php">Darwin Core Archives (DwC-A)</a></li>
                 <?php
                 if(file_exists('webservices/dwc/rss.xml')){
@@ -48,7 +48,7 @@ $smManager = new SiteMapManager();
 				<li><a href="imagelib/index.php">Image Library</a></li>
 				<li><a href="imagelib/search.php">Image Search</a></li>
 				<li><a href="imagelib/contributors.php">Image Contributors</a></li>
-				<li><a href="misc/usagepolicy.php">Usage Policy and Copyright Information</a></li>
+				<li><a href="misc/usagepolicy.php">Usage Policy</a></li>
 			</ul>
 
             <h3>Additional Resources</h3>
@@ -60,7 +60,7 @@ $smManager = new SiteMapManager();
                     <?php
                 }
                 ?>
-                <li><a href="taxa/admin/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
+                <li><a href="taxa/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
                 <li><a href="checklists/index.php">Checklists</a></li>
                 <li><a href="checklists/dynamicmap.php?interface=checklist">Dynamic Checklist</a></li>
                 <?php
@@ -103,7 +103,7 @@ $smManager = new SiteMapManager();
                             </li>
                             <li>
                                 <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collmetadata.php">
-                                    Create a New Collection or Observation Profile
+                                    Create New Collection
                                 </a>
                             </li>
                             <li>
@@ -127,23 +127,19 @@ $smManager = new SiteMapManager();
                             <?php
                             if($GLOBALS['IS_ADMIN']){
                                 ?>
-                                <li><a href="profile/usertaxonomymanager.php">Taxonomic Interest User Permissions</a></li>
+                                <li><a href="profile/usertaxonomymanager.php">Taxonomic Interest Permissions</a></li>
                                 <?php
                             }
                             if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
                                 ?>
-                                <li><a href="taxa/admin/taxonomydisplay.php">Edit Taxonomic Placement</a></li>
-                                <li><a href="taxa/admin/taxonomyloader.php">Add New Taxonomic Name</a></li>
-                                <li><a href="taxa/admin/batchloader.php">Batch Upload a Taxonomic Data File</a></li>
-                                <li><a href="taxa/admin/eolmapper.php">Encyclopedia of Life Linkage Manager</a></li>
+                                <li><a href="taxa/thesaurus/index.php">Taxonomic Thesaurus Manager</a></li>
+                                <li><a href="taxa/taxonomy/index.php">Taxonomy Editor</a></li>
                                 <?php
                             }
                             if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
                                 ?>
-                                <li><a href="taxa/admin/batchimageloader.php">Batch Upload Taxa Images</a></li>
-                                <li>To edit the synonyms, common names, description, or images for a taxon, click on the editing link located in the upper right of each
-                                    <a href="taxa/admin/tpeditor.php?taxon=">Taxon Profile page</a>
-                                </li>
+                                <li><a href="taxa/profile/tpeditor.php">Taxon Profile Manager</a></li>
+                                <li><a href="taxa/media/index.php">Taxa Media Batch Uploader</a></li>
                                 <?php
                             }
                             ?>

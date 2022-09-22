@@ -641,30 +641,12 @@ class ImageLocalProcessor {
 
 	private function createNewImage($sourcePathBase, $targetPath, $newWidth, $newHeight, $sourceWidth, $sourceHeight): bool
 	{
-		if($this->processUsingImageMagick) {
-			$status = $this->createNewImageImagick($sourcePathBase,$targetPath,$newWidth);
-		} 
-		elseif(function_exists('gd_info') && extension_loaded('gd')) {
+		if(function_exists('gd_info') && extension_loaded('gd')) {
 			$status = $this->createNewImageGD($sourcePathBase,$targetPath,$newWidth,$newHeight,$sourceWidth,$sourceHeight);
 		}
 		else{
 			$this->logOrEcho('FATAL ERROR: No appropriate image handler for image conversions',1);
 			exit('ABORT: No appropriate image handler for image conversions');
-		}
-		return $status;
-	}
-	
-	private function createNewImageImagick($sourceImg,$targetPath,$newWidth): bool
-	{
-		$status = false;
-		if($newWidth < 300){
-			system('convert '.$sourceImg.' -thumbnail '.$newWidth.'x'.($newWidth*1.5).' '.$targetPath, $retval);
-		}
-		else{
-			system('convert '.$sourceImg.' -resize '.$newWidth.'x'.($newWidth*1.5).($this->jpgQuality?' -quality '.$this->jpgQuality:'').' '.$targetPath, $retval);
-		}
-		if(file_exists($targetPath)){
-			$status = true;
 		}
 		return $status;
 	}
@@ -784,17 +766,11 @@ class ImageLocalProcessor {
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if(strcasecmp($r->url,$webUrl) === 0){
-					if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal URLs).',1);
-					}
 					if(!$this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
 						$this->logOrEcho('ERROR deleting image record #'.$r->imgid.' (equal URLs).',1);
 					}
 				}
 				elseif($this->imgExists === 2 && strcasecmp(basename($r->url),basename($webUrl)) === 0){
-					if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal basename).',1);
-					}
 					if($this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
 						$urlPath = parse_url($r->url, PHP_URL_PATH);
 						if($urlPath && strpos($urlPath, $this->imgUrlBase) === 0){

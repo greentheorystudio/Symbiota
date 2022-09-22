@@ -239,7 +239,7 @@ if($GLOBALS['SYMB_UID']){
                                 </li>
                                 <li>
                                     <a href="../upload/index.php?collid=<?php echo $collid; ?>">
-                                        Import/Update Occurrence Records and Images
+                                        Occurrence Data Upload Module
                                     </a>
                                 </li>
                                 <li>

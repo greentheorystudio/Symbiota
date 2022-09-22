@@ -108,7 +108,6 @@ $headerMapBase = array(
     '`month`'=>'Month',
     'municipality'=>'Municipality',
     'occurrenceremarks'=>'Notes (Occurrence Remarks)',
-    'ocrfragment'=>'OCR Fragment',
     'othercatalognumbers'=>'Other Catalog Numbers',
     'ownerinstitutioncode'=>'Owner Code',
     'preparations'=>'Preparations',
@@ -212,7 +211,7 @@ else{
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210901"></script>
+	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210921"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;border:0;">
 	<div>

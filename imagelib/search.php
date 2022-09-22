@@ -24,7 +24,7 @@ $taxaList = array();
 $stArr = array();
 $validStArr = false;
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
     if($collManager->validateSearchTermsArr($stArr)){
         $validStArr = true;
     }
@@ -42,7 +42,7 @@ if($stArrJson){
 	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
 	<script src="../js/images.index.js?ver=20210810" type="text/javascript"></script>
-    <script src="../js/search.term.manager.js?ver=20220430" type="text/javascript"></script>
+    <script src="../js/search.term.manager.js?ver=20220921" type="text/javascript"></script>
 	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
         $('html').hide();

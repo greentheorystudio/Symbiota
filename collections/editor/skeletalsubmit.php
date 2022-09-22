@@ -136,7 +136,7 @@ if($collid){
 							if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['Taxonomy'])){ 
 								?>
 								<div style="float:left;padding:2px 3px;">
-									<a href="../../taxa/admin/taxonomyloader.php" target="_blank">
+									<a href="../../taxa/taxonomy/index.php" target="_blank">
 										<i style="height:15px;width:15px;color:green;" title="Add new name to taxonomic thesaurus" class="fas fa-plus"></i>
 									</a>
 								</div>
