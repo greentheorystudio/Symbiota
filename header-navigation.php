@@ -66,6 +66,11 @@
         </li>
         <li>
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Total_Biodiv.php" >Biodiversity</a>
+            <ul>
+                <li>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/benthic_story.php" >Benthic Monitoring in the IRL</a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="#" >Data Explorer</a>

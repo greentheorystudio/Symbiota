@@ -4,14 +4,29 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title>Biodiversity</title>
+    <title>Silent Sentinels</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet"/>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet"/>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css" type="text/css" rel="stylesheet"/>
     <style>
         .hero-container {
-            background-image: url("../content/imglib/static/15_SpradleyM1.jpg");
+            background-image: url("../content/imglib/static/SLRiver_sunrise.jpg");
             background-position: center bottom;
+        }
+
+        .bottom-hero-container {
+            background-image: url("../content/imglib/static/IMG_0425.JPG");
+            background-position: center bottom;
+            width: 100%;
+            height: 1000px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+            margin-top:100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #innertext{
@@ -45,16 +60,17 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
         ?>
     </div>
     <div class="page-title-container">
-        <h1>Biodiversity</h1>
+        <h1>Silent Sentinels</h1>
     </div>
     <div class="top-text-container">
         <h3>
-            The Indian River Lagoon’s diverse montage of habitats creates a broad variety of opportunities for life in the estuary.
-            Thousands of species of plants, birds, fish and mammals call the lagoon home.
+            As signals of change in Florida’s Indian River Lagoon, tiny bottom-dwelling creatures known as benthic infauna
+            punch above their weight.
         </h3>
     </div>
     <div class="photo-credit-container">
-        Photo credit: M. Spradley
+        The St. Lucie River at sunrise. The river is a major tributary to the Indian River Lagoon, and its freshwater carries
+        nutrients as well as other pollutants from more densely populated areas of its drainage basin.
     </div>
 </div>
 <div id="bodyContainer">
@@ -69,27 +85,9 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                         </a>
                     </li>
                     <li>
-                        <a href="#location-section" data-number="2">
+                        <a href="#monitoring-section" data-number="2">
                             <span class="cd-dot"></span>
-                            <span class="cd-label">A Unique Location</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#what-is-section" data-number="3">
-                            <span class="cd-dot"></span>
-                            <span class="cd-label">What is Biodiversity?</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#threats-section" data-number="4">
-                            <span class="cd-dot"></span>
-                            <span class="cd-label">Threats to Biodiversity</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#further-reading-section" data-number="5">
-                            <span class="cd-dot"></span>
-                            <span class="cd-label">Further Reading</span>
+                            <span class="cd-label">Monitoring the Invisible</span>
                         </a>
                     </li>
                 </ul>
@@ -99,151 +97,192 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
     <div id="innertext">
         <div id="intro-section" class="cd-section">
             <p>
-                The IRL Species Inventory is an effort to document organisms that have been present in the Lagoon at some point in time –
-                but is certainly an incomplete record of the total diversity in the Indian River Lagoon. However, to date, the Inventory
-                contains documentation for 4,460 individual species, including an estimated 2,100 species of plants and more than 2,200
-                animal species.
+                FORT PIERCE, FLORIDA -- March on the Indian River Lagoon in south-central Florida is a lovely time of year.
+                The sun isn’t yet too hot. Aquamarine water glitters in a ruffling breeze under a sky propped up by tropical
+                columns of cloud. Dolphins and turtles pop up regularly in the inlet leading to the sea.
+            </p>
+            <p>
+                On a 70-degree spring morning, three Smithsonian biologists head out on a flat-bottomed boat loaded with buckets,
+                sample jars and heavy metal tools. As their colleagues have done quarterly since 2005, they visit 15 sites
+                around the central part of the 156-mile-long estuary to collect samples.
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/old_IRL_bidiversity_pie_chart.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/msites_map.jpg" />
                 </figure>
             </div>
             <p>
-                The original IRL Species Inventory, first compiled in 1995, listed a total of 2,493 different species of plants, animals and
-                protists. Of these, animals comprised the greatest proportion of species in the inventory (71.4 percent), with 1,779 species
-                grouped into 20 phyla. Plants were grouped into four phyla, consisting of 289 different species. Protista (17 percent) consisted
-                of 425 species in four phyla. No data are available for Kingdom Monera (bacteria).
-            </p>
-            <p>
-                Sampling of some taxa are more complete and thoroughly documented than others, including fishes, birds, mollusks, chrysophytes,
-                dinoflagellates, rhizopods, ectoprocts, sipunculids, echinoderms, and mammals. Other taxonomic groups, including vascular plants,
-                amphibians and reptiles, and marine macroalgae are relatively complete but could benefit from increased sampling over wider areas
-                of the lagoon. Other taxa are, at the very best, partial lists, for example sponges and chaetognaths.
-            </p>
-            <p>
-                Ongoing research continues to discover and catalog numerous species of invertebrates, crustaceans, microscopic diatoms, sponges
-                and algae.
-            </p>
-        </div>
-        <div id="location-section" class="cd-section">
-            <h4>A Unique Location</h4>
-            <p>
-                The IRL owes its incredible biodiversity to two main factors: its unique geographical position, and its diverse
-                montage of habitat types.
-            </p>
-            <p>
-                East-central Florida is located in the transition area between the temperate Carolinian climate zone to the
-                north, and the subtropical Caribbean climate zone to the south. Temperate species of plants and animals exist
-                in the Indian River Lagoon at the southernmost extent of their ranges, while subtropical and tropical species
-                exist at their northernmost extents. Generally, the area around Cape Canaveral in northern Brevard County is
-                where vegetation patterns begin to shift from primarily warm-temperate shrubs and trees, to more subtropical
-                and tropical varieties.
-            </p>
-            <p>
-                Mangroves and salt marshes provide ample breeding, nursery and feeding grounds for a variety of species, and
-                the lagoon’s ocean beaches attract some of the highest numbers of nesting sea turtles in the Western Hemisphere.
-                The IRL also lies within the Atlantic Flyway and is an important stopover for many species of seasonally migratory
-                birds.
+                The sites were selected to represent a range of conditions in the lagoon, from fairly pristine to heavily impacted.
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
-                <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/13_MillerC1.jpg" />
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/17EbaughT1.jpg" />
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Caretta_caretta_Sabrina_Bethurum.jpg" />
-                    <figcaption style="width:800px;">
-                        River otters, pileated woodpeckers and loggerhead turtles all rely on the IRL’s diversity of habitats
-                        for their life cycles. <i>Credit: C. Miller, T. Ebaugh, S. Bethurum </i>
-                    </figcaption>
+                <figure style="margin:0;display:flex;gap:20px;">
+                    <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/pristine.jpg" />
+                    <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impacted.jpg" />
                 </figure>
             </div>
             <p>
-                Iconic residents of the lagoon include the Atlantic bottlenose dolphin (<i>Tursiops truncatus</i>) and manatee
-                (<i>Trichechus manatus latirostris</i>). An estimated one-third of the U.S. manatee population uses the lagoon, and
-                an estimated 300 dolphins are believed to live permanently in the IRL.
-            </p>
-            <p>
-                The lagoon’s watershed is also home to 53 species of animals that are classified as either threatened or endangered.
-                Johnson’s seagrass (<i>Halophila johnsonii</i>) is one IRL resident that is found nowhere else in the world; other rare
-                species include the four-petaled pawpaw (<i>Asimina tetramera</i>), smalltooth sawfish (<i>Pristis pectinata</i>), green and
-                leatherback turtles (<i>Chelonia mydas</i> and <i>Dermochelys coriacea</i>) and Kirtland’s warbler (<i>Setophaga kirtlandii</i>).
-            </p>
-        </div>
-        <div id="what-is-section" class="cd-section">
-            <h4>What is Biodiversity?</h4>
-            <p>
-                Biodiversity may be defined as the measure of how healthy an ecosystem is. Healthy ecosystems support high
-                biological diversity, while stressed or highly disturbed ecosystems do not. Biodiversity encompasses not
-                only diversity of species and diverse gene pools, but also diverse habitat and ecosystem types.
+                To most eyes, the samples the scientists bring back from these sites resemble a young child’s collection of
+                summer flotsam: jars full of bright pink fluid and tiny seashells; some with only jumble of brownish wrack;
+                others crammed full of watery, silty mud.
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/06RaulersonD1.jpg" />
-                    <figcaption style="width:500px;">
-                        Land crabs on the march. <i>Credit: D. Raulerson</i>
+                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/jess_with_jars.jpg" />
+                    <figcaption style="width:600px;">
+                        SMS technician Jess Glanz examines a sample jar from a collection site on the Indian River Lagoon.
                     </figcaption>
                 </figure>
             </div>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <h2 style="width:80%;">This layer, known as the benthos (Greek: “depth of the sea”), is as important to life in the water as
+                    soils are to life on land.</h2>
+            </div>
             <p>
-                <b>Genetic Diversity:</b> Populations with greater genetic diversity are far better equipped to cope with environmental change, and
-                are able to reproduce more successfully than populations with low genetic diversity. Populations with low
-                genetic diversity can become so well adapted to local conditions that any environmental disturbance may be
-                enough to reduce their numbers dramatically, or even destroy them entirely.
-            </p>
-            <p>
-                <b>Species Richness:</b> Another measure of biodiversity is <i>species diversity</i>. One measure of this is <i>richness</i>, the
-                number of species which occur within a particular taxonomic level (species, genus, family) in a geographic area. In marine
-                ecosystems, species diversity tends to vary widely depending upon latitudinal and longitudinal location. Tropical areas
-                tend to have higher species richness, for example. The lowest species diversity is found in the eastern Atlantic.
-            </p>
-            <p>
-                <b>Ecosystem Diversity:</b> Ecosystems are the collection of all the plants and animals within a particular area, each
-                differing in species composition, physical structure and function. Ecosystem diversity refers to the number of ecosystems in
-                a geographic area; the Indian River Lagoon is an example of a collection of ecosystems, each of them highly diverse.
-            </p>
-        </div>
-        <div id="threats-section" class="cd-section">
-            <h4>Threats to Biodiversity</h4>
-            <p>
-                The factors which threaten biodiversity in estuaries and in the oceans are generally the same as those which
-                affect biodiversity in terrestrial systems: overexploitation, physical alteration of habitat areas, alien species
-                introductions, and changes in atmospheric composition.
+                Where these samples come from are the habitats at the bottom of the lagoon. This layer, known as the benthos
+                (Greek: “depth of the sea”), is as important to life in the water as soils are to life on land. The animals
+                that live there – many of them microscopic – wear many hats.
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Fort_Pierce_Inlet_Daniel_Piraino_Flickr.jpg" />
-                    <figcaption style="width:500px;">
-                        Fort Pierce from the air. <i>Credit: D. Piraino, Flickr</i>
+                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/infauna.jpg" />
+                    <figcaption style="width:600px;">
+                        A sampling of benthic infauna.
                     </figcaption>
                 </figure>
             </div>
             <p>
-                Many threats to the survival of life in the oceans can originate on land. Examples of threats include siltation,
-                nutrient loading, and pollution by toxic chemicals. The continuous growth of human development also threatens
-                coastal and estuarine ecosystems. Habitat degradation which occurs as the result of these problems inevitably
-                leads to loss of species from an ecosystem, and thus, a loss of biodiversity.
+                They serve as food for many animals, from tiny fish to large, valuable commercial and sport species, including
+                mullet and red drum.
             </p>
+            <p>
+                They act as filters, siphoning vast quantities of water and capturing suspended nutrients and other particles –
+                which are then sequestered in the sediments below.
+            </p>
+            <p>
+                They also act as silent sentinels of change, largely invisible indicators of shifts across a body of water
+                that serves as the foundation of life and livelihoods for a huge swath of Florida’s Atlantic coast.
+            </p>
+            <p>
+                Finally, they are ubiquitous. Literally, everywhere: crowded and scattered throughout the sediments of the
+                bottom of the lagoon.
+            </p>
+            <p>
+                So, the jars and buckets of mud and silt and crustaceans and worms aboard the Smithsonian research boat are
+                more important than they might first seem. Like many small things collected over time, their sums and differences
+                begin to tell a story – one that others can build on in the efforts to restore a lagoon that has begun to
+                falter under the weight of human influence.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure>
+                    <img style="border:0;width:100%;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Team_BEL.jpg" />
+                </figure>
+            </div>
         </div>
-        <div id="further-reading-section" class="cd-section">
-            <h4>Further Reading</h4>
-            <ul class="further-reading-list">
-                <li>
-                    Norse, Elliot A. 1993. Global Marine Biological Diversity: A Strategy for Building Conservation Into Decision Making.
-                    Island Press, Washington, D.C. 384 pp.
-                </li>
-                <li>
-                    Swain, H., P. A. Schamlzer, D. R. Breininger, K. Root, S. Boyle, S. Bergen, S. MacCaffree. 1995. Appendix B Biological
-                    Consultant's Report. Brevard County Scrub Conservation and Development Plan. Dept. Bio. Sci., Florida Institute of
-                    Technology., Melbourne, FL.
-                </li>
-                <li>
-                    Thorne-Miller, Boyce, and J. Catena. 1991. The Living Ocean: Understanding and Protecting Marine Biodiversity.
-                    Island press, Washington D.C. 180 pp.
-                </li>
-            </ul>
+        <div id="monitoring-section" class="cd-section">
+            <h4>Monitoring the Invisible</h4>
+            <p>
+                The Indian River Lagoon’s range of temperate-to-subtropical climates make for enticing environs for many plants
+                and animals. More than 4,000 species of flora and fauna call the lagoon home. Set foot anywhere on the bottom
+                of the lagoon, however, and you stand atop an even greater diversity of life. In some areas, a size 10.5
+                footprint can contain as many as 8,600 individual creatures.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/odonnell_garret_fabricinuda_trilobata.jpg" />
+                    <figcaption style="width:500px;">
+                        Thousands of these <i>Fabricinuda trilobata</i> worms were found in a sample of Indian River Lagoon sediment.
+                    </figcaption>
+                </figure>
+            </div>
+            <p>
+                But great weather and even better fishing mean people love it here too. In the 1950s, just 45,000 people lived
+                in the five counties around the lagoon. By the 2020s, the region’s population exploded to over a million people,
+                and remains one of the fastest growing areas of the United States. Like other coastal areas around the world,
+                massive human influxes have had a deep impact on the ecological function of the entire estuary.
+            </p>
+            <p>
+                People dug canals to drain the area’s abundant wetlands. Water that once flowed south from nearby Lake Okeechobee
+                was redirected to flow out east through the Indian River Lagoon and west through Fort Myers toward Sanibel Island.
+                Huge citrus, sugar and cattle operations flourished.
+            </p>
+            <div style="display:flex;justify-content: center;align-content: center;">
+                <figure style="margin:0;display:flex;flex-direction:column;justify-content: center;align-content: center;">
+                    <div style="width:100%;display:flex;justify-content: center;align-content: center;gap:30px;">
+                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap1-historic-trim.jpg" />
+                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap2-current-trim.jpg" />
+                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap3-cerp-trim.jpg" />
+                    </div>
+                    <figcaption style="width:80%;margin: 0 auto;">
+                        These maps show the historic, current and projected future water flow in southern Florida. A decades-long
+                        plan to restore water flow south through the Everglades is underway. <i>(Graphics: National Park Service)</i>
+                    </figcaption>
+                </figure>
+            </div>
+            <p>
+                During exceptionally rainy years, freshwater releases from Lake O carry nutrient-laden waters, which drive harmful
+                algal blooms, and dilute the lagoon’s salinity. Septic tanks are common for handling residential wastes, and many
+                systems leak. Pollution, erratic salinity and oxygen starvation from algae blooms wreak havoc not only on fish,
+                but also on oysters, seagrasses and benthic infauna – the filters, stabilizers and foundation of the lagoon’s
+                ecosystem.
+            </p>
+            <p>
+                Though the lagoon has proven to be resilient, effects pile up over time—both negative impacts as well as positive
+                gains from restoration efforts. Often, these trends can only be detected by long-term data collection like
+                the Smithsonian’s benthic infaunal monitoring program, which was launched in 2005 as a component of the hugely
+                ambitious <a href="https://storymaps.arcgis.com/stories/dfd3e4261602415683015a919dfbafec" target="_blank" >Comprehensive Everglades Restoration Program</a>.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <video width="900" controls>
+                        <source src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/M09_Grab1_20220105_Trim.mp4" type="video/mp4">
+                    </video>
+                    <figcaption style="width:900px;text-align: center;margin-top:10px;font-style: italic;">
+                        Scientists use tools like the ponar grab, descending here, to collect sediments from the bottom of the lagoon.
+                    </figcaption>
+                </figure>
+            </div>
+            <p>
+                A goal of the monitoring program is to reveal connections and trends between the lagoon’s health, and what’s
+                living in the benthos at a given moment in time. Long-term, benthic infauna could also potentially be used
+                to gauge several lagoon health indicators.
+            </p>
+            <p style="padding-left:50px;">
+                <b>Effectiveness of restoration efforts.</b> The proverbial canary in the coal mine is a bioindicator species,
+                which forewarns of coming trouble—or signals that all is well. The presence or absence of a particular species
+                of clam, worm or other bottom-dwelling invertebrate in an area of the lagoon could be used to help diagnose
+                the effectiveness of restoration efforts, for example, or connect the effects of certain water quality trends.
+            </p>
+            <p style="padding-left:50px;">
+                <b>Biodiversity.</b> Nothing in the lagoon could exist without the benthic community, yet this area has the
+                largest gaps in scientific knowledge about biodiversity in the lagoon. Benthic monitoring and analysis help
+                reveal a more complete picture of biodiversity in the Indian River Lagoon. In the last several years, advanced
+                genetic techniques alone have uncovered over 1,000 previously unknown species—but their roles in the ecosystem
+                remain unclear.
+            </p>
+            <p style="padding-left:50px;">
+                <b>Lagoon health report card.</b> One goal of the benthic monitoring program is to develop an index with local data
+                to show local conditions, graded like a report card.
+            </p>
+            <p>
+                By connecting changes in benthic communities to turning-point events in the lagoon, both natural and human-made,
+                the monitoring program is the kind of baseline scientific research necessary for understanding how the lagoon
+                ecosystem works—and contributes to the greater roadmap for restoration underway across this jewel of coastal
+                Atlantic Florida.
+            </p>
         </div>
     </div>
 </div>
+<div class="bottom-hero-container">
+    <div style="width: 70%;padding: 0 20px;background-color: rgba(226, 232, 236, 0.58);">
+        <h3 style="display:flex;align-content: center;flex-direction:column;justify-content: center;align-items:center;">
+            <i>“It is a wonderful river… immensely deep and very fine sweet water. The beauties of nature are here very manifest, in fact it is a wonderland.”</i><br />
+            –Dr. Herman Herold, 1884, <i>Logbook of Trip to Jupiter Inlet, Transcript</i>
+        </h3>
+    </div>
+</div>
+<p style="padding-left:20px;">
+    <i>Story published September 2022</i>
+</p>
 <?php
 include(__DIR__ . '/../footer.php');
 ?>
