@@ -71,28 +71,30 @@ class ProfileManager extends Manager{
             $result = $this->conn->query($this->authSql);
             if($row = $result->fetch_object()){
                 $this->uid = $row->uid;
-                $this->validated = $row->validated ? (int)$row->validated : 0;
-                $this->displayName = $row->firstname;
-                if(strlen($this->displayName) > 15) {
-                    $this->displayName = $this->userName;
-                }
-                if(strlen($this->displayName) > 15) {
-                    $this->displayName = substr($this->displayName, 0, 10) . '...';
-                }
+                if($this->uid){
+                    $this->validated = $row->validated ? (int)$row->validated : 0;
+                    $this->displayName = $row->firstname;
+                    if(strlen($this->displayName) > 15) {
+                        $this->displayName = $this->userName;
+                    }
+                    if(strlen($this->displayName) > 15) {
+                        $this->displayName = substr($this->displayName, 0, 10) . '...';
+                    }
 
-                $authStatus = true;
-                $this->reset();
-                $this->setUserRights();
-                $this->setUserParams();
-                if($this->rememberMe){
-                    $this->setTokenCookie();
-                }
+                    $authStatus = true;
+                    $this->reset();
+                    $this->setUserRights();
+                    $this->setUserParams();
+                    if($this->rememberMe){
+                        $this->setTokenCookie();
+                    }
 
-                $connection = new DbConnection();
-                $conn = $connection->getConnection();
-                $sql = 'UPDATE users SET lastlogindate = NOW() WHERE (username = "'.$this->userName.'")';
-                $conn->query($sql);
-                $conn->close();
+                    $connection = new DbConnection();
+                    $conn = $connection->getConnection();
+                    $sql = 'UPDATE users SET lastlogindate = NOW() WHERE (username = "'.$this->userName.'")';
+                    $conn->query($sql);
+                    $conn->close();
+                }
             }
         }
         return $authStatus;

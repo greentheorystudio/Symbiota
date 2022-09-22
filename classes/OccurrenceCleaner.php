@@ -51,7 +51,7 @@ class OccurrenceCleaner extends Manager{
 			$sql = 'SELECT o.catalognumber AS dupid, o.occid, o.catalognumber, o.dbpk, o.othercatalognumbers, o.family, o.sciname, '.
 				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
 				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified '.
-				'FROM omoccurrences o '.
+				'FROM omoccurrences AS o '.
 				'WHERE o.collid = '.$this->collid.' AND o.catalognumber IN("'.implode('","',array_keys($dupArr)).'") '.
 				'ORDER BY o.catalognumber';
 		}
@@ -59,7 +59,7 @@ class OccurrenceCleaner extends Manager{
 			$sql = 'SELECT o.otherCatalogNumbers AS dupid, o.occid, o.catalognumber, o.dbpk, o.othercatalognumbers, o.family, o.sciname, '.
 				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
 				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified '.
-				'FROM omoccurrences o '.
+				'FROM omoccurrences AS o '.
 				'WHERE o.collid = '.$this->collid.' AND o.otherCatalogNumbers IN("'.implode('","',array_keys($dupArr)).'") '.
 				'ORDER BY o.otherCatalogNumbers';
 		}
@@ -73,21 +73,21 @@ class OccurrenceCleaner extends Manager{
 		$retArr = array();
 		if($this->obsUid){
 			$sql = 'SELECT o.occid, o.eventdate, recordedby, o.recordnumber '.
-				'FROM omoccurrences o INNER JOIN '.
+				'FROM omoccurrences AS o INNER JOIN '.
 				'(SELECT eventdate, recordnumber FROM omoccurrences GROUP BY eventdate, recordnumber, collid, observeruid '.
 				'HAVING Count(*)>1 AND collid = '.$this->collid.' AND observeruid = '.$this->obsUid.
 				' AND eventdate IS NOT NULL AND recordnumber IS NOT NULL '.
-				'AND recordnumber NOT IN("sn","s.n.","Not Provided","unknown")) intab '.
+				'AND recordnumber NOT IN("sn","s.n.","Not Provided","unknown")) AS intab '.
 				'ON o.eventdate = intab.eventdate AND o.recordnumber = intab.recordnumber '.
 				'WHERE collid = '.$this->collid.' AND observeruid = '.$this->obsUid.' ';
 		}
 		else{
 			$sql = 'SELECT o.occid, o.eventdate, recordedby, o.recordnumber '.
-				'FROM omoccurrences o INNER JOIN '.
+				'FROM omoccurrences AS o INNER JOIN '.
 				'(SELECT eventdate, recordnumber FROM omoccurrences GROUP BY eventdate, recordnumber, collid '.
 				'HAVING Count(*)>1 AND collid = '.$this->collid.
 				' AND eventdate IS NOT NULL AND recordnumber IS NOT NULL '.
-				'AND recordnumber NOT IN("sn","s.n.","Not Provided","unknown")) intab '.
+				'AND recordnumber NOT IN("sn","s.n.","Not Provided","unknown")) AS intab '.
 				'ON o.eventdate = intab.eventdate AND o.recordnumber = intab.recordnumber '.
 				'WHERE collid = '.$this->collid.' ';
 		}
@@ -107,7 +107,7 @@ class OccurrenceCleaner extends Manager{
 						if($cnt >= $start){
 							$sql = 'SELECT '.$cnt.' AS dupid, o.occid, o.dbpk, o.catalognumber, o.othercatalognumbers, o.othercatalognumbers, o.family, o.sciname, o.recordedby, o.recordnumber, '.
 								'o.associatedcollectors, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.municipality, o.locality, datelastmodified '.
-								'FROM omoccurrences o '.
+								'FROM omoccurrences AS o '.
 								'WHERE occid IN('.implode(',',$dupArr).') ';
 							//echo $sql;
 							$dupArr = $this->getDuplicates($sql);
@@ -171,7 +171,7 @@ class OccurrenceCleaner extends Manager{
 	public function hasDuplicateClusters(): bool
 	{
 		$retStatus = false;
-		$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurduplicatelink d ON o.occid = d.occid WHERE (o.collid = '.$this->collid.') LIMIT 1';
+		$sql = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN omoccurduplicatelink AS d ON o.occid = d.occid WHERE (o.collid = '.$this->collid.') LIMIT 1';
 		$rs = $this->conn->query($sql);
 		if($rs->num_rows) {
 			$retStatus = true;
@@ -240,8 +240,8 @@ class OccurrenceCleaner extends Manager{
     {
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT o.country) AS cnt '.
-			'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
-			'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND l.countryid IS NULL ';
+			'FROM omoccurrences AS o LEFT JOIN lkupcountry AS l ON o.country = l.countryname '.
+			'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND ISNULL(l.countryid) ';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$retCnt = $r->cnt;
@@ -254,8 +254,8 @@ class OccurrenceCleaner extends Manager{
 	{
 		$retArr = array();
 		$sql = 'SELECT country, count(o.occid) as cnt '.
-			'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
-			'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND l.countryid IS NULL '.
+			'FROM omoccurrences AS o LEFT JOIN lkupcountry AS l ON o.country = l.countryname '.
+			'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND ISNULL(l.countryid) '.
 			'GROUP BY o.country ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -271,7 +271,7 @@ class OccurrenceCleaner extends Manager{
 	{
 		$retArr = array();
 		if($includeStates){
-			$sql = 'SELECT c.countryname, s.statename FROM lkupcountry c LEFT JOIN lkupstateprovince s ON c.countryid = s.countryid ';
+			$sql = 'SELECT c.countryname, s.statename FROM lkupcountry AS c LEFT JOIN lkupstateprovince AS s ON c.countryid = s.countryid ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->countryname][] = $r->statename;
@@ -297,7 +297,7 @@ class OccurrenceCleaner extends Manager{
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT stateprovince) AS cnt '.
 			'FROM omoccurrences '.
-			'WHERE (collid = '.$this->collid.') AND (country IS NULL) AND (stateprovince IS NOT NULL)';
+			'WHERE collid = '.$this->collid.' AND ISNULL(country) AND stateprovince IS NOT NULL ';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$retCnt = $r->cnt;
@@ -311,7 +311,7 @@ class OccurrenceCleaner extends Manager{
 		$retArr = array();
 		$sql = 'SELECT stateprovince, COUNT(occid) AS cnt '.
 			'FROM omoccurrences '.
-			'WHERE (collid = '.$this->collid.') AND (country IS NULL) AND (stateprovince IS NOT NULL) '.
+			'WHERE collid = '.$this->collid.' AND ISNULL(country IS NULL) AND stateprovince IS NOT NULL '.
 			'GROUP BY stateprovince';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -326,7 +326,7 @@ class OccurrenceCleaner extends Manager{
 	public function getBadStateCount($country = null): array
     {
 		$retCnt = array();
-		$sql = 'SELECT COUNT(DISTINCT o.stateprovince) as cnt '.$this->getBadStateSqlBase();
+		$sql = 'SELECT COUNT(DISTINCT o.stateprovince) AS cnt '.$this->getBadStateSqlBase();
 		if($country) {
 			$sql .= 'AND o.country = "' . Sanitizer::cleanInStr($this->conn,$country) . '" ';
 		}
@@ -343,7 +343,7 @@ class OccurrenceCleaner extends Manager{
 		$retArr = array();
 		$sqlFrag = $this->getBadStateSqlBase();
 		if($sqlFrag){
-			$sql = 'SELECT o.country, o.stateprovince, count(DISTINCT o.occid) as cnt '.
+			$sql = 'SELECT o.country, o.stateprovince, COUNT(DISTINCT o.occid) AS cnt '.
 				$this->getBadStateSqlBase().
 				'GROUP BY o.stateprovince ';
 			$rs = $this->conn->query($sql);
@@ -366,7 +366,7 @@ class OccurrenceCleaner extends Manager{
 	{
 		$retStr = '';
 		$countryArr = array();
-		$sql = 'SELECT DISTINCT c.countryname FROM lkupcountry c INNER JOIN lkupstateprovince s ON c.countryid = s.countryid ';
+		$sql = 'SELECT DISTINCT c.countryname FROM lkupcountry AS c INNER JOIN lkupstateprovince AS s ON c.countryid = s.countryid ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$countryArr[] = $r->countryname;
@@ -374,8 +374,8 @@ class OccurrenceCleaner extends Manager{
 		$rs->free();
 
 		if($countryArr){
-			$retStr = 'FROM omoccurrences o LEFT JOIN lkupstateprovince l ON o.stateprovince = l.statename '.
-				'WHERE (o.country IN("'.implode('","', $countryArr).'")) AND (o.stateprovince IS NOT NULL) AND (o.collid = '.$this->collid.') AND (l.stateid IS NULL) ';
+			$retStr = 'FROM omoccurrences AS o LEFT JOIN lkupstateprovince AS l ON o.stateprovince = l.statename '.
+				'WHERE (o.country IN("'.implode('","', $countryArr).'")) AND (o.stateprovince IS NOT NULL) AND (o.collid = '.$this->collid.') AND ISNULL(l.stateid) ';
 		}
 
 		return $retStr;
@@ -386,8 +386,8 @@ class OccurrenceCleaner extends Manager{
 		$retArr = array();
 		if($includeCounties){
 			$sql = 'SELECT c.countryname, s.statename, co.countyname '.
-				'FROM lkupstateprovince s INNER JOIN lkupcountry c ON s.countryid = c.countryid '.
-				'LEFT JOIN lkupcounty co ON s.stateid = co.stateid ';
+				'FROM lkupstateprovince AS s INNER JOIN lkupcountry AS c ON s.countryid = c.countryid '.
+				'LEFT JOIN lkupcounty AS co ON s.stateid = co.stateid ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[strtoupper($r->countryname)][ucwords(strtolower($r->statename))][] = str_replace(array(' county',' co.',' co'),'',strtolower($r->countyname));
@@ -396,7 +396,7 @@ class OccurrenceCleaner extends Manager{
 		}
 		else{
 			$sql = 'SELECT c.countryname, s.statename '.
-				'FROM lkupstateprovince s INNER JOIN lkupcountry c ON s.countryid = c.countryid ';
+				'FROM lkupstateprovince AS s INNER JOIN lkupcountry AS c ON s.countryid = c.countryid ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->countryname][] = $r->statename;
@@ -439,13 +439,13 @@ class OccurrenceCleaner extends Manager{
 	private function getNullStateNotCountySqlFrag(): string
 	{
 		return 'FROM omoccurrences '.
-			'WHERE (collid = '.$this->collid.') AND (stateprovince IS NULL) AND (county IS NOT NULL) AND (country IS NOT NULL) ';
+			'WHERE (collid = '.$this->collid.') AND ISNULL(stateprovince) AND (county IS NOT NULL) AND (country IS NOT NULL) ';
 	}
 
 	public function getBadCountyCount($state = null): array
     {
 		$retCnt = array();
-		$sql = 'SELECT COUNT(DISTINCT o.county) as cnt '.$this->getBadCountySqlFrag();
+		$sql = 'SELECT COUNT(DISTINCT o.county) AS cnt '.$this->getBadCountySqlFrag();
 		if($state) {
 			$sql .= 'AND o.stateprovince = "' . Sanitizer::cleanInStr($this->conn,$state) . '" ';
 		}
@@ -460,7 +460,7 @@ class OccurrenceCleaner extends Manager{
 	public function getBadCountyArr(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT o.country, o.stateprovince, o.county, count(o.occid) as cnt '.$this->getBadCountySqlFrag().'GROUP BY o.country, o.stateprovince, o.county ';
+		$sql = 'SELECT o.country, o.stateprovince, o.county, COUNT(o.occid) AS cnt '.$this->getBadCountySqlFrag().'GROUP BY o.country, o.stateprovince, o.county ';
 		//echo $sql; exit;
 		$rs = $this->conn->query($sql);
 		$cnt = 0;
@@ -478,16 +478,16 @@ class OccurrenceCleaner extends Manager{
 		$retStr = '';
 		$stateyArr = array();
 		$sql = 'SELECT DISTINCT s.statename '.
-			'FROM lkupstateprovince s INNER JOIN lkupcounty co ON s.stateid = co.stateid ';
+			'FROM lkupstateprovince AS s INNER JOIN lkupcounty AS co ON s.stateid = co.stateid ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$stateyArr[] = $r->statename;
 		}
 		$rs->free();
 		if($stateyArr){
-			$retStr = 'FROM omoccurrences o LEFT JOIN lkupcounty l ON o.county = l.countyname '.
+			$retStr = 'FROM omoccurrences AS o LEFT JOIN lkupcounty AS l ON o.county = l.countyname '.
 			'WHERE (o.county IS NOT NULL) AND (o.country = "USA") AND (o.stateprovince IN("'.implode('","', $stateyArr).'")) '.
-			'AND (o.collid = '.$this->collid.') AND (l.countyid IS NULL) ';
+			'AND (o.collid = '.$this->collid.') AND ISNULL(l.countyid) ';
 		}
 		return $retStr;
 	}
@@ -496,7 +496,7 @@ class OccurrenceCleaner extends Manager{
 	{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT statename, REPLACE(countyname," County","") AS countyname '.
-			'FROM lkupcounty c INNER JOIN lkupstateprovince s ON c.stateid = s.stateid '.
+			'FROM lkupcounty AS c INNER JOIN lkupstateprovince AS s ON c.stateid = s.stateid '.
 			'ORDER BY c.countyname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -541,55 +541,50 @@ class OccurrenceCleaner extends Manager{
 	private function getNullCountyNotLocalitySqlFrag(): string
 	{
 		return 'FROM omoccurrences '.
-			'WHERE (collid = '.$this->collid.') AND (county IS NULL) AND (locality IS NOT NULL) '.
+			'WHERE (collid = '.$this->collid.') AND ISNULL(county) AND (locality IS NOT NULL) '.
 			'AND country IN("USA","United States") AND (stateprovince IS NOT NULL) AND (stateprovince NOT IN("District Of Columbia","DC")) ';
 	}
 
 	public function getCoordStats(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT count(*) AS cnt '.
+        $coord = 0;
+        $noCoord = 0;
+        $noCoordVerbatim = 0;
+        $noCoordNoVerbatim = 0;
+		$sql = 'SELECT decimallatitude, decimallongitude, verbatimcoordinates '.
 			'FROM omoccurrences '.
-			'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL)';
+			'WHERE collid = '.$this->collid.' ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr['coord'] = $r->cnt;
+			$coords = ($r->decimallatitude && $r->decimallongitude);
+            if($coords){
+                $coord++;
+            }
+            else{
+                $noCoord++;
+                if($r->verbatimcoordinates){
+                    $noCoordVerbatim++;
+                }
+                else{
+                    $noCoordNoVerbatim++;
+                }
+            }
 		}
 		$rs->free();
 
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NULL) AND (decimallongitude IS NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['noCoord'] = $r->cnt;
-		}
-		$rs->free();
+        $retArr['coord'] = $coord;
+        $retArr['noCoord'] = $noCoord;
+        $retArr['noCoord_verbatim'] = $noCoordVerbatim;
+        $retArr['noCoord_noVerbatim'] = $noCoordNoVerbatim;
 
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NULL) AND (decimallongitude IS NULL) AND (verbatimcoordinates IS NOT NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['noCoord_verbatim'] = $r->cnt;
-		}
-		$rs->free();
-
-		$sql = 'SELECT count(*) AS cnt '.
-				'FROM omoccurrences '.
-				'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NULL) AND (decimallongitude IS NULL) AND (verbatimcoordinates IS NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['noCoord_noVerbatim'] = $r->cnt;
-		}
-		$rs->free();
 		return $retArr;
 	}
 
 	public function getUnverifiedByCountry(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT country, count(occid) AS cnt '.
+		$sql = 'SELECT country, COUNT(occid) AS cnt '.
 			'FROM omoccurrences '.
 			'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL) AND country IS NOT NULL '.
 			'AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "coordinate")) '.
@@ -740,39 +735,13 @@ class OccurrenceCleaner extends Manager{
 		}
 	}
 
-	public function getRankingStats($category): array
-	{
-		$retArr = array();
-		$category = Sanitizer::cleanInStr($this->conn,$category);
-		$sql = 'SELECT v.category, v.ranking, v.protocol, COUNT(v.occid) as cnt '.
-			'FROM omoccurverification v INNER JOIN omoccurrences o ON v.occid = o.occid '.
-			'WHERE (o.collid = '.$this->collid.') AND v.category = "'.$category.'" '.
-			'GROUP BY v.category, v.ranking, v.protocol';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->category][$r->ranking][$r->protocol] = $r->cnt;
-		}
-		$rs->free();
-		if($category){
-			$sql = 'SELECT COUNT(occid) AS cnt '.
-				'FROM omoccurrences '.
-				'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NOT NULL) AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "'.$category.'"))';
-			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$retArr[$category]['unranked'][''] = $r->cnt;
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-
 	public function getOccurrenceRankingArr($category, $ranking): array
 	{
 		$retArr = array();
 		if(is_numeric($ranking)){
 			$sql = 'SELECT DISTINCT v.occid, l.username, v.initialtimestamp '.
-				'FROM omoccurverification v INNER JOIN omoccurrences o ON v.occid = o.occid '.
-				'INNER JOIN users l ON v.uid = l.uid '.
+				'FROM omoccurverification AS v INNER JOIN omoccurrences AS o ON v.occid = o.occid '.
+				'INNER JOIN users AS l ON v.uid = l.uid '.
 				'WHERE (o.collid = '.$this->collid.') AND (v.category = "'.Sanitizer::cleanInStr($this->conn,$category).'") AND (ranking = '.$ranking.')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -787,7 +756,7 @@ class OccurrenceCleaner extends Manager{
 	public function getRankList(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT DISTINCT v.ranking FROM omoccurverification v INNER JOIN omoccurrences o ON v.occid = o.occid WHERE (o.collid = '.$this->collid.')';
+		$sql = 'SELECT DISTINCT v.ranking FROM omoccurverification AS v INNER JOIN omoccurrences AS o ON v.occid = o.occid WHERE (o.collid = '.$this->collid.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[] = $r->ranking;
@@ -852,7 +821,7 @@ class OccurrenceCleaner extends Manager{
 		if($this->collid){
 			$sql = 'SELECT CONCAT_WS("-",c.institutioncode, c.collectioncode) AS code, c.collectionname, '.
 				'c.icon, c.colltype, c.managementtype '.
-				'FROM omcollections c '.
+				'FROM omcollections AS c '.
 				'WHERE (c.collid = '.$this->collid.') ';
 			//echo $sql;
 			$rs = $this->conn->query($sql);

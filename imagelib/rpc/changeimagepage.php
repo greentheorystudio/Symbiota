@@ -17,7 +17,7 @@ $taxaList = array();
 $paginationStr = '';
 $recordListHtml = '';
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 
 $imgLibManager = new ImageLibraryManager();
 $collManager = new OccurrenceManager();
@@ -25,7 +25,7 @@ $collManager = new OccurrenceManager();
 if($collManager->validateSearchTermsArr($stArr)){
     if(strlen($stArrJson) <= 1800){
         $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/search.php';
-        $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber.'&imagedisplay='.$view.'&taxon='.$taxon;
+        $urlArgs = '?starr='.str_replace("'", '%squot;',$stArrJson).'&page='.$pageNumber.'&imagedisplay='.$view.'&taxon='.$taxon;
         $copyURL = $urlPrefix.$urlArgs;
     }
 

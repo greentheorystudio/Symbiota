@@ -36,7 +36,7 @@ if($fileType === 'geojson' || $fileType === 'kml' || $fileType === 'gpx') {
 }
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 }
 
 if($GLOBALS['SOLR_MODE'] && $stArr){

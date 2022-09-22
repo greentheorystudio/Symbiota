@@ -26,7 +26,7 @@ if($GLOBALS['SYMB_UID']){
 if($isTaxonEditor){
     ?>
     <div id="editbutton">
-        <a href="admin/tpeditor.php?tid=<?php echo $taxonManager->getTid(); ?>" <?php echo 'title="Edit Taxon Data"'; ?>>
+        <a href="profile/tpeditor.php?tid=<?php echo $taxonManager->getTid(); ?>" <?php echo 'title="Edit Taxon Data"'; ?>>
             <i style="height:20px;width:20px;" class="far fa-edit"></i>
         </a>
     </div>
@@ -168,7 +168,7 @@ ob_start();
 if(!$taxonManager->echoImages(0,1,0)){
     echo '<div id="nocentralimage">';
     if($isEditor){
-        echo '<a href="admin/tpeditor.php?category=imageadd&tid='.$taxonManager->getTid().'"><b>Add an Image</b></a>';
+        echo '<a href="profile/tpeditor.php?category=imageadd&tid='.$taxonManager->getTid().'"><b>Add an Image</b></a>';
     }
     else{
         echo 'Images<br/>not available';
@@ -370,7 +370,7 @@ ob_start();
                     echo '</div>';
                 }
                 elseif($isEditor){
-                    echo '<div class="spptext"><a href="admin/tpeditor.php?category=imageadd&tid='.$subArr['tid'].'">Add an Image</a></div>';
+                    echo '<div class="spptext"><a href="profile/tpeditor.php?category=imageadd&tid='.$subArr['tid'].'">Add an Image</a></div>';
                 }
                 else{
                     echo '<div class="spptext">Images<br/>not available</div>';

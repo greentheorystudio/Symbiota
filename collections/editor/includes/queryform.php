@@ -24,7 +24,6 @@ $qOrderByDir='';
 $qImgOnly='';
 $qWithoutImg='';
 $qExsiccatiId='';
-$qOcrFrag = '';
 $qCustomOpenParen1='';
 $qCustomField1='';
 $qCustomType1='';
@@ -98,8 +97,7 @@ if($qryArr){
     $qCustomType5 = (array_key_exists('ct5',$qryArr)?$qryArr['ct5']:'');
     $qCustomValue5 = (array_key_exists('cv5',$qryArr)?htmlentities($qryArr['cv5']):'');
     $qCustomCloseParen5 = (array_key_exists('ccp5',$qryArr)?$qryArr['ccp5']:'');
-    $qOcrFrag = (array_key_exists('ocr',$qryArr)?htmlentities($qryArr['ocr']):'');
-	$qOrderBy = (array_key_exists('orderby',$qryArr)?$qryArr['orderby']:'');
+    $qOrderBy = (array_key_exists('orderby',$qryArr)?$qryArr['orderby']:'');
 	$qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'');
 }
 
@@ -140,24 +138,10 @@ else{
 				<span title="Separate multiples by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
 					<input type="text" name="q_catalognumber" value="<?php echo $qCatalogNumber; ?>" />
 				</span>
-				<?php 
-				if($crowdSourceMode){
-					?>
-					<span style="margin-left:25px;"><b>OCR Fragment:</b></span> 
-					<span title="Search for term embedded within OCR block of text">
-						<input type="text" name="q_ocrfrag" value="<?php echo $qOcrFrag; ?>" style="width:200px;" />
-					</span>
-					<?php 
-				}
-				else{
-					?>
-					<span style="margin-left:25px;"><b>Other Catalog Numbers:</b></span> 
-					<span title="Separate multiples by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-						<input type="text" name="q_othercatalognumbers" value="<?php echo $qOtherCatalogNumbers; ?>" />
-					</span>
-					<?php
-				}
-				?>
+                <span style="margin-left:25px;"><b>Other Catalog Numbers:</b></span>
+                <span title="Separate multiples by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
+                    <input type="text" name="q_othercatalognumbers" value="<?php echo $qOtherCatalogNumbers; ?>" />
+                </span>
 			</div>
 			<?php 
 			if(!$crowdSourceMode){
@@ -259,7 +243,7 @@ else{
 					'informationWithheld'=>'Information Withheld','institutionCode'=>'Institution Code (override)','labelProject'=>'Label Project',
 					'lifeStage'=>'Life Stage','locality'=>'Locality',
 					'localitySecurity'=>'Locality Security','localitySecurityReason'=>'Locality Security Reason','locationRemarks'=>'Location Remarks',
-					'username'=>'Modified By','`month`'=>'Month','municipality'=>'Municipality','occurrenceRemarks'=>'Notes (Occurrence Remarks)','ocrFragment'=>'OCR Fragment',
+					'username'=>'Modified By','`month`'=>'Month','municipality'=>'Municipality','occurrenceRemarks'=>'Notes (Occurrence Remarks)',
 					'otherCatalogNumbers'=>'Other Catalog Numbers','ownerInstitutionCode'=>'Owner Code','preparations'=>'Preparations',
 					'reproductiveCondition'=>'Reproductive Condition','samplingEffort'=>'Sampling Effort','samplingProtocol'=>'Sampling Protocol',
 					'sciname'=>'Scientific Name','sex'=>'Sex','specificEpithet'=>'Specific Epithet','stateProvince'=>'State/Province',

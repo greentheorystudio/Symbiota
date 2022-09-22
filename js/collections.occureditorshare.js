@@ -270,9 +270,6 @@ function customSelectChanged(targetSelect){
         sourceObj = document.queryform.q_customfield5;
         targetObj = document.queryform.q_customtype5;
     }
-	if(sourceObj.value === "ocrFragment"){
-		targetObj.value = "LIKE";
-	}
 }
 
 function toggleCustomDiv2(){

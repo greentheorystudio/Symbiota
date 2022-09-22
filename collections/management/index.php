@@ -2,7 +2,6 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCrowdSource.php');
-include_once(__DIR__ . '/../../classes/SpecProcessorOcr.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -106,7 +105,6 @@ if($isEditor){
 				<div id="tabs" class="taxondisplaydiv">
 				    <ul>
 				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo $collid; ?>">Crowdsourcing</a></li>
-				        <li><a href="ocrprocessor.php?collid=<?php echo $collid.'&procstatus='.$procStatus.'&spprid='.$spprId; ?>">OCR</a></li>
 				        <li><a href="reports.php?<?php echo str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'])); ?>">Reports</a></li>
                         <li><a href="#dupmanager">Duplicate Clustering</a></li>
                         <li><a href="cleaningbase.php?collid=<?php echo $collid; ?>">Cleaning Tools</a></li>
