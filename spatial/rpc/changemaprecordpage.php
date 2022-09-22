@@ -26,7 +26,7 @@ $spatialManager = new SpatialModuleManager();
 $occManager = new OccurrenceManager();
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
     if($occManager->validateSearchTermsArr($stArr)){
         $validStArr = true;
     }
@@ -37,10 +37,10 @@ if($selArrJson){
 }
 
 if($validStArr){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
     if(strlen($stArrJson) <= 1800){
         $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/spatial/index.php';
-        $urlArgs = '?starr='.$stArrJson;
+        $urlArgs = '?starr='.str_replace("'", '%squot;',$stArrJson);
         $copyURL = $urlPrefix.$urlArgs;
     }
 

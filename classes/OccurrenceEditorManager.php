@@ -179,9 +179,6 @@ class OccurrenceEditorManager {
             if(array_key_exists('q_dateentered',$_REQUEST) && $_REQUEST['q_dateentered']) {
                 $this->qryArr['de'] = trim($_REQUEST['q_dateentered']);
             }
-            if(array_key_exists('q_ocrfrag',$_REQUEST) && $_REQUEST['q_ocrfrag']) {
-                $this->qryArr['ocr'] = trim($_REQUEST['q_ocrfrag']);
-            }
             if(array_key_exists('q_imgonly',$_REQUEST) && $_REQUEST['q_imgonly']) {
                 $this->qryArr['io'] = 1;
             }
@@ -529,9 +526,6 @@ class OccurrenceEditorManager {
         if(array_key_exists('woi',$this->qryArr)){
             $sqlWhere .= 'AND (i.imgid IS NULL) ';
         }
-        if(array_key_exists('ocr',$this->qryArr)){
-            $sqlWhere .= 'AND (ocr.rawstr LIKE "%'.Sanitizer::cleanInStr($this->conn,$this->qryArr['ocr']).'%") ';
-        }
         if(array_key_exists('exsid',$this->qryArr) && is_numeric($this->qryArr['exsid'])){
             $sqlWhere .= 'AND (exn.ometid = '.$this->qryArr['exsid'].') ';
         }
@@ -546,10 +540,7 @@ class OccurrenceEditorManager {
                 $cao = 'AND';
             }
             if($cf){
-                if($cf === 'ocrFragment'){
-                    $cf = 'ocr.rawstr';
-                }
-                elseif($cf === 'username'){
+                if($cf === 'username'){
                     $cf = 'ul.username';
                 }
                 elseif($cf === 'verbatimsciname'){
@@ -749,18 +740,7 @@ class OccurrenceEditorManager {
 
     private function addTableJoins($sql): string
     {
-        if(strpos($this->sqlWhere,'ocr.rawstr')){
-            if(strpos($this->sqlWhere,'ocr.rawstr IS NULL') && array_key_exists('io',$this->qryArr)){
-                $sql .= 'INNER JOIN images i ON o2.occid = i.occid LEFT JOIN specprocessorrawlabels ocr ON i.imgid = ocr.imgid ';
-            }
-            elseif(strpos($this->sqlWhere,'ocr.rawstr IS NULL')){
-                $sql .= 'LEFT JOIN images i ON o2.occid = i.occid LEFT JOIN specprocessorrawlabels ocr ON i.imgid = ocr.imgid ';
-            }
-            else{
-                $sql .= 'INNER JOIN images i ON o2.occid = i.occid INNER JOIN specprocessorrawlabels ocr ON i.imgid = ocr.imgid ';
-            }
-        }
-        elseif(array_key_exists('io',$this->qryArr)){
+        if(array_key_exists('io',$this->qryArr)){
             $sql .= 'INNER JOIN images i ON o2.occid = i.occid ';
         }
         elseif(array_key_exists('woi',$this->qryArr)){
@@ -1216,9 +1196,6 @@ class OccurrenceEditorManager {
                 $archiveArr['imgs'] = $imgArr;
                 if($imgArr){
                     $imgidStr = implode(',',array_keys($imgArr));
-                    if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (imgid IN('.$imgidStr.'))')){
-                        $this->errorArr[] = 'ERROR removing OCR blocks linked to images.';
-                    }
                     if(!$this->conn->query('DELETE FROM imagetag WHERE (imgid IN('.$imgidStr.'))')){
                         $this->errorArr[] = 'ERROR removing imageTags linked to images.';
                     }
@@ -1733,75 +1710,6 @@ class OccurrenceEditorManager {
             return 'ERROR Adding new genetic resource.';
         }
         return 'Genetic resource added successfully!';
-    }
-
-    public function getRawTextFragments(): array
-    {
-        $retArr = array();
-        if($this->occid){
-            $sql = 'SELECT r.prlid, r.imgid, r.rawstr, r.notes, r.source '.
-                'FROM specprocessorrawlabels r INNER JOIN images i ON r.imgid = i.imgid '.
-                'WHERE i.occid = '.$this->occid;
-            $rs = $this->conn->query($sql);
-            while($r = $rs->fetch_object()){
-                $retArr[$r->imgid][$r->prlid]['raw'] = Sanitizer::cleanOutStr($r->rawstr);
-                $retArr[$r->imgid][$r->prlid]['notes'] = Sanitizer::cleanOutStr($r->notes);
-                $retArr[$r->imgid][$r->prlid]['source'] = Sanitizer::cleanOutStr($r->source);
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
-    public function insertTextFragment($imgId,$rawFrag,$notes,$source){
-        $statusStr = '';
-        if($imgId && $rawFrag){
-            $sql = 'INSERT INTO specprocessorrawlabels(imgid,rawstr,notes,source) '.
-                'VALUES ('.$imgId.',"'.$this->cleanRawFragment($rawFrag).'",'.
-                ($notes?'"'.Sanitizer::cleanInStr($this->conn,$notes).'"':'NULL').','.
-                ($source?'"'.Sanitizer::cleanInStr($this->conn,$source).'"':'NULL').')';
-            //echo $sql;
-            if($this->conn->query($sql)){
-                $statusStr = $this->conn->insert_id;
-            }
-            else{
-                $statusStr = 'ERROR: unable to INSERT text fragment.';
-                $statusStr .= '; SQL = '.$sql;
-            }
-        }
-        return $statusStr;
-    }
-
-    public function saveTextFragment($prlId,$rawFrag,$notes,$source): ?string
-    {
-        $statusStr = '';
-        if($prlId && $rawFrag){
-            $sql = 'UPDATE specprocessorrawlabels '.
-                'SET rawstr = "'.$this->cleanRawFragment($rawFrag).'", '.
-                'notes = '.($notes?'"'.Sanitizer::cleanInStr($this->conn,$notes).'"':'NULL').', '.
-                'source = '.($source?'"'.Sanitizer::cleanInStr($this->conn,$source).'"':'NULL').' '.
-                'WHERE (prlid = '.$prlId.')';
-            //echo $sql;
-            if(!$this->conn->query($sql)){
-                $statusStr = 'ERROR: unable to UPDATE text fragment.';
-                $statusStr .= '; SQL = '.$sql;
-            }
-        }
-        return $statusStr;
-    }
-
-    public function deleteTextFragment($prlId): ?string
-    {
-        $statusStr = '';
-        if($prlId){
-            $sql = 'DELETE FROM specprocessorrawlabels '.
-                'WHERE (prlid = '.$prlId.')';
-            //echo $sql;
-            if(!$this->conn->query($sql)){
-                $statusStr = 'ERROR: unable DELETE text fragment.';
-            }
-        }
-        return $statusStr;
     }
 
     public function getImageMap(): array

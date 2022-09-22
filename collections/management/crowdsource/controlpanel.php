@@ -41,10 +41,6 @@ $projArr = $csManager->getProjectDetails();
 		?>
 		<div style="float:right;"><a href="#" onclick="toggle('projFormDiv')"><i style="height:20px;width:20px;" class="far fa-edit"></i></a></div>
 		<div style="font-weight:bold;font-size:130%;"><?php echo (($omcsid && $projArr)?$projArr['name']:''); ?></div>
-		<div>
-			This module can be used to submit and manage records for data entry by the
-			general public.</a>.
-		</div>
 		<div id="projFormDiv" style="display:none">
 			<fieldset style="margin:15px;">
 				<legend><b>Edit Project</b></legend>

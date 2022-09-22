@@ -18,7 +18,7 @@ $tidArr = array();
 $stArr = array();
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 	$checklistManager->setSearchTermsArr($stArr);
 }
 

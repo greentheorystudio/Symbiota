@@ -29,9 +29,6 @@ $GLOBALS['IMG_TN_WIDTH'] = 200;
 $GLOBALS['IMG_LG_WIDTH'] = 3200;
 $GLOBALS['IPLANT_IMAGE_IMPORT_PATH'] = '';		//Path used to map/import images uploaded to the iPlant image server (e.g. /home/shared/project-name/--INSTITUTION_CODE--/, the --INSTITUTION_CODE-- text will be replaced with collection's institution code)
 
-//$GLOBALS['USE_IMAGE_MAGICK'] = 0;		//1 = ImageMagick resize images, given that it's installed (faster, less memory intensive)
-$GLOBALS['TESSERACT_PATH'] = ''; 			//Needed for OCR function in the occurrence editor page
-
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
 //Configurations for Apache SOLR integration

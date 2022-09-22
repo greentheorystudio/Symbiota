@@ -1470,38 +1470,6 @@ CREATE TABLE `specprocessorprojects` (
   CONSTRAINT `FK_specprocessorprojects_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `specprocessorrawlabels` (
-  `prlid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `imgid` int(10) unsigned DEFAULT NULL,
-  `occid` int(10) unsigned DEFAULT NULL,
-  `rawstr` text NOT NULL,
-  `processingvariables` varchar(250) DEFAULT NULL,
-  `score` int(11) DEFAULT NULL,
-  `notes` varchar(255) DEFAULT NULL,
-  `source` varchar(150) DEFAULT NULL,
-  `sortsequence` int(11) DEFAULT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`prlid`),
-  KEY `FK_specproc_images` (`imgid`),
-  KEY `FK_specproc_occid` (`occid`),
-  CONSTRAINT `FK_specproc_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_specproc_images` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `specprococrfrag` (
-  `ocrfragid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `prlid` int(10) unsigned NOT NULL,
-  `firstword` varchar(45) NOT NULL,
-  `secondword` varchar(45) DEFAULT NULL,
-  `keyterm` varchar(45) DEFAULT NULL,
-  `wordorder` int(11) DEFAULT NULL,
-  `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ocrfragid`),
-  KEY `FK_specprococrfrag_prlid_idx` (`prlid`),
-  KEY `Index_keyterm` (`keyterm`),
-  CONSTRAINT `FK_specprococrfrag_prlid` FOREIGN KEY (`prlid`) REFERENCES `specprocessorrawlabels` (`prlid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE `taxa` (
   `TID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `kingdomName` varchar(45) DEFAULT NULL,

@@ -17,7 +17,7 @@ $resetPageNum = false;
 $stArr = array();
 $validStArr = false;
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
     if($collManager->validateSearchTermsArr($stArr)){
         $validStArr = true;
     }
@@ -48,7 +48,7 @@ if($stArrJson){
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/collections.search.js?ver=20210621"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220430"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220921"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
