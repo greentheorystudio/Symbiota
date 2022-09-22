@@ -11,17 +11,10 @@ class TaxonomyDisplayManager{
 	private $displayAuthor = false;
 	private $displayFullTree = false;
 	private $displaySubGenera = false;
-	private $isEditor = false;
-	
+
 	public function __construct(){
         $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		if($GLOBALS['USER_RIGHTS']){
-			if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
-				$this->isEditor = true;
-			}
-		}
-		
 	}
 
  	public function __destruct(){
@@ -240,14 +233,9 @@ class TaxonomyDisplayManager{
 					$indent -= 10;
 				}
 				echo '<div>' .str_repeat('&nbsp;',$indent/5);
-				if($this->isEditor){
-					echo '<a href="taxonomyeditor.php?tid='.$key.'" target="_blank">'.$sciName.'</a>';
-				}
-				else{
-					echo '<a href="../index.php?taxon='.$key.'" target="_blank">'.$sciName.'</a>';
-				}
+                echo '<a href="taxonomyeditor.php?tid='.$key.'">'.$sciName.'</a>';
 				if($this->taxonRank < 140 && !$this->displayFullTree && $taxonRankId === 140){
-					echo '<a href="taxonomydisplay.php?target='.$sciName.'">';
+					echo '<a href="index.php?target='.$sciName.'&tabindex=1">';
 					echo '<i style="height:15px;width:15px;" class="fas fa-level-down-alt"></i>';
 					echo '</a>';
 				}
@@ -258,12 +246,7 @@ class TaxonomyDisplayManager{
 					foreach($synNameArr as $synTid => $synName){
 						$synName = str_replace($this->targetStr, '<b>' .$this->targetStr. '</b>',$synName);
 						echo '<div>'.str_repeat('&nbsp;',$indent/5).str_repeat('&nbsp;',7);
-						if($this->isEditor){
-							echo '[<a href="taxonomyeditor.php?tid='.$synTid.'" target="_blank">'.$synName.'</a>]';
-						}
-						else{
-							echo '[<a href="../index.php?taxon='.$synTid.'" target="_blank">'.$synName.'</a>]';
-						}
+                        echo '[<a href="taxonomyeditor.php?tid='.$synTid.'">'.$synName.'</a>]';
 						echo '</div>';
 					}
 				}

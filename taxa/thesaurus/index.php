@@ -1,26 +1,26 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
-include_once(__DIR__ . '/../../classes/ImageProcessor.php');
+include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
-ini_set('max_execution_time', 3600);
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$collid = (int)$_REQUEST['collid'];
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 
-$isEditor = 0;
-if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
-	$isEditor = 1;
+$loaderObj = new TaxonomyEditorManager();
+
+$isEditor = false;
+$status = '';
+if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
+    $isEditor = true;
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Data Upload Module</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomic Thesaurus Manager</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
@@ -46,35 +46,26 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 ?>
 <div class="navpath">
     <a href="../../index.php">Home</a> &gt;&gt;
-    <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Panel</a> &gt;&gt;
-    <b>Occurrence Data Upload Module</b>
+    <b>Taxonomic Thesaurus Manager</b>
 </div>
 <div id="innertext">
-	<h1>Occurrence Data Upload Module</h1>
+	<h1>Taxonomic Thesaurus Manager</h1>
 	<?php
-	if($isEditor && $collid){
+	if($isEditor){
 		?>
         <div id="tabs">
             <ul>
-                <li><a href="#occurrences">Occurrence Records</a></li>
-                <li><a href="#images">Images</a></li>
+                <li><a href="#fileupload">Load Data File</a></li>
             </ul>
 
-            <div id="occurrences">
-                <?php include_once(__DIR__ . '/occurrenceloader.php'); ?>
-            </div>
-
-            <div id="images">
-                <?php include_once(__DIR__ . '/imageloader.php'); ?>
+            <div id="fileupload">
+                <?php include_once(__DIR__ . '/batchloader.php'); ?>
             </div>
         </div>
         <?php
 	}
-	elseif($isEditor){
-        echo '<div>ERROR: collection identifier not defined. Contact administrator</div>';
-    }
-    else{
-        echo '<div style="font-weight:bold;font-size:120%;">ERROR: you are not authorized to upload to this collection</div>';
+	else{
+        echo '<div style="font-weight:bold;font-size:120%;">You do not have permissions to access this tool</div>';
     }
 	?>
 </div>
