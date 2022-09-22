@@ -109,7 +109,7 @@ if($isEditor && $formSubmit){
                 if($clusterArr){
                     $paginationStr = '<span>';
                     if($start) {
-                        $paginationStr .= '<a href="index.php?tabindex=3&collid=' . $collId . '&action=' . $action . '&start=' . ($start - $limit) . '&limit=' . $limit . '">';
+                        $paginationStr .= '<a href="index.php?tabindex=2&collid=' . $collId . '&action=' . $action . '&start=' . ($start - $limit) . '&limit=' . $limit . '">';
                     }
                     $paginationStr .= '&lt;&lt; Previous';
                     if($start) {
@@ -119,7 +119,7 @@ if($isEditor && $formSubmit){
                     $paginationStr .= ' || '.($start+1).' - '.(count($clusterArr)<$limit?$totalCnt:($start + $limit)).' || ';
                     $paginationStr .= '<span>';
                     if($totalCnt >= ($start+$limit)) {
-                        $paginationStr .= '<a href="index.php?tabindex=3&collid=' . $collId . '&action=' . $action . '&start=' . ($start + $limit) . '&limit=' . $limit . '">';
+                        $paginationStr .= '<a href="index.php?tabindex=2&collid=' . $collId . '&action=' . $action . '&start=' . ($start + $limit) . '&limit=' . $limit . '">';
                     }
                     $paginationStr .= 'Next &gt;&gt;';
                     if($totalCnt >= ($start+$limit)) {
@@ -165,7 +165,7 @@ if($isEditor && $formSubmit){
                                             <input name="start" type="hidden" value="<?php echo $start; ?>" />
                                             <input name="limit" type="hidden" value="<?php echo $limit; ?>" />
                                             <input name="action" type="hidden" value="<?php echo $action; ?>" />
-                                            <input name="tabindex" type="hidden" value="3" />
+                                            <input name="tabindex" type="hidden" value="2" />
                                             <input name="formsubmit" type="hidden" value="clusteredit" />
                                             <input name="submit" type="submit" value="Save Edits" />
                                         </form>
@@ -175,7 +175,7 @@ if($isEditor && $formSubmit){
                                             <input name="start" type="hidden" value="<?php echo $start; ?>" />
                                             <input name="limit" type="hidden" value="<?php echo $limit; ?>" />
                                             <input name="action" type="hidden" value="<?php echo $action; ?>" />
-                                            <input name="tabindex" type="hidden" value="3" />
+                                            <input name="tabindex" type="hidden" value="2" />
                                             <input name="formsubmit" type="hidden" value="clusterdelete" />
                                             <input name="submit" type="submit" value="Delete Cluster" />
                                         </form>
@@ -199,7 +199,7 @@ if($isEditor && $formSubmit){
                                                     <input name="start" type="hidden" value="<?php echo $start; ?>" />
                                                     <input name="limit" type="hidden" value="<?php echo $limit; ?>" />
                                                     <input name="action" type="hidden" value="<?php echo $action; ?>" />
-                                                    <input name="tabindex" type="hidden" value="3" />
+                                                    <input name="tabindex" type="hidden" value="2" />
                                                     <input name="formsubmit" type="hidden" value="occdelete" />
                                                     <button style="margin:0;padding:2px;" type="submit">
                                                         <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
@@ -228,12 +228,12 @@ if($isEditor && $formSubmit){
                     echo $paginationStr;
                 }
                 else{
-                     echo '<div><b>No Duplicate Clusters match the request. We suggest returning to Duplicate cluster main menu and batch building duplicate clusters</b></div>';
+                     echo '<div><b>No Duplicate Clusters match the request.</b></div>';
                 }
             }
             ?>
             <div>
-                <a href="index.php?tabindex=3&collid=<?php echo $collId; ?>">Return to main menu</a>
+                <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>">Return to main menu</a>
             </div>
             <?php
         }
@@ -241,25 +241,18 @@ if($isEditor && $formSubmit){
             ?>
             <fieldset style="padding:20px;">
                 <legend><b>Duplicate Linkages</b></legend>
-                    <div>
-                    It is common within some collection domains to collect specimens in duplicate.
-                    Links below list duplicate cluster and aid collection managers in batch linking
-                    their specimen records to duplicate specimens housed at other institutions.
-                    The main method of batch clustering duplicates is by matching
-                    the collector, collector number, and collection date.
-                </div>
                 <div style="margin:25px;font-weight:bold;font-size:120%;">
-                    <a href="index.php?tabindex=3&collid=<?php echo $collId; ?>&action=listdupes">
+                    <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>&action=listdupes">
                         List linked duplicate clusters
                     </a>
                 </div>
                 <div style="margin:25px;font-weight:bold;font-size:120%;">
-                    <a href="index.php?tabindex=3&collid=<?php echo $collId; ?>&dupedepth=2&action=listdupeconflicts">
+                    <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>&dupedepth=2&action=listdupeconflicts">
                         List linked duplicate clusters with conflicted identifications
                     </a>
                 </div>
                 <div style="margin:25px;font-weight:bold;font-size:120%;">
-                    <a href="index.php?tabindex=3&collid=<?php echo $collId; ?>&action=batchlinkdupes">
+                    <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>&action=batchlinkdupes">
                         Start batch linking duplicates
                     </a>
                 </div>

@@ -3,7 +3,6 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/ImageLocalProcessor.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
-include_once(__DIR__ . '/../../classes/SpecProcessorOcr.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -135,25 +134,6 @@ $statusStr = '';
 					$imageProcessor->setLogMode(3);
 					$imageProcessor->setCollid($collid);
 					$imageProcessor->loadFileData($_POST);
-					echo '</ul>';
-				}
-				elseif($action === 'Run Batch OCR'){
-					$ocrManager = new SpecProcessorOcr();
-					$ocrManager->setVerbose(2);
-					$batchLimit = 100;
-					if(array_key_exists('batchlimit',$_POST)) {
-                        $batchLimit = $_POST['batchlimit'];
-                    }
-					echo '<ul>';
-					$ocrManager->batchOcrUnprocessed($collid,$procStatus,$batchLimit,0);
-					echo '</ul>';
-				}
-				elseif($action === 'Load OCR Files'){
-					$specManager->addProject($_POST);
-					$ocrManager = new SpecProcessorOcr();
-					$ocrManager->setVerbose(2);
-					echo '<ul>';
-					$ocrManager->harvestOcrText($_POST);
 					echo '</ul>';
 				}
 				if($statusStr){

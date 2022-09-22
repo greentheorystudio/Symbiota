@@ -145,7 +145,7 @@ if($editable && $action){
         $(document).ready(function() {
 			$("#sninput").autocomplete({
 				source: function( request, response ) {
-					$.getJSON( "rpc/gettaxasuggest.php", { "term": request.term, "hideauth": 1 }, response );
+					$.getJSON( "../rpc/gettaxasuggest.php", { "term": request.term, "hideauth": 1 }, response );
 				}
 			},{ minLength: 3, autoFocus: true }
 			);
@@ -205,7 +205,7 @@ if($editable && $action){
                 echo "<div id='family' style='margin-left:20px;margin-top:0.25em;'><b>Family:</b> ".$tEditor->getFamily()."</div>";
                 echo '</div>';
                 if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
-                    echo "<a href='taxonomyeditor.php?tid=" . $tid . "'><strong>Edit taxonomic placement</strong></a>";
+                    echo "<a href='../taxonomy/taxonomyeditor.php?tid=" . $tid . "'><strong>Edit taxonomic placement</strong></a>";
                 }
                 echo '</div>';
                 if($statusStr){
@@ -376,7 +376,7 @@ if($editable && $action){
 							}
 							?>
 							<div style="margin:10px;">
-								Synonym management is done in the <a href="taxonomyeditor.php?tid=<?php echo $tid; ?>">Taxonomy Editor</a>.
+								Synonym management is done in the <a href="../taxonomy/taxonomyeditor.php?tid=<?php echo $tid; ?>">Taxonomy Editor</a>.
 							</div>
 						</fieldset>
 					</div>

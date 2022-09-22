@@ -1,6 +1,5 @@
 <?php
 include_once(__DIR__ . '/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/SpecProcessorOcr.php');
 include_once(__DIR__ . '/MediaShared.php');
 include_once(__DIR__ . '/Sanitizer.php');
 

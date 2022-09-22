@@ -380,10 +380,7 @@ class ImageShared{
 				$qualityRating = $this->jpgCompression;
 			}
 
-			if($GLOBALS['USE_IMAGE_MAGICK']) {
-				$status = $this->createNewImageImagick($subExt,$targetWidth,$qualityRating,$targetPathOverride);
-			}
-			elseif(function_exists('gd_info') && extension_loaded('gd')) {
+			if(function_exists('gd_info') && extension_loaded('gd')) {
 				$status = $this->createNewImageGD($subExt,$targetWidth,$qualityRating,$targetPathOverride);
 			}
 			else{
@@ -391,26 +388,6 @@ class ImageShared{
 			}
 		}
 		return $status;
-	}
-
-	private function createNewImageImagick($subExt,$newWidth,$qualityRating,$targetPathOverride): bool
-	{
-		$targetPath = $targetPathOverride;
-		if(!$targetPath) {
-			$targetPath = $this->targetPath . $this->imgName . $subExt . $this->imgExt;
-		}
-		if($newWidth < 300){
-			system('convert '.$this->sourcePath.' -thumbnail '.$newWidth.'x'.($newWidth*1.5).' '.$targetPath, $retval);
-		}
-		else{
-			system('convert '.$this->sourcePath.' -resize '.$newWidth.'x'.($newWidth*1.5).($qualityRating?' -quality '.$qualityRating:'').' '.$targetPath, $retval);
-		}
-		if(file_exists($targetPath)){
-			return true;
-		}
-
-		$this->errArr[] = 'ERROR: Image failed to be created in Imagick function (target path: '.$targetPath.')';
-		return false;
 	}
 
 	private function createNewImageGD($subExt, $newWidth, $qualityRating, $targetPathOverride): bool
@@ -569,9 +546,6 @@ class ImageShared{
 		}
 		$rs->close();
 
-		if($occid){
-			$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (imgid = '.$imgIdDel.')');
-		}
 		$this->conn->query('DELETE FROM imagetag WHERE (imgid = '.$imgIdDel.')');
 
 		$sql = 'DELETE FROM images WHERE (imgid = '.$imgIdDel.')';

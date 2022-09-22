@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbbase.php');
-include_once(__DIR__ . '/../../../classes/TPEditorManager.php');
-include_once(__DIR__ . '/../../../classes/TPImageEditorManager.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
+include_once(__DIR__ . '/../../classes/TPEditorManager.php');
+include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
 
 $tImageEditor = new TPImageEditorManager();
 $tEditor = new TPEditorManager();

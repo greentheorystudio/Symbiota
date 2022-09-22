@@ -49,9 +49,7 @@
       "@php -r \"file_exists('./temp/downloads') || mkdir('./temp/downloads');\"",
       "@php -r \"file_exists('./temp/images') || mkdir('./temp/images');\"",
       "@php -r \"file_exists('./temp/ootd') || mkdir('./temp/ootd');\"",
-      "@php -r \"file_exists('./temp/report') || mkdir('./temp/report');\"",
-      "@php -r \"file_exists('./temp/symbocr') || mkdir('./temp/symbocr');\""
-
+      "@php -r \"file_exists('./temp/report') || mkdir('./temp/report');\""
     ],
     "post-update-cmd": [
       "chmod -R 777 ./collections/datasets/dwc",
@@ -68,7 +66,6 @@
       "chmod -R 777 ./temp/images",
       "chmod -R 777 ./temp/ootd",
       "chmod -R 777 ./temp/report",
-      "chmod -R 777 ./temp/symbocr",
       "chmod -R 777 ./webservices/dwc/rss.xml"
     ],
     "update-docker-solr-config": [

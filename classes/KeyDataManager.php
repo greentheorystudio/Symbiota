@@ -76,23 +76,24 @@ class KeyDataManager extends Manager{
 				'WHERE (clpl.pid = ' .$this->pid. ') ';
 		}
 		//echo $sql.'<br/>'; exit;
-		$result = $this->conn->query($sql);
-		while($row = $result->fetch_object()){
-			$genus = $row->UnitName1;
-			$family = $row->Family;
-			if($genus) {
-				$returnArr[] = $genus;
-			}
-			if($family) {
-				$returnArr[] = $family;
-			}
-		}
+		if($result = $this->conn->query($sql)){
+            while($row = $result->fetch_object()){
+                $genus = $row->UnitName1;
+                $family = $row->Family;
+                if($genus) {
+                    $returnArr[] = $genus;
+                }
+                if($family) {
+                    $returnArr[] = $family;
+                }
+            }
 
-		$result->free();
-		$returnArr = array_unique($returnArr);
-		natcasesort($returnArr);
-		array_unshift($returnArr, '--------------------------');
-		array_unshift($returnArr, 'All Species');
+            $result->free();
+            $returnArr = array_unique($returnArr);
+            natcasesort($returnArr);
+            array_unshift($returnArr, '--------------------------');
+            array_unshift($returnArr, 'All Species');
+        }
 		return $returnArr;
 	}
 

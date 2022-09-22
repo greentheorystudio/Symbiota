@@ -8,20 +8,20 @@ $(document).ready(function() {
 
 	$("#parentstr").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, rhigh: document.taxoneditform.rankid.value }, response );
+			$.getJSON( "../rpc/gettaxasuggest.php", { term: request.term, rhigh: document.taxoneditform.rankid.value }, response );
 		},
 		minLength: 3,
 		autoFocus: true
 	});
 
 	$("#aefacceptedstr").autocomplete({ 
-		source: "rpc/getacceptedsuggest.php",
+		source: "../rpc/getacceptedsuggest.php",
 		minLength: 3,
 		autoFocus: true
 	});
 
 	$("#ctnafacceptedstr").autocomplete({ 
-		source: "rpc/getacceptedsuggest.php",
+		source: "../rpc/getacceptedsuggest.php",
 		minLength: 3,
 		autoFocus: true
 	});
@@ -100,7 +100,7 @@ function verifyChangeToNotAcceptedForm(f){
 function submitLinkToAccepted(f){
 	$.ajax({
 		type: "POST",
-		url: "rpc/gettid.php",
+		url: "../rpc/gettid.php",
 		data: { sciname: f.acceptedstr.value }
 	}).done(function( msg ) {
 		if(msg == 0){
@@ -116,7 +116,7 @@ function submitLinkToAccepted(f){
 function submitTaxStatusForm(f){
 	$.ajax({
 		type: "POST",
-		url: "rpc/gettid.php",
+		url: "../rpc/gettid.php",
 		data: { sciname: f.parentstr.value }
 	}).done(function( msg ) {
 		if(msg == 0){

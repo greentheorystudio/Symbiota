@@ -12,7 +12,7 @@ $validStArr = false;
 $occManager = new OccurrenceManager();
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
     if($occManager->validateSearchTermsArr($stArr)){
         $validStArr = true;
     }
