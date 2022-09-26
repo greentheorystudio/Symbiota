@@ -68,7 +68,7 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
             punch above their weight.
         </h3>
     </div>
-    <div class="photo-credit-container">
+    <div class="photo-credit-container" style="font-size: 17px;font-style: italic;">
         The St. Lucie River at sunrise. The river is a major tributary to the Indian River Lagoon, and its freshwater carries
         nutrients as well as other pollutants from more densely populated areas of its drainage basin.
     </div>
@@ -109,15 +109,23 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
                     <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/msites_map.jpg" />
+                    <figcaption style="width:500px;font-size: 17px;font-style: italic;margin-left:10px;margin-top:-10px;">
+                        A map of the Smithsonian’s long-term benthic monitoring sites on the Indian River Lagoon. (Credit: Holly Sweat)
+                    </figcaption>
                 </figure>
             </div>
             <p>
                 The sites were selected to represent a range of conditions in the lagoon, from fairly pristine to heavily impacted.
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
-                <figure style="margin:0;display:flex;gap:20px;">
-                    <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/pristine.jpg" />
-                    <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impacted.jpg" />
+                <figure style="margin: 15px;">
+                    <div style="display:flex;gap:20px;">
+                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/pristine.jpg" />
+                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impacted.jpg" />
+                    </div>
+                    <figcaption style="width:800px;font-size: 17px;font-style: italic;">
+                        The image on the left depicts an area of the lagoon with relatively pristine, healthy water conditions; at right, an area of the lagoon with highly impacted, degraded water conditions.  (Photos: Holly Sweat)
+                    </figcaption>
                 </figure>
             </div>
             <p>
@@ -128,8 +136,8 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
                     <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/jess_with_jars.jpg" />
-                    <figcaption style="width:600px;">
-                        SMS technician Jess Glanz examines a sample jar from a collection site on the Indian River Lagoon.
+                    <figcaption style="width:600px;font-size: 17px;font-style: italic;">
+                        SMS technician Jess Glanz examines a sample jar from a collection site on the Indian River Lagoon.  (Photo: Holly Sweat)
                     </figcaption>
                 </figure>
             </div>
@@ -145,8 +153,8 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
                     <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/infauna.jpg" />
-                    <figcaption style="width:600px;">
-                        A sampling of benthic infauna.
+                    <figcaption style="width:600px;font-size: 17px;font-style: italic;">
+                        A sampling of benthic infauna. (Credit: Holly Sweat)
                     </figcaption>
                 </figure>
             </div>
@@ -175,6 +183,10 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure>
                     <img style="border:0;width:100%;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Team_BEL.jpg" />
+                    <figcaption style="width:100%;font-size: 17px;font-style: italic;">
+                        From left, Program Coordinator Jess Glanz, Principal Investigator Dr. Holly Sweat and Technician Garrett O’Donnell sample for
+                        benthic infauna on the Indian River Lagoon. (Photo: Scott Jones)
+                    </figcaption>
                 </figure>
             </div>
         </div>
@@ -189,8 +201,8 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
                     <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/odonnell_garret_fabricinuda_trilobata.jpg" />
-                    <figcaption style="width:500px;">
-                        Thousands of these <i>Fabricinuda trilobata</i> worms were found in a sample of Indian River Lagoon sediment.
+                    <figcaption style="width:500px;font-size: 17px;font-style: italic;">
+                        Thousands of these <i>Fabricinuda trilobata</i> worms were found in a sample of Indian River Lagoon sediment.  (Photo: Holly Sweat)
                     </figcaption>
                 </figure>
             </div>
@@ -212,7 +224,7 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                         <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap2-current-trim.jpg" />
                         <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap3-cerp-trim.jpg" />
                     </div>
-                    <figcaption style="width:80%;margin: 0 auto;">
+                    <figcaption style="width:80%;margin: 0 auto;font-size: 17px;font-style: italic;">
                         These maps show the historic, current and projected future water flow in southern Florida. A decades-long
                         plan to restore water flow south through the Everglades is underway. <i>(Graphics: National Park Service)</i>
                     </figcaption>
@@ -236,8 +248,8 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                     <video width="900" controls>
                         <source src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/M09_Grab1_20220105_Trim.mp4" type="video/mp4">
                     </video>
-                    <figcaption style="width:900px;text-align: center;margin-top:10px;font-style: italic;">
-                        Scientists use tools like the ponar grab, descending here, to collect sediments from the bottom of the lagoon.
+                    <figcaption style="width:900px;font-size: 17px;font-style: italic;">
+                        Scientists use tools like the ponar grab, descending here, to collect sediments from the bottom of the lagoon. (Credit: Holly Sweat and Jess Glanz)
                     </figcaption>
                 </figure>
             </div>
