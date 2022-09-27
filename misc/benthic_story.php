@@ -137,7 +137,7 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                 <figure style="margin: 15px;">
                     <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/jess_with_jars.jpg" />
                     <figcaption style="width:600px;font-size: 17px;font-style: italic;">
-                        SMS technician Jess Glanz examines a sample jar from a collection site on the Indian River Lagoon.  (Photo: Holly Sweat)
+                        Program Coordinator Jess Glanz examines a sample jar from a collection site on the Indian River Lagoon.  (Photo: Holly Sweat)
                     </figcaption>
                 </figure>
             </div>
