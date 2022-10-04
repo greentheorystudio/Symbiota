@@ -50,7 +50,7 @@ class ChecklistLoaderManager {
 			flush();
 			while($valueArr = fgetcsv($fh)){
 				if($valueArr){
-                    $sciNameStr = Sanitizer::cleanInStr($valueArr[$headerArr['sciname']]);
+                    $sciNameStr = Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['sciname']]);
                     if($sciNameStr){
                         $tid = 0;
                         $rankId = 0;
@@ -79,31 +79,31 @@ class ChecklistLoaderManager {
                                 $sqlInsert = '';
                                 $sqlValues = '';
                                 if(array_key_exists('family',$headerArr) && $valueArr[$headerArr['family']]){
-                                    $famValue = Sanitizer::cleanInStr($valueArr[$headerArr['family']]);
+                                    $famValue = Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['family']]);
                                     if(strcasecmp($family, $famValue)){
                                         $sqlInsert .= ',familyoverride';
-                                        $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['family']]).'"';
+                                        $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['family']]).'"';
                                     }
                                 }
                                 if(array_key_exists('habitat',$headerArr) && $valueArr[$headerArr['habitat']]){
                                     $sqlInsert .= ',habitat';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['habitat']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['habitat']]).'"';
                                 }
                                 if(array_key_exists('abundance',$headerArr) && $valueArr[$headerArr['abundance']]){
                                     $sqlInsert .= ',abundance';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['abundance']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['abundance']]).'"';
                                 }
                                 if(array_key_exists('notes',$headerArr) && $valueArr[$headerArr['notes']]){
                                     $sqlInsert .= ',notes';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['notes']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['notes']]).'"';
                                 }
                                 if(array_key_exists('internalnotes',$headerArr) && $valueArr[$headerArr['internalnotes']]){
                                     $sqlInsert .= ',internalnotes';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['internalnotes']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['internalnotes']]).'"';
                                 }
                                 if(array_key_exists('source',$headerArr) && $valueArr[$headerArr['source']]){
                                     $sqlInsert .= ',source';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['source']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['source']]).'"';
                                 }
 
                                 $sql = 'INSERT INTO fmchklsttaxalink (tid,clid'.$sqlInsert.') VALUES ('.$tid.', '.$this->clid.$sqlValues.')';

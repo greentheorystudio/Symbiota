@@ -74,12 +74,12 @@ if(!$researchList && !$editMode){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Inventory Projects</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Biotic Inventory Projects</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
-    <style type="text/css">
+    <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+    <style>
         a.boxclose{
             float:right;
             width:36px;
@@ -204,7 +204,13 @@ if(!$researchList && !$editMode){
 include(__DIR__ . '/../header.php');
 echo "<div class='navpath'>";
 echo "<a href='../index.php'>Home</a> &gt;&gt; ";
-echo '<b><a href="index.php?pid='.$pid.'">'.($projArr?$projArr['projname']:'Inventory Project List').'</a></b>';
+if($projArr){
+    echo "<a href='index.php'>Biotic Inventory Projects</a> &gt;&gt; ";
+    echo '<b>'.$projArr['projname'].'</b>';
+}
+else{
+    echo '<b>Biotic Inventory Projects</b>';
+}
 echo '</div>';
 ?>
 
@@ -422,7 +428,7 @@ echo '</div>';
         }
     }
     else{
-        echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Projects</h1>';
+        echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Biotic Inventory Projects</h1>';
         $projectArr = $projManager->getProjectList();
         foreach($projectArr as $pid => $projList){
             ?>

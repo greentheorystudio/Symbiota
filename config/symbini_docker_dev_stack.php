@@ -9,9 +9,9 @@ $GLOBALS['PORTAL_GUID'] = '8453b446-8f84-4949-a587-3e8b9678dc0b';				//Typically
 $GLOBALS['SECURITY_KEY'] = '424a9fc6-9454-4bce-acba-e32656da8a63';				//Typically a UUID used to verify access to certain web service
 
 $GLOBALS['CLIENT_ROOT'] = '';				//URL path to project root folder (relative path w/o domain, e.g. '/seinet')
-$GLOBALS['SERVER_ROOT'] = '/var/www/default/htdocs';				//Full path to Symbiota project root folder
+$GLOBALS['SERVER_ROOT'] = '/var/www/default/htdocs';				//Full path to project root folder
 $GLOBALS['TEMP_DIR_ROOT'] = $GLOBALS['SERVER_ROOT'].'/temp';				//Must be writable by Apache; will use system default if not specified
-$GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'].'/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
+$GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'].'/content/logs';					//Must be writable by Apache; will use <PORTAL_ROOT>/temp/logs if not specified
 
 $GLOBALS['SMTP_HOST'] = '172.28.1.3';                //SMTP Host
 $GLOBALS['SMTP_PORT'] = 1025;                //SMTP Port
@@ -28,9 +28,6 @@ $GLOBALS['IMG_WEB_WIDTH'] = 1400;
 $GLOBALS['IMG_TN_WIDTH'] = 200;
 $GLOBALS['IMG_LG_WIDTH'] = 3200;
 $GLOBALS['IPLANT_IMAGE_IMPORT_PATH'] = '';		//Path used to map/import images uploaded to the iPlant image server (e.g. /home/shared/project-name/--INSTITUTION_CODE--/, the --INSTITUTION_CODE-- text will be replaced with collection's institution code)
-
-//$GLOBALS['USE_IMAGE_MAGICK'] = 0;		//1 = ImageMagick resize images, given that it's installed (faster, less memory intensive)
-$GLOBALS['TESSERACT_PATH'] = ''; 			//Needed for OCR function in the occurrence editor page
 
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 

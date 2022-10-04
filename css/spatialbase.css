@@ -1,3 +1,34 @@
+body{
+	font-size: 16px;
+}
+
+.ui-panel{width:350px;min-height:100%;max-height:none;border-width:0;position:absolute;top:0;display:block}
+.ui-panel-position-left{left:-350px}
+.ui-panel-animate.ui-panel-position-left.ui-panel-display-overlay,.ui-panel-animate.ui-panel-position-left.ui-panel-display-push{left:0;-webkit-transform:translate3d(-350px,0,0);-moz-transform:translate3d(-350px,0,0);transform:translate3d(-350px,0,0)}
+.ui-panel-position-right{right:-350px}
+.ui-panel-animate.ui-panel-position-right.ui-panel-display-overlay,.ui-panel-animate.ui-panel-position-right.ui-panel-display-push{right:0;-webkit-transform:translate3d(350px,0,0);-moz-transform:translate3d(350px,0,0);transform:translate3d(350px,0,0)}
+.ui-panel-page-content-position-left{left:350px;right:-350px}
+.ui-panel-animate.ui-panel-page-content-position-left{left:0;right:0;-webkit-transform:translate3d(350px,0,0);-moz-transform:translate3d(350px,0,0);transform:translate3d(350px,0,0)}
+.ui-panel-page-content-position-right{left:-350px;right:350px}
+.ui-panel-animate.ui-panel-page-content-position-right{left:0;right:0;-webkit-transform:translate3d(-350px,0,0);-moz-transform:translate3d(-350px,0,0);transform:translate3d(-350px,0,0)}
+.ui-panel-dismiss-open.ui-panel-dismiss-position-left{left:350px}
+.ui-panel-dismiss-open.ui-panel-dismiss-position-right{right:350px}
+@media (min-width:55em){
+	.ui-responsive-panel .ui-panel-page-content-open.ui-panel-page-content-position-left{margin-right:350px}
+	.ui-responsive-panel .ui-panel-page-content-open.ui-panel-page-content-position-right{margin-left:350px}
+	.ui-responsive-panel .ui-panel-page-content-open{width:auto;height:95%;}
+	.ui-responsive-panel .ui-panel-dismiss-display-push,.ui-responsive-panel.ui-page-active~.ui-panel-dismiss-display-push{display:none}
+}
+
+
+.ui-panel-inner{padding:0;}
+
+.ui-accordion .ui-accordion-content {
+	padding: 10px 10px;
+	border-top: 0;
+	overflow: auto;
+}
+
 * {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -58,6 +89,7 @@
 	border-width: 1px 1px 0 0;
 	background-color: #3c668d;
 	opacity: 0.85;
+	font-size: 12px;
 }
 
 .ui-rangeSlider-label .ui-rangeSlider-leftLabel {
@@ -69,6 +101,7 @@
 	top: 10px;
 	left: 50%;
 	z-index: 3;
+	font-size: 12px;
 }
 
 #maptoolbox {
@@ -155,31 +188,31 @@
 .ol-zoom {
 	top: 42px;
 	left: auto;
-	right: .5em;
+	right: 8px;
 }
 
 .ol-zoom .ol-zoom-out {
-	margin-top: 235px;
+	margin-top: 231px;
 	left: auto;
 	right: 8px;
 }
 .ol-zoomslider {
 	background-color: transparent;
-	top: 5.2em;
+	top: 65px;
 	left: auto;
-	right: .5em;
+	right: 8px;
 	height:235px;
 }
 
 .ol-touch .ol-zoom .ol-zoom-out {
-	margin-top: 252px;
+	margin-top: 231px;
 	left: auto;
-	right: .5em;
+	right: 8px;
 }
 .ol-touch .ol-zoomslider {
-	top: 5.25em;
+	top: 65px;
 	left: auto;
-	right: .5em;
+	right: 8px;
 }
 .ol-popup {
 	position: absolute;
@@ -288,6 +321,10 @@ a.boxclose{
 	height: 30px;
 }
 
+#panelcontainer{
+	font-size: 12px;
+}
+
 #defaultpanel{
 	width:380px;
 }
@@ -317,76 +354,7 @@ a.boxclose{
 	color: black;
 }
 
-#sliderdiv{
-	pointer-events:none;
-}
-
-#sliderdiv .ui-widget-header {
-	overflow: hidden;
-	background: #68a1d6;
-	height: 30px;
-	margin:0;
-	-moz-border-radius: 4px;
-	cursor: none;
-	-webkit-box-shadow: inset 0 2px 6px RGBA(0,0,0,0.5);
-	-moz-box-shadow: inset 0 2px 6px RGBA(0,0,0,0.5);
-	box-shadow: inset 0 2px 6px RGBA(0,0,0,0.5);
-}
-
-#sliderdiv .ui-corner-all {
-	border-radius: 4px;
-}
-
-#sliderdiv .ui-slider .ui-slider-range {
-	position: absolute;
-	z-index: 1;
-	font-size: .7em;
-	display: block;
-	border: 0;
-	background-position: 0 0;
-}
-
-#sliderdiv .ui-slider-horizontal .ui-slider-range {
-	top: 0;
-	height: 100%;
-	overflow: hidden;
-}
-
-#custom-handle-min, #custom-handle-max {
-	background: transparent;
-	border: 0;
-	cursor:col-resize;
-	position: absolute;
-	display: block;
-	z-index:99;
-	pointer-events: auto;
-}
-
-.custom-label {
-	background: #67707F;
-	background: -moz-linear-gradient(top, #67707F 0%, #888DA0 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#67707F), color-stop(100%,#888DA0));
-	padding: 5px 10px;
-	width: 94px;
-	height: 30px;
-	position: relative;
-	top: -39px;
-	left: -40px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
-	color:white;
-	font-size:12px;
-}
-.label-arrow {
-	width: 30px;
-	height: 15px;
-	position: relative;
-	top: -40px;
-	left: -8px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
-	border-left: 15px solid transparent;
-	border-right: 15px solid transparent;
-	border-top: 15px solid #888DA0;
-
+.tool-warning{
+	font-weight: bold;
+	color: red;
 }

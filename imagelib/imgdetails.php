@@ -21,19 +21,19 @@ if($isEditor){
 	if($action === 'Submit Image Edits'){
 		$status = $imgManager->editImage($_POST);
 		if(is_numeric($status)) {
-            header('Location: ../taxa/admin/tpeditor.php?tid=' . $status . '&tabindex=1');
+            header('Location: ../taxa/profile/tpeditor.php?tid=' . $status . '&tabindex=1');
         }
 	}
 	elseif($action === 'Transfer Image'){
 		$imgManager->changeTaxon($_REQUEST['targettid'],$_REQUEST['sourcetid']);
-		header( 'Location: ../taxa/admin/tpeditor.php?tid='.$_REQUEST['targettid'].'&tabindex=1' );
+		header( 'Location: ../taxa/profile/tpeditor.php?tid='.$_REQUEST['targettid'].'&tabindex=1' );
 	}
 	elseif($action === 'Delete Image'){
 		$imgDel = $_REQUEST['imgid'];
 		$removeImg = (array_key_exists('removeimg',$_REQUEST)?$_REQUEST['removeimg']:0);
 		$status = $imgManager->deleteImage($imgDel, $removeImg);
 		if(is_numeric($status)){
-			header( 'Location: ../taxa/admin/tpeditor.php?tid='.$status.'&tabindex=1' );
+			header( 'Location: ../taxa/profile/tpeditor.php?tid='.$status.'&tabindex=1' );
 		}
 	}
 	$imgArr = $imgManager->getImageMetadata();
@@ -43,7 +43,7 @@ if($imgArr){
 	$imgUrl = $imgArr['url'];
 	$origUrl = $imgArr['originalurl'];
 	$metaUrl = $imgArr['url'];
-	if($GLOBALS['IMAGE_DOMAIN']){
+	if(isset($GLOBALS['IMAGE_DOMAIN'])){
 		if(strncmp($imgUrl, '/', 1) === 0){
 			$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 			$metaUrl = $GLOBALS['IMAGE_DOMAIN'].$metaUrl;
@@ -76,12 +76,12 @@ if($imgArr){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Image Details: #' .$imgId; ?></title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
+	<link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/imagelib.imgdetails.js?ver=20210313" type="text/javascript"></script>
-	<script src="../js/shared.js?ver=20220310" type="text/javascript"></script>
+	<script src="../js/shared.js?ver=20220809" type="text/javascript"></script>
 </head>
 <body>
 	<div id="fb-root"></div>
@@ -266,7 +266,7 @@ if($imgArr){
 									<div style="margin-top:2px;">
 										<input type="submit" name="submitaction" id="submit" value="Delete Image"/>
 									</div>
-									<input name="removeimg" type="checkbox" value="1" /> Remove image from server
+									<input name="removeimg" type="checkbox" value="1" checked/> Remove image from server
 									<div style="margin-left:20px;color:red;">
 										(Note: if box is checked, image will be permanently deleted from server, as well as from database)
 									</div>

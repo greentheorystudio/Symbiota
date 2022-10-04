@@ -10,7 +10,7 @@ $clid = (int)$_REQUEST['clid'];
 	<title>Collections Search Download</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
@@ -82,13 +82,13 @@ $clid = (int)$_REQUEST['clid'];
 							</td>
 							<td>
 								<div style="margin:10px 0;">
-									<input type="radio" name="schema" value="symbiota" onclick="georefRadioClicked(this)" CHECKED />
-									Symbiota Native
+									<input type="radio" name="schema" value="native" onclick="georefRadioClicked(this)" CHECKED />
+									Native
 									<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
                                         <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a><br/>
 									<div id="schemanativeinfodialog">
-										Symbiota native is very similar to Darwin Core except with the addtion of a few fields
+										Native is very similar to Darwin Core except with the addtion of a few fields
 										such as substrate, associated collectors, verbatim description.
 									</div>
 									<input type="radio" name="schema" value="dwc" onclick="georefRadioClicked(this)" />

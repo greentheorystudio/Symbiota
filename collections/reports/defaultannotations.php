@@ -26,7 +26,7 @@ if($GLOBALS['SYMB_UID']){
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Default Annotations</title>
-		<style type="text/css">
+		<style>
 			body {font-family:arial,sans-serif;}
 			table.labels {page-break-before:auto;page-break-inside:avoid;border-spacing:5px;}
 			table.labels td {width:<?php echo ($rowsPerPage === 1?'600px':(100/$rowsPerPage).'%'); ?>;border:1px solid black;padding:8px;}

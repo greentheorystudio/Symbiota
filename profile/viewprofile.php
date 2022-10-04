@@ -122,7 +122,7 @@ if($isEditor){
         $statusStr = $pHandler->addUserTaxonomy($_POST['taxon'], $_POST['editorstatus'], $_POST['geographicscope'], $_POST['notes']);
     }
     elseif($action === 'resendconfirmationemail'){
-        $pHandler->addUserTaxonomy($_POST['taxon'], $_POST['editorstatus'], $_POST['geographicscope'], $_POST['notes']);
+        $pHandler->sendConfirmationEmail($userId);
         $statusStr = 'Resent confirmation email!';
     }
     $person = $pHandler->getPerson();
@@ -141,7 +141,7 @@ if($isEditor){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - View User Profile</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
+    <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
@@ -150,7 +150,7 @@ if($isEditor){
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
     <script type="text/javascript" src="../js/profile.viewprofile.js?ver=20210313"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20220310"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20220809"></script>
 </head>
 <body>
 <?php
@@ -160,7 +160,7 @@ include(__DIR__ . '/../header.php');
     <?php
     if($isEditor){
         if($statusStr){
-            echo "<div style='color:#FF0000;margin:10px 0 10px 10px;'>".$statusStr. '</div>';
+            echo "<div style='color:#FF0000;margin:10px 0 10px 10px;'>".$statusStr.'</div>';
         }
         ?>
         <div id="tabs" style="margin:10px;">
@@ -168,7 +168,7 @@ include(__DIR__ . '/../header.php');
                 <?php
                 if($GLOBALS['VALID_USER']){
                     ?>
-                    <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
+                    <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Checklists and Projects</a></li>
                     <li><a href="occurrencemenu.php">Occurrence Management</a></li>
                     <?php
                 }

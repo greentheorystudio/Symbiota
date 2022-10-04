@@ -24,11 +24,7 @@ class SpecUploadDwca extends SpecUploadBase{
         }
         $fullPath = $this->uploadTargetPath.$localFolder.'/dwca.zip';
 
-        if(array_key_exists('ulfnoverride',$_POST) && $_POST['ulfnoverride'] && !$this->path){
-            $this->path = $_POST['ulfnoverride'];
-        }
-
-        if($this->path){
+        if($this->path && file_exists($this->path)){
             if($this->uploadType === $this->IPTUPLOAD){
                 if(strpos($this->path,'/resource.do')){
                     $this->path = str_replace('/resource.do','/archive.do',$this->path);
@@ -87,8 +83,8 @@ class SpecUploadDwca extends SpecUploadBase{
                     }
                 }
                 else{
-                    $this->outputMsg('<li>ERROR: Symbiota URL not in correct format (path: '.$this->path.') </li>');
-                    $this->errorStr = 'ERROR: Symbiota URL not in correct format (path: '.$this->path.')';
+                    $this->outputMsg('<li>ERROR: URL not in correct format (path: '.$this->path.') </li>');
+                    $this->errorStr = 'ERROR: URL not in correct format (path: '.$this->path.')';
                 }
             }
             elseif(copy($this->path,$fullPath)){

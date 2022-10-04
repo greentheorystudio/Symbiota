@@ -32,35 +32,6 @@ class TaxonomyUpload{
 		}
 	}
 
-	public function setUploadFile($ulFileName = null): void
-	{
-		if($ulFileName){
-			if(file_exists($ulFileName)){
-				$pos = strrpos($ulFileName, '/');
-				if(!$pos) {
-					$pos = strrpos($ulFileName, "\\");
-				}
-				$this->uploadFileName = substr($ulFileName,$pos+1);
-				copy($ulFileName,$this->uploadTargetPath.$this->uploadFileName);
-			}
-		}
-		elseif(array_key_exists('uploadfile',$_FILES)){
-			$this->uploadFileName = $_FILES['uploadfile']['name'];
-			if(is_writable($this->uploadTargetPath)){
-                move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
-            }
-		}
-		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) === '.zip'){
-			$zip = new ZipArchive;
-			$zip->open($this->uploadTargetPath.$this->uploadFileName);
-			$zipFile = $this->uploadTargetPath.$this->uploadFileName;
-			$this->uploadFileName = $zip->getNameIndex(0);
-			$zip->extractTo($this->uploadTargetPath);
-			$zip->close();
-			unlink($zipFile);
-		}
-	}
-
 	public function loadFile($fieldMap): void
 	{
 		$this->outputMsg('Starting Upload');
@@ -125,7 +96,7 @@ class TaxonomyUpload{
                         if(in_array('scinameinput', $fieldMap, true)){
                             $inputArr = array();
                             foreach($uploadTaxaIndexArr as $recIndex => $targetField){
-                                $valIn = Sanitizer::cleanInStr($this->encodeString($recordArr[$recIndex]));
+                                $valIn = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$recIndex]));
                                 if($targetField === 'acceptance' && !is_numeric($valIn)){
                                     $valInTest = strtolower($valIn);
                                     if($valInTest === 'accepted' || $valInTest === 'valid'){
@@ -176,7 +147,7 @@ class TaxonomyUpload{
                                 unset($inputArr['identificationqualifier']);
                                 foreach($inputArr as $k => $v){
                                     $sql1 .= ','.$k;
-                                    $inValue = Sanitizer::cleanInStr($v);
+                                    $inValue = Sanitizer::cleanInStr($this->conn,$v);
                                     $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
                                 }
                                 $sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
@@ -642,14 +613,7 @@ class TaxonomyUpload{
 			'SET i.tid = o.TidInterpreted '.
 			'WHERE ISNULL(i.tid) AND (o.TidInterpreted IS NOT NULL)';
 		$this->conn->query($sql2);
-
-		$sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude) '.
-			'SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,2), round(o.decimallongitude,2) '.
-			'FROM omoccurrences o '.
-			'WHERE (o.tidinterpreted IS NOT NULL) AND (o.decimallatitude between -180 and 180) AND (o.decimallongitude between -180 and 180) '.
-			'AND (ISNULL(o.cultivationStatus) OR o.cultivationStatus = 0) AND (ISNULL(o.coordinateUncertaintyInMeters) OR o.coordinateUncertaintyInMeters < 10000) ';
-		$this->conn->query($sql3);
-	}
+    }
 
 	private function transferVernaculars($secondRound = null): void
 	{

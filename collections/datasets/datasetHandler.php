@@ -21,7 +21,7 @@ if(!is_numeric($datasetID) && $datasetID !== '--newDataset') {
 
 $stArr= array();
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 }
 if($occArrJson){
     $occid = json_decode($occArrJson, true);

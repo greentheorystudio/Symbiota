@@ -87,13 +87,9 @@ function getSearchTermsArr(){
 function loadSearchTermsArrFromJson(stArrJson){
     const dateId = getDatestringIdentifier();
     const queryId = document.getElementById('queryId').value;
-    try{
-        const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
-        searchTermsArr[dateId][queryId] = JSON.parse(stArrJson);
-        localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
-    }catch (e){
-        return false;
-    }
+    const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
+    searchTermsArr[dateId][queryId] = JSON.parse(stArrJson.replaceAll('%squot;',"'"));
+    localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
 }
 
 function getSearchTermsArrKeyValue(key){
@@ -153,9 +149,19 @@ function validateSearchTermsArr(stArr){
 function setSearchTermsArrKeyValue(key,value){
     const dateId = getDatestringIdentifier();
     const queryId = document.getElementById('queryId').value;
-    const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
+    let searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
     searchTermsArr[dateId][queryId][key] = value;
-    localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
+    let jsonSearchTermsArr = JSON.stringify(searchTermsArr);
+    const stLength = jsonSearchTermsArr.length;
+    if(stLength > 5000000){
+        clearLocalStorageSearchTerms();
+        initializeSearchStorage(queryId);
+        const currentSearchTermsArr = searchTermsArr[dateId][queryId];
+        searchTermsArr = {};
+        searchTermsArr[dateId][queryId] = currentSearchTermsArr;
+        jsonSearchTermsArr = JSON.stringify(searchTermsArr);
+    }
+    localStorage.setItem('searchTermsArr', jsonSearchTermsArr);
 }
 
 function copySearchUrl(){

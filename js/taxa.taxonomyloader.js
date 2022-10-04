@@ -9,14 +9,14 @@ var taxonExistsValid = false;
 
 $(document).ready(function() {
 	$("#acceptedstr").autocomplete({ 
-		source: "rpc/getacceptedsuggest.php",
+		source: "../rpc/getacceptedsuggest.php",
 		minLength: 2, 
 		autoFocus: true 
 	});
 	
 	$("#parentname").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, rhigh: $("#rankid").val() }, response );
+			$.getJSON( "../rpc/gettaxasuggest.php", { term: request.term, rhigh: $("#rankid").val() }, response );
 		},
 		change: function() {
 			checkParentExistance(document.loaderform);
@@ -105,7 +105,7 @@ function validateLoadForm(f){
 
 	$.ajax({
 		type: "POST",
-		url: "rpc/gettid.php",
+		url: "../rpc/gettid.php",
 		async: false,
 		data: { sciname: f.sciname.value, rankid: f.rankid.value, author: f.author.value }
 	}).done(function( msg ) {
@@ -218,7 +218,7 @@ function checkAcceptedExistance(f){
 	if(f.acceptedstr.value){
 		$.ajax({
 			type: "POST",
-			url: "rpc/gettid.php",
+			url: "../rpc/gettid.php",
 			async: false,
 			data: { sciname: f.acceptedstr.value }
 		}).done(function( msg ) {
@@ -247,7 +247,7 @@ function checkParentExistance(f){
 	if(parentStr){
 		$.ajax({
 			type: "POST",
-			url: "rpc/gettid.php",
+			url: "../rpc/gettid.php",
 			async: false,
 			data: { sciname: parentStr }
 		}).done(function( msg ) {

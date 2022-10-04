@@ -104,7 +104,6 @@ class SpecProcessorManager {
 
 	public function addProject($addArr): void
 	{
-		$this->conn->query('DELETE FROM specprocessorprojects WHERE (title = "OCR Harvest") AND (collid = '.$this->collid.')');
 		$sql = '';
 		if(isset($addArr['projecttype'])){
 			$sourcePath = $addArr['sourcepath'];
@@ -146,11 +145,6 @@ class SpecProcessorManager {
 					(isset($addArr['createlgimg'])&&$addArr['createlgimg']?$addArr['createlgimg']:'NULL').')';
 			}
 		}
-		elseif($addArr['title'] === 'OCR Harvest' && $addArr['newprofile']){
-			$sql = 'INSERT INTO specprocessorprojects(collid,title,speckeypattern) '.
-				'VALUES('.$this->collid.',"'.$this->cleanInStr($addArr['title']).'","'.
-				$this->cleanInStr($addArr['speckeypattern']).'")';
-		}
 		if($sql && !$this->conn->query($sql)) {
 			echo 'ERROR saving project.';
 		}
@@ -167,9 +161,6 @@ class SpecProcessorManager {
 		$sqlWhere = '';
 		if(is_numeric($crit)){
 			$sqlWhere .= 'WHERE (spprid = '.$crit.')';
-		}
-		elseif($crit === 'OCR Harvest' && $this->collid){
-			$sqlWhere .= 'WHERE (collid = '.$this->collid.') ';
 		}
 		if($sqlWhere){
 			$sql = 'SELECT collid, title, speckeypattern, patternreplace, replacestr,coordx1, coordx2, coordy1, coordy2, sourcepath, targetpath, '.
@@ -213,9 +204,6 @@ class SpecProcessorManager {
 				elseif($this->title === 'IPlant Image Processing'){
 					$this->projectType = 'iplant';
 				}
-				elseif($this->title === 'OCR Harvest'){
-					break;
-				}
 				else{
 					$this->projectType = 'local';
 				}
@@ -240,7 +228,7 @@ class SpecProcessorManager {
 		if($this->collid){
 			$sql = 'SELECT spprid, title '.
 				'FROM specprocessorprojects '.
-				'WHERE (collid = '.$this->collid.') AND title != "OCR Harvest"';
+				'WHERE (collid = '.$this->collid.') ';
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
 				$projArr[$row->spprid] = $row->title;
@@ -257,31 +245,6 @@ class SpecProcessorManager {
 			$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.
 					'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
 					'WHERE (o.collid = '.$this->collid.') ';
-			if($procStatus){
-				if($procStatus === 'null'){
-					$sql .= 'AND processingstatus IS NULL';
-				}
-				else{
-					$sql .= 'AND processingstatus = "'.$this->cleanInStr($procStatus).'"';
-				}
-			}
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$cnt = $r->cnt;
-			}
-			$rs->free();
-		}
-		return $cnt;
-	}
-
-	public function getSpecNoOcr($procStatus = null): int
-	{
-		$cnt = 0;
-		if($this->collid){
-			$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.
-					'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-					'LEFT JOIN specprocessorrawlabels r ON i.imgid = r.imgid '.
-					'WHERE o.collid = '.$this->collid.' AND r.imgid IS NULL ';
 			if($procStatus){
 				if($procStatus === 'null'){
 					$sql .= 'AND processingstatus IS NULL';

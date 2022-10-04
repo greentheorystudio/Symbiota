@@ -590,7 +590,7 @@ class ChecklistManager {
 
 	public function setTaxonFilter($tFilter): void
 	{
-		$this->taxonFilter = Sanitizer::cleanInStr(strtolower($tFilter));
+		$this->taxonFilter = Sanitizer::cleanInStr($this->conn,strtolower($tFilter));
 	}
 
     public function setThesFilter(): void
@@ -658,7 +658,7 @@ class ChecklistManager {
 			$sql .= 'WHERE (pid = '.$pValue.')';
 		}
 		else{
-			$sql .= 'WHERE (projname = "'.Sanitizer::cleanInStr($pValue).'")';
+			$sql .= 'WHERE (projname = "'.Sanitizer::cleanInStr($this->conn,$pValue).'")';
 		}
 		$rs = $this->conn->query($sql);
 		if($rs){

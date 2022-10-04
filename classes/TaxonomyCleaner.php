@@ -60,7 +60,7 @@ class TaxonomyCleaner extends Manager{
 		echo '<li>Starting taxa check</li>';
 		$sql = 'SELECT sciname, family, scientificnameauthorship, count(*) as cnt '.$this->getSqlFragment();
 		if($startIndex) {
-			$sql .= 'AND (sciname > "' . Sanitizer::cleanInStr($startIndex) . '") ';
+			$sql .= 'AND (sciname > "' . Sanitizer::cleanInStr($this->conn,$startIndex) . '") ';
 		}
 		$sql .= 'GROUP BY sciname, family ORDER BY sciname LIMIT '.($limit ?: 50);
 		//echo $sql; exit;
@@ -120,7 +120,7 @@ class TaxonomyCleaner extends Manager{
                 if($manualCheck){
                     $thesLink = '';
                     if($isTaxonomyEditor){
-                        $thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/taxonomyloader.php\'); return false;" title="Open Thesaurus New Record Form"><i style="height:15px;width:15px;" class="far fa-edit"></i><b style="font-size:70%;">T</b></a>';
+                        $thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/index.php\'); return false;" title="Open New Taxon Form"><i style="height:15px;width:15px;" class="far fa-edit"></i><b style="font-size:70%;">T</b></a>';
                     }
                     echo '<li style="margin-left:15px;">Checking close matches in thesaurus'.$thesLink.'...</li>';
                     if($matchArr = $taxonHarvester->getCloseMatch($sciname)){
@@ -364,9 +364,9 @@ class TaxonomyCleaner extends Manager{
 			}
 			$rs->free();
 
-			$oldSciname = Sanitizer::cleanInStr($oldSciname);
+			$oldSciname = Sanitizer::cleanInStr($this->conn,$oldSciname);
 			if($idQualifierIn) {
-				$idQualifier = Sanitizer::cleanInStr($idQualifierIn);
+				$idQualifier = Sanitizer::cleanInStr($this->conn,$idQualifierIn);
 			}
 			$sqlWhere = 'WHERE (collid IN('.$collid.')) AND (sciname = "'.$oldSciname.'") AND (tidinterpreted IS NULL) ';
 			$sql1 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
@@ -451,7 +451,7 @@ class TaxonomyCleaner extends Manager{
 		$sql = 'SELECT tid, sciname FROM taxa ';
 		$queryString = preg_replace('/[()\'"+\-=@$%]+/', '', $queryString);
 		if($queryString){
-			$tokenArr = explode(' ',Sanitizer::cleanInStr($queryString));
+			$tokenArr = explode(' ',Sanitizer::cleanInStr($this->conn,$queryString));
 			$token = array_shift($tokenArr);
 			if($token === 'x') {
 				$token = array_shift($tokenArr);

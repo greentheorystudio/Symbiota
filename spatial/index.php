@@ -1,14 +1,9 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
-include_once(__DIR__ . '/../classes/OccurrenceManager.php');
-include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 180);
 
-$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
-$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $windowType = array_key_exists('windowtype',$_REQUEST)?$_REQUEST['windowtype']:'analysis';
 $clusterPoints = !(array_key_exists('clusterpoints', $_REQUEST) && $_REQUEST['clusterpoints'] === 'false');
 
@@ -16,8 +11,6 @@ $inputWindowMode = false;
 $inputWindowModeTools = array();
 $inputWindowSubmitText = '';
 $displayWindowMode = false;
-$stArr = array();
-$validStArr = false;
 
 if(strncmp($windowType, 'input', 5) === 0){
     $inputWindowMode = true;
@@ -35,54 +28,28 @@ if(strncmp($windowType, 'input', 5) === 0){
         $inputWindowSubmitText = 'Criteria';
     }
 }
-
-if(file_exists(__DIR__ . '/../config/includes/searchVarCustom.php')){
-    include(__DIR__ . '/../config/includes/searchVarCustom.php');
-}
-
-$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
-if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = $GLOBALS['DEFAULTCATID'];
-}
-
-$occManager = new OccurrenceManager();
-$spatialManager = new SpatialModuleManager();
-
-if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
-    if($occManager->validateSearchTermsArr($stArr)){
-        $validStArr = true;
-    }
-}
-
-$collList = $occManager->getFullCollectionList($catId);
-$specArr = ($collList['spec'] ?? null);
-$obsArr = ($collList['obs'] ?? null);
-
-$datasetArr = $occManager->getDatasetArr();
-
-$dbArr = array();
 ?>
-<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<!DOCTYPE html>
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>" style="background-color:white;">
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Spatial Module</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery.mobile-1.4.0.min.css?ver=20210817" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery.mobile-1.4.0.min.css?ver=20220720" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui_accordian.css?ver=20220720" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css" type="text/css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220626" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220816" type="text/css" rel="stylesheet" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/shp.js" type="text/javascript"></script>
@@ -93,179 +60,19 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220310" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.js?ver=20220622" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20220330" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220809" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220926" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20220921" type="text/javascript"></script>
+    <?php include_once(__DIR__ . '/includes/spatialvars.php'); ?>
     <script type="text/javascript">
-        let searchTermsArr = {};
-
-        $(function() {
-            let winHeight = $(window).height();
-            winHeight = winHeight + "px";
-            document.getElementById('spatialpanel').style.height = winHeight;
-
-            $("#sidepanel-accordion").accordion({
-                icons: null,
-                collapsible: true,
-                heightStyle: "fill"
-            });
-        });
-
-        $(window).resize(function(){
-            let winHeight = $(window).height();
-            winHeight = winHeight + "px";
-            document.getElementById('spatialpanel').style.height = winHeight;
-            $("#sidepanel-accordion").accordion("refresh");
-        });
-
-        $(document).on("pageloadfailed", function(event){
-            event.preventDefault();
-        });
-
-        $(document).ready(function() {
-            setLayersController();
-            if(document.getElementById("taxa")){
-                $( "#taxa" )
-                    .bind( "keydown", function( event ) {
-                        if ( event.keyCode == $.ui.keyCode.TAB &&
-                            $( this ).data( "autocomplete" ).menu.active ) {
-                            event.preventDefault();
-                        }
-                    })
-                    .autocomplete({
-                        source: function( request, response ) {
-                            const t = Number(document.getElementById("taxontype").value);
-                            let rankLow = '';
-                            let rankHigh = '';
-                            let rankLimit = '';
-                            let source = '';
-                            if(t === 5){
-                                source = '../webservices/autofillvernacular.php';
-                            }
-                            else{
-                                source = '../webservices/autofillsciname.php';
-                            }
-                            if(t === 4){
-                                rankLow = 21;
-                                rankHigh = 139;
-                            }
-                            else if(t === 2){
-                                rankLimit = 140;
-                            }
-                            else if(t === 3){
-                                rankLow = 141;
-                            }
-                            else{
-                                rankLow = 140;
-                            }
-                            //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
-                            $.getJSON( source, {
-                                term: extractLast( request.term ),
-                                rlow: rankLow,
-                                rhigh: rankHigh,
-                                rlimit: rankLimit,
-                                hideauth: true,
-                                limit: 20
-                            }, response );
-                        },
-                        appendTo: "#taxa_autocomplete",
-                        search: function() {
-                            const term = extractLast( this.value );
-                            if ( term.length < 4 ) {
-                                return false;
-                            }
-                        },
-                        focus: function() {
-                            return false;
-                        },
-                        select: function( event, ui ) {
-                            const terms = split( this.value );
-                            terms.pop();
-                            terms.push( ui.item.value );
-                            this.value = terms.join( ", " );
-                            processTaxaParamChange();
-                            return false;
-                        }
-                    },{});
-            }
-
-            spatialModuleInitialising = true;
-            initializeSearchStorage(<?php echo $queryId; ?>);
-
-            $('#criteriatab').tabs({
-                beforeLoad: function( event, ui ) {
-                    $(ui.panel).html("<p>Loading...</p>");
-                }
-            });
-            $('#recordstab').tabs({
-                beforeLoad: function( event, ui ) {
-                    $(ui.panel).html("<p>Loading...</p>");
-                }
-            });
-            $('#vectortoolstab').tabs({
-                beforeLoad: function( event, ui ) {
-                    $(ui.panel).html("<p>Loading...</p>");
-                }
-            });
-            $('#addLayers').popup({
-                transition: 'all 0.3s',
-                scrolllock: true,
-                blur: false
-            });
-            $('#infopopup').popup({
-                transition: 'all 0.3s'
-            });
-            $('#datasetmanagement').popup({
-                transition: 'all 0.3s',
-                scrolllock: true
-            });
-            $('#csvoptions').popup({
-                transition: 'all 0.3s',
-                scrolllock: true
-            });
-            $('#mapsettings').popup({
-                transition: 'all 0.3s',
-                scrolllock: true
-            });
-            $('#layerqueryselector').popup({
-                transition: 'all 0.3s',
-                scrolllock: true,
-                closetransitionend: function(event, ui) {
-                    clearLayerQuerySelector();
-                }
-            });
-
-            <?php
-            if(!$clusterPoints){
-                echo 'deactivateClustering();';
-            }
-            if($inputWindowMode){
-                echo 'loadInputParentParams();';
-            }
-            if($queryId || $validStArr){
-                if($validStArr){
-                    ?>
-                    initializeSearchStorage(<?php echo $queryId; ?>);
-                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-                    <?php
-                }
-                ?>
-                searchTermsArr = getSearchTermsArr();
-                if(validateSearchTermsArr(searchTermsArr)){
-                    setInputFormBySearchTermsArr();
-                    createShapesFromSearchTermsArr();
-                    setCollectionForms();
-                    loadPoints();
-                }
-                <?php
-            }
-            ?>
-            spatialModuleInitialising = false;
-        });
+        const WINDOWMODE = '<?php echo $windowType; ?>';
+        const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
+        const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
     </script>
+    <?php include_once(__DIR__ . '/includes/spatialinitialize.php'); ?>
 </head>
 <body class="mapbody">
-<div data-role="page" id="page1">
+<div data-role="page" id="panelcontainer">
     <div role="main" class="ui-content">
         <a href="#defaultpanel" id="panelopenbutton" data-role="button" data-inline="true" data-icon="bars">Open</a>
     </div>
@@ -298,38 +105,13 @@ $dbArr = array();
 </div>
 
 <script type="text/javascript">
-    const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
-    const WINDOWMODE = '<?php echo $windowType; ?>';
-    const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
-    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
-    const pointLayerFillColor = '<?php echo $GLOBALS['SPATIAL_POINT_FILL_COLOR']; ?>';
-    const pointLayerBorderColor = '<?php echo $GLOBALS['SPATIAL_POINT_BORDER_COLOR']; ?>';
-    const pointLayerBorderWidth = <?php echo $GLOBALS['SPATIAL_POINT_BORDER_WIDTH']; ?>;
-    const pointLayerPointRadius = <?php echo $GLOBALS['SPATIAL_POINT_POINT_RADIUS']; ?>;
-    const pointLayerSelectionsBorderColor = '<?php echo $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_COLOR']; ?>';
-    const pointLayerSelectionsBorderWidth = <?php echo $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_WIDTH']; ?>;
-    const shapesFillColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_FILL_COLOR']; ?>';
-    const shapesBorderColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR']; ?>';
-    const shapesBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH']; ?>;
-    const shapesPointRadius = <?php echo $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']; ?>;
-    const shapesOpacity = '<?php echo $GLOBALS['SPATIAL_SHAPES_OPACITY']; ?>';
-    const shapesSelectionsBorderColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR']; ?>';
-    const shapesSelectionsFillColor = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR']; ?>';
-    const shapesSelectionsBorderWidth = <?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH']; ?>;
-    const shapesSelectionsOpacity = '<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY']; ?>';
-    const dragDropFillColor = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR']; ?>';
-    const dragDropBorderColor = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']; ?>';
-    const dragDropBorderWidth = <?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH']; ?>;
-    const dragDropPointRadius = <?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>;
-    const dragDropOpacity = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>';
-    const dragDropRasterColorScale = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']; ?>';
-
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');
     const popupcloser = document.getElementById('popup-closer');
     const finderpopupcontainer = document.getElementById('finderpopup');
     const finderpopupcontent = document.getElementById('finderpopup-content');
     const finderpopupcloser = document.getElementById('finderpopup-closer');
+    let finderpopuptimeout;
     const typeSelect = document.getElementById('drawselect');
 
     const popupoverlay = new ol.Overlay({
@@ -360,164 +142,56 @@ $dbArr = array();
         return false;
     };
 
-    const selectsource = new ol.source.Vector({
-        wrapX: true
-    });
-    const selectlayer = new ol.layer.Vector({
-        zIndex: 8,
-        source: selectsource,
-        style: getVectorLayerStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesPointRadius, shapesOpacity)
+    layersObj['dragdrop1'].on('postrender', function(evt) {
+        if(!loadPointsEvent){
+            hideWorking();
+        }
     });
 
-    let uncertaintycirclesource = new ol.source.Vector({
-        wrapX: true
-    });
-    const uncertaintycirclelayer = new ol.layer.Vector({
-        zIndex: 7,
-        source: uncertaintycirclesource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(255,0,0,0.3)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#000000',
-                width: 1
-            }),
-            image: new ol.style.Circle({
-                radius: 7,
-                stroke: new ol.style.Stroke({
-                    color: '#000000',
-                    width: 1
-                }),
-                fill: new ol.style.Fill({
-                    color: 'rgba(255,0,0)'
-                })
-            })
-        })
+    layersObj['dragdrop2'].on('postrender', function(evt) {
+        if(!loadPointsEvent){
+            hideWorking();
+        }
     });
 
-    let rasteranalysissource = new ol.source.Vector({
-        wrapX: true
-    });
-    const rasteranalysislayer = new ol.layer.Vector({
-        zIndex: 7,
-        source: rasteranalysissource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(255,0,0,0.3)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: 'rgba(255,0,0,1)',
-                width: 5
-            })
-        })
+    layersObj['dragdrop3'].on('postrender', function(evt) {
+        if(!loadPointsEvent){
+            hideWorking();
+        }
     });
 
-    let pointvectorsource = new ol.source.Vector({
-        wrapX: true
-    });
-    const pointvectorlayer = new ol.layer.Vector({
-        zIndex: 9,
-        source: pointvectorsource
+    layersObj['select'].on('postrender', function(evt) {
+        if(!loadPointsEvent){
+            hideWorking();
+        }
     });
 
-    const heatmaplayer = new ol.layer.Heatmap({
-        zIndex: 10,
-        source: pointvectorsource,
-        weight: function (feature) {
-            let showPoint = true;
-            if (dateSliderActive) {
-                showPoint = validateFeatureDate(feature);
-            }
-            if (showPoint) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        },
-        gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
-        blur: parseInt(heatMapBlur.toString(), 10),
-        radius: parseInt(heatMapRadius.toString(), 10),
-        visible: false
+    layersObj['pointv'].on('prerender', function(evt) {
+        if(loadPointsEvent){
+            showWorking();
+        }
     });
 
-    const blankdragdropsource = new ol.source.Vector({
-        wrapX: true
-    });
-    const dragdroplayer1 = new ol.layer.Vector({
-        zIndex: 1,
-        source: blankdragdropsource,
-        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
-    });
-    const dragdroplayer2 = new ol.layer.Vector({
-        zIndex: 2,
-        source: blankdragdropsource,
-        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
-    });
-    const dragdroplayer3 = new ol.layer.Vector({
-        zIndex: 3,
-        source: blankdragdropsource,
-        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
-    });
-    const dragdroplayer4 = new ol.layer.Image({
-        zIndex: 4,
-    });
-    const dragdroplayer5 = new ol.layer.Image({
-        zIndex: 5,
-    });
-    const dragdroplayer6 = new ol.layer.Image({
-        zIndex: 6,
+    layersObj['heat'].on('prerender', function(evt) {
+        if(loadPointsEvent){
+            showWorking();
+        }
     });
 
-    const spiderLayer = new ol.layer.Vector({
-        zIndex: 11,
-        source: new ol.source.Vector({
-            features: new ol.Collection(),
-            useSpatialIndex: true
-        })
+    layersObj['pointv'].on('postrender', function(evt) {
+        if(loadPointsEvent && pointvectorsource.getFeatures().length === Number(queryRecCnt)){
+            loadPointsPostrender();
+        }
     });
 
-    layersArr['base'] = baselayer;
-    layersArr['dragdrop1'] = dragdroplayer1;
-    layersArr['dragdrop2'] = dragdroplayer2;
-    layersArr['dragdrop3'] = dragdroplayer3;
-    layersArr['dragdrop4'] = dragdroplayer4;
-    layersArr['dragdrop5'] = dragdroplayer5;
-    layersArr['dragdrop6'] = dragdroplayer6;
-    layersArr['uncertainty'] = uncertaintycirclelayer;
-    layersArr['rasteranalysis'] = rasteranalysislayer;
-    layersArr['select'] = selectlayer;
-    layersArr['pointv'] = pointvectorlayer;
-    layersArr['heat'] = heatmaplayer;
-    layersArr['spider'] = spiderLayer;
-
-    layersArr['dragdrop1'].on('postrender', function(evt) {
-        hideWorking();
-    });
-
-    layersArr['dragdrop2'].on('postrender', function(evt) {
-        hideWorking();
-    });
-
-    layersArr['dragdrop3'].on('postrender', function(evt) {
-        hideWorking();
-    });
-
-    layersArr['select'].on('postrender', function(evt) {
-        hideWorking();
-    });
-
-    layersArr['pointv'].on('postrender', function(evt) {
-        checkLoading();
-    });
-
-    layersArr['heat'].on('postrender', function(evt) {
-        checkLoading();
+    layersObj['heat'].on('postrender', function(evt) {
+        if(loadPointsEvent && pointvectorsource.getFeatures().length === Number(queryRecCnt)){
+            loadPointsPostrender();
+        }
     });
 
     const selectInteraction = new ol.interaction.Select({
-        layers: [layersArr['select']],
+        layers: [layersObj['select']],
         condition: function (evt) {
             return (evt.type === 'click' && activeLayer === 'select' && !evt.originalEvent.altKey && !evt.originalEvent.shiftKey);
         },
@@ -544,7 +218,7 @@ $dbArr = array();
     });
 
     const rasterAnalysisInteraction = new ol.interaction.Select({
-        layers: [layersArr['rasteranalysis']],
+        layers: [layersObj['rasteranalysis']],
         style: new ol.style.Style({
             fill: new ol.style.Fill({
                 color: 'rgba(255,0,0,0.3)'
@@ -561,14 +235,14 @@ $dbArr = array();
     });
 
     const pointInteraction = new ol.interaction.Select({
-        layers: [layersArr['pointv'], layersArr['spider']],
+        layers: [layersObj['pointv'], layersObj['spider']],
         condition: function (evt) {
             if (evt.type === 'click' && activeLayer === 'pointv') {
                 if (!evt.originalEvent.altKey) {
                     if (spiderCluster) {
                         const spiderclick = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
                             spiderFeature = feature;
-                            if (feature && layer === layersArr['spider']) {
+                            if (feature && layer === layersObj['spider']) {
                                 return feature;
                             }
                         });
@@ -577,7 +251,7 @@ $dbArr = array();
                                 features: new ol.Collection(),
                                 useSpatialIndex: true
                             });
-                            layersArr['spider'].setSource(blankSource);
+                            layersObj['spider'].setSource(blankSource);
                             for (const i in hiddenClusters) {
                                 if(hiddenClusters.hasOwnProperty(i)){
                                     showFeature(hiddenClusters[i]);
@@ -586,17 +260,17 @@ $dbArr = array();
                             hiddenClusters = [];
                             spiderCluster = false;
                             spiderFeature = '';
-                            layersArr['pointv'].getSource().changed();
+                            layersObj['pointv'].getSource().changed();
                         }
                     }
                     return true;
                 } else if (evt.originalEvent.altKey) {
                     map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
                         if (feature) {
-                            if (spiderCluster && layer === layersArr['spider']) {
+                            if (spiderCluster && layer === layersObj['spider']) {
                                 clickedFeatures.push(feature);
                                 return feature;
-                            } else if (layer === layersArr['pointv']) {
+                            } else if (layer === layersObj['pointv']) {
                                 clickedFeatures.push(feature);
                                 return feature;
                             }
@@ -620,7 +294,7 @@ $dbArr = array();
             return (activeLayer === 'select' && evt.originalEvent.shiftKey);
         },
         addCondition: ol.events.condition.shiftKeyOnly,
-        layers: [selectlayer],
+        layers: [layersObj['select']],
         hitTolerance: 2,
         translateFeature: false,
         scale: true,
@@ -668,12 +342,12 @@ $dbArr = array();
                         const geoJSONFormat = new ol.format.GeoJSON();
                         features = geoJSONFormat.readFeatures(geoJSONFormat.writeFeatures(features));
                     }
-                    layersArr[sourceIndex] = new ol.source.Vector({
+                    layersObj[sourceIndex] = new ol.source.Vector({
                         features: features
                     });
-                    layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
+                    layersObj[dragDropTarget].setSource(layersObj[sourceIndex]);
                     processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
-                    map.getView().fit(layersArr[sourceIndex].getExtent());
+                    map.getView().fit(layersObj[sourceIndex].getExtent());
                     toggleLayerDisplayMessage();
                 }
             }
@@ -701,12 +375,12 @@ $dbArr = array();
                             const features = format.readFeatures(geojson, {
                                 featureProjection: 'EPSG:3857'
                             });
-                            layersArr[sourceIndex] = new ol.source.Vector({
+                            layersObj[sourceIndex] = new ol.source.Vector({
                                 features: features
                             });
-                            layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
+                            layersObj[dragDropTarget].setSource(layersObj[sourceIndex]);
                             processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
-                            map.getView().fit(layersArr[sourceIndex].getExtent());
+                            map.getView().fit(layersObj[sourceIndex].getExtent());
                             hideWorking();
                             toggleLayerDisplayMessage();
                         });
@@ -751,18 +425,18 @@ $dbArr = array();
                                 maxValue = item;
                             }
                         });
-                        layersArr[dataIndex] = {};
-                        layersArr[dataIndex]['data'] = bands[0];
-                        layersArr[dataIndex]['bbox'] = image.getBoundingBox();
-                        layersArr[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
-                        layersArr[dataIndex]['x_min'] = x_min;
-                        layersArr[dataIndex]['x_max'] = x_max;
-                        layersArr[dataIndex]['y_min'] = y_min;
-                        layersArr[dataIndex]['y_max'] = y_max;
-                        layersArr[dataIndex]['imageWidth'] = imageWidth;
-                        layersArr[dataIndex]['imageHeight'] = imageHeight;
-                        layersArr[dataIndex]['minValue'] = minValue;
-                        layersArr[dataIndex]['maxValue'] = maxValue;
+                        layersObj[dataIndex] = {};
+                        layersObj[dataIndex]['data'] = bands[0];
+                        layersObj[dataIndex]['bbox'] = image.getBoundingBox();
+                        layersObj[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
+                        layersObj[dataIndex]['x_min'] = x_min;
+                        layersObj[dataIndex]['x_max'] = x_max;
+                        layersObj[dataIndex]['y_min'] = y_min;
+                        layersObj[dataIndex]['y_max'] = y_max;
+                        layersObj[dataIndex]['imageWidth'] = imageWidth;
+                        layersObj[dataIndex]['imageHeight'] = imageHeight;
+                        layersObj[dataIndex]['minValue'] = minValue;
+                        layersObj[dataIndex]['maxValue'] = maxValue;
                         const canvasElement = document.createElement('canvas');
                         const plot = new plotty.plot({
                             canvas: canvasElement,
@@ -773,13 +447,13 @@ $dbArr = array();
                             colorScale: dragDropRasterColorScale
                         });
                         plot.render();
-                        layersArr[sourceIndex] = new ol.source.ImageStatic({
+                        layersObj[sourceIndex] = new ol.source.ImageStatic({
                             url: canvasElement.toDataURL("image/png"),
                             imageExtent: box,
                             projection: 'EPSG:4326'
                         });
-                        layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                        map.addLayer(layersArr[dragDropTarget]);
+                        layersObj[dragDropTarget].setSource(layersObj[sourceIndex]);
+                        map.addLayer(layersObj[dragDropTarget]);
                         processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
                         addRasterLayerToTargetList(dragDropTarget,filename);
                         toggleLayerDisplayMessage();
@@ -804,11 +478,11 @@ $dbArr = array();
     });
 
     const mapView = new ol.View({
-        zoom: <?php echo $GLOBALS['SPATIAL_INITIAL_ZOOM']; ?>,
+        zoom: initialMapZoom,
         projection: 'EPSG:3857',
         minZoom: 2.5,
         maxZoom: 19,
-        center: ol.proj.transform(<?php echo $GLOBALS['SPATIAL_INITIAL_CENTER']; ?>, 'EPSG:4326', 'EPSG:3857'),
+        center: ol.proj.transform(initialMapCenter, 'EPSG:4326', 'EPSG:3857'),
     });
 
     const map = new ol.Map({
@@ -818,18 +492,7 @@ $dbArr = array();
         controls: ol.control.defaults().extend([
             new ol.control.FullScreen()
         ]),
-        layers: [
-            layersArr['base'],
-            layersArr['dragdrop1'],
-            layersArr['dragdrop2'],
-            layersArr['dragdrop3'],
-            layersArr['uncertainty'],
-            layersArr['rasteranalysis'],
-            layersArr['select'],
-            layersArr['pointv'],
-            layersArr['heat'],
-            layersArr['spider']
-        ],
+        layers: layersArr,
         overlays: [popupoverlay,finderpopupoverlay]
     });
 
@@ -877,13 +540,13 @@ $dbArr = array();
 
     map.getView().on('change:resolution', function() {
         if(spiderCluster){
-            const source = layersArr['spider'].getSource();
+            const source = layersObj['spider'].getSource();
             source.clear();
             const blankSource = new ol.source.Vector({
                 features: new ol.Collection(),
                 useSpatialIndex: true
             });
-            layersArr['spider'].setSource(blankSource);
+            layersObj['spider'].setSource(blankSource);
             for(const i in hiddenClusters){
                 if(hiddenClusters.hasOwnProperty(i)){
                     showFeature(hiddenClusters[i]);
@@ -891,7 +554,7 @@ $dbArr = array();
             }
             hiddenClusters = [];
             spiderCluster = '';
-            layersArr['pointv'].getSource().changed();
+            layersObj['pointv'].getSource().changed();
         }
     });
 
@@ -1006,7 +669,7 @@ $dbArr = array();
                     infoArr['opacity'] = shapesOpacity;
                     infoArr['removable'] = true;
                     infoArr['sortable'] = false;
-                    infoArr['symbology'] = true;
+                    infoArr['symbology'] = false;
                     infoArr['query'] = true;
                     processAddLayerControllerElement(infoArr,document.getElementById("coreLayers"),false);
                     shapeActive = true;
@@ -1014,7 +677,7 @@ $dbArr = array();
             }
             else{
                 if(shapeActive){
-                    removeLayerToSelList('select');
+                    removeLayerFromSelList('select');
                     shapeActive = false;
                 }
             }
@@ -1029,7 +692,6 @@ $dbArr = array();
         let infoHTML;
         if(evt.originalEvent.altKey){
             if(activeLayer === 'pointv'){
-                infoHTML = '';
                 let targetFeature = '';
                 let iFeature = '';
                 if(clickedFeatures.length === 1){
@@ -1047,26 +709,7 @@ $dbArr = array();
                     return;
                 }
                 if(iFeature){
-                    infoHTML += '<b>occid:</b> '+iFeature.get('occid')+'<br />';
-                    infoHTML += '<b>CollectionName:</b> '+(iFeature.get('CollectionName')?iFeature.get('CollectionName'):'')+'<br />';
-                    infoHTML += '<b>catalogNumber:</b> '+(iFeature.get('catalogNumber')?iFeature.get('catalogNumber'):'')+'<br />';
-                    infoHTML += '<b>otherCatalogNumbers:</b> '+(iFeature.get('otherCatalogNumbers')?iFeature.get('otherCatalogNumbers'):'')+'<br />';
-                    infoHTML += '<b>family:</b> '+(iFeature.get('family')?iFeature.get('family'):'')+'<br />';
-                    infoHTML += '<b>sciname:</b> '+(iFeature.get('sciname')?iFeature.get('sciname'):'')+'<br />';
-                    infoHTML += '<b>recordedBy:</b> '+(iFeature.get('recordedBy')?iFeature.get('recordedBy'):'')+'<br />';
-                    infoHTML += '<b>recordNumber:</b> '+(iFeature.get('recordNumber')?iFeature.get('recordNumber'):'')+'<br />';
-                    infoHTML += '<b>eventDate:</b> '+(iFeature.get('displayDate')?iFeature.get('displayDate'):'')+'<br />';
-                    infoHTML += '<b>habitat:</b> '+(iFeature.get('habitat')?iFeature.get('habitat'):'')+'<br />';
-                    infoHTML += '<b>associatedTaxa:</b> '+(iFeature.get('associatedTaxa')?iFeature.get('associatedTaxa'):'')+'<br />';
-                    infoHTML += '<b>country:</b> '+(iFeature.get('country')?iFeature.get('country'):'')+'<br />';
-                    infoHTML += '<b>StateProvince:</b> '+(iFeature.get('StateProvince')?iFeature.get('StateProvince'):'')+'<br />';
-                    infoHTML += '<b>county:</b> '+(iFeature.get('county')?iFeature.get('county'):'')+'<br />';
-                    infoHTML += '<b>locality:</b> '+(iFeature.get('locality')?iFeature.get('locality'):'')+'<br />';
-                    if(iFeature.get('thumbnailurl')){
-                        const thumburl = iFeature.get('thumbnailurl');
-                        infoHTML += '<img src="'+thumburl+'" style="height:150px" />';
-                    }
-                    popupcontent.innerHTML = infoHTML;
+                    popupcontent.innerHTML = getPointFeatureInfoHtml(iFeature);
                     popupoverlay.setPosition(evt.coordinate);
                 }
                 else{
@@ -1074,21 +717,21 @@ $dbArr = array();
                 }
                 clickedFeatures = [];
             }
-            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6' || layersArr[activeLayer] instanceof ol.layer.Image){
+            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6' || layersObj[activeLayer] instanceof ol.layer.Image){
                 infoHTML = '';
                 const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
                 const dataIndex = activeLayer + 'Data';
-                const x = Math.floor(layersArr[dataIndex]['imageWidth']*(coords[0] - layersArr[dataIndex]['x_min'])/(layersArr[dataIndex]['x_max'] - layersArr[dataIndex]['x_min']));
-                const y = layersArr[dataIndex]['imageHeight']-Math.ceil(layersArr[dataIndex]['imageHeight']*(coords[1] - layersArr[dataIndex]['y_max'])/(layersArr[dataIndex]['y_min'] - layersArr[dataIndex]['y_max']));
-                const rasterDataIndex = (Number(layersArr[dataIndex]['imageWidth']) * y) + x;
-                infoHTML += '<b>Value:</b> '+layersArr[dataIndex]['data'][rasterDataIndex]+'<br />';
+                const x = Math.floor(layersObj[dataIndex]['imageWidth']*(coords[0] - layersObj[dataIndex]['x_min'])/(layersObj[dataIndex]['x_max'] - layersObj[dataIndex]['x_min']));
+                const y = layersObj[dataIndex]['imageHeight']-Math.ceil(layersObj[dataIndex]['imageHeight']*(coords[1] - layersObj[dataIndex]['y_max'])/(layersObj[dataIndex]['y_min'] - layersObj[dataIndex]['y_max']));
+                const rasterDataIndex = (Number(layersObj[dataIndex]['imageWidth']) * y) + x;
+                infoHTML += '<b>Value:</b> '+layersObj[dataIndex]['data'][rasterDataIndex]+'<br />';
                 popupcontent.innerHTML = infoHTML;
                 popupoverlay.setPosition(evt.coordinate);
             }
-            else if(layersArr[activeLayer] instanceof ol.layer.Vector){
+            else if(layersObj[activeLayer] instanceof ol.layer.Vector){
                 infoHTML = '';
                 const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-                    if (layer === layersArr[activeLayer]) {
+                    if (layer === layersObj[activeLayer]) {
                         return feature;
                     }
                 });
@@ -1108,9 +751,9 @@ $dbArr = array();
         }
         else{
             if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv'){
-                if(layersArr[activeLayer] instanceof ol.layer.Vector){
+                if(layersObj[activeLayer] instanceof ol.layer.Vector){
                     map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
-                        if(layer === layersArr[activeLayer]){
+                        if(layer === layersObj[activeLayer]){
                             if(!selectsource.hasFeature(feature)){
                                 const featureClone = feature.clone();
                                 selectsource.addFeature(featureClone);
@@ -1129,7 +772,7 @@ $dbArr = array();
             let idArr = [];
             map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
                 for(let i = 0; i<selectobject.length; i++){
-                    if(layer === layersArr[selectobject.options[i].value] && !idArr.includes(selectobject.options[i].value)){
+                    if(layer === layersObj[selectobject.options[i].value] && !idArr.includes(selectobject.options[i].value)){
                         idArr.push(selectobject.options[i].value);
                         if(infoHTML){
                             infoHTML += '<br />';
@@ -1187,8 +830,6 @@ $dbArr = array();
     setTransformHandleStyle();
 </script>
 
-<?php include_once(__DIR__ . '/includes/datasetmanagement.php'); ?>
-
 <?php include_once(__DIR__ . '/includes/mapsettings.php'); ?>
 
 <?php include_once(__DIR__ . '/includes/layerqueryselector.php'); ?>
@@ -1197,42 +838,10 @@ $dbArr = array();
 
 <?php include_once(__DIR__ . '/includes/layercontroller.php'); ?>
 
-<?php include_once(__DIR__ . '/../collections/csvoptions.php'); ?>
-
-<!-- Data Download Form -->
-<div style="display:none;">
-    <form name="datadownloadform" id="datadownloadform" action="../collections/rpc/datadownloader.php" method="post">
-        <input id="starrjson" name="starrjson" type="hidden" />
-        <input id="dh-q" name="dh-q" type="hidden" />
-        <input id="dh-fq" name="dh-fq" type="hidden" />
-        <input id="dh-fl" name="dh-fl" type="hidden" />
-        <input id="dh-rows" name="dh-rows" type="hidden" />
-        <input id="dh-type" name="dh-type" type="hidden" />
-        <input id="dh-filename" name="dh-filename" type="hidden" />
-        <input id="dh-contentType" name="dh-contentType" type="hidden" />
-        <input id="dh-selections" name="dh-selections" type="hidden" />
-        <input id="schemacsv" name="schemacsv" type="hidden" />
-        <input id="identificationscsv" name="identificationscsv" type="hidden" />
-        <input id="imagescsv" name="imagescsv" type="hidden" />
-        <input id="formatcsv" name="formatcsv" type="hidden" />
-        <input id="zipcsv" name="zipcsv" type="hidden" />
-        <input id="csetcsv" name="csetcsv" type="hidden" />
-    </form>
-</div>
-
-<!-- Dataset Form -->
-<div style="display:none;">
-    <form name="datasetform" id="datasetform" action="../collections/datasets/datasetHandler.php" method="post" target="_blank">
-        <input id="dsstarrjson" name="dsstarrjson" type="hidden" />
-        <input id="selectedtargetdatasetid" name="targetdatasetid" type="hidden" />
-        <input id="occarrjson" name="occarrjson" type="hidden" />
-        <input id="datasetformaction" name="action" type="hidden" />
-    </form>
-</div>
+<?php include_once(__DIR__ . '/includes/spatialfooter.php'); ?>
 
 <div class="loadingModal">
     <div id="loaderAnimation"></div>
 </div>
-<input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />
 </body>
 </html>

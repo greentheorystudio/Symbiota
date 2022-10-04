@@ -8,7 +8,7 @@ class OccurrenceDownload{
 	private $conn;
 	private $redactLocalities = true;
 	private $rareReaderArr = array();
-	private $schemaType = 'symbiota';
+	private $schemaType = 'native';
 	private $extended = 0;
 	private $delimiter = ',';
 	private $charSetSource;
@@ -54,10 +54,10 @@ class OccurrenceDownload{
 		$fileName = $this->getOutputFileName();
 
 		if($this->schemaType === 'checklist'){
-			$contentDesc = 'Symbiota Checklist File';
+			$contentDesc = 'Checklist File';
 		}
 		elseif($this->schemaType === 'georef'){
-			$contentDesc = 'Symbiota Occurrence Georeference Data';
+			$contentDesc = 'Occurrence Georeference Data';
 		}
 		if($this->zipFile){
 			$zipArchive = null;
@@ -266,7 +266,7 @@ class OccurrenceDownload{
 
 			$tnUrl = $r->thumbnailurl;
 			if(strncmp($tnUrl, '/', 1) === 0){
-				if($GLOBALS['IMAGE_DOMAIN']){
+				if(isset($GLOBALS['IMAGE_DOMAIN'])){
 					$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
 				}
 				else{
@@ -310,7 +310,7 @@ class OccurrenceDownload{
 				$cond = 'EQUALS';
 			}
 			if($value || ($cond === 'NULL' || $cond === 'NOTNULL')){
-				$this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($value);
+				$this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($this->conn,$value);
 			}
 		}
 	}

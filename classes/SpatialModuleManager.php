@@ -21,14 +21,14 @@ class SpatialModuleManager{
         }
     }
 
-    public function getOccStrFromGeoJSON($json): string{
-        $occArr = array();
+    public function getIdStrFromGeoJSON($json): string{
+        $idArr = array();
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
-            $occArr[] = $data['properties']['occid'];
+            $idArr[] = $data['properties']['id'];
         }
-        return implode(',',$occArr);
+        return implode(',',$idArr);
     }
 
     public function getLayersConfigJSON(): string
@@ -42,7 +42,7 @@ class SpatialModuleManager{
 
     public function writeGPXFromGeoJSON($json): string{
         $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
-            'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
+            'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="BioSurv">';
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
@@ -121,7 +121,7 @@ class SpatialModuleManager{
             $geoArr['properties']['coll_year'] = utf8_encode($row->year);
             $geoArr['properties']['tidinterpreted'] = utf8_encode($row->tidinterpreted);
             $geoArr['properties']['coll_day'] = utf8_encode($row->day);
-            $geoArr['properties']['occid'] = utf8_encode($row->occid);
+            $geoArr['properties']['id'] = utf8_encode($row->occid);
             $geoArr['properties']['CollectionName'] = utf8_encode($row->CollectionName);
             $geoArr['properties']['sciname'] = utf8_encode($row->sciname);
             $geoArr['properties']['family'] = utf8_encode($row->family);

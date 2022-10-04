@@ -19,7 +19,7 @@
  * JSON array of scientific names.
  *
  * Each scientific name contains a subarray with:
- *  id: Symbiota portal TID for that taxon.
+ *  id: Portal TID for that taxon.
  *  value: Suggested label for taxon (currently set to be same as index).
  *  author: Authority for taxon.
  *

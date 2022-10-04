@@ -823,7 +823,7 @@ class SpecUploadBase extends SpecUpload{
             }
             foreach($editArr as $appliedStatus => $eArr){
                 $sql = 'INSERT INTO omoccurrevisions(occid, oldValues, newValues, externalSource, reviewStatus, appliedStatus) '.
-                    'VALUES('.$r['occid'].',"'.Sanitizer::cleanInStr(json_encode($eArr['old'])).'","'.Sanitizer::cleanInStr(json_encode($eArr['new'])).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
+                    'VALUES('.$r['occid'].',"'.Sanitizer::cleanInStr($this->conn,json_encode($eArr['old'])).'","'.Sanitizer::cleanInStr($this->conn,json_encode($eArr['new'])).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
                 if(!$this->conn->query($sql)){
                     $this->outputMsg('<li style="margin-left:10px;">ERROR adding edit revision</li>');
                 }
@@ -1052,7 +1052,7 @@ class SpecUploadBase extends SpecUpload{
         $uuidManager->populateGuids();
 
         if($this->imageTransferCount){
-            $this->outputMsg('<li style="margin-left:10px;color:orange">WARNING: Image thumbnails may need to be created using the <a href="../../imagelib/admin/thumbnailbuilder.php?collid='.$this->collId.'">Image Thumbnail Builder</a></li>');
+            $this->outputMsg('<li style="margin-left:10px;color:orange">WARNING: Image thumbnails may need to be created using the <a href="../../collections/management/thumbnailbuilder.php?collid='.$this->collId.'">Image Thumbnail Builder</a></li>');
         }
     }
 
@@ -1269,7 +1269,7 @@ class SpecUploadBase extends SpecUpload{
             if(strncmp($symbField, 'unmapped', 8) !== 0){
                 $sqlFields .= ','.$symbField;
                 $valueStr = $this->encodeString($valueStr);
-                $valueStr = Sanitizer::cleanInStr($valueStr);
+                $valueStr = Sanitizer::cleanInStr($this->conn,$valueStr);
                 if($valueStr) {
                     $hasValue = true;
                 }
