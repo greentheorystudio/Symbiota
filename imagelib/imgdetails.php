@@ -266,7 +266,7 @@ if($imgArr){
 									<div style="margin-top:2px;">
 										<input type="submit" name="submitaction" id="submit" value="Delete Image"/>
 									</div>
-									<input name="removeimg" type="checkbox" value="1" /> Remove image from server
+									<input name="removeimg" type="checkbox" value="1" checked/> Remove image from server
 									<div style="margin-left:20px;color:red;">
 										(Note: if box is checked, image will be permanently deleted from server, as well as from database)
 									</div>

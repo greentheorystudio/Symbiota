@@ -35,7 +35,7 @@ $clManager->setProj($pid);
 	include(__DIR__ . '/../header.php');
 	echo "<div class='navpath'>";
 	echo "<a href='../index.php'>Home</a> &gt;&gt; ";
-	echo ' <b>Species Checklists</b>';
+	echo ' <b>Checklists</b>';
 	echo '</div>';
 	?>
 	<div id="innertext">
