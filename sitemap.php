@@ -62,6 +62,7 @@ $smManager = new SiteMapManager();
                 ?>
                 <li><a href="taxa/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
                 <li><a href="checklists/index.php">Checklists</a></li>
+                <li><a href="projects/index.php">Biotic Inventory Projects</a></li>
                 <li><a href="checklists/dynamicmap.php?interface=checklist">Dynamic Checklist</a></li>
                 <?php
                 if(isset($GLOBALS['KEY_MOD_IS_ACTIVE']) && $GLOBALS['KEY_MOD_IS_ACTIVE']){
@@ -71,18 +72,6 @@ $smManager = new SiteMapManager();
 			</ul>
 
 			<?php
-			$projList = $smManager->getProjectList();
-			if($projList){
-				echo '<h3>Biotic Inventory Projects</h3><ul>';
-				foreach($projList as $pid => $pArr){
-					echo "<li><a href='projects/index.php?pid=".$pid."'>".$pArr['name']."</a></li>\n";
-					echo '<ul><li>Manager: ' .$pArr['managers']."</li></ul>\n";
-				}
-				echo '</ul>';
-			}
-			?>
-
-            <?php
             if($GLOBALS['SYMB_UID']){
                 ?>
                 <fieldset class="sitemapDataManagementContainer">

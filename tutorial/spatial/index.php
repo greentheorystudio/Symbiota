@@ -20,8 +20,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                 position: absolute;
                 left: 50%;
                 bottom:15%;
-                min-width: 650px;
-                min-height: 550px;
+                min-width: 725px;
+                min-height: 625px;
                 width:55%;
                 height: 70%;
             }
