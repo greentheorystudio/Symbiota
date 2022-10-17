@@ -428,16 +428,24 @@ echo '</div>';
         }
     }
     else{
-        echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Biotic Inventory Projects</h1>';
         $projectArr = $projManager->getProjectList();
-        foreach($projectArr as $pid => $projList){
-            ?>
-            <h2><a href="index.php?pid=<?php echo $pid; ?>"><?php echo $projList['projname']; ?></a></h2>
-            <div style="margin:0 0 30px 15px;">
-                <div><b>Managers:</b> <?php echo ($projList['managers']?:'Not defined'); ?></div>
-                <div style='margin-top:10px;'><?php echo $projList['descr']; ?></div>
-            </div>
-            <?php
+        if($projectArr){
+            echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Biotic Inventory Projects</h1>';
+            foreach($projectArr as $pid => $projList){
+                ?>
+                <h2><a href="index.php?pid=<?php echo $pid; ?>"><?php echo $projList['projname']; ?></a></h2>
+                <div style="margin:0 0 30px 15px;">
+                    <div><b>Managers:</b> <?php echo ($projList['managers']?:'Not defined'); ?></div>
+                    <div style='margin-top:10px;'><?php echo $projList['descr']; ?></div>
+                </div>
+                <?php
+            }
+        }
+        else{
+            echo '<div><b>There are no biotic inventory projects available at this time.</b></div>';
+            if($GLOBALS['VALID_USER']){
+                echo '<div><a href="index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></div>';
+            }
         }
     }
     ?>
