@@ -22,7 +22,7 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
     <script type="text/javascript" src="../js/shared.js?ver=20220809"></script>
     <script type="text/javascript" src="../js/collections.harvestparams.js?ver=20211104"></script>
     <script type="text/javascript" src="../js/search.term.manager.js?ver=20220921"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220615" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
