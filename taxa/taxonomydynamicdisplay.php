@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/TaxonomyDisplayManager.php');
+include_once(__DIR__ . '/../config/symbbase.php');
+include_once(__DIR__ . '/../classes/TaxonomyDisplayManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
 
@@ -16,6 +16,8 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
     $editable = true;
 }
 
+$treePath = array();
+$targetId = 0;
 if($target){
     $treePath = $taxonDisplayObj->getDynamicTreePath();
     $targetId = end($treePath);
@@ -49,7 +51,7 @@ if($target){
         $(document).ready(function() {
             $("#taxontarget").autocomplete({
                     source: function( request, response ) {
-                        $.getJSON( "../../webservices/autofillsciname.php", {
+                        $.getJSON( "../webservices/autofillsciname.php", {
                             term: request.term,
                             limit: 10,
                             hideauth: false
@@ -62,7 +64,7 @@ if($target){
 </head>
 <body class="claro">
 <?php
-include(__DIR__ . '/../../header.php');
+include(__DIR__ . '/../header.php');
 ?>
 <div class="navpath">
     <a href="../index.php">Home</a> &gt;&gt;
@@ -106,10 +108,10 @@ include(__DIR__ . '/../../header.php');
             </fieldset>
         </form>
     </div>
-    <div id="tree"></div>
     <?php
-    if($target){
+    if($targetId){
         ?>
+        <div id="tree"></div>
         <script type="text/javascript">
             require([
                 "dojo/window",
@@ -176,7 +178,9 @@ include(__DIR__ . '/../../header.php');
 
                 taxonTree.set("path", <?php echo json_encode($treePath); ?>).then(
                     function(){
-                        win.scrollIntoView(taxonTree.selectedNode.id);
+                        if(taxonTree.selectedNode){
+                            win.scrollIntoView(taxonTree.selectedNode.id);
+                        }
                     }
                 );
                 taxonTree.startup();
@@ -185,10 +189,13 @@ include(__DIR__ . '/../../header.php');
         </script>
         <?php
     }
+    elseif($target){
+        echo '<div><h3>The taxon you entered is not found in the Taxonomic Thesaurus</h3></div>';
+    }
     ?>
 </div>
 <?php
-include(__DIR__ . '/../../footer.php');
+include(__DIR__ . '/../footer.php');
 ?>
 
 </body>
