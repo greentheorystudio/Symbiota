@@ -266,9 +266,11 @@
             <div class="col-lg-7">
                 <div style="display:flex;justify-content:space-between;align-items: center;">
                     <div style="display:flex;gap:4px;">
-                        <span class="btn btn-success fileinput-button">
-                            <i style="height:15px;width:15px;" class="fas fa-plus"></i>
-                            <span>Add files</span>
+                        <span class="fileinput-button">
+                            <button type="button" class="btn btn-success fileinput-button">
+                                <i style="height:15px;width:15px;" class="fas fa-plus"></i>
+                                <span>Add files</span>
+                            </button>
                             <input type="file" id="batchUploadedElement" name="imgfile" multiple/>
                         </span>
                         <button type="submit" class="btn btn-primary start">
