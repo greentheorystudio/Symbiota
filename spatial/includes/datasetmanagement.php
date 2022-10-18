@@ -1,5 +1,9 @@
 <?php
-/** @var array $datasetArr */
+include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
+
+$occManager = new OccurrenceManager();
+
+$datasetArr = $occManager->getDatasetArr();
 ?>
 <div id="datasetmanagement" data-role="popup" class="well" style="width:500px;height:175px;font-size:14px;">
     <a class="boxclose datasetmanagement_close" id="boxclose"></a>

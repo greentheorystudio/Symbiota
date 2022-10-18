@@ -91,7 +91,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 		<title>Occurrence Attribute Mining Tool</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+		<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
@@ -161,7 +161,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 			}
 		</script>
 		<script src="../../js/collections.traitattr.js" type="text/javascript"></script>
-		<script src="../../js/shared.js?ver=20220310" type="text/javascript"></script>
+		<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
 	</head>
 	<body style="width:900px">
 		<?php

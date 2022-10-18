@@ -127,7 +127,7 @@ if($clValue || $dynClid){
 								echo "<div class='tnimg' style='".($imgSrc? '' : 'border:1px solid black;')."'>";
 								$spUrl = "../taxa/index.php?taxon=$tid&cl=".$clManager->getClid();
 								if($imgSrc){
-									$imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
+									$imgSrc = (isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
 									echo "<img src='".$imgSrc."' style='height:100%;' />";
 								}
 								else{

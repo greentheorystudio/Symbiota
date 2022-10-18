@@ -17,7 +17,7 @@ $resetPageNum = false;
 $stArr = array();
 $validStArr = false;
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
     if($collManager->validateSearchTermsArr($stArr)){
         $validStArr = true;
     }
@@ -29,8 +29,8 @@ if($stArrJson){
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
-    <style type="text/css">
+    <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+    <style>
         .ui-tabs .ui-tabs-nav li { width:32%; }
         .ui-tabs .ui-tabs-nav li a { margin-left:10px;}
         a.boxclose{
@@ -48,7 +48,7 @@ if($stArrJson){
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/collections.search.js?ver=20210621"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220330"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220921"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};

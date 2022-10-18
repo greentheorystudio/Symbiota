@@ -118,8 +118,8 @@ class DwcArchiverCore extends Manager{
 
     public function setCollArr($collTarget, $collTypeStr = null): void
     {
-        $collTarget = Sanitizer::cleanInStr($collTarget);
-        $collType = Sanitizer::cleanInStr($collTypeStr);
+        $collTarget = Sanitizer::cleanInStr($this->conn,$collTarget);
+        $collType = Sanitizer::cleanInStr($this->conn,$collTypeStr);
         $sqlWhere = '';
         if($collType === 'specimens'){
             $sqlWhere = '(c.colltype = "Preserved Specimens") ';
@@ -194,10 +194,10 @@ class DwcArchiverCore extends Manager{
             }
             if($value || ($cond === 'NULL' || $cond === 'NOTNULL')){
                 if(is_array($value)){
-                    $this->conditionArr[$field][$cond] = Sanitizer::cleanInArray($value);
+                    $this->conditionArr[$field][$cond] = Sanitizer::cleanInArray($this->conn,$value);
                 }
                 else{
-                    $this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($value);
+                    $this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($this->conn,$value);
                 }
             }
         }
@@ -499,7 +499,7 @@ class DwcArchiverCore extends Manager{
                 }
             }
             else{
-                $fileNameSeed = 'SymbiotaOutput_'.$this->ts;
+                $fileNameSeed = 'OccurrenceDataOutput_'.$this->ts;
             }
         }
         $fileName = str_replace(array(' ','"',"'"),'',$fileNameSeed).'_DwC-A.zip';
@@ -572,7 +572,7 @@ class DwcArchiverCore extends Manager{
         else{
             $errStr = "<span style='color:red;'>FAILED to create archive file due to failure to return occurrence records. ".
                 'Note that OccurrenceID GUID assignments are required for Darwin Core Archive publishing. ' .
-                'Symbiota GUID (recordID) assignments are also required, which can be verified by the portal manager through running the GUID mapping utilitiy available in sitemap</span>';
+                'GUID (recordID) assignments are also required, which can be verified by the portal manager through running the GUID mapping utilitiy available in sitemap</span>';
             $this->logOrEcho($errStr);
             if($collid) {
                 $this->deleteArchive($collid);
@@ -603,7 +603,7 @@ class DwcArchiverCore extends Manager{
         $coreElem->setAttribute('linesTerminatedBy','\n');
         $coreElem->setAttribute('fieldsEnclosedBy','"');
         $coreElem->setAttribute('ignoreHeaderLines','1');
-        $coreElem->setAttribute('rowType','http://rs.tdwg.org/dwc/terms/Occurrence');
+        $coreElem->setAttribute('rowType','https://dwc.tdwg.org/terms/#Occurrence');
 
         $filesElem = $newDoc->createElement('files');
         $filesElem->appendChild($newDoc->createElement('location','occurrences'.$this->fileExt));
@@ -637,7 +637,7 @@ class DwcArchiverCore extends Manager{
             $extElem1->setAttribute('linesTerminatedBy','\n');
             $extElem1->setAttribute('fieldsEnclosedBy','"');
             $extElem1->setAttribute('ignoreHeaderLines','1');
-            $extElem1->setAttribute('rowType','http://rs.tdwg.org/dwc/terms/Identification');
+            $extElem1->setAttribute('rowType','https://dwc.tdwg.org/terms/#Identification');
 
             $filesElem1 = $newDoc->createElement('files');
             $filesElem1->appendChild($newDoc->createElement('location','identifications'.$this->fileExt));
@@ -845,7 +845,7 @@ class DwcArchiverCore extends Manager{
         if(!$emlArr) {
             $emlArr = $this->getEmlArr();
         }
-        foreach($GLOBALS['RIGHTS_TERMS_DEFS'] as $k => $v){
+        foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
             if($k === $emlArr['collMetadata'][1]['intellectualRights']){
                 $usageTermArr = $v;
             }
@@ -859,7 +859,7 @@ class DwcArchiverCore extends Manager{
         $rootElem->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
         $rootElem->setAttribute('xsi:schemaLocation','eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.0.1/eml.xsd');
         $rootElem->setAttribute('packageId',UuidFactory::getUuidV4());
-        $rootElem->setAttribute('system','http://symbiota.org');
+        $rootElem->setAttribute('system','https://github.com/greentheorystudio/Symbiota');
         $rootElem->setAttribute('scope','system');
         $rootElem->setAttribute('xml:lang','eng');
 
@@ -1004,7 +1004,7 @@ class DwcArchiverCore extends Manager{
             $datasetElem->appendChild($rightsElem);
         }
 
-        $symbElem = $newDoc->createElement('symbiota');
+        $symbElem = $newDoc->createElement('biosurv');
         $dateElem = $newDoc->createElement('dateStamp');
         $dateElem->appendChild($newDoc->createTextNode(date('c')));
         $symbElem->appendChild($dateElem);
@@ -1670,7 +1670,7 @@ class DwcArchiverCore extends Manager{
             $this->schemaType = $type;
         }
         else{
-            $this->schemaType = 'symbiota';
+            $this->schemaType = 'native';
         }
     }
 

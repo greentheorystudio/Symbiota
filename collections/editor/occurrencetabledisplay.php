@@ -108,7 +108,6 @@ $headerMapBase = array(
     '`month`'=>'Month',
     'municipality'=>'Municipality',
     'occurrenceremarks'=>'Notes (Occurrence Remarks)',
-    'ocrfragment'=>'OCR Fragment',
     'othercatalognumbers'=>'Other Catalog Numbers',
     'ownerinstitutioncode'=>'Owner Code',
     'preparations'=>'Preparations',
@@ -202,7 +201,7 @@ else{
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Table View</title>
-    <style type="text/css">
+    <style>
 		table.styledtable td {
 		    white-space: nowrap;
 		}
@@ -212,7 +211,7 @@ else{
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210901"></script>
+	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210921"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;border:0;">
 	<div>
@@ -342,7 +341,7 @@ else{
 						<?php
                         if($crowdSourceMode){
                             ?>
-                            <a href="../specprocessor/crowdsource/index.php">Crowd Sourcing Central</a> &gt;&gt;
+                            <a href="../management/crowdsource/index.php">Crowd Sourcing Central</a> &gt;&gt;
                             <?php
                         }
                         else{
@@ -368,7 +367,7 @@ else{
 				?>
 				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 					<tr>
-						<th>Symbiota ID</th>
+						<th>ID</th>
 						<?php
 						foreach($headerMap as $k => $v){
 							echo '<th>'.$v.'</th>';
@@ -406,7 +405,7 @@ else{
 				<div style="width:790px;">
 					<?php echo $navStr; ?>
 				</div>
-				*Click on the Symbiota identifier in the first column to open the editor.
+				*Click on the identifier in the first column to open the editor.
 				<?php
 			}
 			else{

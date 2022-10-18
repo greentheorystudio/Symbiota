@@ -5,15 +5,10 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
-$catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
-
-if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = (int)$GLOBALS['DEFAULTCATID'];
-}
 
 $collManager = new OccurrenceManager();
 
-$collList = $collManager->getFullCollectionList($catId);
+$collList = $collManager->getFullCollectionList();
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
 $otherCatArr = $collManager->getOccurVoucherProjects();
@@ -23,11 +18,11 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search</title>
 		<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-		<link href="../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+		<link href="../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
 		<script src="../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
-		<script src="../js/shared.js?ver=20220310" type="text/javascript"></script>
-        <script src="../js/search.term.manager.js?ver=20220330" type="text/javascript"></script>
+		<script src="../js/shared.js?ver=20220809" type="text/javascript"></script>
+        <script src="../js/search.term.manager.js?ver=20220921" type="text/javascript"></script>
         <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
         <script type="text/javascript">
             const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';

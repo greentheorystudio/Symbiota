@@ -36,7 +36,7 @@ if($fileType === 'geojson' || $fileType === 'kml' || $fileType === 'gpx') {
 }
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 }
 
 if($GLOBALS['SOLR_MODE'] && $stArr){
@@ -134,7 +134,7 @@ else{
             $occStr = $selections;
         }
         else{
-            $occStr = $spatialManager->getOccStrFromGeoJSON($jsonContent);
+            $occStr = $spatialManager->getIdStrFromGeoJSON($jsonContent);
         }
         $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
     }
@@ -161,7 +161,7 @@ else{
         $contentDesc = 'Darwin Core ';
     }
     else{
-        $contentDesc = 'Symbiota ';
+        $contentDesc = 'Native ';
     }
     $contentDesc .= 'Occurrence ';
     if($zip){

@@ -1,6 +1,5 @@
 <?php
 include_once(__DIR__ . '/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/SpecProcessorOcr.php');
 include_once(__DIR__ . '/ImageShared.php');
 include_once(__DIR__ . '/Sanitizer.php');
 
@@ -20,33 +19,8 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
     {
 		$status = true;
 		if($this->addOccurrence($postArr)){
-			if($this->activeImgId && $this->addImage($postArr)) {
-                $rawStr = '';
-                $ocrSource = '';
-                if($postArr['ocrblock']){
-                    $rawStr = trim($postArr['ocrblock']);
-                    if($postArr['ocrsource']) {
-                        $ocrSource = $postArr['ocrsource'];
-                    }
-                    else {
-                        $ocrSource = 'User submitted';
-                    }
-                }
-                elseif(isset($postArr['tessocr']) && $postArr['tessocr']){
-                    $ocrManager = new SpecProcessorOcr();
-                    $rawStr = $ocrManager->ocrImageById($this->activeImgId);
-                    $ocrSource = 'Tesseract';
-                }
-                if($rawStr){
-                    if($ocrSource) {
-                        $ocrSource .= ': ' . date('Y-m-d');
-                    }
-                    $sql = 'INSERT INTO specprocessorrawlabels(imgid, rawstr, source) '.
-                        'VALUES('.$this->activeImgId.',"'.Sanitizer::cleanInStr($rawStr).'","'.Sanitizer::cleanInStr($ocrSource).'")';
-                    if(!$this->conn->query($sql)){
-                        $this->errorStr = 'ERROR loading OCR text block.';
-                    }
-                }
+			if($this->activeImgId) {
+                $this->addImage($postArr);
             }
 		}
 		else{
@@ -110,15 +84,15 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 	 		}
 		}
 		$occId = $_REQUEST['occid'];
-		$caption = Sanitizer::cleanInStr($_REQUEST['caption']);
-		$photographer = Sanitizer::cleanInStr($_REQUEST['photographer']);
+		$caption = Sanitizer::cleanInStr($this->conn,$_REQUEST['caption']);
+		$photographer = Sanitizer::cleanInStr($this->conn,$_REQUEST['photographer']);
 		$photographerUid = (array_key_exists('photographeruid',$_REQUEST)?$_REQUEST['photographeruid']:'');
-		$notes = Sanitizer::cleanInStr($_REQUEST['notes']);
-		$copyRight = Sanitizer::cleanInStr($_REQUEST['copyright']);
+		$notes = Sanitizer::cleanInStr($this->conn,$_REQUEST['notes']);
+		$copyRight = Sanitizer::cleanInStr($this->conn,$_REQUEST['copyright']);
 		$sortSeq = (is_numeric($_REQUEST['sortsequence'])?$_REQUEST['sortsequence']:'');
-		$sourceUrl = Sanitizer::cleanInStr($_REQUEST['sourceurl']);
+		$sourceUrl = Sanitizer::cleanInStr($this->conn,$_REQUEST['sourceurl']);
 
-		if($GLOBALS['IMAGE_DOMAIN']){
+		if(isset($GLOBALS['IMAGE_DOMAIN'])){
     		if(strncmp($url, '/', 1) === 0){
 	    		$url = 'http://'.$_SERVER['HTTP_HOST'].$url;
     		}

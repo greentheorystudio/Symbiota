@@ -66,14 +66,14 @@ class GlossaryManager{
 		$retArr = array();
 		$sqlWhere = '';
 		if($keyword){
-			$sqlWhere .= 'AND (g.term LIKE "'.Sanitizer::cleanInStr($keyword).'%" OR g.term LIKE "% '.Sanitizer::cleanInStr($keyword).'%" ';
+			$sqlWhere .= 'AND (g.term LIKE "'.Sanitizer::cleanInStr($this->conn,$keyword).'%" OR g.term LIKE "% '.Sanitizer::cleanInStr($this->conn,$keyword).'%" ';
 			if($deepSearch) {
-				$sqlWhere .= 'OR g.definition LIKE "%' . Sanitizer::cleanInStr($keyword) . '%"';
+				$sqlWhere .= 'OR g.definition LIKE "%' . Sanitizer::cleanInStr($this->conn,$keyword) . '%"';
 			}
 			$sqlWhere .= ') ';
 		}
 		if($language){
-			$sqlWhere .= 'AND (g.`language` = "'.Sanitizer::cleanInStr($language).'") ';
+			$sqlWhere .= 'AND (g.`language` = "'.Sanitizer::cleanInStr($this->conn,$language).'") ';
 		}
 		if(is_numeric($tid)){
 			$sqlWhere .= 'AND (t.tid = '.$tid.' OR t2.tid = '.$tid.' OR (t.tid IS NULL AND t2.tid IS NULL)) ';
@@ -303,14 +303,14 @@ class GlossaryManager{
 	public function createTerm($pArr): bool
 	{
 		$status = true;
-		$term = Sanitizer::cleanInStr($pArr['term']);
-		$def = Sanitizer::cleanInStr($pArr['definition']);
-		$lang = Sanitizer::cleanInStr($pArr['language']);
-		$source = Sanitizer::cleanInStr($pArr['source']);
-		$author = Sanitizer::cleanInStr($pArr['author']);
-		$translator = Sanitizer::cleanInStr($pArr['translator']);
-		$notes = Sanitizer::cleanInStr($pArr['notes']);
-		$resourceUrl = Sanitizer::cleanInStr($pArr['resourceurl']);
+		$term = Sanitizer::cleanInStr($this->conn,$pArr['term']);
+		$def = Sanitizer::cleanInStr($this->conn,$pArr['definition']);
+		$lang = Sanitizer::cleanInStr($this->conn,$pArr['language']);
+		$source = Sanitizer::cleanInStr($this->conn,$pArr['source']);
+		$author = Sanitizer::cleanInStr($this->conn,$pArr['author']);
+		$translator = Sanitizer::cleanInStr($this->conn,$pArr['translator']);
+		$notes = Sanitizer::cleanInStr($this->conn,$pArr['notes']);
+		$resourceUrl = Sanitizer::cleanInStr($this->conn,$pArr['resourceurl']);
 		$sql = 'INSERT INTO glossary(term,definition,`language`,source,author,translator,notes,resourceurl,uid) '.
 			'VALUES("'.$term.'",'.($def?'"'.$def.'"':'NULL').','.($lang?'"'.$lang.'"':'NULL').','.
 			($source?'"'.$source.'"':'NULL').','.($author?'"'.$author.'"':'NULL').','.($translator?'"'.$translator.'"':'NULL').','.
@@ -338,7 +338,7 @@ class GlossaryManager{
 			if((isset($pArr['tid']) && $pArr['tid']) || (isset($pArr['taxagroup']) && $pArr['taxagroup'])){
 				$tid = $pArr['tid'];
 				if($tid){
-					$taxon = Sanitizer::cleanInStr($pArr['taxagroup']);
+					$taxon = Sanitizer::cleanInStr($this->conn,$pArr['taxagroup']);
 					if(preg_match('/^(\D+)\s\(/', $taxon, $m)){
 						$taxon = $m[1];
 					}
@@ -371,14 +371,14 @@ class GlossaryManager{
 		if(!is_numeric($pArr['glossid'])) {
 			return false;
 		}
-		$term = Sanitizer::cleanInStr($pArr['term']);
-		$lang = Sanitizer::cleanInStr($pArr['language']);
-		$def = Sanitizer::cleanInStr($pArr['definition']);
-		$source = Sanitizer::cleanInStr($pArr['source']);
-		$translator = Sanitizer::cleanInStr($pArr['translator']);
-		$author = Sanitizer::cleanInStr($pArr['author']);
-		$notes = Sanitizer::cleanInStr($pArr['notes']);
-		$resourceUrl = Sanitizer::cleanInStr($pArr['resourceurl']);
+		$term = Sanitizer::cleanInStr($this->conn,$pArr['term']);
+		$lang = Sanitizer::cleanInStr($this->conn,$pArr['language']);
+		$def = Sanitizer::cleanInStr($this->conn,$pArr['definition']);
+		$source = Sanitizer::cleanInStr($this->conn,$pArr['source']);
+		$translator = Sanitizer::cleanInStr($this->conn,$pArr['translator']);
+		$author = Sanitizer::cleanInStr($this->conn,$pArr['author']);
+		$notes = Sanitizer::cleanInStr($this->conn,$pArr['notes']);
+		$resourceUrl = Sanitizer::cleanInStr($this->conn,$pArr['resourceurl']);
 		$sql = 'UPDATE glossary SET term = "'.$term.'",language = "'.$lang.'",definition = '.($def?'"'.$def.'"':'NULL').
 			',source = '.($source?'"'.$source.'"':'NULL').
 			',translator = '.($translator?'"'.$translator.'"':'NULL').
@@ -496,7 +496,7 @@ class GlossaryManager{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'glossid' && $k !== 'glimgid' && $k !== 'glossgrpid'){
-					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE glossaryimages SET '.substr($sql,1).' WHERE (glimgid = '.$glimgId.')';
@@ -560,10 +560,10 @@ class GlossaryManager{
 	{
 		$status = true;
 		if(is_numeric($pArr['tid'])){
-			$terms = Sanitizer::cleanInStr($_REQUEST['contributorTerm']);
-			$images = Sanitizer::cleanInStr($_REQUEST['contributorImage']);
-			$translator = Sanitizer::cleanInStr($_REQUEST['translator']);
-			$sources = Sanitizer::cleanInStr($_REQUEST['additionalSources']);
+			$terms = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributorTerm']);
+			$images = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributorImage']);
+			$translator = Sanitizer::cleanInStr($this->conn,$_REQUEST['translator']);
+			$sources = Sanitizer::cleanInStr($this->conn,$_REQUEST['additionalSources']);
 			$sql = 'INSERT INTO glossarysources(tid,contributorTerm,contributorImage,translator,additionalSources) '.
 				'VALUES('.$pArr['tid'].','.($terms?'"'.$terms.'"':'NULL').','.($images?'"'.$images.'"':'NULL').','.
 				($translator?'"'.$translator.'"':'NULL').','.($sources?'"'.$sources.'"':'NULL').')';
@@ -580,10 +580,10 @@ class GlossaryManager{
 	{
 		$status = true;
 		if(is_numeric($pArr['tid'])){
-			$terms = Sanitizer::cleanInStr($_REQUEST['contributorTerm']);
-			$images = Sanitizer::cleanInStr($_REQUEST['contributorImage']);
-			$translator = Sanitizer::cleanInStr($_REQUEST['translator']);
-			$sources = Sanitizer::cleanInStr($_REQUEST['additionalSources']);
+			$terms = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributorTerm']);
+			$images = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributorImage']);
+			$translator = Sanitizer::cleanInStr($this->conn,$_REQUEST['translator']);
+			$sources = Sanitizer::cleanInStr($this->conn,$_REQUEST['additionalSources']);
 			$sql = 'UPDATE glossarysources '.
 				'SET contributorTerm = '.($terms?'"'.$terms.'"':'NULL').', contributorImage = '.($images?'"'.$images.'"':'NULL').', '.
 				'translator = '.($translator?'"'.$translator.'"':'NULL').', additionalSources = '.($sources?'"'.$sources.'"':'NULL').' '.
@@ -844,7 +844,7 @@ class GlossaryManager{
 		$glossId = $_REQUEST['glossid'];
 		$status = 'File added successfully!';
 		$sql = 'INSERT INTO glossaryimages(glossid,url,thumbnailurl,structures,notes,createdBy,uid) '.
-			'VALUES('.$glossId.',"'.$imgWebUrl.'","'.$imgTnUrl.'","'.Sanitizer::cleanInStr($_REQUEST['structures']).'","'.Sanitizer::cleanInStr($_REQUEST['notes']).'","'.Sanitizer::cleanInStr($_REQUEST['createdBy']).'",'.$GLOBALS['SYMB_UID'].') ';
+			'VALUES('.$glossId.',"'.$imgWebUrl.'","'.$imgTnUrl.'","'.Sanitizer::cleanInStr($this->conn,$_REQUEST['structures']).'","'.Sanitizer::cleanInStr($this->conn,$_REQUEST['notes']).'","'.Sanitizer::cleanInStr($this->conn,$_REQUEST['createdBy']).'",'.$GLOBALS['SYMB_UID'].') ';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
 			$status = 'ERROR Loading Data.';
@@ -856,7 +856,7 @@ class GlossaryManager{
 		$exists = false;
 		$localUrl = '';
 		if(strncmp($url, '/', 1) === 0){
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
 			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){
@@ -901,10 +901,7 @@ class GlossaryManager{
 				$qualityRating = $this->jpgCompression;
 			}
 			
-	        if($GLOBALS['USE_IMAGE_MAGICK']) {
-				$status = $this->createNewImageImagick($subExt,$targetWidth,$qualityRating);
-			} 
-			elseif(function_exists('gd_info') && extension_loaded('gd')) {
+	        if(function_exists('gd_info') && extension_loaded('gd')) {
 				$status = $this->createNewImageGD($subExt,$targetWidth,$qualityRating);
 			}
 			else{
@@ -914,21 +911,6 @@ class GlossaryManager{
 		return $status;
 	}
 	
-	private function createNewImageImagick($subExt,$newWidth,$qualityRating = null): bool
-	{
-		$targetPath = $this->targetPath.$this->imgName.$subExt.$this->imgExt;
-		if($newWidth < 300){
-			system('convert '.$this->sourcePath.' -thumbnail '.$newWidth.'x'.($newWidth*1.5).' '.$targetPath, $retval);
-		}
-		else{
-			system('convert '.$this->sourcePath.' -resize '.$newWidth.'x'.($newWidth*1.5).($qualityRating?' -quality '.$qualityRating:'').' '.$targetPath, $retval);
-		}
-		if(file_exists($targetPath)){
-			return true;
-		}
-		return false;
-	}
-
 	private function createNewImageGD($subExt, $newWidth, $qualityRating = null): bool
 	{
 		$status = false;
@@ -981,7 +963,7 @@ class GlossaryManager{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if($GLOBALS['IMAGE_DOMAIN']){
+		if(isset($GLOBALS['IMAGE_DOMAIN'])){
 			$urlBase = $this->getServerDomain().$urlBase;
     	}
 		return $urlBase;

@@ -16,37 +16,32 @@ popupcloser.onclick = function() {
     return false;
 };
 
-let vectorsource = new ol.source.Vector({
+const blankdragdropsource = new ol.source.Vector({
     wrapX: true
 });
-const vectorlayer = new ol.layer.Vector({
-    zIndex: 5,
-    source: vectorsource,
-    style: new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: 'rgba(255,0,0,0.3)'
-        }),
-        stroke: new ol.style.Stroke({
-            color: '#000000',
-            width: 1
-        }),
-        image: new ol.style.Circle({
-            radius: 7,
-            stroke: new ol.style.Stroke({
-                color: '#000000',
-                width: 1
-            }),
-            fill: new ol.style.Fill({
-                color: 'rgba(255,0,0)'
-            })
-        })
-    })
+layersObj['dragdrop1'] = new ol.layer.Vector({
+    zIndex: 1,
+    source: blankdragdropsource,
+    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
 });
+layersArr.push(layersObj['dragdrop1']);
+layersObj['dragdrop2'] = new ol.layer.Vector({
+    zIndex: 2,
+    source: blankdragdropsource,
+    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+});
+layersArr.push(layersObj['dragdrop2']);
+layersObj['dragdrop3'] = new ol.layer.Vector({
+    zIndex: 3,
+    source: blankdragdropsource,
+    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+});
+layersArr.push(layersObj['dragdrop3']);
 
 let radiuscirclesource = new ol.source.Vector({
     wrapX: true
 });
-const radiuscirclelayer = new ol.layer.Vector({
+layersObj['radius'] = new ol.layer.Vector({
     zIndex: 4,
     source: radiuscirclesource,
     style: new ol.style.Style({
@@ -69,32 +64,35 @@ const radiuscirclelayer = new ol.layer.Vector({
         })
     })
 });
+layersArr.push(layersObj['radius']);
 
-const blankdragdropsource = new ol.source.Vector({
+let vectorsource = new ol.source.Vector({
     wrapX: true
 });
-const dragdroplayer1 = new ol.layer.Vector({
-    zIndex: 1,
-    source: blankdragdropsource,
-    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+layersObj['vector'] = new ol.layer.Vector({
+    zIndex: 5,
+    source: vectorsource,
+    style: new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(255,0,0,0.3)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#000000',
+            width: 1
+        }),
+        image: new ol.style.Circle({
+            radius: 7,
+            stroke: new ol.style.Stroke({
+                color: '#000000',
+                width: 1
+            }),
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,0)'
+            })
+        })
+    })
 });
-const dragdroplayer2 = new ol.layer.Vector({
-    zIndex: 2,
-    source: blankdragdropsource,
-    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
-});
-const dragdroplayer3 = new ol.layer.Vector({
-    zIndex: 3,
-    source: blankdragdropsource,
-    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
-});
-
-layersArr['base'] = baselayer;
-layersArr['dragdrop1'] = dragdroplayer1;
-layersArr['dragdrop2'] = dragdroplayer2;
-layersArr['dragdrop3'] = dragdroplayer3;
-layersArr['radius'] = radiuscirclelayer;
-layersArr['vector'] = vectorlayer;
+layersArr.push(layersObj['vector']);
 
 const mapView = new ol.View({
     zoom: initialMapZoom,
@@ -110,14 +108,7 @@ const map = new ol.Map({
     controls: ol.control.defaults().extend([
         new ol.control.FullScreen()
     ]),
-    layers: [
-        layersArr['base'],
-        layersArr['dragdrop1'],
-        layersArr['dragdrop2'],
-        layersArr['dragdrop3'],
-        layersArr['radius'],
-        layersArr['vector']
-    ],
+    layers: layersArr,
     overlays: [popupoverlay],
     renderer: 'canvas'
 });
@@ -165,11 +156,11 @@ dragAndDropInteraction.on('addfeatures', function(event) {
                     const geoJSONFormat = new ol.format.GeoJSON();
                     features = geoJSONFormat.readFeatures(geoJSONFormat.writeFeatures(features));
                 }
-                layersArr[sourceIndex] = new ol.source.Vector({
+                layersObj[sourceIndex] = new ol.source.Vector({
                     features: features
                 });
-                layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                map.getView().fit(layersArr[sourceIndex].getExtent());
+                layersObj[dragDropTarget].setSource(layersObj[sourceIndex]);
+                map.getView().fit(layersObj[sourceIndex].getExtent());
             }
         }
         else if(fileType === 'zip'){
@@ -181,11 +172,11 @@ dragAndDropInteraction.on('addfeatures', function(event) {
                         const features = format.readFeatures(geojson, {
                             featureProjection: 'EPSG:3857'
                         });
-                        layersArr[sourceIndex] = new ol.source.Vector({
+                        layersObj[sourceIndex] = new ol.source.Vector({
                             features: features
                         });
-                        layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                        map.getView().fit(layersArr[sourceIndex].getExtent());
+                        layersObj[dragDropTarget].setSource(layersObj[sourceIndex]);
+                        map.getView().fit(layersObj[sourceIndex].getExtent());
                     });
                 });
             }

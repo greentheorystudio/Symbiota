@@ -278,7 +278,7 @@ if(!$clid){
 
 <div>
 	<?php
-	if(array_key_exists('userid',$_REQUEST)){
+	if(array_key_exists('userid',$_REQUEST) && $GLOBALS['VALID_USER']){
 		$userId = $_REQUEST['userid'];
 		echo '<div style="font-weight:bold;font-size:14px;">Checklists assigned to your account</div>';
 		$listArr = $clManager->getManagementLists($userId);
@@ -314,7 +314,7 @@ if(!$clid){
 			<?php
 		}
 
-		echo '<div style="font-weight:bold;font-size:14px;margin-top:25px;">Inventory Project Administration</div>'."\n";
+		echo '<div style="font-weight:bold;font-size:14px;margin-top:25px;">Biotic Inventory Project Administration</div>'."\n";
 		if(array_key_exists('proj',$listArr)){
 			$projArr = $listArr['proj'];
 			?>
@@ -337,7 +337,8 @@ if(!$clid){
 			<?php
 		}
 		else{
-			echo '<div style="margin:10px;">There are no Projects for which you have administrative permissions</div>';
+			echo '<div style="margin:10px;">There are no Projects for which you have administrative permissions.<br />';
+            echo '<a href="../projects/index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></div>';
 		}
 	}
 	?>

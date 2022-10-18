@@ -8,8 +8,14 @@
 
 /config/dbconnection.php
 /config/symbini.php
+/css/main.css
 /taxa/includes/config/taxaProfileElementsCustom.php
 /taxa/includes/config/taxaProfileTemplateCustom.php
+/footer.php
+/header.php
+/robots.txt
+/index.php
+/misc/usagepolicy.php
 /collections/datasets/dwc
 /content
 /data

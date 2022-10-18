@@ -87,7 +87,7 @@ class OccurrenceDataset {
     public function editDataset($dsid,$name,$notes): bool
     {
         $sql = 'UPDATE omoccurdatasets '.
-            'SET name = "'.Sanitizer::cleanInStr($name).'", notes = "'.Sanitizer::cleanInStr($notes).'" '.
+            'SET name = "'.Sanitizer::cleanInStr($this->conn,$name).'", notes = "'.Sanitizer::cleanInStr($this->conn,$notes).'" '.
             'WHERE datasetid = '.$dsid;
         if(!$this->conn->query($sql)){
             $this->errorArr[] = 'ERROR saving dataset edits';
@@ -99,7 +99,7 @@ class OccurrenceDataset {
     public function createDataset($name,$notes,$uid): bool
     {
         $sql = 'INSERT INTO omoccurdatasets (name,notes,uid) '.
-            'VALUES("'.Sanitizer::cleanInStr($name).'",'.($notes?'"'.Sanitizer::cleanInStr($notes).'"':'NULL').','.$uid.') ';
+            'VALUES("'.Sanitizer::cleanInStr($this->conn,$name).'",'.($notes?'"'.Sanitizer::cleanInStr($this->conn,$notes).'"':'NULL').','.$uid.') ';
         if($this->conn->query($sql)){
             $this->datasetId = $this->conn->insert_id;
         }
@@ -224,7 +224,7 @@ class OccurrenceDataset {
     public function addUser($datasetID,$uid,$role): bool
     {
         if(is_numeric($uid)){
-            $sql = 'INSERT INTO userroles(uid,role,tablename,tablepk,uidassignedby) VALUES('.$uid.',"'.Sanitizer::cleanInStr($role).'","omoccurdatasets",'.$datasetID.','.$GLOBALS['SYMB_UID'].')';
+            $sql = 'INSERT INTO userroles(uid,role,tablename,tablepk,uidassignedby) VALUES('.$uid.',"'.Sanitizer::cleanInStr($this->conn,$role).'","omoccurdatasets",'.$datasetID.','.$GLOBALS['SYMB_UID'].')';
             if(!$this->conn->query($sql)){
                 $this->errorArr[] = 'ERROR adding new user.';
                 return false;
@@ -328,7 +328,7 @@ class OccurrenceDataset {
         $retArr = array();
         $sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," - ",u.username," [#",u.uid,"]") AS username '.
             'FROM users u '.
-            'WHERE u.lastname LIKE "%'.Sanitizer::cleanInStr($term).'%" OR u.username LIKE "%'.Sanitizer::cleanInStr($term).'%" '.
+            'WHERE u.lastname LIKE "%'.Sanitizer::cleanInStr($this->conn,$term).'%" OR u.username LIKE "%'.Sanitizer::cleanInStr($this->conn,$term).'%" '.
             'ORDER BY u.lastname,u.firstname';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()) {

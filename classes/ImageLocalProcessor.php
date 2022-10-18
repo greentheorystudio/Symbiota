@@ -153,7 +153,7 @@ class ImageLocalProcessor {
 		if(!$this->imgUrlBase){
 			$this->imgUrlBase = $GLOBALS['IMAGE_ROOT_URL'];
 		}
-		if($GLOBALS['IMAGE_DOMAIN'] && strncmp($this->imgUrlBase, 'http://', 7) !== 0 && strncmp($this->imgUrlBase, 'https://', 8) !== 0) {
+		if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($this->imgUrlBase, 'http://', 7) !== 0 && strncmp($this->imgUrlBase, 'https://', 8) !== 0) {
 			$urlPrefix = 'http://';
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 				$urlPrefix = 'https://';
@@ -641,30 +641,12 @@ class ImageLocalProcessor {
 
 	private function createNewImage($sourcePathBase, $targetPath, $newWidth, $newHeight, $sourceWidth, $sourceHeight): bool
 	{
-		if($this->processUsingImageMagick) {
-			$status = $this->createNewImageImagick($sourcePathBase,$targetPath,$newWidth);
-		} 
-		elseif(function_exists('gd_info') && extension_loaded('gd')) {
+		if(function_exists('gd_info') && extension_loaded('gd')) {
 			$status = $this->createNewImageGD($sourcePathBase,$targetPath,$newWidth,$newHeight,$sourceWidth,$sourceHeight);
 		}
 		else{
 			$this->logOrEcho('FATAL ERROR: No appropriate image handler for image conversions',1);
 			exit('ABORT: No appropriate image handler for image conversions');
-		}
-		return $status;
-	}
-	
-	private function createNewImageImagick($sourceImg,$targetPath,$newWidth): bool
-	{
-		$status = false;
-		if($newWidth < 300){
-			system('convert '.$sourceImg.' -thumbnail '.$newWidth.'x'.($newWidth*1.5).' '.$targetPath, $retval);
-		}
-		else{
-			system('convert '.$sourceImg.' -resize '.$newWidth.'x'.($newWidth*1.5).($this->jpgQuality?' -quality '.$this->jpgQuality:'').' '.$targetPath, $retval);
-		}
-		if(file_exists($targetPath)){
-			$status = true;
 		}
 		return $status;
 	}
@@ -784,17 +766,11 @@ class ImageLocalProcessor {
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if(strcasecmp($r->url,$webUrl) === 0){
-					if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal URLs).',1);
-					}
 					if(!$this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
 						$this->logOrEcho('ERROR deleting image record #'.$r->imgid.' (equal URLs).',1);
 					}
 				}
 				elseif($this->imgExists === 2 && strcasecmp(basename($r->url),basename($webUrl)) === 0){
-					if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal basename).',1);
-					}
 					if($this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
 						$urlPath = parse_url($r->url, PHP_URL_PATH);
 						if($urlPath && strpos($urlPath, $this->imgUrlBase) === 0){
@@ -1119,7 +1095,7 @@ class ImageLocalProcessor {
 										$updateValueArr = array();
 										$occRemarkArr = array();
 										foreach($activeFields as $activeField){
-											$activeValue = Sanitizer::cleanInStr($recMap[$activeField]);
+											$activeValue = Sanitizer::cleanInStr($this->conn,$recMap[$activeField]);
 											if(!trim($r[$activeField])){
 												$type = (array_key_exists('type',$symbMap[$activeField])?$symbMap[$activeField]['type']:'string');
 												$size = (array_key_exists('size',$symbMap[$activeField])?$symbMap[$activeField]['size']:0);
@@ -1177,7 +1153,7 @@ class ImageLocalProcessor {
 								$sqlIns2 = 'VALUES ('.$this->activeCollid.',"'.$catNum.'","unprocessed","'.date('Y-m-d H:i:s').'"';
 								foreach($activeFields as $aField){
 									$sqlIns1 .= ','.$aField;
-									$value = Sanitizer::cleanInStr($recMap[$aField]);
+									$value = Sanitizer::cleanInStr($this->conn,$recMap[$aField]);
 									$type = (array_key_exists('type',$symbMap[$aField])?$symbMap[$aField]['type']:'string');
 									$size = (array_key_exists('size',$symbMap[$aField])?$symbMap[$aField]['size']:0);
 									if($type === 'numeric'){
@@ -1676,7 +1652,7 @@ class ImageLocalProcessor {
 		$exists = false;
 		$localUrl = '';
 		if(strncmp($url, '/', 1) === 0){
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
 			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){

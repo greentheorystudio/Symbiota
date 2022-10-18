@@ -143,7 +143,7 @@ if($GLOBALS['IS_ADMIN']){
 						<div style="float:left;"><?php echo ($user['username']?$user['username'].' (last login: '.$user['lastlogindate'].')':'login not registered for this user'); ?></div>
 					</div>
                     <?php
-                    if(!$user['validated']){
+                    if((int)$user['validated'] !== 1){
                         ?>
                         <div style="clear:left;margin-top:20px;">
                             <span style="font-weight:bold;margin-right:8px;color:red">UNCONFIRMED USER </span>
@@ -597,7 +597,10 @@ if($GLOBALS['IS_ADMIN']){
 				<?php
 			}
 			else{
-				$users = $userManager->getUsers($listType, $searchTerm);
+                if($GLOBALS['EMAIL_CONFIGURED']){
+                    $pHandler->clearOldUnregisteredUsers();
+                }
+                $users = $userManager->getUsers($listType, $searchTerm);
 				?>
                 <h1>Users</h1>
                 <div style="height:30px;display:flex;gap:20px;">

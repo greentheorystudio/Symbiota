@@ -206,7 +206,7 @@ if($userChecklists || $checklistArr){
 									if(!$tnUrl) {
                                         $tnUrl = $url;
                                     }
-									if($GLOBALS['IMAGE_DOMAIN']){
+									if(isset($GLOBALS['IMAGE_DOMAIN'])){
 										if(strncmp($url, '/', 1) === 0) {
                                             $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
                                         }

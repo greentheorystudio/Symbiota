@@ -244,7 +244,7 @@ class GamesManager {
 				}
 				if($iCnt < 5){
 					$url = $rImg->url;
-					if($GLOBALS['IMAGE_DOMAIN'] && strncmp($url, '/', 1) === 0){
+					if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($url, '/', 1) === 0){
 						$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 					}
 					$retArr[$rImg->tidaccepted]['url'][] = $url;
@@ -268,7 +268,7 @@ class GamesManager {
 					}
 					if($iCnt < 5){
 						$url = $rImg2->url;
-						if($GLOBALS['IMAGE_DOMAIN'] && strncmp($url, '/', 1) === 0){
+						if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($url, '/', 1) === 0){
 							$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 						}
 						$retArr[$rImg2->parenttid]['url'][] = $url;

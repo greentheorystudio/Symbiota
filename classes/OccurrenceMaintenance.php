@@ -434,7 +434,7 @@ class OccurrenceMaintenance {
 
 			$returnArrJson = json_encode($statsArr);
 			$sql = 'UPDATE omcollectionstats '.
-				"SET dynamicProperties = '".Sanitizer::cleanInStr($returnArrJson)."' ".
+				"SET dynamicProperties = '".Sanitizer::cleanInStr($this->conn,$returnArrJson)."' ".
 				'WHERE collid IN('.$collid.') ';
 			if(!$this->conn->query($sql)){
 				$errStr = 'WARNING: unable to update collection stats table [1].';

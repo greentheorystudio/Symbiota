@@ -82,62 +82,26 @@
             }
             ?>
             <div id="mapPngDownloadDiv">
-                <button data-role="none" type="button" onclick='processMapPNGDownload();' >Download Map PNG</button>
+                <button data-role="none" type="button" onclick='processMapPNGDownload();'>Download Map Image</button>
             </div>
+            <?php
+            if(!$inputWindowMode){
+                ?>
+                <div onclick="openTutorialWindow('../tutorial/spatial/index.php');" title="Open Tutorial Window">
+                    <i style="height:20px;width:20px;cursor:pointer;color:white;" class="far fa-question-circle"></i>
+                </div>
+                <?php
+            }
+            ?>
         </div>
         <div style="clear:both;"></div>
         <?php
         if(in_array('uncertainty', $inputWindowModeTools, true) || in_array('radius', $inputWindowModeTools, true)){
             $labelText = in_array('uncertainty', $inputWindowModeTools, true) ? 'Coordinate uncertainty' : 'Radius';
             ?>
-            <div style="margin-top:8px;clear:both;color:white;">
-                <span class="maptext"><?php echo $labelText; ?> in meters: </span>
+            <div style="margin-top:8px;clear:both;">
+                <span class="maptext" style="color:white;"><?php echo $labelText; ?> in meters: </span>
                 <input data-role="none" id="inputpointuncertainty" type="text" style="width:100px;" name="inputpointuncertainty" onchange="processInputPointUncertaintyChange();" title="Coordinate uncertainty in meters" />
-            </div>
-            <?php
-        }
-        if(!$inputWindowMode){
-            ?>
-            <div id="dateslidercontrol" style="margin-top:5px;display:none;">
-                <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
-                <div id="setdatediv" style="">
-                    <span class="maptext">Earliest</span>
-                    <input data-role="none" type="text" id="datesliderearlydate" style="width:100px;margin-right:5px;" onchange="checkDSLowDate();" />
-                    <span class="maptext">Latest</span>
-                    <input data-role="none" type="text" id="datesliderlatedate" style="width:100px;margin-right:25px;" onchange="checkDSHighDate();" />
-                    <button data-role="none" type="button" onclick="setDSValues();" >Set</button>
-                </div>
-                <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
-                <div id="animatediv">
-                    <div>
-                        <span class="maptext">Interval Duration (years)</span>
-                        <input data-role="none" type="text" id="datesliderinterduration" style="width:40px;margin-right:5px;" onchange="checkDSAnimDuration();" />
-                        <span class="maptext">Interval Time (seconds)</span>
-                        <input data-role="none" type="text" id="datesliderintertime" style="width:40px;margin-right:10px;" onchange="checkDSAnimTime();" />
-                    </div>
-                    <div style="clear:both;"></div>
-                    <div style="margin-top:3px;">
-                        <div style="float:left;">
-                        <span style="margin-right:5px;">
-                            <span class="maptext">Save Images</span>
-                            <input data-role="none" type='checkbox' id='dateslideranimimagesave' onchange="checkDSSaveImage();" value='1'>
-                        </span>
-                            <span style="margin-right:5px;">
-                            <span class="maptext">Reverse</span>
-                            <input data-role="none" type='checkbox' id='dateslideranimreverse' value='1'>
-                        </span>
-                            <span>
-                            <span class="maptext">Dual</span>
-                            <input data-role="none" type='checkbox' id='dateslideranimdual' value='1'>
-                        </span>
-                        </div>
-                        <div style="float:right;">
-                            <button data-role="none" type="button" onclick="setDSAnimation();" >Start</button>
-                            <button data-role="none" type="button" onclick="stopDSAnimation();" >Stop</button>
-                        </div>
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>
             </div>
             <?php
         }

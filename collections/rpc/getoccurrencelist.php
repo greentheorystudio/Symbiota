@@ -9,7 +9,7 @@ $targetTid = (int)$_REQUEST['targettid'];
 $pageNumber = (int)$_REQUEST['page'];
 $cntPerPage = 100;
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 $copyURL = '';
 
 $collManager = null;
@@ -34,7 +34,7 @@ else{
 
 if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
     $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
-    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
+    $urlArgs = '?starr='.str_replace("'", '%squot;',$stArrJson).'&page='.$pageNumber;
     $copyURL = $urlPrefix.$urlArgs;
 }
 
@@ -77,44 +77,48 @@ if($GLOBALS['SYMB_UID']){
 }
 $htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><i style="width:15px;height:15px;" class="fas fa-table"></i></button></a></div>';
 $htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="width:15px;height:15px;" class="fas fa-globe"></i></button></a></div>';
-$htmlStr .= '<div><a href="../imagelib/search.php?queryId='.$queryId.'"><button class="icon-button" title="Image Search"><i style="width:15px;height:15px;" class="fas fa-camera"></i></button></a></div>';
+$htmlStr .= '<div><a href="../imagelib/search.php?queryId='.$queryId.'"><button class="icon-button" title="Image Display"><i style="width:15px;height:15px;" class="fas fa-camera"></i></button></a></div>';
 if(strlen($stArrJson) <= 1800){
-    $htmlStr .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';
+    $htmlStr .= '<div><button class="icon-button" title="Copy Search URL" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';
 }
 $htmlStr .= '</div>';
-
 $htmlStr .= '</div>';
-
 $htmlStr .= '<div style="clear:both;"></div>';
-
-$paginationStr = '<div><div style="clear:both;"><hr/></div><div style="float:left;margin:5px;">';
 $lastPage = (int)($collManager->getRecordCnt() / $cntPerPage) + 1;
 $startPage = ($pageNumber > 4?$pageNumber - 4:1);
 $endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
+$paginationStr = '<div><div style="clear:both;"><hr/></div>';
 $pageBar = '';
-if($startPage > 1){
-    $pageBar .= "<span class='pagination' style='margin-right:5px;'><a href='' onclick='setOccurrenceList(1);return false;'>First</a></span>";
-    $pageBar .= "<span class='pagination' style='margin-right:5px;'><a href='' onclick='setOccurrenceList(".(($pageNumber - 10) < 1?1:$pageNumber - 10).");return false;'>&lt;&lt;</a></span>";
-}
-for($x = $startPage; $x <= $endPage; $x++){
-    if($pageNumber !== $x){
-        $pageBar .= "<span class='pagination' style='margin-right:3px;'><a href='' onclick='setOccurrenceList(" .$x.");return false;'>".$x. '</a></span>';
+if($lastPage > $startPage){
+    $pageBar .= '<div style="float:left;margin:5px;">';
+    if($startPage > 1){
+        $pageBar .= "<span class='pagination' style='margin-right:5px;'><a href='' onclick='setOccurrenceList(1);return false;'>First</a></span>";
+        $pageBar .= "<span class='pagination' style='margin-right:5px;'><a href='' onclick='setOccurrenceList(".(($pageNumber - 10) < 1?1:$pageNumber - 10).");return false;'>&lt;&lt;</a></span>";
     }
-    else{
-        $pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>" .$x. '</span>';
+    for($x = $startPage; $x <= $endPage; $x++){
+        if($pageNumber !== $x){
+            $pageBar .= "<span class='pagination' style='margin-right:3px;'><a href='' onclick='setOccurrenceList(" .$x.");return false;'>".$x. '</a></span>';
+        }
+        else{
+            $pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>" .$x. '</span>';
+        }
     }
+    if(($lastPage - $startPage) >= 10){
+        $pageBar .= "<span class='pagination' style='margin-left:5px;'><a href='' onclick='setOccurrenceList(".(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)).");return false;'>&gt;&gt;</a></span>";
+        $pageBar .= "<span class='pagination' style='margin-left:5px;'><a href='' onclick='setOccurrenceList(".$lastPage.");return false;'>Last</a></span>";
+    }
+    $pageBar .= '</div><div style="float:right;margin:5px;">';
+    $beginNum = ($pageNumber - 1)*$cntPerPage + 1;
+    $endNum = $beginNum + $cntPerPage - 1;
+    if($endNum > $collManager->getRecordCnt()) {
+        $endNum = $collManager->getRecordCnt();
+    }
+    $pageBar .= 'Page '.$pageNumber.', records '.$beginNum.'-'.$endNum.' of '.$collManager->getRecordCnt();
 }
-if(($lastPage - $startPage) >= 10){
-    $pageBar .= "<span class='pagination' style='margin-left:5px;'><a href='' onclick='setOccurrenceList(".(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)).");return false;'>&gt;&gt;</a></span>";
-    $pageBar .= "<span class='pagination' style='margin-left:5px;'><a href='' onclick='setOccurrenceList(".$lastPage.");return false;'>Last</a></span>";
+elseif($collManager->getRecordCnt() > 0){
+    $pageBar .= '<div style="float:right;margin:5px;">';
+    $pageBar .= 'Records 1-' .$collManager->getRecordCnt(). ' of ' .$collManager->getRecordCnt();
 }
-$pageBar .= '</div><div style="float:right;margin:5px;">';
-$beginNum = ($pageNumber - 1)*$cntPerPage + 1;
-$endNum = $beginNum + $cntPerPage - 1;
-if($endNum > $collManager->getRecordCnt()) {
-    $endNum = $collManager->getRecordCnt();
-}
-$pageBar .= 'Page '.$pageNumber.', records '.$beginNum.'-'.$endNum.' of '.$collManager->getRecordCnt();
 $paginationStr .= $pageBar;
 $paginationStr .= '</div><div style="clear:both;"><hr/></div></div>';
 $htmlStr .= $paginationStr;

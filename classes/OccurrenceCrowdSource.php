@@ -51,7 +51,7 @@ class OccurrenceCrowdSource {
 		$statusStr = '';
 		if(is_numeric($omcsid)){
 			$sql = 'UPDATE omcrowdsourcecentral '.
-				'SET instructions = '.($instr?'"'.Sanitizer::cleanInStr($instr).'"':'NULL').',trainingurl = '.($url?'"'.Sanitizer::cleanInStr($url).'"':'NULL').
+				'SET instructions = '.($instr?'"'.Sanitizer::cleanInStr($this->conn,$instr).'"':'NULL').',trainingurl = '.($url?'"'.Sanitizer::cleanInStr($this->conn,$url).'"':'NULL').
 				' WHERE omcsid = '.$omcsid;
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR editing project.';
@@ -226,16 +226,16 @@ class OccurrenceCrowdSource {
                     'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
                     'WHERE o.collid = '.$this->collid.' AND q.occid IS NULL AND (o.processingstatus = "unprocessed") ';
                 if($family){
-                    $sqlFrag .= 'AND (o.family = "'.Sanitizer::cleanInStr($family).'") ';
+                    $sqlFrag .= 'AND (o.family = "'.Sanitizer::cleanInStr($this->conn,$family).'") ';
                 }
                 if($taxon){
-                    $sqlFrag .= 'AND (o.sciname LIKE "'.Sanitizer::cleanInStr($taxon).'%") ';
+                    $sqlFrag .= 'AND (o.sciname LIKE "'.Sanitizer::cleanInStr($this->conn,$taxon).'%") ';
                 }
                 if($country){
-                    $sqlFrag .= 'AND (o.country = "'.Sanitizer::cleanInStr($country).'") ';
+                    $sqlFrag .= 'AND (o.country = "'.Sanitizer::cleanInStr($this->conn,$country).'") ';
                 }
                 if($stateProvince){
-                    $sqlFrag .= 'AND (o.stateprovince = "'.Sanitizer::cleanInStr($stateProvince).'") ';
+                    $sqlFrag .= 'AND (o.stateprovince = "'.Sanitizer::cleanInStr($this->conn,$stateProvince).'") ';
                 }
                 $sqlCnt = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$sqlFrag;
                 $rs = $this->conn->query($sqlCnt);
@@ -386,7 +386,7 @@ class OccurrenceCrowdSource {
 			$successArr = array();
 			foreach($occidArr as $occid){
 				$points = $postArr['p-'.$occid];
-				$comments = Sanitizer::cleanInStr($postArr['c-'.$occid]);
+				$comments = Sanitizer::cleanInStr($this->conn,$postArr['c-'.$occid]);
 				$sql = 'UPDATE omcrowdsourcequeue '.
 					'SET points = '.$points.',notes = '.($comments?'"'.$comments.'"':'NULL').',reviewstatus = 10 '.
 					'WHERE occid = '.$occid;
