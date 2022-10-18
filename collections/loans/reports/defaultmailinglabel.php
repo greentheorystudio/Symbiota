@@ -121,7 +121,7 @@ else{
 	<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
 			<title>Mailing Label</title>
-			<style type="text/css">
+			<style>
 				<?php 
 					include_once(__DIR__ . '/../../../css/main.css');
 				?>

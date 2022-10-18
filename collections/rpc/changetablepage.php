@@ -11,7 +11,7 @@ $sortField1 = $_REQUEST['sortfield1'];
 $sortField2 = $_REQUEST['sortfield2'];
 $sortOrder = $_REQUEST['sortorder'];
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 $copyURL = '';
 $recArr = array();
 
@@ -37,7 +37,7 @@ $targetClid = $collManager->getSearchTerm('targetclid');
 
 if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
     $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/listtabledisplay.php';
-    $urlArgs = '?starr='.$stArrJson.'&occindex='.$occIndex.'&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
+    $urlArgs = '?starr='.str_replace("'", '%squot;',$stArrJson).'&occindex='.$occIndex.'&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
     $copyURL = $urlPrefix.$urlArgs;
 }
 
@@ -79,9 +79,9 @@ if($recArr){
     }
     $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>';
     $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="height:15px;width:15px;" class="fas fa-globe"></i></button></a></div>';
-    $recordListHtml .= '<div><a href="../imagelib/search.php?queryId='.$queryId.'"><button class="icon-button" title="Image Search"><i style="width:15px;height:15px;" class="fas fa-camera"></i></button></a></div>';
+    $recordListHtml .= '<div><a href="../imagelib/search.php?queryId='.$queryId.'"><button class="icon-button" title="Image Display"><i style="width:15px;height:15px;" class="fas fa-camera"></i></button></a></div>';
     if(strlen($stArrJson) <= 1800){
-        $recordListHtml .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>';
+        $recordListHtml .= '<div><button class="icon-button" title="Copy Search URL" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>';
     }
     if($qryCnt > 1){
         $recordListHtml .= '<div>';
@@ -125,7 +125,7 @@ if($recArr){
     $recordListHtml .= '</div>';
     $recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;"><tr>';
     $recordListHtml .= '<th class="dataset-div checkbox-elem" style="display:none;"></th>';
-    $recordListHtml .= '<th>Symbiota ID</th>';
+    $recordListHtml .= '<th>ID</th>';
     $recordListHtml .= '<th>Collection</th>';
     $recordListHtml .= '<th>Catalog Number</th>';
     $recordListHtml .= '<th>Family</th>';
@@ -219,7 +219,7 @@ if($recArr){
     if($qryCnt > 1){
         $recordListHtml .= '<div style="width:790px;">'.$navStr.'</div>';
     }
-    $recordListHtml .= '*Click on the Symbiota identifier in the first column to see Full Record Details.';
+    $recordListHtml .= '*Click on the identifier in the first column to see Full Record Details.';
 }
 else{
     $recordListHtml .= '<div style="font-weight:bold;font-size:120%;">No records found matching the query</div>';

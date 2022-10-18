@@ -114,8 +114,8 @@ if($isEditor){
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <style type="text/css">
+    <link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
+    <style>
         a.boxclose{
             float:right;
             width:36px;
@@ -130,8 +130,8 @@ if($isEditor){
     <script type="text/javascript" src="../../js/external/jquery.js"></script>
     <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/external/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20220310"></script>
-    <script type="text/javascript" src="../../js/search.term.manager.js?ver=20220330"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20220809"></script>
+    <script type="text/javascript" src="../../js/search.term.manager.js?ver=20220921"></script>
     <script type="text/javascript">
         let stArr = {};
         $(document).ready(function() {

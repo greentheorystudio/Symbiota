@@ -14,7 +14,7 @@ $solrManager = new SOLRManager();
 $checklistManager = new OccurrenceChecklistManager();
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
     if($checklistManager->validateSearchTermsArr($stArr)){
         if($GLOBALS['SOLR_MODE']){
             $solrManager->setSearchTermsArr($stArr);
@@ -41,7 +41,7 @@ if($stArrJson){
             <button class="icon-button" title='Open in Interactive Key Interface' onclick="submitInteractiveKeyFormTaxaList();">
                 <i style='width:15px;height:15px;' class="fas fa-key"></i>
             </button>
-            <form id="interactiveKeyForm" style="display:inline;" action="checklistsymbiota.php" method="post">
+            <form id="interactiveKeyForm" style="display:inline;" action="checklistnative.php" method="post">
                 <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
                 <input type="hidden" name="interface" value='key' />
             </form>
@@ -51,7 +51,7 @@ if($stArrJson){
         <button class="icon-button" title='Open in Checklist Explorer Interface' onclick="submitChecklistExplorerFormTaxaList();">
             <i style='width:15px;height:15px;' class="fas fa-list"></i>
         </button>
-        <form id="checklistExplorerForm" style="display:inline;" action="checklistsymbiota.php" method="post">
+        <form id="checklistExplorerForm" style="display:inline;" action="checklistnative.php" method="post">
             <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
             <input type="hidden" name="interface" value='checklist' />
         </form>

@@ -129,7 +129,7 @@ class OccurrenceListManager extends OccurrenceManager{
                 if($r->occid !== $previousOccid){
                     $tnUrl = $r->thumbnailurl;
                     if($tnUrl){
-                        if($GLOBALS['IMAGE_DOMAIN'] && $tnUrl && strncmp($tnUrl, '/', 1) === 0) {
+                        if(isset($GLOBALS['IMAGE_DOMAIN']) && $tnUrl && strncmp($tnUrl, '/', 1) === 0) {
                             $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                         }
                         $returnArr[$r->occid]['img'] = $tnUrl;
@@ -179,7 +179,7 @@ class OccurrenceListManager extends OccurrenceManager{
     public function getCloseTaxaMatch($name): array
     {
         $retArr = array();
-        $searchName = Sanitizer::cleanInStr($name);
+        $searchName = Sanitizer::cleanInStr($this->conn,$name);
         $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex(?)';
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('s', $searchName);

@@ -36,21 +36,21 @@ class OccurrenceLabel{
             $sqlWhere = '';
             $sqlOrderBy = '';
             if($pArr['taxa']){
-                $sqlWhere .= 'AND (o.sciname = "'.Sanitizer::cleanInStr($pArr['taxa']).'") ';
+                $sqlWhere .= 'AND (o.sciname = "'.Sanitizer::cleanInStr($this->conn,$pArr['taxa']).'") ';
             }
             if($pArr['labelproject']){
-                $sqlWhere .= 'AND (o.labelproject = "'.Sanitizer::cleanInStr($pArr['labelproject']).'") ';
+                $sqlWhere .= 'AND (o.labelproject = "'.Sanitizer::cleanInStr($this->conn,$pArr['labelproject']).'") ';
             }
             if($pArr['recordenteredby']){
-                $sqlWhere .= 'AND (o.recordenteredby = "'.Sanitizer::cleanInStr($pArr['recordenteredby']).'") ';
+                $sqlWhere .= 'AND (o.recordenteredby = "'.Sanitizer::cleanInStr($this->conn,$pArr['recordenteredby']).'") ';
             }
-            $date1 = Sanitizer::cleanInStr($pArr['date1']);
-            $date2 = Sanitizer::cleanInStr($pArr['date2']);
+            $date1 = Sanitizer::cleanInStr($this->conn,$pArr['date1']);
+            $date2 = Sanitizer::cleanInStr($this->conn,$pArr['date2']);
             if(!$date1 && $date2){
                 $date1 = $date2;
                 $date2 = '';
             }
-            $dateTarget = Sanitizer::cleanInStr($pArr['datetarget']);
+            $dateTarget = Sanitizer::cleanInStr($this->conn,$pArr['datetarget']);
             if($date1){
                 if($date2){
                     $sqlWhere .= 'AND (DATE('.$dateTarget.') BETWEEN "'.$date1.'" AND "'.$date2.'") ';
@@ -60,7 +60,7 @@ class OccurrenceLabel{
                 }
             }
             if($pArr['recordnumber']){
-                $rnArr = explode(',',Sanitizer::cleanInStr($pArr['recordnumber']));
+                $rnArr = explode(',',Sanitizer::cleanInStr($this->conn,$pArr['recordnumber']));
                 $rnBetweenFrag = array();
                 $rnInFrag = array();
                 foreach($rnArr as $v){
@@ -93,7 +93,7 @@ class OccurrenceLabel{
                 $sqlWhere .= 'AND ('.substr($rnWhere,3).') ';
             }
             if($pArr['recordedby']){
-                $recordedBy = Sanitizer::cleanInStr($pArr['recordedby']);
+                $recordedBy = Sanitizer::cleanInStr($this->conn,$pArr['recordedby']);
                 if(strlen($recordedBy) < 4 || in_array(strtolower($recordedBy),array('best','little'))){
                     $sqlWhere .= 'AND (o.recordedby LIKE "%'.$recordedBy.'%") ';
                 }
@@ -102,7 +102,7 @@ class OccurrenceLabel{
                 }
             }
             if($pArr['identifier']){
-                $iArr = explode(',',Sanitizer::cleanInStr($pArr['identifier']));
+                $iArr = explode(',',Sanitizer::cleanInStr($this->conn,$pArr['identifier']));
                 $iBetweenFrag = array();
                 $iInFrag = array();
                 foreach($iArr as $v){
@@ -236,7 +236,7 @@ class OccurrenceLabel{
             $labelArr = $this->getLabelArray($occidArr);
             if($labelArr){
                 $fileName = 'labeloutput_'.time(). '.csv';
-                header('Content-Description: Symbiota Label Output File');
+                header('Content-Description: Label Output File');
                 header ('Content-Type: text/csv');
                 header ('Content-Disposition: attachment; filename="'.$fileName.'"');
                 header('Content-Transfer-Encoding: '.strtoupper($GLOBALS['CHARSET']));

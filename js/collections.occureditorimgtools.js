@@ -1,5 +1,4 @@
 let activeImgIndex = 1;
-let ocrFragIndex = 1;
 
 $(document).ready(function() {
 	const imgTd = getCookie("symbimgtd");
@@ -118,95 +117,6 @@ function changeImgRes(resType){
 	}
 }
 
-function rotateiPlantImage(rotationAngle){
-	const imgObj = document.getElementById("activeimg-" + activeImgIndex);
-	let imgSrc = imgObj.src;
-	if(imgSrc.indexOf("bisque.cyverse") > -1){
-		let angle = 0;
-		imgSrc = imgSrc.substring(0,imgSrc.indexOf('&format='));
-		if(imgSrc.indexOf("rotate=") > -1){
-			const last3 = imgSrc.substr(-3);
-			if(last3 === "=90"){
-				angle = 90;
-			}
-			else if(last3 === "-90"){
-				angle = -90;
-			}
-			else if(last3 === "180"){
-				angle = 180;
-			}
-			imgSrc = imgSrc.substring(0,imgSrc.indexOf('&rotate='));
-		}
-		angle = angle + rotationAngle;
-		if(angle == -180){
-			angle = 180;
-		}
-		else if(angle == 270){
-			angle = -90;
-		}
-		if(angle == 0){
-			imgObj.src = imgSrc + "&format=jpeg";
-		}
-		else{
-			imgObj.src = imgSrc + "&rotate="+angle+"&format=jpeg";
-		}
-
-		const img = document.getElementById("activeimg-" + activeImgIndex);
-		$(img).imagetool("option","src",imgObj.src);
-		$(img).imagetool("reset");
-	}
-}
-
-function ocrImage(ocrButton,imgidVar,imgCnt){
-	ocrButton.disabled = true;
-	document.getElementById("workingcircle-"+imgCnt).style.display = "inline";
-
-	const imgObj = document.getElementById("activeimg-" + imgCnt);
-
-	let xVar = 0;
-	let yVar = 0;
-	let wVar = 1;
-	let hVar = 1;
-	let ocrBestVar = 0;
-
-	if(document.getElementById("ocrfull").checked === false){
-		xVar = $(imgObj).imagetool('properties').x;
-		yVar = $(imgObj).imagetool('properties').y;
-		wVar = $(imgObj).imagetool('properties').w;
-		hVar = $(imgObj).imagetool('properties').h;
-	}
-	if(document.getElementById("ocrbest").checked === true){
-		ocrBestVar = 1;
-	}
-
-	$.ajax({
-		type: "POST",
-		url: "rpc/ocrimage.php",
-		data: { imgid: imgidVar, ocrbest: ocrBestVar, x: xVar, y: yVar, w: wVar, h: hVar }
-	}).done(function( msg ) {
-		const rawStr = msg;
-		document.getElementById("tfeditdiv-"+imgCnt).style.display = "none";
-		document.getElementById("tfadddiv-"+imgCnt).style.display = "block";
-		const addform = document.getElementById("ocraddform-" + imgCnt);
-		addform.rawtext.innerText = rawStr;
-		addform.rawtext.textContent = rawStr;
-		const today = new Date();
-		let dd = today.getDate();
-		let mm = today.getMonth() + 1; //January is 0!
-		const yyyy = today.getFullYear();
-		if(dd<10) {
-			dd='0'+dd;
-		}
-		if(mm<10) {
-			mm='0'+mm;
-		}
-		addform.rawsource.value = "Tesseract: "+yyyy+"-"+mm+"-"+dd;
-		
-		document.getElementById("workingcircle-"+imgCnt).style.display = "none";
-		ocrButton.disabled = false;
-	});
-}
-
 function nextLabelProcessingImage(imgCnt){
 	document.getElementById("labeldiv-"+(imgCnt-1)).style.display = "none";
 	let imgObj = document.getElementById("labeldiv-" + imgCnt);
@@ -215,20 +125,9 @@ function nextLabelProcessingImage(imgCnt){
 		imgCnt = "1";
 	}
 	imgObj.style.display = "block";
-	
+
 	initImageTool("activeimg-"+imgCnt);
 	activeImgIndex = imgCnt;
-	
-	return false;
-}
 
-function nextRawText(imgCnt,fragCnt){
-	document.getElementById("tfdiv-"+imgCnt+"-"+(fragCnt-1)).style.display = "none";
-	let fragObj = document.getElementById("tfdiv-" + imgCnt + "-" + fragCnt);
-	if(!fragObj) {
-		fragObj = document.getElementById("tfdiv-"+imgCnt+"-1");
-	}
-	fragObj.style.display = "block";
-	ocrFragIndex = fragCnt;
 	return false;
 }

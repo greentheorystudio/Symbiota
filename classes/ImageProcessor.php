@@ -346,13 +346,13 @@ class ImageProcessor {
                 fgetcsv($fh);
                 while($recordArr = fgetcsv($fh)){
                     if($recordArr){
-                        $catalogNumber = (isset($fieldMap['catalognumber'])?Sanitizer::cleanInStr($recordArr[$fieldMap['catalognumber']]):'');
-                        $originalUrl = (isset($fieldMap['originalurl'])?Sanitizer::cleanInStr($recordArr[$fieldMap['originalurl']]):'');
-                        $url = (isset($fieldMap['url'])?Sanitizer::cleanInStr($recordArr[$fieldMap['url']]):'');
+                        $catalogNumber = (isset($fieldMap['catalognumber'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['catalognumber']]):'');
+                        $originalUrl = (isset($fieldMap['originalurl'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['originalurl']]):'');
+                        $url = (isset($fieldMap['url'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['url']]):'');
                         if(!$url) {
                             $url = 'empty';
                         }
-                        $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?Sanitizer::cleanInStr($recordArr[$fieldMap['thumbnailurl']]):'');
+                        $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['thumbnailurl']]):'');
                         if($catalogNumber && $originalUrl){
                             echo '<li>Processing catalogNumber: '.$catalogNumber.'</li>';
                             $occArr = array();
@@ -531,8 +531,8 @@ class ImageProcessor {
             $format = 'image/jpeg';
             $sql = 'INSERT INTO images(occid,url,thumbnailurl,originalurl,archiveurl,owner,sourceIdentifier,format) '.
                 'VALUES ('.$occid.',"'.$webUrl.'",'.($tnUrl?'"'.$tnUrl.'"':'NULL').','.($lgUrl?'"'.$lgUrl.'"':'NULL').','.
-                ($archiveUrl?'"'.$archiveUrl.'"':'NULL').','.($ownerStr?'"'.Sanitizer::cleanInStr($ownerStr).'"':'NULL').','.
-                ($sourceIdentifier?'"'.Sanitizer::cleanInStr($sourceIdentifier).'"':'NULL').',"'.$format.'")';
+                ($archiveUrl?'"'.$archiveUrl.'"':'NULL').','.($ownerStr?'"'.Sanitizer::cleanInStr($this->conn,$ownerStr).'"':'NULL').','.
+                ($sourceIdentifier?'"'.Sanitizer::cleanInStr($this->conn,$sourceIdentifier).'"':'NULL').',"'.$format.'")';
             if($this->conn->query($sql)){
                 $status = true;
             }

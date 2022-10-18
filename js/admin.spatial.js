@@ -374,7 +374,12 @@ function openLayerGroupEditWindow(id) {
 }
 
 function openUpdateFileUpload() {
-    document.getElementById('updateLayerFileBox').style.display = "block";
+    if(document.getElementById('updateLayerFileBox').style.display === "none"){
+        document.getElementById('updateLayerFileBox').style.display = "block";
+    }
+    else{
+        document.getElementById('updateLayerFileBox').style.display = "none";
+    }
 }
 
 function processAddLayerListElement(lArr, parentElement) {
@@ -498,6 +503,11 @@ function processSaveDisplaySettings(){
 
 function processSaveSymbologySettings(){
     const data = {};
+    const pointsClusterValue = document.getElementById('pointsCluster').checked;
+    const pointsClusterDistanceValue = $('#pointsClusterDistance').spinner( "value" );
+    const pointsDisplayHeatMapValue = document.getElementById('pointsDisplayHeatMap').checked;
+    const pointsHeatMapRadiusValue = $('#pointsHeatMapRadius').spinner( "value" );
+    const pointsHeatMapBlurValue = $('#pointsHeatMapBlur').spinner( "value" );
     const pointsBorderColorValue = document.getElementById('pointsBorderColor').value;
     const pointsFillColorValue = document.getElementById('pointsFillColor').value;
     const pointsBorderWidthValue = $('#pointsBorderWidth').spinner( "value" );
@@ -519,6 +529,11 @@ function processSaveSymbologySettings(){
     const dragDropPointRadiusValue = $('#dragDropPointRadius').spinner( "value" );
     const dragDropOpacityValue = $('#dragDropOpacity').spinner( "value" );
     const dragDropRasterColorScaleValue = document.getElementById('dragDropRasterColorScale').value;
+    data['SPATIAL_POINT_CLUSTER'] = '';
+    data['SPATIAL_POINT_CLUSTER_DISTANCE'] = '';
+    data['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = '';
+    data['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '';
+    data['SPATIAL_POINT_HEAT_MAP_BLUR'] = '';
     data['SPATIAL_POINT_FILL_COLOR'] = '';
     data['SPATIAL_POINT_BORDER_COLOR'] = '';
     data['SPATIAL_POINT_BORDER_WIDTH'] = '';
@@ -549,6 +564,11 @@ function processSaveSymbologySettings(){
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
         if(http.readyState === 4 && http.status === 200) {
+            data['SPATIAL_POINT_CLUSTER'] = pointsClusterValue;
+            data['SPATIAL_POINT_CLUSTER_DISTANCE'] = pointsClusterDistanceValue;
+            data['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = pointsDisplayHeatMapValue;
+            data['SPATIAL_POINT_HEAT_MAP_RADIUS'] = pointsHeatMapRadiusValue;
+            data['SPATIAL_POINT_HEAT_MAP_BLUR'] = pointsHeatMapBlurValue;
             data['SPATIAL_POINT_FILL_COLOR'] = pointsFillColorValue;
             data['SPATIAL_POINT_BORDER_COLOR'] = pointsBorderColorValue;
             data['SPATIAL_POINT_BORDER_WIDTH'] = pointsBorderWidthValue;
@@ -590,23 +610,28 @@ function processSaveSymbologySettings(){
 }
 
 function processSetDefaultSettings() {
-    document.getElementById('pointsBorderColor').value = '000000';
-    document.getElementById('pointsFillColor').value = 'E69E67';
+    document.getElementById('pointsCluster').checked = true;
+    $('#pointsClusterDistance').spinner("value", 50);
+    document.getElementById('pointsDisplayHeatMap').checked = false;
+    $('#pointsHeatMapRadius').spinner("value", 5);
+    $('#pointsHeatMapBlur').spinner("value", 15);
+    document.getElementById('pointsBorderColor').color.fromString('000000');
+    document.getElementById('pointsFillColor').color.fromString('E69E67');
     $('#pointsBorderWidth').spinner("value", 1);
     $('#pointsPointRadius').spinner("value", 7);
-    document.getElementById('pointsSelectionsBorderColor').value = '10D8E6';
+    document.getElementById('pointsSelectionsBorderColor').color.fromString('10D8E6');
     $('#pointsSelectionsBorderWidth').spinner("value", 2);
-    document.getElementById('shapesBorderColor').value = '3399CC';
-    document.getElementById('shapesFillColor').value = 'FFFFFF';
+    document.getElementById('shapesBorderColor').color.fromString('3399CC');
+    document.getElementById('shapesFillColor').color.fromString('FFFFFF');
     $('#shapesBorderWidth').spinner("value", 2);
     $('#shapesPointRadius').spinner("value", 5);
     $('#shapesOpacity').spinner("value", 0.4);
-    document.getElementById('shapesSelectionsBorderColor').value = '0099FF';
-    document.getElementById('shapesSelectionsFillColor').value = 'FFFFFF';
+    document.getElementById('shapesSelectionsBorderColor').color.fromString('0099FF');
+    document.getElementById('shapesSelectionsFillColor').color.fromString('FFFFFF');
     $('#shapesSelectionsBorderWidth').spinner("value", 5);
     $('#shapesSelectionsOpacity').spinner("value", 0.5);
-    document.getElementById('dragDropBorderColor').value = '000000';
-    document.getElementById('dragDropFillColor').value = 'AAAAAA';
+    document.getElementById('dragDropBorderColor').color.fromString('000000');
+    document.getElementById('dragDropFillColor').color.fromString('AAAAAA');
     $('#dragDropBorderWidth').spinner("value", 2);
     $('#dragDropPointRadius').spinner("value", 5);
     $('#dragDropOpacity').spinner("value", 0.3);
@@ -807,52 +832,57 @@ function uploadLayerFile(){
 }
 
 function uploadLayerUpdateFile() {
-    showWorking();
     const layerId = Number(document.getElementById('editLayerId').value);
     const file = document.getElementById('layerFileUpdate').files[0];
-    const http = new XMLHttpRequest();
-    const url = "rpc/mapServerConfigurationController.php";
-    const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
-    const params = 'action=deleteMapDataFile&filename='+filename;
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState === 4 && http.status === 200) {
-            if(Number(http.responseText) !== 1){
-                hideWorking();
-                document.getElementById("statusStr").innerHTML = 'Error deleting original data file';
-                setTimeout(function () {
-                    document.getElementById("statusStr").innerHTML = '';
-                }, 5000);
-            }
-            else{
-                const formData = new FormData();
-                formData.append('addLayerFile', file);
-                formData.append('action', 'uploadMapDataFile');
-                http.open("POST", url, true);
-                http.onreadystatechange = function() {
-                    if(http.readyState === 4 && http.status === 200) {
-                        if(http.responseText && http.responseText !== ''){
-                            const date = new Date();
-                            let fileType = http.responseText.split('.').pop();
-                            if(fileType === 'tiff'){
-                                fileType = 'tif';
-                            }
-                            layerData[layerId]['file'] = http.responseText;
-                            layerData[layerId]['fileType'] = fileType;
-                            layerData[layerId]['dateUploaded'] = date.toISOString().split('T')[0];
-                            $('#layereditwindow').popup('hide');
-                            clearEditWindows();
-                            saveLayerConfigChanges();
-                        }
-                    }
+    if(layerId && file){
+        showWorking();
+        const http = new XMLHttpRequest();
+        const url = "rpc/mapServerConfigurationController.php";
+        const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
+        const params = 'action=deleteMapDataFile&filename='+filename;
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState === 4 && http.status === 200) {
+                if(Number(http.responseText) !== 1){
                     hideWorking();
-                };
-                http.send(formData);
+                    document.getElementById("statusStr").innerHTML = 'Error deleting original data file';
+                    setTimeout(function () {
+                        document.getElementById("statusStr").innerHTML = '';
+                    }, 5000);
+                }
+                else{
+                    const formData = new FormData();
+                    formData.append('addLayerFile', file);
+                    formData.append('action', 'uploadMapDataFile');
+                    http.open("POST", url, true);
+                    http.onreadystatechange = function() {
+                        if(http.readyState === 4 && http.status === 200) {
+                            if(http.responseText && http.responseText !== ''){
+                                const date = new Date();
+                                let fileType = http.responseText.split('.').pop();
+                                if(fileType === 'tiff'){
+                                    fileType = 'tif';
+                                }
+                                layerData[layerId]['file'] = http.responseText;
+                                layerData[layerId]['fileType'] = fileType;
+                                layerData[layerId]['dateUploaded'] = date.toISOString().split('T')[0];
+                                $('#layereditwindow').popup('hide');
+                                clearEditWindows();
+                                saveLayerConfigChanges();
+                            }
+                        }
+                        hideWorking();
+                    };
+                    http.send(formData);
+                }
             }
-        }
-    };
-    http.send(params);
+        };
+        http.send(params);
+    }
+    else{
+        alert("You must choose a valid file to use for the update first.");
+    }
 }
 
 function validateFileUpload(ele){

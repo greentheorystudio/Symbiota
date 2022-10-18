@@ -52,18 +52,18 @@ class OccurrenceGeoLocate {
 			'AND (locality regexp "T\\.? ?[0-9]{1,3}?[NS]\\.?,? ?R\\.? ?[0-9]{1,3} ?[EW]\\.?,? ?.*" '.
 			'OR verbatimCoordinates regexp "T\\.? ?[0-9]{1,3} ?[NS]\\.?,? ?R\\.? ?[0-9]{1,3} ?[EW]\\.?,? ?.*") ';
 		if(isset($this->filterArr['country']) && $this->filterArr['country']){
-			$sql .= 'AND (country = "'.Sanitizer::cleanInStr($this->filterArr['country']).'" ';
+			$sql .= 'AND (country = "'.Sanitizer::cleanInStr($this->conn,$this->filterArr['country']).'" ';
 		}
 		if(isset($this->filterArr['stateProvince']) && $this->filterArr['stateProvince']){
-			$sql .= 'AND (stateProvince = "'.Sanitizer::cleanInStr($this->filterArr['stateProvince']).'" ';
+			$sql .= 'AND (stateProvince = "'.Sanitizer::cleanInStr($this->conn,$this->filterArr['stateProvince']).'" ';
 		}
 		if(isset($this->filterArr['county']) && $this->filterArr['county']){
-			$countyTerm = Sanitizer::cleanInStr($this->filterArr['county']);
+			$countyTerm = Sanitizer::cleanInStr($this->conn,$this->filterArr['county']);
 			$countyTerm = str_replace(array(' county',' parish'),'',$countyTerm);
 			$sql .= 'AND (county LIKE "'.$countyTerm.'%" ';
 		}
 		if(isset($this->filterArr['locality']) && $this->filterArr['locality']){
-			$sql .= 'AND (locality LIKE "%'.Sanitizer::cleanInStr($this->filterArr['locality']).'%" ';
+			$sql .= 'AND (locality LIKE "%'.Sanitizer::cleanInStr($this->conn,$this->filterArr['locality']).'%" ';
 		}
 		return $sql;
 	}

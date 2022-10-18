@@ -40,12 +40,12 @@ if($collid){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Skeletal Record Submission</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/collections.occurskeletalsubmit.js?ver=20220112" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20220310" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -136,7 +136,7 @@ if($collid){
 							if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['Taxonomy'])){ 
 								?>
 								<div style="float:left;padding:2px 3px;">
-									<a href="../../taxa/admin/taxonomyloader.php" target="_blank">
+									<a href="../../taxa/taxonomy/index.php" target="_blank">
 										<i style="height:15px;width:15px;color:green;" title="Add new name to taxonomic thesaurus" class="fas fa-plus"></i>
 									</a>
 								</div>

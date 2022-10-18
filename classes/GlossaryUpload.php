@@ -62,7 +62,7 @@ class GlossaryUpload{
 
 	public function loadFile($fieldMap,$languageArr,$tidStr,$batchSources): void
 	{
-		$batchSources = Sanitizer::cleanInStr($this->encodeString($batchSources));
+		$batchSources = Sanitizer::cleanInStr($this->conn,$this->encodeString($batchSources));
 		$this->outputMsg('Starting Upload');
 		$this->conn->query('TRUNCATE TABLE uploadglossary');
 		$this->conn->query('OPTIMIZE TABLE uploadglossary');
@@ -96,13 +96,13 @@ class GlossaryUpload{
                             if($field === $lang.'_term'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $term = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
+                                    $term = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_definition'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $definition = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
+                                    $definition = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                                 if(strlen($definition) > 2000){
                                     $definition = '';
@@ -112,37 +112,37 @@ class GlossaryUpload{
                             if($field === $lang.'_source'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $source = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
+                                    $source = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_author'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $author = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
+                                    $author = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_translator'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $translator = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
+                                    $translator = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_notes'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $notes = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
+                                    $notes = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_resourceurl'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $resourceUrl = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
+                                    $resourceUrl = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_synonym'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $synonym = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
+                                    $synonym = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                         }

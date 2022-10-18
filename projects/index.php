@@ -74,12 +74,12 @@ if(!$researchList && !$editMode){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Inventory Projects</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Biotic Inventory Projects</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
-    <style type="text/css">
+    <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+    <style>
         a.boxclose{
             float:right;
             width:36px;
@@ -204,7 +204,13 @@ if(!$researchList && !$editMode){
 include(__DIR__ . '/../header.php');
 echo "<div class='navpath'>";
 echo "<a href='../index.php'>Home</a> &gt;&gt; ";
-echo '<b><a href="index.php?pid='.$pid.'">'.($projArr?$projArr['projname']:'Inventory Project List').'</a></b>';
+if($projArr){
+    echo "<a href='index.php'>Biotic Inventory Projects</a> &gt;&gt; ";
+    echo '<b>'.$projArr['projname'].'</b>';
+}
+else{
+    echo '<b>Biotic Inventory Projects</b>';
+}
 echo '</div>';
 ?>
 
@@ -422,16 +428,24 @@ echo '</div>';
         }
     }
     else{
-        echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Projects</h1>';
         $projectArr = $projManager->getProjectList();
-        foreach($projectArr as $pid => $projList){
-            ?>
-            <h2><a href="index.php?pid=<?php echo $pid; ?>"><?php echo $projList['projname']; ?></a></h2>
-            <div style="margin:0 0 30px 15px;">
-                <div><b>Managers:</b> <?php echo ($projList['managers']?:'Not defined'); ?></div>
-                <div style='margin-top:10px;'><?php echo $projList['descr']; ?></div>
-            </div>
-            <?php
+        if($projectArr){
+            echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Biotic Inventory Projects</h1>';
+            foreach($projectArr as $pid => $projList){
+                ?>
+                <h2><a href="index.php?pid=<?php echo $pid; ?>"><?php echo $projList['projname']; ?></a></h2>
+                <div style="margin:0 0 30px 15px;">
+                    <div><b>Managers:</b> <?php echo ($projList['managers']?:'Not defined'); ?></div>
+                    <div style='margin-top:10px;'><?php echo $projList['descr']; ?></div>
+                </div>
+                <?php
+            }
+        }
+        else{
+            echo '<div><b>There are no biotic inventory projects available at this time.</b></div>';
+            if($GLOBALS['VALID_USER']){
+                echo '<div><a href="index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></div>';
+            }
         }
     }
     ?>

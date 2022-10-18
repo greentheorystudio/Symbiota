@@ -38,10 +38,10 @@ $editorArr = $utManager->getTaxonomyEditors();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title>Taxonomic Interest User permissions</title>
+	<title>Taxonomic Interest Permissions</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
+	<link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
@@ -70,7 +70,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 			return true;
 		}
 	</script>
-	<script type="text/javascript" src="../js/shared.js?ver=20220310"></script>
+	<script type="text/javascript" src="../js/shared.js?ver=20220809"></script>
 </head>
 <body>
 	<?php
@@ -78,7 +78,7 @@ $editorArr = $utManager->getTaxonomyEditors();
     ?>
     <div class='navpath'>
         <a href='../index.php'>Home</a> &gt;&gt;
-        <b>Taxonomic Interest User permissions</b>
+        <b>Taxonomic Interest Permissions</b>
     </div>
     <?php
 
@@ -94,15 +94,17 @@ $editorArr = $utManager->getTaxonomyEditors();
 	if($isEditor){
 		?>
 		<div id="innertext">
-			<h2>Taxonomic Interest User Permissions</h2>
-			<div style="float:right;" title="Add a new taxonomic relationship">
-				<a href="#" onclick="toggle('addUserDiv')">
-                    <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
-				</a>
-			</div>
-			<div id="addUserDiv" style="display:none;">
+			<h2>Taxonomic Interest Permissions</h2>
+			<div style="width:98%;margin: 0 auto; display:flex;justify-content: flex-end">
+                <div title="Add a new taxonomic relationship">
+                    <a href="#" onclick="toggle('addUserDiv')">
+                        <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
+                    </a>
+                </div>
+            </div>
+			<div id="addUserDiv" style="display:<?php echo $editorArr ? 'none' : 'block'; ?>;">
 				<fieldset style="padding:20px;">
-					<legend><b>New Taxonomic Relationship</b></legend>
+					<legend><b>Create New Taxonomic Interest Permission</b></legend>
 					<form name="adduserform" action="usertaxonomymanager.php" method="post" onsubmit="return verifyUserAddForm(this)">
 						<div style="margin:3px;">
 							<b>User</b><br/>
@@ -148,56 +150,61 @@ $editorArr = $utManager->getTaxonomyEditors();
 			</div>
 			<div>
 				<?php 
-				foreach($editorArr as $editorStatus => $userArr){
-					$cat = 'Undefined';
-					if($editorStatus === 'RegionOfInterest') {
-                        $cat = 'Region Of Interest';
+				if($editorArr){
+                    foreach($editorArr as $editorStatus => $userArr){
+                        $cat = 'Undefined';
+                        if($editorStatus === 'RegionOfInterest') {
+                            $cat = 'Region Of Interest';
+                        }
+                        elseif($editorStatus === 'OccurrenceEditor') {
+                            $cat = 'Occurrence Identification Editor';
+                        }
+                        elseif($editorStatus === 'TaxonomicThesaurusEditor') {
+                            $cat = 'Taxonomic Thesaurus Editor';
+                        }
+                        ?>
+                        <div><b><u><?php echo $cat; ?></u></b></div>
+                        <ul style="margin:10px;">
+                            <?php
+                            foreach($userArr as $uid => $uArr){
+                                $username = $uArr['username'];
+                                unset($uArr['username']);
+                                ?>
+                                <li>
+                                    <?php
+                                    echo '<b>'.$username.'</b>';
+                                    ?>
+                                    <a href="usertaxonomymanager.php?delutid=all&deluid=<?php echo $uid.'&es='.$editorStatus; ?>" onclick="return confirm('Are you sure you want to remove all taxonomy links for this user?');" title="Delete all taxonomic relationships for this user">
+                                        <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
+                                    </a>
+                                    <?php
+                                    foreach($uArr as $utid => $utArr){
+                                        echo '<li style="margin-left:15px;">'.$utArr['sciname'];
+                                        if($utArr['geoscope']) {
+                                            echo ' (' . $utArr['geoscope'] . ')';
+                                        }
+                                        if($utArr['notes']) {
+                                            echo ': ' . $utArr['notes'];
+                                        }
+                                        ?>
+                                        <a href="usertaxonomymanager.php?delutid=<?php echo $utid; ?>" onclick="return confirm('Are you sure you want to remove this taxonomy links for this user?');" title="Delete this user taxonomic relationship">
+                                            <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
+                                        </a>
+                                        <?php
+                                        echo '</li>';
+                                    }
+                                    ?>
+                                </li>
+                                <?php
+                            }
+                            ?>
+                        </ul>
+                        <?php
                     }
-					elseif($editorStatus === 'OccurrenceEditor') {
-                        $cat = 'Occurrence Identification Editor';
-                    }
-					elseif($editorStatus === 'TaxonomicThesaurusEditor') {
-                        $cat = 'Taxonomic Thesaurus Editor';
-                    }
-					?>
-					<div><b><u><?php echo $cat; ?></u></b></div>
-					<ul style="margin:10px;">
-					<?php 
-					foreach($userArr as $uid => $uArr){
-						$username = $uArr['username'];
-						unset($uArr['username']);
-						?>
-						<li>
-							<?php
-							echo '<b>'.$username.'</b>';
-							?>
-							<a href="usertaxonomymanager.php?delutid=all&deluid=<?php echo $uid.'&es='.$editorStatus; ?>" onclick="return confirm('Are you sure you want to remove all taxonomy links for this user?');" title="Delete all taxonomic relationships for this user">
-								<i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
-							</a>
-							<?php
-							foreach($uArr as $utid => $utArr){
-								echo '<li style="margin-left:15px;">'.$utArr['sciname'];
-								if($utArr['geoscope']) {
-                                    echo ' (' . $utArr['geoscope'] . ')';
-                                }
-								if($utArr['notes']) {
-                                    echo ': ' . $utArr['notes'];
-                                }
-								?>
-								<a href="usertaxonomymanager.php?delutid=<?php echo $utid; ?>" onclick="return confirm('Are you sure you want to remove this taxonomy links for this user?');" title="Delete this user taxonomic relationship">
-									<i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
-								</a>
-								<?php
-								echo '</li>';
-							}
-							?>
-						</li>
-						<?php  
-					}
-					?>
-					</ul>
-					<?php 
-				}
+                }
+                else{
+                    echo '<div><h3>No Taxonomic Interest Permissions have been created.</h3>';
+                }
 				?>
 			</div>
 		</div>

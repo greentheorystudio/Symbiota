@@ -87,8 +87,8 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 	<title>Darwin Core Archiver Publisher</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
-	<link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
-	<style type="text/css">
+	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
+	<style>
 		.nowrap { white-space: nowrap; }
 	</style>
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
@@ -193,12 +193,11 @@ include(__DIR__ . '/../../header.php');
 		?>
 		<div style="margin:10px;">
 			Use the controls below to publish occurrence data within this collection as a
-			<a href="http://rs.tdwg.org/dwc/terms/guides/text/index.htm">Darwin Core Archive (DwC-A)</a> file.
+			<a href="https://github.com/gbif/ipt/wiki/DwCAHowToGuide" target="_blank">Darwin Core Archive (DwC-A)</a> file.
 			A DwC-A file is a single compressed ZIP file that contains one to several data files along with a meta.xml
 			document that describes the content.
 			The occurrence data file is required, but identifications (determinations) and image metadata are optional.
-			Fields within the occurrences.csv file are defined by the <a href="http://rs.tdwg.org/dwc/terms/index.htm">Darwin Core</a>
-			exchange standard.
+			Fields within the occurrences.csv file are defined by the <a href="https://www.tdwg.org/standards/dwc/" target="_blank">Darwin Core standard</a>.
 		</div>
 		<?php
 	}
@@ -207,12 +206,12 @@ include(__DIR__ . '/../../header.php');
 		<div style="margin:10px;">
 			The following downloads are occurrence data packages from collections
 			that have chosen to publish their complete dataset as a
-			<a href="http://rs.tdwg.org/dwc/terms/guides/text/index.htm">Darwin Core Archive (DwC-A)</a> file.
+			<a href="https://github.com/gbif/ipt/wiki/DwCAHowToGuide" target="_blank">Darwin Core Archive (DwC-A)</a> file.
 			A DwC-A file is a single compressed ZIP file that contains one to several data files along with a meta.xml
 			document that describes the content.
 			The archives below contain three comma separated (CSV) files containing occurrences, identifications (determinations), and image metadata.
-			Fields within the occurrences.csv file are defined by the <a href="http://rs.tdwg.org/dwc/terms/index.htm">Darwin Core</a>
-			exchange standard. The identification and image files follow the DwC extensions for those data types.
+			Fields within the occurrences.csv file are defined by the <a href="https://www.tdwg.org/standards/dwc/" target="_blank">Darwin Core standard</a>.
+            The identification and image files follow the DwC extensions for those data types.
 		</div>
 		<div style="margin:10px;">
 			<h3>Data Usage Policy:</h3>
@@ -299,8 +298,8 @@ include(__DIR__ . '/../../header.php');
 						echo ' <span style="color:red;margin-left:15px;">These records will not be published!</span> ';
 					}
 					else{
-						echo 'Records missing Symbiota GUIDs: '.$recFlagArr['nullGUIDs'].'<br/>';
-						echo 'Please go to the <a href="../admin/guidmapper.php?collid='.$collId.'">Collection GUID Mapper</a> to assign Symbiota GUIDs.';
+						echo 'Records missing GUIDs: '.$recFlagArr['nullGUIDs'].'<br/>';
+						echo 'Please go to the <a href="../admin/guidmapper.php?collid='.$collId.'">Collection GUID Mapper</a> to assign GUIDs.';
 					}
 					echo '</div>';
 				}

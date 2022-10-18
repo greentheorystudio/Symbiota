@@ -57,11 +57,11 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Image Submission</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/external/jquery-ui.css" type="text/css" rel="stylesheet" />
+	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/collections.imageoccursubmit.js?ver=20111118" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20220310" type="text/javascript"></script>
+	<script src="../../js/collections.imageoccursubmit.js?ver=20220915" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
 	<script type="text/javascript">
 	function validateImgOccurForm(f){
 		if(f.imgfile.value === "" && f.imgurl.value === ""){
@@ -185,24 +185,6 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							<b>County:</b><br/>
 							<input id="county" name="county" type="text" value="<?php echo ($_POST['county'] ?? ''); ?>" />
 						</div> 
-					</div>
-					<div style="clear:both;margin:3px;">
-						<?php
-						if(isset($GLOBALS['TESSERACT_PATH']) && $GLOBALS['TESSERACT_PATH']){
-							?>
-							<div style="float:left;">
-								<input name="tessocr" type="checkbox" value=1 <?php echo (isset($_POST['tessocr'])?'checked':''); ?> />
-								OCR Text using Tesseract OCR engine
-							</div>
-							<?php
-						}
-						?>
-						<div style="float:left;margin:8px 0 0 20px;">(<a href="#" onclick="toggle('manualocr')">Manually add OCR</a>)</div>
-					</div>
-					<div id="manualocr" style="clear:both;display:none;margin:3px;">
-						<b>OCR Text</b><br/>
-						<textarea name="ocrblock" style="width:100%;height:100px;"></textarea><br/>
-						<b>Source:</b> <input type="text" name="ocrsource" value="" />
 					</div>
 				</fieldset>
 				<div style="margin:10px;clear:both;">

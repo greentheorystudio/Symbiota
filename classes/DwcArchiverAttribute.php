@@ -1,25 +1,24 @@
 <?php
-
 class DwcArchiverAttribute{
 
 	public static function getFieldArr(): array
     {
 		$fieldArr['coreid'] = 'o.occid';
-		$termArr['measurementType'] = 'http://rs.tdwg.org/dwc/terms/measurementType';
+		$termArr['measurementType'] = 'https://dwc.tdwg.org/terms/#measurementType';
 		$fieldArr['measurementType'] = 'm.traitname';
 		$termArr['measurementTypeID'] = 'http://rs.iobis.org/obis/terms/measurementTypeID';
 		$fieldArr['measurementTypeID'] = 'm.refurl AS measurementTypeID';
-		$termArr['measurementValue'] = 'http://rs.tdwg.org/dwc/terms/measurementValue';
+		$termArr['measurementValue'] = 'https://dwc.tdwg.org/terms/#measurementValue';
 		$fieldArr['measurementValue'] = 's.statename';
 		$termArr['measurementValueID'] = 'http://rs.iobis.org/obis/terms/measurementValueID';
 		$fieldArr['measurementValueID'] = 's.refurl AS measurementValueID';
-		$termArr['measurementUnit'] = 'http://rs.tdwg.org/dwc/terms/measurementUnit';
+		$termArr['measurementUnit'] = 'https://dwc.tdwg.org/terms/#measurementUnit';
 		$fieldArr['measurementUnit'] = 'm.units';
-		$termArr['measurementDeterminedDate'] = 'http://rs.tdwg.org/dwc/terms/measurementDeterminedDate';
+		$termArr['measurementDeterminedDate'] = 'https://dwc.tdwg.org/terms/#measurementDeterminedDate';
 		$fieldArr['measurementDeterminedDate'] = 'DATE_FORMAT(IFNULL(a.datelastmodified,a.initialtimestamp), "%Y-%m-%dT%TZ") AS detDate';
-		$termArr['measurementDeterminedBy'] = 'http://rs.tdwg.org/dwc/terms/measurementDeterminedBy';
+		$termArr['measurementDeterminedBy'] = 'https://dwc.tdwg.org/terms/#measurementDeterminedBy';
 		$fieldArr['measurementDeterminedBy'] = 'u.username';
-		$termArr['measurementRemarks'] = 'http://rs.tdwg.org/dwc/terms/measurementRemarks';
+		$termArr['measurementRemarks'] = 'https://dwc.tdwg.org/terms/#measurementRemarks';
 		$fieldArr['measurementRemarks'] = 'a.notes';
 		
 		$retArr['terms'] = $termArr;

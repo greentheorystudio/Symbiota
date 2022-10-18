@@ -135,7 +135,7 @@ $specImgArr = $occManager->getImageMap();
 							$imgUrl = $imgArr['url'];
 							$origUrl = $imgArr['origurl'];
 							$tnUrl = $imgArr['tnurl'];
-							if($GLOBALS['IMAGE_DOMAIN']){
+							if(isset($GLOBALS['IMAGE_DOMAIN'])){
 								if(strncmp($imgUrl, '/', 1) === 0){
 									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 								}

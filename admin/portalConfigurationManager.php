@@ -20,8 +20,8 @@ $databaseProperties = $confManager->getDatabasePropArr();
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Portal Configuration Manager</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="../css/external/jquery-ui.css" rel="stylesheet" />
-    <style type="text/css">
+    <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+    <style>
         fieldset {
             background-color: #f9f9f9;
             padding:15px;
@@ -48,7 +48,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
     <script src="../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20220310"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20220809"></script>
     <script type="text/javascript">
         const maxPostSize = <?php echo $confManager->getServerMaxPostSize(); ?>;
         const maxUploadSize = <?php echo $confManager->getServerMaxUploadFilesize(); ?>;
@@ -185,7 +185,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
             http.onreadystatechange = function() {
                 if(http.readyState === 4 && http.status === 200) {
                     if(http.responseText){
-                        alert('That Configuration Name is used within Symbiota and cannot be set as an additional configuration name. Please enter a different name.');
+                        alert('That Configuration Name is used internally within the software and cannot be set as an additional configuration name. Please enter a different name.');
                         document.getElementById('newConfName').value = '';
                     }
                     else{
@@ -311,7 +311,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
                             }
                         }
                         else{
-                            alert('The path entered is not a valid path to a Symbiota installation on the server.');
+                            alert('The path entered is not a valid path to a portal installation on the server.');
                             document.getElementById(configname).value = oldValue;
                         }
                     }
@@ -350,7 +350,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
                             }
                         }
                         else{
-                            alert('The path entered is not a valid URL path to a Symbiota portal.');
+                            alert('The path entered is not a valid URL path to a portal.');
                             document.getElementById(configname).value = oldValue;
                         }
                     }

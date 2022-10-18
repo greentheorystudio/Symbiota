@@ -22,12 +22,12 @@ class KeyCharDeficitManager{
 	
 	public function setLanguage($lang): void
 	{
-		$this->language = Sanitizer::cleanInStr($lang);
+		$this->language = Sanitizer::cleanInStr($this->con,$lang);
 	}
 	
 	public function setProject($proj): void
 	{
-		$this->project = Sanitizer::cleanInStr($proj);
+		$this->project = Sanitizer::cleanInStr($this->con,$proj);
 	}
 	
 	public function getClQueryList(): array

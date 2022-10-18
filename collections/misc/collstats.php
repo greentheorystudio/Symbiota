@@ -234,11 +234,11 @@ if($action !== 'Update Statistics'){
 			<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Statistics</title>
 			<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 			<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-			<link rel="stylesheet" href="../../css/external/jquery-ui.css" type="text/css" />
+			<link rel="stylesheet" href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" />
             <script src="../../js/external/all.min.js" type="text/javascript"></script>
             <script type="text/javascript" src="../../js/external/jquery.js"></script>
 			<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-			<script type="text/javascript" src="../../js/search.term.manager.js?ver=20220330"></script>
+			<script type="text/javascript" src="../../js/search.term.manager.js?ver=20220921"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
@@ -447,7 +447,7 @@ if($action !== 'Update Statistics'){
 													</td>
 													<td style="padding:9px 5px;width:10px;">
 														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-															<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>" />
+															<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo ((isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID'] !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>" />
 														</a>
 													</td>
 													<td style="padding-top:8px;">
@@ -460,7 +460,7 @@ if($action !== 'Update Statistics'){
 												</tr>
 												<tr>
 													<td colspan="3">
-														<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+														<div id="cat-<?php echo $idStr; ?>" style="<?php echo ((isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
 															<table>
 																<?php
 																foreach($catArr as $collid => $collName2){
@@ -594,7 +594,7 @@ if($action !== 'Update Statistics'){
 													</td>
 													<td style="padding:9px 5px;width:10px;">
 														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                                            <img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>" />
+                                                            <img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo ((isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID'] !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>" />
 														</a>
 													</td>
 													<td style="padding-top:8px;">
@@ -607,7 +607,7 @@ if($action !== 'Update Statistics'){
 												</tr>
 												<tr>
 													<td colspan="3">
-                                                        <div id="cat-<?php echo $idStr; ?>" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+                                                        <div id="cat-<?php echo $idStr; ?>" style="<?php echo ((isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
 															<table>
 																<?php
 																foreach($catArr as $collid => $collName2){

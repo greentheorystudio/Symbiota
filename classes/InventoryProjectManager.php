@@ -72,7 +72,7 @@ class InventoryProjectManager {
 		$sql = '';
 		foreach($projArr as $field => $value){
 			if(in_array($field, $fieldArr, true)){
-				$sql .= ','.$field.' = "'.Sanitizer::cleanInStr($value).'"';
+				$sql .= ','.$field.' = "'.Sanitizer::cleanInStr($this->conn,$value).'"';
 			}
 		}
 		$sql = 'UPDATE fmprojects SET '.substr($sql,1).' WHERE (pid = '.$this->pid.')';
@@ -96,10 +96,10 @@ class InventoryProjectManager {
 
 	public function addNewProject($projArr){
 		$sql = 'INSERT INTO fmprojects(projname,managers,fulldescription,notes,ispublic) '.
-			'VALUES("'.Sanitizer::cleanInStr($projArr['projname']).'",'.
-			($projArr['managers']?'"'.Sanitizer::cleanInStr($projArr['managers']).'"':'NULL').','.
-			($projArr['fulldescription']?'"'.Sanitizer::cleanInStr($projArr['fulldescription']).'"':'NULL').','.
-			($projArr['notes']?'"'.Sanitizer::cleanInStr($projArr['notes']).'"':'NULL').','.
+			'VALUES("'.Sanitizer::cleanInStr($this->conn,$projArr['projname']).'",'.
+			($projArr['managers']?'"'.Sanitizer::cleanInStr($this->conn,$projArr['managers']).'"':'NULL').','.
+			($projArr['fulldescription']?'"'.Sanitizer::cleanInStr($this->conn,$projArr['fulldescription']).'"':'NULL').','.
+			($projArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$projArr['notes']).'"':'NULL').','.
 			(is_numeric($projArr['ispublic'])?$projArr['ispublic']:'0').')';
 		//echo $sql;
 		if($this->conn->query($sql)){

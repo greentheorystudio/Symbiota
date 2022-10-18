@@ -30,13 +30,13 @@ if(isset($_SESSION['USER_RIGHTS'])){
 $GLOBALS['USER_DISPLAY_NAME'] = (array_key_exists('dn',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['dn']: '');
 $GLOBALS['USERNAME'] = (array_key_exists('un',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['un']:0);
 $GLOBALS['SYMB_UID'] = (array_key_exists('uid',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['uid']:0);
-$GLOBALS['VALID_USER'] = (array_key_exists('valid',$GLOBALS['PARAMS_ARR'])?($GLOBALS['PARAMS_ARR']['valid'] === 1):false);
+$GLOBALS['VALID_USER'] = (array_key_exists('valid', $GLOBALS['PARAMS_ARR']) && $GLOBALS['PARAMS_ARR']['valid'] === 1);
 $GLOBALS['IS_ADMIN'] = (array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS'])?1:0);
 $GLOBALS['SOLR_MODE'] = (isset($GLOBALS['SOLR_URL']) && $GLOBALS['SOLR_URL']);
 $GLOBALS['CHECKLIST_FG_EXPORT'] = (isset($GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']) && $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']);
 $GLOBALS['BROADGEOREFERENCE'] = (isset($GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']) && $GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']);
 
-$GLOBALS['RIGHTS_TERMS_DEFS'] = array(
+$GLOBALS['RIGHTS_TERMS'] = array(
     'http://creativecommons.org/publicdomain/zero/1.0/' => array(
         'title' => 'CC0 1.0 (Public-domain)',
         'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',

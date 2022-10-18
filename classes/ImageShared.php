@@ -52,24 +52,24 @@ class ImageShared{
 	public function __construct(){
 		$connection = new DbConnection();
  		$this->conn = $connection->getConnection();
- 		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'];
+ 		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'] ?? '';
 		if(substr($this->imageRootPath,-1) !== '/') {
 			$this->imageRootPath .= '/';
 		}
-		$this->imageRootUrl = $GLOBALS['IMAGE_ROOT_URL'];
+		$this->imageRootUrl = $GLOBALS['IMAGE_ROOT_URL'] ?? '';
 		if(substr($this->imageRootUrl,-1) !== '/') {
 			$this->imageRootUrl .= '/';
 		}
-		if($GLOBALS['IMG_TN_WIDTH']){
+		if(isset($GLOBALS['IMG_TN_WIDTH'])){
 			$this->tnPixWidth = $GLOBALS['IMG_TN_WIDTH'];
 		}
-		if($GLOBALS['IMG_WEB_WIDTH']){
+		if(isset($GLOBALS['IMG_WEB_WIDTH'])){
 			$this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
 		}
-		if($GLOBALS['IMG_LG_WIDTH']){
+		if(isset($GLOBALS['IMG_LG_WIDTH'])){
 			$this->lgPixWidth = $GLOBALS['IMG_LG_WIDTH'];
 		}
-		if($GLOBALS['MAX_UPLOAD_FILESIZE']){
+		if(isset($GLOBALS['MAX_UPLOAD_FILESIZE'])){
 			$this->webFileSizeLimit = $GLOBALS['MAX_UPLOAD_FILESIZE'];
 		}
 		ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
@@ -199,7 +199,7 @@ class ImageShared{
 		$status = false;
 		$url = str_replace(' ','%20',$url);
 		if(strncmp($url, '/', 1) === 0){
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
 			else{
@@ -380,10 +380,7 @@ class ImageShared{
 				$qualityRating = $this->jpgCompression;
 			}
 
-			if($GLOBALS['USE_IMAGE_MAGICK']) {
-				$status = $this->createNewImageImagick($subExt,$targetWidth,$qualityRating,$targetPathOverride);
-			}
-			elseif(function_exists('gd_info') && extension_loaded('gd')) {
+			if(function_exists('gd_info') && extension_loaded('gd')) {
 				$status = $this->createNewImageGD($subExt,$targetWidth,$qualityRating,$targetPathOverride);
 			}
 			else{
@@ -391,26 +388,6 @@ class ImageShared{
 			}
 		}
 		return $status;
-	}
-
-	private function createNewImageImagick($subExt,$newWidth,$qualityRating,$targetPathOverride): bool
-	{
-		$targetPath = $targetPathOverride;
-		if(!$targetPath) {
-			$targetPath = $this->targetPath . $this->imgName . $subExt . $this->imgExt;
-		}
-		if($newWidth < 300){
-			system('convert '.$this->sourcePath.' -thumbnail '.$newWidth.'x'.($newWidth*1.5).' '.$targetPath, $retval);
-		}
-		else{
-			system('convert '.$this->sourcePath.' -resize '.$newWidth.'x'.($newWidth*1.5).($qualityRating?' -quality '.$qualityRating:'').' '.$targetPath, $retval);
-		}
-		if(file_exists($targetPath)){
-			return true;
-		}
-
-		$this->errArr[] = 'ERROR: Image failed to be created in Imagick function (target path: '.$targetPath.')';
-		return false;
 	}
 
 	private function createNewImageGD($subExt, $newWidth, $qualityRating, $targetPathOverride): bool
@@ -518,7 +495,7 @@ class ImageShared{
 				($this->locality?'"'.$this->locality.'"':'NULL').','.
 				($this->occid?:'NULL').','.
 				($this->notes?'"'.$this->notes.'"':'NULL').',"'.
-				Sanitizer::cleanInStr($GLOBALS['USERNAME']).'",'.
+				Sanitizer::cleanInStr($this->conn,$GLOBALS['USERNAME']).'",'.
 				($this->sortSeq?:'50').','.
 				($this->sourceIdentifier?'"'.$this->sourceIdentifier.'"':'NULL').','.
 				($this->rights?'"'.$this->rights.'"':'NULL').','.
@@ -528,7 +505,7 @@ class ImageShared{
 				$guid = UuidFactory::getUuidV4();
 				$this->activeImgId = $this->conn->insert_id;
 				if(!$this->conn->query('INSERT INTO guidimages(guid,imgid) VALUES("'.$guid.'",'.$this->activeImgId.')')) {
-					$this->errArr[] = ' Warning: Symbiota GUID mapping failed';
+					$this->errArr[] = ' Warning: GUID mapping failed';
 				}
 			}
 			else{
@@ -559,7 +536,7 @@ class ImageShared{
 				if($v) {
 					$imgArr[$k] = $v;
 				}
-				$imgObj .= '"'.$k.'":"'.Sanitizer::cleanInStr($v).'",';
+				$imgObj .= '"'.$k.'":"'.Sanitizer::cleanInStr($this->conn,$v).'",';
 			}
 			$imgObj = json_encode($imgArr);
 			$sqlArchive = 'UPDATE guidimages '.
@@ -569,9 +546,6 @@ class ImageShared{
 		}
 		$rs->close();
 
-		if($occid){
-			$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (imgid = '.$imgIdDel.')');
-		}
 		$this->conn->query('DELETE FROM imagetag WHERE (imgid = '.$imgIdDel.')');
 
 		$sql = 'DELETE FROM images WHERE (imgid = '.$imgIdDel.')';
@@ -687,7 +661,7 @@ class ImageShared{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if($GLOBALS['IMAGE_DOMAIN']){
+		if(isset($GLOBALS['IMAGE_DOMAIN'])){
 			$urlPrefix = 'http://';
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 				$urlPrefix = 'https://';
@@ -733,12 +707,12 @@ class ImageShared{
 
 	public function setCaption($v): void
 	{
-		$this->caption = Sanitizer::cleanInStr($v);
+		$this->caption = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setPhotographer($v): void
 	{
-		$this->photographer = Sanitizer::cleanInStr($v);
+		$this->photographer = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setPhotographerUid($v): void
@@ -750,7 +724,7 @@ class ImageShared{
 
 	public function setSourceUrl($v): void
 	{
-		$this->sourceUrl = Sanitizer::cleanInStr($v);
+		$this->sourceUrl = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function getTargetPath(): string
@@ -764,12 +738,12 @@ class ImageShared{
 
 	public function setOwner($v): void
 	{
-		$this->owner = Sanitizer::cleanInStr($v);
+		$this->owner = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setLocality($v): void
 	{
-		$this->locality = Sanitizer::cleanInStr($v);
+		$this->locality = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setOccid($v): void
@@ -792,7 +766,7 @@ class ImageShared{
 
 	public function setNotes($v): void
 	{
-		$this->notes = Sanitizer::cleanInStr($v);
+		$this->notes = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function setSortSeq($v): void
@@ -804,7 +778,7 @@ class ImageShared{
 
 	public function setCopyright($v): void
 	{
-		$this->copyright = Sanitizer::cleanInStr($v);
+		$this->copyright = Sanitizer::cleanInStr($this->conn,$v);
 	}
 
 	public function getErrArr(): array
@@ -865,7 +839,7 @@ class ImageShared{
 					$exists = true;
 				}
 			}
-			if($GLOBALS['IMAGE_DOMAIN']){
+			if(isset($GLOBALS['IMAGE_DOMAIN'])){
 				$uri = $GLOBALS['IMAGE_DOMAIN'].$uri;
 			}
 			else{

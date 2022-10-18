@@ -43,6 +43,11 @@ class ConfigurationManager{
         'SPATIAL_INITIAL_CENTER',
         'SPATIAL_INITIAL_ZOOM',
         'SPATIAL_INITIAL_BASE_LAYER',
+        'SPATIAL_POINT_CLUSTER',
+        'SPATIAL_POINT_CLUSTER_DISTANCE',
+        'SPATIAL_POINT_DISPLAY_HEAT_MAP',
+        'SPATIAL_POINT_HEAT_MAP_RADIUS',
+        'SPATIAL_POINT_HEAT_MAP_BLUR',
         'SPATIAL_POINT_FILL_COLOR',
         'SPATIAL_POINT_BORDER_COLOR',
         'SPATIAL_POINT_BORDER_WIDTH',
@@ -137,7 +142,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20220627';
+        $GLOBALS['CSS_VERSION'] = '20220724';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -229,6 +234,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['CLIENT_ROOT'])){
             $GLOBALS['CLIENT_ROOT'] = '';
         }
+        if(!isset($GLOBALS['ADMIN_EMAIL'])){
+            $GLOBALS['ADMIN_EMAIL'] = '';
+        }
         if(!isset($GLOBALS['TEMP_DIR_ROOT']) || $GLOBALS['TEMP_DIR_ROOT'] === ''){
             $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
         }
@@ -267,6 +275,21 @@ class ConfigurationManager{
         }
         if(!isset($GLOBALS['SPATIAL_INITIAL_BASE_LAYER']) || $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] === ''){
             $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
+        }
+        if(!isset($GLOBALS['SPATIAL_POINT_CLUSTER'])){
+            $GLOBALS['SPATIAL_POINT_CLUSTER'] = true;
+        }
+        if(!isset($GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE']) || $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] === ''){
+            $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] = '50';
+        }
+        if(!isset($GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'])){
+            $GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = false;
+        }
+        if(!isset($GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS']) || $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] === ''){
+            $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '5';
+        }
+        if(!isset($GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR']) || $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] === ''){
+            $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] = '15';
         }
         if(!isset($GLOBALS['SPATIAL_POINT_FILL_COLOR']) || $GLOBALS['SPATIAL_POINT_FILL_COLOR'] === ''){
             $GLOBALS['SPATIAL_POINT_FILL_COLOR'] = 'E69E67';
@@ -334,6 +357,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
             $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
         }
+        if(!isset($GLOBALS['DYN_CHECKLIST_RADIUS']) || !$GLOBALS['DYN_CHECKLIST_RADIUS']){
+            $GLOBALS['DYN_CHECKLIST_RADIUS'] = '100';
+        }
         $GLOBALS['EMAIL_CONFIGURED'] = (isset($GLOBALS['PORTAL_EMAIL_ADDRESS']) && $GLOBALS['PORTAL_EMAIL_ADDRESS'] && $GLOBALS['SMTP_USERNAME'] && $GLOBALS['SMTP_PASSWORD'] && $GLOBALS['SMTP_HOST'] && $GLOBALS['SMTP_PORT']);
     }
 
@@ -354,6 +380,11 @@ class ConfigurationManager{
         $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
         $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
         $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
+        $GLOBALS['SPATIAL_POINT_CLUSTER'] = true;
+        $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] = '50';
+        $GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = false;
+        $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '5';
+        $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] = '15';
         $GLOBALS['SPATIAL_POINT_FILL_COLOR'] = 'E69E67';
         $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] = '000000';
         $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] = '1';
@@ -634,8 +665,8 @@ class ConfigurationManager{
 
     public function readClientCookies(): void
     {
-        if((isset($_COOKIE['SymbiotaCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
-            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+        if((isset($_COOKIE['BioSurvCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
+            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['BioSurvCrumb']), true);
             if($tokenArr){
                 $pHandler = new ProfileManager();
                 if($pHandler->setUserName($tokenArr[0])){
@@ -650,8 +681,8 @@ class ConfigurationManager{
             }
         }
 
-        if((isset($_COOKIE['SymbiotaCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
-            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+        if((isset($_COOKIE['BioSurvCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
+            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['BioSurvCrumb']), true);
             if($tokenArr){
                 $pHandler = new ProfileManager();
                 $uid = $pHandler->getUid($tokenArr[0]);

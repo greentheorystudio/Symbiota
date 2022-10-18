@@ -29,7 +29,7 @@ class KeyDataManager extends Manager{
 			$this->pid = $projValue;
 		}
 		else{
-			$sql = "SELECT p.pid FROM fmprojects p WHERE (p.projname = '".Sanitizer::cleanInStr($projValue)."')";
+			$sql = "SELECT p.pid FROM fmprojects p WHERE (p.projname = '".Sanitizer::cleanInStr($this->conn,$projValue)."')";
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$this->pid = $row->pid;
@@ -43,7 +43,7 @@ class KeyDataManager extends Manager{
 	{
         $this->lang = $l;
         $this->langArr[] = $l;
-        $sql = "SELECT iso639_1 FROM adminlanguages WHERE langname = '".Sanitizer::cleanInStr($l)."' ";
+        $sql = "SELECT iso639_1 FROM adminlanguages WHERE langname = '".Sanitizer::cleanInStr($this->conn,$l)."' ";
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
             $this->langArr[] = $row->iso639_1;
@@ -76,29 +76,30 @@ class KeyDataManager extends Manager{
 				'WHERE (clpl.pid = ' .$this->pid. ') ';
 		}
 		//echo $sql.'<br/>'; exit;
-		$result = $this->conn->query($sql);
-		while($row = $result->fetch_object()){
-			$genus = $row->UnitName1;
-			$family = $row->Family;
-			if($genus) {
-				$returnArr[] = $genus;
-			}
-			if($family) {
-				$returnArr[] = $family;
-			}
-		}
+		if($result = $this->conn->query($sql)){
+            while($row = $result->fetch_object()){
+                $genus = $row->UnitName1;
+                $family = $row->Family;
+                if($genus) {
+                    $returnArr[] = $genus;
+                }
+                if($family) {
+                    $returnArr[] = $family;
+                }
+            }
 
-		$result->free();
-		$returnArr = array_unique($returnArr);
-		natcasesort($returnArr);
-		array_unshift($returnArr, '--------------------------');
-		array_unshift($returnArr, 'All Species');
+            $result->free();
+            $returnArr = array_unique($returnArr);
+            natcasesort($returnArr);
+            array_unshift($returnArr, '--------------------------');
+            array_unshift($returnArr, 'All Species');
+        }
 		return $returnArr;
 	}
 
 	public function setTaxonFilter($t): void
 	{
-		$this->taxonFilter = Sanitizer::cleanInStr($t);
+		$this->taxonFilter = Sanitizer::cleanInStr($this->conn,$t);
 	}
 
 	public function setClValue($clv){
