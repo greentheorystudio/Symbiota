@@ -52,24 +52,24 @@ class ImageShared{
 	public function __construct(){
 		$connection = new DbConnection();
  		$this->conn = $connection->getConnection();
- 		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'];
+ 		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'] ?? '';
 		if(substr($this->imageRootPath,-1) !== '/') {
 			$this->imageRootPath .= '/';
 		}
-		$this->imageRootUrl = $GLOBALS['IMAGE_ROOT_URL'];
+		$this->imageRootUrl = $GLOBALS['IMAGE_ROOT_URL'] ?? '';
 		if(substr($this->imageRootUrl,-1) !== '/') {
 			$this->imageRootUrl .= '/';
 		}
-		if($GLOBALS['IMG_TN_WIDTH']){
+		if(isset($GLOBALS['IMG_TN_WIDTH'])){
 			$this->tnPixWidth = $GLOBALS['IMG_TN_WIDTH'];
 		}
-		if($GLOBALS['IMG_WEB_WIDTH']){
+		if(isset($GLOBALS['IMG_WEB_WIDTH'])){
 			$this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
 		}
-		if($GLOBALS['IMG_LG_WIDTH']){
+		if(isset($GLOBALS['IMG_LG_WIDTH'])){
 			$this->lgPixWidth = $GLOBALS['IMG_LG_WIDTH'];
 		}
-		if($GLOBALS['MAX_UPLOAD_FILESIZE']){
+		if(isset($GLOBALS['MAX_UPLOAD_FILESIZE'])){
 			$this->webFileSizeLimit = $GLOBALS['MAX_UPLOAD_FILESIZE'];
 		}
 		ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');

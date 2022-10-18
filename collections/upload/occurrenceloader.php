@@ -198,7 +198,7 @@ $specUploadManager->readUploadParameters();
 ?>
 <script>
     $(document).ready(function() {
-        <?php echo (($uspid && $action)?'adjustParameterForm()':''); ?>
+        <?php echo (($uspid && ($action === 'addprofile' || $action === 'editprofile'))?'adjustParameterForm();':''); ?>
     });
 
     function checkUploadListForm(f){

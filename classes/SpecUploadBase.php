@@ -839,15 +839,15 @@ class SpecUploadBase extends SpecUpload{
         if(($r = $rs->fetch_object()) && $r->cnt) {
             $this->outputMsg('<li>Transferring Determination History...</li>');
 
-            $sql = 'UPDATE uploaddetermtemp ud INNER JOIN uploadspectemp u ON ud.collid = u.collid AND ud.dbpk = u.dbpk '.
+            $sql = 'UPDATE uploaddetermtemp AS ud INNER JOIN uploadspectemp AS u ON ud.collid = u.collid AND ud.dbpk = u.dbpk '.
                 'SET ud.occid = u.occid '.
-                'WHERE (ud.occid IS NULL) AND (u.occid IS NOT NULL) AND (ud.collid IN('.$this->collId.'))';
+                'WHERE ISNULL(ud.occid) AND (u.occid IS NOT NULL) AND (ud.collid IN('.$this->collId.'))';
             if(!$this->conn->query($sql)){
                 $this->outputMsg('<li style="margin-left:20px;">WARNING updating occids within uploaddetermtemp</li> ');
             }
 
             $sqlDel = 'DELETE u.* '.
-                'FROM uploaddetermtemp u INNER JOIN omoccurdeterminations d ON u.occid = d.occid '.
+                'FROM uploaddetermtemp AS u INNER JOIN omoccurdeterminations AS d ON u.occid = d.occid '.
                 'WHERE (u.collid IN('.$this->collId.')) '.
                 'AND (d.sciname = u.sciname) AND (d.identifiedBy = u.identifiedBy) AND (d.dateIdentified = u.dateIdentified)';
             $this->conn->query($sqlDel);
@@ -856,10 +856,10 @@ class SpecUploadBase extends SpecUpload{
                 'identificationQualifier, iscurrent, identificationReferences, identificationRemarks, sourceIdentifier) '.
                 'SELECT u.occid, u.sciname, u.scientificNameAuthorship, u.identifiedBy, u.dateIdentified, '.
                 'u.identificationQualifier, u.iscurrent, u.identificationReferences, u.identificationRemarks, sourceIdentifier '.
-                'FROM uploaddetermtemp u '.
+                'FROM uploaddetermtemp AS u '.
                 'WHERE u.occid IS NOT NULL AND (u.collid IN('.$this->collId.'))';
             if($this->conn->query($sql)){
-                $sqlDel = 'DELETE * '.
+                $sqlDel = 'DELETE '.
                     'FROM uploaddetermtemp '.
                     'WHERE (collid IN('.$this->collId.'))';
                 $this->conn->query($sqlDel);
