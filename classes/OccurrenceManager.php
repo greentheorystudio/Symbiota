@@ -1120,7 +1120,7 @@ class OccurrenceManager{
             $parentTidArr = array();
             $rankId = 0;
             $sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid '.
-                'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tidaccepted '.
+                'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
                 'WHERE (ts.tid IN('.implode(',',$targetTidArr).') OR ts.tidaccepted IN('.implode(',',$targetTidArr).')) AND t.sciname NOT IN("'.$searchStr.'") ';
             $rs2 = $this->conn->query($sql2);
             while($r2 = $rs2->fetch_object()){
