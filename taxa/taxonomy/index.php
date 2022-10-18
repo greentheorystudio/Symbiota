@@ -63,8 +63,8 @@ $tRankArr = $loaderObj->getRankArr();
 		?>
         <div id="tabs">
             <ul>
-                <li><a href="#new">New Name</a></li>
-                <li><a href="#edit">Edit Existing Name</a></li>
+                <li><a href="#new">Add New Taxon</a></li>
+                <li><a href="#edit">Edit Existing Taxon</a></li>
             </ul>
 
             <div id="new">
