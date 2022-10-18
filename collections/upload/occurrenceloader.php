@@ -55,6 +55,8 @@ $SYMBIOTA = 10;
 $specUploadManager = new SpecUpload();
 
 if($isEditor){
+    $specUploadManager->setCollId($collid);
+    $specUploadManager->setUspid($uspid);
     if($action === 'Automap Fields'){
         $autoMap = true;
     }
