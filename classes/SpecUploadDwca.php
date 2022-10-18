@@ -24,7 +24,7 @@ class SpecUploadDwca extends SpecUploadBase{
         }
         $fullPath = $this->uploadTargetPath.$localFolder.'/dwca.zip';
 
-        if($this->path && file_exists($this->path)){
+        if($this->path){
             if($this->uploadType === $this->IPTUPLOAD){
                 if(strpos($this->path,'/resource.do')){
                     $this->path = str_replace('/resource.do','/archive.do',$this->path);
@@ -57,30 +57,22 @@ class SpecUploadDwca extends SpecUploadBase{
                         'sourcepage' => 'specimen',
                         $searchLabel => $pathParts[1]
                     );
-                    $data = http_build_query($data);
-                    $context_options = array (
-                        'ssl' => array(
-                            'verify_peer' => false,
-                            'verify_peer_name' => false
-                        ),
-                        'http' => array (
-                            'method' => 'POST',
-                            'timeout' => 6000,
-                            'header'=> "Content-type: application/x-www-form-urlencoded\r\n"
-                                . 'Content-Length: ' . strlen($data) . "\r\n",
-                            'content' => $data
-                        )
-                    );
-
-                    $context = stream_context_create($context_options);
-                    $datafile = file_get_contents($pathParts[0], false, $context);
-                    if(file_put_contents($fullPath, $datafile)){
+                    $fp = fopen($fullPath, 'wb+');
+                    $ch = curl_init(str_replace(' ','%20',$this->path));
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
+                    curl_setopt($ch, CURLOPT_FILE, $fp);
+                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                    if(curl_exec($ch)) {
                         $this->baseFolderName = $localFolder;
                     }
                     else {
                         $this->outputMsg('<li>ERROR: unable to upload file (path: '.$fullPath.') </li>');
                         $this->errorStr = 'ERROR: unable to upload file (path: '.$fullPath.')';
                     }
+                    curl_close($ch);
+                    fclose($fp);
                 }
                 else{
                     $this->outputMsg('<li>ERROR: URL not in correct format (path: '.$this->path.') </li>');
@@ -90,7 +82,7 @@ class SpecUploadDwca extends SpecUploadBase{
             elseif(copy($this->path,$fullPath)){
                 $this->baseFolderName = $localFolder;
             }
-            else{
+            elseif(file_exists($this->path)){
                 $fp = fopen($fullPath, 'wb+');
                 $ch = curl_init(str_replace(' ','%20',$this->path));
                 curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
