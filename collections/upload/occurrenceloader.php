@@ -93,7 +93,6 @@ if($isEditor){
 }
 
 $specManager = new SpecProcessorManager();
-$specUploadManager = new SpecUpload();
 $duManager = new SpecUploadBase();
 if($uploadType === $DIRECTUPLOAD){
     $duManager = new SpecUploadDirect();
@@ -780,37 +779,39 @@ $specUploadManager->readUploadParameters();
                     }
                     if(!$ulPath && ($uploadType === $FILEUPLOAD || $uploadType === $SKELETAL || $uploadType === $NFNUPLOAD || $uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD || $uploadType === $SYMBIOTA)){
                         $ulPath = $duManager->uploadFile();
-                        if(!$ulPath && $uploadType !== $IPTUPLOAD && $uploadType !== $SYMBIOTA){
-                            ?>
-                            <form name="fileuploadform" action="index.php" method="post" enctype="multipart/form-data" onsubmit="return verifyFileUploadForm(this)">
-                                <fieldset style="width:95%;">
-                                    <legend style="font-weight:bold;font-size:120%;<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle;?>: Identify Data Source</legend>
-                                    <div>
-                                        <div style="margin:10px">
-                                            <div>
-                                                <input name="uploadfile" type="file" size="50" onchange="verifyImageSize(this);" />
+                        if(!$ulPath){
+                            if($uploadType !== $IPTUPLOAD && $uploadType !== $SYMBIOTA){
+                                ?>
+                                <form name="fileuploadform" action="index.php" method="post" enctype="multipart/form-data" onsubmit="return verifyFileUploadForm(this)">
+                                    <fieldset style="width:95%;">
+                                        <legend style="font-weight:bold;font-size:120%;<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle;?>: Identify Data Source</legend>
+                                        <div>
+                                            <div style="margin:10px">
+                                                <div>
+                                                    <input name="uploadfile" type="file" size="50" onchange="verifyImageSize(this);" />
+                                                </div>
+                                            </div>
+                                            <div style="margin:10px;">
+                                                <?php
+                                                if(!$uspid && $uploadType !== $NFNUPLOAD) {
+                                                    echo '<input name="automap" type="checkbox" value="1" CHECKED /> <b>Automap fields</b><br/>';
+                                                }
+                                                ?>
+                                            </div>
+                                            <div style="margin:10px;">
+                                                <input name="action" type="submit" value="Analyze File" />
+                                                <input name="uspid" type="hidden" value="<?php echo $uspid;?>" />
+                                                <input name="collid" type="hidden" value="<?php echo $collid;?>" />
+                                                <input name="uploadtype" type="hidden" value="<?php echo $uploadType;?>" />
                                             </div>
                                         </div>
-                                        <div style="margin:10px;">
-                                            <?php
-                                            if(!$uspid && $uploadType !== $NFNUPLOAD) {
-                                                echo '<input name="automap" type="checkbox" value="1" CHECKED /> <b>Automap fields</b><br/>';
-                                            }
-                                            ?>
-                                        </div>
-                                        <div style="margin:10px;">
-                                            <input name="action" type="submit" value="Analyze File" />
-                                            <input name="uspid" type="hidden" value="<?php echo $uspid;?>" />
-                                            <input name="collid" type="hidden" value="<?php echo $collid;?>" />
-                                            <input name="uploadtype" type="hidden" value="<?php echo $uploadType;?>" />
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </form>
-                            <?php
-                        }
-                        else{
-                            echo '<div style="font-weight:bold;color:red;">There was a problem loading the resource at the path entered. Please verify that the path for this resource is correct.</div>';
+                                    </fieldset>
+                                </form>
+                                <?php
+                            }
+                            else{
+                                echo '<div style="font-weight:bold;color:red;">There was a problem loading the resource at the path entered. Please verify that the path for this resource is correct.</div>';
+                            }
                         }
                     }
                     $processingList = array('unprocessed' => 'Unprocessed', 'stage 1' => 'Stage 1', 'stage 2' => 'Stage 2', 'stage 3' => 'Stage 3',
