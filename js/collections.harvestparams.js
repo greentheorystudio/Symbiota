@@ -48,6 +48,9 @@ function setHarvestParamsForm(){
     if(stArr['usethes']){
         document.harvestparams.thes.checked = true;
     }
+    else{
+        document.harvestparams.thes.checked = false;
+    }
     if(stArr['taxontype']){
         document.harvestparams.type.value = stArr['taxontype'];
     }
