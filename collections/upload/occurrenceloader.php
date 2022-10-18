@@ -1,5 +1,6 @@
 <?php
 /** @var int $collid */
+/** @var int $isEditor */
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/SpecUpload.php');
@@ -590,7 +591,7 @@ $specUploadManager->readUploadParameters();
                         <legend style="font-weight:bold;font-size:120%;">Upload Options</legend>
                         <div style="float:right;">
                             <?php
-                            echo '<a href="dataupload.php?collid='.$collid.'&action=addprofile"><i style="height:20px;width:20px;" title="Add a New Upload Profile" class="fas fa-plus"></i></a>';
+                            echo '<a href="index.php?collid='.$collid.'&action=addprofile"><i style="height:20px;width:20px;" title="Add a New Upload Profile" class="fas fa-plus"></i></a>';
                             ?>
                         </div>
                         <?php
