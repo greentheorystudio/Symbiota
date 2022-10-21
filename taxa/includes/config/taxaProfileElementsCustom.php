@@ -8,7 +8,6 @@
 /** @var string $ambiguous */
 /** @var array $synonymArr */
 /** @var string $acceptedName */
-/** @var array $links */
 /** @var string $clValue */
 /** @var string $lang */
 /** @var string $vernStr */
