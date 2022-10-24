@@ -246,8 +246,17 @@ UPDATE CASCADE;
 ALTER TABLE `taxadescrstmts`
     MODIFY COLUMN `heading` varchar (75) NULL DEFAULT NULL AFTER `tdbid`;
 
-ALTER TABLE `taxaresourcelinks`
-    ADD UNIQUE INDEX `UNIQUE_taxaresource`(`tid`, `sourcename`);
+CREATE TABLE `taxaidentifiers` (
+   `tidentid` int(11) NOT NULL AUTO_INCREMENT,
+   `tid` int(10) unsigned NOT NULL,
+   `name` varchar(45) NOT NULL,
+   `identifier` varchar(255) NOT NULL,
+   PRIMARY KEY (`tidentid`),
+   KEY `FK_tid` (`tid`),
+   KEY `name` (`name`),
+   KEY `identifier` (`identifier`),
+   CONSTRAINT `FK_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 ALTER TABLE `taxavernaculars`
     MODIFY COLUMN `Language` varchar (15) NULL DEFAULT NULL AFTER `VernacularName`,
