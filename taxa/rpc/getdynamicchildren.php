@@ -34,6 +34,7 @@ if($taxId === 'root'){
 	$lowestRank = '';
 	$sql = 'SELECT MIN(t.RankId) AS RankId '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
+        'WHERE RankId > 0 '.
 		'LIMIT 1 ';
 	//echo $sql."<br>";
 	$rs = $con->query($sql);
