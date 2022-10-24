@@ -136,7 +136,7 @@ $smManager = new SiteMapManager();
                         <?php
                     }
 
-                    if($GLOBALS['KEY_MOD_IS_ACTIVE'] || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
+                    if((isset($GLOBALS['KEY_MOD_IS_ACTIVE']) && $GLOBALS['KEY_MOD_IS_ACTIVE']) || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
                         ?>
                         <h3>Identification Keys</h3>
                         <ul>

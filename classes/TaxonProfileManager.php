@@ -551,37 +551,6 @@ class TaxonProfileManager {
         return $returnArr;
     }
 
-    public function getTaxaLinks(): array
-    {
-        $links = array();
-        if($this->tid){
-            $parArr = array($this->tid);
-            $rsPar = $this->con->query('SELECT parenttid FROM taxaenumtree WHERE tid = '.$this->tid);
-            while($rPar = $rsPar->fetch_object()){
-                $parArr[] = $rPar->parenttid;
-            }
-            $rsPar->free();
-
-            $sql = 'SELECT DISTINCT tlid, url, icon, title, notes, sortsequence '.
-                'FROM taxalinks '.
-                'WHERE (tid IN('.implode(',',$parArr).')) ';
-            //echo $sql; exit;
-            $result = $this->con->query($sql);
-            while($r = $result->fetch_object()){
-                $links[] = array('title' => $r->title, 'url' => $r->url, 'icon' => $r->icon, 'notes' => $r->notes, 'sortseq' => $r->sortsequence);
-            }
-            $result->free();
-            usort($links, static function($a, $b) {
-                if($a['sortseq'] === $b['sortseq']){
-                    return (strtolower($a['title']) < strtolower($b['title'])) ? -1 : 1;
-                }
-
-                return $a['sortseq'] - $b['sortseq'];
-            });
-        }
-        return $links;
-    }
-
     public function getMapArr($tidStr = null): array
     {
         $maps = array();
