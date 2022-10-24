@@ -48,9 +48,6 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 	elseif(array_key_exists('deleteuid',$_REQUEST)){
 		$statusStr = $clManager->deleteEditor($_REQUEST['deleteuid']);
 	}
-	elseif($action === 'Add Point'){
-		$statusStr = $clManager->addPoint($_POST['pointtid'],$_POST['pointlat'],$_POST['pointlng'],$_POST['notes']);
-	}
 	elseif($action && array_key_exists('clidadd',$_POST)){
 		$statusStr = $clManager->addChildChecklist($_POST['clidadd']);
 	}
