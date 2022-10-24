@@ -7,7 +7,6 @@
 /** @var string $ambiguous */
 /** @var array $synonymArr */
 /** @var string $acceptedName */
-/** @var array $links */
 /** @var string $clValue */
 /** @var string $lang */
 /** @var string $vernStr */
@@ -93,17 +92,6 @@ if($ambiguous){
     echo '</div>';
 }
 $ambiguousDiv = ob_get_clean();
-
-ob_start();
-if($links && (int)$links[0]['sortseq'] === 1){
-    $uStr = str_replace('--SCINAME--',rawurlencode($taxonManager->getSciName()),$links[0]['url']);
-    ?>
-    <div id="weblinks">
-        Go to <a href="<?php echo $uStr; ?>" target="_blank"><?php echo $links[0]['title']; ?></a>...
-    </div>
-    <?php
-}
-$webLinksDiv = ob_get_clean();
 
 ob_start();
 if($taxonRank > 140){
@@ -406,37 +394,6 @@ ob_start();
 </div>
 <?php
 $imgBoxDiv = ob_get_clean();
-
-ob_start();
-echo '<div id="footerlinkstoggle">';
-if($taxonRank > 180 && $links) {
-    echo '<a href="#" onclick="toggleLinks(\'links\');return false;">Web Links</a>';
-}
-
-if($taxonRank > 140){
-    $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid();
-    if($clValue) {
-        $parentLink .= '&cl=' . $taxonManager->getClid();
-    }
-    if($projValue) {
-        $parentLink .= '&proj=' . $projValue;
-    }
-    echo '<a href="'.$parentLink.'" class="parentlink">View Parent Taxon</a>';
-}
-echo '</div>';
-
-if($taxonRank > 180 && $links){
-    echo '<div id="links" style="display:none;"><h1 id="linksbanner">Web Links</h1><ul id="linkslist">';
-    foreach($links as $l){
-        $urlStr = str_replace('--SCINAME--',rawurlencode($taxonManager->getSciName()),$l['url']);
-        echo '<li><a href="'.$urlStr.'" target="_blank">'.$l['title'].'</a></li>';
-        if($l['notes']) {
-            echo ' ' . $l['notes'];
-        }
-    }
-    echo "</ul>\n</div>";
-}
-$footerLinksDiv = ob_get_clean();
 
 ob_start();
 ?>

@@ -39,19 +39,9 @@ $acceptedName = $taxonManager->getAcceptance();
 $synonymArr = $taxonManager->getSynonymArr();
 $spDisplay = $taxonManager->getDisplayName();
 $taxonRank = (int)$taxonManager->getRankId();
-$links = $taxonManager->getTaxaLinks();
 $vernStr = $taxonManager->getVernacularStr();
 $vernArr = $taxonManager->getVernacularArr();
 $synStr = $taxonManager->getSynonymStr();
-if($links){
-    foreach($links as $linkKey => $linkUrl){
-        if($linkUrl['title'] === 'REDIRECT'){
-            $locUrl = str_replace('--SCINAME--',rawurlencode($taxonManager->getSciName()),$linkUrl['url']);
-            header('Location: '.$locUrl);
-            exit;
-        }
-    }
-}
 
 $styleClass = '';
 if($taxonRank > 180) {
