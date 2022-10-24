@@ -362,20 +362,7 @@ class ChecklistAdmin{
 		return $insertStatus;
 	}
 
-	public function addPoint($tid,$lat,$lng,$notes): string
-    {
-		$statusStr = '';
-		if(is_numeric($tid) && is_numeric($lat) && is_numeric($lng)){
-			$sql = 'INSERT INTO fmchklstcoordinates(clid,tid,decimallatitude,decimallongitude,notes) '.
-				'VALUES('.$this->clid.','.$tid.','.$lat.','.$lng.',"'.Sanitizer::cleanInStr($this->conn,$notes).'")';
-			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR: unable to add point.';
-			}
-		}
-		return $statusStr;
-	}
-
-    public function getEditors(): array
+	public function getEditors(): array
     {
 		$editorArr = array();
 		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",u.username,")") as uname '.
@@ -434,23 +421,6 @@ class ChecklistAdmin{
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$retArr[$row->clid] = $row->name;
-		}
-		$rs->free();
-		return $retArr;
-	}
-
-	public function getPoints($tid): array
-    {
-		$retArr = array();
-		$sql = 'SELECT c.chklstcoordid, c.decimallatitude, c.decimallongitude, c.notes '.
-			'FROM fmchklstcoordinates c '.
-			'WHERE c.clid = '.$this->clid.' AND c.tid = '.$tid;
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->chklstcoordid]['lat'] = $r->decimallatitude;
-			$retArr[$r->chklstcoordid]['lng'] = $r->decimallongitude;
-			$retArr[$r->chklstcoordid]['notes'] = $r->notes;
 		}
 		$rs->free();
 		return $retArr;
