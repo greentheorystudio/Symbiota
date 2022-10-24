@@ -11,19 +11,19 @@ if(!$GLOBALS['SYMB_UID']) {
 
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
+if($action && !preg_match('/^[a-zA-Z\d\s_]+$/',$action)) {
     $action = '';
 }
 
 $datasetManager = new OccurrenceDataset();
 
 $statusStr = '';
-if($action === 'createNewDataset'){
+if($action === 'createNewDataset' && $GLOBALS['VALID_USER']){
     if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$GLOBALS['SYMB_UID'])){
         $statusStr = implode(',',$datasetManager->getErrorArr());
     }
 }
-elseif($action === 'addSelectedToDataset'){
+elseif($action === 'addSelectedToDataset' && $GLOBALS['VALID_USER']){
     $datasetID = $_POST['datasetid'];
     if(!$datasetID && $_POST['name']) {
         $datasetManager->createDataset($_POST['name'], '', $GLOBALS['SYMB_UID']);
@@ -202,7 +202,7 @@ include(__DIR__ . '/../../header.php');
             </fieldset>
             <?php
         }
-        else{
+        elseif($GLOBALS['VALID_USER']){
             ?>
             <div style="margin:20px">
                 <div style="font-weight:bold">There are no datasets associated to your login</div>
