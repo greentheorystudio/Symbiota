@@ -560,18 +560,6 @@ if(!$printMode){
                         </div>
                         <?php
                     }
-                    if(!$showImages && $coordArr = $clManager->getCoordinates(0, true)) {
-                        $url = '../spatial/index.php?starr={"clid":"'.$clid.'","taxonfilter":"'.str_replace("'", '%squot;',$taxonFilter).'"}';
-                        ?>
-                        <div style="text-align:center;padding:10px">
-                            <div>
-                                <a href='<?php echo $url; ?>' target="_blank">
-                                    <i style='width:40px;height:40px;' title="Open in Spatial Window" class="fas fa-globe"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <?php
-                    }
                     ?>
                 </div>
                 <?php

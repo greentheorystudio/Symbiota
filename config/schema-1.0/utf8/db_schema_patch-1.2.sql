@@ -11,11 +11,6 @@ CREATE TABLE `configurations`
     PRIMARY KEY (`id`)
 );
 
-ALTER TABLE `fmchklstcoordinates`
-DROP
-FOREIGN KEY `FKchklsttaxalink`,
-DROP INDEX `IndexUnique`;
-
 ALTER TABLE `fmchklstprojlink`
     ADD COLUMN `sortSequence` int(11) NULL AFTER `mapChecklist`;
 
@@ -25,16 +20,6 @@ FOREIGN KEY `FK_chklsttaxalink_cid`,
   DROP
 FOREIGN KEY `FK_chklsttaxalink_tid`,
   ADD INDEX `FK_chklsttaxalink_tid`(`TID`);
-
-ALTER TABLE `fmchklsttaxastatus`
-DROP
-FOREIGN KEY `FK_fmchklsttaxastatus_clidtid`,
-DROP INDEX `FK_fmchklsttaxastatus_clid_idx`;
-
-ALTER TABLE `fmcltaxacomments`
-DROP
-FOREIGN KEY `FK_clcomment_cltaxa`,
-DROP INDEX `FK_clcomment_cltaxa`;
 
 ALTER TABLE `fmprojects`
     MODIFY COLUMN `fulldescription` varchar (5000) NULL DEFAULT NULL AFTER `briefdescription`;

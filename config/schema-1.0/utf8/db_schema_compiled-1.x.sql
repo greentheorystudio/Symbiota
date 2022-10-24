@@ -55,20 +55,6 @@ CREATE TABLE `fmchklstchildren` (
   CONSTRAINT `FK_fmchklstchild_child` FOREIGN KEY (`clidchild`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `fmchklstcoordinates` (
-  `chklstcoordid` int(11) NOT NULL AUTO_INCREMENT,
-  `clid` int(10) unsigned NOT NULL,
-  `tid` int(10) unsigned NOT NULL,
-  `decimallatitude` double NOT NULL,
-  `decimallongitude` double NOT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`chklstcoordid`),
-  UNIQUE KEY `IndexUnique` (`clid`,`tid`,`decimallatitude`,`decimallongitude`),
-  KEY `FKchklsttaxalink` (`clid`,`tid`),
-  CONSTRAINT `FKchklsttaxalink` FOREIGN KEY (`clid`, `tid`) REFERENCES `fmchklsttaxalink` (`CLID`, `TID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE `fmchklstprojlink` (
   `pid` int(10) unsigned NOT NULL,
   `clid` int(10) unsigned NOT NULL,
@@ -99,47 +85,6 @@ CREATE TABLE `fmchklsttaxalink` (
   KEY `FK_chklsttaxalink_cid` (`CLID`),
   CONSTRAINT `FK_chklsttaxalink_cid` FOREIGN KEY (`CLID`) REFERENCES `fmchecklists` (`CLID`),
   CONSTRAINT `FK_chklsttaxalink_tid` FOREIGN KEY (`TID`) REFERENCES `taxa` (`TID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `fmchklsttaxastatus` (
-  `clid` int(10) unsigned NOT NULL,
-  `tid` int(10) unsigned NOT NULL,
-  `geographicRange` int(11) NOT NULL DEFAULT '0',
-  `populationRank` int(11) NOT NULL DEFAULT '0',
-  `abundance` int(11) NOT NULL DEFAULT '0',
-  `habitatSpecificity` int(11) NOT NULL DEFAULT '0',
-  `intrinsicRarity` int(11) NOT NULL DEFAULT '0',
-  `threatImminence` int(11) NOT NULL DEFAULT '0',
-  `populationTrends` int(11) NOT NULL DEFAULT '0',
-  `nativeStatus` varchar(45) DEFAULT NULL,
-  `endemicStatus` int(11) NOT NULL DEFAULT '0',
-  `protectedStatus` varchar(45) DEFAULT NULL,
-  `localitySecurity` int(11) DEFAULT NULL,
-  `localitySecurityReason` varchar(45) DEFAULT NULL,
-  `invasiveStatus` varchar(45) DEFAULT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `modifiedUid` int(10) unsigned DEFAULT NULL,
-  `modifiedtimestamp` datetime DEFAULT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`clid`,`tid`),
-  KEY `FK_fmchklsttaxastatus_clid_idx` (`clid`,`tid`),
-  CONSTRAINT `FK_fmchklsttaxastatus_clidtid` FOREIGN KEY (`clid`, `tid`) REFERENCES `fmchklsttaxalink` (`CLID`, `TID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `fmcltaxacomments` (
-  `cltaxacommentsid` int(11) NOT NULL AUTO_INCREMENT,
-  `clid` int(10) unsigned NOT NULL,
-  `tid` int(10) unsigned NOT NULL,
-  `comment` text NOT NULL,
-  `uid` int(10) unsigned NOT NULL,
-  `ispublic` int(11) NOT NULL DEFAULT '1',
-  `parentid` int(11) DEFAULT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`cltaxacommentsid`),
-  KEY `FK_clcomment_users` (`uid`),
-  KEY `FK_clcomment_cltaxa` (`clid`,`tid`),
-  CONSTRAINT `FK_clcomment_users` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_clcomment_cltaxa` FOREIGN KEY (`clid`, `tid`) REFERENCES `fmchklsttaxalink` (`CLID`, `TID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `fmdynamicchecklists` (
@@ -293,18 +238,6 @@ CREATE TABLE `guidoccurrences` (
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`guid`),
   UNIQUE KEY `guidoccurrences_occid_unique` (`occid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `imageannotations` (
-  `tid` int(10) unsigned DEFAULT NULL,
-  `imgid` int(10) unsigned NOT NULL DEFAULT '0',
-  `AnnDate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `Annotator` varchar(100) DEFAULT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`imgid`,`AnnDate`) USING BTREE,
-  KEY `TID` (`tid`) USING BTREE,
-  CONSTRAINT `FK_resourceannotations_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`),
-  CONSTRAINT `FK_resourceannotations_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `imagekeywords` (
@@ -1334,17 +1267,6 @@ CREATE TABLE `referencechecklistlink` (
   KEY `FK_refcheckllistlink_clid_idx` (`clid`),
   CONSTRAINT `FK_refchecklistlink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_refchecklistlink_clid` FOREIGN KEY (`clid`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `referencechklsttaxalink` (
-  `refid` int(11) NOT NULL,
-  `clid` int(10) unsigned NOT NULL,
-  `tid` int(10) unsigned NOT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`refid`,`clid`,`tid`),
-  KEY `FK_refchktaxalink_clidtid_idx` (`clid`,`tid`),
-  CONSTRAINT `FK_refchktaxalink_ref` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_refchktaxalink_clidtid` FOREIGN KEY (`clid`, `tid`) REFERENCES `fmchklsttaxalink` (`CLID`, `TID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `referencecollectionlink` (
@@ -2908,11 +2830,6 @@ CREATE TABLE `configurations`
     PRIMARY KEY (`id`)
 );
 
-ALTER TABLE `fmchklstcoordinates`
-DROP
-FOREIGN KEY `FKchklsttaxalink`,
-DROP INDEX `IndexUnique`;
-
 ALTER TABLE `fmchklstprojlink`
     ADD COLUMN `sortSequence` int(11) NULL AFTER `mapChecklist`;
 
@@ -2922,16 +2839,6 @@ FOREIGN KEY `FK_chklsttaxalink_cid`,
   DROP
 FOREIGN KEY `FK_chklsttaxalink_tid`,
   ADD INDEX `FK_chklsttaxalink_tid`(`TID`);
-
-ALTER TABLE `fmchklsttaxastatus`
-DROP
-FOREIGN KEY `FK_fmchklsttaxastatus_clidtid`,
-DROP INDEX `FK_fmchklsttaxastatus_clid_idx`;
-
-ALTER TABLE `fmcltaxacomments`
-DROP
-FOREIGN KEY `FK_clcomment_cltaxa`,
-DROP INDEX `FK_clcomment_cltaxa`;
 
 ALTER TABLE `fmprojects`
     MODIFY COLUMN `fulldescription` varchar (5000) NULL DEFAULT NULL AFTER `briefdescription`;

@@ -23,7 +23,7 @@ class EOLManager {
 	public function getEmptyIdentifierCount(): int
 	{
 		$tidCnt = 0;
-		$sql = 'SELECT COUNT(t.tid) as tidcnt '.
+		/*$sql = 'SELECT COUNT(t.tid) as tidcnt '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'WHERE t.rankid IN(220,230,240,260) AND ts.tid = ts.tidaccepted '.
 			'AND t.TID NOT IN (SELECT tid FROM taxalinks WHERE title = "Encyclopedia of Life" AND sourceidentifier IS NOT NULL) ';
@@ -31,7 +31,7 @@ class EOLManager {
 		while($r = $rs->fetch_object()){
 			$tidCnt = $r->tidcnt;
 		}
-		$rs->close();
+		$rs->close();*/
 		return $tidCnt;
 	}
 	
@@ -40,7 +40,7 @@ class EOLManager {
 		$successCnt = 0;
 		set_time_limit(36000);
 
-		if(!is_numeric($tidStart)) {
+		/*if(!is_numeric($tidStart)) {
 			$tidStart = 0;
 		}
 		$startingTid = 0;
@@ -85,13 +85,13 @@ class EOLManager {
 		}
 		echo "<li>EOL mapping successfully completed for $successCnt taxa</li>\n";
 		echo "</ol>\n";
-		$rs->close();
+		$rs->close();*/
 	}
 	
 	private function queryEolIdentifier($tid, $sciName, $makePrimaryLink): bool
 	{
 		$retStatus = false;
-		$url = 'http://eol.org/api/search/1.0.json?q='.urlencode($sciName);
+		/*$url = 'http://eol.org/api/search/1.0.json?q='.urlencode($sciName);
 		if($GLOBALS['EOL_KEY']) {
 			$url .= '&key=' . $GLOBALS['EOL_KEY'];
 		}
@@ -126,14 +126,14 @@ class EOLManager {
 			echo '<li style="color:red;">ERROR attempting to open url: '.$url.'</li>';
 		}
 		flush();
-		sleep(2);
+		sleep(2);*/
 		return $retStatus;
 	}
 	
 	public function getImageDeficiencyCount(): int
 	{
 		$tidCnt = 0;
-		$sql = 'SELECT COUNT(t.tid) AS tidcnt '.
+		/*$sql = 'SELECT COUNT(t.tid) AS tidcnt '.
 			'FROM taxa t INNER JOIN taxalinks l ON t.tid = l.tid '.
 			'WHERE t.rankid IN(220,230,240,260) AND l.owner = "EOL" '.
 			'AND t.tid NOT IN (SELECT ts1.tidaccepted FROM images ii INNER JOIN taxstatus ts1 ON ii.tid = ts1.tid) ';
@@ -141,14 +141,14 @@ class EOLManager {
 		while($r = $rs->fetch_object()){
 			$tidCnt = $r->tidcnt;
 		}
-		$rs->close();
+		$rs->close();*/
 		return $tidCnt;
 	}
 	
 	public function mapImagesForTaxa($tidStart,$restart): void
 	{
 		set_time_limit(36000);
-		if(!is_numeric($tidStart)) {
+		/*if(!is_numeric($tidStart)) {
 			$tidStart = 0;
 		}
 		$startingTid = 0;
@@ -193,7 +193,7 @@ class EOLManager {
 		}
 		echo "<li>EOL mapping successfully completed for $successCnt taxa</li>\n";
 		echo "</ul>\n";
-		$rs->close();
+		$rs->close();*/
 	}
 
 	private function mapEolImages($tid, $identifier): bool
