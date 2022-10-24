@@ -14,7 +14,6 @@
 /** @var string $mapThumbDiv */
 /** @var string $imgDiv */
 /** @var string $imgTabDiv */
-/** @var string $footerLinksDiv */
 /** @var string $projectDiv */
 /** @var string $imgBoxDiv */
 /** @var string $taxonValue */
@@ -32,30 +31,30 @@ $footerRowElements = array();
 
 if($taxonRank){
     if($taxonRank > 180){
-        $topRowElements = Array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
-        $leftColumnElements = Array($taxonNotesDiv,$taxonSourcesDiv,$familyDiv,$vernacularsDiv,$synonymsDiv,$centralImageDiv);
-        $rightColumnElements = Array($descTabsDiv);
-        $bottomRowElements = Array($mapThumbDiv,$imgDiv,$imgTabDiv);
-        $footerRowElements = Array($footerLinksDiv);
+        $topRowElements = array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
+        $leftColumnElements = array($taxonNotesDiv,$taxonSourcesDiv,$familyDiv,$vernacularsDiv,$synonymsDiv,$centralImageDiv);
+        $rightColumnElements = array($descTabsDiv);
+        $bottomRowElements = array($mapThumbDiv,$imgDiv,$imgTabDiv);
+        $footerRowElements = array();
     }
     elseif($taxonRank === 180){
         $topRowElements = array();
-        $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
-        $bottomRowElements = Array($imgBoxDiv);
-        $footerRowElements = Array($footerLinksDiv);
+        $leftColumnElements = array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
+        $rightColumnElements = array($editButtonDiv,$descTabsDiv);
+        $bottomRowElements = array($imgBoxDiv);
+        $footerRowElements = array();
     }
     else{
         $topRowElements = array();
-        $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
-        $bottomRowElements = Array($imgBoxDiv);
-        $footerRowElements = Array($footerLinksDiv);
+        $leftColumnElements = array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
+        $rightColumnElements = array($editButtonDiv,$descTabsDiv);
+        $bottomRowElements = array($imgBoxDiv);
+        $footerRowElements = array();
     }
 }
 elseif($taxonValue){
-    $topRowElements = Array($notFoundDiv);
+    $topRowElements = array($notFoundDiv);
 }
 else{
-    $topRowElements = Array('ERROR!');
+    $topRowElements = array('ERROR!');
 }

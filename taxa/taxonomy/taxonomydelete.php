@@ -231,29 +231,6 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 		</div>
 	</div>
 	<div style="margin:15px;">
-		<b>Linked Resources:</b> 
-		<div style="margin:10px"> 
-			<?php 
-			if(array_key_exists('link',$verifyArr)){
-				?>
-				<span style="color:red;">Warning: linked resources exists</span>
-				<ul>
-					<?php 
-					echo '<li>'.implode('</li><li>',$verifyArr['link']).'</li>';
-					?> 
-				
-				</ul>
-				<?php 
-			}
-			else{
-				?>
-				<span style="color:green;">Approved:</span> no resources linked to this taxon
-				<?php 
-			}
-			?>
-		</div>
-	</div>
-	<div style="margin:15px;">
 		<fieldset style="padding:15px;">
 			<legend><b>Remap Resources to Another Taxon</b></legend>
 			<form name="remaptaxonform" method="post" action="taxonomyeditor.php">
