@@ -381,10 +381,7 @@ class TaxonomyEditorManager{
 			
 			$sqlVerns = 'UPDATE taxavernaculars SET tid = '.$tidNew.' WHERE (tid = '.$tid.')';
 			$this->conn->query($sqlVerns);
-			
-			$sqltl = 'UPDATE taxalinks SET tid = '.$tidNew.' WHERE (tid = '.$tid.')';
-			$this->conn->query($sqltl);
-		}		
+		}
 	}
 	
 	private function resetCharStateInheritance($tid): void
@@ -697,13 +694,6 @@ class TaxonomyEditorManager{
 		}
 		$rs->free();
 		
-		$sql ='SELECT title FROM taxalinks WHERE tid = '.$this->tid;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['link'][] = $r->title;
-		}
-		$rs->free();
-		
 		return $retArr;
 	}
 	
@@ -758,12 +748,7 @@ class TaxonomyEditorManager{
 				$statusStr .= 'ERROR transferring morphology for ID key<br/>';
 			}
 			
-			$sql ='UPDATE IGNORE taxalinks SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
-			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring taxa links<br/>';
-			}
-
-			$delStatusStr = $this->deleteTaxon(); 
+			$delStatusStr = $this->deleteTaxon();
 			if($statusStr) {
 				$delStatusStr .= $statusStr;
 			}
@@ -811,11 +796,6 @@ class TaxonomyEditorManager{
 		$sql ='DELETE FROM kmdescr WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
 			$statusStr .= 'ERROR deleting morphology for ID Key in deleteTaxon method<br/>';
-		}
-
-		$sql ='DELETE FROM taxalinks WHERE tid = '.$this->tid;
-		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR deleting taxa links in deleteTaxon method<br/>';
 		}
 
 		$taxStatusArr = array();

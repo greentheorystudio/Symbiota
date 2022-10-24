@@ -1532,32 +1532,13 @@ CREATE TABLE `taxadescrstmts` (
 
 CREATE TABLE `taxaenumtree` (
   `tid` int(10) unsigned NOT NULL,
-  `taxauthid` int(10) unsigned NOT NULL,
   `parenttid` int(10) unsigned NOT NULL,
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`tid`,`taxauthid`,`parenttid`),
+  PRIMARY KEY (`tid`,`parenttid`),
   KEY `FK_tet_taxa` (`tid`),
-  KEY `FK_tet_taxauth` (`taxauthid`),
   KEY `FK_tet_taxa2` (`parenttid`),
   CONSTRAINT `FK_tet_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_tet_taxauth` FOREIGN KEY (`taxauthid`) REFERENCES `taxauthority` (`taxauthid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_tet_taxa2` FOREIGN KEY (`parenttid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `taxalinks` (
-  `tlid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `tid` int(10) unsigned NOT NULL,
-  `url` varchar(500) NOT NULL,
-  `title` varchar(100) NOT NULL,
-  `sourceIdentifier` varchar(45) DEFAULT NULL,
-  `owner` varchar(100) DEFAULT NULL,
-  `icon` varchar(45) DEFAULT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `sortsequence` int(10) unsigned NOT NULL DEFAULT '50',
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`tlid`),
-  KEY `Index_unique` (`tid`,`url`(255)),
-  CONSTRAINT `FK_taxalinks_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `taxamaps` (
@@ -1570,97 +1551,6 @@ CREATE TABLE `taxamaps` (
   KEY `FK_tid_idx` (`tid`),
   CONSTRAINT `FK_taxamaps_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `taxaprofilepubdesclink` (
-  `tdbid` int(10) unsigned NOT NULL,
-  `tppid` int(11) NOT NULL,
-  `caption` varchar(45) DEFAULT NULL,
-  `editornotes` varchar(250) DEFAULT NULL,
-  `sortsequence` int(11) DEFAULT NULL,
-  `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`tdbid`,`tppid`),
-  KEY `FK_tppubdesclink_id_idx` (`tppid`),
-  CONSTRAINT `FK_tppubdesclink_tdbid` FOREIGN KEY (`tdbid`) REFERENCES `taxadescrblock` (`tdbid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_tppubdesclink_id` FOREIGN KEY (`tppid`) REFERENCES `taxaprofilepubs` (`tppid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `taxaprofilepubimagelink` (
-  `imgid` int(10) unsigned NOT NULL,
-  `tppid` int(11) NOT NULL,
-  `caption` varchar(45) DEFAULT NULL,
-  `editornotes` varchar(250) DEFAULT NULL,
-  `sortsequence` int(11) DEFAULT NULL,
-  `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`imgid`,`tppid`),
-  KEY `FK_tppubimagelink_id_idx` (`tppid`),
-  CONSTRAINT `FK_tppubimagelink_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_tppubimagelink_id` FOREIGN KEY (`tppid`) REFERENCES `taxaprofilepubs` (`tppid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `taxaprofilepubmaplink` (
-  `mid` int(10) unsigned NOT NULL,
-  `tppid` int(11) NOT NULL,
-  `caption` varchar(45) DEFAULT NULL,
-  `editornotes` varchar(250) DEFAULT NULL,
-  `sortsequence` int(11) DEFAULT NULL,
-  `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`mid`,`tppid`),
-  KEY `FK_tppubmaplink_id_idx` (`tppid`),
-  CONSTRAINT `FK_tppubmaplink_tdbid` FOREIGN KEY (`mid`) REFERENCES `taxamaps` (`mid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_tppubmaplink_id` FOREIGN KEY (`tppid`) REFERENCES `taxaprofilepubs` (`tppid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `taxaprofilepubs` (
-  `tppid` int(11) NOT NULL AUTO_INCREMENT,
-  `pubtitle` varchar(150) NOT NULL,
-  `authors` varchar(150) DEFAULT NULL,
-  `description` varchar(500) DEFAULT NULL,
-  `abstract` text,
-  `uidowner` int(10) unsigned DEFAULT NULL,
-  `externalurl` varchar(250) DEFAULT NULL,
-  `rights` varchar(250) DEFAULT NULL,
-  `usageterm` varchar(250) DEFAULT NULL,
-  `accessrights` varchar(250) DEFAULT NULL,
-  `ispublic` int(11) DEFAULT NULL,
-  `inclusive` int(11) DEFAULT NULL,
-  `dynamicProperties` text,
-  `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`tppid`),
-  KEY `FK_taxaprofilepubs_uid_idx` (`uidowner`),
-  KEY `INDEX_taxaprofilepubs_title` (`pubtitle`),
-  CONSTRAINT `FK_taxaprofilepubs_uid` FOREIGN KEY (`uidowner`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `taxaresourcelinks` (
-  `taxaresourceid` int(11) NOT NULL AUTO_INCREMENT,
-  `tid` int(10) unsigned NOT NULL,
-  `sourcename` varchar(150) NOT NULL,
-  `sourceidentifier` varchar(45) DEFAULT NULL,
-  `sourceguid` varchar(150) DEFAULT NULL,
-  `url` varchar(250) DEFAULT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `ranking` int(11) DEFAULT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`taxaresourceid`),
-  KEY `taxaresource_name` (`sourcename`),
-  KEY `FK_taxaresource_tid_idx` (`tid`),
-  CONSTRAINT `FK_taxaresource_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `taxauthority` (
-  `taxauthid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `isprimary` int(1) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(45) NOT NULL,
-  `description` varchar(250) DEFAULT NULL,
-  `editors` varchar(150) DEFAULT NULL,
-  `contact` varchar(45) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `url` varchar(150) DEFAULT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `isactive` int(1) unsigned NOT NULL DEFAULT '1',
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`taxauthid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `taxavernaculars` (
   `TID` int(10) unsigned NOT NULL DEFAULT '0',
@@ -1696,22 +1586,17 @@ CREATE TABLE `taxonunits` (
 CREATE TABLE `taxstatus` (
   `tid` int(10) unsigned NOT NULL,
   `tidaccepted` int(10) unsigned NOT NULL,
-  `taxauthid` int(10) unsigned NOT NULL COMMENT 'taxon authority id',
   `parenttid` int(10) unsigned DEFAULT NULL,
-  `hierarchystr` varchar(200) DEFAULT NULL,
   `family` varchar(50) DEFAULT NULL,
   `UnacceptabilityReason` varchar(250) DEFAULT NULL,
   `notes` varchar(250) DEFAULT NULL,
   `SortSequence` int(10) unsigned DEFAULT '50',
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`tid`,`tidaccepted`,`taxauthid`) USING BTREE,
+  PRIMARY KEY (`tid`,`tidaccepted`) USING BTREE,
   KEY `FK_taxstatus_tidacc` (`tidaccepted`),
-  KEY `FK_taxstatus_taid` (`taxauthid`),
   KEY `Index_ts_family` (`family`),
   KEY `Index_parenttid` (`parenttid`),
-  KEY `Index_hierarchy` (`hierarchystr`) USING BTREE,
   CONSTRAINT `FK_taxstatus_parent` FOREIGN KEY (`parenttid`) REFERENCES `taxa` (`TID`),
-  CONSTRAINT `FK_taxstatus_taid` FOREIGN KEY (`taxauthid`) REFERENCES `taxauthority` (`taxauthid`) ON UPDATE CASCADE,
   CONSTRAINT `FK_taxstatus_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`),
   CONSTRAINT `FK_taxstatus_tidacc` FOREIGN KEY (`tidaccepted`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -2052,7 +1937,6 @@ CREATE TABLE `usertaxonomy` (
   `idusertaxonomy` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(10) unsigned NOT NULL,
   `tid` int(10) unsigned NOT NULL,
-  `taxauthid` int(10) unsigned NOT NULL DEFAULT '1',
   `editorstatus` varchar(45) DEFAULT NULL,
   `geographicScope` varchar(250) DEFAULT NULL,
   `notes` varchar(250) DEFAULT NULL,
@@ -2060,11 +1944,9 @@ CREATE TABLE `usertaxonomy` (
   `modifiedtimestamp` datetime DEFAULT NULL,
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idusertaxonomy`),
-  UNIQUE KEY `usertaxonomy_UNIQUE` (`uid`,`tid`,`taxauthid`,`editorstatus`),
+  UNIQUE KEY `usertaxonomy_UNIQUE` (`uid`,`tid`,`editorstatus`),
   KEY `FK_usertaxonomy_uid_idx` (`uid`),
   KEY `FK_usertaxonomy_tid_idx` (`tid`),
-  KEY `FK_usertaxonomy_taxauthid_idx` (`taxauthid`),
-  CONSTRAINT `FK_usertaxonomy_taxauthid` FOREIGN KEY (`taxauthid`) REFERENCES `taxauthority` (`taxauthid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_usertaxonomy_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_usertaxonomy_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -2114,8 +1996,6 @@ INSERT IGNORE INTO `taxonunits`(rankid,rankname, dirparentrankid, reqparentranki
     (290,'Cultivated',220,220),
     (300,'Unspecified',220,220);
 
-INSERT INTO `taxauthority` (`taxauthid`, `isprimary`, `name`) VALUES (1, 1, 'Central Thesaurus');
-
 INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (1, 1, 'Organism', 'Organism');
 INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (2, 10, 'Bacteria', 'Bacteria');
 INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (3, 10, 'Protozoa', 'Protozoa');
@@ -2125,14 +2005,14 @@ INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (6, 10, 'Ani
 INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (7, 10, 'Chromista', 'Chromista');
 INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (8, 10, 'Archaea', 'Archaea');
 
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (1, 1, 1, 1);
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (2, 2, 1, 1);
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (3, 3, 1, 1);
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (4, 4, 1, 1);
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (5, 5, 1, 1);
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (6, 6, 1, 1);
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (7, 7, 1, 1);
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (8, 8, 1, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `parenttid`) VALUES (1, 1, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `parenttid`) VALUES (2, 2, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `parenttid`) VALUES (3, 3, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `parenttid`) VALUES (4, 4, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `parenttid`) VALUES (5, 5, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `parenttid`) VALUES (6, 6, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `parenttid`) VALUES (7, 7, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `parenttid`) VALUES (8, 8, 1);
 
 INSERT INTO `lkupcountry` VALUES (1,'Andorra','AD','AND',20,'2011-06-01 01:35:22'),(2,'United Arab Emirates','AE','ARE',784,'2011-06-01 01:35:22'),(3,'Afghanistan','AF','AFG',4,'2011-06-01 01:35:22'),(4,'Antigua and Barbuda','AG','ATG',28,'2011-06-01 01:35:22'),(5,'Anguilla','AI','AIA',660,'2011-06-01 01:35:22'),(6,'Albania','AL','ALB',8,'2011-06-01 01:35:22'),(7,'Armenia','AM','ARM',51,'2011-06-01 01:35:22'),(8,'Netherlands Antilles','AN','ANT',530,'2011-06-01 01:35:22'),(9,'Angola','AO','AGO',24,'2011-06-01 01:35:22'),(10,'Antarctica','AQ',NULL,NULL,'2011-06-01 01:35:22'),(11,'Argentina','AR','ARG',32,'2011-06-01 01:35:22'),(12,'American Samoa','AS','ASM',16,'2011-06-01 01:35:22'),(13,'Austria','AT','AUT',40,'2011-06-01 01:35:22'),(14,'Australia','AU','AUS',36,'2011-06-01 01:35:22'),(15,'Aruba','AW','ABW',533,'2011-06-01 01:35:22'),(16,'Azerbaijan','AZ','AZE',31,'2011-06-01 01:35:22'),(17,'Bosnia and Herzegovina','BA','BIH',70,'2011-06-01 01:35:22'),(18,'Barbados','BB','BRB',52,'2011-06-01 01:35:22'),(19,'Bangladesh','BD','BGD',50,'2011-06-01 01:35:22'),(20,'Belgium','BE','BEL',56,'2011-06-01 01:35:22'),(21,'Burkina Faso','BF','BFA',854,'2011-06-01 01:35:22'),(22,'Bulgaria','BG','BGR',100,'2011-06-01 01:35:22'),(23,'Bahrain','BH','BHR',48,'2011-06-01 01:35:22'),(24,'Burundi','BI','BDI',108,'2011-06-01 01:35:22'),(25,'Benin','BJ','BEN',204,'2011-06-01 01:35:22'),(26,'Bermuda','BM','BMU',60,'2011-06-01 01:35:22'),(27,'Brunei Darussalam','BN','BRN',96,'2011-06-01 01:35:22'),(28,'Bolivia','BO','BOL',68,'2011-06-01 01:35:22'),(29,'Brazil','BR','BRA',76,'2011-06-01 01:35:22'),(30,'Bahamas','BS','BHS',44,'2011-06-01 01:35:22'),(31,'Bhutan','BT','BTN',64,'2011-06-01 01:35:22'),(32,'Bouvet Island','BV',NULL,NULL,'2011-06-01 01:35:22'),(33,'Botswana','BW','BWA',72,'2011-06-01 01:35:22'),(34,'Belarus','BY','BLR',112,'2011-06-01 01:35:22'),(35,'Belize','BZ','BLZ',84,'2011-06-01 01:35:22'),(36,'Canada','CA','CAN',124,'2011-06-01 01:35:22'),(37,'Cocos (Keeling) Islands','CC',NULL,NULL,'2011-06-01 01:35:22'),(38,'Congo, the Democratic Republic of the','CD','COD',180,'2011-06-01 01:35:22'),(39,'Central African Republic','CF','CAF',140,'2011-06-01 01:35:22'),(40,'Congo','CG','COG',178,'2011-06-01 01:35:22'),(41,'Switzerland','CH','CHE',756,'2011-06-01 01:35:22'),(42,'Cote D\'Ivoire','CI','CIV',384,'2011-06-01 01:35:22'),(43,'Cook Islands','CK','COK',184,'2011-06-01 01:35:22'),(44,'Chile','CL','CHL',152,'2011-06-01 01:35:22'),(45,'Cameroon','CM','CMR',120,'2011-06-01 01:35:22'),(46,'China','CN','CHN',156,'2011-06-01 01:35:22'),(47,'Colombia','CO','COL',170,'2011-06-01 01:35:22'),(48,'Costa Rica','CR','CRI',188,'2011-06-01 01:35:22'),(49,'Serbia and Montenegro','CS',NULL,NULL,'2011-06-01 01:35:22'),(50,'Cuba','CU','CUB',192,'2011-06-01 01:35:22'),(51,'Cape Verde','CV','CPV',132,'2011-06-01 01:35:22'),(52,'Christmas Island','CX',NULL,NULL,'2011-06-01 01:35:22'),(53,'Cyprus','CY','CYP',196,'2011-06-01 01:35:22'),(54,'Czech Republic','CZ','CZE',203,'2011-06-01 01:35:22'),(55,'Germany','DE','DEU',276,'2011-06-01 01:35:22'),(56,'Djibouti','DJ','DJI',262,'2011-06-01 01:35:22'),(57,'Denmark','DK','DNK',208,'2011-06-01 01:35:22'),(58,'Dominica','DM','DMA',212,'2011-06-01 01:35:22'),(59,'Dominican Republic','DO','DOM',214,'2011-06-01 01:35:22'),(60,'Algeria','DZ','DZA',12,'2011-06-01 01:35:22'),(61,'Ecuador','EC','ECU',218,'2011-06-01 01:35:22'),(62,'Estonia','EE','EST',233,'2011-06-01 01:35:22'),(63,'Egypt','EG','EGY',818,'2011-06-01 01:35:22'),(64,'Western Sahara','EH','ESH',732,'2011-06-01 01:35:22'),(65,'Eritrea','ER','ERI',232,'2011-06-01 01:35:22'),(66,'Spain','ES','ESP',724,'2011-06-01 01:35:22'),(67,'Ethiopia','ET','ETH',231,'2011-06-01 01:35:22'),(68,'Finland','FI','FIN',246,'2011-06-01 01:35:22'),(69,'Fiji','FJ','FJI',242,'2011-06-01 01:35:22'),(70,'Falkland  Islands (Malvinas)','FK','FLK',238,'2011-06-01 01:35:22'),(71,'Micronesia, Federated States of','FM','FSM',583,'2011-06-01 01:35:22'),(72,'Faroe Islands','FO','FRO',234,'2011-06-01 01:35:22');
 INSERT INTO `lkupcountry` VALUES (73,'France','FR','FRA',250,'2011-06-01 01:35:22'),(74,'Gabon','GA','GAB',266,'2011-06-01 01:35:22'),(75,'United Kingdom','GB','GBR',826,'2011-06-01 01:35:22'),(76,'Grenada','GD','GRD',308,'2011-06-01 01:35:22'),(77,'Georgia','GE','GEO',268,'2011-06-01 01:35:22'),(78,'French Guiana','GF','GUF',254,'2011-06-01 01:35:22'),(79,'Ghana','GH','GHA',288,'2011-06-01 01:35:22'),(80,'Gibraltar','GI','GIB',292,'2011-06-01 01:35:22'),(81,'Greenland','GL','GRL',304,'2011-06-01 01:35:22'),(82,'Gambia','GM','GMB',270,'2011-06-01 01:35:22'),(83,'Guinea','GN','GIN',324,'2011-06-01 01:35:22'),(84,'Guadeloupe','GP','GLP',312,'2011-06-01 01:35:22'),(85,'Equatorial Guinea','GQ','GNQ',226,'2011-06-01 01:35:22'),(86,'Greece','GR','GRC',300,'2011-06-01 01:35:22'),(87,'South Georgia and the South Sandwich Islands','GS',NULL,NULL,'2011-06-01 01:35:22'),(88,'Guatemala','GT','GTM',320,'2011-06-01 01:35:22'),(89,'Guam','GU','GUM',316,'2011-06-01 01:35:22'),(90,'Guinea-Bissau','GW','GNB',624,'2011-06-01 01:35:22'),(91,'Guyana','GY','GUY',328,'2011-06-01 01:35:22'),(92,'Hong Kong','HK','HKG',344,'2011-06-01 01:35:22'),(93,'Heard Island and Mcdonald Islands','HM',NULL,NULL,'2011-06-01 01:35:22'),(94,'Honduras','HN','HND',340,'2011-06-01 01:35:22'),(95,'Croatia','HR','HRV',191,'2011-06-01 01:35:22'),(96,'Haiti','HT','HTI',332,'2011-06-01 01:35:22'),(97,'Hungary','HU','HUN',348,'2011-06-01 01:35:22'),(98,'Indonesia','ID','IDN',360,'2011-06-01 01:35:22'),(99,'Ireland','IE','IRL',372,'2011-06-01 01:35:22'),(100,'Israel','IL','ISR',376,'2011-06-01 01:35:22'),(101,'India','IN','IND',356,'2011-06-01 01:35:22'),(102,'British Indian Ocean Territory','IO',NULL,NULL,'2011-06-01 01:35:22'),(103,'Iraq','IQ','IRQ',368,'2011-06-01 01:35:22'),(104,'Iran, Islamic Republic of','IR','IRN',364,'2011-06-01 01:35:22'),(105,'Iceland','IS','ISL',352,'2011-06-01 01:35:22'),(106,'Italy','IT','ITA',380,'2011-06-01 01:35:22'),(107,'Jamaica','JM','JAM',388,'2011-06-01 01:35:22'),(108,'Jordan','JO','JOR',400,'2011-06-01 01:35:22'),(109,'Japan','JP','JPN',392,'2011-06-01 01:35:22'),(110,'Kenya','KE','KEN',404,'2011-06-01 01:35:22'),(111,'Kyrgyzstan','KG','KGZ',417,'2011-06-01 01:35:22'),(112,'Cambodia','KH','KHM',116,'2011-06-01 01:35:22'),(113,'Kiribati','KI','KIR',296,'2011-06-01 01:35:22'),(114,'Comoros','KM','COM',174,'2011-06-01 01:35:22'),(115,'Saint Kitts and Nevis','KN','KNA',659,'2011-06-01 01:35:22'),(116,'Korea, Democratic People\'s Republic of','KP','PRK',408,'2011-06-01 01:35:22'),(117,'Korea, Republic of','KR','KOR',410,'2011-06-01 01:35:22'),(118,'Kuwait','KW','KWT',414,'2011-06-01 01:35:22'),(119,'Cayman Islands','KY','CYM',136,'2011-06-01 01:35:22'),(120,'Kazakhstan','KZ','KAZ',398,'2011-06-01 01:35:22'),(121,'Lao People\'s Democratic Republic','LA','LAO',418,'2011-06-01 01:35:22'),(122,'Lebanon','LB','LBN',422,'2011-06-01 01:35:22'),(123,'Saint Lucia','LC','LCA',662,'2011-06-01 01:35:22'),(124,'Liechtenstein','LI','LIE',438,'2011-06-01 01:35:22'),(125,'Sri Lanka','LK','LKA',144,'2011-06-01 01:35:22'),(126,'Liberia','LR','LBR',430,'2011-06-01 01:35:22'),(127,'Lesotho','LS','LSO',426,'2011-06-01 01:35:22'),(128,'Lithuania','LT','LTU',440,'2011-06-01 01:35:22'),(129,'Luxembourg','LU','LUX',442,'2011-06-01 01:35:22'),(130,'Latvia','LV','LVA',428,'2011-06-01 01:35:22'),(131,'Libyan Arab Jamahiriya','LY','LBY',434,'2011-06-01 01:35:22'),(132,'Morocco','MA','MAR',504,'2011-06-01 01:35:22'),(133,'Monaco','MC','MCO',492,'2011-06-01 01:35:22'),(134,'Moldova, Republic of','MD','MDA',498,'2011-06-01 01:35:22'),(135,'Madagascar','MG','MDG',450,'2011-06-01 01:35:22'),(136,'Marshall Islands','MH','MHL',584,'2011-06-01 01:35:22'),(137,'Macedonia, the Former Yugoslav Republic of','MK','MKD',807,'2011-06-01 01:35:22'),(138,'Mali','ML','MLI',466,'2011-06-01 01:35:22'),(139,'Myanmar','MM','MMR',104,'2011-06-01 01:35:22'),(140,'Mongolia','MN','MNG',496,'2011-06-01 01:35:22'),(141,'Macao','MO','MAC',446,'2011-06-01 01:35:22');
@@ -2343,7 +2223,7 @@ INSERT INTO `temp_voucher_delete`(clid,occid)
 DELETE v.*
 FROM fmvouchers v INNER JOIN temp_voucher_delete t ON v.clid = t.clid AND v.occid = t.occid
 INNER JOIN taxstatus ts ON v.tid = ts.tid
-WHERE ts.taxauthid = 1 AND ts.tid != ts.tidaccepted;
+WHERE ts.tid != ts.tidaccepted;
 
 DELETE v.*
 FROM fmvouchers v INNER JOIN temp_voucher_delete t ON v.clid = t.clid AND v.occid = t.occid;
@@ -2570,9 +2450,6 @@ ALTER TABLE `taxa`
   DROP INDEX `sciname_unique`,
   ADD UNIQUE INDEX `sciname_unique` (`SciName` ASC, `RankId` ASC, `Author` ASC),
   ADD INDEX `sciname_index` (`SciName` ASC);
-
-ALTER TABLE `taxalinks`
-  ADD COLUMN `inherit` INT NULL DEFAULT 1 AFTER `icon`;
 
 CREATE INDEX idx_taxacreated ON taxa(initialtimestamp);
 
@@ -3266,8 +3143,17 @@ UPDATE CASCADE;
 ALTER TABLE `taxadescrstmts`
     MODIFY COLUMN `heading` varchar (75) NULL DEFAULT NULL AFTER `tdbid`;
 
-ALTER TABLE `taxaresourcelinks`
-    ADD UNIQUE INDEX `UNIQUE_taxaresource`(`tid`, `sourcename`);
+CREATE TABLE `taxaidentifiers` (
+   `tidentid` int(11) NOT NULL AUTO_INCREMENT,
+   `tid` int(10) unsigned NOT NULL,
+   `name` varchar(45) NOT NULL,
+   `identifier` varchar(255) NOT NULL,
+   PRIMARY KEY (`tidentid`),
+   KEY `FK_tid` (`tid`),
+   KEY `name` (`name`),
+   KEY `identifier` (`identifier`),
+   CONSTRAINT `FK_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 ALTER TABLE `taxavernaculars`
     MODIFY COLUMN `Language` varchar (15) NULL DEFAULT NULL AFTER `VernacularName`,
@@ -3578,7 +3464,7 @@ ON t.TID = e.tid
     LEFT JOIN taxa AS t2 ON e.parenttid = t2.TID
     LEFT JOIN taxonkingdoms AS k ON t2.SciName = k.kingdom_name
     SET t.kingdomid = k.kingdom_id
-WHERE t2.RankId = 10 AND e.taxauthid = 1 AND (t.kingdomid = 100);
+WHERE t2.RankId = 10 AND t.kingdomid = 100;
 
 ALTER TABLE `users`
     ADD COLUMN `username` varchar(45) NOT NULL AFTER `lastname`,
@@ -3592,24 +3478,6 @@ ON u.uid = ul.uid
         u.lastlogindate = ul.lastlogindate;
 
 DROP TABLE IF EXISTS `userlogin`;
-
-DELETE te.* FROM taxaenumtree AS te LEFT JOIN taxauthority AS ta ON te.taxauthid = ta.taxauthid
-WHERE ta.isprimary <> 1;
-
-ALTER TABLE `taxaenumtree` DROP FOREIGN KEY `FK_tet_taxauth`;
-
-ALTER TABLE `taxaenumtree`
-    DROP COLUMN `taxauthid`,
-    DROP INDEX `FK_tet_taxauth`;
-
-DELETE ts.* FROM taxstatus AS ts LEFT JOIN taxauthority AS ta ON ts.taxauthid = ta.taxauthid
-WHERE ta.isprimary <> 1;
-
-ALTER TABLE `taxstatus` DROP FOREIGN KEY `FK_taxstatus_taid`;
-
-ALTER TABLE `taxstatus`
-    DROP COLUMN `taxauthid`,
-    DROP INDEX `FK_taxstatus_taid`;
 
 ALTER TABLE `configurations`
     ADD UNIQUE INDEX `configurationname`(`configurationname`);
