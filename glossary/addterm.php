@@ -100,7 +100,7 @@ if($isEditor && $formSubmit === 'Create Term') {
 
 			$.ajax({
 				type: "POST",
-				url: "rpc/checkterm.php",
+				url: "../api/glossary/checkterm.php",
 				data: { term: f.term.value, language: f.language.value, tid: tidValue, relglossid: f.relglossid.value }
 			}).success(function( data ) {
 				if(data === "1"){
@@ -115,7 +115,7 @@ if($isEditor && $formSubmit === 'Create Term') {
 		}
 
 	</script>
-	<script src="../js/glossary.index.js?ver=20220113" type="text/javascript"></script>
+	<script src="../js/glossary.index.js?ver=20221025" type="text/javascript"></script>
 </head>
 <body>
 	<div id="innertext">
