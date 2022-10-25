@@ -45,11 +45,11 @@ if($isEditor && $action === 'Submit Occurrence') {
         $statusStr = $occurManager->getErrorStr();
     }
 }
-if($collid && file_exists('includes/config/occurVarColl'.$collid.'.php')){
-	include(__DIR__ . '/includes/config/occurVarColl'.$collid.'.php');
+if($collid && file_exists('../../config/occurVarColl'.$collid.'.php')){
+	include(__DIR__ . '/../../config/occurVarColl'.$collid.'.php');
 }
-elseif(file_exists('includes/config/occurVarDefault.php')){
-	include(__DIR__ . '/includes/config/occurVarDefault.php');
+elseif(file_exists('../../config/occurVarDefault.php')){
+	include(__DIR__ . '/../../config/occurVarDefault.php');
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
