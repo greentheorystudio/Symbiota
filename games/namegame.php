@@ -133,7 +133,7 @@ if(!$clName){
 		function getWordList(){
 			$.ajax({
 				method: "POST",
-				url: "rpc/getwordlist.php",
+				url: "../api/games/getwordlist.php",
 				dataType: "json",
 				data: {
 					clid : <?php echo $clid; ?>,
