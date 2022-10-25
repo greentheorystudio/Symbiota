@@ -716,7 +716,7 @@ function saveLayerGroupEdits() {
 function setLayersList() {
     document.getElementById("layerList").innerHTML = '';
     const http = new XMLHttpRequest();
-    const url = "../spatial/rpc/getlayersconfig.php";
+    const url = "../api/spatial/getlayersconfig.php";
     //console.log(url);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
