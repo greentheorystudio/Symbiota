@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbbase.php');
-include_once(__DIR__ . '/../../../classes/OccurrenceDataset.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
+include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
 
 $term = $_REQUEST['term'];
 

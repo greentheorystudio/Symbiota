@@ -324,7 +324,7 @@ function searchDupesCatalogNumber(f,verbose){
 
 		$.ajax({
 			type: "POST",
-			url: "rpc/dupequerycatnum.php",
+			url: "../../api/occurrenceduplicates/dupequerycatnum.php",
 			data: { catnum: cnValue, collid: f.collid.value, occid: f.occid.value }
 		}).done(function( msg ) {
 			if(msg){
@@ -370,7 +370,7 @@ function searchDupesOtherCatalogNumbers(f){
 
 		$.ajax({
 			type: "POST",
-			url: "rpc/dupequeryothercatnum.php",
+			url: "../../api/occurrenceduplicates/dupequeryothercatnum.php",
 			data: { othercatnum: ocnValue, collid: f.collid.value, occid: f.occid.value }
 		}).done(function( msg ) {
 			if(msg.length > 6){
@@ -427,7 +427,7 @@ function searchDupes(f,silent){
 
 	$.ajax({
 		type: "POST",
-		url: "rpc/dupequery.php",
+		url: "../../api/occurrenceduplicates/dupequery.php",
 		data: { cname: cNameIn, cnum: cNumIn, cdate: cDateIn, ometid: ometidIn, exsnumber: exsNumberIn, curoccid: currOccidIn }
 	}).done(function( msg ) {
 		if(msg){

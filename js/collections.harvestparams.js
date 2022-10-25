@@ -8,7 +8,7 @@ $(document).ready(function() {
         })
         .autocomplete({
             source: function( request, response ) {
-                $.getJSON( "rpc/taxalist.php", {
+                $.getJSON( "../api/taxa/taxalist.php", {
                     term: extractLast( request.term ), t: function() { return document.harvestparams.taxontype.value; }
                 }, response );
             },

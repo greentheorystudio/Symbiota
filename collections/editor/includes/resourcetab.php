@@ -33,7 +33,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	}
 
 	function openDupeWindow(){
-        const url = "rpc/dupelist.php?curoccid=<?php echo $occid . '&recordedby=' . urlencode($occArr['recordedby']) . '&recordnumber=' . $occArr['recordnumber'] . '&eventdate=' . $occArr['eventdate']; ?>";
+        const url = "dupelist.php?curoccid=<?php echo $occid . '&recordedby=' . urlencode($occArr['recordedby']) . '&recordnumber=' . $occArr['recordnumber'] . '&eventdate=' . $occArr['eventdate']; ?>";
         const dupeWindow = open(url, "dupelist", "resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
         if (dupeWindow.opener == null) {
             dupeWindow.opener = self;
@@ -44,7 +44,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		if(confirm("Are you sure you want to unlink the record as a duplicate?")){
 			$.ajax({
 				type: "POST",
-				url: "rpc/dupedelete.php",
+				url: "../../api/occurrenceduplicates/dupedelete.php",
 				dataType: "json",
 				data: { dupid: dupid, occid: occid }
 			}).done(function( retStr ) {

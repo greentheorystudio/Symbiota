@@ -1,7 +1,7 @@
 function addVoucherToCl(occidIn,clidIn,tidIn){
     $.ajax({
         type: "POST",
-        url: "rpc/addvoucher.php",
+        url: "../api/checklists/addvoucher.php",
         data: { occid: occidIn, clid: clidIn, tid: tidIn }
     }).done(function( msg ) {
         if(msg === "1"){
