@@ -160,7 +160,7 @@ if($isEditor){
                 }
             });
             $( "#userinput" ).autocomplete({
-                source: "rpc/getuserlist.php",
+                source: "../../api/datasets/getuserlist.php",
                 minLength: 3,
                 autoFocus: true,
                 select: function( event, ui ) {
