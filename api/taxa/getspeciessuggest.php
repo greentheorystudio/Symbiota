@@ -20,16 +20,7 @@ $rs->free();
 $con->close();
 
 if($retArr){
-	if($GLOBALS['CHARSET'] === 'UTF-8'){
-		echo json_encode($retArr);
-	}
-	else{
-		$str = '[';
-		foreach($retArr as $k => $vArr){
-			$str .= '{"id":"'.$vArr['id'].'","value":"'.str_replace('"',"''",$vArr['value']).'"},';
-		}
-		echo trim($str,',').']';
-	}
+    echo json_encode($retArr);
 }
 else{
 	echo 'null';

@@ -10,7 +10,7 @@ $(document).ready(function() {
 
 function initTaxonAutoComplete(){
 	$( "#taxoninput" ).autocomplete({
-		source: "rpc/taxasuggest.php",
+		source: "../api/taxa/getspeciessuggest.php",
 		minLength: 4,
 		autoFocus: true
 	});
