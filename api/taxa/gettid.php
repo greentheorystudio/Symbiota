@@ -9,8 +9,8 @@ $con = $connection->getConnection();
 
 $sciName = $con->real_escape_string($_REQUEST['sciname']);
 
-$sql = 'SELECT t.tid FROM taxa t '.
-	"WHERE (t.sciname = '".$sciName."')";
+$sql = 'SELECT t.tid FROM taxa AS t '.
+	"WHERE t.sciname = '".$sciName."' ";
 $result = $con->query($sql);
 if($row = $result->fetch_object()){
 	$responseStr = $row->tid;

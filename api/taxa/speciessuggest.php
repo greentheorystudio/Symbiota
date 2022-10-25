@@ -11,7 +11,10 @@ $queryString = $con->real_escape_string($_REQUEST['term']);
 $taxLevel = (isset($_REQUEST['level'])?$con->real_escape_string($_REQUEST['level']):'low');
 
 $sql = 'SELECT tid, sciname FROM taxa WHERE sciname LIKE "'.$queryString.'%" ';
-if($taxLevel === 'low'){
+if($taxLevel === 'species'){
+    $sql .= 'AND rankid < 220';
+}
+elseif($taxLevel === 'low'){
 	$sql .= 'AND rankid > 179';
 }
 else{

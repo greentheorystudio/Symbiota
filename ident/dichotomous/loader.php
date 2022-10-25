@@ -93,9 +93,8 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 		  		alert ("Your browser does not support AJAX!");
 		  		return;
 		  	}
-            let url = "rpc/gettid.php";
+            let url = "../../api/taxa/gettid.php";
             url=url+"?sciname="+sciname;
-			url=url+"&sid="+Math.random();
 			cseXmlHttp.onreadystatechange=cseStateChanged;
 			cseXmlHttp.open("POST",url,true);
 			cseXmlHttp.send(null);

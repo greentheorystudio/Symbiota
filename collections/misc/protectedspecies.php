@@ -79,7 +79,7 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 
 			$.ajax({
 				type: "POST",
-				url: "rpc/gettid.php",
+				url: "../../api/taxa/gettid.php",
 				dataType: "json",
 				data: { sciname: sciName }
 			}).done(function( data ) {
