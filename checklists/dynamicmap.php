@@ -40,7 +40,7 @@ $dynClManager = new DynamicChecklistManager();
         $(document).ready(function() {
             $( "#taxa" ).autocomplete({
                 source: function( request, response ) {
-                    $.getJSON( "rpc/speciessuggest.php", { term: request.term, level: 'high' }, response );
+                    $.getJSON( "../api/taxa/speciessuggest.php", { term: request.term, level: 'high' }, response );
                 },
                 minLength: 2,
                 autoFocus: true,
