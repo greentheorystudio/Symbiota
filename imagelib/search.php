@@ -61,7 +61,7 @@ if($stArrJson){
 			$('#photographer').manifest({
 				required: true,
 				marcoPolo: {
-					url: 'rpc/imagesearchautofill.php',
+					url: '../api/search/imagesearchautofill.php',
 					data: {
 						t: 'photographer'
 					},
@@ -73,7 +73,7 @@ if($stArrJson){
 
             $('#taxainput').manifest({
                 marcoPolo: {
-                    url: 'rpc/imagesearchautofill.php',
+                    url: '../api/search/imagesearchautofill.php',
                     data: {
                         t: 'taxa'
                     },
@@ -85,7 +85,7 @@ if($stArrJson){
 
             $('#commoninput').manifest({
                 marcoPolo: {
-                    url: 'rpc/imagesearchautofill.php',
+                    url: '../api/search/imagesearchautofill.php',
                     data: {
                         t: 'common'
                     },
@@ -97,7 +97,7 @@ if($stArrJson){
 
             $('#keywordsinput').manifest({
                 marcoPolo: {
-                    url: 'rpc/imagesearchautofill.php',
+                    url: '../api/search/imagesearchautofill.php',
                     data: {
                         t: 'keywords'
                     },
@@ -229,7 +229,7 @@ if($stArrJson){
             }
             document.getElementById("imagebox").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
             const http = new XMLHttpRequest();
-            const url = "rpc/changeimagepage.php";
+            const url = "../api/search/changeimagepage.php";
             const queryid = document.getElementById('queryId').value;
             const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&queryId='+queryid+'&page='+page+'&view='+view+'&taxon='+taxon;
             //console.log(url+'?'+params);
