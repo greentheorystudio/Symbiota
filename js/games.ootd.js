@@ -15,7 +15,7 @@ $(document).ready(function() {
 		})
 		.autocomplete({
 			source: function( request, response ) {
-				$.getJSON( "rpc/ootdfamilylist.php", {
+				$.getJSON( "../../api/games/ootdfamilylist.php", {
 					term: extractLast( request.term ), t: function() { return document.answers.family_answer.value; }
 				}, response );
 			},
@@ -47,7 +47,7 @@ $(document).ready(function() {
 		})
 		.autocomplete({
 			source: function( request, response ) {
-				$.getJSON( "rpc/ootdscinamelist.php", {
+				$.getJSON( "../../api/games/ootdscinamelist.php", {
 					term: extractLast( request.term ), t: function() { return document.answers.sciname_answer.value; }
 				}, response );
 			},

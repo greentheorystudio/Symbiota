@@ -56,7 +56,7 @@ function initAutoComplete(formElem){
 	$("#"+formElem).autocomplete({
 		source: function( request, response ){
 			$.ajax({
-				url: "rpc/clspeciessuggest.php",
+				url: "../api/checklists/clspeciessuggest.php",
 				dataType: "json",
 				data: {
 					term : request.term,
@@ -74,7 +74,7 @@ function initAutoComplete(formElem){
 function linkVoucher(occidIn, clidIn){
 	$.ajax({
 		type: "POST",
-		url: "rpc/linkvoucher.php",
+		url: "../api/checklists/linkvoucher.php",
 		data: { clid: clidIn, occid: occidIn, sciname: document.getElementById("tid-"+occidIn).value }
 	}).done(function( msg ) {
 		if(msg === 1){

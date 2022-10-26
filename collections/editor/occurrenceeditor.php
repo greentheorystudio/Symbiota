@@ -65,18 +65,18 @@ if($GLOBALS['SYMB_UID']){
     }
 
     if($isGenObs){
-        if(file_exists('includes/config/occurVarGenObs'.$GLOBALS['SYMB_UID'].'.php')){
-            include(__DIR__ . '/includes/config/occurVarGenObs'.$GLOBALS['SYMB_UID'].'.php');
+        if(file_exists('../../config/occurVarGenObs'.$GLOBALS['SYMB_UID'].'.php')){
+            include(__DIR__ . '/../../config/occurVarGenObs'.$GLOBALS['SYMB_UID'].'.php');
         }
-        elseif(file_exists('includes/config/occurVarGenObsDefault.php')){
-            include(__DIR__ . '/includes/config/occurVarGenObsDefault.php');
+        elseif(file_exists('../../config/occurVarGenObsDefault.php')){
+            include(__DIR__ . '/../../config/occurVarGenObsDefault.php');
         }
     }
-    else if($collId && file_exists('includes/config/occurVarColl'.$collId.'.php')){
-        include(__DIR__ . '/includes/config/occurVarColl'.$collId.'.php');
+    else if($collId && file_exists('../../config/occurVarColl'.$collId.'.php')){
+        include(__DIR__ . '/../../config/occurVarColl'.$collId.'.php');
     }
-    elseif(file_exists('includes/config/occurVarDefault.php')){
-        include(__DIR__ . '/includes/config/occurVarDefault.php');
+    elseif(file_exists('../../config/occurVarDefault.php')){
+        include(__DIR__ . '/../../config/occurVarDefault.php');
     }
     if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']) {
         $occManager->setExsiccatiMode(true);
@@ -481,7 +481,7 @@ else{
     <?php
     if($crowdSourceMode === 1){
         ?>
-        <link href="includes/config/occureditorcrowdsource.css?ver=1805" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditorcrowdsource.css?ver=1805" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
     }
     else{
@@ -537,10 +537,10 @@ else{
         }
     </script>
     <script type="text/javascript" src="../../js/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20220915"></script>
-    <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20220110"></script>
+    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221025"></script>
+    <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221025"></script>
     <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20220921"></script>
-    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20210921"></script>
+    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221025"></script>
 </head>
 <body>
 <div id="innertext">
