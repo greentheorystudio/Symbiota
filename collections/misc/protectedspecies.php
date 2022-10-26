@@ -38,8 +38,8 @@ $rsArr = $rsManager->getProtectedSpeciesList();
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			$("#speciestoadd").autocomplete({ source: "rpc/speciessuggest.php" },{ minLength: 3, autoFocus: true });
-			$("#searchtaxon").autocomplete({ source: "rpc/speciessuggest.php" },{ minLength: 3 });
+			$("#speciestoadd").autocomplete({ source: "../../api/taxa/speciessuggest.php" },{ minLength: 3, autoFocus: true });
+			$("#searchtaxon").autocomplete({ source: "../../api/taxa/speciessuggest.php" },{ minLength: 3 });
 		});
 
 		function toggle(target){
@@ -79,7 +79,7 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 
 			$.ajax({
 				type: "POST",
-				url: "rpc/gettid.php",
+				url: "../../api/taxa/gettid.php",
 				dataType: "json",
 				data: { sciname: sciName }
 			}).done(function( data ) {

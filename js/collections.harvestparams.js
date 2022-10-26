@@ -8,7 +8,7 @@ $(document).ready(function() {
         })
         .autocomplete({
             source: function( request, response ) {
-                $.getJSON( "rpc/taxalist.php", {
+                $.getJSON( "../api/taxa/taxalist.php", {
                     term: extractLast( request.term ), t: function() { return document.harvestparams.taxontype.value; }
                 }, response );
             },
@@ -45,109 +45,111 @@ function changeTableDisplay(){
 
 function setHarvestParamsForm(){
     const stArr = getSearchTermsArr();
-    if(stArr['usethes']){
-        document.harvestparams.thes.checked = true;
-    }
-    else{
-        document.harvestparams.thes.checked = false;
-    }
-    if(stArr['taxontype']){
-        document.harvestparams.type.value = stArr['taxontype'];
-    }
-    if(stArr['taxa']){
-        document.harvestparams.taxa.value = stArr['taxa'];
-    }
-    let countryStr = '';
-    if (stArr['country']) {
-        countryStr = stArr['country'];
-        countryArr = countryStr.split(";");
-        if (countryArr.indexOf('USA') > -1 || countryArr.indexOf('usa') > -1) {
-            countryStr = countryArr[0];
+    if(validateSearchTermsArr(stArr)){
+        if(stArr['usethes']){
+            document.harvestparams.thes.checked = true;
         }
-        document.harvestparams.country.value = countryStr;
-    }
-    if(stArr['state']){
-        document.harvestparams.state.value = stArr['state'];
-    }
-    if(stArr['county']){
-        document.harvestparams.county.value = stArr['county'];
-    }
-    if(stArr['local']){
-        document.harvestparams.local.value = stArr['local'];
-    }
-    if(stArr['elevlow']){
-        document.harvestparams.elevlow.value = stArr['elevlow'];
-    }
-    if(stArr['elevhigh']){
-        document.harvestparams.elevhigh.value = stArr['elevhigh'];
-    }
-    if(stArr['assochost']){
-        document.harvestparams.assochost.value = stArr['assochost'];
-    }
-    if(stArr['upperlat']){
-        document.harvestparams.upperlat.value = stArr['upperlat'];
-        document.harvestparams.bottomlat.value = stArr['bottomlat'];
-        document.harvestparams.leftlong.value = stArr['leftlong'];
-        document.harvestparams.rightlong.value = stArr['rightlong'];
-    }
-    if(stArr['pointlat']){
-        document.harvestparams.pointlat.value = stArr['pointlat'];
-        document.harvestparams.pointlong.value = stArr['pointlong'];
-        document.harvestparams.radius.value = stArr['radius'];
-        document.harvestparams.groundradius.value = stArr['groundradius'];
-        document.harvestparams.radiustemp.value = stArr['radiustemp'];
-        document.harvestparams.radiusunits.value = stArr['radiusunits'];
-    }
-    if(stArr['polyArr']){
-        document.harvestparams.polyArr.value = stArr['polyArr'];
-        document.getElementById("spatialParamasNoCriteria").style.display = "none";
-        document.getElementById("spatialParamasCriteria").style.display = "block";
-    }
-    if(stArr['circleArr']){
-        document.harvestparams.circleArr.value = stArr['circleArr'];
-        document.getElementById("spatialParamasNoCriteria").style.display = "none";
-        document.getElementById("spatialParamasCriteria").style.display = "block";
-    }
-    if(stArr['collector']){
-        document.harvestparams.collector.value = stArr['collector'];
-    }
-    if(stArr['collnum']){
-        document.harvestparams.collnum.value = stArr['collnum'];
-    }
-    if(stArr['eventdate1']){
-        document.harvestparams.eventdate1.value = stArr['eventdate1'];
-    }
-    if(stArr['eventdate2']){
-        document.harvestparams.eventdate2.value = stArr['eventdate2'];
-    }
-    if(stArr['occurrenceRemarks']){
-        document.harvestparams.occurrenceRemarks.value = stArr['occurrenceRemarks'];
-    }
-    if(stArr['catnum']){
-        document.harvestparams.catnum.value = stArr['catnum'];
-    }
-    document.harvestparams.othercatnum.checked = !!stArr['othercatnum'];
-    if(stArr['typestatus']){
-        document.harvestparams.typestatus.checked = true;
-    }
-    if(stArr['hasaudio']){
-        document.harvestparams.hasaudio.checked = true;
-    }
-    if(stArr['hasimages']){
-        document.harvestparams.hasimages.checked = true;
-    }
-    if(stArr['hasvideo']){
-        document.harvestparams.hasvideo.checked = true;
-    }
-    if(stArr['hasmedia']){
-        document.harvestparams.hasmedia.checked = true;
-    }
-    if(stArr['hasgenetic']){
-        document.harvestparams.hasgenetic.checked = true;
-    }
-    if(sessionStorage.collsearchtableview){
-        document.getElementById('showtable').checked = true;
-        changeTableDisplay();
+        else{
+            document.harvestparams.thes.checked = false;
+        }
+        if(stArr['taxontype']){
+            document.harvestparams.type.value = stArr['taxontype'];
+        }
+        if(stArr['taxa']){
+            document.harvestparams.taxa.value = stArr['taxa'];
+        }
+        let countryStr = '';
+        if (stArr['country']) {
+            countryStr = stArr['country'];
+            countryArr = countryStr.split(";");
+            if (countryArr.indexOf('USA') > -1 || countryArr.indexOf('usa') > -1) {
+                countryStr = countryArr[0];
+            }
+            document.harvestparams.country.value = countryStr;
+        }
+        if(stArr['state']){
+            document.harvestparams.state.value = stArr['state'];
+        }
+        if(stArr['county']){
+            document.harvestparams.county.value = stArr['county'];
+        }
+        if(stArr['local']){
+            document.harvestparams.local.value = stArr['local'];
+        }
+        if(stArr['elevlow']){
+            document.harvestparams.elevlow.value = stArr['elevlow'];
+        }
+        if(stArr['elevhigh']){
+            document.harvestparams.elevhigh.value = stArr['elevhigh'];
+        }
+        if(stArr['assochost']){
+            document.harvestparams.assochost.value = stArr['assochost'];
+        }
+        if(stArr['upperlat']){
+            document.harvestparams.upperlat.value = stArr['upperlat'];
+            document.harvestparams.bottomlat.value = stArr['bottomlat'];
+            document.harvestparams.leftlong.value = stArr['leftlong'];
+            document.harvestparams.rightlong.value = stArr['rightlong'];
+        }
+        if(stArr['pointlat']){
+            document.harvestparams.pointlat.value = stArr['pointlat'];
+            document.harvestparams.pointlong.value = stArr['pointlong'];
+            document.harvestparams.radius.value = stArr['radius'];
+            document.harvestparams.groundradius.value = stArr['groundradius'];
+            document.harvestparams.radiustemp.value = stArr['radiustemp'];
+            document.harvestparams.radiusunits.value = stArr['radiusunits'];
+        }
+        if(stArr['polyArr']){
+            document.harvestparams.polyArr.value = stArr['polyArr'];
+            document.getElementById("spatialParamasNoCriteria").style.display = "none";
+            document.getElementById("spatialParamasCriteria").style.display = "block";
+        }
+        if(stArr['circleArr']){
+            document.harvestparams.circleArr.value = stArr['circleArr'];
+            document.getElementById("spatialParamasNoCriteria").style.display = "none";
+            document.getElementById("spatialParamasCriteria").style.display = "block";
+        }
+        if(stArr['collector']){
+            document.harvestparams.collector.value = stArr['collector'];
+        }
+        if(stArr['collnum']){
+            document.harvestparams.collnum.value = stArr['collnum'];
+        }
+        if(stArr['eventdate1']){
+            document.harvestparams.eventdate1.value = stArr['eventdate1'];
+        }
+        if(stArr['eventdate2']){
+            document.harvestparams.eventdate2.value = stArr['eventdate2'];
+        }
+        if(stArr['occurrenceRemarks']){
+            document.harvestparams.occurrenceRemarks.value = stArr['occurrenceRemarks'];
+        }
+        if(stArr['catnum']){
+            document.harvestparams.catnum.value = stArr['catnum'];
+        }
+        document.harvestparams.othercatnum.checked = !!stArr['othercatnum'];
+        if(stArr['typestatus']){
+            document.harvestparams.typestatus.checked = true;
+        }
+        if(stArr['hasaudio']){
+            document.harvestparams.hasaudio.checked = true;
+        }
+        if(stArr['hasimages']){
+            document.harvestparams.hasimages.checked = true;
+        }
+        if(stArr['hasvideo']){
+            document.harvestparams.hasvideo.checked = true;
+        }
+        if(stArr['hasmedia']){
+            document.harvestparams.hasmedia.checked = true;
+        }
+        if(stArr['hasgenetic']){
+            document.harvestparams.hasgenetic.checked = true;
+        }
+        if(sessionStorage.collsearchtableview){
+            document.getElementById('showtable').checked = true;
+            changeTableDisplay();
+        }
     }
 }
 

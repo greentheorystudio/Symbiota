@@ -160,7 +160,7 @@ if($isEditor){
                 }
             });
             $( "#userinput" ).autocomplete({
-                source: "rpc/getuserlist.php",
+                source: "../../api/datasets/getuserlist.php",
                 minLength: 3,
                 autoFocus: true,
                 select: function( event, ui ) {
@@ -511,7 +511,7 @@ include(__DIR__ . '/../../header.php');
 <!-- Data Download Form -->
 <?php include_once(__DIR__ . '/../csvoptions.php'); ?>
 <div style="display:none;">
-    <form name="datadownloadform" id="datadownloadform" action="../rpc/datadownloader.php" method="post">
+    <form name="datadownloadform" id="datadownloadform" action="../../api/search/datadownloader.php" method="post">
         <input id="starrjson" name="starrjson" type="hidden" />
         <input id="dh-q" name="dh-q" type="hidden" />
         <input id="dh-fq" name="dh-fq" type="hidden" />

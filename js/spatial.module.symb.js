@@ -564,6 +564,9 @@ function setInputFormBySearchTermsArr(){
         if(searchTermsArr.hasOwnProperty('thes')){
             document.getElementById("thes").checked = true;
         }
+        else{
+            document.getElementById("thes").checked = false;
+        }
     }
     if(searchTermsArr.hasOwnProperty('country')){
         document.getElementById("country").value = searchTermsArr['country'];

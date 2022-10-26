@@ -1,14 +1,14 @@
 $(document).ready(function() {
 	$("#taxonfilter").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/clsearchsuggest.php", { term: request.term, cl: clid }, response );
+			$.getJSON( "../api/checklists/clsearchsuggest.php", { term: request.term, cl: clid }, response );
 		}
 	},
 	{ minLength: 3 });
 
 	$("#speciestoadd").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "../webservices/autofillsciname.php", {
+			$.getJSON( "../api/taxa/autofillsciname.php", {
 				term: request.term,
 				limit: 10,
 				hideauth: true
@@ -103,7 +103,7 @@ function validateAddSpecies(f){
 	  		alert ("Your browser does not support AJAX!");
 	  		return false;
 	  	}
-		let url = "rpc/gettid.php";
+		let url = "../api/taxa/gettid.php";
 		url=url+"?sciname="+sciName;
 		url=url+"&sid="+Math.random();
 		cseXmlHttp.onreadystatechange=function(){

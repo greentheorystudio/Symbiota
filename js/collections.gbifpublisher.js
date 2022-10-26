@@ -96,7 +96,7 @@ function findInstKey(){
 	let key = '';
 	$.ajax({
 		type: "POST",
-		url: "rpc/checkgbifinstall.php",
+		url: "../../api/collections/checkgbifinstall.php",
 		async: false,
 		success: function(response) {
 			key = response;
@@ -112,7 +112,7 @@ function callGbifCurl(type,url,data){
 	let key;
 	$.ajax({
 		type: "POST",
-		url: "rpc/getgbifcurl.php",
+		url: "../../api/collections/getgbifcurl.php",
 		data: {type: type, url: url, data: data},
 		async: false,
 		success: function(response) {

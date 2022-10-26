@@ -53,7 +53,7 @@ elseif($action === 'addSelectedToDataset' && $GLOBALS['VALID_USER']){
             }
             if(f.adduser.value.indexOf(" [#") === -1){
                 $.ajax({
-                    url: "rpc/getuserlist.php",
+                    url: "../../api/datasets/getuserlist.php",
                     dataType: "json",
                     data: {
                         term: f.adduser.value
