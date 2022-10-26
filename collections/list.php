@@ -47,7 +47,7 @@ if($stArrJson){
     <script type="text/javascript" src="../js/external/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../js/collections.search.js?ver=20210621"></script>
+    <script type="text/javascript" src="../js/collections.search.js?ver=20221025"></script>
     <script type="text/javascript" src="../js/search.term.manager.js?ver=20220921"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
@@ -83,7 +83,7 @@ if($stArrJson){
         function setOccurrenceList(listPage){
             document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
             const http = new XMLHttpRequest();
-            const url = "rpc/getoccurrencelist.php";
+            const url = "../api/search/getoccurrencelist.php";
             const queryid = document.getElementById('queryId').value;
             const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&page='+listPage;
             //console.log(url+'?'+params);
@@ -103,7 +103,7 @@ if($stArrJson){
         function addAllVouchersToCl(clidIn){
             const occJson = document.getElementById("specoccjson").value;
             const http = new XMLHttpRequest();
-            const url = "rpc/addallvouchers.php";
+            const url = "../api/checklists/addallvouchers.php";
             const params = 'clid='+clidIn+'&jsonOccArr='+encodeURIComponent(occJson)+'&tid=<?php echo ($targetTid?:'0'); ?>';
             //console.log(url+'?'+params);
             http.open("POST", url, true);
@@ -124,7 +124,7 @@ if($stArrJson){
         function getTaxaList(){
             document.getElementById("taxalist").innerHTML = "<p>Loading...</p>";
             const http = new XMLHttpRequest();
-            const url = "rpc/getchecklist.php";
+            const url = "../api/search/getchecklist.php";
             const jsonStarr = encodeURIComponent(JSON.stringify(stArr));
             const params = 'starr='+jsonStarr;
             //console.log(url+'?'+params);
@@ -175,7 +175,7 @@ echo '</div>';
 <!-- Data Download Form -->
 <?php include_once(__DIR__ . '/csvoptions.php'); ?>
 <div style="display:none;">
-    <form name="datadownloadform" id="datadownloadform" action="rpc/datadownloader.php" method="post">
+    <form name="datadownloadform" id="datadownloadform" action="../api/search/datadownloader.php" method="post">
         <input id="starrjson" name="starrjson" type="hidden" />
         <input id="dh-q" name="dh-q" type="hidden" />
         <input id="dh-fq" name="dh-fq" type="hidden" />

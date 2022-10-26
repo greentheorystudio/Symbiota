@@ -1595,14 +1595,6 @@ class DwcArchiverCore extends Manager{
                         if(file_exists($emlPath1)) {
                             unlink($emlPath1);
                         }
-                        $filePath2 = $filePath.'collections/datasets/dwc'.substr($nodeValue,strrpos($nodeValue,'/'));
-                        if(file_exists($filePath2)) {
-                            unlink($filePath2);
-                        }
-                        $emlPath2 = str_replace('.zip','.eml',$filePath2);
-                        if(file_exists($emlPath2)) {
-                            unlink($emlPath2);
-                        }
                         $cElem->removeChild($i);
                     }
                 }

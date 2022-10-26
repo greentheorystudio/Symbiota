@@ -24,7 +24,7 @@ function parseScinameFromFilename(fileName){
 function getNewTaxaDataArr(value,fileName,validate){
 	const fileNodeArr = document.getElementById('uploadList').childNodes;
 	const http = new XMLHttpRequest();
-	const url = "../rpc/getbatchimageuploadtaxadata.php";
+	const url = "../../api/taxa/getbatchimageuploadtaxadata.php";
 	const params = 'taxa='+encodeURIComponent(JSON.stringify(taxaNameArr));
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);
@@ -229,7 +229,7 @@ function csvToArray(str) {
 
 function setTaxaDataObjFromTaxaArr(){
 	const http = new XMLHttpRequest();
-	const url = "../rpc/getbatchimageuploadtaxadata.php";
+	const url = "../../api/taxa/getbatchimageuploadtaxadata.php";
 	const params = 'taxa='+encodeURIComponent(JSON.stringify(taxaNameArr));
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);

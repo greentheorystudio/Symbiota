@@ -542,7 +542,7 @@ function savePDFFile(content){
 
 function loadImageDataUri(imgid,callback){
     const http = new XMLHttpRequest();
-    const url = "rpc/fieldguideimageprocessor.php";
+    const url = "../api/checklists/fieldguideimageprocessor.php";
     const params = 'imgid=' + imgid;
     //console.log(url+'?'+params);
     http.open("POST", url, true);

@@ -35,12 +35,12 @@ $dynClManager = new DynamicChecklistManager();
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20220926" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221025" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $( "#taxa" ).autocomplete({
                 source: function( request, response ) {
-                    $.getJSON( "rpc/speciessuggest.php", { term: request.term, level: 'high' }, response );
+                    $.getJSON( "../api/taxa/speciessuggest.php", { term: request.term, level: 'high' }, response );
                 },
                 minLength: 2,
                 autoFocus: true,

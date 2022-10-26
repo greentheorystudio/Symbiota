@@ -259,7 +259,7 @@ if($action !== 'Update Statistics'){
                         })
                         .autocomplete({
                             source: function( request, response ) {
-                                $.getJSON( "rpc/speciessuggest.php", {
+                                $.getJSON( "../../api/taxa/speciessuggest.php", {
                                     term: extractLast( request.term )
                                 }, response );
                             },
