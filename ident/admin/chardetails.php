@@ -171,7 +171,7 @@ $headingAdminUrl = 'headingadmin.php';
 		function verifyCharStateImages(cid,cs){
 			$.ajax({
 				type: "POST",
-				url: 'rpc/getcharstateimgcnt.php',
+				url: '../../api/ident/getcharstateimgcnt.php',
 				data: { cidinput: cid, csinput: cs }
 			}).done(function( msg ) {
 				document.getElementById("delvercsimgspan-"+cs).style.display = "none";
@@ -187,7 +187,7 @@ $headingAdminUrl = 'headingadmin.php';
 		function verifyCharStateLang(cid,cs){
 			$.ajax({
 				type: "POST",
-				url: 'rpc/getcharstatelangcnt.php',
+				url: '../../api/ident/getcharstatelangcnt.php',
 				data: { cidinput: cid, csinput: cs }
 			}).done(function( msg ) {
 				document.getElementById("delvercslangspan-"+cs).style.display = "none";
@@ -203,7 +203,7 @@ $headingAdminUrl = 'headingadmin.php';
 		function verifyDescr(cid,cs){
 			$.ajax({
 				type: "POST",
-				url: 'rpc/getdescrcnt.php',
+				url: '../../api/ident/getdescrcnt.php',
 				data: { cidinput: cid, csinput: cs }
 			}).done(function( msg ) {
 				document.getElementById("delverdescrspan-"+cs).style.display = "none";

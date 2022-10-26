@@ -48,7 +48,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 	<script>
 		$(document).ready(function() {
 			$( "#taxoninput" ).autocomplete({
-				source: "rpc/taxasuggest.php",
+				source: "../api/taxa/getspeciessuggest.php",
 				minLength: 2,
 				autoFocus: true
 			});

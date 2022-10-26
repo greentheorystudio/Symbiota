@@ -64,7 +64,7 @@ $clManager->setCollectionVariables();
             });
         }
     </script>
-	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20220110"></script>
+	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20221025"></script>
 	<style>
 		li{margin:5px;}
 	</style>

@@ -6,7 +6,7 @@ include_once(__DIR__ . '/../../collections/csvoptions.php');
 ?>
 <!-- Data Download Form -->
 <div style="display:none;">
-    <form name="datadownloadform" id="datadownloadform" action="../collections/rpc/datadownloader.php" method="post">
+    <form name="datadownloadform" id="datadownloadform" action="../api/search/datadownloader.php" method="post">
         <input id="starrjson" name="starrjson" type="hidden" />
         <input id="dh-q" name="dh-q" type="hidden" />
         <input id="dh-fq" name="dh-fq" type="hidden" />

@@ -70,7 +70,7 @@ elseif($activeCollArr){
 								response( cache[ term ] );
 								return;
 							}
-							$.getJSON( "rpc/taxasuggest.php", request, function( data ) {
+							$.getJSON( "../../api/taxa/taxasuggest.php", request, function( data ) {
 								cache[ term ] = data;
 								response( data );
 							});
@@ -95,7 +95,7 @@ elseif($activeCollArr){
 			function remappTaxon(oldName,targetTid,idQualifier,msgCode){
 				$.ajax({
 					type: "POST",
-					url: "rpc/remaptaxon.php",
+					url: "../../api/taxa/remaptaxon.php",
 					dataType: "json",
 					data: { collid: "<?php echo $collid; ?>", oldsciname: oldName, tid: targetTid, idq: idQualifier }
 				}).done(function( res ) {
