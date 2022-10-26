@@ -118,9 +118,9 @@ if($stArrJson){
                 }
                 ?>
                 stArr = getSearchTermsArr();
-                setParamsForm();
-                setCollectionForms();
                 if(validateSearchTermsArr(stArr)){
+                    setParamsForm();
+                    setCollectionForms();
                     document.getElementById('imagetab').style.display = "block";
                     $('#tabs').tabs({ active: 2 });
                     changeImagePage("",stArr['imagedisplay'],1);
@@ -258,6 +258,9 @@ if($stArrJson){
             const stArr = getSearchTermsArr();
             if(stArr['usethes']){
                 document.getElementById("thes").checked = true;
+            }
+            else{
+                document.getElementById("thes").checked = false;
             }
             if(stArr['taxontype']){
                 document.getElementById("taxontype").value = stArr['taxontype'];

@@ -126,9 +126,14 @@ class OccurrenceManager{
                     }
                 }
                 elseif($this->taxaSearchType === 2 || ($this->taxaSearchType === 1 && (strtolower(substr($name,-5)) === 'aceae' || strtolower(substr($name,-4)) === 'idae'))){
-                    $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$name)."') OR (ISNULL(o.tidinterpreted) AND (o.family = '".Sanitizer::cleanInStr($this->conn,$name)."' OR o.sciname = '".Sanitizer::cleanInStr($this->conn,$name)."')) ";
+                    if($image){
+                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$name)."') ";
+                    }
+                    else{
+                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$name)."') OR (ISNULL(o.tidinterpreted) AND (o.family = '".Sanitizer::cleanInStr($this->conn,$name)."' OR o.sciname = '".Sanitizer::cleanInStr($this->conn,$name)."')) ";
+                    }
                 }
-                else{
+                elseif(!$image){
                     $sqlWhereTaxa .= "OR (o.sciname LIKE '".Sanitizer::cleanInStr($this->conn,$name)."%') ";
                 }
             }
