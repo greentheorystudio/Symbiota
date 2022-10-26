@@ -3,7 +3,7 @@ let count = 0;
 
 $(document).ready(function() {
 	$("#fsciname").autocomplete({
-		source: "rpc/getspeciessuggest.php", 
+		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		autoFocus: true,
 		change: function() {
@@ -18,14 +18,14 @@ $(document).ready(function() {
 	});
 
 	$("#fcountry").autocomplete({
-		source: "rpc/lookupCountry.php", 
+		source: "../../api/geography/lookupCountry.php",
 		minLength: 2,
 		autoFocus: true
 	});
 
 	$("#fstateprovince").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/lookupState.php", { term: request.term, country: document.defaultform.country.value }, response );
+			$.getJSON( "../../api/geography/lookupState.php", { term: request.term, country: document.defaultform.country.value }, response );
 		},
 		minLength: 2,
 		autoFocus: true
@@ -33,7 +33,7 @@ $(document).ready(function() {
 
 	$("#fcounty").autocomplete({ 
 		source: function( request, response ) {
-			$.getJSON( "rpc/lookupCounty.php", { term: request.term, "state": document.defaultform.stateprovince.value }, response );
+			$.getJSON( "../../api/geography/lookupCounty.php", { term: request.term, "state": document.defaultform.stateprovince.value }, response );
 		},
 		minLength: 2,
 		autoFocus: true
@@ -58,7 +58,7 @@ function hideOptions(){
 function verifySciName(){
 	$.ajax({
 		type: "POST",
-		url: "rpc/verifysciname.php",
+		url: "../../api/taxa/verifysciname.php",
 		dataType: "json",
 		data: { term: $( "#fsciname" ).val() }
 	}).done(function( data ) {
@@ -90,7 +90,7 @@ function localitySecurityCheck(){
 	if(tidIn !== "" && stateIn !== ""){
 		$.ajax({
 			type: "POST",
-			url: "rpc/localitysecuritycheck.php",
+			url: "../../api/checklists/localitysecuritycheck.php",
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
@@ -125,7 +125,7 @@ function submitDefaultForm(){
 	if(continueSubmit && $( "#fcatalognumber" ).val() !== ""){
 		$.ajax({
 			type: "POST",
-			url: "rpc/occurAddData.php",
+			url: "../../api/occurrences/occurAddData.php",
 			dataType: "json",
 			data: { 
 				sciname: $( "#fsciname" ).val(), 

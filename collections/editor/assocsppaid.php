@@ -13,7 +13,7 @@ header('X-Frame-Options: SAMEORIGIN');
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript">
         $(document).ready(function() {
-			$("#taxonname").autocomplete({ source: "rpc/getassocspp.php" },
+			$("#taxonname").autocomplete({ source: "../../api/taxa/getassocspp.php" },
 			{ minLength: 4, autoFocus: true, delay: 200 });
 
 			$("#taxonname").focus();

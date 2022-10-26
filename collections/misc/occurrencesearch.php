@@ -61,7 +61,7 @@ $collArr = $occManager->getCollectionArr($GLOBALS['IS_ADMIN']?'all':$collEditorA
 		    else{
 				$.ajax({
 					type: "POST",
-					url: "../editor/rpc/occurAddData.php",
+					url: "../../api/occurrences/occurAddData.php",
 					dataType: "json",
 					data: { collid: f.collid.value }
 				}).done(function( retObj ) {

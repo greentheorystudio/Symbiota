@@ -2,14 +2,14 @@ let taxonValid = false;
 
 $(document).ready(function() {
 	$("#sciname").autocomplete({ 
-		source: "rpc/getspeciessuggest.php", 
+		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		change: function() {
 			const f = document.obsform;
 			if( f.sciname.value ){
 				$.ajax({
 					type: "POST",
-					url: "rpc/verifysciname.php",
+					url: "../../api/taxa/verifysciname.php",
 					dataType: "json",
 					data: { term: f.sciname.value }
 				}).done(function( data ) {

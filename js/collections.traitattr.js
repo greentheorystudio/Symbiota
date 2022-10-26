@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$("#taxonfilter").autocomplete({ 
-		source: "rpc/getTaxonFilter.php", 
+		source: "../../api/occurrences/getTaxonFilter.php",
 		dataType: "json",
 		minLength: 3,
 		select: function( event, ui ) {
@@ -17,7 +17,7 @@ $(document).ready(function() {
 								
 			$.ajax({
 				type: "POST",
-				url: "rpc/getTaxonFilter.php",
+				url: "../../api/occurrences/getTaxonFilter.php",
 				data: { term: $( this ).val(), exact: 1 }
 			}).done(function( msg ) {
 				if(msg === ""){

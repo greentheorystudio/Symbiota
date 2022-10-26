@@ -69,7 +69,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 				})
 				.autocomplete({
 					source: function( request, response ) {
-						$.getJSON( "../rpc/taxalist.php", {
+						$.getJSON( "../../api/taxa/taxalist.php", {
 							term: extractLast( request.term )
 						}, response );
 					},

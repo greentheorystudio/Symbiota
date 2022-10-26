@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
 	$("#sciname").autocomplete({ 
-		source: "rpc/getspeciessuggest.php", 
+		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		change: function(event, ui) {
 			$( "#tidinterpreted" ).val("");
@@ -22,7 +22,7 @@ $(document).ready(function() {
 
 	$("#country").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/lookupCountry.php", { term: request.term }, response );
+			$.getJSON( "../../api/geography/lookupCountry.php", { term: request.term }, response );
 		},
 		minLength: 2,
 		autoFocus: true
@@ -30,7 +30,7 @@ $(document).ready(function() {
 
 	$("#state").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/lookupState.php", { term: request.term, "country": document.imgoccurform.country.value }, response );
+			$.getJSON( "../../api/geography/lookupState.php", { term: request.term, "country": document.imgoccurform.country.value }, response );
 		},
 		minLength: 2,
 		autoFocus: true
@@ -38,7 +38,7 @@ $(document).ready(function() {
 
 	$("#county").autocomplete({ 
 		source: function( request, response ) {
-			$.getJSON( "rpc/lookupCounty.php", { term: request.term, "state": document.imgoccurform.stateprovince.value }, response );
+			$.getJSON( "../../api/geography/lookupCounty.php", { term: request.term, "state": document.imgoccurform.stateprovince.value }, response );
 		},
 		minLength: 2,
 		autoFocus: true
@@ -55,7 +55,7 @@ $(document).ready(function() {
 function verifySciName(){
 	$.ajax({
 		type: "POST",
-		url: "rpc/verifysciname.php",
+		url: "../../api/taxa/verifysciname.php",
 		dataType: "json",
 		data: { term: $( "#sciname" ).val() }
 	}).done(function( data ) {
@@ -87,7 +87,7 @@ function localitySecurityCheck(f){
 	if(tidIn !== "" && stateIn !== ""){
 		$.ajax({
 			type: "POST",
-			url: "rpc/localitysecuritycheck.php",
+			url: "../../api/checklists/localitysecuritycheck.php",
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {

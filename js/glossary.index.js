@@ -18,7 +18,7 @@ $(document).ready(function() {
 				let reqTerm = request.term;
 				reqTerm = reqTerm.split( /,\s*/ );
 				reqTerm = reqTerm.pop();
-				$.getJSON( "rpc/taxalist.php", {
+				$.getJSON( "../api/taxa/taxalist.php", {
 					term: reqTerm, t: 'single'
 				}, response );
 			},

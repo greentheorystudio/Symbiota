@@ -116,7 +116,7 @@ if($isEditor){
 						if(catalogNumbers.indexOf(catNum) < 0){
 							$.ajax({
 								type: "POST",
-								url: "rpc/getnewdetspeclist.php",
+								url: "../../api/occurrences/getnewdetspeclist.php",
 								data: { 
 									catalognumber: $( "#fcatalognumber" ).val(),
 									collid: $( "#fcollid" ).val()
@@ -156,7 +156,7 @@ if($isEditor){
                 if(continueSubmit && $( "#nomsciname" ).val() !== ""){
 					$.ajax({
 						type: "POST",
-						url: "rpc/getnewdetspeclist.php",
+						url: "../../api/occurrences/getnewdetspeclist.php",
 						data: { 
 							sciname: $( "#nomsciname" ).val(),
 							collid: $( "#nomcollid" ).val()
@@ -228,14 +228,14 @@ if($isEditor){
 			
 			function initNomAdjAutocomplete(f){
 				$( f.sciname ).autocomplete({ 
-					source: "rpc/getspeciessuggest.php", 
+					source: "../../api/taxa/getspeciessuggest.php",
 					minLength: 3
 				});
 			}
 			
 			function initDetAutocomplete(f){
 				$( f.sciname ).autocomplete({ 
-					source: "rpc/getspeciessuggest.php", 
+					source: "../../api/taxa/getspeciessuggest.php",
 					minLength: 3,
 					change: function() {
 						if(f.sciname.value){
@@ -254,7 +254,7 @@ if($isEditor){
 			function verifyDetSciName(f){
 				$.ajax({
 					type: "POST",
-					url: "rpc/verifysciname.php",
+					url: "../../api/taxa/verifysciname.php",
 					dataType: "json",
 					data: { term: f.sciname.value }
 				}).done(function( data ) {

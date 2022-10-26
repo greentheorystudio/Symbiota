@@ -742,7 +742,7 @@ function changeRecordPage(page){
     document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
     const selJson = JSON.stringify(selections);
     const http = new XMLHttpRequest();
-    const url = "rpc/changemaprecordpage.php";
+    const url = "../api/search/changemaprecordpage.php";
     const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(SOLRMODE){
         params = 'starr=' + jsonStarr + '&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
@@ -1705,7 +1705,7 @@ function getQueryRecCnt(callback){
     if(SOLRMODE){
         let qStr = '';
         http = new XMLHttpRequest();
-        url = "rpc/SOLRConnector.php";
+        url = "../api/search/SOLRConnector.php";
         params = 'starr=' + jsonStarr + '&rows=0&start=0&wt=json';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
@@ -1722,7 +1722,7 @@ function getQueryRecCnt(callback){
     }
     else{
         http = new XMLHttpRequest();
-        url = "rpc/MYSQLConnector.php";
+        url = "../api/search/MYSQLConnector.php";
         params = 'starr=' + jsonStarr + '&rows=0&start=0&type=reccnt';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
@@ -1907,7 +1907,7 @@ function lazyLoadPoints(index,finalIndex,callback){
     const http = new XMLHttpRequest();
     const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(SOLRMODE){
-        url = "rpc/SOLRConnector.php";
+        url = "../api/search/SOLRConnector.php";
         params = 'starr=' + jsonStarr + '&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
@@ -1927,7 +1927,7 @@ function lazyLoadPoints(index,finalIndex,callback){
         http.send(params);
     }
     else{
-        url = "rpc/MYSQLConnector.php";
+        url = "../api/search/MYSQLConnector.php";
         params = 'starr=' + jsonStarr + '&rows=' + lazyLoadCnt + '&start=' + startindex + '&type=geoquery';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
@@ -3229,7 +3229,7 @@ function setRasterDragDropTarget(){
 
 function setLayersController(){
     const http = new XMLHttpRequest();
-    const url = "rpc/getlayersconfig.php";
+    const url = "../api/spatial/getlayersconfig.php";
     //console.log(url);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

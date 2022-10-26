@@ -50,7 +50,7 @@ if($stArrJson){
     <script src="../js/external/jquery.js" type="text/javascript"></script>
     <script src="../js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
-    <script src="../js/collections.search.js?ver=20210621" type="text/javascript"></script>
+    <script src="../js/collections.search.js?ver=20221025" type="text/javascript"></script>
     <script type="text/javascript" src="../js/search.term.manager.js?ver=20220921"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
@@ -86,7 +86,7 @@ if($stArrJson){
             sortorder = document.sortform.sortorder.value;
             document.getElementById("tablediv").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
             const http = new XMLHttpRequest();
-            const url = "rpc/changetablepage.php";
+            const url = "../api/search/changetablepage.php";
             const queryid = document.getElementById('queryId').value;
             const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&occindex='+index+'&sortfield1='+sortfield1+'&sortfield2='+sortfield2+'&sortorder='+sortorder;
             //console.log(url+'?'+params);
@@ -162,7 +162,7 @@ if($stArrJson){
 <!-- Data Download Form -->
 <?php include_once(__DIR__ . '/csvoptions.php'); ?>
 <div style="display:none;">
-    <form name="datadownloadform" id="datadownloadform" action="rpc/datadownloader.php" method="post">
+    <form name="datadownloadform" id="datadownloadform" action="../api/search/datadownloader.php" method="post">
         <input id="starrjson" name="starrjson" type="hidden" />
         <input id="dh-q" name="dh-q" type="hidden" />
         <input id="dh-fq" name="dh-fq" type="hidden" />

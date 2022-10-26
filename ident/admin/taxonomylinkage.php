@@ -24,8 +24,9 @@ $tLinks = $keyManager->getTaxonRelevance();
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$( "#relevanceinput" ).autocomplete({
-				source: "rpc/taxasuggest.php",
-				minLength: 2,
+				source: "../../api/taxa/speciessuggest.php",
+                level: 'species',
+                minLength: 2,
 				autoFocus: true,
 				select: function( event, ui ) {
 					if(ui.item){
@@ -39,7 +40,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 					if($( "#relevancetidinput" ).val() === ""){
 						$.ajax({
 							type: "POST",
-							url: "rpc/taxonvalidation.php",
+							url: "../../api/taxa/taxonvalidation.php",
 							data: { term: $( this ).val() }
 						}).done(function( msg ) {
 							if(msg === ""){
