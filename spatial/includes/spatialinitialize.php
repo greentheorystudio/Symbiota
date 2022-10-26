@@ -18,7 +18,7 @@ if($stArrJson){
     }
 }
 ?>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20220914" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20221026" type="text/javascript"></script>
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     let searchTermsArr = {};
@@ -66,10 +66,10 @@ if($stArrJson){
                         let rankLimit = '';
                         let source = '';
                         if(t === 5){
-                            source = '../webservices/autofillvernacular.php';
+                            source = '../api/taxa/autofillvernacular.php';
                         }
                         else{
-                            source = '../webservices/autofillsciname.php';
+                            source = '../api/taxa/autofillsciname.php';
                         }
                         if(t === 4){
                             rankLow = 21;
@@ -112,7 +112,8 @@ if($stArrJson){
                         processTaxaParamChange();
                         return false;
                     }
-                },{});
+                },{}
+            );
         }
 
         spatialModuleInitialising = true;

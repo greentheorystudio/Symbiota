@@ -36,13 +36,13 @@ return <<<EOD
                     source: function( request, response ) {
                         var quicksearchcommonselectorchecked = document.quicksearch.quicksearchselector.checked;
                         if(quicksearchcommonselectorchecked){
-                            $.getJSON( "$clientRoot/webservices/autofillvernacular.php", {
+                            $.getJSON( "$clientRoot/api/taxa/autofillvernacular.php", {
                                 term: request.term,
                                 limit: 10
                             }, response );
                         }
                         else{
-                            $.getJSON( "$clientRoot/webservices/autofillsciname.php", {
+                            $.getJSON( "$clientRoot/api/taxa/autofillsciname.php", {
                                 term: request.term,
                                 limit: 10,
                                 hideauth: true
@@ -62,13 +62,13 @@ return <<<EOD
                 source: function( request, response ) {
                     var quicksearchcommonselectorchecked = document.quicksearch.quicksearchselector.checked;
                     if(quicksearchcommonselectorchecked){
-                        $.getJSON( "$clientRoot/webservices/autofillvernacular.php", {
+                        $.getJSON( "$clientRoot/api/taxa/autofillvernacular.php", {
                             term: request.term,
                             limit: 10
                         }, response );
                     }
                     else{
-                        $.getJSON( "$clientRoot/webservices/autofillsciname.php", {
+                        $.getJSON( "$clientRoot/api/taxa/autofillsciname.php", {
                             term: request.term,
                             limit: 10,
                             hideauth: true

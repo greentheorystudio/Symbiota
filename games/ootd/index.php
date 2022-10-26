@@ -40,7 +40,7 @@ if($submitAction){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-	<script type="text/javascript" src="../../js/games.ootd.js"></script>
+	<script type="text/javascript" src="../../js/games.ootd.js?ver=20221025"></script>
 
 	<script type="text/javascript">
 		$(function() {

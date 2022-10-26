@@ -63,7 +63,7 @@ if($targetTid){
         $(document).ready(function() {
             $("#orderinput").autocomplete({
                 source: function( request, response ) {
-                    $.getJSON( "../webservices/autofillsciname.php", {
+                    $.getJSON( "../api/taxa/autofillsciname.php", {
                         term: request.term,
                         limit: 10,
                         rlimit: 100,
@@ -82,7 +82,7 @@ if($targetTid){
 
             $("#familyinput").autocomplete({
                 source: function( request, response ) {
-                    $.getJSON( "../webservices/autofillsciname.php", {
+                    $.getJSON( "../api/taxa/autofillsciname.php", {
                         term: request.term,
                         limit: 10,
                         rlimit: 140,
@@ -101,7 +101,7 @@ if($targetTid){
 
             $("#scinameinput").autocomplete({
                 source: function( request, response ) {
-                    $.getJSON( "../webservices/autofillsciname.php", {
+                    $.getJSON( "../api/taxa/autofillsciname.php", {
                         term: request.term,
                         limit: 10,
                         hideauth: false
@@ -119,7 +119,7 @@ if($targetTid){
 
             $("#commoninput").autocomplete({
                 source: function( request, response ) {
-                    $.getJSON( "../webservices/autofillvernacular.php", {
+                    $.getJSON( "../api/taxa/autofillvernacular.php", {
                         term: request.term,
                         limit: 10
                     }, response );

@@ -142,7 +142,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
         function sendAPIRequest(action,configname,configvalue){
             const data = {};
             const http = new XMLHttpRequest();
-            const url = "rpc/configurationModelController.php";
+            const url = "../api/configurations/configurationModelController.php";
             data[configname] = configvalue;
             const jsonData = JSON.stringify(data);
             const params = 'action='+action+'&data='+jsonData;
@@ -173,7 +173,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
 
         function processNewConfNameChange(){
             const http = new XMLHttpRequest();
-            const url = "rpc/configurationValidationController.php";
+            const url = "../api/configurations/configurationValidationController.php";
             let newNameValue = document.getElementById('newConfName').value;
             newNameValue = newNameValue.replace(/ /g, "_");
             newNameValue = newNameValue.toUpperCase();
@@ -221,7 +221,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
 
         function processUpdateCss(){
             const http = new XMLHttpRequest();
-            const url = "rpc/configurationModelController.php";
+            const url = "../api/configurations/configurationModelController.php";
             const params = 'action=updateCss';
             console.log(url+'?'+params);
             http.open("POST", url, true);
@@ -261,7 +261,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
             const configvalue = document.getElementById(configname).value;
             if(configvalue !== ''){
                 const http = new XMLHttpRequest();
-                const url = "rpc/configurationValidationController.php";
+                const url = "../api/configurations/configurationValidationController.php";
                 let params = 'action=validateServerWritePath&value='+configvalue;
                 //console.log(url+'?'+params);
                 http.open("POST", url, true);
@@ -295,7 +295,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
             const configvalue = document.getElementById(configname).value;
             if(configvalue !== ''){
                 const http = new XMLHttpRequest();
-                const url = "rpc/configurationValidationController.php";
+                const url = "../api/configurations/configurationValidationController.php";
                 let params = 'action=validateServerPath&value='+configvalue;
                 //console.log(url+'?'+params);
                 http.open("POST", url, true);
@@ -329,7 +329,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
             const configvalue = document.getElementById(configname).value;
             if(configvalue !== ''){
                 const http = new XMLHttpRequest();
-                const url = "rpc/configurationValidationController.php";
+                const url = "../api/configurations/configurationValidationController.php";
                 let params = 'action=validateClientPath&value='+configvalue;
                 console.log(url+'?'+params);
                 http.open("POST", url, true);

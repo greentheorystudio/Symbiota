@@ -65,14 +65,14 @@ if($isEditor){
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
 	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../js/glossary.index.js?ver=20220113"></script>
+	<script type="text/javascript" src="../js/glossary.index.js?ver=20221025"></script>
 	<script type="text/javascript">
         const taxArr = [];
 
         $(document).ready(function() {
 			$('#batchtaxagroup').manifest({
 				marcoPolo: {
-					url: 'rpc/taxalist.php',
+					url: '../api/taxa/taxalist.php',
 					data: {
 						t: 'batch'
 					},

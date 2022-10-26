@@ -241,7 +241,7 @@ function submitBatchUpdate(f){
 
 	$.ajax({
 		type: "POST",
-		url: "rpc/batchupdateverify.php",
+		url: "../../api/occurrences/batchupdateverify.php",
 		dataType: "json",
 		data: { collid: f.collid.value, fieldname: fieldName, oldvalue: oldValue, bumatch: buMatch, ouid: f.ouid.value }
 	}).done(function( retCnt ) {
