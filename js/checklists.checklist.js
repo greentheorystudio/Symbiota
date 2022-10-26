@@ -8,7 +8,7 @@ $(document).ready(function() {
 
 	$("#speciestoadd").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "../webservices/autofillsciname.php", {
+			$.getJSON( "../api/taxa/autofillsciname.php", {
 				term: request.term,
 				limit: 10,
 				hideauth: true

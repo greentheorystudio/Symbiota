@@ -66,10 +66,10 @@ if($stArrJson){
                         let rankLimit = '';
                         let source = '';
                         if(t === 5){
-                            source = '../webservices/autofillvernacular.php';
+                            source = '../api/taxa/autofillvernacular.php';
                         }
                         else{
-                            source = '../webservices/autofillsciname.php';
+                            source = '../api/taxa/autofillsciname.php';
                         }
                         if(t === 4){
                             rankLow = 21;
