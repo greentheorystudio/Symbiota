@@ -94,7 +94,7 @@ function displayNewExchange(){
 
 function generateNewId(collId,targetObj,idType){
 	const http = new XMLHttpRequest();
-	const url = "rpc/generatenextid.php";
+	const url = "../../api/occurrenceloans/generatenextid.php";
 	let params = 'idtype=' + idType + '&collid=' + collId;
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);
@@ -183,7 +183,7 @@ function addSpecimen(f,splist){
 	}
 	else{
 		const http = new XMLHttpRequest();
-		const url = "rpc/insertloanspecimens.php";
+		const url = "../../api/occurrenceloans/insertloanspecimens.php";
 		let params = 'loanid=' + loanid + '&catalognumber=' + catalogNumber + '&collid=' + collid;
 		//console.log(url+'?'+params);
 		http.open("POST", url, true);
@@ -405,7 +405,7 @@ function outIdentCheck(collid){
   		return;
   	}
 	const http = new XMLHttpRequest();
-	const url = "rpc/loanoutidentifiercheck.php";
+	const url = "../../api/occurrenceloans/loanoutidentifiercheck.php";
 	let params = 'ident=' + loanidentifierown + '&collid=' + collid;
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);
@@ -428,7 +428,7 @@ function inIdentCheck(collid){
   		return;
   	}
 	const http = new XMLHttpRequest();
-	const url = "rpc/loaninidentifiercheck.php";
+	const url = "../../api/occurrenceloans/loaninidentifiercheck.php";
 	let params = 'ident=' + loanidentifierborr + '&collid=' + collid;
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);
@@ -452,7 +452,7 @@ function exIdentCheck(collid){
   		return;
   	}
 	const http = new XMLHttpRequest();
-	const url = "rpc/exidentifiercheck.php";
+	const url = "../../api/occurrenceloans/exidentifiercheck.php";
 	let params = 'ident=' + identifier + '&collid=' + collid;
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);
@@ -495,7 +495,7 @@ function verifyLoanDet(){
 
 function initLoanDetAutocomplete(f){
 	$( f.sciname ).autocomplete({ 
-		source: "../editor/rpc/getspeciessuggest.php", 
+		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		change: function() {
 			if(f.sciname.value){
@@ -513,7 +513,7 @@ function initLoanDetAutocomplete(f){
 
 function verifyLoanDetSciName(f){
 	const http = new XMLHttpRequest();
-	const url = "../editor/rpc/verifysciname.php";
+	const url = "../../api/taxa/verifysciname.php";
 	let params = 'term=' + f.sciname.value;
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);

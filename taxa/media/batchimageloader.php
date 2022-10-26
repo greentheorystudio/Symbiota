@@ -38,7 +38,7 @@
 <script src="../../js/external/jquery.fileupload-video.js"></script>
 <script src="../../js/external/jquery.fileupload-validate.js"></script>
 <script src="../../js/external/jquery.fileupload-ui.js"></script>
-<script src="../../js/taxa.batchmedialoader.js"></script>
+<script src="../../js/taxa.batchmedialoader.js?ver=20221025"></script>
 <script id="template-upload" type="text/x-tmpl">
         {% for (var i=0, file; file=o.files[i]; i++) { %}
             <tr class="template-upload fade{%=o.options.loadImageFileTypes.test(file.type)?' image':''%}">
@@ -102,7 +102,7 @@
 
     $(function () {
         $('#fileupload').fileupload({
-            url: '../rpc/uploadimage.php',
+            url: '../../api/taxa/uploadimage.php',
             dropZone: $('#fileDropZone'),
             paramName: 'imgfile',
             filesContainer: '#uploadList',

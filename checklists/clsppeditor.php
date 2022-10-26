@@ -73,7 +73,7 @@ $clArray = $vManager->getChecklistData();
 			$(document).ready(function() {
 				$("#renamesciname").autocomplete({
 					source: function( request, response ) {
-						$.getJSON( "rpc/speciessuggest.php", { term: request.term, cl: <?php echo $clid;?> }, response );
+						$.getJSON( "../api/taxa/speciessuggest.php", { term: request.term, cl: <?php echo $clid;?> }, response );
 					},
 					minLength: 3,
 					autoFocus: true,
@@ -104,7 +104,7 @@ $clArray = $vManager->getChecklistData();
 			function checkScinameExistance(f){
 				$.ajax({
 					type: "POST",
-					url: "rpc/gettid.php",
+					url: "../api/taxa/gettid.php",
 					data: { sciname: f.renamesciname.value }
 				}).done(function( renameTid ) {
 					if(renameTid){

@@ -83,7 +83,7 @@ if($isEditor && $action === 'Download Records') {
 			function setOccurData(occidInVal){
 				$.ajax({
 					type: "POST",
-					url: "rpc/getoccurrence.php",
+					url: "../../api/occurrences/getoccurrence.php",
 					dataType: "json",
 					data: { occid: occidInVal }
 				}).done(function( data ) {
