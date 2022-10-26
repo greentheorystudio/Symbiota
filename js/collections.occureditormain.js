@@ -33,7 +33,7 @@ $(document).ready(function() {
 	});
 
 	$( "#exstitleinput" ).autocomplete({
-		source: "rpc/exsiccatisuggest.php",
+		source: "../../api/exsiccati/exsiccatisuggest.php",
 		minLength: 2,
 		autoFocus: true,
 		select: function( event, ui ) {
@@ -53,7 +53,7 @@ $(document).ready(function() {
 			else{
 				if($( "#ometidinput" ).val() === ""){
 					const http = new XMLHttpRequest();
-					const url = "rpc/exsiccativalidation.php";
+					const url = "../../api/exsiccati/exsiccativalidation.php";
 					const params = 'term=' + $( this ).val();
 					//console.log(url+'?'+params);
 					http.open("POST", url, true);
@@ -76,7 +76,7 @@ $(document).ready(function() {
 	});
 
 	$("#ffsciname").autocomplete({ 
-		source: "rpc/getspeciessuggest.php", 
+		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		select: function(event, ui) {
 			$( "#tidinterpreted" ).val("");
@@ -118,7 +118,7 @@ $(document).ready(function() {
 	if(localityAutoLookup){
 		$("#fflocality").autocomplete({ 
 			source: function( request, response ) {
-				$.getJSON( "rpc/getlocality.php", { recordedby: $( "input[name=recordedby]" ).val(), eventdate: $( "input[name=eventdate]" ).val(), locality: request.term }, response );
+				$.getJSON( "../../api/occurrenceduplicates/getlocality.php", { recordedby: $( "input[name=recordedby]" ).val(), eventdate: $( "input[name=eventdate]" ).val(), locality: request.term }, response );
 			},
 			minLength: 4,
 			select: function( event, ui ) {
@@ -139,7 +139,7 @@ $(document).ready(function() {
 
 	$("#ffcountry").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/lookupCountry.php", { term: request.term }, response );
+			$.getJSON( "../../api/geography/lookupCountry.php", { term: request.term }, response );
 		},
 		minLength: 2,
 		autoFocus: true,
@@ -150,7 +150,7 @@ $(document).ready(function() {
 
 	$("#ffstate").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/lookupState.php", { term: request.term, "country": document.fullform.country.value }, response );
+			$.getJSON( "../../api/geography/lookupState.php", { term: request.term, "country": document.fullform.country.value }, response );
 		},
 		minLength: 2,
 		autoFocus: true,
@@ -161,7 +161,7 @@ $(document).ready(function() {
 
 	$("#ffcounty").autocomplete({ 
 		source: function( request, response ) {
-			$.getJSON( "rpc/lookupCounty.php", { term: request.term, "state": document.fullform.stateprovince.value }, response );
+			$.getJSON( "../../api/geography/lookupCounty.php", { term: request.term, "state": document.fullform.stateprovince.value }, response );
 		},
 		minLength: 2,
 		autoFocus: true,
@@ -172,7 +172,7 @@ $(document).ready(function() {
 
 	$("textarea[name=associatedtaxa]").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/getassocspp.php", { term: extractLast( request.term ) }, response );
+			$.getJSON( "../../api/taxa/getassocspp.php", { term: extractLast( request.term ) }, response );
 		},
 		search: function() {
 			const term = extractLast(this.value);
@@ -231,7 +231,7 @@ function verifyFullFormSciName(id = null){
 		id = document.getElementById("ffsciname").value;
 	}
 	const http = new XMLHttpRequest();
-	const url = "rpc/verifysciname.php";
+	const url = "../../api/taxa/verifysciname.php";
 	const params = 'term='+id;
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);
@@ -269,7 +269,7 @@ function localitySecurityCheck(){
 	const stateIn = $("input[name=stateprovince]").val();
 	if(tidIn !== "" && stateIn !== ""){
 		const http = new XMLHttpRequest();
-		const url = "rpc/localitysecuritycheck.php";
+		const url = "../../api/checklists/localitysecuritycheck.php";
 		const params = 'tid='+tidIn+'&state='+stateIn;
 		//console.log(url+'?'+params);
 		http.open("POST", url, true);
@@ -751,7 +751,7 @@ function verifyDeletion(f){
 
 function verifyAssocImages(occidIn){
 	const http = new XMLHttpRequest();
-	const url = "rpc/getassocimgcnt.php";
+	const url = "../../api/occurrences/getassocimgcnt.php";
 	const params = 'occid='+occidIn;
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);
@@ -774,7 +774,7 @@ function verifyAssocImages(occidIn){
 
 function verifyAssocVouchers(occidIn){
 	const http = new XMLHttpRequest();
-	const url = "rpc/getassocvouchers.php";
+	const url = "../../api/occurrences/getassocvouchers.php";
 	const params = 'occid='+occidIn;
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);
@@ -971,7 +971,7 @@ function parseDate(dateStr){
 
 function initDetAutocomplete(f){
 	$( f.sciname ).autocomplete({ 
-		source: "rpc/getspeciessuggest.php", 
+		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		select: function(event, ui) {
 			if(f.sciname.value){
@@ -992,7 +992,7 @@ function verifyDetSciName(f,id = null){
 		id = f.sciname.value;
 	}
 	const http = new XMLHttpRequest();
-	const url = "rpc/verifysciname.php";
+	const url = "../../api/taxa/verifysciname.php";
 	const params = 'term='+id;
 	//console.log(url+'?'+params);
 	http.open("POST", url, true);

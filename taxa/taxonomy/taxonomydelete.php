@@ -12,7 +12,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 <script>
 	$(document).ready(function() {
         $("#remapvalue").autocomplete({
-				source: "../rpc/gettaxasuggest.php",
+				source: "../../api/taxa/autofillsciname.php",
 				minLength: 2
 			}
 		);
@@ -25,7 +25,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 		}
 		$.ajax({
 			type: "POST",
-			url: "../rpc/gettid.php",
+			url: "../../api/taxa/gettid.php",
 			data: { sciname: f.remapvalue.value }
 		}).done(function( msg ) {
 			if(msg == 0){

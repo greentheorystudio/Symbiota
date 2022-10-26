@@ -217,7 +217,7 @@ if($clArray){
             let startindex = 0;
             if(index > 0) startindex = (index*lazyLoadCnt) + 1;
             const http = new XMLHttpRequest();
-            const url = "rpc/fieldguideexporter.php";
+            const url = "../api/checklists/fieldguideexporter.php";
             const params = 'rows=' + lazyLoadCnt + '&photogArr=' + encodeURIComponent(JSON.stringify(photog)) + '&photoNum=' + photoNum + '&start=' + startindex + '&cl=<?php echo $clValue . '&pid=' . $pid . '&dynclid=' . $dynClid; ?>';
             //console.log(url+'?'+params);
             http.open("POST", url, true);
@@ -230,7 +230,7 @@ if($clArray){
             http.send(params);
         }
     </script>
-    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20220201"></script>
+    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20221025"></script>
     <?php
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>
@@ -238,7 +238,7 @@ if($clArray){
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/vfs_fonts.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.fieldguideexport.js?ver=60" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.fieldguideexport.js?ver=20221025" type="text/javascript"></script>
         <?php
     }
     ?>

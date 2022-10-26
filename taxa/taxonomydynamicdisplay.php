@@ -51,7 +51,7 @@ if($target){
         $(document).ready(function() {
             $("#taxontarget").autocomplete({
                     source: function( request, response ) {
-                        $.getJSON( "../webservices/autofillsciname.php", {
+                        $.getJSON( "../api/taxa/autofillsciname.php", {
                             term: request.term,
                             limit: 10,
                             hideauth: false
@@ -125,7 +125,7 @@ include(__DIR__ . '/../header.php');
                 "dojo/domReady!"
             ], function(win, declare, dom, on, Tree, ObjectStoreModel, dndSource, JsonRest){
                 const taxonTreeStore = new JsonRest({
-                    target: "rpc/getdynamicchildren.php",
+                    target: "../api/taxa/getdynamicchildren.php",
                     labelAttribute: "label",
                     getChildren: function(object){
                         return this.query({

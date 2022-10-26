@@ -23,7 +23,7 @@ $(document).ready(function() {
 		})
 		.autocomplete({
 			source: function( request, response ) {
-				$.getJSON( "rpc/authorlist.php", {
+				$.getJSON( "../api/references/authorlist.php", {
 					term: extractLast( request.term ), t: function() {
 						return document.authorform.addauthorsearch.value;
 					}
@@ -60,10 +60,10 @@ $(document).ready(function() {
 	if(parentChild){
 		let url = '';
 		if(document.getElementById("ReferenceTypeId").value === 2 || document.getElementById("ReferenceTypeId").value === 4 || document.getElementById("ReferenceTypeId").value === 7 || document.getElementById("ReferenceTypeId").value === 8){
-			url = 'rpc/parenttitlelist.php';
+			url = '../api/references/parenttitlelist.php';
 		}
 		if(document.getElementById("ReferenceTypeId").value === 3 || document.getElementById("ReferenceTypeId").value === 6){
-			url = 'rpc/seriestitlelist.php';
+			url = '../api/references/seriestitlelist.php';
 		}
 		$( "#secondarytitle" )
 			.bind( "keydown", function( event ) {
@@ -109,7 +109,7 @@ $(document).ready(function() {
 			})
 			.autocomplete({
 				source: function( request, response ) {
-					$.getJSON( "rpc/seriestitlelist.php", {
+					$.getJSON( "../api/references/seriestitlelist.php", {
 						term: extractLast( request.term ), t: function() {
 							return document.referenceeditform.tertiarytitle.value;
 						}
@@ -143,7 +143,7 @@ function getParentInfo(refid){
 	}
 	const refType = document.getElementById("ReferenceTypeId").value;
 
-	const url = "rpc/parentdetails.php?refid=" + refid + "&reftype=" + refType;
+	const url = "../api/references/parentdetails.php?refid=" + refid + "&reftype=" + refType;
 
 	sutXmlHttp.onreadystatechange=function(){
 		let parentArr;
@@ -201,7 +201,7 @@ function addAuthorToRef(){
 		return;
 	}
 
-	const url = "rpc/authormanager.php?refid=" + refid + "&action=addauthor&refauthid=" + refauthid;
+	const url = "../api/references/authormanager.php?refid=" + refid + "&action=addauthor&refauthid=" + refauthid;
 
 	let authorList = '';
 	sutXmlHttp.onreadystatechange=function(){
@@ -224,7 +224,7 @@ function deleteRefAuthor(refauthid){
 			return;
 		}
 
-		const url = "rpc/authormanager.php?refid=" + refid + "&action=deleterefauthor&refauthid=" + refauthid;
+		const url = "../api/references/authormanager.php?refid=" + refid + "&action=deleterefauthor&refauthid=" + refauthid;
 
 		let authorList = '';
 		sutXmlHttp.onreadystatechange=function(){
@@ -248,7 +248,7 @@ function deleteRefLink(table,field,type,id){
 			return;
 		}
 
-		const url = "rpc/authormanager.php?refid=" + refid + "&action=deletereflink&table=" + table + "&field=" + field + "&id=" + id + "&type=" + type;
+		const url = "../api/references/authormanager.php?refid=" + refid + "&action=deletereflink&table=" + table + "&field=" + field + "&id=" + id + "&type=" + type;
 
 		let authorList = '';
 		sutXmlHttp.onreadystatechange=function(){
@@ -285,7 +285,7 @@ function processNewAuthor(f){
 		return;
 	}
 
-	const url = "rpc/authormanager.php?refid=" + refid + "&action=createauthor&firstname=" + firstName + "&midname=" + middleName + "&lastname=" + lastName;
+	const url = "../api/references/authormanager.php?refid=" + refid + "&action=createauthor&firstname=" + firstName + "&midname=" + middleName + "&lastname=" + lastName;
 
 	let authorList = '';
 

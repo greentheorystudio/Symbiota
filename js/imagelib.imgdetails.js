@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$( "#targettaxon" ).autocomplete({
-		source: "rpc/gettaxasuggest.php",
+		source: "../api/search/gettaxasuggest.php",
 		minLength: 3,
 		focus: function( event, ui ) {
 			$( "#targettaxon" ).val(ui.item.label);
@@ -36,7 +36,7 @@ function checkScinameExistance(sciname){
 	if(sciname.length > 0){
 		$.ajax({
 			type: "POST",
-			url: "rpc/gettid.php",
+			url: "../api/taxa/gettid.php",
 			data: { term: sciname }
 		}).done(function( msg ) {
 			if(msg === ""){

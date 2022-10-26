@@ -16,7 +16,7 @@ $taxonDisplayObj->setDisplaySubGenera($displaySubGenera);
     $(document).ready(function() {
         $("#taxontarget").autocomplete({
                 source: function( request, response ) {
-                    $.getJSON( "../rpc/gettaxasuggest.php", { term: request.term }, response );
+                    $.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term }, response );
                 }
             },{ minLength: 3 }
         );

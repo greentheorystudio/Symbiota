@@ -139,7 +139,7 @@ $indTermUrl = 'individual.php';
 		}
 
 	</script>
-	<script src="../js/glossary.index.js?ver=20220113" type="text/javascript"></script>
+	<script src="../js/glossary.index.js?ver=20221025" type="text/javascript"></script>
 </head>
 <body>
 	<?php

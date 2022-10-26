@@ -62,7 +62,7 @@ function cogePublishDwca(f){
 	$("#coge-download").show();
 	$.ajax({
 		type: "POST",
-		url: "rpc/coge_build_dwca.php",
+		url: "../../api/collections/coge_build_dwca.php",
 		dataType: "json",
 		data: { 
 			collid: f.collid.value, 
@@ -122,7 +122,7 @@ function cogeUpdateCount(formObj){
 	$("#recalspan").show();
 	$.ajax({
 		type: "POST",
-		url: "rpc/coge_getCount.php",
+		url: "../../api/collections/coge_getCount.php",
 		dataType: "json",
 		data: { 
 			collid: f.collid.value, 
