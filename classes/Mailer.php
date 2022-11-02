@@ -27,7 +27,16 @@ class Mailer {
             $mail->Port = $GLOBALS['SMTP_PORT'];
 
             $mail->setFrom($GLOBALS['PORTAL_EMAIL_ADDRESS'], $GLOBALS['DEFAULT_TITLE']);
-            $mail->addAddress($emailAddr);
+            if(strpos($emailAddr, ',') !== false){
+                $addrArr = explode(',', $emailAddr);
+                foreach($addrArr as $email){
+                    echo $email;
+                    $mail->addAddress($email);
+                }
+            }
+            else{
+                $mail->addAddress($emailAddr);
+            }
 
             $mail->isHTML();
             $mail->Subject = $subject;
