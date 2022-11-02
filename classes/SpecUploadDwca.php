@@ -200,7 +200,9 @@ class SpecUploadDwca extends SpecUploadBase{
                     }
                     elseif($item !== '.' && $item !== '..' && is_dir($newPath)){
                         $pathFrag .= $item.'/';
-                        $this->locateBaseFolder($baseDir, $pathFrag);
+                        if(is_dir($baseDir.$pathFrag)){
+                            $this->locateBaseFolder($baseDir, $pathFrag);
+                        }
                     }
                 }
             }
