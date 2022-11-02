@@ -8,11 +8,11 @@ if($taxonRank > 180){
         </span>
         <?php
         echo $taxonManager->getAuthor();
-        $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
+        $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue;
         echo ' <a href="'.$parentLink.'">';
         echo '<i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i>';
         echo '</a>';
-        if($taxAuthId && ($taxonManager->getTid() !== $taxonManager->getSubmittedTid())){
+        if($taxonManager->getTid() !== $taxonManager->getSubmittedTid()){
             echo '<span id="redirectedfrom"> (redirected from: <i>'.$taxonManager->getSubmittedSciName().'</i>)</span>';
         }
         ?>
@@ -30,7 +30,7 @@ else{
         echo "<span id='sciname' class='".$styleClass."' >".$displayName."</span>";
         echo $taxonManager->getAuthor();
         if($taxonRank > 140){
-            $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
+            $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue;
             echo ' <a href="'.$parentLink.'">';
             echo '<i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i>';
             echo '</a>';
