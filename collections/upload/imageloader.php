@@ -20,7 +20,7 @@ if($isEditor){
             $fileName = $imgProcessor->loadImageFile();
         }
     }
-    elseif($action === 'Save Profile'){
+    elseif($action === 'Save Image Profile'){
         if($_POST['spprid']){
             $specManager->editProject($_POST);
         }
@@ -28,7 +28,7 @@ if($isEditor){
             $specManager->addProject($_POST);
         }
     }
-    elseif($action === 'Delete Profile'){
+    elseif($action === 'Delete Image Profile'){
         $specManager->deleteProject($_POST['sppriddel']);
     }
 }
@@ -83,7 +83,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
             if($("[name='sourcepath']").val() === "-- Use Default Path --") {
                 $("[name='sourcepath']").val("");
             }
-            $("#profileEditSubmit").val("Save Profile");
+            $("#profileEditSubmit").val("Save Image Profile");
             $("#submitDiv").show();
         }
         else if(uploadType === 'file'){
@@ -224,12 +224,14 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
     }
 </script>
 <div>
-    <div style="padding:15px;">
-        These tools are designed to aid collection managers in batch processing specimen images.
-        Contact portal manager for help in setting up a new workflow.
-        Once a profile is established, the collection manager can use this form to manually trigger image processing.
-    </div>
     <?php
+    if($spprid){
+        ?>
+        <div style="display:flex;justify-content: flex-end;" title="Show all saved profiles or add a new one...">
+            <a href="index.php?tabindex=1&collid=<?php echo $collid; ?>"><i style="height:20px;width:20px;color:green;cursor:pointer;" class="fas fa-plus"></i></a>
+        </div>
+        <?php
+    }
     if($GLOBALS['SYMB_UID']){
         if($collid){
             if($fileName){
@@ -280,7 +282,6 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                         <?php
                     }
                 }
-
                 $projectType = $specManager->getProjectType();
                 ?>
                 <div id="editdiv" style="display:<?php echo ($spprid?'none':'block'); ?>;position:relative;">
@@ -290,8 +291,8 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                             <?php
                             if($spprid){
                                 ?>
-                                <div style="position:absolute;top:10px;right:10px;" onclick="toggle('editdiv');toggle('imgprocessdiv')" title="Close Editor">
-                                    <i style="height:20px;width:20px;" class="far fa-edit"></i>
+                                <div style="display:flex;justify-content:flex-end;" onclick="toggle('editdiv');toggle('imgprocessdiv')" title="Close Editor">
+                                    <i style="height:20px;width:20px;cursor:pointer;" class="far fa-edit"></i>
                                 </div>
                                 <input name="projecttype" type="hidden" value="<?php echo $projectType; ?>" />
                                 <?php
@@ -517,7 +518,8 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                                 <input name="spprid" type="hidden" value="<?php echo $spprid; ?>" />
                                 <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
                                 <input name="tabindex" type="hidden" value="1" />
-                                <input id="profileEditSubmit" name="submitaction" type="submit" value="Save Profile" />
+                                <input id="profileEditSubmit" name="submitaction" type="hidden" value="Save Image Profile" />
+                                <button type="submit">Save Profile</button>
                             </div>
                         </fieldset>
                     </form>
@@ -531,7 +533,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                                     <input name="sppriddel" type="hidden" value="<?php echo $spprid; ?>" />
                                     <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
                                     <input name="tabindex" type="hidden" value="1" />
-                                    <input name="submitaction" type="submit" value="Delete Profile" />
+                                    <input name="submitaction" type="submit" value="Delete Image Profile" />
                                 </div>
                             </fieldset>
                         </form>
@@ -546,11 +548,8 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                         <form name="imgprocessform" action="../management/processor.php" method="post" enctype="multipart/form-data" onsubmit="return validateProcForm(this);">
                             <fieldset style="padding:15px;">
                                 <legend><b><?php echo $specManager->getTitle(); ?></b></legend>
-                                <div style="position:absolute;top:10px;right:35px;" title="Show all saved profiles or add a new one...">
-                                    <a href="../management/index.php?tabindex=1&collid=<?php echo $collid; ?>"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
-                                </div>
-                                <div style="position:absolute;top:10px;right:10px;" title="Open Editor">
-                                    <a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
+                                <div style="display:flex;justify-content:flex-end;" title="Open Editor">
+                                    <a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><i style="height:20px;width:20px;cursor:pointer;" class="far fa-edit"></i></a>
                                 </div>
                                 <div style="margin-top:10px;clear:both;">
                                     <div style="width:200px;float:left;">
