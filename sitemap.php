@@ -82,10 +82,10 @@ $smManager = new SiteMapManager();
                         <h3>Administrative Tools</h3>
                         <ul>
                             <li>
-                                <a href="admin/portalConfigurationManager.php">Portal Configurations</a>
+                                <a href="admin/portal/index.php">Portal Configurations</a>
                             </li>
                             <li>
-                                <a href="admin/mappingConfigurationManager.php">Mapping Configurations</a>
+                                <a href="admin/mapping/index.php">Mapping Configurations</a>
                             </li>
                             <li>
                                 <a href="profile/usermanagement.php">User Management</a>
