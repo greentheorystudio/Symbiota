@@ -12,6 +12,7 @@ if(!$GLOBALS['SYMB_UID']) {
 
 $collid = (int)$_REQUEST['collid'];
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $isEditor = 0;
 if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){

@@ -601,17 +601,7 @@ class SpecProcessorManager {
 	}
 
 	public function getSourcePathDefault(){
-		$sourcePath = $this->sourcePath;
-		if(!$sourcePath && $this->projectType === 'iplant' && $GLOBALS['IPLANT_IMAGE_IMPORT_PATH']){
-			$sourcePath = $GLOBALS['IPLANT_IMAGE_IMPORT_PATH'];
-			if(strpos($sourcePath, '--INSTITUTION_CODE--')) {
-				$sourcePath = str_replace('--INSTITUTION_CODE--', $this->institutionCode, $sourcePath);
-			}
-			if(strpos($sourcePath, '--COLLECTION_CODE--')) {
-				$sourcePath = str_replace('--COLLECTION_CODE--', $this->collectionCode, $sourcePath);
-			}
-		}
-		return $sourcePath;
+		return $this->sourcePath;
 	}
 
 	public function setTargetPath($p): void
