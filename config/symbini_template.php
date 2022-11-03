@@ -26,7 +26,6 @@ $GLOBALS['IMAGE_ROOT_PATH'] = $GLOBALS['SERVER_ROOT'].'/content/imglib';			//Wri
 $GLOBALS['IMG_WEB_WIDTH'] = 1400;
 $GLOBALS['IMG_TN_WIDTH'] = 200;
 $GLOBALS['IMG_LG_WIDTH'] = 3200;
-$GLOBALS['IPLANT_IMAGE_IMPORT_PATH'] = '';		//Path used to map/import images uploaded to the iPlant image server (e.g. /home/shared/project-name/--INSTITUTION_CODE--/, the --INSTITUTION_CODE-- text will be replaced with collection's institution code)
 
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
