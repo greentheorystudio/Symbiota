@@ -164,7 +164,6 @@ elseif($activeCollArr){
 			if($collid && is_numeric($collid)){
 				?>
 				<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-				<a href="index.php?collid=<?php echo $collid; ?>&emode=1">Data Cleaning Tools</a> &gt;&gt;
 				<?php
 			}
 			else{

@@ -248,6 +248,16 @@ if($GLOBALS['SYMB_UID']){
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="../management/politicalunits.php?collid=<?php echo $collid; ?>">
+                                        Geography Cleaning Module
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../management/taxonomycleaner.php?collid=<?php echo $collid; ?>">
+                                        Taxonomy Cleaning Module
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="../datasets/datapublisher.php?collid=<?php echo $collid; ?>">
                                         Darwin Core Archive Publishing
                                     </a>

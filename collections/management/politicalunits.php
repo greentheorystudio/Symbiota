@@ -130,8 +130,7 @@ if($action && $isEditor){
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=off">Collection Management</a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>">Data Cleaning Tools</a> &gt;&gt;
-        <b>Geography Cleaning Module</b>
+		<b>Geography Cleaning Module</b>
 		<?php 
 		if($mode) {
             echo '&gt;&gt; <a href="politicalunits.php?collid=' . $collid . '"><b>Political Geography Cleaning Menu</b></a>';

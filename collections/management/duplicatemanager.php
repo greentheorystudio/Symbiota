@@ -237,26 +237,51 @@ if($isEditor && $formSubmit){
             </div>
             <?php
         }
-        else {
+        else{
+            if($collMap['colltype'] !== 'General Observations'){
+                ?>
+                <div style="margin: 10px 0;">
+                    <h3>Duplicate Records</h3>
+                    <div style="margin:0 0 40px 15px;">
+                        <ul>
+                            <li>
+                                <a href="duplicatesearch.php?collid=<?php echo $collId; ?>&action=listdupscatalog">
+                                    List Duplicate Catalog Numbers
+                                </a>
+                            </li>
+                            <li>
+                                <a href="duplicatesearch.php?collid=<?php echo $collId; ?>&action=listdupsothercatalog">
+                                    List Duplicate Other Catalog Numbers
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <?php
+            }
             ?>
-            <fieldset style="padding:20px;">
-                <legend><b>Duplicate Linkages</b></legend>
-                <div style="margin:25px;font-weight:bold;font-size:120%;">
-                    <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>&action=listdupes">
-                        List linked duplicate clusters
-                    </a>
+            <div style="margin: 10px 0;">
+                <h3>Duplicate Linkages</h3>
+                <div style="margin:0 0 40px 15px;">
+                    <ul>
+                        <li>
+                            <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>&action=listdupes">
+                                List linked duplicates
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>&dupedepth=2&action=listdupeconflicts">
+                                List linked duplicates with conflicted identification conflicts
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>&action=batchlinkdupes">
+                                Start batch linking duplicates
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <div style="margin:25px;font-weight:bold;font-size:120%;">
-                    <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>&dupedepth=2&action=listdupeconflicts">
-                        List linked duplicate clusters with conflicted identifications
-                    </a>
-                </div>
-                <div style="margin:25px;font-weight:bold;font-size:120%;">
-                    <a href="index.php?tabindex=2&collid=<?php echo $collId; ?>&action=batchlinkdupes">
-                        Start batch linking duplicates
-                    </a>
-                </div>
-            </fieldset>
+            </div>
             <?php
         }
     }
