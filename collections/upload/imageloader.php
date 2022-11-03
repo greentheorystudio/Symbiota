@@ -224,12 +224,14 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
     }
 </script>
 <div>
-    <div style="padding:15px;">
-        These tools are designed to aid collection managers in batch processing specimen images.
-        Contact portal manager for help in setting up a new workflow.
-        Once a profile is established, the collection manager can use this form to manually trigger image processing.
-    </div>
     <?php
+    if($spprid){
+        ?>
+        <div style="display:flex;justify-content: flex-end;" title="Show all saved profiles or add a new one...">
+            <a href="index.php?tabindex=1&collid=<?php echo $collid; ?>"><i style="height:20px;width:20px;color:green;cursor:pointer;" class="fas fa-plus"></i></a>
+        </div>
+        <?php
+    }
     if($GLOBALS['SYMB_UID']){
         if($collid){
             if($fileName){
@@ -290,8 +292,8 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                             <?php
                             if($spprid){
                                 ?>
-                                <div style="position:absolute;top:10px;right:10px;" onclick="toggle('editdiv');toggle('imgprocessdiv')" title="Close Editor">
-                                    <i style="height:20px;width:20px;" class="far fa-edit"></i>
+                                <div style="display:flex;justify-content:flex-end;" onclick="toggle('editdiv');toggle('imgprocessdiv')" title="Close Editor">
+                                    <i style="height:20px;width:20px;cursor:pointer;" class="far fa-edit"></i>
                                 </div>
                                 <input name="projecttype" type="hidden" value="<?php echo $projectType; ?>" />
                                 <?php
@@ -546,11 +548,8 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                         <form name="imgprocessform" action="../management/processor.php" method="post" enctype="multipart/form-data" onsubmit="return validateProcForm(this);">
                             <fieldset style="padding:15px;">
                                 <legend><b><?php echo $specManager->getTitle(); ?></b></legend>
-                                <div style="position:absolute;top:10px;right:35px;" title="Show all saved profiles or add a new one...">
-                                    <a href="../management/index.php?tabindex=1&collid=<?php echo $collid; ?>"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
-                                </div>
-                                <div style="position:absolute;top:10px;right:10px;" title="Open Editor">
-                                    <a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
+                                <div style="display:flex;justify-content:flex-end;" title="Open Editor">
+                                    <a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><i style="height:20px;width:20px;cursor:pointer;" class="far fa-edit"></i></a>
                                 </div>
                                 <div style="margin-top:10px;clear:both;">
                                     <div style="width:200px;float:left;">
