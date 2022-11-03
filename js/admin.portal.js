@@ -219,6 +219,22 @@ function processServerWritePathConfigurationChange(configname,oldValue){
     }
 }
 
+function processTaxonomyRankCheckChange(action){
+    const rankArr = [];
+    const checkBoxes = document.getElementsByClassName('taxonomy-checkbox');
+    for(let i in checkBoxes){
+        if(checkBoxes.hasOwnProperty(i) && checkBoxes[i].checked === true){
+            rankArr.push(Number(checkBoxes[i].value));
+        }
+    }
+    if(action === 'add'){
+        sendAPIRequest('add','TAXONOMIC_RANKS',JSON.stringify(rankArr));
+    }
+    else if(action === 'update'){
+        sendAPIRequest('update','TAXONOMIC_RANKS',JSON.stringify(rankArr),false);
+    }
+}
+
 function processTextConfigurationChange(configname,oldValue,required){
     const configvalue = document.getElementById(configname).value;
     if(configvalue !== ""){

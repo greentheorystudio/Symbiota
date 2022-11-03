@@ -33,22 +33,6 @@ $confManager = new ConfigurationManager();
                 }
             });
         });
-
-        function processTaxonomyRankCheckChange(action){
-            const rankArr = [];
-            const checkBoxes = document.getElementsByClassName('taxonomy-checkbox');
-            for(let i in checkBoxes){
-                if(checkBoxes.hasOwnProperty(i) && checkBoxes[i].checked === true){
-                    rankArr.push(Number(checkBoxes[i].value));
-                }
-            }
-            if(action === 'add'){
-                sendAPIRequest('add','TAXONOMIC_RANKS',JSON.stringify(rankArr),false);
-            }
-            else if(action === 'update'){
-                sendAPIRequest('update','TAXONOMIC_RANKS',JSON.stringify(rankArr),false);
-            }
-        }
     </script>
 </head>
 <body>
