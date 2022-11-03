@@ -1,12 +1,12 @@
 <?php
 /** @var int $collid */
 /** @var int $isEditor */
-/** @var string $action */
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
 
 $spprid = array_key_exists('spprid',$_REQUEST)?(int)$_REQUEST['spprid']:0;
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $specManager = new SpecProcessorManager();
 $specManager->setCollId($collid);
