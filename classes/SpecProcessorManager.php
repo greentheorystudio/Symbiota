@@ -110,40 +110,22 @@ class SpecProcessorManager {
 			if($sourcePath === '-- Use Default Path --') {
 				$sourcePath = '';
 			}
-			if($addArr['projecttype'] === 'idigbio'){
-				$sql = 'INSERT INTO specprocessorprojects(collid,title,speckeypattern,patternreplace,replacestr,projecttype,sourcepath) '.
-					'VALUES('.$this->collid.',"iDigBio CSV upload","'.$this->cleanInStr($addArr['speckeypattern']).'",'.
-					($addArr['patternreplace']?'"'.$this->cleanInStr($addArr['patternreplace']).'"':'NULL').','.
-					($addArr['replacestr']?'"'.$this->conn->real_escape_string($addArr['replacestr']).'"':'NULL').','.
-					($addArr['projecttype']?'"'.$this->cleanInStr($addArr['projecttype']).'"':'NULL').','.
-					($sourcePath?'"'.$this->cleanInStr($sourcePath).'"':'NULL').')';
-			}
-			elseif($addArr['projecttype'] === 'iplant'){
-				$sql = 'INSERT INTO specprocessorprojects(collid,title,speckeypattern,patternreplace,replacestr,projecttype,sourcepath) '.
-					'VALUES('.$this->collid.',"IPlant Image Processing","'.$this->cleanInStr($addArr['speckeypattern']).'",'.
-					($addArr['patternreplace']?'"'.$this->cleanInStr($addArr['patternreplace']).'"':'NULL').','.
-					($addArr['replacestr']?'"'.$this->conn->real_escape_string($addArr['replacestr']).'"':'NULL').','.
-					($addArr['projecttype']?'"'.$this->cleanInStr($addArr['projecttype']).'"':'NULL').','.
-					($sourcePath?'"'.$this->cleanInStr($sourcePath).'"':'NULL').')';
-			}
-			elseif($addArr['projecttype'] === 'local'){
-				$sql = 'INSERT INTO specprocessorprojects(collid,title,speckeypattern,patternreplace,replacestr,projecttype,sourcepath,targetpath,'.
-					'imgurl,webpixwidth,tnpixwidth,lgpixwidth,jpgcompression,createtnimg,createlgimg) '.
-					'VALUES('.$this->collid.',"'.$this->cleanInStr($addArr['title']).'","'.
-					$this->cleanInStr($addArr['speckeypattern']).'",'.
-					($addArr['patternreplace']?'"'.$this->cleanInStr($addArr['patternreplace']).'"':'NULL').','.
-					($addArr['replacestr']?'"'.$this->conn->real_escape_string($addArr['replacestr']).'"':'NULL').','.
-					($addArr['projecttype']?'"'.$this->cleanInStr($addArr['projecttype']).'"':'NULL').','.
-					($sourcePath?'"'.$this->cleanInStr($sourcePath).'"':'NULL').','.
-					(isset($addArr['targetpath'])&&$addArr['targetpath']?'"'.$this->cleanInStr($addArr['targetpath']).'"':'NULL').','.
-					(isset($addArr['imgurl'])&&$addArr['imgurl']?'"'.$addArr['imgurl'].'"':'NULL').','.
-					(isset($addArr['webpixwidth'])&&$addArr['webpixwidth']?$addArr['webpixwidth']:'NULL').','.
-					(isset($addArr['tnpixwidth'])&&$addArr['tnpixwidth']?$addArr['tnpixwidth']:'NULL').','.
-					(isset($addArr['lgpixwidth'])&&$addArr['lgpixwidth']?$addArr['lgpixwidth']:'NULL').','.
-					(isset($addArr['jpgcompression'])&&$addArr['jpgcompression']?$addArr['jpgcompression']:'NULL').','.
-					(isset($addArr['createtnimg'])&&$addArr['createtnimg']?$addArr['createtnimg']:'NULL').','.
-					(isset($addArr['createlgimg'])&&$addArr['createlgimg']?$addArr['createlgimg']:'NULL').')';
-			}
+            $sql = 'INSERT INTO specprocessorprojects(collid,title,speckeypattern,patternreplace,replacestr,projecttype,sourcepath,targetpath,'.
+                'imgurl,webpixwidth,tnpixwidth,lgpixwidth,jpgcompression,createtnimg,createlgimg) '.
+                'VALUES('.$this->collid.',"'.$this->cleanInStr($addArr['title']).'","'.
+                $this->cleanInStr($addArr['speckeypattern']).'",'.
+                ($addArr['patternreplace']?'"'.$this->cleanInStr($addArr['patternreplace']).'"':'NULL').','.
+                ($addArr['replacestr']?'"'.$this->conn->real_escape_string($addArr['replacestr']).'"':'NULL').','.
+                ($addArr['projecttype']?'"'.$this->cleanInStr($addArr['projecttype']).'"':'NULL').','.
+                ($sourcePath?'"'.$this->cleanInStr($sourcePath).'"':'NULL').','.
+                (isset($addArr['targetpath'])&&$addArr['targetpath']?'"'.$this->cleanInStr($addArr['targetpath']).'"':'NULL').','.
+                (isset($addArr['imgurl'])&&$addArr['imgurl']?'"'.$addArr['imgurl'].'"':'NULL').','.
+                (isset($addArr['webpixwidth'])&&$addArr['webpixwidth']?$addArr['webpixwidth']:'NULL').','.
+                (isset($addArr['tnpixwidth'])&&$addArr['tnpixwidth']?$addArr['tnpixwidth']:'NULL').','.
+                (isset($addArr['lgpixwidth'])&&$addArr['lgpixwidth']?$addArr['lgpixwidth']:'NULL').','.
+                (isset($addArr['jpgcompression'])&&$addArr['jpgcompression']?$addArr['jpgcompression']:'NULL').','.
+                (isset($addArr['createtnimg'])&&$addArr['createtnimg']?$addArr['createtnimg']:'NULL').','.
+                (isset($addArr['createlgimg'])&&$addArr['createlgimg']?$addArr['createlgimg']:'NULL').')';
 		}
 		if($sql && !$this->conn->query($sql)) {
 			echo 'ERROR saving project.';
@@ -163,7 +145,7 @@ class SpecProcessorManager {
 			$sqlWhere .= 'WHERE (spprid = '.$crit.')';
 		}
 		if($sqlWhere){
-			$sql = 'SELECT collid, title, speckeypattern, patternreplace, replacestr,coordx1, coordx2, coordy1, coordy2, sourcepath, targetpath, '.
+			$sql = 'SELECT collid, title, projecttype, speckeypattern, patternreplace, replacestr,coordx1, coordx2, coordy1, coordy2, sourcepath, targetpath, '.
 				'imgurl, webpixwidth, tnpixwidth, lgpixwidth, jpgcompression, createtnimg, createlgimg, source '.
 				'FROM specprocessorprojects '.$sqlWhere;
 			//echo $sql;
@@ -198,15 +180,7 @@ class SpecProcessorManager {
 				$this->createTnImg = $row->createtnimg;
 				$this->createLgImg = $row->createlgimg;
 				$this->lastRunDate = $row->source;
-				if($this->title === 'iDigBio CSV upload'){
-					$this->projectType = 'idigbio';
-				}
-				elseif($this->title === 'IPlant Image Processing'){
-					$this->projectType = 'iplant';
-				}
-				else{
-					$this->projectType = 'local';
-				}
+                $this->projectType = $row->projecttype;
 			}
 			$rs->free();
 
@@ -551,7 +525,7 @@ class SpecProcessorManager {
 	{
 		$retArr = array();
 		if($this->collid){
-			$GLOBALS['LOG_PATHFrag'] = ($this->projectType === 'local'?'imgProccessing':$this->projectType).'/';
+			$GLOBALS['LOG_PATHFrag'] = 'imgProccessing/';
 			if(file_exists($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag']) && $fh = opendir($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag'])) {
 				while($fileName = readdir($fh)){
 					if(strpos($fileName,$this->collid.'_') === 0){

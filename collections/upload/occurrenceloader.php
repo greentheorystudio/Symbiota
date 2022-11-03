@@ -9,7 +9,7 @@ include_once(__DIR__ . '/../../classes/SpecUploadFile.php');
 include_once(__DIR__ . '/../../classes/SpecUploadDwca.php');
 
 $uspid = array_key_exists('uspid',$_REQUEST)?(int)$_REQUEST['uspid']:0;
-$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
+$occAction = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $uploadType = array_key_exists('uploadtype',$_REQUEST)?htmlspecialchars($_REQUEST['uploadtype']):'';
 $autoMap = array_key_exists('automap',$_POST);
 $ulPath = array_key_exists('ulpath',$_REQUEST)?htmlspecialchars($_REQUEST['ulpath']): '';
@@ -57,37 +57,37 @@ $specUploadManager = new SpecUpload();
 if($isEditor){
     $specUploadManager->setCollId($collid);
     $specUploadManager->setUspid($uspid);
-    if($action === 'Automap Fields'){
+    if($occAction === 'Automap Fields'){
         $autoMap = true;
     }
-    elseif($action === 'Save Edits'){
+    elseif($occAction === 'Save Edits'){
         if($specUploadManager->editUploadProfile($_POST)){
             $statusStr = 'SUCCESS: Edits to import profile have been applied';
         }
         else{
             $statusStr = $specUploadManager->getErrorStr();
         }
-        $action = '';
+        $occAction = '';
         $uploadType = 0;
     }
-    elseif($action === 'Create Profile'){
+    elseif($occAction === 'Create Profile'){
         if($specUploadManager->createUploadProfile($_POST)){
             $statusStr = 'SUCCESS: New upload profile added';
         }
         else{
             $statusStr = $specUploadManager->getErrorStr();
         }
-        $action = '';
+        $occAction = '';
         $uploadType = 0;
     }
-    elseif($action === 'Delete Profile'){
+    elseif($occAction === 'Delete Profile'){
         if($specUploadManager->deleteUploadProfile($uspid)){
             $statusStr = 'SUCCESS: Upload Profile Deleted';
         }
         else{
             $statusStr = $specUploadManager->getErrorStr();
         }
-        $action = '';
+        $occAction = '';
         $uploadType = 0;
     }
 }
@@ -133,7 +133,7 @@ if($uploadType){
     }
 
     if(array_key_exists('sf',$_POST)){
-        if($action === 'Reset Field Mapping'){
+        if($occAction === 'Reset Field Mapping'){
             $statusStr = $duManager->deleteFieldMap();
         }
         else{
@@ -185,7 +185,7 @@ if($uploadType){
                 $duManager->setImageFieldMap($fieldImMap);
             }
         }
-        if($action === 'Save Mapping'){
+        if($occAction === 'Save Mapping'){
             $statusStr = $duManager->saveFieldMap(array_key_exists('profiletitle',$_POST)?$_POST['profiletitle']:'');
             if(!$uspid) {
                 $uspid = $duManager->getUspid();
@@ -198,7 +198,7 @@ $specUploadManager->readUploadParameters();
 ?>
 <script>
     $(document).ready(function() {
-        <?php echo (($uspid && ($action === 'addprofile' || $action === 'editprofile'))?'adjustParameterForm();':''); ?>
+        <?php echo (($uspid && ($occAction === 'addprofile' || $occAction === 'editprofile'))?'adjustParameterForm();':''); ?>
     });
 
     function checkUploadListForm(f){
@@ -456,7 +456,7 @@ $specUploadManager->readUploadParameters();
         if($isEditor && $collid){
             echo '<div style="font-weight:bold;font-size:130%;">'.$duManager->getCollInfo('name').'</div>';
             echo '<div style="margin:0 0 15px 15px;"><b>Last Upload Date:</b> '.($duManager->getCollInfo('uploaddate')?:'not recorded').'</div>';
-            if($action === 'addprofile' || $action === 'editprofile') {
+            if($occAction === 'addprofile' || $occAction === 'editprofile') {
                 ?>
                 <div style="clear:both;">
                     <fieldset>
@@ -625,8 +625,8 @@ $specUploadManager->readUploadParameters();
                 </form>
                 <?php
             }
-            if($uploadType && $action !== 'addprofile' && $action !== 'editprofile'){
-                if(($action === 'Start Upload') || (!$action && ($uploadType === $STOREDPROCEDURE || $uploadType === $SCRIPTUPLOAD))){
+            if($uploadType && $occAction !== 'addprofile' && $occAction !== 'editprofile'){
+                if(($occAction === 'Start Upload') || (!$occAction && ($uploadType === $STOREDPROCEDURE || $uploadType === $SCRIPTUPLOAD))){
                     echo "<div style='font-weight:bold;font-size:120%'>Upload Status:</div>";
                     echo "<ul style='margin:10px;font-weight:bold;'>";
                     $duManager->uploadData($finalTransfer);
@@ -750,7 +750,7 @@ $specUploadManager->readUploadParameters();
                         <?php
                     }
                 }
-                elseif($action === 'Transfer Records to Central Occurrence Table' || $finalTransfer){
+                elseif($occAction === 'Transfer Records to Central Occurrence Table' || $finalTransfer){
                     echo '<ul>';
                     $duManager->finalTransfer();
                     echo '</ul>';
