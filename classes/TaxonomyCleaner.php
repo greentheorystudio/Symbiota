@@ -58,7 +58,7 @@ class TaxonomyCleaner extends Manager{
 		}
 		$endIndex = 0;
 		echo '<li>Starting taxa check</li>';
-		$sql = 'SELECT sciname, family, scientificnameauthorship, count(*) as cnt '.$this->getSqlFragment();
+		$sql = 'SELECT sciname, family, scientificnameauthorship, count(*) AS cnt '.$this->getSqlFragment();
 		if($startIndex) {
 			$sql .= 'AND (sciname > "' . Sanitizer::cleanInStr($this->conn,$startIndex) . '") ';
 		}
@@ -176,7 +176,7 @@ class TaxonomyCleaner extends Manager{
 
 	private function getSqlFragment(): string
 	{
-		return 'FROM omoccurrences WHERE (collid IN('.$this->collid.')) AND (tidinterpreted IS NULL) AND (sciname IS NOT NULL) AND (sciname NOT LIKE "% x %") AND (sciname NOT LIKE "% × %") ';
+		return 'FROM omoccurrences WHERE collid IN('.$this->collid.') AND ISNULL(tidinterpreted) AND sciname IS NOT NULL AND sciname NOT LIKE "% x %" AND sciname NOT LIKE "% × %" ';
 	}
 
 	public function deepIndexTaxa(): void
@@ -188,19 +188,19 @@ class TaxonomyCleaner extends Manager{
 			$kingdomName = array_pop($targetKingdomStr);
 		}
 
-		$this->logOrEcho('Cleaning leading and trailing spaces...');
+		$this->logOrEcho('Cleaning leading and trailing spaces');
 		$sql = 'UPDATE omoccurrences '.
-			'SET sciname = trim(sciname) '.
-			'WHERE (collid IN('.$this->collid.')) AND (tidinterpreted is NULL) AND (sciname LIKE " %" OR sciname LIKE "% ")';
+			'SET sciname = TRIM(sciname) '.
+			'WHERE collid IN('.$this->collid.') AND ISNULL(tidinterpreted) AND (sciname LIKE " %" OR sciname LIKE "% ")';
 		if($this->conn->query($sql)){
 			$this->logOrEcho($this->conn->affected_rows.' occurrence records cleaned',1);
 		}
 		flush();
 
-		$this->logOrEcho('Cleaning double spaces embedded within name...');
+		$this->logOrEcho('Cleaning double spaces embedded within name');
 		$sql = 'UPDATE omoccurrences '.
-			'SET sciname = replace(sciname, "  ", " ") '.
-			'WHERE (collid IN('.$this->collid.')) AND (tidinterpreted is NULL) AND (sciname LIKE "%  %") ';
+			'SET sciname = REPLACE(sciname, "  ", " ") '.
+			'WHERE collid IN('.$this->collid.') AND ISNULL(tidinterpreted) AND sciname LIKE "%  %" ';
 		if($this->conn->query($sql)){
 			$this->logOrEcho($this->conn->affected_rows.' occurrence records cleaned',1);
 		}
@@ -208,11 +208,11 @@ class TaxonomyCleaner extends Manager{
 
 		$this->indexOccurrenceTaxa();
 
-		$this->logOrEcho('Indexing names based on matching trinomials without taxonRank designation...');
+		$this->logOrEcho('Indexing names based on matching trinomials without taxonRank designation');
 		$triCnt = 0;
 		$sql = 'SELECT DISTINCT o.sciname, t.tid '.
-			'FROM omoccurrences o INNER JOIN taxa t ON o.sciname = CONCAT_WS(" ",t.unitname1,t.unitname2,t.unitname3) '.
-			'WHERE (o.collid IN('.$this->collid.')) AND (t.rankid IN(230,240)) AND (o.sciname LIKE "% % %") AND (o.tidinterpreted IS NULL) ';
+			'FROM omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = CONCAT_WS(" ",t.unitname1,t.unitname2,t.unitname3) '.
+			'WHERE o.collid IN('.$this->collid.') AND t.rankid IN(230,240) AND o.sciname LIKE "% % %" AND ISNULL(o.tidinterpreted) ';
 		if($kingdomName) {
 			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
 		}
@@ -225,10 +225,10 @@ class TaxonomyCleaner extends Manager{
 		$this->logOrEcho($triCnt.' occurrence records remapped',1);
 		flush();
 
-		$this->logOrEcho('Indexing names ending in &quot;sp.&quot;...');
-		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON SUBSTRING(o.sciname,1, CHAR_LENGTH(o.sciname) - 4) = t.sciname '.
+		$this->logOrEcho('Indexing names ending in sp.');
+		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON SUBSTRING(o.sciname,1, CHAR_LENGTH(o.sciname) - 4) = t.sciname '.
 			'SET o.tidinterpreted = t.tid '.
-			'WHERE (o.collid IN('.$this->collid.')) AND (o.sciname LIKE "% sp.") AND (o.tidinterpreted IS NULL) ';
+			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% sp." AND ISNULL(o.tidinterpreted) ';
 		if($kingdomName) {
 			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
 		}
@@ -237,10 +237,10 @@ class TaxonomyCleaner extends Manager{
 		}
 		flush();
 
-		$this->logOrEcho('Indexing names containing &quot;spp.&quot;...');
-		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON REPLACE(o.sciname," spp.","") = t.sciname '.
+		$this->logOrEcho('Indexing names containing spp.');
+		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," spp.","") = t.sciname '.
 			'SET o.tidinterpreted = t.tid '.
-			'WHERE (o.collid IN('.$this->collid.')) AND (o.sciname LIKE "% spp.%") AND (o.tidinterpreted IS NULL) ';
+			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% spp.%" AND ISNULL(o.tidinterpreted) ';
 		if($kingdomName) {
 			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
 		}
@@ -249,20 +249,20 @@ class TaxonomyCleaner extends Manager{
 		}
 		flush();
 
-		$this->logOrEcho('Indexing names containing &quot;cf.&quot;...');
+		$this->logOrEcho('Indexing names containing cf.');
 		$cnt = 0;
-		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON REPLACE(o.sciname," cf. "," ") = t.sciname '.
+		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," cf. "," ") = t.sciname '.
 			'SET o.tidinterpreted = t.tid '.
-			'WHERE (o.collid IN('.$this->collid.')) AND (o.sciname LIKE "% cf. %") AND (o.tidinterpreted IS NULL) ';
+			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% cf. %" AND ISNULL(o.tidinterpreted) ';
 		if($kingdomName) {
 			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
 		}
 		if($this->conn->query($sql)){
 			$cnt = $this->conn->affected_rows;
 		}
-		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON REPLACE(o.sciname," cf "," ") = t.sciname '.
+		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," cf "," ") = t.sciname '.
 			'SET o.tidinterpreted = t.tid '.
-			'WHERE (o.collid IN('.$this->collid.')) AND (o.sciname LIKE "% cf %") AND (o.tidinterpreted IS NULL) ';
+			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% cf %" AND ISNULL(o.tidinterpreted) ';
 		if($kingdomName) {
 			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
 		}
@@ -272,10 +272,10 @@ class TaxonomyCleaner extends Manager{
 		}
 		flush();
 
-		$this->logOrEcho('Indexing names containing &quot;aff.&quot;...');
-		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON REPLACE(o.sciname," aff. "," ") = t.sciname '.
+		$this->logOrEcho('Indexing names containing aff.');
+		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," aff. "," ") = t.sciname '.
 			'SET o.tidinterpreted = t.tid '.
-			'WHERE (o.collid IN('.$this->collid.')) AND (o.sciname LIKE "% aff. %") AND (o.tidinterpreted IS NULL) ';
+			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% aff. %" AND ISNULL(o.tidinterpreted) ';
 		if($kingdomName) {
 			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
 		}
@@ -284,10 +284,10 @@ class TaxonomyCleaner extends Manager{
 		}
 		flush();
 
-		$this->logOrEcho('Indexing names containing &quot;group&quot; statements...');
-		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON REPLACE(o.sciname," group"," ") = t.sciname '.
+		$this->logOrEcho('Indexing names containing group statements');
+		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," group"," ") = t.sciname '.
 			'SET o.tidinterpreted = t.tid '.
-			'WHERE (o.collid IN('.$this->collid.')) AND (o.sciname LIKE "% group%") AND (o.tidinterpreted IS NULL) ';
+			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% group%" AND ISNULL(o.tidinterpreted) ';
 		if($kingdomName) {
 			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
 		}
@@ -300,10 +300,10 @@ class TaxonomyCleaner extends Manager{
 	private function indexOccurrenceTaxa(): void
 	{
 		$this->logOrEcho('Populating null kingdom name tags...');
-		$sql = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
+		$sql = 'UPDATE taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
+			'INNER JOIN taxa AS t2 ON e.parenttid = t2.tid '.
 			'SET t.kingdomname = t2.sciname '.
-			'WHERE (t2.rankid = 10) AND ISNULL(t.kingdomName)';
+			'WHERE t2.rankid = 10 AND ISNULL(t.kingdomName) ';
 		if($this->conn->query($sql)){
 			$this->logOrEcho($this->conn->affected_rows.' taxon records updated',1);
 		}
@@ -313,11 +313,11 @@ class TaxonomyCleaner extends Manager{
 		flush();
 
 		$this->logOrEcho('Populating null family tags...');
-		$sql = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
+		$sql = 'UPDATE taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
+			'INNER JOIN taxa AS t2 ON e.parenttid = t2.tid '.
+			'INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
 			'SET ts.family = t2.sciname '.
-			'WHERE (t2.rankid = 140) AND ISNULL(ts.family)';
+			'WHERE t2.rankid = 140 AND ISNULL(ts.family) ';
 		if($this->conn->query($sql)){
 			$this->logOrEcho($this->conn->affected_rows.' taxon records updated',1);
 		}
@@ -327,9 +327,9 @@ class TaxonomyCleaner extends Manager{
 		flush();
 
 		$this->logOrEcho('Indexing names based on exact matches...');
-		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname '.
+		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = t.sciname '.
 			'SET o.tidinterpreted = t.tid '.
-			'WHERE (o.collid IN('.$this->collid.')) AND (o.tidinterpreted IS NULL) ';
+			'WHERE o.collid IN('.$this->collid.') AND ISNULL(o.tidinterpreted) ';
 		if($this->targetKingdom) {
 			$sql .= 'AND t.kingdomname = "' . $this->targetKingdom . '" ';
 		}
@@ -470,7 +470,7 @@ class TaxonomyCleaner extends Manager{
 				if($tokenArr){
 					$token = array_shift($tokenArr);
 					if($tokenArr){
-						$sql .= 'AND (unitind3 LIKE "'.$token.'%") AND (unitname3 LIKE "'.array_shift($tokenArr).'%") ';
+						$sql .= 'AND unitind3 LIKE "'.$token.'%" AND unitname3 LIKE "'.array_shift($tokenArr).'%" ';
 					}
 					else{
 						$sql .= 'AND (unitind3 LIKE "'.$token.'%" OR unitname3 LIKE "'.$token.'%") ';
@@ -480,7 +480,7 @@ class TaxonomyCleaner extends Manager{
 			if($this->targetKingdom){
 				$kingdomStr = explode(':',$this->targetKingdom);
 				$kingdomName = array_pop($kingdomStr);
-				$sql .= 'AND (kingdomname IS NULL OR kingdomname = "'.$kingdomName.'") ';
+				$sql .= 'AND (ISNULL(kingdomname) OR kingdomname = "'.$kingdomName.'") ';
 			}
 			$sql .= 'LIMIT 30';
 			//echo $sql;
