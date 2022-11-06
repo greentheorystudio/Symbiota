@@ -153,7 +153,7 @@ if($editor && $submitAction){
 				</div>
 				<div class='navpath' style="margin:10px;">
 					<a href='../../index.php'>Home</a> &gt;&gt;
-                    <a href='../misc/collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Control Menu</a> &gt;&gt;
+                    <a href='../misc/collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Management Panel</a> &gt;&gt;
 					<b>Batch Georeferencing Tools</b>
 				</div>
 				<?php

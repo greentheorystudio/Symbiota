@@ -6,7 +6,7 @@ include_once(__DIR__ . '/Sanitizer.php');
 
 class TaxonomyCleaner extends Manager{
 
-	private $collid;
+	private $collid = 0;
 	private $targetKingdom;
 	private $autoClean = 0;
 	private $testValidity = 1;
@@ -521,7 +521,7 @@ class TaxonomyCleaner extends Manager{
 
 	public function setCollId($collid): void
 	{
-		if(preg_match('/^[\d,]+$/',$collid)){
+		if(is_numeric($collid)){
 			$this->collid = $collid;
 		}
 	}
