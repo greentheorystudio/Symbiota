@@ -54,7 +54,7 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Image Submission</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Create New Record From Image</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
@@ -108,8 +108,8 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-		<b>Occurrence Image Submission</b>
+		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+		<b>Create New Record From Image</b>
 	</div>
 	<div id="innertext">
 		<h1><?php echo $collMap['collectionname']; ?></h1>

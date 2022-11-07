@@ -200,7 +200,7 @@ else{
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Table View</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Edit Existing Record</title>
     <style>
 		table.styledtable td {
 		    white-space: nowrap;
@@ -347,7 +347,7 @@ else{
                         else{
                             if(!$isGenObs || $GLOBALS['IS_ADMIN']){
                                 ?>
-                                <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management</a> &gt;&gt;
+                                <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
                                 <?php
                             }
                             if($isGenObs){
@@ -357,7 +357,7 @@ else{
                             }
                         }
                         ?>
-						<b>Occurrence Record Table View</b>
+						<b>Edit Existing Record</b>
 					</span>
                 <?php
 				echo $navStr; ?>

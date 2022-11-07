@@ -476,7 +476,7 @@ else{
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.($occId?'Occurrence Editor':'Create New Record'); ?></title>
     <link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
     <?php
     if($crowdSourceMode === 1){
@@ -592,20 +592,16 @@ else{
                 }
                 else if($isEditor === 1 || $isEditor === 2){
                     ?>
-                    <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1" onclick="return verifyLeaveForm()">Collection Management</a> &gt;&gt;
+                    <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1" onclick="return verifyLeaveForm()">Collection Control Panel</a> &gt;&gt;
                     <?php
                 }
                 if($occId) {
-                    echo '<a href="../individual/index.php?occid=' . $occId . '">Public Display</a> &gt;&gt;';
+                    echo '<b>Occurrence Editor</b>';
+                }
+                else{
+                    echo '<b>Create New Record</b>';
                 }
                 ?>
-                <b>
-                    <?php
-                    if($isEditor === 3) {
-                        echo 'Taxonomic ';
-                    }
-                    ?>
-                    Editor</b>
             </div>
         </div>
         <?php

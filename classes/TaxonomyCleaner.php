@@ -440,11 +440,6 @@ class TaxonomyCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function getTaxonomicResourceList(): array
-	{
-        return array('col' => 'Catalog of Life', 'worms' => 'World Register of Marine Species');
-	}
-
 	public function getTaxaSuggest($queryString): array
 	{
 		$retArr = array();

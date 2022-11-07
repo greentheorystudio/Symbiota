@@ -69,7 +69,7 @@ if($action && $isEditor){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Political Units Standardization</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Geography Cleaning Module</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
@@ -129,7 +129,7 @@ if($action && $isEditor){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=off">Collection Management</a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
 		<b>Geography Cleaning Module</b>
 		<?php 
 		if($mode) {

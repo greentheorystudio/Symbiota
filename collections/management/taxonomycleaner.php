@@ -28,51 +28,57 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Taxonomy Cleaning Module</title>
+		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> $Taxonomy Resolution Module</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/external/jquery-ui.css?ver=20220720?ver=3" type="text/css" rel="stylesheet" />
+        <style>
+            .processor-container {
+                width: 95%;
+                height: 700px;
+                margin: 20px auto;
+                display: flex;
+                justify-content: space-between;
+            }
+            .processor-control-container {
+                width: 40%;
+                height: 650px;
+                padding:5px;
+                border: 2px #aaaaaa solid;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+            }
+            .processor-accordion-panel {
+                width: 100%-2px;
+                height: 650px;
+                padding: 15px;
+            }
+            .processor-display {
+                width: 50%;
+                height: 650px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                font-family: Andale Mono, monospace;
+                background-color: #f5f5f5;
+                border: 2px black solid;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                border-radius: 10px;
+            }
+        </style>
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
-		<script src="../../js/external/jquery.js?ver=3" type="text/javascript"></script>
-		<script src="../../js/external/jquery-ui.js?ver=3" type="text/javascript"></script>
+		<script src="../../js/external/jquery.js" type="text/javascript"></script>
+		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+        <script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
 		<script>
-            const cache = {};
-
             $( document ).ready(function() {
-				$(".displayOnLoad").show();
-				$(".hideOnLoad").hide();
-
-				$(".taxon").each(function(){
-					$( this ).autocomplete({
-						minLength: 2,
-						autoFocus: true,
-						source: function( request, response ) {
-                            const term = request.term;
-                            if ( term in cache ) {
-								response( cache[ term ] );
-								return;
-							}
-							$.getJSON( "../../api/taxa/taxasuggest.php", request, function( data ) {
-								cache[ term ] = data;
-								response( data );
-							});
-						},
-						change: function(event,ui) {
-							if(ui.item == null && this.value.trim() !== ""){
-								alert("Scientific name not found in Thesaurus.");
-								this.focus();
-								this.form.tid.value = "";
-							}
-						},
-						focus: function( event, ui ) {
-							this.form.tid.value = ui.item.id;
-						},
-						select: function( event, ui ) {
-							this.form.tid.value = ui.item.id;
-						}
-					});
-				});
-			});
+				$("#processor-accordion").accordion({
+                    icons: null,
+                    collapsible: true,
+                    heightStyle: "fill"
+                });
+            });
 
 			function remappTaxon(oldName,targetTid,idQualifier,msgCode){
 				$.ajax({
@@ -102,39 +108,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 					remappTaxon(oldName, f.tid.value, '', itemCnt+"-c");
 				}
 			}
-
-			function checkSelectCollidForm(f){
-                let formVerified = false;
-                for(let h=0; h<f.length; h++){
-					if(f.elements[h].name === "collid[]" && f.elements[h].checked){
-						formVerified = true;
-						break;
-					}
-				}
-				if(!formVerified){
-					alert("Please choose at least one collection!");
-					return false;
-				}
-				return true;
-			}
-
-			function selectAllCollections(cbObj){
-                const cbStatus = cbObj.checked;
-                const f = cbObj.form;
-                for(let i=0; i<f.length; i++){
-					if(f.elements[i].name === "collid[]") f.elements[i].checked = cbStatus;
-				}
-			}
-
-			function verifyCleanerForm(f){
-				if(f.targetkingdom.value === ""){
-					alert("Select target kingdom for collection");
-					return false;
-				}
-				return true;
-			}
-		</script>
-		<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
+        </script>
 	</head>
 	<body>
 		<?php
@@ -145,16 +119,11 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 			<?php
 			if($collid && is_numeric($collid)){
 				?>
-				<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-				<?php
-			}
-			else{
-				?>
-				<a href="../../profile/viewprofile.php?tabindex=1">Occurrence Management</a> &gt;&gt;
+				<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
 				<?php
 			}
 			?>
-			<b>Occurrence Taxonomy Cleaning Module</b>
+			<b>$Taxonomy Resolution Module</b>
 		</div>
 		<div id="innertext">
 			<?php
@@ -185,78 +154,90 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                     $badSpecimenCount = $cleanManager->getBadSpecimenCount();
                     ?>
                 </div>
-                <div style="margin:20px;">
-                    <fieldset style="padding:20px;">
-                        <form name="maincleanform" action="taxonomycleaner.php" method="post" onsubmit="return verifyCleanerForm(this)">
-                            <div style="margin-bottom:15px;">
-                                <b>Occurrence records with scientific names that are not associated with the taxonomic thesaurus</b>
-                                <div style="margin-left:10px;margin-top:8px;">
-                                    <u>Records</u>: <?php echo $badSpecimenCount; ?><br/>
-                                    <u>Unique scientific names</u>: <?php echo $badTaxaCount; ?>
+                <div style="margin:15px 0;padding:10px;">
+                    <div style="margin-left:10px;margin-top:8px;font-weight:bold;font-size:1.3em;">
+                        <u>Occurrences not linked to taxonomic thesaurus</u>: <?php echo $badSpecimenCount; ?><br/>
+                        <u>Unique scientific names</u>: <?php echo $badTaxaCount; ?><br/>
+                        <div style="margin-top:5px;">
+                            Target Kingdom:
+                            <select id="targetkingdom">
+                                <option value="">Select Target Kingdom</option>
+                                <option value="">--------------------------</option>
+                                <?php
+                                $kingdomArr = $cleanManager->getKingdomArr();
+                                foreach($kingdomArr as $kTid => $kSciname){
+                                    echo '<option value="'.$kTid.':'.$kSciname.'" '.($targetKingdom === (int)$kTid?'SELECTED':'').'>'.$kSciname.'</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="processor-container">
+                    <div class="processor-control-container">
+                        <div id="processor-accordion">
+                            <h3 class="tabtitle">Resolve Names From Taxonomic Thesaurus</h3>
+                            <div class="processor-accordion-panel">
+                                Resolve occurrence record scientific names that are not yet linked with the Taxonomic Thesaurus
+                                to taxa currently in the Taxonomic Thesaurus.
+                                <div style="clear:both;display:flex;justify-content:flex-end;">
+                                    <div>
+                                        <button id="resolveFromTaxThesaurusStart" onclick="resolveFromTaxThesaurus();">Start</button>
+                                        <button id="resolveFromTaxThesaurusCancel" onclick="cancelResolveFromTaxThesaurus();" style="display:none;">Cancel</button>
+                                    </div>
+                                </div>
+                                <hr/>
+                                Update occurrence records already linked to the Taxonomic Thesaurus.
+                                <div style="clear:both;display:flex;justify-content:flex-end;">
+                                    <div>
+                                        <button id="updateWithTaxThesaurusStart" onclick="updateWithTaxThesaurus();">Start</button>
+                                        <button id="updateWithTaxThesaurusCancel" onclick="cancelUpdateWithTaxThesaurus();" style="display:none;">Cancel</button>
+                                    </div>
+                                </div>
+                                <hr/>
+                                Resolve occurrence record scientific names that are not yet linked with the Taxonomic Thesaurus
+                                to taxa currently in the Taxonomic Thesaurus using extra cleaning on scientific names.
+                                <div style="clear:both;display:flex;justify-content:flex-end;">
+                                    <div>
+                                        <button id="cleanResolveFromTaxThesaurusStart" onclick="cleanResolveFromTaxThesaurus();">Start</button>
+                                        <button id="cleanResolveFromTaxThesaurusCancel" onclick="cancelCleanResolveFromTaxThesaurus();" style="display:none;">Cancel</button>
+                                    </div>
+                                </div>
+                                <hr/>
+                                Get fuzzy matches of occurrence record scientific names that are not yet linked with the Taxonomic Thesaurus
+                                to taxa currently in the Taxonomic Thesaurus.
+                                <div style="clear:both;display:flex;justify-content:flex-end;">
+                                    <div>
+                                        <button id="resolveFromTaxThesaurusFuzzyStart" onclick="resolveFromTaxThesaurusFuzzy();">Start</button>
+                                        <button id="resolveFromTaxThesaurusFuzzyCancel" onclick="cancelResolveFromTaxThesaurusFuzzy();" style="display:none;">Cancel</button>
+                                    </div>
+                                </div>
+                                <hr/>
+                            </div>
+
+                            <h3 class="tabtitle">Resolve Names From Taxonomic Data Sources</h3>
+                            <div class="processor-accordion-panel">
+                                <div style="margin-bottom:10px;">
+                                    <fieldset style="padding:15px;">
+                                        <legend><b>Taxonomic Data Source</b></legend>
+                                        <input name="taxresource" type="radio" value="col" checked /> Catalogue of Life (COL)<br/>
+                                        <input name="taxresource" type="radio" value="itis" /> Integrated Taxonomic Information System (ITIS)<br/>
+                                        <input name="taxresource" type="radio" value="worms" /> World Register of Marine Species (WoRMS)
+                                    </fieldset>
+                                </div>
+                                <div style="clear:both;display:flex;justify-content:flex-end;">
+                                    <div>
+                                        <button id="resolveFromTaxDataSourceStart" onclick="resolveFromTaxDataSource();">Start</button>
+                                        <button id="resolveFromTaxDataSourceCancel" onclick="cancelResolveFromTaxDataSource();" style="display:none;">Cancel</button>
+                                    </div>
                                 </div>
                             </div>
-                            <hr/>
-                            <div style="margin:20px 10px">
-                                <div style="margin:10px 0;">
-                                    Use this tool to attempt to resolve unassociated scientific names through a selected taxonomic data source and
-                                    add resolved names to the taxonomic thesaurus.
-                                </div>
-                                <div style="margin:10px;">
-                                    <div style="margin-bottom:5px;">
-                                        <fieldset style="padding:15px;margin:10px 0;">
-                                            <legend><b>Taxonomic Data Source</b></legend>
-                                            <?php
-                                            $taxResourceList = $cleanManager->getTaxonomicResourceList();
-                                            foreach($taxResourceList as $taKey => $taValue){
-                                                echo '<input name="taxresource" type="radio" value="'.$taKey.'" '.($taxResource === $taKey ?'checked':'').' /> '.$taValue.'<br/>';
-                                            }
-                                            ?>
-                                        </fieldset>
-                                    </div>
-                                    <div style="margin-bottom:5px;">
-                                        Target Kingdom:
-                                        <select name="targetkingdom">
-                                            <option value="">Select Target Kingdom</option>
-                                            <option value="">--------------------------</option>
-                                            <?php
-                                            $kingdomArr = $cleanManager->getKingdomArr();
-                                            foreach($kingdomArr as $kTid => $kSciname){
-                                                echo '<option value="'.$kTid.':'.$kSciname.'" '.($targetKingdom === (int)$kTid?'SELECTED':'').'>'.$kSciname.'</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                    <div style="margin-bottom:5px;">
-                                        Number of names to process per run: <input name="limit" type="text" value="<?php echo $limit; ?>" style="width:40px" />
-                                    </div>
-                                    <div style="margin-bottom:5px;">
-                                        Start index: <input name="startindex" type="text" value="<?php echo $startIndex; ?>" title="Enter a taxon name or letter of the alphabet to indicate where the processing should start" />
-                                    </div>
-                                    <div style="margin-bottom:5px;">
-                                        Processing:
-                                        <span style="margin-left:15px;"><input name="autoclean" type="radio" value="0" <?php echo (!$autoClean?'checked':''); ?> /> Manual</span>
-                                        <span style="margin-left:10px;"><input name="autoclean" type="radio" value="1" <?php echo ($autoClean === 1?'checked':''); ?> /> Automatic</span>
-                                    </div>
-                                    <div style="clear:both;">
-                                        <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-                                        <button name="submitaction" type="submit" value="AnalyzingNames" ><?php echo ($startIndex?'Continue Resolving Names':'Resolve Taxonomic Names'); ?></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <hr/>
-                        <form name="deepindexform" action="taxonomycleaner.php" method="post">
-                            <div style="margin:20px 10px">
-                                <div style="margin:10px 0;">
-                                    Following tool will run a set of algorithms that will run names through several filters to improve linkages to taxonomic thesaurus
-                                </div>
-                                <div style="margin:10px">
-                                    <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-                                    <button name="submitaction" type="submit" value="deepindex">Deep Index Occurrence Taxa</button>
-                                </div>
-                            </div>
-                        </form>
-                    </fieldset>
+                        </div>
+                    </div>
+
+                    <div class="processor-display" id="processing-display">
+                        <ul id="progressDisplayList"></ul>
+                    </div>
                 </div>
                 <?php
             }

@@ -165,17 +165,17 @@ if($GLOBALS['SYMB_UID']){
                             </li>
                             <li>
                                 <a href="../editor/skeletalsubmit.php?collid=<?php echo $collid; ?>">
-                                    Create Skeletal Records
+                                    Create Skeletal Record
                                 </a>
                             </li>
 							<li>
 								<a href="../editor/occurrencetabledisplay.php?displayquery=1&collid=<?php echo $collid; ?>">
-                                    Edit Existing Records
+                                    Edit Existing Record
 								</a>
 							</li>
 							<li>
 								<a href="../editor/batchdeterminations.php?collid=<?php echo $collid; ?>">
-                                    Add Batch Determinations/Nomenclatural Adjustments
+                                    Batch Determinations/Nomenclatural Adjustments
 								</a>
 							</li>
 							<li>
@@ -185,7 +185,7 @@ if($GLOBALS['SYMB_UID']){
                             </li>
                             <li>
                                 <a href="../reports/annotationmanager.php?collid=<?php echo $collid; ?>">
-                                    Print Annotations Labels
+                                    Print Annotation Labels
                                 </a>
                             </li>
 							<li>
@@ -254,12 +254,12 @@ if($GLOBALS['SYMB_UID']){
                                 </li>
                                 <li>
                                     <a href="../management/taxonomycleaner.php?collid=<?php echo $collid; ?>">
-                                        Occurrence Taxonomy Cleaning Module
+                                        Taxonomy Resolution Module
                                     </a>
                                 </li>
                                 <li>
                                     <a href="../datasets/datapublisher.php?collid=<?php echo $collid; ?>">
-                                        Darwin Core Archive Publishing
+                                        Darwin Core Archive Publisher
                                     </a>
                                 </li>
 								<li>
@@ -269,12 +269,12 @@ if($GLOBALS['SYMB_UID']){
                                 </li>
                                 <li>
                                     <a href="../management/thumbnailbuilder.php?collid=<?php echo $collid; ?>">
-                                        Build Image Thumbnails
+                                        Thumbnail Builder
                                     </a>
                                 </li>
                                 <li>
                                     <a href="../management/guidmapper.php?collid=<?php echo $collid; ?>" >
-                                        Generate GUIDs/UUIDs
+                                        GUID/UUID Generator
                                     </a>
                                 </li>
 								<li>

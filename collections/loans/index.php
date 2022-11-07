@@ -107,8 +107,8 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
     ?>
     <div class='navpath'>
         <a href='../../index.php'>Home</a> &gt;&gt;
-        <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
-        <a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management Main Menu</b></a>
+        <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+        <a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management</b></a>
     </div>
 	<div id="innertext">
 		<?php 
