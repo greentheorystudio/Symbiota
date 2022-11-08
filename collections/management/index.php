@@ -105,9 +105,7 @@ if($isEditor){
 				<div id="tabs" class="taxondisplaydiv">
 				    <ul>
 				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo $collid; ?>">Crowdsourcing</a></li>
-				        <li><a href="reports.php?<?php echo str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'])); ?>">Reports</a></li>
-                        <li><a href="#dupmanager">Duplicate Clustering</a></li>
-                        <li><a href="cleaningbase.php?collid=<?php echo $collid; ?>">Cleaning Tools</a></li>
+				        <li><a href="#dupmanager">Duplicate Clustering</a></li>
                         <?php
 				        if(isset($GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT']) && $GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT']){
 					        ?>
@@ -115,6 +113,7 @@ if($isEditor){
 					        <?php 	
 				        }
 				        ?>
+                        <li><a href="reports.php?<?php echo str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'])); ?>">Reports</a></li>
 				    </ul>
 
                     <div id="dupmanager">

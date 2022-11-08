@@ -29,7 +29,7 @@ if($isEditor){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Annotations Labels</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Annotation Labels</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
@@ -101,10 +101,10 @@ include(__DIR__ . '/../../header.php');
         echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
     }
     else{
-        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
+        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
     }
     ?>
-    <b>Print Annotations Labels</b>
+    <b>Print Annotation Labels</b>
 </div>
 <div id="innertext">
     <?php

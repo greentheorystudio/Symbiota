@@ -37,7 +37,7 @@ if($collid){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Skeletal Record Submission</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Create Skeletal Record</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
@@ -53,8 +53,8 @@ if($collid){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-		<b>Occurrence Skeletal Record Submission</b>
+		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+		<b>Create Skeletal Record</b>
 	</div>
 	<div id="innertext">
 		<div style="float:right;"><a href="#" onclick="toggle('descriptiondiv')"><b>Display Instructions</b></a></div>

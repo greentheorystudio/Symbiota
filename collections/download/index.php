@@ -50,7 +50,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 ?>
 <div class="navpath">
     <a href="../../index.php">Home</a> &gt;&gt;
-    <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Panel</a> &gt;&gt;
+    <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
     <b>Data Exporter and Backup</b>
 </div>
 <div id="innertext">

@@ -58,12 +58,18 @@ $uuidManager = new UuidFactory();
 <?php 
 include(__DIR__ . '/../../header.php');
 ?>
+<div class="navpath">
+    <a href="../../index.php">Home</a> &gt;&gt;
+    <?php
+    if($collId){
+        echo '<a href="../../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">Collection Control Panel</a> &gt;&gt;';
+    }
+    ?>
+    <b>GUID/UUID Generator</b>
+</div>
 <div id="innertext">
 	<?php 
 	if($isEditor){
-		?>
-		<h3>GUID/UUID Generator</h3>
-		<?php
 		if($action === 'Generate Collection GUIDs/UUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids($collId);

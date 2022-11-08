@@ -85,11 +85,13 @@ class ConfigurationManager{
         'USERNAME',
         'SYMB_UID',
         'IS_ADMIN',
+        'TAXONOMIC_RANKS',
         'RIGHTS_TERMS_DEFS'
     );
 
     public $baseDirectories = array(
         'admin',
+        'api',
         'checklists',
         'classes',
         'collections',
@@ -104,6 +106,7 @@ class ConfigurationManager{
         'references',
         'spatial',
         'taxa',
+        'tutorial',
         'webservices'
     );
 
@@ -236,6 +239,18 @@ class ConfigurationManager{
         }
         if(!isset($GLOBALS['ADMIN_EMAIL'])){
             $GLOBALS['ADMIN_EMAIL'] = '';
+        }
+        if(!isset($GLOBALS['TAXONOMIC_RANKS']) || $GLOBALS['TAXONOMIC_RANKS'] === ''){
+            $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
+        }
+        if(!isset($GLOBALS['IMG_WEB_WIDTH']) || $GLOBALS['IMG_WEB_WIDTH'] === ''){
+            $GLOBALS['IMG_WEB_WIDTH'] = 1400;
+        }
+        if(!isset($GLOBALS['IMG_TN_WIDTH']) || $GLOBALS['IMG_TN_WIDTH'] === ''){
+            $GLOBALS['IMG_TN_WIDTH'] = 200;
+        }
+        if(!isset($GLOBALS['IMG_LG_WIDTH']) || $GLOBALS['IMG_LG_WIDTH'] === ''){
+            $GLOBALS['IMG_LG_WIDTH'] = 3200;
         }
         if(!isset($GLOBALS['TEMP_DIR_ROOT']) || $GLOBALS['TEMP_DIR_ROOT'] === ''){
             $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
@@ -378,6 +393,10 @@ class ConfigurationManager{
         $GLOBALS['SECURITY_KEY'] = $this->getGUID();
         $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
         $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
+        $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
+        $GLOBALS['IMG_WEB_WIDTH'] = 1400;
+        $GLOBALS['IMG_TN_WIDTH'] = 200;
+        $GLOBALS['IMG_LG_WIDTH'] = 3200;
         $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
         $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
         $GLOBALS['SPATIAL_POINT_CLUSTER'] = true;
@@ -640,7 +659,9 @@ class ConfigurationManager{
                 $versionArr['db'] = 'MySQL';
             }
             $versionPieces = explode('-', $versionStr);
-            $versionArr['ver'] = $versionPieces[0];
+            if(is_array($versionPieces)){
+                $versionArr['ver'] = $versionPieces[0];
+            }
         }
         return $versionArr;
     }
@@ -743,5 +764,22 @@ class ConfigurationManager{
             $status = true;
         }
         return $status;
+    }
+
+    public function getTaxonomyRankArr(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits ORDER BY rankid ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            if(array_key_exists($row->rankid,$retArr)){
+                $retArr[$row->rankid] .= ', ' . $row->rankname;
+            }
+            else{
+                $retArr[$row->rankid] = $row->rankname;
+            }
+        }
+        $result->free();
+        return $retArr;
     }
 }

@@ -61,7 +61,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $collMetadata['collectionname']; ?> Collection Permissions</title>
+	<title><?php echo $collMetadata['collectionname']; ?> Manage Permissions</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script>
@@ -86,8 +86,8 @@ if($collMetadata['colltype'] === 'General Observations') {
     ?>
     <div class='navpath'>
         <a href='../../index.php'>Home</a> &gt;&gt;
-        <a href='collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Management</a> &gt;&gt;
-        <b><?php echo $collMetadata['collectionname'].' Permissions'; ?></b>
+        <a href='collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Control Panel</a> &gt;&gt;
+        <b>Manage Permissions</b>
     </div>
 
 	<div id="innertext">

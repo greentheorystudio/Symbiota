@@ -76,7 +76,7 @@ if($collid){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' ' .($collid?$collData['collectionname']: '') ; ?> Collection Profiles</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.($collid?'Edit Collection Metadata':'Create New Collection Profile'); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
@@ -273,8 +273,8 @@ if($collid){
 	echo '<div class="navpath">';
     echo '<a href="../../index.php">Home</a> &gt;&gt; ';
     if($collid){
-        echo '<a href="collprofiles.php?collid='.$collid.'&emode=1">Collection Management</a> &gt;&gt; ';
-        echo '<b>'.$collData['collectionname'].' Metadata Editor</b>';
+        echo '<a href="collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+        echo '<b>Edit Collection Metadata</b>';
     }
     else{
         echo '<b>Create New Collection Profile</b>';

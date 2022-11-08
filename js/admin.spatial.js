@@ -252,7 +252,7 @@ function deleteLayer() {
     const layerId = Number(document.getElementById('editLayerId').value);
     if(confirm("Are you sure you want to delete this layer? This will delete the layer data file from the server and cannot be undone.")){
         const http = new XMLHttpRequest();
-        const url = "../api/configurations/mapServerConfigurationController.php";
+        const url = "../../api/configurations/mapServerConfigurationController.php";
         const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
         const params = 'action=deleteMapDataFile&filename='+filename;
         http.open("POST", url, true);
@@ -485,7 +485,7 @@ function processSaveDisplaySettings(){
     data['SPATIAL_INITIAL_CENTER'] = centerPointValue;
     const jsonData = JSON.stringify(data);
     const http = new XMLHttpRequest();
-    const url = "../api/configurations/configurationModelController.php";
+    const url = "../../api/configurations/configurationModelController.php";
     let params = 'action=update&data='+jsonData;
     //console.log(url+'?'+params);
     http.open("POST", url, true);
@@ -557,7 +557,7 @@ function processSaveSymbologySettings(){
     data['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = '';
     const deleteJsonData = JSON.stringify(data);
     const http = new XMLHttpRequest();
-    const url = "../api/configurations/configurationModelController.php";
+    const url = "../../api/configurations/configurationModelController.php";
     let params = 'action=delete&data='+deleteJsonData;
     //console.log(url+'?'+params);
     http.open("POST", url, true);
@@ -645,7 +645,7 @@ function saveLayerConfigChanges(){
         const newLayerConfig = {};
         newLayerConfig['layerConfig'] = newLayerConfigArr;
         const http = new XMLHttpRequest();
-        const url = "../api/configurations/mapServerConfigurationController.php";
+        const url = "../../api/configurations/mapServerConfigurationController.php";
         const jsonData = JSON.stringify(newLayerConfig).replaceAll('&','%<amp>%');
         const params = 'action=saveMapServerConfig&data='+jsonData;
         http.open("POST", url, true);
@@ -716,7 +716,7 @@ function saveLayerGroupEdits() {
 function setLayersList() {
     document.getElementById("layerList").innerHTML = '';
     const http = new XMLHttpRequest();
-    const url = "../api/spatial/getlayersconfig.php";
+    const url = "../../api/spatial/getlayersconfig.php";
     //console.log(url);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -810,7 +810,7 @@ function uploadLayerFile(){
     const layerName = document.getElementById('addLayerName').value;
     if(file && layerName !== ''){
         const http = new XMLHttpRequest();
-        const url = "../api/configurations/mapServerConfigurationController.php";
+        const url = "../../api/configurations/mapServerConfigurationController.php";
         const formData = new FormData();
         formData.append('addLayerFile', file);
         formData.append('action', 'uploadMapDataFile');
@@ -837,7 +837,7 @@ function uploadLayerUpdateFile() {
     if(layerId && file){
         showWorking();
         const http = new XMLHttpRequest();
-        const url = "../api/configurations/mapServerConfigurationController.php";
+        const url = "../../api/configurations/mapServerConfigurationController.php";
         const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
         const params = 'action=deleteMapDataFile&filename='+filename;
         http.open("POST", url, true);

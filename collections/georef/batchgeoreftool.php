@@ -104,7 +104,7 @@ if($editor && $submitAction){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title>Georeferencing Tools</title>
+		<title>Batch Georeference Occurrences</title>
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
@@ -153,8 +153,8 @@ if($editor && $submitAction){
 				</div>
 				<div class='navpath' style="margin:10px;">
 					<a href='../../index.php'>Home</a> &gt;&gt;
-                    <a href='../misc/collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Control Menu</a> &gt;&gt;
-					<b>Batch Georeferencing Tools</b>
+                    <a href='../misc/collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Control Panel</a> &gt;&gt;
+					<b>Batch Georeference Occurrences</b>
 				</div>
 				<?php
 				if($statusStr){

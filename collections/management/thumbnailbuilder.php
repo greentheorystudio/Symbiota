@@ -48,7 +48,7 @@ $imgManager->setTid($tid);
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<?php
 		if($collid){
-			echo '<a href="../../collections/misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Menu</a> &gt;&gt;';
+			echo '<a href="../../collections/misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt;';
 		}
 		else{
 			echo '<a href="../../sitemap.php">Sitemap</a> &gt;&gt;';

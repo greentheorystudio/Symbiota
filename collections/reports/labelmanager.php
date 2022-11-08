@@ -194,7 +194,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
             echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
         }
         else{
-            echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
         }
 		?>
 		<b>Print Labels</b>

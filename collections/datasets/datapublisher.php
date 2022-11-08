@@ -84,7 +84,7 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title>Darwin Core Archiver Publisher</title>
+	<title>Darwin Core Archive Publisher</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
@@ -163,7 +163,7 @@ include(__DIR__ . '/../../header.php');
 	<?php
 	if($collId){
 		?>
-		<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management</a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
 		<?php
 	}
 	else{
