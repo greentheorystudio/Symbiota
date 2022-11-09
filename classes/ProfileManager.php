@@ -1172,24 +1172,26 @@ class ProfileManager extends Manager{
     {
         $returnStr = '';
         if($uid && $confirmationCode){
-            $sql = 'SELECT guid '.
+            $sql = 'SELECT guid, validated '.
                 'FROM users '.
                 'WHERE (uid = '.$uid.')';
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
-                if($row->guid && $row->guid === $confirmationCode){
-                    $connection = new DbConnection();
-                    $editCon = $connection->getConnection();
-                    $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$uid.')';
-                    $editCon->query($sql);
-                    $editCon->close();
-                    $returnStr = 'Success! Your account has been confirmed. Please login to activate confirmation.';
-                }
-                else{
-                    $returnStr = 'There was a problem confirming your account. ';
-                    $returnStr .= '<a href="viewprofile.php">Please follow this link to your profile page and click the Resend Confirmation Email button.</a> ';
-                    if($GLOBALS['ADMIN_EMAIL']){
-                        $returnStr .= 'If you continue to have trouble confirming your account, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                if((int)$row->validated !== 1){
+                    if($row->guid && $row->guid === $confirmationCode){
+                        $connection = new DbConnection();
+                        $editCon = $connection->getConnection();
+                        $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$uid.')';
+                        $editCon->query($sql);
+                        $editCon->close();
+                        $returnStr = 'Success! Your account has been confirmed. Please login to activate confirmation.';
+                    }
+                    else{
+                        $returnStr = 'There was a problem confirming your account. ';
+                        $returnStr .= '<a href="viewprofile.php">Please follow this link to your profile page and click the Resend Confirmation Email button.</a> ';
+                        if($GLOBALS['ADMIN_EMAIL']){
+                            $returnStr .= 'If you continue to have trouble confirming your account, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                        }
                     }
                 }
             }

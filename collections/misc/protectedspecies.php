@@ -120,19 +120,15 @@ include(__DIR__ . '/../../header.php');
 			</form>
 		</fieldset>
 	</div>
-	<div style='margin:15px;'>
-		Species in the list below have protective status with specific locality details below county withheld (e.g. decimal lat/long).
-		Rare, threatened, or sensitive status are the typical causes for protection though species that are cherished by collectors or wild harvesters may also appear on the list.
-	</div>
 	<div>
 		<?php
-		$occurCnt = $rsManager->getSpecimenCnt();
+		$occurCnt = $rsManager->getOccRecordCnt();
 		if($occurCnt) {
             echo '<div style="margin:0px 40px 0px 20px;float:left">Occurrences protected: ' . number_format($occurCnt) . '</div>';
         }
 		if($isEditor){
 			if($action === 'checkstats'){
-				echo '<div>Number of specimens affected: '.$rsManager->protectGlobalSpecies().'</div>';
+				echo '<div>Number of records affected: '.$rsManager->protectGlobalSpecies().'</div>';
 			}
 			else{
 				echo '<div><a href="protectedspecies.php?submitaction=checkstats"><button style="font-size:70%">Verify protections</button></a></div>';

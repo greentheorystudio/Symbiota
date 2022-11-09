@@ -262,7 +262,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         }
     </script>
 </head>
-<body <?php echo ($fullWindow ? '' : 'style="border:0;"'); ?>>
+<body <?php echo ($fullWindow ? '' : 'style="border:0;width:950px;"'); ?>>
 <div id="fb-root"></div>
 <script>
     (function(d, s, id) {
@@ -278,7 +278,7 @@ if($fullWindow){
     include(__DIR__ . '/../../header.php');
 }
 ?>
-<div id="innertext">
+<div>
     <?php
     if($statusStr){
         ?>
@@ -364,9 +364,9 @@ if($fullWindow){
                     ?>
                 </div>
                 <div style="float:left;padding:25px;">
-						<span style="font-size:18px;font-weight:bold;vertical-align:60%;">
-							<?php echo $collMetadata['collectionname']; ?>
-						</span>
+                    <span style="font-size:18px;font-weight:bold;vertical-align:60%;">
+                        <?php echo $collMetadata['collectionname']; ?>
+                    </span>
                 </div>
                 <div style="clear:both;margin-left:60px;">
                     <div>
@@ -1079,7 +1079,7 @@ if($fullWindow){
             <?php
             if($displayMap){
                 ?>
-                <div id="maptab" style="height: 640px;">
+                <div id="maptab" style="height: 600px;">
                     <?php include_once(__DIR__ . '/../../spatial/viewerElement.php'); ?>
                 </div>
                 <?php

@@ -254,7 +254,7 @@ if($GLOBALS['SYMB_UID']){
                                 </li>
                                 <li>
                                     <a href="../management/taxonomycleaner.php?collid=<?php echo $collid; ?>">
-                                        Taxonomy Resolution Module
+                                        Taxonomy Management Module
                                     </a>
                                 </li>
                                 <li>

@@ -15,7 +15,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
  		$returnArr = array();
 		$sql = 'SELECT DISTINCT t.tid, ts.Family, t.SciName, t.Author, t.SecurityStatus FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tid ';
 		if($this->taxaArr) {
-            $sql .= 'INNER JOIN taxaenumtree e ON t.tid = e.tid ';
+            $sql .= 'INNER JOIN taxaenumtree AS e ON t.tid = e.tid ';
         }
 		$sql .= 'WHERE (t.SecurityStatus > 0) ';
 		if($this->taxaArr) {
@@ -36,7 +36,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 	public function addSpecies($tid){
 		$protectCnt = 0;
 		if(is_numeric($tid)){
-	 		$sql = 'UPDATE taxa t SET t.SecurityStatus = 1 WHERE (t.tid = '.$tid.')';
+	 		$sql = 'UPDATE taxa AS t SET t.SecurityStatus = 1 WHERE (t.tid = '.$tid.')';
 	 		//echo $sql;
 			$this->conn->query($sql);
 			$protectCnt = $this->protectGlobalSpecies();
@@ -47,7 +47,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 	public function deleteSpecies($tid){
 		$protectCnt = 0;
 		if(is_numeric($tid)){
-			$sql = 'UPDATE taxa t SET t.SecurityStatus = 0 WHERE (t.tid = '.$tid.')';
+			$sql = 'UPDATE taxa AS t SET t.SecurityStatus = 0 WHERE (t.tid = '.$tid.')';
 	 		//echo $sql;
 			$this->conn->query($sql);
 			$sql2 = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
@@ -66,7 +66,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
     {
 		$retArr = array();
 		$sql = 'SELECT DISTINCT c.clid, c.name, c.locality, c.authors, c.access '.
-			'FROM fmchecklists c INNER JOIN fmchklsttaxalink l ON c.clid = l.clid '.
+			'FROM fmchecklists AS c INNER JOIN fmchklsttaxalink AS l ON c.clid = l.clid '.
 			'WHERE c.type = "rarespp" ';
 		if($this->taxaArr){
 			$sql .= 'AND l.tid IN('.implode(',', $this->taxaArr).') ';
@@ -85,7 +85,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 
 	public function setTaxonFilter($searchTaxon): void
     {
-		$sql = 'SELECT ts.tidaccepted FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE t.sciname LIKE "'.$searchTaxon.'%"';
+		$sql = 'SELECT ts.tidaccepted FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid WHERE t.sciname LIKE "'.$searchTaxon.'%"';
 		$rs = $this->conn->query($sql);
 		if($rs) {
 			while($r = $rs->fetch_object()){
@@ -109,7 +109,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
         }
 	}
 
-	public function getSpecimenCnt(): int
+	public function getOccRecordCnt(): int
     {
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(*) AS cnt FROM omoccurrences WHERE (LocalitySecurity > 0)';

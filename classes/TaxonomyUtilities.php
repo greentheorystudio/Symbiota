@@ -212,4 +212,21 @@ class TaxonomyUtilities {
         $rs->free();
         return $retTid;
     }
+
+    public function getKingdomArr(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.tid, t.sciname '.
+            'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.kingdom_name = t.SciName '.
+            'WHERE t.TID IS NOT NULL '.
+            'ORDER BY t.SciName ';
+        //echo $sql;
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $retArr[$r->tid] = $r->sciname;
+        }
+        $rs->free();
+        asort($retArr);
+        return $retArr;
+    }
 }

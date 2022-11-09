@@ -22,7 +22,8 @@ class TaxonomyCleaner extends Manager{
     {
 		$retCnt = 0;
 		if($this->collid){
-			$sql = 'SELECT COUNT(DISTINCT sciname) AS taxacnt '.$this->getSqlFragment();
+			$sql = 'SELECT COUNT(DISTINCT sciname) AS taxacnt FROM omoccurrences '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tidinterpreted) AND sciname IS NOT NULL ';
 			//echo $sql;
 			if($rs = $this->conn->query($sql)){
 				if($row = $rs->fetch_object()){
@@ -38,7 +39,8 @@ class TaxonomyCleaner extends Manager{
     {
 		$retCnt = 0;
 		if($this->collid){
-			$sql = 'SELECT COUNT(*) AS cnt '.$this->getSqlFragment();
+			$sql = 'SELECT COUNT(occid) AS cnt FROM omoccurrences '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tidinterpreted) AND sciname IS NOT NULL ';
 			//echo $sql;
 			if($rs = $this->conn->query($sql)){
 				if($row = $rs->fetch_object()){
@@ -49,6 +51,22 @@ class TaxonomyCleaner extends Manager{
 		}
 		return $retCnt;
 	}
+
+    public function updateOccTaxonomicThesaurusLinkages(): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName '.
+                'LEFT JOIN taxstatus AS ts on t.TID = ts.tid '.
+                'SET o.tidinterpreted = ts.tidaccepted '.
+                'WHERE o.collid = '.$this->collid.' AND o.tidinterpreted IS NOT NULL AND t.TID IS NOT NULL ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt = $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
 
 	public function analyzeTaxa($taxResource, $startIndex, $limit = null){
 		set_time_limit(1800);
@@ -176,7 +194,7 @@ class TaxonomyCleaner extends Manager{
 
 	private function getSqlFragment(): string
 	{
-		return 'FROM omoccurrences WHERE collid IN('.$this->collid.') AND ISNULL(tidinterpreted) AND sciname IS NOT NULL AND sciname NOT LIKE "% x %" AND sciname NOT LIKE "% × %" ';
+		return 'FROM omoccurrences WHERE collid = '.$this->collid.' AND ISNULL(tidinterpreted) AND sciname IS NOT NULL AND sciname NOT LIKE "% x %" AND sciname NOT LIKE "% × %" ';
 	}
 
 	public function deepIndexTaxa(): void
@@ -485,20 +503,6 @@ class TaxonomyCleaner extends Manager{
 			}
 			$rs->free();
 		}
-		return $retArr;
-	}
-
-	public function getKingdomArr(): array
-	{
-		$retArr = array();
-		$sql = 'SELECT tid, sciname FROM taxa WHERE rankid = 10 ';
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->tid] = $r->sciname;
-		}
-		$rs->free();
-		asort($retArr);
 		return $retArr;
 	}
 
