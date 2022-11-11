@@ -24,13 +24,13 @@ class ImageLibraryManager{
     public function getFamilyList(): array
     {
         $returnArray = array();
-        $sql = 'SELECT DISTINCT ts.Family ';
+        $sql = 'SELECT DISTINCT t.family ';
         $sql .= $this->getImageSql();
-        $sql .= 'AND (ts.Family Is Not Null) ';
+        $sql .= 'AND t.family IS NOT NULL ';
         //echo $sql;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $returnArray[] = $row->Family;
+            $returnArray[] = $row->family;
         }
         $result->free();
         sort($returnArray);
@@ -43,7 +43,7 @@ class ImageLibraryManager{
         $sql .= $this->getImageSql();
         if($inTaxon){
             $taxon = Sanitizer::cleanInStr($this->conn,$inTaxon);
-            $sql .= "AND (ts.Family = '".$taxon."') ";
+            $sql .= "AND t.family = '".$taxon."' ";
         }
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -71,7 +71,7 @@ class ImageLibraryManager{
             $sql .= 'AND ((t.SciName LIKE "'.$taxon.'%") OR (t.tid IN('.implode(',', $tidArr).'))) ';
         }
         elseif($taxon){
-            $sql .= "AND ((t.SciName LIKE '".$taxon."%') OR (ts.family = '".$taxon."')) ";
+            $sql .= "AND ((t.SciName LIKE '".$taxon."%') OR (t.family = '".$taxon."')) ";
         }
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -84,8 +84,7 @@ class ImageLibraryManager{
 
     private function getImageSql(): string
     {
-        $sql = 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
-            'INNER JOIN taxstatus AS ts ON t.tid = ts.tid ';
+        $sql = 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid ';
         if(array_key_exists('tags',$this->searchTermsArr) && $this->searchTermsArr['tags']){
             $sql .= 'INNER JOIN imagetag AS it ON i.imgid = it.imgid ';
         }
@@ -155,12 +154,12 @@ class ImageLibraryManager{
         }
         $sql = 'SELECT DISTINCT i.imgid, t.tidaccepted, t.tid, t.sciname, i.url, i.thumbnailurl, i.originalurl, '.
             'u.uid, u.lastname, u.firstname, i.caption, '.
-            'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode ';
+            'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) AS instcode ';
         $sql .= $this->getSqlBase();
         $sql .= $this->sqlWhere;
         if(array_key_exists('imagecount',$this->searchTermsArr)&&$this->searchTermsArr['imagecount']){
             if($this->searchTermsArr['imagecount'] === 'taxon'){
-                $sql .= 'GROUP BY ts.tidaccepted ';
+                $sql .= 'GROUP BY t.tidaccepted ';
             }
             elseif($this->searchTermsArr['imagecount'] === 'specimen'){
                 $sql .= 'GROUP BY o.occid ';
@@ -233,7 +232,6 @@ class ImageLibraryManager{
         $sql .= 'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
         $sql .= 'LEFT JOIN users AS u ON i.photographeruid = u.uid ';
         $sql .= 'INNER JOIN taxa AS t ON i.tid = t.tid ';
-        $sql .= 'INNER JOIN taxstatus AS ts ON i.tid = ts.tid ';
         if(array_key_exists('taxontype',$this->searchTermsArr) && (int)$this->searchTermsArr['taxontype'] === 4) {
             $sql .= 'INNER JOIN taxaenumtree AS te ON i.tid = te.tid ';
         }

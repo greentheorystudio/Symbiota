@@ -8,8 +8,8 @@ $con = $connection->getConnection();
 $q = $con->real_escape_string($_REQUEST['term']);
 
 $retArr = array();
-$sql = 'SELECT t.tid, t.sciname, t.author FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-	'WHERE (ts.tid = ts.tidaccepted) AND (t.sciname LIKE "'.$q.'%") ORDER BY t.sciname LIMIT 10';
+$sql = 'SELECT tid, sciname, author FROM taxa '.
+	'WHERE tid = tidaccepted AND sciname LIKE "'.$q.'%" ORDER BY sciname LIMIT 10';
 $result = $con->query($sql);
 while($row = $result->fetch_object()){
 	if($GLOBALS['CHARSET'] === 'UTF-8') {

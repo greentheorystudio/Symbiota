@@ -127,10 +127,10 @@ class OccurrenceManager{
                 }
                 elseif($this->taxaSearchType === 2 || ($this->taxaSearchType === 1 && (strtolower(substr($name,-5)) === 'aceae' || strtolower(substr($name,-4)) === 'idae'))){
                     if($image){
-                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$name)."') ";
+                        $sqlWhereTaxa .= "OR (t.family = '".Sanitizer::cleanInStr($this->conn,$name)."') ";
                     }
                     else{
-                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$name)."') OR (ISNULL(o.tid) AND (o.family = '".Sanitizer::cleanInStr($this->conn,$name)."' OR o.sciname = '".Sanitizer::cleanInStr($this->conn,$name)."')) ";
+                        $sqlWhereTaxa .= "OR (t.family = '".Sanitizer::cleanInStr($this->conn,$name)."') OR (ISNULL(o.tid) AND (o.family = '".Sanitizer::cleanInStr($this->conn,$name)."' OR o.sciname = '".Sanitizer::cleanInStr($this->conn,$name)."')) ";
                     }
                 }
                 elseif(!$image){
@@ -1031,9 +1031,8 @@ class OccurrenceManager{
     {
         $targetTidArr = array();
         if($searchTarget){
-            $sql1 = 'SELECT t.tid, ts.tidaccepted '.
-                'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
-                'WHERE t.sciname IN("'.$searchTarget.'") ';
+            $sql1 = 'SELECT tid, tidaccepted FROM taxa '.
+                'WHERE sciname IN("'.$searchTarget.'") ';
             $rs1 = $this->conn->query($sql1);
             while($r1 = $rs1->fetch_object()){
                 if($r1->tid && !in_array($r1->tid, $targetTidArr, true)){
@@ -1049,9 +1048,8 @@ class OccurrenceManager{
         if($targetTidArr){
             $parentTidArr = array();
             $rankId = 0;
-            $sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid '.
-                'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
-                'WHERE (ts.tid IN('.implode(',',$targetTidArr).') OR ts.tidaccepted IN('.implode(',',$targetTidArr).')) ';
+            $sql2 = 'SELECT DISTINCT tid, sciname, rankid FROM taxa '.
+                'WHERE (tid IN('.implode(',',$targetTidArr).') OR tidaccepted IN('.implode(',',$targetTidArr).')) ';
             $rs2 = $this->conn->query($sql2);
             while($r2 = $rs2->fetch_object()){
                 $this->taxaArr[$r2->sciname] = $r2->tid;
@@ -1063,9 +1061,8 @@ class OccurrenceManager{
 
             if($parentTidArr) {
                 $sql4 = 'SELECT DISTINCT t.tid, t.sciname ' .
-                    'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.tid = ts.tid ' .
-                    'LEFT JOIN taxaenumtree AS te ON t.tid = te.tid ' .
-                    'WHERE (te.parenttid IN(' . implode('', $parentTidArr) . ')) AND (ts.tidaccepted = ts.tid)';
+                    'FROM taxa AS t LEFT JOIN taxaenumtree AS te ON t.tid = te.tid ' .
+                    'WHERE te.parenttid IN(' . implode('', $parentTidArr) . ') AND t.tidaccepted = t.tid ';
                 $rs4 = $this->conn->query($sql4);
                 while ($r4 = $rs4->fetch_object()) {
                     $this->taxaArr[$r4->sciname] = $r4->tid;

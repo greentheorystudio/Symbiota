@@ -117,7 +117,7 @@ function submitLinkToAccepted(f){
 	});
 }
 
-function submitTaxStatusForm(f){
+function submitUpperTaxForm(f){
 	$.ajax({
 		type: "POST",
 		url: "../../api/taxa/gettid.php",

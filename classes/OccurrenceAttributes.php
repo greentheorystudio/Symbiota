@@ -110,24 +110,22 @@ class OccurrenceAttributes extends Manager {
 	
 	private function setSqlBody(): void
 	{
-		$this->sqlBody = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-			'LEFT JOIN tmattributes a ON i.occid = a.occid '.
-			'WHERE (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') ';
+		$this->sqlBody = 'FROM omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+			'LEFT JOIN tmattributes AS a ON i.occid = a.occid '.
+			'WHERE ISNULL(a.occid) AND o.collid = '.$this->collidStr.' ';
 		if($this->tidFilter){
 			$tidArr = array();
-			$sql = 'SELECT ts1.tid '.
-				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '. 
-				'WHERE ts2.tid = '.$this->tidFilter.'';
+			$sql = 'SELECT tidaccepted FROM taxa WHERE tid = '.$this->tidFilter.' ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$tidArr[] = $r->tid;
+				$tidArr[] = $r->tidaccepted;
 			}
 			$rs->free();
-			$this->sqlBody = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-				'INNER JOIN taxaenumtree e ON i.tid = e.tid '.
-				'LEFT JOIN tmattributes a ON i.occid = a.occid '.
-				'WHERE (e.parenttid IN('.$this->tidFilter.') OR e.tid IN('.implode(',',$tidArr).')) '.
-				'AND (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') ';
+			$this->sqlBody = 'FROM omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+				'INNER JOIN taxaenumtree AS e ON i.tid = e.tid '.
+				'LEFT JOIN tmattributes AS a ON i.occid = a.occid '.
+				'WHERE e.parenttid IN('.$this->tidFilter.') OR e.tid IN('.implode(',',$tidArr).') '.
+				'AND ISNULL(a.occid) AND o.collid = '.$this->collidStr.' ';
 		}
 	}
 

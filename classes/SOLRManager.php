@@ -640,7 +640,7 @@ class SOLRManager extends OccurrenceManager{
 
             foreach($this->taxaArr as $key => $valueArray){
                 if($this->taxaSearchType === 4){
-                    $rs1 = $this->conn->query("SELECT ts.tidaccepted FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid WHERE (t.sciname = '".$key."')");
+                    $rs1 = $this->conn->query("SELECT tidaccepted FROM taxa WHERE sciname = '".$key."' ");
                     if($r1 = $rs1->fetch_object()){
                         $sqlWhereTaxa = 'OR (parenttid:'.$r1->tidaccepted.') ';
                     }

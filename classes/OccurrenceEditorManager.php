@@ -824,9 +824,8 @@ class OccurrenceEditorManager {
         if($editArr || $quickHostEntered){
             if($editArr){
                 if($occArr['sciname'] && !$occArr['tid'] && in_array('sciname', $editArr, true)){
-                    $sql2 = 'SELECT t.tid, t.author, ts.family '.
-                        'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-                        'WHERE t.sciname = "'.$occArr['sciname'].'"';
+                    $sql2 = 'SELECT tid, author, family FROM taxa '.
+                        'WHERE sciname = "'.$occArr['sciname'].'"';
                     $rs2 = $this->conn->query($sql2);
                     while($r2 = $rs2->fetch_object()){
                         $occArr['tid'] = $r2->tid;
@@ -1585,9 +1584,8 @@ class OccurrenceEditorManager {
         if(is_numeric($clid) && is_numeric($tid)){
             $clTid = 0;
             $sqlCl = 'SELECT cl.tid '.
-                'FROM fmchklsttaxalink cl INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
-                'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-                'WHERE (ts2.tid = '.$tid.') AND (cl.clid = '.$clid.')';
+                'FROM fmchklsttaxalink AS cl INNER JOIN taxa AS t ON cl.tid = t.tid '.
+                'WHERE t.tidaccepted = '.$tid.' AND cl.clid = '.$clid.' ';
             $rsCl = $this->conn->query($sqlCl);
             //echo $sqlCl;
             if($rowCl = $rsCl->fetch_object()){

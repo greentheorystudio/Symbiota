@@ -13,7 +13,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
     public function getProtectedSpeciesList(): array
     {
  		$returnArr = array();
-		$sql = 'SELECT DISTINCT t.tid, ts.Family, t.SciName, t.Author, t.SecurityStatus FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tid ';
+		$sql = 'SELECT DISTINCT t.tid, t.family, t.SciName, t.Author, t.SecurityStatus FROM taxa AS t ';
 		if($this->taxaArr) {
             $sql .= 'INNER JOIN taxaenumtree AS e ON t.tid = e.tid ';
         }
@@ -21,13 +21,13 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 		if($this->taxaArr) {
             $sql .= 'AND (e.parenttid IN(' . implode(',', $this->taxaArr) . ') OR t.tid IN(' . implode(',', $this->taxaArr) . ')) ';
         }
-		$sql .= 'ORDER BY ts.Family, t.SciName';
+		$sql .= 'ORDER BY t.family, t.SciName';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			$returnArr[$row->Family][$row->tid]['sciname'] = $row->SciName;
-			$returnArr[$row->Family][$row->tid]['author'] = $row->Author;
-			$returnArr[$row->Family][$row->tid]['status'] = $row->SecurityStatus;
+			$returnArr[$row->family][$row->tid]['sciname'] = $row->SciName;
+			$returnArr[$row->family][$row->tid]['author'] = $row->Author;
+			$returnArr[$row->family][$row->tid]['status'] = $row->SecurityStatus;
 		}
 		$rs->free();
 		return $returnArr;
@@ -83,7 +83,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 
 	public function setTaxonFilter($searchTaxon): void
     {
-		$sql = 'SELECT ts.tidaccepted FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid WHERE t.sciname LIKE "'.$searchTaxon.'%"';
+		$sql = 'SELECT tidaccepted FROM taxa WHERE sciname LIKE "'.$searchTaxon.'%"';
 		$rs = $this->conn->query($sql);
 		if($rs) {
 			while($r = $rs->fetch_object()){
@@ -93,7 +93,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 		$rs->free();
 
 		if($this->taxaArr){
-			$sql = 'SELECT tid  FROM taxstatus WHERE tidaccepted IN('.implode(',',$this->taxaArr). ')';
+			$sql = 'SELECT tid FROM taxa WHERE tidaccepted IN('.implode(',',$this->taxaArr). ')';
 			$rs = $this->conn->query($sql);
 			if($rs) {
 				while($r = $rs->fetch_object()){

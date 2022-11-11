@@ -59,27 +59,26 @@ class KeyDataManager extends Manager{
 	public function getTaxaFilterList(): array
 	{
 		$returnArr = array();
-		$sql = 'SELECT DISTINCT nt.UnitName1, ts.Family ';
+		$sql = 'SELECT DISTINCT t.UnitName1, t.family ';
 		if($this->clid && $this->clType === 'static'){
-			$sql .= 'FROM (taxstatus ts INNER JOIN taxa nt ON ts.tid = nt.tid) INNER JOIN fmchklsttaxalink cltl ON nt.TID = cltl.TID ' .
-				'WHERE (cltl.CLID = ' .$this->clid. ') ';
+			$sql .= 'FROM taxa AS t INNER JOIN fmchklsttaxalink AS cltl ON t.TID = cltl.TID ' .
+				'WHERE cltl.CLID = ' .$this->clid. ' ';
 		}
 		else if($this->dynClid){
-			$sql .= 'FROM (taxstatus ts INNER JOIN taxa nt ON ts.tid = nt.tid) INNER JOIN fmdyncltaxalink dcltl ON nt.TID = dcltl.TID ' .
-				'WHERE (dcltl.dynclid = ' .$this->dynClid. ') ';
+			$sql .= 'FROM taxa AS t INNER JOIN fmdyncltaxalink AS dcltl ON t.TID = dcltl.TID ' .
+				'WHERE dcltl.dynclid = ' .$this->dynClid. ' ';
 		}
 		else{
-			$sql .= 'FROM (((taxstatus ts INNER JOIN taxa nt ON ts.tid = nt.tid) ' .
-				'INNER JOIN fmchklsttaxalink cltl ON nt.TID = cltl.TID) ' .
-				'INNER JOIN fmchecklists cl ON cltl.CLID = cl.CLID) ' .
-				'INNER JOIN fmchklstprojlink clpl ON cl.CLID = clpl.clid ' .
-				'WHERE (clpl.pid = ' .$this->pid. ') ';
+			$sql .= 'FROM ((taxa AS t INNER JOIN fmchklsttaxalink AS cltl ON t.TID = cltl.TID) ' .
+				'INNER JOIN fmchecklists AS cl ON cltl.CLID = cl.CLID) ' .
+				'INNER JOIN fmchklstprojlink AS clpl ON cl.CLID = clpl.clid ' .
+				'WHERE clpl.pid = ' .$this->pid. ' ';
 		}
 		//echo $sql.'<br/>'; exit;
 		if($result = $this->conn->query($sql)){
             while($row = $result->fetch_object()){
                 $genus = $row->UnitName1;
-                $family = $row->Family;
+                $family = $row->family;
                 if($genus) {
                     $returnArr[] = $genus;
                 }
@@ -443,7 +442,7 @@ class KeyDataManager extends Manager{
     public function setTaxaListSQL(): void
 	{
         if(!$this->sql){
-            $sqlBase = 'SELECT DISTINCT t.tid, ts.Family, ' .($this->commonDisplay?'IFNULL(v.VernacularName,t.SciName)':'t.SciName'). ' AS DisplayName, ts.ParentTID ';
+            $sqlBase = 'SELECT DISTINCT t.tid, t.Family, ' .($this->commonDisplay?'IFNULL(v.VernacularName,t.SciName)':'t.SciName'). ' AS DisplayName, ts.ParentTID ';
             if($this->dynClid){
                 $sqlFromBase = 'INNER JOIN fmdyncltaxalink AS clk ON t.tid = clk.tid ';
                 $sqlWhere = 'WHERE clk.dynclid = ' .$this->dynClid. ' AND t.RankId = 220 ';

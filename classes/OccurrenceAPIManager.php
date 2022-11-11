@@ -139,9 +139,8 @@ class OccurrenceAPIManager{
         $sciname = $pArr['sciname'];
         $prevDet = $this->checkCurrentDetermination($occId);
         if($prevDet !== $sciname){
-            $sql = 'SELECT ts.tidaccepted, ts.family, t.Author '.
-                'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
-                'WHERE t.SciName = "'.$sciname.'" ';
+            $sql = 'SELECT tidaccepted, family, Author FROM taxa '.
+                'WHERE SciName = "'.$sciname.'" ';
             //echo "<div>Sql: ".$sql."</div>";
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){

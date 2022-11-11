@@ -102,7 +102,7 @@
                   <field column="CLID" name="CLID"/>
                 </entity>
                 <entity name="taxa_inner"
-                  query="SELECT ts.family FROM taxstatus AS ts WHERE ts.tid ='${omoccurrences.tid}'">
+                  query="SELECT family FROM taxa WHERE tid ='${omoccurrences.tid}'">
                   <field column="family" name="accFamily"/>
                 </entity>
                 <entity name="parenttaxa_inner"

@@ -170,18 +170,17 @@ class TaxonomyUtilities {
 		$status = true;
         $complete = false;
         $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
-            'SELECT DISTINCT ts.tid, ts.parenttid '.
-            'FROM taxstatus ts '.
-            'WHERE ts.tid NOT IN(SELECT tid FROM taxaenumtree)';
+            'SELECT DISTINCT tid, parenttid FROM taxa '.
+            'WHERE tid NOT IN(SELECT tid FROM taxaenumtree)';
         //echo '<div>SQL1: '.$sql.'</div>';
         if(!$this->conn->query($sql)){
             $status = 'ERROR seeding taxaenumtree.';
         }
         if($status === true){
             $sql2 = 'INSERT INTO taxaenumtree(tid,parenttid) '.
-                'SELECT DISTINCT e.tid, ts.parenttid '.
-                'FROM taxaenumtree e INNER JOIN taxstatus ts ON e.parenttid = ts.tid '.
-                'LEFT JOIN taxaenumtree e2 ON e.tid = e2.tid AND ts.parenttid = e2.parenttid '.
+                'SELECT DISTINCT e.tid, t.parenttid '.
+                'FROM taxaenumtree AS e INNER JOIN taxa AS t ON e.parenttid = t.tid '.
+                'LEFT JOIN taxaenumtree AS e2 ON e.tid = e2.tid AND t.parenttid = e2.parenttid '.
                 'WHERE ISNULL(e2.tid)';
             //echo '<div>SQL2: '.$sql2.'</div>';
             $cnt = 0;
@@ -204,7 +203,7 @@ class TaxonomyUtilities {
     public function getTidAccepted($tid): int
     {
         $retTid = 0;
-        $sql = 'SELECT tidaccepted FROM taxstatus WHERE (tid = '.$tid.')';
+        $sql = 'SELECT tidaccepted FROM taxa WHERE (tid = '.$tid.')';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $retTid = (int)$r->tidaccepted;

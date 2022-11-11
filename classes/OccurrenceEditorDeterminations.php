@@ -125,12 +125,11 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 					$rsSs->free();
 					if(!$sStatus){
 						$sql2 = 'SELECT c.clid '.
-							'FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid '.
-							'INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
-							'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-							'INNER JOIN omoccurrences o ON c.locality = o.stateprovince '.
+							'FROM fmchecklists AS c INNER JOIN fmchklsttaxalink AS cl ON c.clid = cl.clid '.
+							'INNER JOIN taxa AS t ON cl.tid = t.tid '.
+							'INNER JOIN omoccurrences AS o ON c.locality = o.stateprovince '.
 							'WHERE c.type = "rarespp" '.
-							'AND (ts2.tid = '.$tidToAdd.') AND (o.occid = '.$this->occid.')';
+							'AND t.tidaccepted = '.$tidToAdd.' AND o.occid = '.$this->occid.' ';
 						//echo $sql; exit;
 						$rsSs2 = $this->conn->query($sql2);
 						if($rsSs2->num_rows){
@@ -283,10 +282,9 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$tid = 0;
 		$sStatus = 0;
 		$family = '';
-		$sqlTid = 'SELECT t.tid, t.securitystatus, ts.family '.
-			'FROM omoccurdeterminations d INNER JOIN taxa t ON d.sciname = t.sciname '.
-			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (d.detid = '.$detId.')';
+		$sqlTid = 'SELECT t.tid, t.securitystatus, t.family '.
+			'FROM omoccurdeterminations AS d INNER JOIN taxa AS t ON d.sciname = t.sciname '.
+			'WHERE d.detid = '.$detId.' ';
 		$rs = $this->conn->query($sqlTid);
 		if($r = $rs->fetch_object()){
 			$tid = $r->tid;
@@ -298,12 +296,11 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$rs->free();
 		if(!$sStatus && $tid){
 			$sql2 = 'SELECT c.clid '.
-				'FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid '.
-				'INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
-				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-				'INNER JOIN omoccurrences o ON c.locality = o.stateprovince '.
+				'FROM fmchecklists AS c INNER JOIN fmchklsttaxalink AS cl ON c.clid = cl.clid '.
+				'INNER JOIN taxa AS t ON cl.tid = t.tid '.
+				'INNER JOIN omoccurrences AS o ON c.locality = o.stateprovince '.
 				'WHERE c.type = "rarespp" '.
-				'AND (ts2.tid = '.$tid.') AND (o.occid = '.$this->occid.')';
+				'AND t.tidaccepted = '.$tid.' AND o.occid = '.$this->occid.' ';
 			//echo $sql; exit;
 			$rsSs2 = $this->conn->query($sql2);
 			if($rsSs2->num_rows){

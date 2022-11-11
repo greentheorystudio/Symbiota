@@ -665,7 +665,7 @@ class TaxonomyHarvester extends Manager{
             $rs->free();
             $loadTaxon = true;
             if($newTid){
-                $sql = 'SELECT tidaccepted FROM taxstatus WHERE (tid = '.$newTid.')';
+                $sql = 'SELECT tidaccepted FROM taxa WHERE tid = '.$newTid.' ';
                 $rs = $this->conn->query($sql);
                 if($r = $rs->fetch_object()){
                     $tidAccepted = (int)$r->tidaccepted;
@@ -712,9 +712,8 @@ class TaxonomyHarvester extends Manager{
                         if(!$tidAccepted) {
                             $tidAccepted = $newTid;
                         }
-                        $sqlInsert2 = 'INSERT INTO taxstatus(tid,tidAccepted,parentTid,UnacceptabilityReason) '.
-                            'VALUES('.$newTid.','.$tidAccepted.','.$parentTid.','.
-                            (isset($taxonArr['acceptanceReason']) && $taxonArr['acceptanceReason']?'"'.$taxonArr['acceptanceReason'].'"':'NULL').')';
+                        $sqlInsert2 = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', parenttid = '.$parentTid.' '.
+                            'WHERE tid = '.$newTid.' ';
                         //echo $sqlInsert2.'<br/><br/>';
                         if($this->conn->query($sqlInsert2)){
                             $sqlHier = 'INSERT INTO taxaenumtree(tid,parenttid) '.

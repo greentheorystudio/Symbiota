@@ -236,10 +236,9 @@ class ChecklistVoucherAdmin {
 	{
 		$uvCnt = 0;
 		$sql = 'SELECT count(t.tid) AS uvcnt '.
-			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
-			'LEFT JOIN fmvouchers v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
-			'WHERE v.clid IS NULL AND (ctl.clid = '.$this->clid.') ';
+			'FROM taxa AS t INNER JOIN fmchklsttaxalink AS ctl ON t.tid = ctl.tid '.
+			'LEFT JOIN fmvouchers AS v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
+			'WHERE ISNULL(v.clid) AND ctl.clid = '.$this->clid.' ';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$uvCnt = $row->uvcnt;
@@ -251,12 +250,11 @@ class ChecklistVoucherAdmin {
 	public function getNonVoucheredTaxa($startLimit): array
 	{
 		$retArr = array();
-		$sql = 'SELECT t.tid, ts.family, t.sciname '.
-			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
-			'LEFT JOIN fmvouchers v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
-			'WHERE v.clid IS NULL AND (ctl.clid = '.$this->clid.') '.
-			'ORDER BY ts.family, t.sciname '.
+		$sql = 'SELECT t.tid, t.family, t.sciname '.
+			'FROM taxa AS t INNER JOIN fmchklsttaxalink AS ctl ON t.tid = ctl.tid '.
+			'LEFT JOIN fmvouchers AS v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
+			'WHERE ISNULL(v.clid) AND ctl.clid = '.$this->clid.' '.
+			'ORDER BY t.family, t.sciname '.
 			'LIMIT '.($startLimit?$startLimit.',':'').'100';
 		//echo '<div>'.$sql.'</div>';
 		$rs = $this->conn->query($sql);
@@ -281,7 +279,7 @@ class ChecklistVoucherAdmin {
 					'o.tid, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
 					'CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
 					'FROM omoccurrences AS o INNER JOIN omcollections AS c ON o.collid = c.collid '.
-					'INNER JOIN fmchklsttaxalink AS cl ON ts.tidaccepted = cl.tid '.
+					'INNER JOIN fmchklsttaxalink AS cl ON t.tidaccepted = cl.tid '.
 					'INNER JOIN taxa AS t ON cl.tid = t.tid ';
 				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
 					$sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
@@ -377,8 +375,7 @@ class ChecklistVoucherAdmin {
 			}
 			$rs->free();
 
-			$sqlB = 'SELECT COUNT(DISTINCT ts.tidaccepted) as cnt '.
-				$sqlBase;
+			$sqlB = 'SELECT COUNT(DISTINCT t.tidaccepted) as cnt '.$sqlBase;
 			//echo '<div>'.$sql.'</div>';
 			$rsB = $this->conn->query($sqlB);
 			if($r = $rsB->fetch_object()){
@@ -561,7 +558,7 @@ class ChecklistVoucherAdmin {
 			$fieldArr['clNotes'] = 'ctl.notes';
 			$fieldArr['clSource'] = 'ctl.source';
 			$fieldArr['editorNotes'] = 'ctl.internalnotes';
-			$fieldArr['family'] = 'IFNULL(ctl.familyoverride,ts.family) AS family';
+			$fieldArr['family'] = 'IFNULL(ctl.familyoverride,t.family) AS family';
 			$fieldArr['scientificName'] = 't.sciName AS scientificName';
 			$fieldArr['author'] = 't.author AS scientificNameAuthorship';
 
@@ -572,9 +569,8 @@ class ChecklistVoucherAdmin {
 
 			$fileName = $this->getExportFileName().'.csv';
 			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).' '.
-					'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-					'INNER JOIN fmchklsttaxalink ctl ON ctl.tid = t.tid '.
-					'WHERE (ctl.clid IN('.$clidStr.')) ';
+                'FROM taxa AS t INNER JOIN fmchklsttaxalink AS ctl ON ctl.tid = t.tid '.
+                'WHERE ctl.clid IN('.$clidStr.') ';
 			$this->exportCsv($fileName,$sql);
 		}
 	}
@@ -584,14 +580,14 @@ class ChecklistVoucherAdmin {
 		if($this->clid){
 			$fileName = $this->getExportFileName().'.csv';
 
-			$fieldArr = array('tid'=>'t.tid AS taxonID', 'family'=>'IFNULL(ctl.familyoverride,ts.family) AS family', 'scientificName'=>'t.sciname', 'author'=>'t.author AS scientificNameAuthorship');
+			$fieldArr = array('tid'=>'t.tid AS taxonID', 'family'=>'IFNULL(ctl.familyoverride,t.family) AS family', 'scientificName'=>'t.sciname', 'author'=>'t.author AS scientificNameAuthorship');
 			$fieldArr['clhabitat'] = 'ctl.habitat AS cl_habitat';
 			$fieldArr['clabundance'] = 'ctl.abundance';
 			$fieldArr['clNotes'] = 'ctl.notes';
 			$fieldArr['clSource'] = 'ctl.source';
 			$fieldArr['editorNotes'] = 'ctl.internalnotes';
 			$fieldArr = array_merge($fieldArr,$this->getOccurrenceFieldArr());
-			$fieldArr['family'] = 'ts.family';
+			$fieldArr['family'] = 't.family';
 			$fieldArr['scientificName'] = 't.sciName AS scientificName';
 
 			$localitySecurityFields = $this->getLocalitySecurityArr();
@@ -602,13 +598,12 @@ class ChecklistVoucherAdmin {
 			}
 
 			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.
-				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'INNER JOIN fmchklsttaxalink ctl ON ctl.tid = t.tid '.
-				'LEFT JOIN fmvouchers v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
-				'LEFT JOIN omoccurrences o ON v.occid = o.occid '.
-				'LEFT JOIN omcollections c ON o.collid = c.collid '.
-				'LEFT JOIN guidoccurrences g ON o.occid = g.occid '.
-				'WHERE (ctl.clid IN('.$clidStr.')) ';
+				'FROM taxa AS t INNER JOIN fmchklsttaxalink AS ctl ON ctl.tid = t.tid '.
+				'LEFT JOIN fmvouchers AS v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
+				'LEFT JOIN omoccurrences AS o ON v.occid = o.occid '.
+				'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+				'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid '.
+				'WHERE ctl.clid IN('.$clidStr.') ';
 			$this->exportCsv($fileName,$sql,$localitySecurityFields);
 		}
 	}
@@ -765,7 +760,7 @@ class ChecklistVoucherAdmin {
                 $occid = $vArr[0];
                 if(is_numeric($occid) && is_numeric($tid) && count($vArr) === 2){
                     if($useCurrentTaxon){
-                        $sql = 'SELECT tidaccepted FROM taxstatus WHERE tid = '.$tid;
+                        $sql = 'SELECT tidaccepted FROM taxa WHERE tid = '.$tid;
                         $rs = $this->conn->query($sql);
                         if($r = $rs->fetch_object()){
                             $tid = $r->tidaccepted;

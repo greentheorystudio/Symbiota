@@ -13,12 +13,11 @@ class DichoKeyManager{
     {
         $con = $this->getConnection();
         $stmtTaxaMap = array();
-        $sql = 'SELECT t.tid, t.sciname, ts.family, ts.hierarchystr, ts.parenttid ' .
-            'FROM (fmchklsttaxalink cl INNER JOIN taxstatus ts ON cl.tid = ts.tid) ' .
-            'INNER JOIN taxa t ON ts.tid = t.tid ' .
+        $sql = 'SELECT t.tid, t.sciname, t.family, t.parenttid ' .
+            'FROM fmchklsttaxalink AS cl INNER JOIN taxa AS t ON cl.tid = t.tid ' .
             "WHERE cl.clid = $clid ";
         if($taxonFilter){
-            $sql .= "AND (ts.family = '".$taxonFilter."' OR t.sciname LIKE '".$taxonFilter."%')";
+            $sql .= "AND (t.family = '".$taxonFilter."' OR t.sciname LIKE '".$taxonFilter."%')";
         }
         //echo $sql."<br/>";
         $result = $con->query($sql);
@@ -27,19 +26,7 @@ class DichoKeyManager{
         $tempTaxa = array();
         while($row = $result->fetch_object()){
             $childTid = $row->tid;
-            if($row->hierarchystr){
-                $hierArr = array_reverse(explode(',',$row->hierarchystr));
-                foreach($hierArr as $tid){
-                    if(array_key_exists($childTid,$parentArr)) {
-                        break;
-                    }
-                    $parentArr[$childTid] = $tid;
-                    $childTid = $tid;
-                }
-            }
-            else{
-                $parentArr[$row->tid] = $row->parenttid;
-            }
+            $parentArr[$row->tid] = $row->parenttid;
             //$taxaArr[$row->family][$row->tid] = $row->sciname;
             $tempTaxa[] = $row->tid;
         }

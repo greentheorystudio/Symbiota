@@ -614,8 +614,8 @@ UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName
     WHERE ISNULL(t.TID);
 
 ALTER TABLE `taxa`
-    ADD COLUMN `tidaccepted` int(10) UNSIGNED NOT NULL AFTER `Author`,
-    ADD COLUMN `parenttid` int(10) UNSIGNED NOT NULL AFTER `tidaccepted`,
+    ADD COLUMN `tidaccepted` int(10) UNSIGNED NULL AFTER `Author`,
+    ADD COLUMN `parenttid` int(10) UNSIGNED NULL AFTER `tidaccepted`,
     ADD COLUMN `family` varchar(50) NULL AFTER `parenttid`;
 
 ALTER TABLE `symbiota`.`taxa`

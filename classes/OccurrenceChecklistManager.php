@@ -41,11 +41,8 @@ class OccurrenceChecklistManager extends OccurrenceManager{
         $returnVec = array();
         $tidStr = implode(',',$tidArr);
         $this->checklistTaxaCnt = 0;
-        $sql = 'SELECT DISTINCT ts.family, t.sciname '.
-            'FROM (taxstatus AS ts1 LEFT JOIN taxa AS t ON ts1.TidAccepted = t.Tid) '.
-            'LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
-            'WHERE ts1.tid IN('.$tidStr.') '.
-            'AND t.RankId > 140 ';
+        $sql = 'SELECT DISTINCT family, sciname FROM taxa '.
+            'WHERE tidaccepted IN('.$tidStr.') AND RankId > 140 ';
         //echo "<div>".$sql."</div>";
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){

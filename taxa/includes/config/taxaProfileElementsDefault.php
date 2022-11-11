@@ -44,7 +44,7 @@ if($taxonRank > 180){
         <?php
         $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue;
         echo "<a href='".$parentLink."'><i id='parenttaxonicon' style='height:15px;width:15px;' title='Go to Parent' class='fas fa-level-up-alt'></i></a>";
-        if($taxonManager->getTid() !== $taxonManager->getSubmittedTid()){
+        if((int)$taxonManager->getTid() !== (int)$taxonManager->getSubmittedTid()){
             echo '<span id="redirectedfrom"> (redirected from: <i>'.$taxonManager->getSubmittedSciName().'</i>)</span>';
         }
         ?>

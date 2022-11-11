@@ -36,12 +36,10 @@ class TaxonomyDisplayManager{
 		$subGenera = array();
 		$taxaParentIndex = array();
 		if($this->targetStr){
-			$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, ts.parenttid, ts.tidaccepted '.
-				'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
-				'LEFT JOIN taxstatus ts1 ON t.tid = ts1.tidaccepted '.
-				'LEFT JOIN taxa t1 ON ts1.tid = t1.tid ';
+			$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, t.parenttid, t.tidaccepted '.
+				'FROM taxa AS t LEFT JOIN taxa AS t1 ON t.tidaccepted = t1.tid ';
 			if(is_numeric($this->targetStr)){
-				$sql1 .= 'WHERE (ts1.tid = '.$this->targetStr.') ';
+				$sql1 .= 'WHERE t.tidaccepted = '.$this->targetStr.' ';
 			}
 			else{
 				if(strpos($this->targetStr, ' ') && !preg_match('/^[A-Z]+[a-z]+\s[A-Z]+/', $this->targetStr)){
@@ -85,10 +83,9 @@ class TaxonomyDisplayManager{
 		$hierarchyArr = array();
 		if($this->taxaArr){
 			$tidStr = implode(',',array_keys($this->taxaArr));
-			$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, ts.parenttid '.
-				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '. 
-				'INNER JOIN taxaenumtree te ON t.tid = te.tid '.
-				'WHERE (ts.tid = ts.tidaccepted) AND ((te.parenttid IN('.$tidStr.')) OR (t.tid IN('.$tidStr.'))) ';
+			$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, t.parenttid '.
+				'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
+				'WHERE t.tid = t.tidaccepted AND (te.parenttid IN('.$tidStr.') OR t.tid IN('.$tidStr.')) ';
 			if($this->taxonRank < 140 && !$this->displayFullTree) {
 				$sql2 .= 'AND t.rankid <= 140 ';
 			}
@@ -110,10 +107,9 @@ class TaxonomyDisplayManager{
 			}
 			$rs2->free();
 			
-			$sql3 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, ts.parenttid '.
-				'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.parenttid '. 
-				'INNER JOIN taxstatus ts ON t.tid = ts.tid '. 
-				'WHERE (te.tid IN('.$tidStr.')) ';
+			$sql3 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, t.parenttid '.
+				'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.parenttid '.
+				'WHERE te.tid IN('.$tidStr.') ';
 			//echo $sql3."<br>";
 			$rs3 = $this->conn->query($sql3);
 			while($row3 = $rs3->fetch_object()){
@@ -133,9 +129,8 @@ class TaxonomyDisplayManager{
 			$rs3->free();
 			
 			$synTidStr = implode(',',array_keys($this->taxaArr));
-			$sqlSyns = 'SELECT ts.tidaccepted, t.tid, t.sciname, t.author, t.rankid '.
-				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE (ts.tid <> ts.tidaccepted) AND (ts.tidaccepted IN('.$synTidStr.'))';
+			$sqlSyns = 'SELECT tidaccepted, tid, sciname, author, rankid FROM taxa '.
+				'WHERE tid <> tidaccepted AND tidaccepted IN('.$synTidStr.') ';
 			//echo $sqlSyns;
 			$rsSyns = $this->conn->query($sqlSyns);
 			while($row = $rsSyns->fetch_object()){
@@ -152,9 +147,8 @@ class TaxonomyDisplayManager{
 
 			$orphanTaxa = array_unique(array_diff($taxaParentIndex,array_keys($taxaParentIndex)));
 			if($orphanTaxa){
-				$sqlOrphan = 'SELECT t.tid, t.sciname, t.author, ts.parenttid, t.rankid ' .
-					'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
-                    'WHERE (ts.tid = ts.tidaccepted) AND (t.tid IN (' .implode(',',$orphanTaxa). '))';
+				$sqlOrphan = 'SELECT tid, sciname, author, parenttid, rankid FROM taxa ' .
+                    'WHERE tid = tidaccepted AND tid IN(' .implode(',',$orphanTaxa). ') ';
 				//echo $sqlOrphan;
 				$rsOrphan = $this->conn->query($sqlOrphan);
 				while($row4 = $rsOrphan->fetch_object()){
@@ -268,12 +262,10 @@ class TaxonomyDisplayManager{
 		if($this->targetStr){
 			$tid = '';
 			$acceptedTid = '';
-			$sql1 = 'SELECT DISTINCT t.tid, ts.tidaccepted '.
-				'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
-				'LEFT JOIN taxstatus ts1 ON t.tid = ts1.tidaccepted '.
-				'LEFT JOIN taxa t1 ON ts1.tid = t1.tid ';
+			$sql1 = 'SELECT DISTINCT t.tid, t.tidaccepted '.
+				'FROM taxa AS t LEFT JOIN taxa AS t1 ON t.tidaccepted = t1.tid ';
 			if(is_numeric($this->targetStr)){
-				$sql1 .= 'WHERE (t.tid IN('.implode((array)',',$this->targetStr).') OR (ts1.tid = '.$this->targetStr.'))';
+				$sql1 .= 'WHERE (t.tid IN('.implode((array)',',$this->targetStr).') OR t.tidaccepted = '.$this->targetStr.')';
 			}
 			else{
 				$sql1 .= 'WHERE ((t.sciname = "'.$this->targetStr.'") OR (t1.sciname = "'.$this->targetStr.'") '.
@@ -296,9 +288,9 @@ class TaxonomyDisplayManager{
 				$i = 1;
 				$prevTid = '';
 				$retArr[0] = 'root';
-				$sql2 = 'SELECT t.RankId, te.parenttid, ts.tidaccepted, ts.parenttid AS par2 '.
-					'FROM taxa t INNER JOIN taxaenumtree te ON t.TID = te.parenttid '.
-					'INNER JOIN taxstatus ts ON te.parenttid = ts.tid '.
+				$sql2 = 'SELECT t.RankId, te.parenttid, t2.tidaccepted, t2.parenttid AS par2 '.
+					'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.TID = te.parenttid '.
+					'INNER JOIN taxa t2 ON te.parenttid = t2.tid '.
 					'WHERE te.TID = '.($acceptedTid?:$tid).' '.
 					'ORDER BY t.RankId ';
 				//echo '<div>' .$sql2. '</div>';
@@ -309,9 +301,7 @@ class TaxonomyDisplayManager{
 						$prevTid = $row2->tidaccepted;
 					}
 					else{
-						$sql3 = 'SELECT tid '.
-							'FROM taxstatus '.
-							'WHERE parenttid = '.$prevTid.' '.
+						$sql3 = 'SELECT tid FROM taxa WHERE parenttid = '.$prevTid.' '.
 							'AND tid IN(SELECT parenttid FROM taxaenumtree WHERE tid = '.$tid.') ';
 						//echo '<div>' .$sql3. '</div>';
 						$rs3 = $this->conn->query($sql3);

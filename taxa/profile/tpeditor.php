@@ -28,19 +28,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS
 }
 
 if($editable && $action){
-	if($action === 'Edit Synonym Sort Order'){
-		$synSortArr = array();
-		foreach($_REQUEST as $sortKey => $sortValue){
-			if($sortValue && (strncmp($sortKey, 'syn-', 4) === 0)){
-				$index = substr($sortKey,4);
-                if(is_string($index) || is_int($index)){
-                    $synSortArr[$index] = $sortValue;
-                }
-			}
-		}
-		$statusStr = $tEditor->editSynonymSort($synSortArr);
-	}
- 	elseif($action === 'Submit Common Name Edits'){
+	if($action === 'Submit Common Name Edits'){
  		$editVernArr = array();
 		$editVernArr['vid'] = $_REQUEST['vid'];
  		if($_REQUEST['vernacularname']) {
@@ -331,9 +319,6 @@ if($editable && $action){
 							<?php
 							if($synonymArr = $tEditor->getSynonym()){
 								?>
-								<div style="float:right;" title="Edit Synonym Sort Order">
-									<a href="#"  onclick="toggle('synsort');return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
-								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>
 										<?php
@@ -342,31 +327,6 @@ if($editable && $action){
 										}
 										?>
 									</ul>
-								</div>
-								<div class="synsort" style="display:none;">
-									<form name="synsortform" action="tpeditor.php" method="post">
-										<input type="hidden" name="tid" value="<?php echo $tEditor->getTid(); ?>" />
-										<fieldset style='margin: 5px 0 5px 20px;width:350px;'>
-									    	<legend><b>Synonym Sort Order</b></legend>
-									    	<?php
-									    	foreach($synonymArr as $tidKey => $valueArr){
-									    		?>
-												<div>
-													<b><?php echo $valueArr['sortsequence']; ?></b> -
-													<?php echo $valueArr['sciname']; ?>
-												</div>
-												<div style="margin:0 0 5px 10px;">
-													new sort value:
-													<input type="text" name="syn-<?php echo $tidKey; ?>" style="width:35px;border:inset;" />
-												</div>
-												<?php
-											}
-											?>
-											<div>
-												<input type="submit" name="action" value="Edit Synonym Sort Order" />
-											</div>
-										</fieldset>
-									</form>
 								</div>
 								<?php
 							}

@@ -268,10 +268,9 @@ class TaxonomyUpload{
 		}
 
 		$this->outputMsg('Populating null family values... ');
-		$sql = 'UPDATE uploadtaxa ut INNER JOIN taxa t ON ut.unitname1 = t.sciname '.
-			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'SET ut.family = ts.family '.
-			'WHERE (ut.rankid > 140) AND (t.rankid = 180) AND (ts.family IS NOT NULL) AND ISNULL(ut.family)';
+		$sql = 'UPDATE uploadtaxa AS ut INNER JOIN taxa AS t ON ut.unitname1 = t.sciname '.
+			'SET ut.family = t.family '.
+			'WHERE ut.rankid > 140 AND t.rankid = 180 AND t.family IS NOT NULL AND ISNULL(ut.family)';
 		if(!$this->conn->query($sql)){
             $this->outputMsg('ERROR: Cleaning upload step 11.',1);
 		}
@@ -461,9 +460,9 @@ class TaxonomyUpload{
 		if(!$this->conn->query($sql6a)){
 			$this->outputMsg('ERROR tagging non-accepted linked to non-accepted (#1).',1);
 		}
-		$sql6b = 'UPDATE uploadtaxa u INNER JOIN taxstatus ts ON u.tidaccepted = ts.tid '.
+		$sql6b = 'UPDATE uploadtaxa AS u INNER JOIN taxa AS t ON u.tidaccepted = t.tid '.
 			'SET u.ErrorStatus = "FAILED: Non-accepted linked to another non-accepted taxon already within database" '.
-			'WHERE (u.acceptance = 0) AND (ts.tid <> ts.tidaccepted)';
+			'WHERE u.acceptance = 0 AND t.tid <> t.tidaccepted ';
 		if(!$this->conn->query($sql6b)){
 			$this->outputMsg('ERROR tagging non-accepted linked to non-accepted (#2).',1);
 		}
@@ -514,12 +513,10 @@ class TaxonomyUpload{
 		$sql = 'INSERT INTO taxa(SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
 			'SELECT DISTINCT SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
 			'FROM uploadtaxa '.
-			'WHERE ISNULL(TID) AND (rankid = 10)';
+			'WHERE ISNULL(TID) AND rankid = 10 ';
 		if($this->conn->query($sql)){
-			$sql = 'INSERT INTO taxstatus(tid, tidaccepted, parenttid) '.
-				'SELECT DISTINCT t.tid, t.tid, t.tid '.
-				'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE (t.rankid = 10) AND ISNULL(ts.tid)';
+			$sql = 'UPDATE taxa SET tidaccepted = tid, parenttid = tid '.
+				'WHERE rankid = 10 AND ISNULL(parenttid)';
 			if(!$this->conn->query($sql)){
 				$this->outputMsg('ERROR: Transferring upload 1.',1);
 			}
@@ -535,46 +532,45 @@ class TaxonomyUpload{
 			$sql = 'INSERT IGNORE INTO taxa(SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
 				'SELECT DISTINCT SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
 				'FROM uploadtaxa '.
-				'WHERE ISNULL(tid) AND (parenttid IS NOT NULL) AND (rankid IS NOT NULL) AND ISNULL(ErrorStatus) '.
+				'WHERE ISNULL(tid) AND parenttid IS NOT NULL AND rankid IS NOT NULL AND ISNULL(ErrorStatus) '.
 				'ORDER BY RankId ASC ';
 			if(!$this->conn->query($sql)){
 				$this->outputMsg('ERROR loading taxa.',1);
 			}
 
-			$sql = 'UPDATE uploadtaxa ut INNER JOIN taxa t ON ut.sciname = t.sciname '.
-				'SET ut.tid = t.tid WHERE ISNULL(ut.tid)';
+			$sql = 'UPDATE uploadtaxa AS ut INNER JOIN taxa AS t ON ut.sciname = t.sciname '.
+				'SET ut.tid = t.tid WHERE ISNULL(ut.tid) ';
 			if(!$this->conn->query($sql)){
 				$this->outputMsg('ERROR populating TIDs.',1);
 			}
 
-			$sql = 'UPDATE uploadtaxa ut1 INNER JOIN uploadtaxa ut2 ON ut1.sourceacceptedid = ut2.sourceid '.
-				'INNER JOIN taxa t ON ut2.sciname = t.sciname '.
+			$sql = 'UPDATE uploadtaxa AS ut1 INNER JOIN uploadtaxa AS ut2 ON ut1.sourceacceptedid = ut2.sourceid '.
+				'INNER JOIN taxa AS t ON ut2.sciname = t.sciname '.
 				'SET ut1.tidaccepted = t.tid '.
-				'WHERE (ut1.acceptance = 0) AND ISNULL(ut1.tidaccepted) AND (ut1.sourceacceptedid IS NOT NULL) AND (ut2.sourceid IS NOT NULL)';
+				'WHERE ut1.acceptance = 0 AND ISNULL(ut1.tidaccepted) AND ut1.sourceacceptedid IS NOT NULL AND ut2.sourceid IS NOT NULL ';
 			if(!$this->conn->query($sql)){
                 $this->outputMsg('ERROR: Transferring upload 3.',1);
 			}
 
-			$sql = 'UPDATE uploadtaxa ut INNER JOIN taxa t ON ut.acceptedstr = t.sciname '.
+			$sql = 'UPDATE uploadtaxa AS ut INNER JOIN taxa AS t ON ut.acceptedstr = t.sciname '.
 				'SET ut.tidaccepted = t.tid '.
-				'WHERE (ut.acceptance = 0) AND ISNULL(ut.tidaccepted) AND (ut.acceptedstr IS NOT NULL)';
+				'WHERE ut.acceptance = 0 AND ISNULL(ut.tidaccepted) AND ut.acceptedstr IS NOT NULL ';
 			if(!$this->conn->query($sql)){
                 $this->outputMsg('ERROR: Transferring upload 4.',1);
 			}
 
 			$sql = 'UPDATE uploadtaxa SET tidaccepted = tid '.
-				'WHERE (acceptance = 1) AND ISNULL(tidaccepted) AND (tid IS NOT NULL)';
+				'WHERE acceptance = 1 AND ISNULL(tidaccepted) AND tid IS NOT NULL ';
 			if(!$this->conn->query($sql)){
                 $this->outputMsg('ERROR: Transferring upload 5.',1);
 			}
 
 			$this->outputMsg('Create parent and accepted links... ',1);
-			$sql = 'INSERT IGNORE INTO taxstatus(TID, TidAccepted, ParentTid, Family, UnacceptabilityReason) '.
-				'SELECT DISTINCT TID, TidAccepted, ParentTid, Family, UnacceptabilityReason '.
-				'FROM uploadtaxa '.
-				'WHERE (tid IS NOT NULL) AND (TidAccepted IS NOT NULL) AND (parenttid IS NOT NULL)';
+			$sql = 'UPDATE uploadtaxa AS ut INNER JOIN taxa AS t ON ut.sciname = t.sciname '.
+                'SET t.tidaccepted = ut.tidaccepted, t.parenttid = ut.parenttid, t.family = ut.family '.
+				'WHERE ut.tid IS NOT NULL ';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR creating taxstatus links.',1);
+				$this->outputMsg('ERROR creating accepted and parent links.',1);
 			}
 
 			$this->outputMsg('Transferring vernaculars for new taxa... ',1);

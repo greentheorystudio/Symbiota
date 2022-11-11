@@ -332,9 +332,8 @@ class TaxonomyCleaner extends Manager{
 		$this->logOrEcho('Populating null family tags...');
 		$sql = 'UPDATE taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
 			'INNER JOIN taxa AS t2 ON e.parenttid = t2.tid '.
-			'INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-			'SET ts.family = t2.sciname '.
-			'WHERE t2.rankid = 140 AND ISNULL(ts.family) ';
+			'SET t.family = t2.sciname '.
+			'WHERE t2.rankid = 140 AND ISNULL(t.family) ';
 		if($this->conn->query($sql)){
 			$this->logOrEcho($this->conn->affected_rows.' taxon records updated',1);
 		}

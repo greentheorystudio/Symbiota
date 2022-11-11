@@ -130,12 +130,11 @@ class OccurrenceMaintenance {
 			$sensitiveArr[] = $r->tid; 
 		}
 		$rs->free();
-		$sql2 = 'SELECT DISTINCT ts.tid '.
-			'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tidaccepted '.
-			'WHERE t.SecurityStatus > 0 AND t.tid != ts.tid ';
+		$sql2 = 'SELECT DISTINCT tidaccepted FROM taxa '.
+			'WHERE SecurityStatus > 0 AND tid <> tidaccepted ';
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){
-			$sensitiveArr[] = $r2->tid;
+			$sensitiveArr[] = $r2->tidaccepted;
 		}
 		$rs2->free();
 		
@@ -238,12 +237,11 @@ class OccurrenceMaintenance {
             $sensitiveArr[] = $r->tid;
         }
         $rs->free();
-        $sql2 = 'SELECT DISTINCT ts.tid '.
-            'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tidaccepted '.
-            'WHERE t.SecurityStatus > 0 AND t.tid != ts.tid ';
+        $sql2 = 'SELECT DISTINCT tidaccepted FROM taxa '.
+            'WHERE SecurityStatus > 0 AND tid <> tidaccepted ';
         $rs2 = $this->conn->query($sql2);
         while($r2 = $rs2->fetch_object()){
-            $sensitiveArr[] = $r2->tid;
+            $sensitiveArr[] = $r2->tidaccepted;
         }
         $rs2->free();
         return $sensitiveArr;

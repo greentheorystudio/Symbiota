@@ -95,9 +95,8 @@ class TaxonomyDynamicListManager{
         $sql = 'SELECT COUNT(DISTINCT t2.SciName) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN taxa AS t2 ON te.tid = t2.TID '.
-            'LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
-            'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND t.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
-            'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT parenttid FROM taxstatus)) ';
+            'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND t.RankId >= 180 AND t.tid = t.tidaccepted) '.
+            'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT DISTINCT parenttid FROM taxa)) ';
         if($this->descLimit > 0){
             $sql .= 'AND t.TID IN(SELECT tid FROM taxadescrblock) ';
         }
@@ -115,8 +114,7 @@ class TaxonomyDynamicListManager{
         $returnArr = array();
         $parentTaxonSql = 'SELECT DISTINCT te.tid, t.TID AS parentTid, t.RankId, t.SciName '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
-            'LEFT JOIN taxstatus AS ts ON te.tid = ts.tid '.
-            'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND ts.tid = ts.tidaccepted AND t.RankId IN(10,30,60,100,140)) ';
+            'WHERE te.tid IN('.implode(',',$this->targetTidArr).') AND t.tid = t.tidaccepted AND t.RankId IN(10,30,60,100,140) ';
         //echo '<div>Parent sql: ' .$parentTaxonSql. '</div>';
         $rs = $this->conn->query($parentTaxonSql);
         while($r = $rs->fetch_object()){
@@ -127,9 +125,8 @@ class TaxonomyDynamicListManager{
 
         $sql = 'SELECT DISTINCT t.TID, t.SciName '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
-            'LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
-            'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND t.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
-            'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT parenttid FROM taxstatus)) ';
+            'WHERE (te.tid IN('.implode(',',$this->targetTidArr).') AND t.RankId >= 180 AND t.tid = t.tidaccepted) '.
+            'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT DISTINCT parenttid FROM taxa)) ';
         if($this->descLimit){
             $sql .= 'AND t.TID IN(SELECT tid FROM taxadescrblock) ';
         }
