@@ -131,7 +131,7 @@ if($isEditor){
     <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/external/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../../js/shared.js?ver=20220809"></script>
-    <script type="text/javascript" src="../../js/search.term.manager.js?ver=20220921"></script>
+    <script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
     <script type="text/javascript">
         let stArr = {};
         $(document).ready(function() {

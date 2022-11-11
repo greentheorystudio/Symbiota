@@ -79,12 +79,12 @@ $(document).ready(function() {
 		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		select: function(event, ui) {
-			$( "#tidinterpreted" ).val("");
+			$( "#tid" ).val("");
 			$( 'input[name=scientificnameauthorship]' ).val("");
 			$( 'input[name=family]' ).val("");
 			$( 'input[name=localitysecurity]' ).prop('checked', false);
 			fieldChanged('sciname');
-			fieldChanged('tidinterpreted');
+			fieldChanged('tid');
 			fieldChanged('scientificnameauthorship');
 			fieldChanged('family');
 			fieldChanged('localitysecurity');
@@ -92,7 +92,7 @@ $(document).ready(function() {
 				verifyFullFormSciName(ui.item.id);
 			}
 			else{
-				$( "#tidinterpreted" ).val("");
+				$( "#tid" ).val("");
 				$( 'input[name=scientificnameauthorship]' ).val("");
 				$( 'input[name=family]' ).val("");
 				$( 'input[name=localitysecurity]' ).prop('checked', false);
@@ -240,7 +240,7 @@ function verifyFullFormSciName(id = null){
 		if(http.readyState === 4 && http.status === 200) {
 			if(http.responseText){
 				const data = JSON.parse(http.responseText);
-				$( "#tidinterpreted" ).val(data.tid);
+				$( "#tid" ).val(data.tid);
 				$( 'input[name=family]' ).val(data.family);
 				$( 'input[name=scientificnameauthorship]' ).val(data.author);
 				if(data.status == 1){
@@ -265,7 +265,7 @@ function verifyFullFormSciName(id = null){
 }
 
 function localitySecurityCheck(){
-	const tidIn = $("input[name=tidinterpreted]").val();
+	const tidIn = $("input[name=tid]").val();
 	const stateIn = $("input[name=stateprovince]").val();
 	if(tidIn !== "" && stateIn !== ""){
 		const http = new XMLHttpRequest();
@@ -313,7 +313,7 @@ function recordNumberChanged(){
 
 function stateProvinceChanged(stateVal){ 
 	fieldChanged('stateprovince');
-	const tidVal = $("#tidinterpreted").val();
+	const tidVal = $("#tid").val();
 	if(tidVal !== "" && stateVal !== ""){
 		localitySecurityCheck();
 	}

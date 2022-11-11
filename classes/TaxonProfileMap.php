@@ -89,7 +89,7 @@ class TaxonProfileMap {
 	private function getTaxaWhere(): string
 	{
 		$sql = '';
-		$sql .= 'WHERE (o.tidinterpreted IN('.implode(',',array_keys($this->synMap)).')) '.
+		$sql .= 'WHERE (o.tid IN('.implode(',',array_keys($this->synMap)).')) '.
 			'AND (o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
 		if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) &&
 			!array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS']) && array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){

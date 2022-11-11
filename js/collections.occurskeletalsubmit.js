@@ -7,7 +7,7 @@ $(document).ready(function() {
 		minLength: 3,
 		autoFocus: true,
 		change: function() {
-			$( "#ftidinterpreted" ).val("");
+			$( "#ftid" ).val("");
 			$( '#fscientificnameauthorship' ).val("");
 			$( '#ffamily' ).val("");
 			$( '#flocalitysecurity' ).prop('checked', false);
@@ -63,7 +63,7 @@ function verifySciName(){
 		data: { term: $( "#fsciname" ).val() }
 	}).done(function( data ) {
 		if(data){
-			$( "#ftidinterpreted" ).val(data.tid);
+			$( "#ftid" ).val(data.tid);
 			$( '#ffamily' ).val(data.family);
 			$( '#fscientificnameauthorship' ).val(data.author);
 			if(data.status == 1){
@@ -85,7 +85,7 @@ function verifySciName(){
 }
 
 function localitySecurityCheck(){
-	const tidIn = $("#ftidinterpreted").val();
+	const tidIn = $("#ftid").val();
 	const stateIn = $("#stateprovince").val();
 	if(tidIn !== "" && stateIn !== ""){
 		$.ajax({
@@ -102,7 +102,7 @@ function localitySecurityCheck(){
 }
 
 function stateProvinceChanged(stateVal){
-	const tidVal = $("#ftidinterpreted").val();
+	const tidVal = $("#ftid").val();
 	if(tidVal !== "" && stateVal !== ""){
 		localitySecurityCheck();
 	}

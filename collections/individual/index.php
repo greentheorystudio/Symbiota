@@ -310,7 +310,7 @@ if($fullWindow){
                 }
                 ?>
                 <li id="indCommentsTab"><a href="#commenttab"><span><?php echo ($commentArr?count($commentArr).' ':''); ?>Comments</span></a></li>
-                <li id="indLinkedResourcesTab"><a href="linkedresources.php?occid=<?php echo $occid.'&tid='.$occArr['tidinterpreted'].'&clid='.$clid.'&collid='.$collid; ?>"><span>Linked Resources</span></a></li>
+                <li id="indLinkedResourcesTab"><a href="linkedresources.php?occid=<?php echo $occid.'&tid='.$occArr['tid'].'&clid='.$clid.'&collid='.$collid; ?>"><span>Linked Resources</span></a></li>
                 <?php
                 if($isEditor){
                     ?>

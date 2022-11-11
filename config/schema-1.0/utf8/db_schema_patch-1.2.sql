@@ -587,3 +587,44 @@ ALTER TABLE `taxstatus`
 
 ALTER TABLE `configurations`
     ADD UNIQUE INDEX `configurationname`(`configurationname`);
+
+ALTER TABLE `symbiota`.`omoccurdeterminations`
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`;
+
+ALTER TABLE `omoccurdeterminations`
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`;
+
+UPDATE omoccurdeterminations AS d LEFT JOIN taxa AS t ON d.sciname = t.SciName
+    SET d.tid = t.TID
+WHERE t.TID IS NOT NULL;
+
+UPDATE omoccurdeterminations AS d LEFT JOIN taxa AS t ON d.sciname = t.SciName
+    SET d.tid = NULL
+WHERE ISNULL(t.TID);
+
+ALTER TABLE `omoccurrences`
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`;
+
+UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName
+    SET o.tid = t.TID
+    WHERE t.TID IS NOT NULL;
+
+UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName
+    SET o.tid = NULL
+    WHERE ISNULL(t.TID);
+
+ALTER TABLE `taxa`
+    ADD COLUMN `tidaccepted` int(10) UNSIGNED NOT NULL AFTER `Author`,
+    ADD COLUMN `parenttid` int(10) UNSIGNED NOT NULL AFTER `tidaccepted`,
+    ADD COLUMN `family` varchar(50) NULL AFTER `parenttid`;
+
+ALTER TABLE `symbiota`.`taxa`
+    ADD INDEX `tidaccepted`(`tidaccepted`),
+    ADD INDEX `parenttid`(`parenttid`),
+    ADD INDEX `family`(`family`);
+
+UPDATE taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid
+    SET t.tidaccepted = ts.tidaccepted, t.parenttid = ts.parenttid, t.family = ts.family;
+
+ALTER TABLE `uploadspectemp`
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`;

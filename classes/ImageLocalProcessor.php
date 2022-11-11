@@ -922,7 +922,7 @@ class ImageLocalProcessor {
 							}
 						}
 					}
-					unset($symbMap['datelastmodified'], $symbMap['occid'], $symbMap['collid'], $symbMap['catalognumber'], $symbMap['institutioncode'], $symbMap['collectioncode'], $symbMap['dbpk'], $symbMap['processingstatus'], $symbMap['observeruid'], $symbMap['tidinterpreted']);
+					unset($symbMap['datelastmodified'], $symbMap['occid'], $symbMap['collid'], $symbMap['catalognumber'], $symbMap['institutioncode'], $symbMap['collectioncode'], $symbMap['dbpk'], $symbMap['processingstatus'], $symbMap['observeruid'], $symbMap['tid']);
 
 					$symbMap['ometid']['type'] = 'numeric';
 					$symbMap['exsiccatititle']['type'] = 'string';

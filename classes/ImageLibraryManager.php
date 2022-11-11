@@ -153,7 +153,7 @@ class ImageLibraryManager{
         if(!$this->recordCount){
             $this->setRecordCnt();
         }
-        $sql = 'SELECT DISTINCT i.imgid, o.tidinterpreted, t.tid, t.sciname, i.url, i.thumbnailurl, i.originalurl, '.
+        $sql = 'SELECT DISTINCT i.imgid, t.tidaccepted, t.tid, t.sciname, i.url, i.thumbnailurl, i.originalurl, '.
             'u.uid, u.lastname, u.firstname, i.caption, '.
             'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode ';
         $sql .= $this->getSqlBase();
@@ -179,7 +179,7 @@ class ImageLibraryManager{
         while($r = $result->fetch_object()){
             $imgId = $r->imgid;
             $retArr[$imgId]['imgid'] = $r->imgid;
-            $retArr[$imgId]['tidaccepted'] = $r->tidinterpreted;
+            $retArr[$imgId]['tidaccepted'] = $r->tidaccepted;
             $retArr[$imgId]['tid'] = $r->tid;
             $retArr[$imgId]['sciname'] = $r->sciname;
             $retArr[$imgId]['url'] = $r->url;
@@ -203,7 +203,7 @@ class ImageLibraryManager{
         if($this->sqlWhere){
             if(array_key_exists('imagecount',$this->searchTermsArr)&&$this->searchTermsArr['imagecount']){
                 if($this->searchTermsArr['imagecount'] === 'taxon'){
-                    $sql = 'SELECT COUNT(DISTINCT o.tidinterpreted) AS cnt ';
+                    $sql = 'SELECT COUNT(DISTINCT o.tid) AS cnt ';
                 }
                 elseif($this->searchTermsArr['imagecount'] === 'specimen'){
                     $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt ';

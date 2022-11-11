@@ -782,7 +782,7 @@ class ProfileManager extends Manager{
         $specFH = fopen($fileName.'_spec.csv', 'wb');
 
         $headerStr = 'occid,dbpk,basisOfRecord,otherCatalogNumbers,ownerInstitutionCode, '.
-            'family,scientificName,sciname,tidinterpreted,genus,specificEpithet,taxonRank,infraspecificEpithet,scientificNameAuthorship, '.
+            'family,scientificName,sciname,tid,genus,specificEpithet,taxonRank,infraspecificEpithet,scientificNameAuthorship, '.
             'taxonRemarks,identifiedBy,dateIdentified,identificationReferences,identificationRemarks,identificationQualifier, '.
             'typeStatus,recordedBy,recordNumber,associatedCollectors,eventDate,year,month,day,startDayOfYear,endDayOfYear, '.
             'verbatimEventDate,habitat,substrate,occurrenceRemarks,informationWithheld,associatedOccurrences, '.

@@ -58,7 +58,7 @@ class ObservationSubmitManager {
 			}
 
 			$sql = 'INSERT INTO omoccurrences(collid, basisofrecord, family, sciname, scientificname, '.
-				'scientificNameAuthorship, tidinterpreted, taxonRemarks, identifiedBy, dateIdentified, '.
+				'scientificNameAuthorship, tid, taxonRemarks, identifiedBy, dateIdentified, '.
 				'identificationReferences, recordedBy, recordNumber, '.
 				'associatedCollectors, eventDate, `year`, `month`, `day`, startDayOfYear, habitat, substrate, occurrenceRemarks, associatedTaxa, '.
 				'verbatimattributes, reproductiveCondition, cultivationStatus, establishmentMeans, country, '.

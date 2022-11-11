@@ -537,7 +537,7 @@ else{
         }
     </script>
     <script type="text/javascript" src="../../js/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221025"></script>
+    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221110"></script>
     <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221025"></script>
     <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20220921"></script>
     <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221025"></script>
@@ -848,7 +848,7 @@ else{
                                                     <a href="#" onclick="return dwcDoc('scientificName')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
                                                     <br/>
                                                     <input type="text" id="ffsciname" name="sciname" maxlength="250" tabindex="28" value="<?php echo array_key_exists('sciname',$occArr)?$occArr['sciname']:''; ?>" onchange="fieldChanged('sciname');" <?php echo ((!$isEditor || $isEditor === 3)?'disabled ':''); ?> />
-                                                    <input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo array_key_exists('tidinterpreted',$occArr)?$occArr['tidinterpreted']:''; ?>" />
+                                                    <input type="hidden" id="tid" name="tid" value="<?php echo array_key_exists('tid',$occArr)?$occArr['tid']:''; ?>" />
                                                     <?php
                                                     if(!$isEditor){
                                                         echo '<div style="clear:both;color:red;margin-left:5px;">Note: Full editing permissions are needed to edit an identification</div>';

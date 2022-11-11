@@ -60,7 +60,7 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/collections.imageoccursubmit.js?ver=20221025" type="text/javascript"></script>
+	<script src="../../js/collections.imageoccursubmit.js?ver=20221110" type="text/javascript"></script>
 	<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
 	<script type="text/javascript">
 	function validateImgOccurForm(f){
@@ -169,7 +169,7 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 						<b>Scientific Name:</b> 
 						<input id="sciname" name="sciname" type="text" value="<?php echo ($_POST['sciname'] ?? ''); ?>" style="width:300px"/>
 						<input name="scientificnameauthorship" type="text" value="<?php echo ($_POST['scientificnameauthorship'] ?? ''); ?>" /><br/>
-						<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo ($_POST['tidinterpreted'] ?? ''); ?>" />
+						<input type="hidden" id="tid" name="tid" value="<?php echo ($_POST['tid'] ?? ''); ?>" />
 						<b>Family:</b> <input name="family" type="text" value="<?php echo ($_POST['family'] ?? ''); ?>" />
 					</div>
 					<div> 

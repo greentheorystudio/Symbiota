@@ -244,7 +244,7 @@ class TaxonomyEditorManager{
 		}
 		
 		if(($postArr['securitystatus'] !== $_REQUEST['securitystatusstart']) && is_numeric($postArr['securitystatus'])) {
-			$sql2 = 'UPDATE omoccurrences SET localitysecurity = '.$postArr['securitystatus'].' WHERE (tidinterpreted = '.$this->tid.') AND ISNULL(localitySecurityReason)';
+			$sql2 = 'UPDATE omoccurrences SET localitysecurity = '.$postArr['securitystatus'].' WHERE tid = '.$this->tid.' AND ISNULL(localitySecurityReason) ';
 			$this->conn->query($sql2);
 		}
 		return $statusStr;
@@ -587,18 +587,18 @@ class TaxonomyEditorManager{
                         echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree.';
                     }
 
-                    $sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid ';
+                    $sql1 = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = t.sciname SET o.tid = t.tid ';
                     if($dataArr['securitystatus'] === 1) {
                         $sql1 .= ',o.localitysecurity = 1 ';
                     }
-                    $sql1 .= 'WHERE (o.sciname = "'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'") ';
+                    $sql1 .= 'WHERE o.sciname = "'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'" ';
                     if(!$this->conn->query($sql1)){
                         echo 'WARNING: Taxon loaded into taxa, but update occurrences with matching name.';
                     }
 
-                    $sql2 = 'UPDATE omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-                        'SET i.tid = o.tidinterpreted '.
-                        'WHERE i.tid IS NULL AND o.tidinterpreted IS NOT NULL';
+                    $sql2 = 'UPDATE omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+                        'SET i.tid = o.tid '.
+                        'WHERE ISNULL(i.tid) AND o.tid IS NOT NULL';
                     $this->conn->query($sql2);
                     if(!$this->conn->query($sql2)){
                         echo 'WARNING: Taxon loaded into taxa, but update occurrence images with matching name.';
@@ -664,14 +664,14 @@ class TaxonomyEditorManager{
 		}
 		$rs->free();
 		
-		$sql ='SELECT occid FROM omoccurrences WHERE tidinterpreted = '.$this->tid;
+		$sql ='SELECT occid FROM omoccurrences WHERE tid = '.$this->tid;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr['occur'][] = $r->occid;
 		}
 		$rs->free();
 		
-		$sql ='SELECT occid FROM omoccurdeterminations WHERE tidinterpreted = '.$this->tid;
+		$sql ='SELECT occid FROM omoccurdeterminations WHERE tid = '.$this->tid;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr['dets'][] = $r->occid;
@@ -702,11 +702,11 @@ class TaxonomyEditorManager{
 		$statusStr = '';
 		$delStatusStr = '';
 		if(is_numeric($targetTid)){
-			$sql ='UPDATE omoccurrences SET tidinterpreted = '.$targetTid.' WHERE tidinterpreted = '.$this->tid;
+			$sql ='UPDATE omoccurrences SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
 				$statusStr .= 'ERROR transferring occurrence records<br/>';
 			}
-			$sql ='UPDATE omoccurdeterminations SET tidinterpreted = '.$targetTid.' WHERE tidinterpreted = '.$this->tid;
+			$sql ='UPDATE omoccurdeterminations SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
 				$statusStr .= 'ERROR transferring occurrence determination records<br/>';
 			}
@@ -778,9 +778,9 @@ class TaxonomyEditorManager{
 			$statusStr .= 'ERROR deleting taxa description blocks in deleteTaxon method<br/>';
 		}
 
-		$sql = 'UPDATE omoccurrences SET tidinterpreted = NULL WHERE tidinterpreted = '.$this->tid;
+		$sql = 'UPDATE omoccurrences SET tid = NULL WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR setting tidinterpreted to NULL in deleteTaxon method<br/>';
+			$statusStr .= 'ERROR setting tid to NULL in deleteTaxon method<br/>';
 		}
 		
 		$sql ='DELETE FROM fmvouchers WHERE tid = '.$this->tid;

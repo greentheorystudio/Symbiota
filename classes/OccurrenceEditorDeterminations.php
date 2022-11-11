@@ -148,7 +148,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 					'identificationQualifier = '.($detArr['identificationqualifier']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
 					'identificationReferences = '.($detArr['identificationreferences']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationreferences']).'"':'NULL').','.
 					'identificationRemarks = '.($detArr['identificationremarks']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationremarks']).'"':'NULL').', '.
-					'tidinterpreted = '.($tidToAdd?:'NULL').', localitysecurity = '.$sStatus.
+					'tid = '.($tidToAdd?:'NULL').', localitysecurity = '.$sStatus.
 					' WHERE (occid = '.$this->occid.')';
 				//echo "<div>".$sqlNewDet."</div>";
 				$this->conn->query($sqlNewDet);
@@ -312,12 +312,12 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$rsSs2->free();
 		}
 		
-		$sqlNewDet = 'UPDATE omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid '.
+		$sqlNewDet = 'UPDATE omoccurrences AS o INNER JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
 			'SET o.identifiedBy = d.identifiedBy, o.dateIdentified = d.dateIdentified,o.family = '.($family?'"'.$family.'"':'NULL').','.
 			'o.sciname = d.sciname,o.genus = NULL,o.specificEpithet = NULL,o.taxonRank = NULL,o.infraspecificepithet = NULL,o.scientificname = NULL,'.
 			'o.scientificNameAuthorship = d.scientificnameauthorship,o.identificationQualifier = d.identificationqualifier,'.
 			'o.identificationReferences = d.identificationreferences,o.identificationRemarks = d.identificationremarks,'.
-			'o.tidinterpreted = '.($tid?:'NULL').', o.localitysecurity = '.$sStatus.
+			'o.tid = '.($tid?:'NULL').', o.localitysecurity = '.$sStatus.
 			' WHERE (detid = '.$detId.')';
 		//echo "<div>".$sqlNewDet."</div>";
 		$this->conn->query($sqlNewDet);

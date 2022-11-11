@@ -45,7 +45,7 @@ else{
 		<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="../../js/external/jquery.js"></script>
 		<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-		<script type="text/javascript" src="../../js/search.term.manager.js?ver=20220921"></script>
+		<script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
 	</head>
 	<body>
 		<?php

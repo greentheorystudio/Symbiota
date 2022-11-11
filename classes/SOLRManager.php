@@ -36,7 +36,7 @@ class SOLRManager extends OccurrenceManager{
         $cnt = $this->getMaxCnt();
         $solrWhere = $this->getSOLRWhere();
         $solrURLpre = $GLOBALS['SOLR_URL'].'/select?';
-        $solrURLsuf = '&rows='.$cnt.'&start=1&fl=family,tidinterpreted,sciname,accFamily&group=true&group.field=familyscinamecode&wt=json';
+        $solrURLsuf = '&rows='.$cnt.'&start=1&fl=family,tid,sciname,accFamily&group=true&group.field=familyscinamecode&wt=json';
         $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
@@ -113,7 +113,7 @@ class SOLRManager extends OccurrenceManager{
         }
         $solrURLpre = $GLOBALS['SOLR_URL'].'/select?';
         $solrURLsuf = '&rows='.$cntPerPage.'&start='.($bottomLimit?:'0');
-        $solrURLsuf .= '&fl=occid,recordedBy,recordNumber,displayDate,sciname,family,accFamily,tidinterpreted,decimalLatitude,decimalLongitude,'.
+        $solrURLsuf .= '&fl=occid,recordedBy,recordNumber,displayDate,sciname,family,accFamily,tid,decimalLatitude,decimalLongitude,'.
             'localitySecurity,locality,collid,catalogNumber,otherCatalogNumbers,InstitutionCode,CollectionCode,CollectionName&wt=json';
         $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
@@ -166,7 +166,7 @@ class SOLRManager extends OccurrenceManager{
             $returnArr[$occId]['accession'] = ($k['catalogNumber'] ?? '');
             $returnArr[$occId]['family'] = ($k['family'] ?? '');
             $returnArr[$occId]['sciname'] = ($k['sciname'] ?? '');
-            $returnArr[$occId]['tid'] = ($k['tidinterpreted'] ?? '');
+            $returnArr[$occId]['tid'] = ($k['tid'] ?? '');
             $returnArr[$occId]['author'] = ($k['scientificNameAuthorship'] ?? '');
             $returnArr[$occId]['collector'] = ($k['recordedBy'] ?? '');
             $returnArr[$occId]['country'] = ($k['country'] ?? '');
@@ -235,7 +235,7 @@ class SOLRManager extends OccurrenceManager{
             $returnArr[$occId]['s'] = ($k['sciname'] ?? '');
             $returnArr[$occId]['lat'] = ($k['decimalLatitude'] ?? '');
             $returnArr[$occId]['lon'] = ($k['decimalLongitude'] ?? '');
-            $returnArr[$occId]['tid'] = ($k['tidinterpreted'] ?? '');
+            $returnArr[$occId]['tid'] = ($k['tid'] ?? '');
             if(!$localitySecurity || $canReadRareSpp
                 || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
                 || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
@@ -276,7 +276,7 @@ class SOLRManager extends OccurrenceManager{
             if((($decLong <= 180 && $decLong >= -180) && ($decLat <= 90 && $decLat >= -90)) && ($canReadRareSpp || !$localitySecurity)){
                 $occId = $k['occid'];
                 $collName = $k['CollectionName'];
-                $tidInterpreted = (isset($k['tidinterpreted'])?$this->xmlentities($k['tidinterpreted']):'');
+                $tid = (isset($k['tid'])?$this->xmlentities($k['tid']):'');
                 $identifier = ($k['recordedBy'] ?? '');
                 $identifier .= ((isset($k['recordNumber']) || isset($k['displayDate']))?' ':'');
                 $identifier .= ((isset($k['recordNumber']) && !isset($k['displayDate']))?$k['recordNumber']:'');
@@ -284,10 +284,10 @@ class SOLRManager extends OccurrenceManager{
                 $latLngStr = $decLat. ',' .$decLong;
                 $returnArr[$collName][$occId]['latLngStr'] = $latLngStr;
                 $returnArr[$collName][$occId]['collid'] = $collid;
-                $tidcode = strtolower(str_replace(' ', '',$tidInterpreted.$k['sciname']));
+                $tidcode = strtolower(str_replace(' ', '',$tid.$k['sciname']));
                 $tidcode = preg_replace('/[^A-Za-z0-9 ]/', '',$tidcode);
                 $returnArr[$collName][$occId]['namestring'] = $this->xmlentities($tidcode);
-                $returnArr[$collName][$occId]['tidinterpreted'] = $tidInterpreted;
+                $returnArr[$collName][$occId]['tid'] = $tid;
                 if(isset($k['accFamily'])){
                     $returnArr[$collName][$occId]['family'] = $this->xmlentities($k['accFamily']);
                 }
@@ -381,7 +381,7 @@ class SOLRManager extends OccurrenceManager{
                 $returnArr[$taxaMapper[$sciName]][$occId]['collid'] = $collid;
                 $returnArr[$taxaMapper[$sciName]][$occId]['latLngStr'] = $latLngStr;
                 $returnArr[$taxaMapper[$sciName]][$occId]['identifier'] = $identifier;
-                $returnArr[$taxaMapper[$sciName]][$occId]['tidinterpreted'] = $k['tidinterpreted'];
+                $returnArr[$taxaMapper[$sciName]][$occId]['tid'] = $k['tid'];
                 $returnArr[$taxaMapper[$sciName]][$occId]['institutioncode'] = $k['InstitutionCode'];
                 $returnArr[$taxaMapper[$sciName]][$occId]['collectioncode'] = $k['CollectionCode'];
                 $returnArr[$taxaMapper[$sciName]][$occId]['catalognumber'] = $k['catalogNumber'];
@@ -419,8 +419,8 @@ class SOLRManager extends OccurrenceManager{
     public function getSOLRTidList($sArr): array{
         $returnArr = array();
         foreach($sArr as $k){
-            if(isset($k['doclist']['docs'][0]['tidinterpreted']) && !in_array($k['doclist']['docs'][0]['tidinterpreted'], $returnArr, true)){
-                $returnArr[] = $k['doclist']['docs'][0]['tidinterpreted'];
+            if(isset($k['doclist']['docs'][0]['tid']) && !in_array($k['doclist']['docs'][0]['tid'], $returnArr, true)){
+                $returnArr[] = $k['doclist']['docs'][0]['tid'];
             }
         }
         return $returnArr;
@@ -689,7 +689,7 @@ class SOLRManager extends OccurrenceManager{
                                     }
                                 }
                             }
-                            $sqlWhereTaxa .= 'OR (tidinterpreted:('.implode(' ',array_keys($synArr)).')) ';
+                            $sqlWhereTaxa .= 'OR (tid:('.implode(' ',array_keys($synArr)).')) ';
                         }
                     }
                 }

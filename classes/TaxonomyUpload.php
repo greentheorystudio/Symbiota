@@ -606,12 +606,12 @@ class TaxonomyUpload{
 		while($loopCnt < 100);
 
 		$this->outputMsg('House cleaning... ');
-		$sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid WHERE ISNULL(o.TidInterpreted)';
+		$sql1 = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = t.sciname SET o.tid = t.tid WHERE ISNULL(o.tid)';
 		$this->conn->query($sql1);
 
-		$sql2 = 'UPDATE images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
-			'SET i.tid = o.TidInterpreted '.
-			'WHERE ISNULL(i.tid) AND (o.TidInterpreted IS NOT NULL)';
+		$sql2 = 'UPDATE images AS i INNER JOIN omoccurrences AS o ON i.occid = o.occid '.
+			'SET i.tid = o.tid '.
+			'WHERE ISNULL(i.tid) AND (o.tid IS NOT NULL)';
 		$this->conn->query($sql2);
     }
 

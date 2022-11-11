@@ -43,7 +43,7 @@ class OccurrenceAPIManager{
     {
         $returnArr = array();
         $sql = 'SELECT o.occid, o.collid, o.dbpk, o.institutioncode, o.collectioncode, o.catalogNumber, o.otherCatalogNumbers, o.family, '.
-            'o.sciname, o.tidinterpreted, o.scientificNameAuthorship, o.recordedBy, o.recordNumber, o.eventDate, o.country, '.
+            'o.sciname, o.tid, o.scientificNameAuthorship, o.recordedBy, o.recordNumber, o.eventDate, o.country, '.
             'o.stateProvince, o.county, o.locality, o.decimallatitude, o.decimallongitude, o.LocalitySecurity, '.
             'o.localitysecurityreason, o.minimumElevationInMeters, o.maximumElevationInMeters, o.observeruid '.
             'FROM omoccurrences AS o ';
@@ -66,7 +66,7 @@ class OccurrenceAPIManager{
             $returnArr[$occId]['otherCatalogNumbers'] = $row->otherCatalogNumbers;
             $returnArr[$occId]['family'] = $row->family;
             $returnArr[$occId]['sciname'] = $row->sciname;
-            $returnArr[$occId]['tidinterpreted'] = $row->tidinterpreted;
+            $returnArr[$occId]['tid'] = $row->tid;
             $returnArr[$occId]['scientificNameAuthorship'] = $row->scientificNameAuthorship;
             $returnArr[$occId]['recordedBy'] = $row->recordedBy;
             $returnArr[$occId]['country'] = $row->country;

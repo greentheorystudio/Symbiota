@@ -46,7 +46,7 @@ class DwcArchiverOccurrence{
         $occurTermArr['scientificName'] = 'https://dwc.tdwg.org/terms/#scientificName';
         $occurFieldArr['scientificName'] = 'o.sciname AS scientificName';
         $occurTermArr['taxonID'] = 'https://dwc.tdwg.org/terms/#taxonID';
-        $occurFieldArr['taxonID'] = 'o.tidinterpreted as taxonID';
+        $occurFieldArr['taxonID'] = 't.tidaccepted as taxonID';
         $occurTermArr['genus'] = 'https://dwc.tdwg.org/terms/#genus';
         $occurFieldArr['genus'] = 'IF(t.rankid >= 180,CONCAT_WS(" ",t.unitind1,t.unitname1),NULL) AS genus';
         $occurTermArr['specificEpithet'] = 'https://dwc.tdwg.org/terms/#specificEpithet';
@@ -297,9 +297,9 @@ class DwcArchiverOccurrence{
 				}
 				$sql = 'SELECT DISTINCT '.trim($sqlFrag,', ');
 			}
-			$sql .= ' FROM (omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid) '.
-				'INNER JOIN guidoccurrences g ON o.occid = g.occid '.
-				'LEFT JOIN taxa t ON o.tidinterpreted = t.TID ';
+			$sql .= ' FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
+				'INNER JOIN guidoccurrences AS g ON o.occid = g.occid '.
+				'LEFT JOIN taxa AS t ON o.tid = t.TID ';
 			$sql .= $tableJoinStr.$conditionSql;
 			if($fullSql) {
                 $sql .= ' ORDER BY c.collid ';

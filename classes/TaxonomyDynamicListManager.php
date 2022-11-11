@@ -69,7 +69,7 @@ class TaxonomyDynamicListManager{
             $this->tid = $tid;
             $this->targetTidArr[] = $tid;
             if($this->collid){
-                $tidSql = 'SELECT DISTINCT tidinterpreted AS tid FROM omoccurrences WHERE collid = '.$this->collid.' ';
+                $tidSql = 'SELECT DISTINCT tid FROM omoccurrences WHERE collid = '.$this->collid.' ';
             }
             else{
                 $tidSql = 'SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$this->tid.' ';

@@ -58,7 +58,7 @@ if($GLOBALS['SYMB_UID']){
 	<script type="text/javascript">
         const collId = "<?php echo $collid; ?>";
     </script>
-	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221025"></script>
+	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221110"></script>
 	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221025"></script>
 	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221025"></script>
     <script type="text/javascript">
@@ -386,7 +386,7 @@ if($GLOBALS['SYMB_UID']){
 									<a href="#" onclick="return dwcDoc('scientificName')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
 									<br/>
 									<input type="text" id="ffsciname" name="sciname" maxlength="250" tabindex="28" value="<?php echo array_key_exists('sciname',$occArr)?$occArr['sciname']:''; ?>" onchange="fieldChanged('sciname');" <?php echo (((!$isEditor || $isEditor === 3) && $occArr['sciname'])?'disabled ':''); ?> />
-									<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="" />
+									<input type="hidden" id="tid" name="tid" value="" />
 									<?php
 									if(!$isEditor && isset($occArr['sciname']) && $occArr['sciname'] !== ''){
 										echo '<div style="clear:both;color:red;margin-left:5px;">Note: Full editing permissions are needed to edit an identification</div>';

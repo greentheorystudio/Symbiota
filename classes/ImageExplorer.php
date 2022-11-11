@@ -132,7 +132,7 @@ class ImageExplorer{
 		    if(isset($searchCriteria['idNeeded']) && $searchCriteria['idNeeded']){
 	   		    $includeVerification = TRUE;
 	   		    $sqlWhere .= 'AND ( ' .
-					'   (o.occid NOT IN (SELECT occid FROM omoccurverification WHERE (category = "identification")) AND (t.rankid < 220 OR o.tidinterpreted IS NULL) ) ' .
+					'   (o.occid NOT IN (SELECT occid FROM omoccurverification WHERE (category = "identification")) AND (t.rankid < 220 OR ISNULL(o.tid)) ) ' .
 					' ) ';
 		    }
 		    if(isset($searchCriteria['idToSpecies']) && $searchCriteria['idToSpecies']){

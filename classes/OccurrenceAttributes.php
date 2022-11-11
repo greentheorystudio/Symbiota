@@ -546,12 +546,12 @@ class OccurrenceAttributes extends Manager {
 	{
 		$sql = '';
 		if($tidFilter){
-			$sql = 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
+			$sql = 'INNER JOIN taxaenumtree AS e ON o.tid = e.tid ';
 		}
 		$sql .= 'WHERE (o.'.$fieldName.' IS NOT NULL) '.
-			'AND (o.occid NOT IN(SELECT t.occid FROM tmattributes t INNER JOIN tmstates s ON t.stateid = s.stateid WHERE s.traitid = '.$traitID.')) ';
+			'AND (o.occid NOT IN(SELECT t.occid FROM tmattributes AS t INNER JOIN tmstates AS s ON t.stateid = s.stateid WHERE s.traitid = '.$traitID.')) ';
 		if($tidFilter){
-			$sql .= 'AND (e.parenttid = '.$tidFilter.' OR o.tidinterpreted = '.$tidFilter.') ';
+			$sql .= 'AND (e.parenttid = '.$tidFilter.' OR o.tid = '.$tidFilter.') ';
 		}
 		if($this->collidStr !== 'all'){
 			$sql .= 'AND (o.collid IN('.$this->collidStr.')) ';

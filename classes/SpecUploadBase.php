@@ -90,7 +90,7 @@ class SpecUploadBase extends SpecUpload{
             }
         }
 
-        $skipOccurFields = array('initialtimestamp','occid','collid','tidinterpreted','fieldnotes','coordinateprecision',
+        $skipOccurFields = array('initialtimestamp','occid','collid','tid','fieldnotes','coordinateprecision',
             'verbatimcoordinatesystem','institutionid','collectionid','associatedoccurrences','datasetid','associatedreferences',
             'previousidentifications','associatedsequences');
         if($this->collMetadataArr['managementtype'] === 'Live Data' && $this->collMetadataArr['guidtarget'] !== 'occurrenceId'){
@@ -132,7 +132,7 @@ class SpecUploadBase extends SpecUpload{
 
         if($this->uploadType === $this->FILEUPLOAD || $this->uploadType === $this->SKELETAL || $this->uploadType === $this->DWCAUPLOAD ||
             $this->uploadType === $this->IPTUPLOAD || $this->uploadType === $this->DIRECTUPLOAD || $this->uploadType === $this->SYMBIOTA){
-            $skipDetFields = array('detid','occid','tidinterpreted','idbyid','appliedstatus','sortsequence','sourceidentifier','initialtimestamp');
+            $skipDetFields = array('detid','occid','tid','idbyid','appliedstatus','sortsequence','sourceidentifier','initialtimestamp');
 
             $rs = $this->conn->query('SHOW COLUMNS FROM uploaddetermtemp');
             while($r = $rs->fetch_object()){
@@ -707,7 +707,7 @@ class SpecUploadBase extends SpecUpload{
         $this->outputMsg('<li>Updating existing records... </li>');
         $fieldArr = array('basisOfRecord', 'catalogNumber','otherCatalogNumbers','occurrenceid',
             'ownerInstitutionCode','institutionID','collectionID','institutionCode','collectionCode',
-            'family','scientificName','sciname','tidinterpreted','genus','specificEpithet','datasetID','taxonRank','infraspecificEpithet',
+            'family','scientificName','sciname','tid','genus','specificEpithet','datasetID','taxonRank','infraspecificEpithet',
             'scientificNameAuthorship','identifiedBy','dateIdentified','identificationReferences','identificationRemarks',
             'taxonRemarks','identificationQualifier','typeStatus','recordedBy','recordNumber','associatedCollectors',
             'eventDate','Year','Month','Day','startDayOfYear','endDayOfYear','verbatimEventDate',
@@ -873,7 +873,7 @@ class SpecUploadBase extends SpecUpload{
 
     private function prepareAssociatedMedia(): void
     {
-        $sql = 'SELECT associatedmedia, tidinterpreted, occid '.
+        $sql = 'SELECT associatedmedia, tid, occid '.
             'FROM uploadspectemp '.
             'WHERE (associatedmedia IS NOT NULL) AND (collid IN('.$this->collId.'))';
         $rs = $this->conn->query($sql);
@@ -886,7 +886,7 @@ class SpecUploadBase extends SpecUpload{
                     if(strpos($mediaUrl,'"')) {
                         continue;
                     }
-                    $this->loadImageRecord(array('occid'=>$r->occid,'tid'=>($r->tidinterpreted?:''),'originalurl'=>$mediaUrl,'url'=>'empty'));
+                    $this->loadImageRecord(array('occid'=>$r->occid,'tid'=>($r->tid?:''),'originalurl'=>$mediaUrl,'url'=>'empty'));
                 }
             }
         }

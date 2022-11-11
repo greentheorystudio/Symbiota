@@ -122,7 +122,7 @@ class OccurrenceManager{
                         $sqlWhereTaxa = 'OR (te.parenttid = '.$tid.' OR te.tid = '.$tid.') ';
                     }
                     else{
-                        $sqlWhereTaxa = 'OR (te.parenttid = '.$tid.' OR te.tid = '.$tid.') OR (ISNULL(o.tidinterpreted) AND o.sciname = "'.Sanitizer::cleanInStr($this->conn,$name).'") ';
+                        $sqlWhereTaxa = 'OR (te.parenttid = '.$tid.' OR te.tid = '.$tid.') OR (ISNULL(o.tid) AND o.sciname = "'.Sanitizer::cleanInStr($this->conn,$name).'") ';
                     }
                 }
                 elseif($this->taxaSearchType === 2 || ($this->taxaSearchType === 1 && (strtolower(substr($name,-5)) === 'aceae' || strtolower(substr($name,-4)) === 'idae'))){
@@ -130,7 +130,7 @@ class OccurrenceManager{
                         $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$name)."') ";
                     }
                     else{
-                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$name)."') OR (ISNULL(o.tidinterpreted) AND (o.family = '".Sanitizer::cleanInStr($this->conn,$name)."' OR o.sciname = '".Sanitizer::cleanInStr($this->conn,$name)."')) ";
+                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($this->conn,$name)."') OR (ISNULL(o.tid) AND (o.family = '".Sanitizer::cleanInStr($this->conn,$name)."' OR o.sciname = '".Sanitizer::cleanInStr($this->conn,$name)."')) ";
                     }
                 }
                 elseif(!$image){
@@ -142,7 +142,7 @@ class OccurrenceManager{
                     $sqlWhereTaxa .= 'OR (i.tid IN('.implode(',',$this->searchTidArr).')) ';
                 }
                 else{
-                    $sqlWhereTaxa .= 'OR (o.tidinterpreted IN('.implode(',',$this->searchTidArr).')) ';
+                    $sqlWhereTaxa .= 'OR (o.tid IN('.implode(',',$this->searchTidArr).')) ';
                 }
             }
             $sqlWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
@@ -586,7 +586,7 @@ class OccurrenceManager{
     {
         $sqlJoin = '';
         if(array_key_exists('taxontype',$this->searchTermsArr) && (int)$this->searchTermsArr['taxontype'] === 4) {
-            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tidinterpreted = te.tid ';
+            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';

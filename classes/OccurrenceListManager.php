@@ -26,7 +26,7 @@ class OccurrenceListManager extends OccurrenceManager{
         }
         $sql = 'SELECT DISTINCT o.occid, c.CollID, IFNULL(o.institutioncode,c.institutioncode) AS institutioncode, IFNULL(o.collectioncode,c.collectioncode) AS collectioncode, c.collectionname, c.icon, '.
             'CONCAT_WS(":",c.institutioncode, c.collectioncode) AS collection, '.
-            'IFNULL(o.CatalogNumber,"") AS catalognumber, o.family, o.sciname, o.tidinterpreted, '.
+            'IFNULL(o.CatalogNumber,"") AS catalognumber, t.family, o.sciname, t.tidaccepted, '.
             'CONCAT_WS(" to ",IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),""),DATE_FORMAT(MAKEDATE(o.year,o.endDayOfYear),"%d %M %Y")) AS date, '.
             'IFNULL(o.scientificNameAuthorship,"") AS author, IFNULL(o.recordedBy,"") AS recordedby, IFNULL(o.recordNumber,"") AS recordnumber, '.
             'o.eventDate, IFNULL(o.country,"") AS country, IFNULL(o.StateProvince,"") AS state, IFNULL(o.county,"") AS county, '.
@@ -36,8 +36,7 @@ class OccurrenceListManager extends OccurrenceManager{
             'o.associatedtaxa, o.substrate, o.individualCount, o.lifeStage, o.sex, c.sortseq ';
         $sql .= (array_key_exists('assochost',$this->searchTermsArr)?', oas.verbatimsciname ':' ');
         $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+            'LEFT JOIN taxa AS t ON o.tid = t.TID ';
         $sql .= $this->setTableJoins($sqlWhere);
         $sql .= $sqlWhere;
         if($this->sortField1 || $this->sortField2 || $this->sortOrder){
@@ -77,7 +76,7 @@ class OccurrenceListManager extends OccurrenceManager{
             $returnArr[$occId]['accession'] = $this->cleanOutStr($row->catalognumber);
             $returnArr[$occId]['family'] = $this->cleanOutStr($row->family);
             $returnArr[$occId]['sciname'] = $this->cleanOutStr($row->sciname);
-            $returnArr[$occId]['tid'] = $row->tidinterpreted;
+            $returnArr[$occId]['tid'] = $row->tidaccepted;
             $returnArr[$occId]['author'] = $this->cleanOutStr($row->author);
             $returnArr[$occId]['collector'] = $this->cleanOutStr($row->recordedby);
             $returnArr[$occId]['country'] = $this->cleanOutStr($row->country);
@@ -151,8 +150,7 @@ class OccurrenceListManager extends OccurrenceManager{
 
     private function setRecordCnt($sqlWhere): void
     {
-        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.TID ';
         $sql .= $this->setTableJoins($sqlWhere);
         $sql .= $sqlWhere;
         //echo "<div>Count sql: ".$sql."</div>";

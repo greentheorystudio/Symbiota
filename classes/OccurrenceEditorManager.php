@@ -36,7 +36,7 @@ class OccurrenceEditorManager {
             $this->conn = $connection->getConnection();
         }
         $this->occFieldArr = array('dbpk', 'catalognumber', 'othercatalognumbers', 'occurrenceid','family', 'scientificname', 'sciname',
-            'tidinterpreted', 'scientificnameauthorship', 'identifiedby', 'dateidentified', 'identificationreferences',
+            'tid', 'scientificnameauthorship', 'identifiedby', 'dateidentified', 'identificationreferences',
             'identificationremarks', 'taxonremarks', 'identificationqualifier', 'typestatus', 'recordedby', 'recordnumber',
             'associatedcollectors', 'eventdate', 'year', 'month', 'day', 'startdayofyear', 'enddayofyear', 'fieldnotes',
             'verbatimeventdate', 'habitat', 'substrate', 'fieldnumber','occurrenceremarks', 'associatedtaxa', 'verbatimattributes',
@@ -823,13 +823,13 @@ class OccurrenceEditorManager {
         }
         if($editArr || $quickHostEntered){
             if($editArr){
-                if($occArr['sciname'] && !$occArr['tidinterpreted'] && in_array('sciname', $editArr, true)){
+                if($occArr['sciname'] && !$occArr['tid'] && in_array('sciname', $editArr, true)){
                     $sql2 = 'SELECT t.tid, t.author, ts.family '.
                         'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
                         'WHERE t.sciname = "'.$occArr['sciname'].'"';
                     $rs2 = $this->conn->query($sql2);
                     while($r2 = $rs2->fetch_object()){
-                        $occArr['tidinterpreted'] = $r2->tid;
+                        $occArr['tid'] = $r2->tid;
                         if(!$occArr['scientificnameauthorship']) {
                             $occArr['scientificnameauthorship'] = $r2->author;
                         }
@@ -872,8 +872,8 @@ class OccurrenceEditorManager {
                             $occArr[$fieldName] = 0;
                         }
                         $newValue = Sanitizer::cleanInStr($this->conn,$occArr[$fieldName]);
-                        $oldValue = Sanitizer::cleanInStr($this->conn,$oldValues[$fieldName]);
-                        if(($oldValue !== $newValue) && $fieldName !== 'tidinterpreted') {
+                        $oldValue = is_array($oldValues) ? Sanitizer::cleanInStr($this->conn,$oldValues[$fieldName]) : '';
+                        if(($oldValue !== $newValue) && $fieldName !== 'tid') {
                             if($fieldName === 'ometid'){
                                 $exsTitleStr = '';
                                 $sql = 'SELECT title FROM omexsiccatititles WHERE ometid = '.$occArr['ometid'];
@@ -920,8 +920,8 @@ class OccurrenceEditorManager {
                         }
                     }
                 }
-                if(in_array('tidinterpreted', $editArr, true)){
-                    $sqlImgTid = 'UPDATE images SET tid = '.($occArr['tidinterpreted']?:'NULL').' '.
+                if(in_array('tid', $editArr, true)){
+                    $sqlImgTid = 'UPDATE images SET tid = '.($occArr['tid']?:'NULL').' '.
                         'WHERE occid = ('.$occArr['occid'].')';
                     $this->conn->query($sqlImgTid);
                 }
@@ -1024,7 +1024,7 @@ class OccurrenceEditorManager {
         if($occArr){
             $fieldArr = array('basisOfRecord' => 's', 'catalogNumber' => 's', 'otherCatalogNumbers' => 's', 'occurrenceid' => 's',
                 'ownerInstitutionCode' => 's', 'institutionCode' => 's', 'collectionCode' => 's',
-                'family' => 's', 'sciname' => 's', 'tidinterpreted' => 'n', 'scientificNameAuthorship' => 's', 'identifiedBy' => 's', 'dateIdentified' => 's',
+                'family' => 's', 'sciname' => 's', 'tid' => 'n', 'scientificNameAuthorship' => 's', 'identifiedBy' => 's', 'dateIdentified' => 's',
                 'identificationReferences' => 's', 'identificationremarks' => 's', 'taxonRemarks' => 's', 'identificationQualifier' => 's', 'typeStatus' => 's',
                 'recordedBy' => 's', 'recordNumber' => 's', 'associatedCollectors' => 's', 'eventDate' => 'd', 'year' => 'n', 'month' => 'n', 'day' => 'n', 'startDayOfYear' => 'n', 'endDayOfYear' => 'n',
                 'verbatimEventDate' => 's', 'habitat' => 's', 'substrate' => 's', 'fieldnumber' => 's', 'occurrenceRemarks' => 's', 'fieldNotes' => 's', 'associatedTaxa' => 's', 'verbatimattributes' => 's',
@@ -1125,8 +1125,8 @@ class OccurrenceEditorManager {
                 if(isset($occArr['confidenceranking']) && $occArr['confidenceranking']){
                     $this->editIdentificationRanking($occArr['confidenceranking'],'');
                 }
-                if(isset($occArr['clidvoucher'], $occArr['tidinterpreted'])){
-                    $status .= $this->linkChecklistVoucher($occArr['clidvoucher'],$occArr['tidinterpreted']);
+                if(isset($occArr['clidvoucher'], $occArr['tid'])){
+                    $status .= $this->linkChecklistVoucher($occArr['clidvoucher'],$occArr['tid']);
                 }
                 if(isset($occArr['linkdupe']) && $occArr['linkdupe']){
                     $dupTitle = $occArr['recordedby'].' '.$occArr['recordnumber'].' '.$occArr['eventdate'];
@@ -1890,18 +1890,18 @@ class OccurrenceEditorManager {
             $tid = 0;
             $sciname = '';
             $family = '';
-            if($this->occurrenceMap && $this->occurrenceMap['tidinterpreted']){
-                $tid = $this->occurrenceMap['tidinterpreted'];
+            if($this->occurrenceMap && $this->occurrenceMap['tid']){
+                $tid = $this->occurrenceMap['tid'];
                 $sciname = $this->occurrenceMap['sciname'];
                 $family = $this->occurrenceMap['family'];
             }
             if(!$tid && !$sciname && !$family){
-                $sql = 'SELECT tidinterpreted, sciname, family '.
+                $sql = 'SELECT tid, sciname, family '.
                     'FROM omoccurrences '.
                     'WHERE occid = '.$this->occid;
                 $rs = $this->conn->query($sql);
                 while($r = $rs->fetch_object()){
-                    $tid = $r->tidinterpreted;
+                    $tid = $r->tid;
                     $sciname = $r->sciname;
                     $family = $r->family;
                 }

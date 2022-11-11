@@ -445,33 +445,31 @@ class KeyDataManager extends Manager{
         if(!$this->sql){
             $sqlBase = 'SELECT DISTINCT t.tid, ts.Family, ' .($this->commonDisplay?'IFNULL(v.VernacularName,t.SciName)':'t.SciName'). ' AS DisplayName, ts.ParentTID ';
             if($this->dynClid){
-                $sqlFromBase = 'INNER JOIN taxstatus ts ON t.tid = ts.tid) ' .
-					'INNER JOIN fmdyncltaxalink clk ON t.tid = clk.tid ';
-                $sqlWhere = 'WHERE (clk.dynclid = ' .$this->dynClid. ') AND t.RankId = 220 ';
+                $sqlFromBase = 'INNER JOIN fmdyncltaxalink AS clk ON t.tid = clk.tid ';
+                $sqlWhere = 'WHERE clk.dynclid = ' .$this->dynClid. ' AND t.RankId = 220 ';
             }
             else{
-                $sqlFromBase = 'INNER JOIN taxstatus ts ON t.tid = ts.tid) ';
                 if($this->clType === 'dynamic'){
-                    $sqlFromBase .= 'INNER JOIN omoccurrences o ON t.tid = o.TidInterpreted ';
+                    $sqlFromBase = 'INNER JOIN omoccurrences AS o ON t.tid = o.tid ';
                 }
                 else{
-                    $sqlFromBase .= 'INNER JOIN fmchklsttaxalink clk ON t.tid = clk.tid ';
+                    $sqlFromBase = 'INNER JOIN fmchklsttaxalink AS clk ON t.tid = clk.tid ';
                 }
                 if($this->clType === 'dynamic'){
                     $sqlWhere = 'WHERE t.RankId = 220 AND (' .$this->dynamicSql. ') ';
                 }
                 else{
-                    $sqlWhere = 'WHERE (clk.clid = ' .$this->clid. ') AND t.RankId = 220 ';
+                    $sqlWhere = 'WHERE clk.clid = ' .$this->clid. ' AND t.RankId = 220 ';
                 }
             }
             if($this->commonDisplay){
-                $sqlFromBase .= 'LEFT JOIN taxavernaculars v ON t.tid = v.tid ';
+                $sqlFromBase .= 'LEFT JOIN taxavernaculars AS v ON t.tid = v.tid ';
                 if($this->langArr){
                     $sqlWhere .= "AND (v.Language IN('".implode("','",$this->langArr)."') OR ISNULL(v.Language)) ";
                 }
             }
             if($this->taxonFilter && $this->taxonFilter !== 'All Species'){
-                $sqlWhere .= 'AND ((ts.Family = "'.$this->taxonFilter.'") OR (t.UnitName1 = "'.$this->taxonFilter.'")) ';
+                $sqlWhere .= 'AND ((t.family = "'.$this->taxonFilter.'") OR (t.UnitName1 = "'.$this->taxonFilter.'")) ';
             }
 
             $count = 0;

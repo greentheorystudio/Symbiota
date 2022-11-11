@@ -47,14 +47,12 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 	public function deleteSpecies($tid){
 		$protectCnt = 0;
 		if(is_numeric($tid)){
-			$sql = 'UPDATE taxa AS t SET t.SecurityStatus = 0 WHERE (t.tid = '.$tid.')';
+			$sql = 'UPDATE taxa AS t SET t.SecurityStatus = 0 WHERE t.tid = '.$tid.' ';
 	 		//echo $sql;
 			$this->conn->query($sql);
-			$sql2 = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
-				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-				'INNER JOIN taxa t ON ts2.tid = t.tid '.
+			$sql2 = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
 				'SET o.LocalitySecurity = 0 '.
-				'WHERE (t.tid = '.$tid.') AND (o.localitySecurityReason IS NULL) ';
+				'WHERE t.tidaccepted = '.$tid.' AND ISNULL(o.localitySecurityReason) ';
 			//echo $sql2; exit;
 			$this->conn->query($sql2);
 			$protectCnt = $this->protectGlobalSpecies();
