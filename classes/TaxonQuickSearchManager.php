@@ -8,9 +8,8 @@ class TaxonQuickSearchManager extends ImageLibraryManager{
     {
 		$returnArray = Array();
 		$sql = 'SELECT DISTINCT t.tid, t.SciName, tv.vernacularname
-			FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID
-			LEFT JOIN taxavernaculars tv ON ts.tid = tv.TID
-			WHERE (t.RankId >= 140) ';
+			FROM taxa AS t LEFT JOIN taxavernaculars AS tv ON t.tid = tv.TID
+			WHERE t.RankId >= 140 ';
 		if($taxon){
 			$taxon = $this->cleanInStr($taxon);
 			$sql .= "AND ((t.SciName REGEXP '^".$taxon."[[:>:]]') OR (tv.VernacularName REGEXP '[[:<:]]".$taxon."[[:>:]]')) ";
