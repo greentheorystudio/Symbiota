@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
+include_once(__DIR__ . '/../../classes/OccurrenceTaxonomyCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = (int)$_REQUEST['collid'];
@@ -10,7 +10,7 @@ $idQualifier = ($_REQUEST['idq'] ?? '');
 
 $status = '0';
 if($collid && $oldSciname && $tid){
-	$cleanerManager = new TaxonomyCleaner();
+	$cleanerManager = new OccurrenceTaxonomyCleaner();
 	if($cleanerManager->remapOccurrenceTaxon($collid, $oldSciname, $tid, $idQualifier)){
 		$status = '1';
 	}

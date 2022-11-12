@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
+include_once(__DIR__ . '/../../classes/OccurrenceTaxonomyCleaner.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -18,7 +18,7 @@ $taxResource = array_key_exists('taxresource',$_POST)?htmlspecialchars($_POST['t
 $startIndex = array_key_exists('startindex',$_POST)?$_POST['startindex']:'';
 $limit = array_key_exists('limit',$_POST)?(int)$_POST['limit']:20;
 
-$cleanManager = new TaxonomyCleaner();
+$cleanManager = new OccurrenceTaxonomyCleaner();
 $utilitiesManager = new TaxonomyUtilities();
 $cleanManager->setCollId($collid);
 

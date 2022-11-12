@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
-include_once(__DIR__ . '/../../classes/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/../../classes/OccurrenceTaxonomyCleaner.php');
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
@@ -13,7 +12,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 
 if($collid && $action){
     if($action === 'getUnlinkedScinameCounts'){
-        $cleanManager = new TaxonomyCleaner();
+        $cleanManager = new OccurrenceTaxonomyCleaner();
         $cleanManager->setCollId($collid);
         $returnArr = array();
         $returnArr['taxaCnt'] = $cleanManager->getBadTaxaCount();
@@ -21,12 +20,12 @@ if($collid && $action){
         echo json_encode($returnArr);
     }
     if($action === 'updateThesaurusLinkages'){
-        $cleanManager = new TaxonomyCleaner();
+        $cleanManager = new OccurrenceTaxonomyCleaner();
         $cleanManager->setCollId($collid);
         echo $cleanManager->updateOccTaxonomicThesaurusLinkages();
     }
     if($action === 'updateLocalitySecurity'){
-        $maintenanceManager = new OccurrenceMaintenance();
-        echo $maintenanceManager->protectGlobalSpecies($collid);
+        $cleanManager = new OccurrenceTaxonomyCleaner();
+        echo $cleanManager->protectGlobalSpecies($collid);
     }
 }

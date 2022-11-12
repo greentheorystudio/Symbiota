@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/OccurrenceTaxonomyCleaner.php');
 
 class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 
@@ -39,7 +40,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 	 		$sql = 'UPDATE taxa AS t SET t.SecurityStatus = 1 WHERE (t.tid = '.$tid.')';
 	 		//echo $sql;
 			$this->conn->query($sql);
-			$protectCnt = $this->protectGlobalSpecies();
+			$protectCnt = OccurrenceTaxonomyCleaner::protectGlobalSpecies();
 		}
 		return $protectCnt;
 	}
@@ -55,7 +56,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 				'WHERE t.tidaccepted = '.$tid.' AND ISNULL(o.localitySecurityReason) ';
 			//echo $sql2; exit;
 			$this->conn->query($sql2);
-			$protectCnt = $this->protectGlobalSpecies();
+			$protectCnt = OccurrenceTaxonomyCleaner::protectGlobalSpecies();
 		}
 		return $protectCnt;
 	}

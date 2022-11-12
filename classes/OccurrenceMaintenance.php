@@ -190,44 +190,6 @@ class OccurrenceMaintenance {
 		return $status;
 	}
 
-    public function protectGlobalSpecies($collid = null): int
-    {
-        $status = 0;
-        if($this->verbose) {
-            $this->outputMsg('Protecting globally rare species... ', 1);
-        }
-        $sensitiveArr = $this->getSensitiveTaxa();
-
-        if($sensitiveArr){
-            $sql = 'UPDATE omoccurrences '.
-                'SET localitySecurity = 1 '.
-                'WHERE (ISNULL(localitySecurity) OR localitySecurity = 0) AND ISNULL(localitySecurityReason) AND tid IN('.implode(',',$sensitiveArr).') ';
-            if($collid) {
-                $sql .= 'AND collid = ' . $collid . ' ';
-            }
-            if($this->conn->query($sql)){
-                $status += $this->conn->affected_rows;
-            }
-            else{
-                $errStr = 'WARNING: unable to protect globally rare species; '.$this->conn->error;
-                $this->errorArr[] = $errStr;
-                if($this->verbose) {
-                    $this->outputMsg($errStr, 2);
-                }
-            }
-        }
-        $sql2 = 'UPDATE omoccurrences '.
-            'SET localitySecurity = 0 '.
-            'WHERE localitySecurity = 1 AND ISNULL(localitySecurityReason) AND tid NOT IN('.implode(',',$sensitiveArr).') ';
-        if($collid) {
-            $sql2 .= 'AND collid = ' . $collid . ' ';
-        }
-        if($this->conn->query($sql2)){
-            $status += $this->conn->affected_rows;
-        }
-        return $status;
-    }
-
     private function getSensitiveTaxa(): array
     {
         $sensitiveArr = array();

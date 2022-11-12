@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceProtectedSpecies.php');
+include_once(__DIR__ . '/../../classes/OccurrenceTaxonomyCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
 
@@ -128,7 +129,8 @@ include(__DIR__ . '/../../header.php');
         }
 		if($isEditor){
 			if($action === 'checkstats'){
-				echo '<div>Number of records affected: '.$rsManager->protectGlobalSpecies().'</div>';
+                $cleanManager = new OccurrenceTaxonomyCleaner();
+                echo '<div>Number of records affected: '.$cleanManager->protectGlobalSpecies().'</div>';
 			}
 			else{
 				echo '<div><a href="protectedspecies.php?submitaction=checkstats"><button style="font-size:70%">Verify protections</button></a></div>';
