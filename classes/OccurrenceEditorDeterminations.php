@@ -79,9 +79,9 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		if($isEditor === 3 && is_numeric($detArr['confidenceranking'])) {
 			$notes .= ($notes?'; ':'').'ConfidenceRanking: '.$detArr['confidenceranking'];
 		}
-		$sql = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+		$sql = 'INSERT INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
 			'identificationQualifier, iscurrent, printqueue, appliedStatus, identificationReferences, identificationRemarks, sortsequence) '.
-			'VALUES ('.$this->occid.',"'.Sanitizer::cleanInStr($this->conn,$detArr['identifiedby']).'","'.Sanitizer::cleanInStr($this->conn,$detArr['dateidentified']).'","'.
+			'VALUES ('.$this->occid.','.($detArr['tidtoadd']?(int)$detArr['tidtoadd']:'NULL').',"'.Sanitizer::cleanInStr($this->conn,$detArr['identifiedby']).'","'.Sanitizer::cleanInStr($this->conn,$detArr['dateidentified']).'","'.
 			$sciname.'",'.($detArr['scientificnameauthorship']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['scientificnameauthorship']).'"':'NULL').','.
 			($detArr['identificationqualifier']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
 			$detArr['makecurrent'].','.$detArr['printqueue'].','.($isEditor === 3?0:1).','.
@@ -96,10 +96,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				$status .= ' (Warning: GUID mapping #1 failed)';
 			}
 			if($isCurrent){
-				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
 					'identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
-					'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"unknown") AS di, '.
-					'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 AS sortseq '.
+					'SELECT occid, tid, IFNULL(identifiedby,"unknown"), IFNULL(dateidentified,"unknown"), '.
+					'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 '.
 					'FROM omoccurrences WHERE (occid = '.$this->occid.')';
 				//echo "<div>".$sqlInsert."</div>";
 				if($this->conn->query($sqlInsert)){
