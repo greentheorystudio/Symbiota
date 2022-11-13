@@ -356,28 +356,27 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 <div class="processor-container">
                     <div class="processor-control-container">
                         <div id="processor-accordion">
-                            <h3 class="tabtitle">Resolve Names From Taxonomic Thesaurus</h3>
+                            <h3 class="tabtitle">General Utilities</h3>
                             <div class="processor-accordion-panel">
-                                Resolve occurrence record scientific names that are not yet linked with the Taxonomic Thesaurus
-                                to taxa currently in the Taxonomic Thesaurus.
+                                Update locality security settings for occurrence records of protected species.
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
-                                        <div class="start-div" id="resolveFromTaxThesaurusStart">
-                                            <button class="start-button" onclick="resolveFromTaxThesaurus();">Start</button>
+                                        <div class="start-div" id="updateOccLocalitySecurityStart">
+                                            <button class="start-button" onclick="updateOccLocalitySecurity();">Start</button>
                                         </div>
-                                        <div class="cancel-div" id="resolveFromTaxThesaurusCancel" style="display:none;">
+                                        <div class="cancel-div" id="updateOccLocalitySecurityCancel" style="display:none;">
                                             <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
                                             <button onclick="cancelProcess();">Cancel</button>
                                         </div>
                                     </div>
                                 </div>
                                 <hr/>
-                                Resolve occurrence record scientific names that are not yet linked with the Taxonomic Thesaurus
-                                to taxa currently in the Taxonomic Thesaurus using extra cleaning on scientific names.
+                                Run cleaning processes on occurrence record scientific names for records that are not linked to
+                                the Taxonomic Thesaurus.
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
                                         <div class="start-div" id="cleanResolveFromTaxThesaurusStart">
-                                            <button class="start-button" onclick="cleanResolveFromTaxThesaurus();">Start</button>
+                                            <button class="start-button" onclick="cleanUnlinkedNames();">Start</button>
                                         </div>
                                         <div class="cancel-div" id="cleanResolveFromTaxThesaurusCancel" style="display:none;">
                                             <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
@@ -386,8 +385,24 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     </div>
                                 </div>
                                 <hr/>
-                                Get fuzzy matches of occurrence record scientific names that are not yet linked with the Taxonomic Thesaurus
-                                to taxa currently in the Taxonomic Thesaurus.
+                                Set or update occurrence record linkages to the Taxonomic Thesaurus.
+                                <div style="clear:both;margin-top:5px;">
+                                    <input type='checkbox' id='hasgenetic' value='1' /> Include determination and image linkages
+                                </div>
+                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                                    <div>
+                                        <div class="start-div" id="updateWithTaxThesaurusStart">
+                                            <button class="start-button" onclick="updateWithTaxThesaurus();">Start</button>
+                                        </div>
+                                        <div class="cancel-div" id="updateWithTaxThesaurusCancel" style="display:none;">
+                                            <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                            <button onclick="cancelProcess();">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr/>
+                                Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
+                                with taxa currently in the Taxonomic Thesaurus.
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
                                         <div class="start-div" id="resolveFromTaxThesaurusFuzzyStart">
@@ -402,7 +417,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 <hr/>
                             </div>
 
-                            <h3 class="tabtitle">Resolve Names From Taxonomic Data Sources</h3>
+                            <h3 class="tabtitle">Resolve Unlinked Names From Taxonomic Data Sources</h3>
                             <div class="processor-accordion-panel">
                                 <div style="margin-bottom:10px;">
                                     <fieldset style="padding:15px;">
@@ -423,36 +438,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <h3 class="tabtitle">General Utilities</h3>
-                            <div class="processor-accordion-panel">
-                                Update linkages of occurrence records already linked to the Taxonomic Thesaurus.
-                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                                    <div>
-                                        <div class="start-div" id="updateWithTaxThesaurusStart">
-                                            <button class="start-button" onclick="updateWithTaxThesaurus();">Start</button>
-                                        </div>
-                                        <div class="cancel-div" id="updateWithTaxThesaurusCancel" style="display:none;">
-                                            <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
-                                            <button onclick="cancelProcess();">Cancel</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr/>
-                                Update locality security settings for occurrence records of protected species.
-                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                                    <div>
-                                        <div class="start-div" id="updateOccLocalitySecurityStart">
-                                            <button class="start-button" onclick="updateOccLocalitySecurity();">Start</button>
-                                        </div>
-                                        <div class="cancel-div" id="updateOccLocalitySecurityCancel" style="display:none;">
-                                            <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
-                                            <button onclick="cancelProcess();">Cancel</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr/>
                             </div>
                         </div>
                     </div>
