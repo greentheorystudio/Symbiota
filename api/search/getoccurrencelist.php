@@ -176,7 +176,7 @@ if($occurArr){
             $instCode .= ':' . $fieldArr['collectioncode'];
         }
         $htmlStr .= '<tr><td style="width:60px;vertical-align:top;text-align:center;">';
-        $htmlStr .= '<a href="misc/collprofiles.php?collid='.$collId.'&acronym='.$fieldArr['institutioncode'].'">';
+        $htmlStr .= '<a href="misc/collprofiles.php?collid='.$collId.'">';
         if($fieldArr['collicon']){
             $icon = (strncmp($fieldArr['collicon'], 'images', 6) === 0 ?'../':'').$fieldArr['collicon'];
             $htmlStr .= '<img align="bottom" src="'.$icon.'" style="width:35px;border:0px;" />';
