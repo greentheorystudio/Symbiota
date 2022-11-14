@@ -507,10 +507,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
     public function protectGlobalSpecies($collid = null): int
     {
         $status = 0;
-        if($this->verbose) {
-            $this->outputMsg('Protecting globally rare species... ', 1);
-        }
-        $sensitiveArr = $this->getSensitiveTaxa();
+        $sensitiveArr = (new TaxonomyUtilities)->getSensitiveTaxa();
 
         if($sensitiveArr){
             $sql = 'UPDATE omoccurrences '.
@@ -521,13 +518,6 @@ class OccurrenceTaxonomyCleaner extends Manager{
             }
             if($this->conn->query($sql)){
                 $status += $this->conn->affected_rows;
-            }
-            else{
-                $errStr = 'WARNING: unable to protect globally rare species; '.$this->conn->error;
-                $this->errorArr[] = $errStr;
-                if($this->verbose) {
-                    $this->outputMsg($errStr, 2);
-                }
             }
         }
         $sql2 = 'UPDATE omoccurrences '.

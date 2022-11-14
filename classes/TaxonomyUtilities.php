@@ -228,4 +228,23 @@ class TaxonomyUtilities {
         asort($retArr);
         return $retArr;
     }
+
+    public function getSensitiveTaxa(): array
+    {
+        $sensitiveArr = array();
+        $sql = 'SELECT DISTINCT tid FROM taxa WHERE (SecurityStatus > 0)';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $sensitiveArr[] = $r->tid;
+        }
+        $rs->free();
+        $sql2 = 'SELECT DISTINCT tidaccepted FROM taxa '.
+            'WHERE SecurityStatus > 0 AND tid <> tidaccepted ';
+        $rs2 = $this->conn->query($sql2);
+        while($r2 = $rs2->fetch_object()){
+            $sensitiveArr[] = $r2->tidaccepted;
+        }
+        $rs2->free();
+        return $sensitiveArr;
+    }
 }
