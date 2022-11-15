@@ -5,13 +5,6 @@ let abortFormVerification = false;
 
 $(document).ready(function() {
 
-	function split( val ) {
-		return val.split( /,\s*/ );
-	}
-	function extractLast( term ) {
-		return split( term ).pop();
-	}
-
 	$("#occedittabs").tabs({
 		select: function() {
 			if(verifyLeaveForm()){
