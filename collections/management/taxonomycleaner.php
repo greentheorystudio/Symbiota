@@ -53,7 +53,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             .processor-accordion-panel {
                 width: 100%-2px;
                 height: 650px;
-                padding: 15px;
             }
             .processor-display {
                 width: 50%;
@@ -85,7 +84,8 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-        <script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
+        <script src="../../js/shared.js?ver=20221114" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=202211011" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const http = new XMLHttpRequest();
@@ -130,165 +130,15 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 				}
 			}
 
-            function setUnlinkedRecordCounts(){
-                const loadingMessage = '<img src="../../images/workingcircle.gif" style="width:15px;" />';
-                document.getElementById("unlinkedOccCnt").innerHTML = loadingMessage;
-                document.getElementById("unlinkedTaxaCnt").innerHTML = loadingMessage;
-                const recHttp = new XMLHttpRequest();
-                const params = 'collid=' + collId + '&action=getUnlinkedScinameCounts';
-                //console.log(occTaxonomyApi+'?'+params);
-                recHttp.open("POST", occTaxonomyApi, true);
-                recHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                recHttp.onreadystatechange = function() {
-                    if(recHttp.readyState === 4) {
-                        let retData = {};
-                        if(recHttp.status === 200) {
-                            retData = JSON.parse(recHttp.responseText);
-                        }
-                        if(retData.hasOwnProperty('occCnt') && retData.hasOwnProperty('taxaCnt')){
-                            document.getElementById("unlinkedOccCnt").innerHTML = retData['occCnt'];
-                            document.getElementById("unlinkedTaxaCnt").innerHTML = retData['taxaCnt'];
-                        }
-                        else{
-                            const errorMessage = '<span style="color:red;">Error loading count</span>';
-                            document.getElementById("unlinkedOccCnt").innerHTML = errorMessage;
-                            document.getElementById("unlinkedTaxaCnt").innerHTML = errorMessage;
-                        }
-                    }
-                };
-                recHttp.send(params);
-            }
-
             function updateWithTaxThesaurus(){
                 adjustUIStart('updateWithTaxThesaurus');
                 addProgressLine('<li>Updating linkages of occurrence records already linked to the Taxonomic Thesaurus ' + processStatus + '</li>');
                 const params = 'collid=' + collId + '&action=updateThesaurusLinkages';
                 //console.log(occTaxonomyApi+'?'+params);
-                http.open("POST", occTaxonomyApi, true);
-                http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                http.onreadystatechange = function() {
-                    if(http.readyState === 4) {
-                        const currentStatus = document.getElementsByClassName('current-status')[0];
-                        if(http.status === 200) {
-                            processSuccessResponse('Complete: ' + http.responseText + ' records updated');
-                        }
-                        else{
-                            processErrorResponse();
-                        }
-                        adjustUIEnd();
-                    }
-                };
-                http.send(params);
-            }
-
-            function updateOccLocalitySecurity(){
-                adjustUIStart('updateOccLocalitySecurity');
-                addProgressLine('<li>Updating the locality security settings for occurrence records of protected species ' + processStatus + '</li>');
-                const params = 'collid=' + collId + '&action=updateLocalitySecurity';
-                //console.log(occTaxonomyApi+'?'+params);
-                http.open("POST", occTaxonomyApi, true);
-                http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                http.onreadystatechange = function() {
-                    if(http.readyState === 4) {
-                        const currentStatus = document.getElementsByClassName('current-status')[0];
-                        if(http.status === 200) {
-                            processSuccessResponse('Complete: ' + http.responseText + ' records updated');
-                        }
-                        else{
-                            processErrorResponse();
-                        }
-                        adjustUIEnd();
-                    }
-                };
-                http.send(params);
-            }
-
-            function processSuccessResponse(lineHtml){
-                const currentStatus = document.getElementsByClassName('current-status')[0];
-                currentStatus.className = 'success-status';
-                currentStatus.innerHTML = lineHtml;
-                setUnlinkedRecordCounts();
-            }
-
-            function processErrorResponse(){
-                const currentStatus = document.getElementsByClassName('current-status')[0];
-                currentStatus.className = 'error-status';
-                if(http.status === 0){
-                    currentStatus.innerHTML = 'Cancelled';
-                }
-                else{
-                    currentStatus.innerHTML = 'Error: ' + http.status + ' ' + http.statusText;
-                }
-                setUnlinkedRecordCounts();
-            }
-
-            function cancelProcess(){
-                http.abort();
-                adjustUIEnd();
-            }
-
-            function addProgressLine(lineHtml){
-                document.getElementById("progressDisplayList").innerHTML += lineHtml;
-            }
-
-            function adjustUIStart(id){
-                clearProgressDisplay();
-                const startDivId = id + 'Start';
-                const cancelDivId = id + 'Cancel';
-                const startButtonElements = document.getElementsByClassName('start-button');
-                for(let i in startButtonElements){
-                    if(startButtonElements.hasOwnProperty(i)){
-                        startButtonElements[i].disabled = true;
-                    }
-                }
-                document.getElementById(startDivId).style.display = 'none';
-                document.getElementById(cancelDivId).style.display = 'block';
-            }
-
-            function clearProgressDisplay(){
-                document.getElementById("progressDisplayList").innerHTML = '';
-            }
-
-            function adjustUIEnd(){
-                const cancelButtonDivElements = document.getElementsByClassName('cancel-div');
-                for(let i in cancelButtonDivElements){
-                    if(cancelButtonDivElements.hasOwnProperty(i)){
-                        cancelButtonDivElements[i].style.display = 'none';
-                    }
-                }
-                const startButtonDivElements = document.getElementsByClassName('start-div');
-                for(let i in startButtonDivElements){
-                    if(startButtonDivElements.hasOwnProperty(i)){
-                        startButtonDivElements[i].style.display = 'block';
-                    }
-                }
-                const startButtonElements = document.getElementsByClassName('start-button');
-                for(let i in startButtonElements){
-                    if(startButtonElements.hasOwnProperty(i)){
-                        startButtonElements[i].disabled = false;
-                    }
-                }
-
-                if(document.getElementById("progressDisplayList").innerHTML !== ''){
-                    const cancelButtonDivElements = document.getElementsByClassName('cancel-div');
-                    for(let i in cancelButtonDivElements){
-                        if(cancelButtonDivElements.hasOwnProperty(i)){
-                            cancelButtonDivElements[i].style.display = 'none';
-                        }
-                    }
-                    const startButtonDivElements = document.getElementsByClassName('start-div');
-                    for(let i in startButtonDivElements){
-                        if(startButtonDivElements.hasOwnProperty(i)){
-                            startButtonDivElements[i].style.display = 'block';
-                        }
-                    }
-                    const startButtonElements = document.getElementsByClassName('start-button');
-                    for(let i in startButtonElements){
-                        if(startButtonElements.hasOwnProperty(i)){
-                            startButtonElements[i].disabled = false;
-                        }
-                    }
-                }
+                sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+                    processUpdateCleanResponse('updated',status,res);
+                    adjustUIEnd();
+                },http);
             }
         </script>
 	</head>
@@ -320,10 +170,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 <div style="margin:20px;clear:both;">
                     <?php
                     /*if($action){
-                        if($action === 'deepindex'){
-                            $cleanManager->deepIndexTaxa();
-                        }
-                        elseif($action === 'AnalyzingNames'){
+                        if($action === 'AnalyzingNames'){
                             echo '<ul>';
                             $cleanManager->setAutoClean($autoClean);
                             $cleanManager->setTargetKingdom($targetKingdom);
@@ -375,10 +222,10 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 the Taxonomic Thesaurus.
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
-                                        <div class="start-div" id="cleanResolveFromTaxThesaurusStart">
-                                            <button class="start-button" onclick="cleanUnlinkedNames();">Start</button>
+                                        <div class="start-div" id="cleanProcessesStart">
+                                            <button class="start-button" onclick="callCleaningController('leading-trailing-spaces');">Start</button>
                                         </div>
-                                        <div class="cancel-div" id="cleanResolveFromTaxThesaurusCancel" style="display:none;">
+                                        <div class="cancel-div" id="cleanProcessesCancel" style="display:none;">
                                             <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
                                             <button onclick="cancelProcess();">Cancel</button>
                                         </div>
@@ -420,7 +267,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             <h3 class="tabtitle">Resolve Unlinked Names From Taxonomic Data Sources</h3>
                             <div class="processor-accordion-panel">
                                 <div style="margin-bottom:10px;">
-                                    <fieldset style="padding:15px;">
+                                    <fieldset style="padding:5px;">
                                         <legend><b>Taxonomic Data Source</b></legend>
                                         <input name="taxresource" type="radio" value="col" checked /> Catalogue of Life (COL)<br/>
                                         <input name="taxresource" type="radio" value="itis" /> Integrated Taxonomic Information System (ITIS)<br/>

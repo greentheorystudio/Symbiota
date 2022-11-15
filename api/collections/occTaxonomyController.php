@@ -11,21 +11,30 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 }
 
 if($collid && $action){
+    $cleanManager = new OccurrenceTaxonomyCleaner();
+    $cleanManager->setCollId($collid);
     if($action === 'getUnlinkedScinameCounts'){
-        $cleanManager = new OccurrenceTaxonomyCleaner();
-        $cleanManager->setCollId($collid);
         $returnArr = array();
         $returnArr['taxaCnt'] = $cleanManager->getBadTaxaCount();
         $returnArr['occCnt'] = $cleanManager->getBadSpecimenCount();
         echo json_encode($returnArr);
     }
     if($action === 'updateThesaurusLinkages'){
-        $cleanManager = new OccurrenceTaxonomyCleaner();
-        $cleanManager->setCollId($collid);
         echo $cleanManager->updateOccTaxonomicThesaurusLinkages();
     }
     if($action === 'updateLocalitySecurity'){
-        $cleanManager = new OccurrenceTaxonomyCleaner();
         echo $cleanManager->protectGlobalSpecies($collid);
+    }
+    if($action === 'cleanTrimNames'){
+        echo $cleanManager->cleanTrimNames();
+    }
+    if($action === 'cleanSpNames'){
+        echo $cleanManager->cleanSpNames();
+    }
+    if($action === 'cleanQualifierNames'){
+        echo $cleanManager->cleanQualifierNames();
+    }
+    if($action === 'cleanDoubleSpaces'){
+        echo $cleanManager->cleanDoubleSpaceNames();
     }
 }

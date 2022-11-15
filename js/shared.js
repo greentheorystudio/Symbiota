@@ -1,126 +1,3 @@
-function toggle(target){
-	const ele = document.getElementById(target);
-	if(ele){
-		if(ele.style.display === "none"){
-			ele.style.display = "block";
-		}
-		else {
-			ele.style.display = "none";
-		}
-	}
-	else{
-		const divObjs = document.getElementsByTagName("div");
-		for (let i = 0; i < divObjs.length; i++) {
-			const divObj = divObjs[i];
-			if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
-				if(divObj.style.display === "none"){
-					divObj.style.display = "block";
-				}
-				else {
-					divObj.style.display = "none";
-				}
-			}
-		}
-	}
-}
-
-function openIndividualPopup(clientRoot, occid,clid){
-	let wWidth = 900;
-	if(document.getElementById('innertext')){
-        wWidth = document.getElementById('innertext').offsetWidth*1.05;
-    }
-    else if(document.body.offsetWidth){
-        wWidth = document.body.offsetWidth*0.9;
-    }
-    if(wWidth > 1000) {
-    	wWidth = 1000;
-    }
-	let newWindow = window.open(clientRoot + '/collections/individual/index.php?occid=' + occid + '&clid=' + clid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=' + (wWidth) + ',height=700,left=20,top=20');
-    if(newWindow.opener == null) {
-    	newWindow.opener = self;
-    }
-    return false;
-}
-
-function openPopup(url){
-	let wWidth = 900;
-	if(document.getElementById('innertext')){
-        wWidth = document.getElementById('innertext').offsetWidth*1.05;
-    }
-    else if(document.body.offsetWidth){
-        wWidth = document.body.offsetWidth*0.9;
-    }
-    if(wWidth > 1000) {
-    	wWidth = 1000;
-    }
-	let newWindow = window.open(url, 'genericPopup', 'scrollbars=1,toolbar=0,resizable=1,width=' + (wWidth) + ',height=700,left=20,top=20');
-    if(newWindow.opener == null) {
-    	newWindow.opener = self;
-    }
-    return false;
-}
-
-function parseDate(dateStr){
-	const dateObj = new Date(dateStr);
-	let dateTokens;
-	let y = 0;
-	let m = 0;
-	let d = 0;
-	try{
-		const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/; //Format: yyyy-mm-dd
-		const validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/; //Format: mm/dd/yyyy
-		const validformat3 = /^\d{1,2} \D+ \d{2,4}$/; //Format: dd mmm yyyy
-		if(validformat1.test(dateStr)){
-			dateTokens = dateStr.split("-");
-			y = dateTokens[0];
-			m = dateTokens[1];
-			d = dateTokens[2];
-		}
-		else if(validformat2.test(dateStr)){
-			dateTokens = dateStr.split("/");
-			m = dateTokens[0];
-			d = dateTokens[1];
-			y = dateTokens[2];
-			if(y.length === 2){
-				y = 0;
-			}
-		}
-		else if(validformat3.test(dateStr)){
-			dateTokens = dateStr.split(" ");
-			d = dateTokens[0];
-			mText = dateTokens[1];
-			y = dateTokens[2];
-			if(y.length === 2){
-				y = 0;
-			}
-			mText = mText.substring(0,3);
-			mText = mText.toLowerCase();
-			const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-			m = mNames.indexOf(mText)+1;
-		}
-		else if(dateObj instanceof Date){
-			y = dateObj.getFullYear();
-			m = dateObj.getMonth() + 1;
-			d = dateObj.getDate();
-		}
-	}
-	catch(ex){
-	}
-	const retArr = [];
-	retArr["y"] = y.toString();
-	retArr["m"] = m.toString();
-	retArr["d"] = d.toString();
-	return retArr;
-}
-
-function showWorking(){
-	document.body.classList.add("processing");
-}
-
-function hideWorking(){
-	document.body.classList.remove("processing");
-}
-
 function arrayIndexSort(obj){
 	const keys = [];
 	for(const key in obj){
@@ -188,6 +65,15 @@ function getISOStrFromDateObj(dObj){
 	return dYear+'-'+dMonth+'-'+dDay;
 }
 
+function getRgbaStrFromHexOpacity(hex,opacity) {
+	const rgbArr = hexToRgb(hex);
+	let retStr = '';
+	if(rgbArr){
+		retStr = 'rgba('+rgbArr['r']+','+rgbArr['g']+','+rgbArr['b']+','+opacity+')';
+	}
+	return retStr;
+}
+
 function hexToRgb(hex) {
 	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	return result ? {
@@ -197,13 +83,8 @@ function hexToRgb(hex) {
 	} : null;
 }
 
-function getRgbaStrFromHexOpacity(hex,opacity) {
-	const rgbArr = hexToRgb(hex);
-	let retStr = '';
-	if(rgbArr){
-		retStr = 'rgba('+rgbArr['r']+','+rgbArr['g']+','+rgbArr['b']+','+opacity+')';
-	}
-	return retStr;
+function hideWorking(){
+	document.body.classList.remove("processing");
 }
 
 function imagePostFunction(image, src) {
@@ -246,10 +127,144 @@ function imagePostFunction(image, src) {
 	}
 }
 
-function split(val) {
-	return val.split( /,\s*/ );
+function openIndividualPopup(clientRoot, occid,clid){
+	let wWidth = 900;
+	if(document.getElementById('innertext')){
+        wWidth = document.getElementById('innertext').offsetWidth*1.05;
+    }
+    else if(document.body.offsetWidth){
+        wWidth = document.body.offsetWidth*0.9;
+    }
+    if(wWidth > 1000) {
+    	wWidth = 1000;
+    }
+	let newWindow = window.open(clientRoot + '/collections/individual/index.php?occid=' + occid + '&clid=' + clid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=' + (wWidth) + ',height=700,left=20,top=20');
+    if(newWindow.opener == null) {
+    	newWindow.opener = self;
+    }
+    return false;
+}
+
+function openPopup(url){
+	let wWidth = 900;
+	if(document.getElementById('innertext')){
+        wWidth = document.getElementById('innertext').offsetWidth*1.05;
+    }
+    else if(document.body.offsetWidth){
+        wWidth = document.body.offsetWidth*0.9;
+    }
+    if(wWidth > 1000) {
+    	wWidth = 1000;
+    }
+	let newWindow = window.open(url, 'genericPopup', 'scrollbars=1,toolbar=0,resizable=1,width=' + (wWidth) + ',height=700,left=20,top=20');
+    if(newWindow.opener == null) {
+    	newWindow.opener = self;
+    }
+    return false;
 }
 
 function openTutorialWindow(url) {
 	window.open(url, '_blank');
 }
+
+function parseDate(dateStr){
+	const dateObj = new Date(dateStr);
+	let dateTokens;
+	let y = 0;
+	let m = 0;
+	let d = 0;
+	try{
+		const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/; //Format: yyyy-mm-dd
+		const validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/; //Format: mm/dd/yyyy
+		const validformat3 = /^\d{1,2} \D+ \d{2,4}$/; //Format: dd mmm yyyy
+		if(validformat1.test(dateStr)){
+			dateTokens = dateStr.split("-");
+			y = dateTokens[0];
+			m = dateTokens[1];
+			d = dateTokens[2];
+		}
+		else if(validformat2.test(dateStr)){
+			dateTokens = dateStr.split("/");
+			m = dateTokens[0];
+			d = dateTokens[1];
+			y = dateTokens[2];
+			if(y.length === 2){
+				y = 0;
+			}
+		}
+		else if(validformat3.test(dateStr)){
+			dateTokens = dateStr.split(" ");
+			d = dateTokens[0];
+			mText = dateTokens[1];
+			y = dateTokens[2];
+			if(y.length === 2){
+				y = 0;
+			}
+			mText = mText.substring(0,3);
+			mText = mText.toLowerCase();
+			const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+			m = mNames.indexOf(mText)+1;
+		}
+		else if(dateObj instanceof Date){
+			y = dateObj.getFullYear();
+			m = dateObj.getMonth() + 1;
+			d = dateObj.getDate();
+		}
+	}
+	catch(ex){
+	}
+	const retArr = [];
+	retArr["y"] = y.toString();
+	retArr["m"] = m.toString();
+	retArr["d"] = d.toString();
+	return retArr;
+}
+
+function sendAPIPostRequest(url,params,callback,http = null){
+	if(!http){
+		http = new XMLHttpRequest();
+	}
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4) {
+			callback(http.status,http.responseText);
+		}
+	};
+	http.send(params);
+}
+
+function showWorking(){
+	document.body.classList.add("processing");
+}
+
+function split(val) {
+	return val.split( /,\s*/ );
+}
+
+function toggle(target){
+	const ele = document.getElementById(target);
+	if(ele){
+		if(ele.style.display === "none"){
+			ele.style.display = "block";
+		}
+		else {
+			ele.style.display = "none";
+		}
+	}
+	else{
+		const divObjs = document.getElementsByTagName("div");
+		for (let i = 0; i < divObjs.length; i++) {
+			const divObj = divObjs[i];
+			if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
+				if(divObj.style.display === "none"){
+					divObj.style.display = "block";
+				}
+				else {
+					divObj.style.display = "none";
+				}
+			}
+		}
+	}
+}
+

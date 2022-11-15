@@ -196,123 +196,97 @@ class OccurrenceTaxonomyCleaner extends Manager{
 		return 'FROM omoccurrences WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname IS NOT NULL AND sciname NOT LIKE "% x %" AND sciname NOT LIKE "% × %" ';
 	}
 
-	public function deepIndexTaxa(): void
-	{
-		$this->setVerboseMode(2);
-		$kingdomName = '';
-		if($this->targetKingdom) {
-			$targetKingdomStr = explode(':', $this->targetKingdom);
-			$kingdomName = array_pop($targetKingdomStr);
-		}
+    public function cleanTrimNames(): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql = 'UPDATE omoccurrences '.
+                'SET sciname = TRIM(sciname) '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND (sciname LIKE " %" OR sciname LIKE "% ") ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
 
-		$this->logOrEcho('Cleaning leading and trailing spaces');
-		$sql = 'UPDATE omoccurrences '.
-			'SET sciname = TRIM(sciname) '.
-			'WHERE collid IN('.$this->collid.') AND ISNULL(tid) AND (sciname LIKE " %" OR sciname LIKE "% ")';
-		if($this->conn->query($sql)){
-			$this->logOrEcho($this->conn->affected_rows.' occurrence records cleaned',1);
-		}
-		flush();
+    public function cleanSpNames(): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET sciname = SUBSTRING(sciname,1, CHAR_LENGTH(sciname) - 4) '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp." ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
 
-		$this->logOrEcho('Cleaning double spaces embedded within name');
-		$sql = 'UPDATE omoccurrences '.
-			'SET sciname = REPLACE(sciname, "  ", " ") '.
-			'WHERE collid IN('.$this->collid.') AND ISNULL(tid) AND sciname LIKE "%  %" ';
-		if($this->conn->query($sql)){
-			$this->logOrEcho($this->conn->affected_rows.' occurrence records cleaned',1);
-		}
-		flush();
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," spp.","") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% spp.%" ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
 
-		$this->indexOccurrenceTaxa();
+    public function cleanQualifierNames(): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," cf. "," "), identificationQualifier = "cf." '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% cf. %" ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
 
-		$this->logOrEcho('Indexing names based on matching trinomials without taxonRank designation');
-		$triCnt = 0;
-		$sql = 'SELECT DISTINCT o.sciname, t.tid '.
-			'FROM omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = CONCAT_WS(" ",t.unitname1,t.unitname2,t.unitname3) '.
-			'WHERE o.collid IN('.$this->collid.') AND t.rankid IN(230,240) AND o.sciname LIKE "% % %" AND ISNULL(o.tid) ';
-		if($kingdomName) {
-			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
-		}
-		$sql .= 'ORDER BY t.rankid';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$triCnt += $this->remapOccurrenceTaxon($this->collid, $r->sciname, $r->tid);
-		}
-		$rs->free();
-		$this->logOrEcho($triCnt.' occurrence records remapped',1);
-		flush();
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," cf "," "), identificationQualifier = "cf." '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% cf %" ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
 
-		$this->logOrEcho('Indexing names ending in sp.');
-		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON SUBSTRING(o.sciname,1, CHAR_LENGTH(o.sciname) - 4) = t.sciname '.
-			'SET o.tid = t.tid '.
-			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% sp." AND ISNULL(o.tid) ';
-		if($kingdomName) {
-			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
-		}
-		if($this->conn->query($sql)){
-			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
-		}
-		flush();
+            $sql3 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," aff. "," "), identificationQualifier = "aff." '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% aff. %" ';
+            //echo $sql3;
+            if($this->conn->query($sql3)){
+                $retCnt += $this->conn->affected_rows;
+            }
 
-		$this->logOrEcho('Indexing names containing spp.');
-		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," spp.","") = t.sciname '.
-			'SET o.tid = t.tid '.
-			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% spp.%" AND ISNULL(o.tid) ';
-		if($kingdomName) {
-			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
-		}
-		if($this->conn->query($sql)){
-			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
-		}
-		flush();
+            $sql4 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," aff "," "), identificationQualifier = "aff." '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% aff %" ';
+            //echo $sql4;
+            if($this->conn->query($sql4)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
 
-		$this->logOrEcho('Indexing names containing cf.');
-		$cnt = 0;
-		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," cf. "," ") = t.sciname '.
-			'SET o.tid = t.tid '.
-			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% cf. %" AND ISNULL(o.tid) ';
-		if($kingdomName) {
-			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
-		}
-		if($this->conn->query($sql)){
-			$cnt = $this->conn->affected_rows;
-		}
-		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," cf "," ") = t.sciname '.
-			'SET o.tid = t.tid '.
-			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% cf %" AND ISNULL(o.tid) ';
-		if($kingdomName) {
-			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
-		}
-		if($this->conn->query($sql)){
-			$cnt += $this->conn->affected_rows;
-			$this->logOrEcho($cnt.' occurrence records mapped',1);
-		}
-		flush();
-
-		$this->logOrEcho('Indexing names containing aff.');
-		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," aff. "," ") = t.sciname '.
-			'SET o.tid = t.tid '.
-			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% aff. %" AND ISNULL(o.tid) ';
-		if($kingdomName) {
-			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
-		}
-		if($this->conn->query($sql)){
-			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
-		}
-		flush();
-
-		$this->logOrEcho('Indexing names containing group statements');
-		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON REPLACE(o.sciname," group"," ") = t.sciname '.
-			'SET o.tid = t.tid '.
-			'WHERE o.collid IN('.$this->collid.') AND o.sciname LIKE "% group%" AND ISNULL(o.tid) ';
-		if($kingdomName) {
-			$sql .= 'AND (t.kingdomname = "' . $kingdomName . '") ';
-		}
-		if($this->conn->query($sql)){
-			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
-		}
-		flush();
-	}
+    public function cleanDoubleSpaceNames(): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname, "  ", " ") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "%  %" ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt = $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
 
 	private function indexOccurrenceTaxa(): void
 	{
