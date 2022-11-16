@@ -1,3 +1,6 @@
+const http = new XMLHttpRequest();
+let processCancelled = false;
+
 function addProgressLine(lineHtml){
     document.getElementById("progressDisplayList").innerHTML += lineHtml;
 }
@@ -42,6 +45,9 @@ function adjustUIEnd(){
             }
         }
     }
+    document.getElementById('targetkingdomselect').disabled = false;
+    document.getElementById('updatedetimage').disabled = false;
+    setUnlinkedRecordCounts();
 }
 
 function adjustUIStart(id){
@@ -56,34 +62,70 @@ function adjustUIStart(id){
     }
     document.getElementById(startDivId).style.display = 'none';
     document.getElementById(cancelDivId).style.display = 'block';
+    document.getElementById('targetkingdomselect').disabled = true;
+    document.getElementById('updatedetimage').disabled = true;
 }
 
 function callCleaningController(step){
     let params = '';
     if(step === 'leading-trailing-spaces'){
+        processCancelled = false;
         adjustUIStart('cleanProcesses');
         addProgressLine('<li>Cleaning leading and trailing spaces in scientific names ' + processStatus + '</li>');
         params = 'collid=' + collId + '&action=cleanTrimNames';
     }
-    else if(step === 'clean-sp'){
-        addProgressLine('<li>Cleaning scientific names ending in sp. or containing spp. ' + processStatus + '</li>');
-        params = 'collid=' + collId + '&action=cleanSpNames';
+    if(processCancelled === false){
+        if(step === 'clean-sp'){
+            addProgressLine('<li>Cleaning scientific names ending in sp. or containing spp. ' + processStatus + '</li>');
+            params = 'collid=' + collId + '&action=cleanSpNames';
+        }
+        else if(step === 'clean-qualifier'){
+            addProgressLine('<li>Cleaning scientific names containing cf. or aff. ' + processStatus + '</li>');
+            params = 'collid=' + collId + '&action=cleanQualifierNames';
+        }
+        else if(step === 'double-spaces'){
+            addProgressLine('<li>Cleaning scientific names containing double spaces ' + processStatus + '</li>');
+            params = 'collid=' + collId + '&action=cleanDoubleSpaces';
+        }
+        //console.log(occTaxonomyApi+'?'+params);
+        sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+            processCleaningControllerResponse(step,status,res);
+        },http);
     }
-    else if(step === 'clean-qualifier'){
-        addProgressLine('<li>Cleaning scientific names containing cf. or aff. ' + processStatus + '</li>');
-        params = 'collid=' + collId + '&action=cleanQualifierNames';
+}
+
+function callTaxThesaurusLinkController(step = ''){
+    const targetKingdom = document.getElementById('targetkingdomselect').value;
+    if(targetKingdom){
+        let params = '';
+        if(!step){
+            processCancelled = false;
+            adjustUIStart('updateWithTaxThesaurus');
+            addProgressLine('<li>Updating linkages of occurrence records to the Taxonomic Thesaurus ' + processStatus + '</li>');
+            params = 'collid=' + collId + '&kingdomid=' + targetKingdom + '&action=updateOccThesaurusLinkages';
+        }
+        if(processCancelled === false){
+            if(step === 'update-det-linkages'){
+                addProgressLine('<li>Updating linkages of associated determination records to the Taxonomic Thesaurus ' + processStatus + '</li>');
+                params = 'collid=' + collId + '&kingdomid=' + targetKingdom + '&action=updateDetThesaurusLinkages';
+            }
+            else if(step === 'update-image-linkages'){
+                addProgressLine('<li>Updating linkages of associated media records to the Taxonomic Thesaurus ' + processStatus + '</li>');
+                params = 'collid=' + collId + '&kingdomid=' + targetKingdom + '&action=updateMediaThesaurusLinkages';
+            }
+            //console.log(occTaxonomyApi+'?'+params);
+            sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+                processTaxThesaurusLinkControllerResponse(step,status,res);
+            },http);
+        }
     }
-    else if(step === 'double-spaces'){
-        addProgressLine('<li>Cleaning scientific names containing double spaces ' + processStatus + '</li>');
-        params = 'collid=' + collId + '&action=cleanDoubleSpaces';
+    else{
+        alert('Please select a Target Kingdom from the dropdown menu above.');
     }
-    //console.log(occTaxonomyApi+'?'+params);
-    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
-        processCleaningControllerResponse(step,status,res);
-    },http);
 }
 
 function cancelProcess(){
+    processCancelled = true;
     http.abort();
     adjustUIEnd();
 }
@@ -124,7 +166,20 @@ function processSuccessResponse(lineHtml){
     const currentStatus = document.getElementsByClassName('current-status')[0];
     currentStatus.className = 'success-status';
     currentStatus.innerHTML = lineHtml;
-    setUnlinkedRecordCounts();
+}
+
+function processTaxThesaurusLinkControllerResponse(step,status,res){
+    const includeDetsImages = document.getElementById('updatedetimage').checked;
+    processUpdateCleanResponse('updated',status,res);
+    if(!step && includeDetsImages){
+        callTaxThesaurusLinkController('update-det-linkages');
+    }
+    else if(step === 'update-det-linkages'){
+        callTaxThesaurusLinkController('update-image-linkages');
+    }
+    else{
+        adjustUIEnd();
+    }
 }
 
 function processUpdateCleanResponse(term,status,res){

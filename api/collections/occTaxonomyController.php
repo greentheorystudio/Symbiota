@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceTaxonomyCleaner.php');
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$kingdomid = array_key_exists('kingdomid',$_REQUEST)?(int)$_REQUEST['kingdomid']:0;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 $isEditor = false;
@@ -19,8 +20,14 @@ if($collid && $action){
         $returnArr['occCnt'] = $cleanManager->getBadSpecimenCount();
         echo json_encode($returnArr);
     }
-    if($action === 'updateThesaurusLinkages'){
-        echo $cleanManager->updateOccTaxonomicThesaurusLinkages();
+    if($action === 'updateOccThesaurusLinkages'){
+        echo $cleanManager->updateOccTaxonomicThesaurusLinkages($kingdomid);
+    }
+    if($action === 'updateDetThesaurusLinkages'){
+        echo $cleanManager->updateDetTaxonomicThesaurusLinkages($kingdomid);
+    }
+    if($action === 'updateMediaThesaurusLinkages'){
+        echo $cleanManager->updateMediaTaxonomicThesaurusLinkages();
     }
     if($action === 'updateLocalitySecurity'){
         echo $cleanManager->protectGlobalSpecies($collid);

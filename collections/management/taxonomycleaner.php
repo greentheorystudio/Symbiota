@@ -40,19 +40,17 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 margin: 20px auto;
                 display: flex;
                 justify-content: space-between;
+                gap: 10px;
             }
             .processor-control-container {
                 width: 40%;
                 height: 650px;
-                padding:5px;
+                padding:20px 30px;
+                font-size: 1.2em;
                 border: 2px #aaaaaa solid;
                 -webkit-border-radius: 5px;
                 -moz-border-radius: 5px;
                 border-radius: 5px;
-            }
-            .processor-accordion-panel {
-                width: 100%-2px;
-                height: 650px;
             }
             .processor-display {
                 width: 50%;
@@ -85,20 +83,14 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221115" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=202211011" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221102" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
-            const http = new XMLHttpRequest();
             const occTaxonomyApi = "../../api/collections/occTaxonomyController.php";
             const processStatus = '<span class="current-status"><img src="../../images/workingcircle.gif" style="width:15px;" /></span>';
 
             $( document ).ready(function() {
-				$("#processor-accordion").accordion({
-                    icons: null,
-                    collapsible: true,
-                    heightStyle: "fill"
-                });
-                setUnlinkedRecordCounts();
+				setUnlinkedRecordCounts();
             });
 
 			function remappTaxon(oldName,targetTid,idQualifier,msgCode){
@@ -129,17 +121,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 					remappTaxon(oldName, f.tid.value, '', itemCnt+"-c");
 				}
 			}
-
-            function updateWithTaxThesaurus(){
-                adjustUIStart('updateWithTaxThesaurus');
-                addProgressLine('<li>Updating linkages of occurrence records already linked to the Taxonomic Thesaurus ' + processStatus + '</li>');
-                const params = 'collid=' + collId + '&action=updateThesaurusLinkages';
-                //console.log(occTaxonomyApi+'?'+params);
-                sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
-                    processUpdateCleanResponse('updated',status,res);
-                    adjustUIEnd();
-                },http);
-            }
         </script>
 	</head>
 	<body>
@@ -187,7 +168,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         <u>Unique scientific names</u>: <span id="unlinkedTaxaCnt"></span><br/>
                         <div style="margin-top:5px;">
                             Target Kingdom:
-                            <select id="targetkingdom">
+                            <select id="targetkingdomselect">
                                 <option value="">Select Target Kingdom</option>
                                 <option value="">--------------------------</option>
                                 <?php
@@ -202,88 +183,83 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 </div>
                 <div class="processor-container">
                     <div class="processor-control-container">
-                        <div id="processor-accordion">
-                            <h3 class="tabtitle">General Utilities</h3>
-                            <div class="processor-accordion-panel">
-                                Update locality security settings for occurrence records of protected species.
-                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                                    <div>
-                                        <div class="start-div" id="updateOccLocalitySecurityStart">
-                                            <button class="start-button" onclick="updateOccLocalitySecurity();">Start</button>
-                                        </div>
-                                        <div class="cancel-div" id="updateOccLocalitySecurityCancel" style="display:none;">
-                                            <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
-                                            <button onclick="cancelProcess();">Cancel</button>
-                                        </div>
-                                    </div>
+                        Update locality security settings for occurrence records of protected species.
+                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                            <div>
+                                <div class="start-div" id="updateOccLocalitySecurityStart">
+                                    <button class="start-button" onclick="updateOccLocalitySecurity();">Start</button>
                                 </div>
-                                <hr/>
-                                Run cleaning processes on occurrence record scientific names for records that are not linked to
-                                the Taxonomic Thesaurus.
-                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                                    <div>
-                                        <div class="start-div" id="cleanProcessesStart">
-                                            <button class="start-button" onclick="callCleaningController('leading-trailing-spaces');">Start</button>
-                                        </div>
-                                        <div class="cancel-div" id="cleanProcessesCancel" style="display:none;">
-                                            <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
-                                            <button onclick="cancelProcess();">Cancel</button>
-                                        </div>
-                                    </div>
+                                <div class="cancel-div" id="updateOccLocalitySecurityCancel" style="display:none;">
+                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <button onclick="cancelProcess();">Cancel</button>
                                 </div>
-                                <hr/>
-                                Set or update occurrence record linkages to the Taxonomic Thesaurus.
-                                <div style="clear:both;margin-top:5px;">
-                                    <input type='checkbox' id='hasgenetic' value='1' /> Include determination and image linkages
-                                </div>
-                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                                    <div>
-                                        <div class="start-div" id="updateWithTaxThesaurusStart">
-                                            <button class="start-button" onclick="updateWithTaxThesaurus();">Start</button>
-                                        </div>
-                                        <div class="cancel-div" id="updateWithTaxThesaurusCancel" style="display:none;">
-                                            <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
-                                            <button onclick="cancelProcess();">Cancel</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr/>
-                                Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
-                                with taxa currently in the Taxonomic Thesaurus.
-                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                                    <div>
-                                        <div class="start-div" id="resolveFromTaxThesaurusFuzzyStart">
-                                            <button class="start-button" onclick="resolveFromTaxThesaurusFuzzy();">Start</button>
-                                        </div>
-                                        <div class="cancel-div" id="resolveFromTaxThesaurusFuzzyCancel" style="display:none;">
-                                            <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
-                                            <button onclick="cancelProcess();">Cancel</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr/>
                             </div>
-
-                            <h3 class="tabtitle">Resolve Unlinked Names From Taxonomic Data Sources</h3>
-                            <div class="processor-accordion-panel">
-                                <div style="margin-bottom:10px;">
-                                    <fieldset style="padding:5px;">
-                                        <legend><b>Taxonomic Data Source</b></legend>
-                                        <input name="taxresource" type="radio" value="col" checked /> Catalogue of Life (COL)<br/>
-                                        <input name="taxresource" type="radio" value="itis" /> Integrated Taxonomic Information System (ITIS)<br/>
-                                        <input name="taxresource" type="radio" value="worms" /> World Register of Marine Species (WoRMS)
-                                    </fieldset>
+                        </div>
+                        <hr style="margin: 10px 0;"/>
+                        Run cleaning processes on occurrence record scientific names for records that are not linked to
+                        the Taxonomic Thesaurus.
+                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                            <div>
+                                <div class="start-div" id="cleanProcessesStart">
+                                    <button class="start-button" onclick="callCleaningController('leading-trailing-spaces');">Start</button>
                                 </div>
-                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                                    <div>
-                                        <div class="start-div" id="resolveFromTaxaDataSourceStart">
-                                            <button class="start-button" onclick="resolveFromTaxaDataSource();">Start</button>
-                                        </div>
-                                        <div class="cancel-div" id="resolveFromTaxaDataSourceCancel" style="display:none;">
-                                            <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
-                                            <button onclick="cancelProcess();">Cancel</button>
-                                        </div>
-                                    </div>
+                                <div class="cancel-div" id="cleanProcessesCancel" style="display:none;">
+                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <button onclick="cancelProcess();">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="margin: 10px 0;"/>
+                        Set or update occurrence record linkages to the Taxonomic Thesaurus.
+                        <div style="clear:both;margin-top:5px;">
+                            <input type='checkbox' id='updatedetimage' /> Also update associated determination, image, and media linkages
+                        </div>
+                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                            <div>
+                                <div class="start-div" id="updateWithTaxThesaurusStart">
+                                    <button class="start-button" onclick="callTaxThesaurusLinkController();">Start</button>
+                                </div>
+                                <div class="cancel-div" id="updateWithTaxThesaurusCancel" style="display:none;">
+                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <button onclick="cancelProcess();">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="margin: 10px 0;"/>
+                        Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
+                        with taxa currently in the Taxonomic Thesaurus.
+                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                            <div>
+                                <div class="start-div" id="resolveFromTaxThesaurusFuzzyStart">
+                                    <button class="start-button" onclick="resolveFromTaxThesaurusFuzzy();">Start</button>
+                                </div>
+                                <div class="cancel-div" id="resolveFromTaxThesaurusFuzzyCancel" style="display:none;">
+                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <button onclick="cancelProcess();">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="margin: 10px 0;"/>
+                        <div style="margin-bottom:10px;">
+                            Search for occurrence record scientific names that are not currently linked to the Taxonomic Thesaurus
+                            from an external Taxonomic Data Source.
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <fieldset style="padding:5px;">
+                                <legend><b>Taxonomic Data Source</b></legend>
+                                <input name="taxresource" type="radio" value="col" checked /> Catalogue of Life (COL)<br/>
+                                <input name="taxresource" type="radio" value="itis" /> Integrated Taxonomic Information System (ITIS)<br/>
+                                <input name="taxresource" type="radio" value="worms" /> World Register of Marine Species (WoRMS)
+                            </fieldset>
+                        </div>
+                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                            <div>
+                                <div class="start-div" id="resolveFromTaxaDataSourceStart">
+                                    <button class="start-button" onclick="resolveFromTaxaDataSource();">Start</button>
+                                </div>
+                                <div class="cancel-div" id="resolveFromTaxaDataSourceCancel" style="display:none;">
+                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <button onclick="cancelProcess();">Cancel</button>
                                 </div>
                             </div>
                         </div>

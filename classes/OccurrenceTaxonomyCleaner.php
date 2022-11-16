@@ -48,16 +48,55 @@ class OccurrenceTaxonomyCleaner extends Manager{
 		return $retCnt;
 	}
 
-    public function updateOccTaxonomicThesaurusLinkages(): int
+    public function updateOccTaxonomicThesaurusLinkages($kingdomId): int
     {
         $retCnt = 0;
-        if($this->collid){
+        if($this->collid && $kingdomId){
             $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName '.
                 'SET o.tid = t.tid '.
-                'WHERE o.collid = '.$this->collid.' AND o.tid IS NOT NULL AND t.TID IS NOT NULL ';
+                'WHERE o.collid = '.$this->collid.' AND (ISNULL(t.kingdomId) OR t.kingdomId = ' . $kingdomId . ') ';
             //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt = $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function updateDetTaxonomicThesaurusLinkages($kingdomId): int
+    {
+        $retCnt = 0;
+        if($this->collid && $kingdomId){
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
+                'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
+                'SET d.tid = t.tid '.
+                'WHERE o.collid = '.$this->collid.' AND (ISNULL(t.kingdomId) OR t.kingdomId = ' . $kingdomId . ') ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt = $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function updateMediaTaxonomicThesaurusLinkages(): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
+                'SET i.tid = o.tid '.
+                'WHERE o.collid = '.$this->collid.' AND i.imgid IS NOT NULL ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN media AS m ON o.occid = m.occid '.
+                'SET m.tid = o.tid '.
+                'WHERE o.collid = '.$this->collid.' AND m.mediaid IS NOT NULL ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
             }
         }
         return $retCnt;

@@ -31,7 +31,7 @@ $fullConfArr = $confManager->getConfigurationsArr();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221115" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221025" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.spatial.js?ver=20221104" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.spatial.js?ver=20221115" type="text/javascript"></script>
     <script type="text/javascript">
         const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
         let serverayerArrObject;
