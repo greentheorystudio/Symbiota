@@ -62,7 +62,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 3</h3>
-                        <p>Drag and drop the file downloaded in step 1 over the map to load the US state data onto the map.</p>
+                        <p>Drag and drop the entire shapefile zip file downloaded in step 1 over the map to load the US state data onto the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Step 4</h3>

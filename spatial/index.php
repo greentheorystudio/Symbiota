@@ -471,6 +471,10 @@ if(strncmp($windowType, 'input', 5) === 0){
                 }
             }
         }
+        else if(fileType === 'shp' || fileType === 'dbf'){
+            hideWorking();
+            alert('In order to load a shapefile, the entire shapefile zip file must be dragged and dropped onto the map.');
+        }
         else{
             hideWorking();
             alert('The drag and drop file loading only supports GeoJSON, kml, tif, and shapefile zip archives.');
