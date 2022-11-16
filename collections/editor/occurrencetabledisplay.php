@@ -1,5 +1,4 @@
 <?php
-/** @var string $qCustomField1 */
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
@@ -59,7 +58,7 @@ $headerMapBase = array(
     'catalognumber'=>'Catalog Number',
     'collectioncode'=>'Collection Code (override)',
     'recordnumber'=>'Collection Number',
-    'recordedby'=>'Collector/Observer',
+    'recordedby'=>'Collector',
     'coordinateuncertaintyinmeters'=>'Coordinate Uncertainty (m)',
     'country'=>'Country',
     'county'=>'County',
@@ -248,7 +247,10 @@ else{
 						}
 					}
 				}
-				if($qCustomField1 && !array_key_exists(strtolower($qCustomField1),$headerArr)){
+                if(isset($qOrderBy) && !array_key_exists(strtolower($qOrderBy),$headerArr)){
+                    $headerArr[strtolower($qOrderBy)] = strtolower($qOrderBy);
+                }
+				if(isset($qCustomField1) && !array_key_exists(strtolower($qCustomField1),$headerArr)){
 					$headerArr[strtolower($qCustomField1)] = strtolower($qCustomField1);
 				}
 				if(isset($qCustomField2) && !array_key_exists(strtolower($qCustomField2),$headerArr)){
