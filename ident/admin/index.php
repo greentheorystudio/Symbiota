@@ -41,7 +41,7 @@ $headingAdminUrl = 'headingadmin.php';
 				alert("A character type must be selected");
 				return false;
 			} 
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
+			if(f.sortsequence.value && isNaN(f.sortsequence.value)){
 				alert("Sort Sequence must be a numeric value only");
 				return false;
 			}

@@ -154,7 +154,7 @@ if($collid){
 				alert("The Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
 				return false;
 			}
-			else if(!isNumeric(f.latitudedecimal.value) || !isNumeric(f.longitudedecimal.value)){
+			else if(isNaN(f.latitudedecimal.value) || isNaN(f.longitudedecimal.value)){
 				alert("Latitdue and longitude values must be in the decimal format (numeric only)");
 				return false;
 			}
@@ -163,7 +163,7 @@ if($collid){
 				return false;
 			}
 			try{
-				if(!isNumeric(f.sortseq.value)){
+				if(isNaN(f.sortseq.value)){
 					alert("Sort sequence must be numeric only");
 					return false;
 				}
@@ -236,22 +236,7 @@ if($collid){
 				alert("The url you have entered is not for a supported image file. Please enter a url for a jpg, png, or gif file.");
 			}
 		}
-
-		function isNumeric(sText){
-            const ValidChars = "0123456789-.";
-            let IsNumber = true;
-            let Char;
-
-            for(let i = 0; i < sText.length && IsNumber === true; i++){
-			   Char = sText.charAt(i); 
-				if(ValidChars.indexOf(Char) === -1){
-					IsNumber = false;
-					break;
-		      	}
-		   	}
-			return IsNumber;
-		}
-	</script>
+    </script>
 </head>
 <body>
 	<?php

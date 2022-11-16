@@ -131,7 +131,7 @@ function insertUtm(f) {
 	const eValue = document.getElementById("utmeast").value.replaceAll(/^\s+|\s+$/g, "");
 	const nValue = document.getElementById("utmnorth").value.replaceAll(/^\s+|\s+$/g, "");
 	if(zValue && eValue && nValue){
-		if(isNumeric(eValue) && isNumeric(nValue)){
+		if(!isNaN(eValue) && !isNaN(nValue)){
 			let vcStr = f.verbatimcoordinates.value;
 			vcStr = vcStr.replaceAll(/\d{2}.*\d+E\s+\d+N[;\s]*/g, "");
 			vcStr = vcStr.replaceAll(/(Northern)|(Southern)/g, "");
@@ -143,7 +143,7 @@ function insertUtm(f) {
 			const utmStr = zValue + " " + eValue + "E " + nValue + "N ";
 			f.verbatimcoordinates.value = vcStr + utmStr;
 			const zNum = parseInt(zValue);
-			if(isNumeric(zNum)){
+			if(!isNaN(zNum)){
 				const latLngStr = utm2LatLng(zNum, eValue, nValue, f.geodeticdatum.value);
 				const llArr = latLngStr.split(',');
 				if(llArr){
@@ -224,7 +224,7 @@ function insertLatLng(f) {
 		if(lngSec === "") {
 			lngSec = 0;
 		}
-		if(isNumeric(latDeg) && isNumeric(latMin) && isNumeric(latSec) && isNumeric(lngDeg) && isNumeric(lngMin) && isNumeric(lngSec)){
+		if(!isNaN(latDeg) && !isNaN(latMin) && !isNaN(latSec) && !isNaN(lngDeg) && !isNaN(lngMin) && !isNaN(lngSec)){
 			if(latDeg < 0 || latDeg > 90){
 				alert("Latitude degree must be between 0 and 90 degrees");
 			}
@@ -290,19 +290,24 @@ function insertTRS(f) {
 	if (!township || !range) {
 		alert("Township and Range fields must have values");
 		return false;
-	} else if (!isNumeric(township)) {
+	}
+	else if (isNaN(township)) {
 		alert("Numeric value expected for Township field. If non-standardize format is used, enter directly into the Verbatim Coordinate Field");
 		return false;
-	} else if (!isNumeric(range)) {
+	}
+	else if (isNaN(range)) {
 		alert("Numeric value expected for Range field. If non-standardize format is used, enter directly into the Verbatim Coordinate Field");
 		return false;
-	} else if (!isNumeric(section)) {
+	}
+	else if (isNaN(section)) {
 		alert("Numeric value expected for Section field. If non-standardize format is used, enter directly into the Verbatim Coordinate Field");
 		return false;
-	} else if (section > 36) {
+	}
+	else if (section > 36) {
 		alert("Section field must contain a numeric value between 1-36");
 		return false;
-	} else {
+	}
+	else {
 		vCoord = f.verbatimcoordinates;
 		if (vCoord.value) {
 			vCoord.value = vCoord.value + "; ";

@@ -117,7 +117,7 @@ $headingAdminUrl = 'headingadmin.php';
 				alert("Character type must not be null");
 				return false;
 			} 
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
+			if(f.sortsequence.value && isNaN(f.sortsequence.value)){
 				alert("Sort Sequence can only be a numeric value");
 				return false;
 			} 
@@ -129,7 +129,7 @@ $headingAdminUrl = 'headingadmin.php';
 				alert("Character state must not be null");
 				return false;
 			} 
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
+			if(f.sortsequence.value && isNaN(f.sortsequence.value)){
 				alert("Sort sequence can only be a numeric value");
 				return false;
 			} 
@@ -137,7 +137,7 @@ $headingAdminUrl = 'headingadmin.php';
 		}
 		
 		function validateStateEditForm(f){
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
+			if(f.sortsequence.value && isNaN(f.sortsequence.value)){
 				alert("Sort Sequence field must be numeric");
 				return false;
 			}

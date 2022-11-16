@@ -160,7 +160,7 @@ if($formSubmit === 'dlexsiccati'){
 				alert("Catalog Number or Collector needs to be filled in");
 				return false;
 			}
-			if(f.ranking.value && !isNumeric(f.ranking.value)){
+			if(f.ranking.value && isNaN(f.ranking.value)){
 				alert("Ranking can only be a number");
 				return false;
 			}

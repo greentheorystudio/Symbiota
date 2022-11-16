@@ -324,7 +324,7 @@ function decimalLongitudeChanged(f){
 }
 
 function coordinateUncertaintyInMetersChanged(f){
-	if(!isNumeric(f.coordinateuncertaintyinmeters.value)){
+	if(isNaN(f.coordinateuncertaintyinmeters.value)){
 		alert("Coordinate uncertainty field must be numeric only");
 	}
 	fieldChanged('coordinateuncertaintyinmeters');
@@ -404,7 +404,7 @@ function parseVerbatimElevation(f){
 }
 
 function minimumDepthInMetersChanged(f){
-	if(!isNumeric(f.minimumdepthinmeters.value)){
+	if(isNaN(f.minimumdepthinmeters.value)){
 		alert("Depth values must be numeric only");
 		return false;
 	}
@@ -412,7 +412,7 @@ function minimumDepthInMetersChanged(f){
 }
 
 function maximumDepthInMetersChanged(f){
-	if(!isNumeric(f.maximumdepthinmeters.value)){
+	if(isNaN(f.maximumdepthinmeters.value)){
 		alert("Depth values must be numeric only");
 		return false;
 	}
@@ -598,23 +598,23 @@ function verifyFullForm(f){
 		alert("Event date is invalid");
 		return false;
 	}
-	if(!isNumeric(f.year.value)){
+	if(isNaN(f.year.value)){
 		alert("Collection year field must be numeric only");
 		return false;
 	}
-	if(!isNumeric(f.month.value)){
+	if(isNaN(f.month.value)){
 		alert("Collection month field must be numeric only");
 		return false;
 	}
-	if(!isNumeric(f.day.value)){
+	if(isNaN(f.day.value)){
 		alert("Collection day field must be numeric only");
 		return false;
 	}
-	if(!isNumeric(f.startdayofyear.value)){
+	if(isNaN(f.startdayofyear.value)){
 		alert("Start day of year field must be numeric only");
 		return false;
 	}
-	if(!isNumeric(f.enddayofyear.value)){
+	if(isNaN(f.enddayofyear.value)){
 		alert("End day of year field must be numeric only");
 		return false;
 	}
@@ -628,7 +628,7 @@ function verifyFullForm(f){
 	if(!verifyDecimalLongitude(f)){
 		return false;
 	}
-	if(!isNumeric(f.coordinateuncertaintyinmeters.value)){
+	if(isNaN(f.coordinateuncertaintyinmeters.value)){
 		alert("Coordinate uncertainty field must be numeric only");
 		return false;
 	}
@@ -648,7 +648,7 @@ function verifyFullForm(f){
 			return false;
 		}
 	}
-	if(!isNumeric(f.duplicatequantity.value)){
+	if(isNaN(f.duplicatequantity.value)){
 		alert("Duplicate Quantity field must be numeric only");
 		return false;
 	}
@@ -677,7 +677,7 @@ function verifyGotoNew(f){
 }
 
 function verifyDecimalLatitude(f){
-	if(!isNumeric(f.decimallatitude.value)){
+	if(isNaN(f.decimallatitude.value)){
 		alert("Input value for Decimal Latitude must be a number value only! " );
 		return false;
 	}
@@ -694,7 +694,7 @@ function verifyDecimalLatitude(f){
 
 function verifyDecimalLongitude(f){
 	const lngValue = f.decimallongitude.value;
-	if(!isNumeric(lngValue)){
+	if(isNaN(lngValue)){
 		alert("Input value for Decimal Longitude must be a number value only! " );
 		return false;
 	}
@@ -710,7 +710,7 @@ function verifyDecimalLongitude(f){
 }
 
 function verifyMinimumElevationInMeters(f){
-	if(!isNumeric(f.minimumelevationinmeters.value)){
+	if(isNaN(f.minimumelevationinmeters.value)){
 		alert("Elevation values must be numeric only");
 		return false;
 	}
@@ -722,7 +722,7 @@ function verifyMinimumElevationInMeters(f){
 }
 
 function verifyMaximumElevationInMeters(f){
-	if(!isNumeric(f.maximumelevationinmeters.value)){
+	if(isNaN(f.maximumelevationinmeters.value)){
 		alert("Elevation values must be numeric only");
 		return false;
 	}
@@ -1045,7 +1045,7 @@ function verifyDetForm(f){
 		alert("Determination Date field must have a value (enter 'unknown' if not defined)");
 		return false;
 	}
-	if(f.sortsequence && !isNumeric(f.sortsequence.value)){
+	if(f.sortsequence && isNaN(f.sortsequence.value)){
 		alert("Sort Sequence field must be a numeric value only");
 		return false;
 	}
@@ -1179,24 +1179,9 @@ function autoDupeChanged(dupeCbObj){
 }
 
 function inputIsNumeric(inputObj, titleStr){
-	if(!isNumeric(inputObj.value)){
+	if(isNaN(inputObj.value)){
 		alert("Input value for " + titleStr + " must be a number value only! " );
 	}
-}
-
-function isNumeric(sText){
-	const validChars = "0123456789-.";
-	let isNumber = true;
-	let charVar;
-
-	for(let i = 0; i < sText.length && isNumber === true; i++){
-   		charVar = sText.charAt(i); 
-		if(validChars.indexOf(charVar) === -1){
-			isNumber = false;
-			break;
-      	}
-   	}
-	return isNumber;
 }
 
 function getCookie(cName){

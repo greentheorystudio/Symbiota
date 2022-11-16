@@ -50,7 +50,7 @@ function linkVoucher(occidIn, clidIn){
 }
 
 function validateSqlFragForm(f){
-	if(!isNumeric(f.latnorth.value) || !isNumeric(f.latsouth.value) || !isNumeric(f.lngwest.value) || !isNumeric(f.lngeast.value)){
+	if(isNaN(f.latnorth.value) || isNaN(f.latsouth.value) || isNaN(f.lngwest.value) || isNaN(f.lngeast.value)){
 		alert("Latitude and longitudes values muct be numeric values only");
 		return false;
 	}
@@ -98,34 +98,4 @@ function selectAll(cb){
 			dbElement.checked = false;
 		}
 	}
-}
-
-function openPopup(urlStr,windowName){
-	let wWidth = 900;
-	if(document.getElementById('innertext').offsetWidth){
-		wWidth = document.getElementById('innertext').offsetWidth*1.05;
-	}
-	else if(document.body.offsetWidth){
-		wWidth = document.body.offsetWidth*0.9;
-	}
-	let newWindow = window.open(urlStr, windowName, 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
-	if (newWindow.opener == null) {
-		newWindow.opener = self;
-	}
-	return false;
-}
-
-function isNumeric(sText){
-	const ValidChars = "0123456789-.";
-	let IsNumber = true;
-	let Char;
-
-	for (let i = 0; i < sText.length && IsNumber === true; i++){
-		Char = sText.charAt(i); 
-		if (ValidChars.indexOf(Char) === -1){
-			IsNumber = false;
-			break;
-		}
-   	}
-	return IsNumber;
 }

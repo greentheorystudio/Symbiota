@@ -60,7 +60,7 @@ if($GLOBALS['SYMB_UID']){
     </script>
     <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
 	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221115"></script>
-	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221025"></script>
+	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221115"></script>
 	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {

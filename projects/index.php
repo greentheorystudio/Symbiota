@@ -140,7 +140,7 @@ if(!$researchList && !$editMode){
                 alert("Project name field cannot be empty.");
                 return false;
             }
-            else if(!isNumeric(f.sortsequence.value)){
+            else if(isNaN(f.sortsequence.value)){
                 alert("Sort sequence can only be a numeric value.");
                 return false;
             }
@@ -163,19 +163,6 @@ if(!$researchList && !$editMode){
             if(f.uid.value === ""){
                 alert("Choose a user from the pull-down");
                 return false;
-            }
-            return true;
-        }
-
-        function isNumeric(sText){
-            const validChars = "0123456789-.";
-            let ch;
-
-            for(let i = 0; i < sText.length; i++){
-                ch = sText.charAt(i);
-                if(validChars.indexOf(ch) === -1) {
-                    return false;
-                }
             }
             return true;
         }

@@ -341,22 +341,7 @@ function openEditPopup(occidStr,targetImgTab){
 	return false;
 }
 
-function isNumeric(sText){
-	const validChars = "0123456789-.";
-	let isNumber = true;
-	let charVar;
-
-	for(let i = 0; i < sText.length && isNumber == true; i++){
-   		charVar = sText.charAt(i); 
-		if(validChars.indexOf(charVar) === -1){
-			isNumber = false;
-			break;
-	  	}
-   	}
-	return isNumber;
-}
-
-function pad( val ){ 
+function pad( val ){
 	return val > 9 ? val : "0" + val; 
 }
 
