@@ -51,7 +51,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-        <script src="../../js/shared.js?ver=20221114" type="text/javascript"></script>
+        <script src="../../js/shared.js?ver=20221115" type="text/javascript"></script>
 		<script type="text/javascript">
             $(document).ready(function() {
 				$( "#taxa" )
@@ -64,11 +64,11 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 				.autocomplete({
 					source: function( request, response ) {
 						$.getJSON( "../../api/taxa/taxalist.php", {
-							term: extractLast( request.term )
+							term: request.term.split( /,\s*/ ).pop()
 						}, response );
 					},
 					search: function() {
-                        const term = extractLast(this.value);
+                        const term = this.value.split( /,\s*/ ).pop();
                         if ( term.length < 4 ) {
 							return false;
 						}
@@ -77,7 +77,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						return false;
 					},
 					select: function( event, ui ) {
-                        const terms = split(this.value);
+                        const terms = this.value.split( /,\s*/ );
                         terms.pop();
 						terms.push( ui.item.value );
 						this.value = terms.join( ", " );

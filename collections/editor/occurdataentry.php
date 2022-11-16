@@ -58,10 +58,10 @@ if($GLOBALS['SYMB_UID']){
 	<script type="text/javascript">
         const collId = "<?php echo $collid; ?>";
     </script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221114"></script>
-	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221114"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
+	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221115"></script>
 	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221025"></script>
-	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221025"></script>
+	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");

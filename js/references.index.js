@@ -17,13 +17,13 @@ $(document).ready(function() {
 		.autocomplete({
 			source: function( request, response ) {
 				$.getJSON( "../api/references/authorlist.php", {
-					term: extractLast( request.term ), t: function() {
+					term: request.term.split( /,\s*/ ).pop(), t: function() {
 						return document.authorform.addauthorsearch.value;
 					}
 				}, response );
 			},
 			search: function() {
-				const term = extractLast(this.value);
+				const term = this.value.split( /,\s*/ ).pop();
 				if ( term.length < 3 ) {
 					return false;
 				}
@@ -32,7 +32,7 @@ $(document).ready(function() {
 				return false;
 			},
 			select: function( event, ui ) {
-				const terms = split(this.value);
+				const terms = this.value.split( /,\s*/ );
 				terms.pop();
 				terms.push( ui.item.label );
 				document.getElementById('refauthorid').value = ui.item.value;
@@ -68,13 +68,13 @@ $(document).ready(function() {
 			.autocomplete({
 				source: function( request, response ) {
 					$.getJSON( url, {
-						term: extractLast( request.term ), t: function() {
+						term: request.term.split( /,\s*/ ).pop(), t: function() {
 							return document.referenceeditform.secondarytitle.value;
 						}
 					}, response );
 				},
 				search: function() {
-					const term = extractLast(this.value);
+					const term = this.value.split( /,\s*/ ).pop();
 					if ( term.length < 3 ) {
 						return false;
 					}
@@ -83,7 +83,7 @@ $(document).ready(function() {
 					return false;
 				},
 				select: function( event, ui ) {
-					const terms = split(this.value);
+					const terms = this.value.split( /,\s*/ );
 					terms.pop();
 					terms.push( ui.item.label );
 					getParentInfo(ui.item.value);
@@ -103,13 +103,13 @@ $(document).ready(function() {
 			.autocomplete({
 				source: function( request, response ) {
 					$.getJSON( "../api/references/seriestitlelist.php", {
-						term: extractLast( request.term ), t: function() {
+						term: request.term.split( /,\s*/ ).pop(), t: function() {
 							return document.referenceeditform.tertiarytitle.value;
 						}
 					}, response );
 				},
 				search: function() {
-					const term = extractLast(this.value);
+					const term = this.value.split( /,\s*/ ).pop();
 					if ( term.length < 3 ) {
 						return false;
 					}
@@ -118,7 +118,7 @@ $(document).ready(function() {
 					return false;
 				},
 				select: function( event, ui ) {
-					const terms = split(this.value);
+					const terms = this.value.split( /,\s*/ );
 					terms.pop();
 					terms.push( ui.item.label );
 					getParentInfo(ui.item.value);
@@ -129,19 +129,18 @@ $(document).ready(function() {
 });
 
 function getParentInfo(refid){
-	const sutXmlHttp = GetXmlHttpObject();
-	if (sutXmlHttp == null){
-		alert ("Your browser does not support AJAX!");
-		return;
-	}
+	let parentArr;
 	const refType = document.getElementById("ReferenceTypeId").value;
-
 	const url = "../api/references/parentdetails.php?refid=" + refid + "&reftype=" + refType;
-
-	sutXmlHttp.onreadystatechange=function(){
-		let parentArr;
-		if (sutXmlHttp.readyState === 4 && sutXmlHttp.status === 200) {
-			parentArr = JSON.parse(sutXmlHttp.responseText);
+	const http = new XMLHttpRequest();
+	const url = "../api/references/parentdetails.php";
+	const params = 'refid=' + refid + '&reftype=' + refType;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status == 200) {
+			parentArr = JSON.parse(http.responseText);
 			document.getElementById("parentRefId").value = parentArr['parentRefId'];
 			document.getElementById("parentRefId2").value = parentArr['parentRefId2'];
 			if(document.getElementById("secondarytitle")){
@@ -182,76 +181,66 @@ function getParentInfo(refid){
 			}
 		}
 	};
-	sutXmlHttp.open("POST",url,false);
-	sutXmlHttp.send(null);
+	http.send(params);
 }
 
 function addAuthorToRef(){
-	const refauthid = document.getElementById('refauthorid').value;
-	const sutXmlHttp = GetXmlHttpObject();
-	if (sutXmlHttp == null){
-		alert ("Your browser does not support AJAX!");
-		return;
-	}
-
-	const url = "../api/references/authormanager.php?refid=" + refid + "&action=addauthor&refauthid=" + refauthid;
-
 	let authorList = '';
-	sutXmlHttp.onreadystatechange=function(){
-		if(sutXmlHttp.readyState === 4 && sutXmlHttp.status === 200){
-			authorList = sutXmlHttp.responseText;
+	const refauthid = document.getElementById('refauthorid').value;
+	const http = new XMLHttpRequest();
+	const url = "../api/references/authormanager.php";
+	const params = 'refid=' + refid + '&action=addauthor&refauthid=' + refauthid;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status == 200) {
+			authorList = http.responseText;
 			document.getElementById("authorlistdiv").innerHTML = authorList;
 			document.getElementById("addauthorsearch").value = '';
 			document.getElementById("refauthorid").value = '';
 		}
 	};
-	sutXmlHttp.open("POST",url,false);
-	sutXmlHttp.send(null);
+	http.send(params);
 }
 
 function deleteRefAuthor(refauthid){
-	if (confirm("Are you sure you would like to remove this author from this reference?")) {
-		const sutXmlHttp = GetXmlHttpObject();
-		if (sutXmlHttp == null){
-			alert ("Your browser does not support AJAX!");
-			return;
-		}
-
-		const url = "../api/references/authormanager.php?refid=" + refid + "&action=deleterefauthor&refauthid=" + refauthid;
-
+	if(confirm("Are you sure you would like to remove this author from this reference?")){
 		let authorList = '';
-		sutXmlHttp.onreadystatechange=function(){
-			if(sutXmlHttp.readyState === 4 && sutXmlHttp.status === 200){
-				authorList = sutXmlHttp.responseText;
+		const http = new XMLHttpRequest();
+		const url = "../api/references/authormanager.php";
+		const params = 'refid=' + refid + '&action=deleterefauthor&refauthid=' + refauthid;
+		//console.log(url+'?'+params);
+		http.open("POST", url, true);
+		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		http.onreadystatechange = function() {
+			if(http.readyState === 4 && http.status == 200) {
+				authorList = http.responseText;
 				document.getElementById("authorlistdiv").innerHTML = authorList;
 				document.getElementById("addauthorsearch").value = '';
 				document.getElementById("refauthorid").value = '';
 			}
 		};
-		sutXmlHttp.open("POST",url,false);
-		sutXmlHttp.send(null);
+		http.send(params);
 	}
 }
 
 function deleteRefLink(table,field,type,id){
-	if (confirm("Are you sure you would like to remove this link from this reference?")) {
-		const sutXmlHttp = GetXmlHttpObject();
-		if (sutXmlHttp == null){
-			alert ("Your browser does not support AJAX!");
-			return;
-		}
-
-		const url = "../api/references/authormanager.php?refid=" + refid + "&action=deletereflink&table=" + table + "&field=" + field + "&id=" + id + "&type=" + type;
-
+	if(confirm("Are you sure you would like to remove this link from this reference?")){
 		let authorList = '';
-		sutXmlHttp.onreadystatechange=function(){
-			if(sutXmlHttp.readyState === 4 && sutXmlHttp.status === 200){
-				authorList = sutXmlHttp.responseText;
+		const http = new XMLHttpRequest();
+		const url = "../api/references/authormanager.php";
+		const params = 'refid=' + refid + '&action=deletereflink&table=' + table + '&field=' + field + '&id=' + id + '&type=' + type;
+		//console.log(url+'?'+params);
+		http.open("POST", url, true);
+		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		http.onreadystatechange = function() {
+			if(http.readyState === 4 && http.status == 200) {
+				authorList = http.responseText;
 				document.getElementById(table).innerHTML = authorList;
 			}
 		};
-		sutXmlHttp.open("POST",url,false);
-		sutXmlHttp.send(null);
+		http.send(params);
 	}
 }
 
@@ -265,6 +254,7 @@ function openNewAuthorWindow(){
 }
 
 function processNewAuthor(f){
+	let authorList = '';
 	const firstName = f.firstname.value;
 	const middleName = f.middlename.value;
 	const lastName = f.lastname.value;
@@ -272,27 +262,22 @@ function processNewAuthor(f){
 		alert("Please enter the first and last name of the author.");
 		return false;
 	}
-	const sutXmlHttp = GetXmlHttpObject();
-	if (sutXmlHttp==null){
-		alert ("Your browser does not support AJAX!");
-		return;
-	}
-
-	const url = "../api/references/authormanager.php?refid=" + refid + "&action=createauthor&firstname=" + firstName + "&midname=" + middleName + "&lastname=" + lastName;
-
-	let authorList = '';
-
-	sutXmlHttp.onreadystatechange=function(){
-		if(sutXmlHttp.readyState === 4 && sutXmlHttp.status === 200){
-			authorList = sutXmlHttp.responseText;
+	const http = new XMLHttpRequest();
+	const url = "../api/references/authormanager.php";
+	const params = 'refid=' + refid + '&action=createauthor&firstname=' + firstName + '&midname=' + middleName + '&lastname=' + lastName;
+	//console.log(url+'?'+params);
+	http.open("POST", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4 && http.status == 200) {
+			authorList = http.responseText;
 			opener.document.getElementById("authorlistdiv").innerHTML = authorList;
 			opener.document.getElementById("addauthorsearch").value = '';
 			opener.document.getElementById("refauthorid").value = '';
 			self.close();
 		}
 	};
-	sutXmlHttp.open("POST",url,false);
-	sutXmlHttp.send(null);
+	http.send(params);
 }
 
 function selectAll(cb){
@@ -301,32 +286,6 @@ function selectAll(cb){
 	for(let i = 0; i < dbElements.length; i++){
 		const dbElement = dbElements[i];
 		dbElement.checked = boxesChecked;
-	}
-}
-
-function toggle(target){
-	const objDiv = document.getElementById(target);
-	if(objDiv){
-		if(objDiv.style.display === "none"){
-			objDiv.style.display = "block";
-		}
-		else{
-			objDiv.style.display = "none";
-		}
-	}
-	else{
-		const divs = document.getElementsByTagName("div");
-		for (let h = 0; h < divs.length; h++) {
-			const divObj = divs[h];
-			if(divObj.className === target){
-				if(divObj.style.display === "none"){
-					divObj.style.display="block";
-				}
-			 	else {
-			 		divObj.style.display="none";
-			 	}
-			}
-		}
 	}
 }
 
@@ -426,20 +385,4 @@ function updateIspublished(){
 	else{
 		document.getElementById("ispublished").value = "0";
 	}
-}
-
-function GetXmlHttpObject(){
-	let xmlHttp;
-	try{
-		xmlHttp = new XMLHttpRequest();
-	}
-	catch (e){
-		try{
-			xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
-		}
-		catch(e){
-			xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-		}
-	}
-	return xmlHttp;
 }

@@ -25,34 +25,7 @@ $uuidManager = new UuidFactory();
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> GUID/UUID Generator</title>
 	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
     <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-	<script type="text/javascript">
-		function toggle(target){
-            const objDiv = document.getElementById(target);
-            if(objDiv){
-				if(objDiv.style.display === "none"){
-					objDiv.style.display = "block";
-				}
-				else{
-					objDiv.style.display = "none";
-				}
-			}
-			else{
-                const divs = document.getElementsByTagName("div");
-                for (let h = 0; h < divs.length; h++) {
-                    const divObj = divs[h];
-                    if(divObj.className === target){
-						if(divObj.style.display === "none"){
-							divObj.style.display="block";
-						}
-					 	else {
-					 		divObj.style.display="none";
-					 	}
-					}
-				}
-			}
-			return false;
-		}
-    </script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
 </head>
 <body>
 <?php 

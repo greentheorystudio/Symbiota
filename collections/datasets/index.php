@@ -44,7 +44,7 @@ elseif($action === 'addSelectedToDataset' && $GLOBALS['VALID_USER']){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/external/jquery.js"></script>
     <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221114"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
     <script type="text/javascript">
         function validateAddForm(f){
             if(f.adduser.value === ""){

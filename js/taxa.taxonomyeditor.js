@@ -36,45 +36,6 @@ function toggleEditFields(){
 	toggle('kingdomdiv');
 }
 
-function toggle(target){
-	const ele = document.getElementById(target);
-	if(ele){
-		if(ele.style.display === "none"){
-			ele.style.display="";
-  		}
-	 	else {
-	 		ele.style.display="none";
-	 	}
-	}
-	else{
-		const divs = document.getElementsByTagName("div");
-		for(let i = 0; i < divs.length; i++) {
-			const divObj = divs[i];
-			if(divObj.className == target){
-				if(divObj.style.display === "none"){
-					divObj.style.display="block";
-				}
-			 	else {
-			 		divObj.style.display="none";
-			 	}
-			}
-		}
-
-		const spans = document.getElementsByTagName("span");
-		for(let j = 0; j < spans.length; j++) {
-			const spanObj = spans[j];
-			if(spanObj.className == target){
-				if(spanObj.style.display === "none"){
-					spanObj.style.display="inline";
-				}
-			 	else {
-			 		spanObj.style.display="none";
-			 	}
-			}
-		}
-	}
-}
-
 function validateTaxonEditForm(f){
 	if(f.unitname1.value.trim() === ""){
 		alert('Unitname 1 field must have a value');

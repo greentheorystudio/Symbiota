@@ -114,7 +114,7 @@ class DichoKeyManager{
         foreach($stmtArr as $sId => $stStrArr){
             echo "<div id='".$sId."' style='display:".($displayStmt? 'block' : 'none').";'>\n";
             foreach($stStrArr as $k => $str){
-                echo "<div style onclick=''>".$str."</div>\n";
+                echo "<div>".$str."</div>\n";
             }
             echo "</div>\n";
             $displayStmt = false;

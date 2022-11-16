@@ -16,39 +16,6 @@ $dichoKeyManager = new DichoKeyManager();
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<meta name='keywords' content='' />
-	<script>
-        let cseXmlHttp;
-        let targetStr;
-
-        function toggle(target){
-            let obj;
-            const divObjs = document.getElementsByTagName("div");
-            for (let i = 0; i < divObjs.length; i++) {
-                obj = divObjs[i];
-                if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-					if(obj.style.display === "none"){
-						obj.style.display="block";
-					}
-					else {
-						obj.style.display="none";
-					}
-				}
-			}
-
-            const spanObjs = document.getElementsByTagName("span");
-            for (let i = 0; i < spanObjs.length; i++) {
-                obj = spanObjs[i];
-                if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-					if(obj.style.display === "none"){
-						obj.style.display="inline";
-					}
-					else {
-						obj.style.display="none";
-					}
-				}
-			}
-		}
-    </script>
 </head>
 <body>
     <?php

@@ -101,6 +101,7 @@ if($collid){
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/external/tiny_mce/tiny_mce.js"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
 	<script>
         tinyMCE.init({
             mode : "textareas",
@@ -199,21 +200,6 @@ if($collid){
 				return false;
 			}
 			return true;
-		}
-		
-		function toggle(target){
-            const divs = document.getElementsByTagName("span");
-            for (let h = 0; h < divs.length; h++) {
-                const divObj = divs[h];
-                if(divObj.className === target){
-                    if(divObj.style.display === "none"){
-                        divObj.style.display="inline-block";
-                    }
-                    else {
-                        divObj.style.display="none";
-                    }
-                }
-            }
 		}
 		
 		function verifyIconImage(){
@@ -594,10 +580,10 @@ if($collid){
 									</span>
 								</span>
                                 <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'display:none;':''); ?>">
-									<a href="#" onclick="toggle('targetelem');return false;">Enter URL</a>
+									<a href="#" onclick="toggle('targetelem','inline-block');return false;">Enter URL</a>
 								</span>
                                 <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'':'display:none;'); ?>">
-									<a href="#" onclick="toggle('targetelem');return false;">Upload Local Image</a>
+									<a href="#" onclick="toggle('targetelem','inline-block');return false;">Upload Local Image</a>
 								</span>
                             </div>
                             <?php

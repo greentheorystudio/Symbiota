@@ -68,7 +68,8 @@ if($editable){
 		let tid = <?php echo $taxonEditorObj->getTid(); ?>;
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script src="../../js/taxa.taxonomyeditor.js?ver=20221111"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
+	<script src="../../js/taxa.taxonomyeditor.js?ver=20221115"></script>
 </head>
 <body>
 <?php

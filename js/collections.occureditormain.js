@@ -165,10 +165,10 @@ $(document).ready(function() {
 
 	$("textarea[name=associatedtaxa]").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "../../api/taxa/getassocspp.php", { term: extractLast( request.term ) }, response );
+			$.getJSON( "../../api/taxa/getassocspp.php", { term: request.term.split( /,\s*/ ).pop() }, response );
 		},
 		search: function() {
-			const term = extractLast(this.value);
+			const term = this.value.split( /,\s*/ ).pop();
 			if ( term.length < 4 ) {
 				return false;
 			}
@@ -177,7 +177,7 @@ $(document).ready(function() {
 			return false;
 		},
 		select: function( event, ui ) {
-			const terms = split(this.value);
+			const terms = this.value.split( /,\s*/ );
 			terms.pop();
 			terms.push( ui.item.value );
 			this.value = terms.join( ", " );

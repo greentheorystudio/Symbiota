@@ -41,6 +41,7 @@ if($isEditor && $action === 'Submit Changes') {
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
 	<script>
         let dataChanged = false;
         window.onbeforeunload = verifyClose;
@@ -51,51 +52,9 @@ if($isEditor && $action === 'Submit Changes') {
 			} 
 		}
 		
-		function toggle(target){
-            let obj;
-            const divObjs = document.getElementsByTagName("div");
-            for (let i = 0; i < divObjs.length; i++) {
-                obj = divObjs[i];
-                if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-                    if(obj.style.display === "none"){
-                        obj.style.display="inline";
-                    }
-				 	else {
-				 		obj.style.display="none";
-				 	}
-				}
-			}
-            const spanObjs = document.getElementsByTagName("span");
-            for (let i = 0; i < spanObjs.length; i++) {
-                obj = spanObjs[i];
-                if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-					if(obj.style.display === "none"){
-						obj.style.display="inline";
-					}
-					else {
-						obj.style.display="none";
-					}
-				}
-			}
-		}
-		
 		function showSearch(){
 			document.getElementById("searchDiv").style.display="block";
 			document.getElementById("searchDisplay").style.display="none";
-		}
-		
-		function openPopup(urlStr,windowName){
-            let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-				wWidth = document.getElementById('innertext').offsetWidth*1.05;
-			}
-			else if(document.body.offsetWidth){
-				wWidth = document.body.offsetWidth*0.9;
-			}
-            const newWindow = window.open(urlStr, windowName, 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
-            if (newWindow.opener == null) {
-                newWindow.opener = self;
-            }
 		}
 	</script>
 </head>
@@ -145,7 +104,7 @@ if($isEditor){
 						echo "<div id='chardiv".$cidKey."' style='display:".(array_key_exists($cidKey,$depArr)? 'hidden' : 'block').";'>";
 						echo "<div style='margin-top:1em;'><span style='font-weight:bold; font-size:larger;'>$charNameStr</span>\n";
 						if($editorManager->getRankId() > 140){
-							$onClickStr = "openPopup('editor.php?tid=".$editorManager->getParentTid(). '&char=' .$cidKey."','technical');";
+							$onClickStr = "openPopup('editor.php?tid=".$editorManager->getParentTid(). '&char=' .$cidKey."');";
 						    echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-size:smaller;'>";
 							echo '<a href="#" onclick="'.$onClickStr.'">parent</a>';
 							echo "</span>\n";

@@ -12,46 +12,6 @@ $(document).ready(function() {
 	});
 });
 
-function toggle(target){
-	const objDiv = document.getElementById(target);
-	if(objDiv){
-		if(objDiv.style.display === "none"){
-			objDiv.style.display = "block";
-		}
-		else{
-			objDiv.style.display = "none";
-		}
-	}
-	else{
-		const divs = document.getElementsByTagName("div");
-		for (let h = 0; h < divs.length; h++) {
-			const divObj = divs[h];
-			if(divObj.className === target){
-				if(divObj.style.display === "none"){
-					divObj.style.display="block";
-				}
-			 	else {
-			 		divObj.style.display="none";
-			 	}
-			}
-		}
-
-		const spans = document.getElementsByTagName("span");
-		for (let i = 0; i < spans.length; i++) {
-			const spanObj = spans[i];
-			if(spanObj.className === target){
-				if(spanObj.style.display === "none"){
-					spanObj.style.display="inline";
-				}
-			 	else {
-			 		spanObj.style.display="none";
-			 	}
-			}
-		}
-	}
-	return false;
-}
-
 function initAutoComplete(formElem){
 	$("#"+formElem).autocomplete({
 		source: function( request, response ){

@@ -37,39 +37,12 @@ $rsArr = $rsManager->getProtectedSpeciesList();
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
 	<script>
 		$(document).ready(function() {
 			$("#speciestoadd").autocomplete({ source: "../../api/taxa/speciessuggest.php" },{ minLength: 3, autoFocus: true });
 			$("#searchtaxon").autocomplete({ source: "../../api/taxa/speciessuggest.php" },{ minLength: 3 });
 		});
-
-		function toggle(target){
-		  	var divs = document.getElementsByTagName("div");
-		  	for (var i = 0; i < divs.length; i++) {
-		  	var divObj = divs[i];
-				if(divObj.className == target){
-					if(divObj.style.display=="none"){
-						divObj.style.display="block";
-					}
-				 	else {
-				 		divObj.style.display="none";
-				 	}
-				}
-			}
-
-		  	var spans = document.getElementsByTagName("span");
-		  	for (var h = 0; h < spans.length; h++) {
-		  	var spanObj = spans[h];
-				if(spanObj.className == target){
-					if(spanObj.style.display=="none"){
-						spanObj.style.display="inline";
-					}
-				 	else {
-				 		spanObj.style.display="none";
-				 	}
-				}
-			}
-		}
 
 		function submitAddSpecies(f){
 			var sciName = f.speciestoadd.value;
@@ -100,7 +73,7 @@ include(__DIR__ . '/../../header.php');
 	<?php
 	if($isEditor){
 		?>
-		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
+		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');toggle('editobjspan','inline');" title="Toggle Editing Functions">
             <i style='width:20px;height:20px;' class="far fa-edit"></i>
 		</div>
 		<?php
@@ -144,7 +117,7 @@ include(__DIR__ . '/../../header.php');
 			<?php
 			if($isEditor){
 				?>
-				<div class="editobj" style="display:none;width:400px;">
+				<div id="editobj" style="display:none;width:400px;">
 					<form name="addspeciesform" action='protectedspecies.php' method='post'>
 						<fieldset style='margin:5px;background-color:#FFFFCC;'>
 							<legend><b>Add Species to List</b></legend>
@@ -172,7 +145,7 @@ include(__DIR__ . '/../../header.php');
 							echo '<div id="tid-'.$tid.'"><a href="../../taxa/index.php?taxon='.$tid.'" target="_blank"><i>'.$nameArr['sciname'].'</i> '.$nameArr['author'].'</a> ';
 							if($isEditor){
 								?>
-								<span class="editobj" style="display:none;">
+								<span class="editobjspan" style="display:none;">
 									<a href="protectedspecies.php?submitaction=deletespecies&tidtodel=<?php echo $tid;?>">
 										<img src="../../images/del.png" style="width:13px;border:0px;" title="remove species from list" />
 									</a>

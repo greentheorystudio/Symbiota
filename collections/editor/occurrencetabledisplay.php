@@ -211,7 +211,8 @@ else{
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221025"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
+	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;border:0;">
 	<div>

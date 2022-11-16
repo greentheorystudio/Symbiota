@@ -613,12 +613,30 @@ UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName
     SET o.tid = NULL
     WHERE ISNULL(t.TID);
 
+ALTER TABLE `taxa` DROP FOREIGN KEY `FK_kingdom_id`;
+
+UPDATE taxa AS t LEFT JOIN taxaenumtree AS te ON t.TID = te.tid
+    LEFT JOIN taxa AS t2 ON te.parenttid = t2.TID
+    LEFT JOIN taxonkingdoms AS k ON t2.SciName = k.kingdom_name
+    SET t.kingdomId = k.kingdom_id
+    WHERE t2.RankId = 10 AND ISNULL(t.kingdomId);
+
 ALTER TABLE `taxa`
+    MODIFY COLUMN `kingdomId` int(11) NOT NULL DEFAULT 100 AFTER `kingdomName`,
     ADD COLUMN `tidaccepted` int(10) UNSIGNED NULL AFTER `Author`,
     ADD COLUMN `parenttid` int(10) UNSIGNED NULL AFTER `tidaccepted`,
-    ADD COLUMN `family` varchar(50) NULL AFTER `parenttid`;
+    ADD COLUMN `family` varchar(50) NULL AFTER `parenttid`,
+    ADD CONSTRAINT `FK_kingdom_id` FOREIGN KEY (`kingdomId`) REFERENCES `symbiota`.`taxonkingdoms` (`kingdom_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE `symbiota`.`taxa`
+ALTER TABLE `taxa`
+    DROP COLUMN `kingdomName`,
+    DROP COLUMN `PhyloSortSequence`,
+    DROP COLUMN `Status`,
+    DROP COLUMN `locked`;
+
+ALTER TABLE `taxa`
+    DROP INDEX `sciname_unique`,
+    ADD UNIQUE INDEX `sciname_unique`(`SciName`, `kingdomId`),
     ADD INDEX `tidaccepted`(`tidaccepted`),
     ADD INDEX `parenttid`(`parenttid`),
     ADD INDEX `family`(`family`);

@@ -120,17 +120,7 @@ if(!$clName){
         const step = 5;
         let repeat = "";
         
-        function toggle(divID) {
-            const ele = document.getElementById(divID);
-            if(ele.style.display === "block") {
-		    	ele.style.display = "none";
-			}
-			else {
-				ele.style.display = "block";
-			}
-		} 
-
-		function getWordList(){
+        function getWordList(){
 			$.ajax({
 				method: "POST",
 				url: "../api/games/getwordlist.php",

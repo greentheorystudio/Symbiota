@@ -150,7 +150,7 @@ if($isEditor){
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
     <script type="text/javascript" src="../js/profile.viewprofile.js?ver=20221025"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221114"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221115"></script>
 </head>
 <body>
 <?php

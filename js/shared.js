@@ -8,10 +8,6 @@ function arrayIndexSort(obj){
 	return keys;
 }
 
-function extractLast(term){
-	return split( term ).pop();
-}
-
 function formatCheckDate(dateStr){
 	if(dateStr !== ""){
 		const dateArr = parseDate(dateStr);
@@ -127,7 +123,7 @@ function imagePostFunction(image, src) {
 	}
 }
 
-function openIndividualPopup(clientRoot, occid,clid){
+function openIndividualPopup(url, occid, clid = 0){
 	let wWidth = 900;
 	if(document.getElementById('innertext')){
         wWidth = document.getElementById('innertext').offsetWidth*1.05;
@@ -138,7 +134,7 @@ function openIndividualPopup(clientRoot, occid,clid){
     if(wWidth > 1000) {
     	wWidth = 1000;
     }
-	let newWindow = window.open(clientRoot + '/collections/individual/index.php?occid=' + occid + '&clid=' + clid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=' + (wWidth) + ',height=700,left=20,top=20');
+	let newWindow = window.open(url + '?occid=' + occid + '&clid=' + clid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=' + (wWidth) + ',height=700,left=20,top=20');
     if(newWindow.opener == null) {
     	newWindow.opener = self;
     }
@@ -238,15 +234,11 @@ function showWorking(){
 	document.body.classList.add("processing");
 }
 
-function split(val) {
-	return val.split( /,\s*/ );
-}
-
-function toggle(target){
+function toggle(target,visibleStyle = 'block'){
 	const ele = document.getElementById(target);
 	if(ele){
 		if(ele.style.display === "none"){
-			ele.style.display = "block";
+			ele.style.display = visibleStyle;
 		}
 		else {
 			ele.style.display = "none";
@@ -258,10 +250,23 @@ function toggle(target){
 			const divObj = divObjs[i];
 			if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
 				if(divObj.style.display === "none"){
-					divObj.style.display = "block";
+					divObj.style.display = visibleStyle;
 				}
 				else {
 					divObj.style.display = "none";
+				}
+			}
+		}
+
+		const spanObjs = document.getElementsByTagName("span");
+		for (let i = 0; i < spanObjs.length; i++) {
+			const spanObj = spanObjs[i];
+			if(spanObj.getAttribute("class") === target || spanObj.getAttribute("className") === target){
+				if(spanObj.style.display === "none"){
+					spanObj.style.display = visibleStyle;
+				}
+				else {
+					spanObj.style.display = "none";
 				}
 			}
 		}

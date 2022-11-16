@@ -45,7 +45,7 @@ if($collid){
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/collections.occurskeletalsubmit.js?ver=20221110" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20221114" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20221115" type="text/javascript"></script>
 </head>
 <body>
 	<?php
