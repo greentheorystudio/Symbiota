@@ -257,7 +257,7 @@ class TaxonomyUtilities {
         }
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
-                if($name !== $r->sciname && levenshtein($name,$r->sciname) < $levDistance){
+                if($name !== $r->sciname && levenshtein($name,$r->sciname) <= $levDistance){
                     $retArr[$r->tid] = $r->sciname;
                 }
             }
