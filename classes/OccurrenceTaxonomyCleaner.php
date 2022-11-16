@@ -9,10 +9,6 @@ class OccurrenceTaxonomyCleaner extends Manager{
 	private $collid = 0;
 	private $targetKingdom;
 	private $autoClean = 0;
-	private $testValidity = 1;
-	private $testTaxonomy = 1;
-	private $checkAuthor = 1;
-	private $verificationMode = 0;
 
 	public function __construct(){
 		parent::__construct();
