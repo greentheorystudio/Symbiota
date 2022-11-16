@@ -106,13 +106,6 @@ if($isEditor){
 				    <ul>
 				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo $collid; ?>">Crowdsourcing</a></li>
 				        <li><a href="#dupmanager">Duplicate Clustering</a></li>
-                        <?php
-				        if(isset($GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT']) && $GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT']){
-					        ?>
-					        <li><a href="geolocate.php?collid=<?php echo $collid; ?>">GeoLocate CoGe</a></li>
-					        <?php 	
-				        }
-				        ?>
                         <li><a href="reports.php?<?php echo str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'])); ?>">Reports</a></li>
 				    </ul>
 

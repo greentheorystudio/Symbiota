@@ -77,7 +77,6 @@ class ConfigurationManager{
         'DISPLAY_COMMON_NAMES',
         'ACTIVATE_EXSICCATI',
         'ACTIVATE_CHECKLIST_FG_EXPORT',
-        'ACTIVATE_GEOLOCATE_TOOLKIT',
         'PARAMS_ARR',
         'USER_RIGHTS',
         'CSS_VERSION',
