@@ -810,19 +810,4 @@ class TaxonProfileManager {
             $this->langArr = array('fr', 'french');
         }
     }
-
-    public function getCloseTaxaMatches($testValue): array
-    {
-        $retArr = array();
-        $value = $this->con->real_escape_string($testValue);
-        $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex("'.$value.'")';
-        if($rs = $this->con->query($sql)){
-            while($r = $rs->fetch_object()){
-                if($testValue !== $r->sciname) {
-                    $retArr[$r->tid] = $r->sciname;
-                }
-            }
-        }
-        return $retArr;
-    }
 }

@@ -6,6 +6,7 @@
 /** @var array $footerRowElements */
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
+include_once(__DIR__ . '/../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
 
@@ -21,6 +22,7 @@ if(!$taxonValue && array_key_exists('quicksearchtaxon',$_REQUEST)){
 }
 
 $taxonManager = new TaxonProfileManager();
+$taxonUtilities = new TaxonomyUtilities();
 if($clValue) {
     $taxonManager->setClName($clValue);
 }

@@ -1,5 +1,6 @@
 <?php
 /** @var TaxonProfileManager $taxonManager */
+/** @var TaxonomyUtilities $taxonUtilities */
 /** @var int $taxonRank */
 /** @var string $styleClass */
 /** @var string $spDisplay */
@@ -406,7 +407,7 @@ ob_start();
         ?>
         <h1><?php echo '<i>'.$taxonValue.'</i> not found'; ?></h1>
         <?php
-        if($matchArr = $taxonManager->getCloseTaxaMatches($taxonValue)){
+        if($matchArr = $taxonUtilities->getCloseTaxaMatches($taxonValue,3)){
             ?>
             <div id="suggestionbox">
                 Did you mean?

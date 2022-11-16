@@ -247,4 +247,21 @@ class TaxonomyUtilities {
         $rs2->free();
         return $sensitiveArr;
     }
+
+    public function getCloseTaxaMatches($name,$levDistance,$kingdomId = null): array
+    {
+        $retArr = array();
+        $sql = 'SELECT tid, sciname FROM taxa ';
+        if($kingdomId){
+            $sql .= 'WHERE kingdomId = ' . $kingdomId;
+        }
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                if($name !== $r->sciname && levenshtein($name,$r->sciname) < $levDistance){
+                    $retArr[$r->tid] = $r->sciname;
+                }
+            }
+        }
+        return $retArr;
+    }
 }

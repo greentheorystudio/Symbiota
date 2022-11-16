@@ -465,55 +465,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function getTaxaSuggest($queryString): array
-	{
-		$retArr = array();
-		$sql = 'SELECT tid, sciname FROM taxa ';
-		$queryString = preg_replace('/[()\'"+\-=@$%]+/', '', $queryString);
-		if($queryString){
-			$tokenArr = explode(' ',Sanitizer::cleanInStr($this->conn,$queryString));
-			$token = array_shift($tokenArr);
-			if($token === 'x') {
-				$token = array_shift($tokenArr);
-			}
-			if($token) {
-				$sql .= 'WHERE unitname1 LIKE "' . $token . '%" ';
-			}
-			if($tokenArr){
-				$token = array_shift($tokenArr);
-				if($token === 'x') {
-					$token = array_shift($tokenArr);
-				}
-				if($token) {
-					$sql .= 'AND unitname2 LIKE "' . $token . '%" ';
-				}
-				if($tokenArr){
-					$token = array_shift($tokenArr);
-					if($tokenArr){
-						$sql .= 'AND unitind3 LIKE "'.$token.'%" AND unitname3 LIKE "'.array_shift($tokenArr).'%" ';
-					}
-					else{
-						$sql .= 'AND (unitind3 LIKE "'.$token.'%" OR unitname3 LIKE "'.$token.'%") ';
-					}
-				}
-			}
-			if($this->targetKingdom){
-				$kingdomStr = explode(':',$this->targetKingdom);
-				$kingdomName = array_pop($kingdomStr);
-				$sql .= 'AND (ISNULL(kingdomname) OR kingdomname = "'.$kingdomName.'") ';
-			}
-			$sql .= 'LIMIT 30';
-			//echo $sql;
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[] = array('id'=>$r->tid,'value'=>$r->sciname);
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-
-    public function protectGlobalSpecies($collid = null): int
+	public function protectGlobalSpecies($collid = null): int
     {
         $status = 0;
         $sensitiveArr = (new TaxonomyUtilities)->getSensitiveTaxa();
