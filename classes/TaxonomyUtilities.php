@@ -264,4 +264,18 @@ class TaxonomyUtilities {
         }
         return $retArr;
     }
+
+    public function getRankNameArr(): string
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT rankname, rankid FROM taxonunits ';
+        //echo $sql;
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $rankName = strtolower($r->rankname);
+            $retArr[$rankName] = (int)$r->rankid;
+        }
+        $rs->free();
+        return json_encode($retArr);
+    }
 }

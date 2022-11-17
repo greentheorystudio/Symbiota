@@ -11,7 +11,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
     $isEditor = true;
 }
 
-if($collid && $action){
+if($isEditor && $collid && $action){
     $cleanManager = new OccurrenceTaxonomyCleaner();
     $cleanManager->setCollId($collid);
     if($action === 'getUnlinkedScinameCounts'){
@@ -20,28 +20,31 @@ if($collid && $action){
         $returnArr['occCnt'] = $cleanManager->getBadSpecimenCount();
         echo json_encode($returnArr);
     }
-    if($action === 'updateOccThesaurusLinkages'){
+    elseif($action === 'updateOccThesaurusLinkages'){
         echo $cleanManager->updateOccTaxonomicThesaurusLinkages($kingdomid);
     }
-    if($action === 'updateDetThesaurusLinkages'){
+    elseif($action === 'updateDetThesaurusLinkages'){
         echo $cleanManager->updateDetTaxonomicThesaurusLinkages($kingdomid);
     }
-    if($action === 'updateMediaThesaurusLinkages'){
+    elseif($action === 'updateMediaThesaurusLinkages'){
         echo $cleanManager->updateMediaTaxonomicThesaurusLinkages();
     }
-    if($action === 'updateLocalitySecurity'){
+    elseif($action === 'updateLocalitySecurity'){
         echo $cleanManager->protectGlobalSpecies($collid);
     }
-    if($action === 'cleanTrimNames'){
+    elseif($action === 'cleanTrimNames'){
         echo $cleanManager->cleanTrimNames();
     }
-    if($action === 'cleanSpNames'){
+    elseif($action === 'cleanSpNames'){
         echo $cleanManager->cleanSpNames();
     }
-    if($action === 'cleanQualifierNames'){
+    elseif($action === 'cleanQualifierNames'){
         echo $cleanManager->cleanQualifierNames();
     }
-    if($action === 'cleanDoubleSpaces'){
+    elseif($action === 'cleanDoubleSpaces'){
         echo $cleanManager->cleanDoubleSpaceNames();
+    }
+    elseif($action === 'getUnlinkedOccSciNames'){
+        echo $cleanManager->getUnlinkedSciNames();
     }
 }

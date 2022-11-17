@@ -7,7 +7,6 @@ include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
-header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
 ini_set('max_execution_time', 600);
 
 $occId = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
@@ -536,7 +535,7 @@ else{
             });
         }
     </script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221116"></script>
     <script type="text/javascript" src="../../js/collections.coordinateValidation.js?ver=20210218"></script>
     <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221115"></script>
     <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221115"></script>

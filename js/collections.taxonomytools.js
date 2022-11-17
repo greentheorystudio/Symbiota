@@ -1,5 +1,10 @@
 const http = new XMLHttpRequest();
 let processCancelled = false;
+let unlinkedNamesArr = [];
+let dataSource = '';
+let targetKingdomId = null;
+let targetKingdomName = null;
+let rankArr = null;
 
 function addProgressLine(lineHtml){
     document.getElementById("progressDisplayList").innerHTML += lineHtml;
@@ -47,6 +52,11 @@ function adjustUIEnd(){
     }
     document.getElementById('targetkingdomselect').disabled = false;
     document.getElementById('updatedetimage').disabled = false;
+    document.getElementById('colradio').disabled = false;
+    document.getElementById('itisradio').disabled = false;
+    document.getElementById('wormsradio').disabled = false;
+    unlinkedNamesArr = [];
+    dataSource = '';
     setUnlinkedRecordCounts();
 }
 
@@ -64,6 +74,9 @@ function adjustUIStart(id){
     document.getElementById(cancelDivId).style.display = 'block';
     document.getElementById('targetkingdomselect').disabled = true;
     document.getElementById('updatedetimage').disabled = true;
+    document.getElementById('colradio').disabled = true;
+    document.getElementById('itisradio').disabled = true;
+    document.getElementById('wormsradio').disabled = true;
 }
 
 function callCleaningController(step){
@@ -74,7 +87,7 @@ function callCleaningController(step){
         addProgressLine('<li>Cleaning leading and trailing spaces in scientific names ' + processStatus + '</li>');
         params = 'collid=' + collId + '&action=cleanTrimNames';
     }
-    if(processCancelled === false){
+    if(!processCancelled){
         if(step === 'clean-sp'){
             addProgressLine('<li>Cleaning scientific names ending in sp. or containing spp. ' + processStatus + '</li>');
             params = 'collid=' + collId + '&action=cleanSpNames';
@@ -95,23 +108,22 @@ function callCleaningController(step){
 }
 
 function callTaxThesaurusLinkController(step = ''){
-    const targetKingdom = document.getElementById('targetkingdomselect').value;
-    if(targetKingdom){
+    if(targetKingdomId){
         let params = '';
         if(!step){
             processCancelled = false;
             adjustUIStart('updateWithTaxThesaurus');
             addProgressLine('<li>Updating linkages of occurrence records to the Taxonomic Thesaurus ' + processStatus + '</li>');
-            params = 'collid=' + collId + '&kingdomid=' + targetKingdom + '&action=updateOccThesaurusLinkages';
+            params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateOccThesaurusLinkages';
         }
-        if(processCancelled === false){
+        if(!processCancelled){
             if(step === 'update-det-linkages'){
                 addProgressLine('<li>Updating linkages of associated determination records to the Taxonomic Thesaurus ' + processStatus + '</li>');
-                params = 'collid=' + collId + '&kingdomid=' + targetKingdom + '&action=updateDetThesaurusLinkages';
+                params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateDetThesaurusLinkages';
             }
             else if(step === 'update-image-linkages'){
                 addProgressLine('<li>Updating linkages of associated media records to the Taxonomic Thesaurus ' + processStatus + '</li>');
-                params = 'collid=' + collId + '&kingdomid=' + targetKingdom + '&action=updateMediaThesaurusLinkages';
+                params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateMediaThesaurusLinkages';
             }
             //console.log(occTaxonomyApi+'?'+params);
             sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
@@ -150,10 +162,13 @@ function processCleaningControllerResponse(step,status,res){
     }
 }
 
-function processErrorResponse(){
+function processErrorResponse(messageText = ''){
     const currentStatus = document.getElementsByClassName('current-status')[0];
     currentStatus.className = 'error-status';
-    if(http.status === 0){
+    if(messageText){
+        currentStatus.innerHTML = messageText;
+    }
+    else if(http.status === 0){
         currentStatus.innerHTML = 'Cancelled';
     }
     else{
@@ -189,6 +204,24 @@ function processUpdateCleanResponse(term,status,res){
     else{
         processErrorResponse();
     }
+}
+
+function setDataSource(){
+    if(document.getElementById('colradio').checked === true){
+        dataSource = 'col';
+    }
+    else if(document.getElementById('itisradio').checked === true){
+        dataSource = 'itis';
+    }
+    else if(document.getElementById('wormsradio').checked === true){
+        dataSource = 'worms';
+    }
+}
+
+function setKingdomId(){
+    const selector = document.getElementById('targetkingdomselect');
+    targetKingdomId = selector.value ? selector.value : null;
+    targetKingdomName = targetKingdomId ? selector.options[selector.selectedIndex].text : null;
 }
 
 function setUnlinkedRecordCounts(){

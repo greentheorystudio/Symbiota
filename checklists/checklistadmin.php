@@ -77,7 +77,7 @@ $voucherProjects = $clManager->getVoucherProjects();
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
-	<script type="text/javascript" src="../js/shared.js?ver=20221115"></script>
+	<script type="text/javascript" src="../js/shared.js?ver=20221116"></script>
 	<script type="text/javascript" src="../js/checklists.checklistadmin.js?ver=20210218"></script>
 </head>
 

@@ -216,6 +216,20 @@ function parseDate(dateStr){
 	return retArr;
 }
 
+function sendAPIGetRequest(url,callback,http = null){
+	if(!http){
+		http = new XMLHttpRequest();
+	}
+	http.open("GET", url, true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if(http.readyState === 4) {
+			callback(http.status,http.responseText);
+		}
+	};
+	http.send();
+}
+
 function sendAPIPostRequest(url,params,callback,http = null){
 	if(!http){
 		http = new XMLHttpRequest();

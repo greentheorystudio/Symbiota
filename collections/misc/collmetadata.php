@@ -101,7 +101,7 @@ if($collid){
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/external/tiny_mce/tiny_mce.js"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221115"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221116"></script>
 	<script>
         tinyMCE.init({
             mode : "textareas",

@@ -231,6 +231,24 @@ class OccurrenceTaxonomyCleaner extends Manager{
 		return 'FROM omoccurrences WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname IS NOT NULL AND sciname NOT LIKE "% x %" AND sciname NOT LIKE "% × %" ';
 	}
 
+    public function getUnlinkedSciNames(): string
+    {
+        $retArr = array();
+        if($this->collid){
+            $sql = 'SELECT DISTINCT sciname '.
+                'FROM omoccurrences '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname IS NOT NULL '.
+                'ORDER BY sciname ';
+            //echo $sql;
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $retArr[] = $r->sciname;
+            }
+            $rs->free();
+        }
+        return json_encode($retArr);
+    }
+
     public function cleanTrimNames(): int
     {
         $retCnt = 0;

@@ -36,7 +36,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
         <style>
             .processor-container {
                 width: 95%;
-                height: 700px;
                 margin: 20px auto;
                 display: flex;
                 justify-content: space-between;
@@ -44,7 +43,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             }
             .processor-control-container {
                 width: 40%;
-                height: 650px;
                 padding:20px 30px;
                 font-size: 1.2em;
                 border: 2px #aaaaaa solid;
@@ -78,16 +76,23 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 color: red;
                 font-weight: bold;
             }
+            #error-status {
+                display: block;
+                color: red;
+                font-weight: bold;
+            }
         </style>
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-        <script src="../../js/shared.js?ver=20221115" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221102" type="text/javascript"></script>
+        <script src="../../js/shared.js?ver=20221116" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221103" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const occTaxonomyApi = "../../api/collections/occTaxonomyController.php";
+            const taxaApi = "../../api/taxa/taxaController.php";
             const processStatus = '<span class="current-status"><img src="../../images/workingcircle.gif" style="width:15px;" /></span>';
+            const recognizedRanks = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 
             $( document ).ready(function() {
 				setUnlinkedRecordCounts();
@@ -121,6 +126,66 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 					remappTaxon(oldName, f.tid.value, '', itemCnt+"-c");
 				}
 			}
+
+            function initializeDataSourceSearch(){
+                if(targetKingdomId){
+                    processCancelled = false;
+                    setDataSource();
+                    adjustUIStart('resolveFromTaxaDataSource');
+                    addProgressLine('<li>Setting rank data for processing search returns ' + processStatus + '</li>');
+                    const params = 'action=getRankNameArr';
+                    //console.log(occTaxonomyApi+'?'+params);
+                    sendAPIPostRequest(taxaApi,params,function(status,res){
+                        if(status === 200 && !processCancelled) {
+                            processSuccessResponse('Complete');
+                            rankArr = JSON.parse(res);
+                            setDataSourceSearchTaxaList();
+                        }
+                        else{
+                            processErrorResponse();
+                        }
+                    },http);
+                }
+                else{
+                    alert('Please select a Target Kingdom from the dropdown menu above.');
+                }
+            }
+
+            function setDataSourceSearchTaxaList(){
+                addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+                const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
+                //console.log(occTaxonomyApi+'?'+params);
+                sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+                    if(status === 200) {
+                        processSuccessResponse('Complete');
+                        unlinkedNamesArr = JSON.parse(res);
+                        callDataSourceSearchController();
+                    }
+                    else{
+                        processErrorResponse();
+                    }
+                },http);
+            }
+
+            function callDataSourceSearchController(){
+                const sciname = unlinkedNamesArr[0];
+                unlinkedNamesArr.splice(0, 1);
+                if(dataSource === 'col'){
+                    loadCOLTaxon(sciname);
+                }
+            }
+
+            function loadCOLTaxon(sciname){
+                const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + sciname;
+                sendAPIGetRequest(url,function(status,res){
+                    if(status === 200) {
+                        console.log(res);
+                    }
+                    else{
+                        processErrorResponse();
+                    }
+                },http);
+            }
         </script>
 	</head>
 	<body>
@@ -168,7 +233,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         <u>Unique scientific names</u>: <span id="unlinkedTaxaCnt"></span><br/>
                         <div style="margin-top:5px;">
                             Target Kingdom:
-                            <select id="targetkingdomselect">
+                            <select id="targetkingdomselect" onchange="setKingdomId();">
                                 <option value="">Select Target Kingdom</option>
                                 <option value="">--------------------------</option>
                                 <?php
@@ -212,7 +277,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         <hr style="margin: 10px 0;"/>
                         Set or update occurrence record linkages to the Taxonomic Thesaurus.
                         <div style="clear:both;margin-top:5px;">
-                            <input type='checkbox' id='updatedetimage' /> Also update associated determination, image, and media linkages
+                            <input type='checkbox' id='updatedetimage' /> Also update associated determination, image, and media linkages.
                         </div>
                         <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                             <div>
@@ -226,8 +291,35 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             </div>
                         </div>
                         <hr style="margin: 10px 0;"/>
+                        <div style="margin-bottom:10px;">
+                            Search for occurrence record scientific names that are not currently linked to the Taxonomic Thesaurus
+                            from an external Taxonomic Data Source.
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <fieldset style="padding:5px;">
+                                <legend><b>Taxonomic Data Source</b></legend>
+                                <input id="colradio" name="taxresource" type="radio" value="col" checked /> Catalogue of Life (COL)<br/>
+                                <input id="itisradio" name="taxresource" type="radio" value="itis" /> Integrated Taxonomic Information System (ITIS)<br/>
+                                <input id="wormsradio" name="taxresource" type="radio" value="worms" /> World Register of Marine Species (WoRMS)
+                            </fieldset>
+                        </div>
+                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                            <div>
+                                <div class="start-div" id="resolveFromTaxaDataSourceStart">
+                                    <button class="start-button" onclick="initializeDataSourceSearch();">Start</button>
+                                </div>
+                                <div class="cancel-div" id="resolveFromTaxaDataSourceCancel" style="display:none;">
+                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <button onclick="cancelProcess();">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="margin: 10px 0;"/>
                         Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
                         with taxa currently in the Taxonomic Thesaurus.
+                        <div style="clear:both;margin-top:5px;">
+                            Character difference tolerance: <input type='text' id='levvalue' />
+                        </div>
                         <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                             <div>
                                 <div class="start-div" id="resolveFromTaxThesaurusFuzzyStart">
@@ -240,29 +332,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             </div>
                         </div>
                         <hr style="margin: 10px 0;"/>
-                        <div style="margin-bottom:10px;">
-                            Search for occurrence record scientific names that are not currently linked to the Taxonomic Thesaurus
-                            from an external Taxonomic Data Source.
-                        </div>
-                        <div style="margin-bottom:10px;">
-                            <fieldset style="padding:5px;">
-                                <legend><b>Taxonomic Data Source</b></legend>
-                                <input name="taxresource" type="radio" value="col" checked /> Catalogue of Life (COL)<br/>
-                                <input name="taxresource" type="radio" value="itis" /> Integrated Taxonomic Information System (ITIS)<br/>
-                                <input name="taxresource" type="radio" value="worms" /> World Register of Marine Species (WoRMS)
-                            </fieldset>
-                        </div>
-                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                            <div>
-                                <div class="start-div" id="resolveFromTaxaDataSourceStart">
-                                    <button class="start-button" onclick="resolveFromTaxaDataSource();">Start</button>
-                                </div>
-                                <div class="cancel-div" id="resolveFromTaxaDataSourceCancel" style="display:none;">
-                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
-                                    <button onclick="cancelProcess();">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="processor-display" id="processing-display">

@@ -181,7 +181,7 @@ $navStr .= '</div>';
                 }
 			}
 		</script>
-		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221115" type="text/javascript" ></script>
+		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221116" type="text/javascript" ></script>
 	</head>
 	<body>
 		<?php
