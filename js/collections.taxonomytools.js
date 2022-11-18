@@ -2,9 +2,12 @@ const http = new XMLHttpRequest();
 let processCancelled = false;
 let unlinkedNamesArr = [];
 let dataSource = '';
+let currentSciname = '';
 let targetKingdomId = null;
 let targetKingdomName = null;
 let rankArr = null;
+let colInitialSearchResults = [];
+let nameSearchResults = [];
 
 function addProgressLine(lineHtml){
     document.getElementById("progressDisplayList").innerHTML += lineHtml;
@@ -162,9 +165,12 @@ function processCleaningControllerResponse(step,status,res){
     }
 }
 
-function processErrorResponse(messageText = ''){
+function processErrorResponse(indent,setCounts,messageText = ''){
     const currentStatus = document.getElementsByClassName('current-status')[0];
     currentStatus.className = 'error-status';
+    if(indent > 0){
+        currentStatus.style.marginLeft = indent + 'px';
+    }
     if(messageText){
         currentStatus.innerHTML = messageText;
     }
@@ -174,13 +180,23 @@ function processErrorResponse(messageText = ''){
     else{
         currentStatus.innerHTML = 'Error: ' + http.status + ' ' + http.statusText;
     }
-    setUnlinkedRecordCounts();
+    if(setCounts){
+        setUnlinkedRecordCounts();
+    }
 }
 
-function processSuccessResponse(lineHtml){
+function processSuccessResponse(indent,lineHtml = ''){
     const currentStatus = document.getElementsByClassName('current-status')[0];
     currentStatus.className = 'success-status';
-    currentStatus.innerHTML = lineHtml;
+    if(lineHtml){
+        if(indent > 0){
+            currentStatus.style.marginLeft = indent + 'px';
+        }
+        currentStatus.innerHTML = lineHtml;
+    }
+    else{
+        currentStatus.style.display = 'none';
+    }
 }
 
 function processTaxThesaurusLinkControllerResponse(step,status,res){
@@ -199,10 +215,10 @@ function processTaxThesaurusLinkControllerResponse(step,status,res){
 
 function processUpdateCleanResponse(term,status,res){
     if(status === 200) {
-        processSuccessResponse('Complete: ' + res + ' records ' + term);
+        processSuccessResponse(15,'Complete: ' + res + ' records ' + term);
     }
     else{
-        processErrorResponse();
+        processErrorResponse(15,true);
     }
 }
 

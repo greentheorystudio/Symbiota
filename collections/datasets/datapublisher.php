@@ -95,7 +95,7 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=20221025"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221116"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221117"></script>
 	<script type="text/javascript">
 		function verifyDwcaAdminForm(){
             const dbElements = document.getElementsByName("coll[]");

@@ -50,15 +50,15 @@ if($GLOBALS['SYMB_UID']){
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
-	<link href="../../css/external/jquery-ui.css?ver=20220720?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/occureditor.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
+	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
+	<link href="../../css/occureditor.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
         const collId = "<?php echo $collid; ?>";
     </script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221116"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221117"></script>
 	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221115"></script>
 	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221115"></script>
 	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>

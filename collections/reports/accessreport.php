@@ -105,7 +105,7 @@ else{
                 }
 			}
 		</script>
-		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221116" type="text/javascript" ></script>
+		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221117" type="text/javascript" ></script>
 	</head>
 	<body>
 		<?php

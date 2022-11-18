@@ -216,6 +216,23 @@ function parseDate(dateStr){
 	return retArr;
 }
 
+function sendProxyGetRequest(proxyurl,url,sessionid,callback,http = null){
+	if(!http){
+		http = new XMLHttpRequest();
+	}
+	const formData = new FormData();
+	formData.append('url', url);
+	formData.append('action', 'get');
+	formData.append('sessionid', sessionid);
+	http.open("POST", proxyurl, true);
+	http.onreadystatechange = function() {
+		if(http.readyState === 4) {
+			callback(http.status,http.responseText);
+		}
+	};
+	http.send(formData);
+}
+
 function sendAPIGetRequest(url,callback,http = null){
 	if(!http){
 		http = new XMLHttpRequest();

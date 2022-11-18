@@ -23,7 +23,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20221116" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20221117" type="text/javascript"></script>
 	<script>
         $(document).ready(function() {
             $('#tabs').tabs({
