@@ -8,9 +8,16 @@ let targetKingdomName = null;
 let rankArr = null;
 let colInitialSearchResults = [];
 let nameSearchResults = [];
+let addHierchyTemp = [];
 
 function addProgressLine(lineHtml){
     document.getElementById("progressDisplayList").innerHTML += lineHtml;
+    const processorWindowBounds = document.getElementById('processor-display').getBoundingClientRect();
+    const currentStatus = document.getElementsByClassName('current-status')[0];
+    if(currentStatus.getBoundingClientRect().bottom > processorWindowBounds.bottom){
+        const scroll = (currentStatus.getBoundingClientRect().top - processorWindowBounds.top) - 10;
+        document.getElementById('processor-display').scrollTop += scroll;
+    }
 }
 
 function adjustUIEnd(){

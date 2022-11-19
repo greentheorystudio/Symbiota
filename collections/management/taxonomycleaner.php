@@ -50,20 +50,26 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 -moz-border-radius: 5px;
                 border-radius: 5px;
             }
-            .processor-display {
+            .processor-display-container {
                 width: 50%;
                 height: 650px;
                 padding: 15px;
-                overflow-x: hidden;
-                overflow-y: auto;
-                font-family: Arial, sans-serif;
-                background-color: #f5f5f5;
                 border: 2px black solid;
                 -webkit-border-radius: 10px;
                 -moz-border-radius: 10px;
                 border-radius: 10px;
             }
-            div.processor-display ul {
+            #processor-display {
+                height: 610px;
+                margin: auto;
+                padding: 15px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                border: 1px black solid;
+                font-family: Arial, sans-serif;
+                background-color: #f5f5f5;
+            }
+            #processor-display ul {
                 padding-left: 15px;
             }
             .success-status {
@@ -86,7 +92,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221117" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221106" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221108" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -175,6 +181,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 if(!processCancelled){
                     if(unlinkedNamesArr.length > 0){
                         nameSearchResults = [];
+                        addHierchyTemp = [];
                         currentSciname = unlinkedNamesArr[0];
                         unlinkedNamesArr.splice(0, 1);
                         if(dataSource === 'col'){
@@ -246,6 +253,8 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     resultObj['accepted_id'] = acceptedObj['id'];
                                     resultObj['accepted_sciname'] = acceptedObj['name'];
                                     resultObj['accepted_author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
+                                    resultObj['accepted_rankname'] = acceptedObj['rank'].toLowerCase();
+                                    resultObj['accepted_rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
                                 }
                                 colInitialSearchResults.push(resultObj);
                             }
@@ -315,9 +324,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                     }
                     else if(nameSearchResults.length === 1){
                         processSuccessResponse(0);
-                        //validateTaxonToAdd();
-                        console.log(nameSearchResults);
-                        runScinameDataSourceSearch();
+                        validateNameSearchResults();
                     }
                     else if(nameSearchResults.length === 0){
                         processErrorResponse(15,false,'Not found');
@@ -442,9 +449,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             }
                             nameSearchResults[0]['hierarchy'] = hierarchyArr;
                             processSuccessResponse(0);
-                            //validateTaxonToAdd();
-                            console.log(nameSearchResults);
-                            runScinameDataSourceSearch();
+                            validateNameSearchResults();
                         }
                         else{
                             processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
@@ -509,39 +514,59 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             const hierarchyArr = [];
                             const foundNameRank = nameSearchResults[0]['rankid']
                             let childObj = resObj['child'];
-                            while(childObj && Number(rankArr[childObj['rank'].toLowerCase()]) < foundNameRank){
-                                const rankname = childObj['rank'].toLowerCase();
-                                const rankid = Number(rankArr[rankname]);
-                                if(recognizedRanks.includes(rankid)){
-                                    const resultObj = {};
-                                    resultObj['id'] = childObj['AphiaID'];
-                                    resultObj['sciname'] = childObj['scientificname'];
-                                    resultObj['author'] = '';
-                                    resultObj['rankname'] = rankname;
-                                    resultObj['rankid'] = rankid;
-                                    if(rankname === 'family'){
-                                        nameSearchResults[0]['family'] = resultObj['sciname'];
+                            const firstObj = {};
+                            const firstrankname = childObj['rank'].toLowerCase();
+                            const firstrankid = Number(rankArr[firstrankname]);
+                            firstObj['id'] = childObj['AphiaID'];
+                            firstObj['sciname'] = childObj['scientificname'];
+                            firstObj['author'] = '';
+                            firstObj['rankname'] = firstrankname;
+                            firstObj['rankid'] = firstrankid;
+                            hierarchyArr.push(firstObj);
+                            while(childObj = childObj['child']){
+                                if(Number(rankArr[childObj['rank'].toLowerCase()]) < foundNameRank){
+                                    const rankname = childObj['rank'].toLowerCase();
+                                    const rankid = Number(rankArr[rankname]);
+                                    if(recognizedRanks.includes(rankid)){
+                                        const resultObj = {};
+                                        resultObj['id'] = childObj['AphiaID'];
+                                        resultObj['sciname'] = childObj['scientificname'];
+                                        resultObj['author'] = '';
+                                        resultObj['rankname'] = rankname;
+                                        resultObj['rankid'] = rankid;
+                                        if(rankname === 'family'){
+                                            nameSearchResults[0]['family'] = resultObj['sciname'];
+                                        }
+                                        hierarchyArr.push(resultObj);
                                     }
-                                    hierarchyArr.push(resultObj);
-                                }
-                                if(childObj.hasOwnProperty('child')){
-                                    childObj = childObj['child'];
-                                }
-                                else{
-                                    childObj = null;
                                 }
                             }
                             nameSearchResults[0]['hierarchy'] = hierarchyArr;
                             processSuccessResponse(0);
-                            //validateTaxonToAdd();
-                            console.log(nameSearchResults);
-                            runScinameDataSourceSearch();
+                            validateNameSearchResults();
                         }
                         else{
                             processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
                             runScinameDataSourceSearch();
                         }
                     },http);
+                }
+            }
+
+            function validateNameSearchResults(){
+                if(!processCancelled){
+                    if(nameSearchResults.length === 1){
+                        const taxonToAdd = nameSearchResults[0];
+                        addHierchyTemp = taxonToAdd['hierarchy'];
+                        addHierchyTemp.sort((a, b) => {
+                            return a.rankid - b.rankid;
+                        });
+                        console.log(addHierchyTemp);
+                    }
+                    else{
+                        processErrorResponse(15,false,'Unable to distinguish taxon by name');
+                        runScinameDataSourceSearch();
+                    }
                 }
             }
         </script>
@@ -692,8 +717,10 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         <hr style="margin: 10px 0;"/>
                     </div>
 
-                    <div class="processor-display" id="processing-display">
-                        <ul id="progressDisplayList"></ul>
+                    <div class="processor-display-container">
+                        <div id="processor-display">
+                            <ul id="progressDisplayList"></ul>
+                        </div>
                     </div>
                 </div>
                 <?php
