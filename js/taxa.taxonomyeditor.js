@@ -68,7 +68,7 @@ function submitLinkToAccepted(f){
 		url: "../../api/taxa/gettid.php",
 		data: { sciname: f.acceptedstr.value }
 	}).done(function( msg ) {
-		if(msg == 0){
+		if(!msg){
 			alert("ERROR: Accepted taxon not found in thesaurus. It is either misspelled or needs to be added to the thesaurus.");
 		}
 		else{
@@ -84,7 +84,7 @@ function submitUpperTaxForm(f){
 		url: "../../api/taxa/gettid.php",
 		data: { sciname: f.parentstr.value }
 	}).done(function( msg ) {
-		if(msg == 0){
+		if(!msg){
 			alert("ERROR: Parent taxon not found in thesaurus. It is either misspelled or needs to be added to the thesaurus.");
 		}
 		else{

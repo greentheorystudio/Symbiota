@@ -109,7 +109,7 @@ function validateLoadForm(f){
 		async: false,
 		data: { sciname: f.sciname.value, rankid: f.rankid.value, author: f.author.value }
 	}).done(function( msg ) {
-		if(msg !== '0'){
+		if(msg){
 			const sciName = document.getElementById("sciname").value;
 			alert("Taxon "+sciName+" "+f.author.value+" ("+msg+") already exists in database");
 		}
@@ -222,8 +222,8 @@ function checkAcceptedExistance(f){
 			async: false,
 			data: { sciname: f.acceptedstr.value }
 		}).done(function( msg ) {
-			if(msg === 0){
-				alert("Accepted does not exist. Add parent to thesaurus before adding this name.");
+			if(!msg){
+				alert("Accepted name does not exist. Add parent to thesaurus before adding this name.");
 			}
 			else{
 				if(msg.indexOf(",") === -1){
@@ -251,7 +251,7 @@ function checkParentExistance(f){
 			async: false,
 			data: { sciname: parentStr }
 		}).done(function( msg ) {
-			if(msg == 0){
+			if(!msg){
 				alert("Parent does not exist. Please first add parent to system.");
 			}
 			else{

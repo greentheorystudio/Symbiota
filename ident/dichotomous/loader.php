@@ -68,7 +68,7 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
             http.onreadystatechange = function() {
                 if(http.readyState === 4) {
                     const responseStr = http.responseText;
-                    if(responseStr === ""){
+                    if(!responseStr){
                         alert("INVALID TAXON: Name does not exist in database.");
                     }
                     else{

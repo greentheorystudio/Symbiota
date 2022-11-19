@@ -69,7 +69,7 @@ if($editable){
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
     <script type="text/javascript" src="../../js/shared.js?ver=20221117"></script>
-	<script src="../../js/taxa.taxonomyeditor.js?ver=20221115"></script>
+	<script src="../../js/taxa.taxonomyeditor.js?ver=20221119"></script>
 </head>
 <body>
 <?php

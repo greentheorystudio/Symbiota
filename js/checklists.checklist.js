@@ -55,7 +55,7 @@ function validateAddSpecies(f){
 		http.onreadystatechange = function() {
 			if(http.readyState === 4 && http.status == 200) {
 				const testTid = http.responseText;
-				if(testTid === ""){
+				if(!testTid){
 					alert("ERROR: Scientific name does not exist in database. Did you spell it correctly? If so, contact your data administrator to add this species to the Taxonomic Thesaurus.");
 				}
 				else{

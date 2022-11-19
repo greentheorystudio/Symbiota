@@ -232,7 +232,7 @@ if($clArray){
             http.send(params);
         }
     </script>
-    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20221115"></script>
+    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20221119"></script>
     <?php
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>

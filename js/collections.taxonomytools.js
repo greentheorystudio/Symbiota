@@ -8,7 +8,9 @@ let targetKingdomName = null;
 let rankArr = null;
 let colInitialSearchResults = [];
 let nameSearchResults = [];
-let addHierchyTemp = [];
+let nameTidIndex = {};
+let processingArr = [];
+let taxaToAddArr = [];
 
 function addProgressLine(lineHtml){
     document.getElementById("progressDisplayList").innerHTML += lineHtml;

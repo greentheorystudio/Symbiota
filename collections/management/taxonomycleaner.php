@@ -98,6 +98,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             const sessionId = '<?php echo session_id(); ?>';
             const occTaxonomyApi = "../../api/collections/occTaxonomyController.php";
             const taxaApi = "../../api/taxa/taxaController.php";
+            const taxaTidLookupApi = "../../api/taxa/gettid.php";
             const proxyUrl = "../../api/proxy.php";
             const processStatus = '<span class="current-status"><img src="../../images/workingcircle.gif" style="width:15px;" /></span>';
             const recognizedRanks = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
@@ -138,6 +139,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             function initializeDataSourceSearch(){
                 if(targetKingdomId){
                     processCancelled = false;
+                    nameTidIndex = {};
                     setDataSource();
                     adjustUIStart('resolveFromTaxaDataSource');
                     addProgressLine('<li>Setting rank data for processing search returns ' + processStatus + '</li>');
@@ -181,7 +183,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 if(!processCancelled){
                     if(unlinkedNamesArr.length > 0){
                         nameSearchResults = [];
-                        addHierchyTemp = [];
                         currentSciname = unlinkedNamesArr[0];
                         unlinkedNamesArr.splice(0, 1);
                         if(dataSource === 'col'){
@@ -555,17 +556,112 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 
             function validateNameSearchResults(){
                 if(!processCancelled){
+                    processingArr = [];
+                    taxaToAddArr = [];
                     if(nameSearchResults.length === 1){
-                        const taxonToAdd = nameSearchResults[0];
-                        addHierchyTemp = taxonToAdd['hierarchy'];
-                        addHierchyTemp.sort((a, b) => {
-                            return a.rankid - b.rankid;
-                        });
-                        console.log(addHierchyTemp);
+                        if(!nameSearchResults[0]['accepted'] && !nameSearchResults[0]['accepted_sciname']){
+                            processErrorResponse(15,false,'Unable to distinguish accepted name');
+                            runScinameDataSourceSearch();
+                        }
+                        else{
+                            const addHierchyTemp = nameSearchResults[0]['hierarchy'];
+                            if(!nameSearchResults[0]['accepted']){
+                                const acceptedObj = {};
+                                acceptedObj['id'] = nameSearchResults[0]['accepted_id'];
+                                acceptedObj['sciname'] = nameSearchResults[0]['accepted_sciname'];
+                                acceptedObj['author'] = nameSearchResults[0]['accepted_author'];
+                                acceptedObj['rankname'] = nameSearchResults[0].hasOwnProperty('accepted_rankname') ? nameSearchResults[0]['accepted_rankname'] : nameSearchResults[0]['rankname'];
+                                acceptedObj['rankid'] = nameSearchResults[0].hasOwnProperty('accepted_rankid') ? nameSearchResults[0]['accepted_rankid'] : nameSearchResults[0]['rankid'];
+                                acceptedObj['family'] = acceptedObj['rankid'] >= 140 ? nameSearchResults[0]['family'] : null;
+                                addHierchyTemp.push(acceptedObj);
+                            }
+                            addHierchyTemp.sort((a, b) => {
+                                return a.rankid - b.rankid;
+                            });
+                            let parentName = addHierchyTemp[0]['sciname'];
+                            for(let i in addHierchyTemp){
+                                if(addHierchyTemp.hasOwnProperty(i) && addHierchyTemp[i]['sciname'] !== parentName){
+                                    addHierchyTemp[i]['parentName'] = parentName;
+                                    addHierchyTemp[i]['family'] = addHierchyTemp[i]['rankid'] >= 140 ? nameSearchResults[0]['family'] : null;
+                                    parentName = addHierchyTemp[i]['sciname'];
+                                }
+                            }
+                            nameSearchResults[0]['parentName'] = parentName;
+                            processingArr = addHierchyTemp;
+                            addProgressLine('<li style="margin-left:15px;">Matching parent and accepted taxa to Taxonomic Thesaurus ' + processStatus + '</li>');
+                            setTaxaToAdd();
+                        }
                     }
                     else{
                         processErrorResponse(15,false,'Unable to distinguish taxon by name');
                         runScinameDataSourceSearch();
+                    }
+                }
+            }
+
+            function setTaxaToAdd(){
+                if(!processCancelled){
+                    if(processingArr.length > 0){
+                        const sciname = processingArr[0]['sciname'];
+                        if(!nameTidIndex.hasOwnProperty(sciname)){
+                            const params = 'sciname=' + sciname + '&kingdomid=' + targetKingdomId;
+                            //console.log(taxaTidLookupApi+'?'+params);
+                            sendAPIPostRequest(taxaTidLookupApi,params,function(status,res){
+                                if(dataSource === 'worms' && (status !== 200 || !res)){
+                                    getWoRMSAddTaxonAuthor();
+                                }
+                                else{
+                                    const currentTaxon = processingArr[0];
+                                    if(status === 200 && res){
+                                        nameTidIndex[currentTaxon['sciname']] = Number(res);
+                                    }
+                                    else{
+                                        taxaToAddArr.push(currentTaxon);
+                                    }
+                                    processingArr.splice(0, 1);
+                                    setTaxaToAdd();
+                                }
+                            },http);
+                        }
+                    }
+                    else{
+                        processAddTaxaArr();
+                    }
+                }
+            }
+
+            function getWoRMSAddTaxonAuthor(){
+                if(!processCancelled){
+                    const id = processingArr[0]['id'];
+                    const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
+                    sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+                        const currentTaxon = processingArr[0];
+                        if(status === 200){
+                            const resObj = JSON.parse(res);
+                            currentTaxon['author'] = resObj['authority'] ? resObj['authority'] : '';
+                        }
+                        taxaToAddArr.push(currentTaxon);
+                        processingArr.splice(0, 1);
+                        setTaxaToAdd();
+                    },http);
+                }
+            }
+
+            function processAddTaxaArr(){
+                if(!processCancelled){
+                    if(taxaToAddArr.length > 0){
+                        const id = processingArr[0]['id'];
+                        const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
+                        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+                            const currentTaxon = processingArr[0];
+                            if(status === 200){
+                                const resObj = JSON.parse(res);
+                                currentTaxon['author'] = resObj['authority'] ? resObj['authority'] : '';
+                            }
+                            taxaToAddArr.push(currentTaxon);
+                            processingArr.splice(0, 1);
+                            setTaxaToAdd();
+                        },http);
                     }
                 }
             }
