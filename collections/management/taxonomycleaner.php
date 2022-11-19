@@ -235,10 +235,10 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 resultObj['id'] = taxResult['id'];
                                 resultObj['sciname'] = taxResult['name'];
                                 resultObj['author'] = taxResult.hasOwnProperty('author') ? taxResult['author'] : '';
+                                resultObj['rankname'] = taxResult['rank'].toLowerCase();
+                                resultObj['rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
                                 if(status === 'accepted name'){
                                     resultObj['accepted'] = true;
-                                    resultObj['rankname'] = taxResult['rank'].toLowerCase();
-                                    resultObj['rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
                                 }
                                 else if(status === 'synonym'){
                                     const acceptedObj = taxResult['accepted_name'];
@@ -246,8 +246,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     resultObj['accepted_id'] = acceptedObj['id'];
                                     resultObj['accepted_sciname'] = acceptedObj['name'];
                                     resultObj['accepted_author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
-                                    resultObj['rankname'] = acceptedObj['rank'].toLowerCase();
-                                    resultObj['rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
                                 }
                                 colInitialSearchResults.push(resultObj);
                             }
@@ -284,7 +282,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             if(status === 200){
                                 const resArr = JSON.parse(res);
                                 const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
-                                if(kingdomObj['name'].toLowerCase() === targetKingdomName.toLowerCase()){
+                                if(kingdomObj && kingdomObj['name'].toLowerCase() === targetKingdomName.toLowerCase()){
                                     const hierarchyArr = [];
                                     for(let i in resArr){
                                         if(resArr.hasOwnProperty(i)){
@@ -319,6 +317,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         processSuccessResponse(0);
                         //validateTaxonToAdd();
                         console.log(nameSearchResults);
+                        runScinameDataSourceSearch();
                     }
                     else if(nameSearchResults.length === 0){
                         processErrorResponse(15,false,'Not found');
@@ -445,6 +444,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             processSuccessResponse(0);
                             //validateTaxonToAdd();
                             console.log(nameSearchResults);
+                            runScinameDataSourceSearch();
                         }
                         else{
                             processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
@@ -535,6 +535,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             processSuccessResponse(0);
                             //validateTaxonToAdd();
                             console.log(nameSearchResults);
+                            runScinameDataSourceSearch();
                         }
                         else{
                             processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
