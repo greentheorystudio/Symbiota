@@ -182,11 +182,11 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             function runScinameDataSourceSearch(){
                 if(!processCancelled){
                     if(unlinkedNamesArr.length > 0){
-                        nameSearchResults = [];
+                        nameSearchResults = new Array();
                         currentSciname = unlinkedNamesArr[0];
                         unlinkedNamesArr.splice(0, 1);
                         if(dataSource === 'col'){
-                            colInitialSearchResults = [];
+                            colInitialSearchResults = new Array();
                             addProgressLine('<li>Searching the Catalogue of Life (COL) for ' + currentSciname + ' ' + processStatus + '</li>');
                             const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + currentSciname;
                             sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
@@ -226,6 +226,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 }
                             },http);
                         }
+                    }
+                    else{
+                        adjustUIEnd();
                     }
                 }
             }
@@ -556,8 +559,8 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 
             function validateNameSearchResults(){
                 if(!processCancelled){
-                    processingArr = [];
-                    taxaToAddArr = [];
+                    processingArr = new Array();
+                    taxaToAddArr = new Array();
                     if(nameSearchResults.length === 1){
                         if(!nameSearchResults[0]['accepted'] && !nameSearchResults[0]['accepted_sciname']){
                             processErrorResponse(15,false,'Unable to distinguish accepted name');
@@ -625,6 +628,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         }
                     }
                     else{
+                        processSuccessResponse(0);
                         processAddTaxaArr();
                     }
                 }
@@ -650,19 +654,124 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             function processAddTaxaArr(){
                 if(!processCancelled){
                     if(taxaToAddArr.length > 0){
-                        const id = processingArr[0]['id'];
-                        const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
-                        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
-                            const currentTaxon = processingArr[0];
-                            if(status === 200){
-                                const resObj = JSON.parse(res);
-                                currentTaxon['author'] = resObj['authority'] ? resObj['authority'] : '';
+                        const taxonToAdd = taxaToAddArr[0];
+                        addProgressLine('<li style="margin-left:15px;">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
+                        const newTaxonObj = {};
+                        newTaxonObj['sciname'] = taxonToAdd['sciname'];
+                        newTaxonObj['author'] = taxonToAdd['author'];
+                        newTaxonObj['kingdomid'] = targetKingdomId;
+                        newTaxonObj['rankid'] = taxonToAdd['rankid'];
+                        newTaxonObj['acceptstatus'] = 1;
+                        newTaxonObj['tidaccepted'] = '';
+                        newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
+                        newTaxonObj['family'] = taxonToAdd['family'];
+                        newTaxonObj['source'] = getDataSourceName();
+                        newTaxonObj['source-name'] = dataSource;
+                        newTaxonObj['source-id'] = taxonToAdd['id'];
+                        const formData = new FormData();
+                        formData.append('taxon', JSON.stringify(newTaxonObj));
+                        formData.append('action', 'addTaxon');
+                        http.open("POST", taxaApi, true);
+                        http.onreadystatechange = function() {
+                            if(http.readyState === 4) {
+                                if(http.status === 200 && Number(http.responseText) > 0){
+                                    nameTidIndex[taxaToAddArr[0]['sciname']] = Number(http.responseText);
+                                    taxaToAddArr.splice(0, 1);
+                                    processSuccessResponse(0);
+                                    processAddTaxaArr();
+                                }
+                                else{
+                                    processErrorResponse(15,false,'Error loading taxon');
+                                    runScinameDataSourceSearch();
+                                }
                             }
-                            taxaToAddArr.push(currentTaxon);
-                            processingArr.splice(0, 1);
-                            setTaxaToAdd();
-                        },http);
+                        };
+                        http.send(formData);
                     }
+                    else{
+                        processAddTaxon();
+                    }
+                }
+            }
+
+            function processAddTaxon(){
+                if(!processCancelled){
+                    const taxonToAdd = nameSearchResults[0];
+                    addProgressLine('<li style="margin-left:15px;">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
+                    const newTaxonObj = {};
+                    newTaxonObj['sciname'] = taxonToAdd['sciname'];
+                    newTaxonObj['author'] = taxonToAdd['author'];
+                    newTaxonObj['kingdomid'] = targetKingdomId;
+                    newTaxonObj['rankid'] = taxonToAdd['rankid'];
+                    newTaxonObj['acceptstatus'] = taxonToAdd['accepted'] ? 1 : 0;
+                    newTaxonObj['tidaccepted'] = !taxonToAdd['accepted'] ? nameTidIndex[taxonToAdd['accepted_sciname']] : '';
+                    newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
+                    newTaxonObj['family'] = taxonToAdd['family'];
+                    newTaxonObj['source'] = getDataSourceName();
+                    newTaxonObj['source-name'] = dataSource;
+                    newTaxonObj['source-id'] = taxonToAdd['id'];
+                    const formData = new FormData();
+                    formData.append('taxon', JSON.stringify(newTaxonObj));
+                    formData.append('action', 'addTaxon');
+                    http.open("POST", taxaApi, true);
+                    http.onreadystatechange = function() {
+                        if(http.readyState === 4) {
+                            if(http.status === 200 && Number(http.responseText) > 0){
+                                nameTidIndex[nameSearchResults[0]['sciname']] = Number(http.responseText);
+                                processSuccessResponse(30,'Successfully added ' + nameSearchResults[0]['sciname']);
+                                processAddTaxaArr();
+                            }
+                            else{
+                                processErrorResponse(15,false,'Error loading taxon');
+                                runScinameDataSourceSearch();
+                            }
+                        }
+                    };
+                    http.send(formData);
+                }
+            }
+
+            function updateOccurrenceLinkages(){
+                if(!processCancelled){
+                    addProgressLine('<li style="margin-left:15px;">Updating linkages of occurrence records to the Taxonomic Thesaurus ' + processStatus + '</li>');
+                    let params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateOccThesaurusLinkages';
+                    //console.log(occTaxonomyApi+'?'+params);
+                    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+                        if(status === 200) {
+                            processSuccessResponse(30,'Complete: ' + res + ' records updated');
+                            addProgressLine('<li style="margin-left:15px;">Updating linkages of associated determination records to the Taxonomic Thesaurus ' + processStatus + '</li>');
+                            params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateDetThesaurusLinkages';
+                            sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+                                if(status === 200) {
+                                    processSuccessResponse(30,'Complete: ' + res + ' records updated');
+                                    addProgressLine('<li style="margin-left:15px;">Updating linkages of media records to the Taxonomic Thesaurus ' + processStatus + '</li>');
+                                    params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateMediaThesaurusLinkages';
+                                    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+                                        if(status === 200) {
+                                            processSuccessResponse(30,'Complete: ' + res + ' records updated');
+                                            runScinameDataSourceSearch();
+                                        }
+                                    },http);
+                                }
+                            },http);
+                        }
+                        else{
+                            processErrorResponse(15,true);
+                            runScinameDataSourceSearch();
+                        }
+                    },http);
+                }
+            }
+
+            function getDataSourceName(){
+                if(dataSource === 'col'){
+                    return 'Catalogue of Life';
+                }
+                else if(dataSource === 'itis'){
+                    return 'Integrated Taxonomic Information System';
+                }
+                else if(dataSource === 'worms'){
+                    return 'World Register of Marine Species';
                 }
             }
         </script>
