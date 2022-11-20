@@ -69,7 +69,7 @@ if($editable){
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
     <script type="text/javascript" src="../../js/shared.js?ver=20221117"></script>
-	<script src="../../js/taxa.taxonomyeditor.js?ver=20221119"></script>
+	<script src="../../js/taxa.taxonomyeditor.js?ver=20221120"></script>
 </head>
 <body>
 <?php
@@ -296,7 +296,7 @@ if($editable){
                                 </div>
                                 <div class="tsedit" style="display:none;margin:3px;">
                                     <input id="parentstr" name="parentstr" type="text" value="<?php echo $taxonEditorObj->getParentName(); ?>" />
-                                    <input name="parenttid" type="hidden" value="<?php echo $taxonEditorObj->getParentTid(); ?>" />
+                                    <input id="parenttid" name="parenttid" type="hidden" value="<?php echo $taxonEditorObj->getParentTid(); ?>" />
                                 </div>
                             </div>
                             <div class="tsedit" style="display:none;clear:both;">
@@ -341,13 +341,13 @@ if($editable){
                                 echo "</ul>\n";
                             }
                             else{
-                                echo "<div style='margin:20px;'>Accepted Name not yet Designated for this Taxon</div>\n";
+                                echo "<div style='margin:20px;'>Acceptance not yet designated for this taxon</div>\n";
                             }
                             ?>
                             <div class="acceptedits" style="display:none;">
                                 <form id="accepteditsform" name="accepteditsform" action="taxonomyeditor.php" method="post" onsubmit="return verifyAcceptEditsForm(this);" >
                                     <fieldset style="width:380px;margin:20px;">
-                                        <legend><b>Link to Another Accepted Name</b></legend>
+                                        <legend><b>Change to Another Accepted Taxon</b></legend>
                                         <div>
                                             Accepted Taxon:
                                             <input id="aefacceptedstr" name="acceptedstr" type="text" style="width:300px;" />
@@ -360,7 +360,7 @@ if($editable){
                                             <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid();?>" />
                                             <input type="hidden" name="tabindex" value="1" />
                                             <input type="hidden" name="submitaction" value="linktoaccepted" />
-                                            <input type="submit" name="pseudosubmit" value="Add Link" />
+                                            <input type="submit" value="Change Accepted Taxon" />
                                         </div>
                                     </fieldset>
                                 </form>
@@ -419,7 +419,7 @@ if($editable){
                                     <fieldset style="width:90%;">
                                         <legend><b>Change to Not Accepted</b></legend>
                                         <div style="margin:5px;">
-                                            <b>Accepted Name:</b>
+                                            <b>Accepted Taxon:</b>
                                             <input id="ctnafacceptedstr" name="acceptedstr" type="text" style="width:270px;" />
                                             <input id="ctnaftidaccepted" name="tidaccepted" type="hidden" value="" />
                                         </div>
@@ -434,7 +434,7 @@ if($editable){
                                             <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid();?>" />
                                             <input type="hidden" name="tabindex" value="1" />
                                             <input type="hidden" name="submitaction" value="changetonotaccepted" />
-                                            <input type='submit' name='pseudosubmit' value='Change Status to Not Accepted' />
+                                            <input type='submit' value='Change Status to Not Accepted' />
                                         </div>
                                         <div style="margin:5px;">
                                             * Synonyms will be transferred to Accepted Taxon

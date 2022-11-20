@@ -3051,15 +3051,14 @@ ALTER TABLE `taxadescrstmts`
     MODIFY COLUMN `heading` varchar (75) NULL DEFAULT NULL AFTER `tdbid`;
 
 CREATE TABLE `taxaidentifiers` (
-   `tidentid` int(11) NOT NULL AUTO_INCREMENT,
-   `tid` int(10) unsigned NOT NULL,
-   `name` varchar(45) NOT NULL,
-   `identifier` varchar(255) NOT NULL,
-   PRIMARY KEY (`tidentid`),
-   KEY `FK_tid` (`tid`),
-   KEY `name` (`name`),
-   KEY `identifier` (`identifier`),
-   CONSTRAINT `FK_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
+  `tidentid` int(11) NOT NULL AUTO_INCREMENT,
+  `tid` int(10) unsigned NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `identifier` varchar(255) NOT NULL,
+  PRIMARY KEY (`tidentid`),
+  UNIQUE KEY `tid_name_unique` (`tid`,`name`),
+  KEY `identifier` (`identifier`),
+  CONSTRAINT `FK_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE `taxavernaculars`

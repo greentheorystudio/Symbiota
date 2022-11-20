@@ -265,12 +265,12 @@ class TaxonomyEditorManager{
 	private function updateDependentData($tid, $tidNew): void
 	{
 		if(is_numeric($tid) && is_numeric($tidNew)){
-			$this->conn->query('DELETE FROM kmdescr WHERE inherited IS NOT NULL AND (tid = '.$tid.')');
-			$this->conn->query('UPDATE IGNORE kmdescr SET tid = '.$tidNew.' WHERE (tid = '.$tid.')');
-			$this->conn->query('DELETE FROM kmdescr WHERE (tid = '.$tid.')');
+			$this->conn->query('DELETE FROM kmdescr WHERE inherited IS NOT NULL AND tid = '.$tid.' ');
+			$this->conn->query('UPDATE IGNORE kmdescr SET tid = '.$tidNew.' WHERE tid = '.$tid.' ');
+			$this->conn->query('DELETE FROM kmdescr WHERE tid = '.$tid.' ');
 			$this->resetCharStateInheritance($tidNew);
 			
-			$sqlVerns = 'UPDATE taxavernaculars SET tid = '.$tidNew.' WHERE (tid = '.$tid.')';
+			$sqlVerns = 'UPDATE taxavernaculars SET tid = '.$tidNew.' WHERE tid = '.$tid.' ';
 			$this->conn->query($sqlVerns);
 		}
 	}
@@ -361,7 +361,7 @@ class TaxonomyEditorManager{
 			$rs2->free();
 			if($this->hierarchyArr){
 				$sql2a = 'DELETE FROM taxaenumtree '.
-					'WHERE parenttid IN('.implode(',',$this->hierarchyArr).') AND (tid IN ('.implode(',',$branchTidArr).')) ';
+					'WHERE parenttid IN('.implode(',',$this->hierarchyArr).') AND tid IN('.implode(',',$branchTidArr).') ';
 				//echo $sql2a; exit;
 				$this->conn->query($sql2a);
 			}
@@ -380,7 +380,7 @@ class TaxonomyEditorManager{
 
 		if($this->rankid > 140){
 			$newFam = '';
-			$sqlFam1 = 'SELECT sciname FROM taxa WHERE (tid IN('.$trueHierarchyStr.')) AND rankid = 140';
+			$sqlFam1 = 'SELECT sciname FROM taxa WHERE tid IN('.$trueHierarchyStr.') AND rankid = 140';
 			$rsFam1 = $this->conn->query($sqlFam1);
 			if($r1 = $rsFam1->fetch_object()){
 				$newFam = $r1->sciname;
@@ -431,14 +431,20 @@ class TaxonomyEditorManager{
                 //echo "sqlNewTaxUpdate: ".$sqlNewTaxUpdate;
                 $this->conn->query($sqlNewTaxUpdate);
             }
+            if(array_key_exists('source-name',$dataArr) && array_key_exists('source-id',$dataArr) && $dataArr['source-name'] && $dataArr['source-id']){
+                $sqlId = 'INSERT IGNORE INTO taxaidentifiers(tid,`name`,identifier) VALUES('.
+                    $tid.',"'.Sanitizer::cleanInStr($this->conn,$dataArr['source-name']).'","'.Sanitizer::cleanInStr($this->conn,$dataArr['source-id']).'")';
+                //echo $sqlId; exit;
+                $this->conn->query($sqlId);
+            }
 		}
 		return $tid;
 	}
 
     public function validateNewTaxonArr($dataArr): array
     {
-        if(!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family']){
-            $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE SciName = "'.Sanitizer::cleanInStr($this->conn,$dataArr['parentname']).'" ';
+        if((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family'])){
+            $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE tid = '.(int)$dataArr['parenttid'].' ';
             //echo $sqlKg; exit;
             $rsKg = $this->conn->query($sqlKg);
             if($r = $rsKg->fetch_object()){

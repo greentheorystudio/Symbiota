@@ -15,6 +15,13 @@ $(document).ready(function() {
 		select: function( event, ui ) {
 			document.getElementById('tidaccepted').value = ui.item.id;
 		},
+		change: function (event, ui) {
+			if(!ui.item){
+				this.value = '';
+				document.getElementById('tidaccepted').value = '';
+				alert("You must select an Accepted Taxon from the list");
+			}
+		},
 		minLength: 2, 
 		autoFocus: true 
 	});
@@ -25,6 +32,13 @@ $(document).ready(function() {
 		},
 		select: function( event, ui ) {
 			document.getElementById('parenttid').value = ui.item.id;
+		},
+		change: function (event, ui) {
+			if(!ui.item){
+				this.value = '';
+				document.getElementById('parenttid').value = '';
+				alert("You must select a Parent Taxon from the list.");
+			}
 		},
 		minLength: 2,
 		autoFocus: true
@@ -80,10 +94,7 @@ function validateLoadForm(f){
 		parentNameValid = true;
 	}
 
-	if(f.parenttid.value === "" && rankId > 10){
-		checkParentExistance(f);
-	}
-	else{
+	if(f.parenttid.value !== "" || rankId > 10){
 		parentIdValid = true;
 	}
 
@@ -96,10 +107,7 @@ function validateLoadForm(f){
 			acceptedNameValid = true;
 		}
 
-		if(f.tidaccepted.value === ""){
-			checkAcceptedExistance(f);
-		}
-		else{
+		if(f.tidaccepted.value !== ""){
 			acceptedIdValid = true;
 		}
 	}
@@ -219,34 +227,6 @@ function acceptanceChanged(f){
 	}
 }
 
-function checkAcceptedExistance(f){
-	if(f.acceptedstr.value){
-		$.ajax({
-			type: "POST",
-			url: "../../api/taxa/gettid.php",
-			async: false,
-			data: { sciname: f.acceptedstr.value }
-		}).done(function( msg ) {
-			if(!msg){
-				alert("Accepted name does not exist. Add parent to thesaurus before adding this name.");
-			}
-			else{
-				if(msg.indexOf(",") === -1){
-					f.tidaccepted.value = msg;
-					acceptedIdValid = true;
-					checkValidations();
-				}
-				else{
-					alert("Accepted is matching two different names in the thesaurus. Please select taxon with the correct author.");
-				}
-			}
-		});
-	}
-	else{
-		return false;
-	}
-}
-
 function checkParentExistance(f){
 	const parentStr = f.parentname.value;
 	if(parentStr){
@@ -260,14 +240,9 @@ function checkParentExistance(f){
 				alert("Parent does not exist. Please first add parent to system.");
 			}
 			else{
-				if(msg.indexOf(",") === -1){
-					f.parenttid.value = msg;
-					parentIdValid = true;
-					checkValidations();
-				}
-				else{
-					alert("Parent is matching two different names in the thesaurus. Please select taxon with the correct author.");
-				}
+				f.parenttid.value = msg;
+				parentIdValid = true;
+				checkValidations();
 			}
 		});
 	}

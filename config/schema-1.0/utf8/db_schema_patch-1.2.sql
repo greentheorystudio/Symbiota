@@ -219,14 +219,12 @@ DELETE
 SET NULL ON UPDATE SET NULL;
 
 ALTER TABLE `taxadescrblock`
-DROP
-FOREIGN KEY `FK_taxadescrblock_tid`;
+    DROP FOREIGN KEY `FK_taxadescrblock_tid`;
 
 ALTER TABLE `taxadescrblock`
-DROP INDEX `Index_unique`,
-  ADD INDEX `FK_taxadescrblock_tid_idx`(`tid`),
-  ADD CONSTRAINT `FK_taxadescrblock_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON
-UPDATE CASCADE;
+    DROP INDEX `Index_unique`,
+    ADD INDEX `FK_taxadescrblock_tid_idx`(`tid`),
+    ADD CONSTRAINT `FK_taxadescrblock_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON UPDATE CASCADE;
 
 ALTER TABLE `taxadescrstmts`
     MODIFY COLUMN `heading` varchar (75) NULL DEFAULT NULL AFTER `tdbid`;
@@ -237,16 +235,15 @@ CREATE TABLE `taxaidentifiers` (
    `name` varchar(45) NOT NULL,
    `identifier` varchar(255) NOT NULL,
    PRIMARY KEY (`tidentid`),
-   KEY `FK_tid` (`tid`),
-   KEY `name` (`name`),
+   UNIQUE KEY `tid_name_unique` (`tid`,`name`),
    KEY `identifier` (`identifier`),
    CONSTRAINT `FK_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE `taxavernaculars`
     MODIFY COLUMN `Language` varchar (15) NULL DEFAULT NULL AFTER `VernacularName`,
-DROP INDEX `unique-key`,
-  ADD UNIQUE INDEX `unique-key`(`VernacularName`, `TID`, `langid`);
+    DROP INDEX `unique-key`,
+    ADD UNIQUE INDEX `unique-key`(`VernacularName`, `TID`, `langid`);
 
 SET
 FOREIGN_KEY_CHECKS = 0;
@@ -256,10 +253,7 @@ TRUNCATE TABLE `taxonunits`;
 ALTER TABLE `taxonunits`
     ADD COLUMN `kingdomid` int(11) NOT NULL AFTER `taxonunitid`,
     ADD UNIQUE INDEX `INDEX-Unique`(`kingdomid`, `rankid`),
-    ADD CONSTRAINT `FK-kingdomid` FOREIGN KEY (`kingdomid`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON
-UPDATE CASCADE
-ON
-DELETE CASCADE;
+    ADD CONSTRAINT `FK-kingdomid` FOREIGN KEY (`kingdomid`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON UPDATE CASCADE ON DELETE CASCADE;
 
 INSERT INTO `taxonunits`(`kingdomid`, `rankid`, `rankname`, `dirparentrankid`, `reqparentrankid`)
 VALUES (1, 10, 'Kingdom', 10, 10),
@@ -470,8 +464,8 @@ FOREIGN_KEY_CHECKS = 1;
 
 ALTER TABLE `taxstatus`
     ADD COLUMN `modifiedBy` varchar(45) NULL AFTER `SortSequence`,
-DROP INDEX `Index_hierarchy`,
-  ADD INDEX `Index_tid`(`tid`);
+    DROP INDEX `Index_hierarchy`,
+    ADD INDEX `Index_tid`(`tid`);
 
 ALTER TABLE `uploadimagetemp`
     CHANGE COLUMN `specimengui` `sourceIdentifier` varchar (150) NULL DEFAULT NULL AFTER `dbpk`,
@@ -523,7 +517,7 @@ CREATE TRIGGER `uploadspectemp_delete` BEFORE DELETE ON `uploadspectemp` FOR EAC
 END;
 
 ALTER TABLE `uploadtaxa`
-DROP INDEX `UNIQUE_sciname` ,
+    DROP INDEX `UNIQUE_sciname` ,
     ADD COLUMN `kingdomId` int(11) NULL AFTER `Family`,
     ADD COLUMN `kingdomName` varchar(250) NULL AFTER `kingdomId`,
     ADD UNIQUE INDEX `UNIQUE_sciname` (`SciName` ASC, `RankId` ASC, `Author` ASC, `AcceptedStr` ASC),
@@ -587,9 +581,6 @@ ALTER TABLE `taxstatus`
 
 ALTER TABLE `configurations`
     ADD UNIQUE INDEX `configurationname`(`configurationname`);
-
-ALTER TABLE `symbiota`.`omoccurdeterminations`
-    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`;
 
 ALTER TABLE `omoccurdeterminations`
     CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`;

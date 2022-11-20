@@ -10,9 +10,20 @@ $(document).ready(function() {
 		source: function( request, response ) {
 			$.getJSON( "../../api/taxa/autofillsciname.php", {
 				term: request.term,
+				acceptedonly: 1,
 				limit: 10,
 				rhigh: document.taxoneditform.rankid.value
 			}, response );
+		},
+		select: function( event, ui ) {
+			document.getElementById('parenttid').value = ui.item.id;
+		},
+		change: function (event, ui) {
+			if(!ui.item){
+				this.value = '';
+				document.getElementById('parenttid').value = '';
+				alert("You must select a Parent Taxon from the list");
+			}
 		},
 		minLength: 3,
 		autoFocus: true
@@ -20,10 +31,17 @@ $(document).ready(function() {
 
 	$("#aefacceptedstr").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, acceptedonly: 1 }, response );
+			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, acceptedonly: 1, limit: 10 }, response );
 		},
 		select: function( event, ui ) {
 			document.getElementById('aeftidaccepted').value = ui.item.id;
+		},
+		change: function (event, ui) {
+			if(!ui.item){
+				this.value = '';
+				document.getElementById('aeftidaccepted').value = '';
+				alert("You must select an Accepted Taxon from the list");
+			}
 		},
 		minLength: 3,
 		autoFocus: true
@@ -31,10 +49,17 @@ $(document).ready(function() {
 
 	$("#ctnafacceptedstr").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, acceptedonly: 1 }, response );
+			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, acceptedonly: 1, limit: 10 }, response );
 		},
 		select: function( event, ui ) {
 			document.getElementById('ctnaftidaccepted').value = ui.item.id;
+		},
+		change: function (event, ui) {
+			if(!ui.item){
+				this.value = '';
+				document.getElementById('ctnaftidaccepted').value = '';
+				alert("You must select an Accepted Taxon from the list");
+			}
 		},
 		minLength: 3,
 		autoFocus: true
@@ -73,33 +98,19 @@ function verifyChangeToNotAcceptedForm(f){
 }
 
 function submitLinkToAccepted(f){
-	$.ajax({
-		type: "POST",
-		url: "../../api/taxa/gettid.php",
-		data: { sciname: f.acceptedstr.value }
-	}).done(function( msg ) {
-		if(!msg){
-			alert("ERROR: Accepted taxon not found in thesaurus. It is either misspelled or needs to be added to the thesaurus.");
-		}
-		else{
-			f.tidaccepted.value = msg;
-			f.submit();
-		}
-	});
+	if(f.tidaccepted.value === ''){
+		alert("Please enter an Accepted Name");
+	}
+	else{
+		f.submit();
+	}
 }
 
 function submitUpperTaxForm(f){
-	$.ajax({
-		type: "POST",
-		url: "../../api/taxa/gettid.php",
-		data: { sciname: f.parentstr.value }
-	}).done(function( msg ) {
-		if(!msg){
-			alert("ERROR: Parent taxon not found in thesaurus. It is either misspelled or needs to be added to the thesaurus.");
-		}
-		else{
-			f.parenttid.value = msg;
-			f.submit();
-		}
-	});
+	if(f.parenttid.value === ''){
+		alert("Please enter an Parent Taxon");
+	}
+	else{
+		f.submit();
+	}
 }
