@@ -8,8 +8,13 @@ var acceptedIdValid = false;
 var taxonExistsValid = false;
 
 $(document).ready(function() {
-	$("#acceptedstr").autocomplete({ 
-		source: "../../api/taxa/getacceptedsuggest.php",
+	$("#acceptedstr").autocomplete({
+		source: function( request, response ) {
+			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, acceptedonly: 1 }, response );
+		},
+		select: function( event, ui ) {
+			document.getElementById('tidaccepted').value = ui.item.id;
+		},
 		minLength: 2, 
 		autoFocus: true 
 	});
@@ -18,8 +23,8 @@ $(document).ready(function() {
 		source: function( request, response ) {
 			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, rhigh: $("#rankid").val() }, response );
 		},
-		change: function() {
-			checkParentExistance(document.loaderform);
+		select: function( event, ui ) {
+			document.getElementById('parenttid').value = ui.item.id;
 		},
 		minLength: 2,
 		autoFocus: true

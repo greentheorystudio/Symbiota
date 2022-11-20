@@ -81,8 +81,8 @@
                     </div>
                     <div id="accdiv" style="display:none;margin-top:3px;">
                         Accepted Taxon:
-                        <input id="acceptedstr" name="acceptedstr" type="text" style="width:400px;border:inset;" onchange="checkAcceptedExistance(this.form);clearValidations();" />
-                        <input type="hidden" name="tidaccepted" />
+                        <input id="acceptedstr" name="acceptedstr" type="text" style="width:400px;border:inset;" onchange="clearValidations();" />
+                        <input type="hidden" name="tidaccepted" id="tidaccepted" />
                         <div style="margin-top:3px;">
                             Unacceptability Reason:
                             <input type='text' id='unacceptabilityreason' name='unacceptabilityreason' style='width:350px;border:inset;' />

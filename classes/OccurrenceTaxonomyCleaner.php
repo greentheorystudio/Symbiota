@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
-include_once(__DIR__ . '/TaxonomyHarvester.php');
 include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceTaxonomyCleaner extends Manager{
@@ -102,136 +101,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
         return $retCnt;
     }
 
-	public function analyzeTaxa($taxResource, $startIndex, $limit = null){
-		set_time_limit(1800);
-		$isTaxonomyEditor = false;
-		if($GLOBALS['USER_RIGHTS'] && array_key_exists('Taxonomy', $GLOBALS['USER_RIGHTS'])) {
-			$isTaxonomyEditor = true;
-		}
-		$endIndex = 0;
-		echo '<li>Starting taxa check</li>';
-		$sql = 'SELECT sciname, family, scientificnameauthorship, count(*) AS cnt '.$this->getSqlFragment();
-		if($startIndex) {
-			$sql .= 'AND (sciname > "' . Sanitizer::cleanInStr($this->conn,$startIndex) . '") ';
-		}
-		$sql .= 'GROUP BY sciname, family ORDER BY sciname LIMIT '.($limit ?: 50);
-		//echo $sql; exit;
-		if($rs = $this->conn->query($sql)){
-			$taxonHarvester = new  TaxonomyHarvester();
-			if($this->targetKingdom){
-				$kingArr = explode(':',$this->targetKingdom);
-				if($kingArr){
-                    $taxonHarvester->setKingdomTid($kingArr[0]);
-                    if(isset($kingArr[1])){
-                        $taxonHarvester->setKingdomName($kingArr[1]);
-                    }
-                }
-            }
-            $taxonHarvester->setTaxonomicResources($taxResource);
-            $taxaAdded = false;
-            $taxaCnt = 1;
-            $itemCnt = 0;
-            while($r = $rs->fetch_object()){
-                $editLink = '[<a href="#" onclick="openPopup(\''.$GLOBALS['CLIENT_ROOT'].
-                    '/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1='.urlencode($r->sciname).'&collid='.
-                    $this->collid.'\'); return false;">'.$r->cnt.' '.((int)$r->cnt === 1?'occurrence':'occurrences').' <i style="height:15px;width:15px;" class="far fa-edit"></i></a>]';
-                echo '<li><div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div></li>';
-                if($r->family) {
-                    $taxonHarvester->setDefaultFamily($r->family);
-                }
-                if($r->scientificnameauthorship) {
-                    $taxonHarvester->setDefaultAuthor($r->scientificnameauthorship);
-                }
-                $sciname = $r->sciname;
-                $tid = 0;
-                $manualCheck = true;
-                $taxonArr = (new TaxonomyUtilities)->parseScientificName($r->sciname,$this->conn);
-                if($taxonArr && $taxonArr['sciname']){
-                    $sciname = $taxonArr['sciname'];
-                    if($sciname !== $r->sciname){
-                        echo '<li style="margin-left:15px;">Interpreted base name: <b>'.$sciname.'</b></li>';
-                    }
-                    $tid = $taxonHarvester->getTid($taxonArr);
-                }
-                if(!$tid && $taxonHarvester->processSciname($sciname)) {
-                    $taxaAdded= true;
-                    if($taxonHarvester->isFullyResolved()){
-                        $manualCheck = false;
-                    }
-                    else{
-                        echo '<li style="margin-left:15px;">Taxon not fully resolved...</li>';
-                    }
-                    $taxonArr = (new TaxonomyUtilities)->parseScientificName($sciname,$this->conn);
-                    $tid = $taxonHarvester->getTid($taxonArr);
-                }
-                if($taxonArr && $taxonArr['sciname'] && $tid && $this->autoClean) {
-                    $this->remapOccurrenceTaxon($this->collid, $r->sciname, $tid, ($taxonArr['identificationqualifier'] ?? ''));
-                    echo '<li style="margin-left:15px;">Occurrences mapped to '.($taxonHarvester->getTidAccepted()?'taxon #'.$taxonHarvester->getTidAccepted():'<b>'.$sciname.'</b>').'</li>';
-                    $manualCheck = false;
-                }
-                if($manualCheck){
-                    $thesLink = '';
-                    if($isTaxonomyEditor){
-                        $thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/index.php\'); return false;" title="Open New Taxon Form"><i style="height:15px;width:15px;" class="far fa-edit"></i><b style="font-size:70%;">T</b></a>';
-                    }
-                    echo '<li style="margin-left:15px;">Checking close matches in thesaurus'.$thesLink.'...</li>';
-                    if($matchArr = $taxonHarvester->getCloseMatch($sciname)){
-                        $strTestArr = array();
-                        for($x=1; $x <= 3; $x++){
-                            $indexStr = 'unitname'.$x;
-                            if(isset($taxonArr[$indexStr]) && $taxonArr['unitname'.$x]) {
-                                $strTestArr[] = $taxonArr['unitname' . $x];
-                            }
-                        }
-                        foreach($matchArr as $tid => $scinameMatch){
-                            $snTokens = explode(' ',$scinameMatch);
-                            if($snTokens){
-                                foreach($snTokens as $k => $v){
-                                    if(in_array($v, $strTestArr, true)) {
-                                        $snTokens[$k] = '<b>' . $v . '</b>';
-                                    }
-                                }
-                                $idQual = (isset($taxonArr['identificationqualifier'])?str_replace("'", '', $taxonArr['identificationqualifier']):'');
-                                $echoStr = '<i>'.implode(' ',$snTokens).'</i> =&gt; <span class="hideOnLoad">wait for page to finish loading...</span><span class="displayOnLoad" style="display:none">'.
-                                    '<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tid.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
-                                    '<span id="remapSpan-'.$itemCnt.'"></span></span>';
-                                echo '<li style="margin-left:30px;">'.$echoStr.'</li>';
-                                $itemCnt++;
-                            }
-						}
-					}
-					else{
-						echo '<li style="margin-left:30px;">No close matches found</li>';
-					}
-					$manStr = 'Manual search: ';
-					$manStr .= '<form onsubmit="return false" style="display:inline;">';
-					$manStr .= '<input class="taxon" name="taxon" type="text" value="" />';
-					$manStr .= '<input class="tid" name="tid" type="hidden" value="" />';
-					$manStr .= '<button onclick="batchUpdate(this.form,\''.$r->sciname.'\','.$taxaCnt.')">Remap</button>';
-					$manStr .= '<span id="remapSpan-'.$taxaCnt.'-c"></span>';
-					$manStr .= '</form>';
-					echo '<li style="margin-left:30px;">'.$manStr.'</li>';
-				}
-				$taxaCnt++;
-				$endIndex = preg_replace("/[^A-Za-z\-. ]/", '', $r->sciname );
-				flush();
-			}
-			$rs->free();
-			if($taxaAdded) {
-				$this->indexOccurrenceTaxa();
-			}
-		}
-
-		echo '<li><b>Done with taxa check </b></li>';
-		return $endIndex;
-	}
-
-	private function getSqlFragment(): string
-	{
-		return 'FROM omoccurrences WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname IS NOT NULL AND sciname NOT LIKE "% x %" AND sciname NOT LIKE "% × %" ';
-	}
-
-    public function getUnlinkedSciNames(): string
+	public function getUnlinkedSciNames(): string
     {
         $retArr = array();
         if($this->collid){

@@ -261,12 +261,6 @@ if($editable){
                         <span style='color:red;'>
                         <?php
                         $acceptance = $taxonEditorObj->getIsAccepted();
-                        if($acceptance === -2){
-                            echo 'In Conflict, needs to be resolved!';
-                        }
-                        if($acceptance === -1){
-                            echo 'Taxonomy not yet defined for this taxon.';
-                        }
                         if($acceptance === 0){
                             echo 'Not Accepted';
                         }

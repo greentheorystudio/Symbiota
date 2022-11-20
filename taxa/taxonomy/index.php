@@ -10,6 +10,7 @@ if(!$GLOBALS['SYMB_UID']) {
 
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $status = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $loaderObj = new TaxonomyEditorManager();
 
@@ -18,10 +19,11 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
     $isEditor = true;
 }
 
-if($isEditor && array_key_exists('sciname', $_POST)) {
-    $status = $loaderObj->loadNewName($_POST);
-    if(is_int($status)){
-        header('Location: taxonomyeditor.php?tid=' .$status);
+if($isEditor && $action === 'Submit New Name') {
+    $tid = $loaderObj->loadNewName($_POST);
+    if($tid){
+        $loaderObj->updateOccurrencesNewTaxon($_POST);
+        header('Location: taxonomyeditor.php?tid=' .$tid);
     }
 }
 $tRankArr = $loaderObj->getRankArr();

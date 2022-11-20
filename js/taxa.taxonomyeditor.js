@@ -18,14 +18,24 @@ $(document).ready(function() {
 		autoFocus: true
 	});
 
-	$("#aefacceptedstr").autocomplete({ 
-		source: "../../api/taxa/getacceptedsuggest.php",
+	$("#aefacceptedstr").autocomplete({
+		source: function( request, response ) {
+			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, acceptedonly: 1 }, response );
+		},
+		select: function( event, ui ) {
+			document.getElementById('aeftidaccepted').value = ui.item.id;
+		},
 		minLength: 3,
 		autoFocus: true
 	});
 
-	$("#ctnafacceptedstr").autocomplete({ 
-		source: "../../api/taxa/getacceptedsuggest.php",
+	$("#ctnafacceptedstr").autocomplete({
+		source: function( request, response ) {
+			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, acceptedonly: 1 }, response );
+		},
+		select: function( event, ui ) {
+			document.getElementById('ctnaftidaccepted').value = ui.item.id;
+		},
 		minLength: 3,
 		autoFocus: true
 	});

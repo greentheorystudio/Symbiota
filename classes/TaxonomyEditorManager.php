@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class TaxonomyEditorManager{
 
@@ -45,9 +46,11 @@ class TaxonomyEditorManager{
 	
 	public function setTaxon(): void
 	{
-		$sqlTaxon = 'SELECT tid, kingdomId, rankid, sciname, unitind1, unitname1, '.
-			'unitind2, unitname2, unitind3, unitname3, author, source, notes, securitystatus, initialtimestamp '.
-			'FROM taxa WHERE tid = '.$this->tid.' ';
+		$sqlTaxon = 'SELECT t.tid, t.kingdomId, t.rankid, t.sciname, t.unitind1, t.unitname1, t.parenttid, t.tidaccepted, t.family, '.
+			't.unitind2, t.unitname2, t.unitind3, t.unitname3, t.author, t.source, t.notes, t.securitystatus, t.initialtimestamp, '.
+            't2.sciname AS scinameaccepted, t2.author AS authoraccepted, t2.notes AS notesaccepted '.
+			'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.tid '.
+            'WHERE t.tid = '.$this->tid.' ';
 		//echo $sqlTaxon;
 		$rs = $this->conn->query($sqlTaxon);
 		if($r = $rs->fetch_object()){
@@ -64,44 +67,24 @@ class TaxonomyEditorManager{
 			$this->source = $r->source;
 			$this->notes = $r->notes;
 			$this->securityStatus = (int)$r->securitystatus;
+            $this->parentTid = (int)$r->parenttid;
+            $this->family = $r->family;
+            $tidAccepted = (int)$r->tidaccepted;
+            if($this->tid === $tidAccepted){
+                $this->isAccepted = 1;
+            }
+            else{
+                $this->isAccepted = 0;
+                $this->acceptedArr[$tidAccepted]['sciname'] = $r->scinameaccepted;
+                $this->acceptedArr[$tidAccepted]['author'] = $r->authoraccepted;
+                $this->acceptedArr[$tidAccepted]['usagenotes'] = $r->notesaccepted;
+            }
 		}
 		$rs->free();
 		
 		if($this->sciName){
 			$this->setRankName();
 			$this->setHierarchy();
-			
-			$sqlTs = 'SELECT parenttid, tidaccepted, family, sciname, author, notes ' .
-				'FROM taxa WHERE tid = '.$this->tid.' ';
-			//echo $sqlTs;
-			if($rsTs = $this->conn->query($sqlTs)){
-                while($row = $rsTs->fetch_object()){
-                    $this->parentTid = $row->parenttid;
-                    $this->family = $row->family;
-                    $tidAccepted = (int)$row->tidaccepted;
-                    if($this->tid === $tidAccepted){
-                        if($this->isAccepted === -1 || $this->isAccepted === 1){
-                            $this->isAccepted = 1;
-                        }
-                        else{
-                            $this->isAccepted = -2;
-                        }
-                    }
-                    else{
-                        if($this->isAccepted === -1 || $this->isAccepted === 0){
-                            $this->isAccepted = 0;
-                        }
-                        else{
-                            $this->isAccepted = -2;
-                        }
-                        $this->acceptedArr[$tidAccepted]['sciname'] = $row->sciname;
-                        $this->acceptedArr[$tidAccepted]['author'] = $row->author;
-                        $this->acceptedArr[$tidAccepted]['usagenotes'] = $row->notes;
-                    }
-                }
-            }
-            $rsTs->free();
-
 			if($this->isAccepted === 1) {
 				$this->setSynonyms();
 			}
@@ -190,7 +173,7 @@ class TaxonomyEditorManager{
 			'unitname3 = '.($postArr['unitname3']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname3']).'"':'NULL').', '.
 			'author = '.($postArr['author']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['author']).'"':'NULL').', '.
 			'rankid = '.(is_numeric($postArr['rankid'])?$postArr['rankid']:'NULL').', '.
-			'source = '.($postArr['source']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', '.
+			'`source` = '.($postArr['source']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', '.
 			'notes = '.($postArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', '.
 			'securitystatus = '.(is_numeric($postArr['securitystatus'])?$postArr['securitystatus']:'0').', '.
 			'modifiedUid = '.$GLOBALS['SYMB_UID'].', '.
@@ -206,7 +189,7 @@ class TaxonomyEditorManager{
 			$statusStr = 'ERROR editing taxon.';
 		}
 		
-		if(($postArr['securitystatus'] !== $_REQUEST['securitystatusstart']) && is_numeric($postArr['securitystatus'])) {
+		if($postArr['securitystatus'] !== $_REQUEST['securitystatusstart'] && is_numeric($postArr['securitystatus'])) {
 			$sql2 = 'UPDATE omoccurrences SET localitysecurity = '.$postArr['securitystatus'].' WHERE tid = '.$this->tid.' AND ISNULL(localitySecurityReason) ';
 			$this->conn->query($sql2);
 		}
@@ -417,105 +400,98 @@ class TaxonomyEditorManager{
 		}
 	}
 
-	public function loadNewName($dataArr){
-		$retStr = '';
-        $tid = 0;
-	    $sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
-			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
+	public function loadNewName($dataArr): int
+    {
+		$tid = 0;
+        $dataArr = $this->validateNewTaxonArr($dataArr);
+	    $sqlTaxa = 'INSERT INTO taxa(sciname,author,kingdomId,rankid,unitind1,unitname1,unitind2,unitname2,unitind3,unitname3,'.
+			'tidaccepted,parenttid,family,`source`,notes,securitystatus,modifiedUid,modifiedTimeStamp) '.
 			'VALUES ("'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'",'.
 			($dataArr['author']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['author']).'"':'NULL').','.
-			($dataArr['rankid']?:'NULL').','.
+            ($dataArr['kingdomid']?(int)$dataArr['kingdomid']:'NULL').','.
+            ($dataArr['rankid']?(int)$dataArr['rankid']:'NULL').','.
 			($dataArr['unitind1']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitind1']).'"':'NULL').',"'.
 			Sanitizer::cleanInStr($this->conn,$dataArr['unitname1']).'",'.
 			($dataArr['unitind2']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitind2']).'"':'NULL').','.
 			($dataArr['unitname2']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitname2']).'"':'NULL').','.
 			($dataArr['unitind3']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitind3']).'"':'NULL').','.
 			($dataArr['unitname3']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitname3']).'"':'NULL').','.
-			($dataArr['source']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['source']).'"':'NULL').','.
+			($dataArr['tidaccepted']?(int)$dataArr['tidaccepted']:'NULL').','.
+            ($dataArr['parenttid']?(int)$dataArr['parenttid']:'NULL').','.
+            ($dataArr['family']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['family']).'"':'NULL').','.
+            ($dataArr['source']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['source']).'"':'NULL').','.
 			($dataArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['notes']).'"':'NULL').','.
-			Sanitizer::cleanInStr($this->conn,$dataArr['securitystatus']).','.
+            (int)$dataArr['securitystatus'].','.
 			$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'")';
 		//echo "sqlTaxa: ".$sqlTaxa;
 		if($this->conn->query($sqlTaxa)){
 			$tid = $this->conn->insert_id;
-		 	$tidAccepted = ($dataArr['acceptstatus']?$tid:$dataArr['tidaccepted']);
-			$parTid = Sanitizer::cleanInStr($this->conn,$dataArr['parenttid']);
-			if(!$parTid && $dataArr['rankid'] <= 10) {
-				$parTid = $tid;
-			}
-			if(!$parTid && $dataArr['parentname']){
-				$sqlPar = 'SELECT tid FROM taxa WHERE sciname = "'.$dataArr['parentname'].'"';
-				$rsPar = $this->conn->query($sqlPar);
-				if($rPar = $rsPar->fetch_object()){
-					$parTid = $rPar->tid;
-				}
-				$rsPar->free();
-			}
-			if($parTid){ 
-				$family = '';
-				if($dataArr['rankid'] > 140){
-					$sqlFam = 'SELECT t.sciname '.
-						'FROM taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.parenttid '.
-						'WHERE (t.tid = '.$parTid.' OR e.tid = '.$parTid.') AND t.rankid = 140 ';
-					//echo $sqlFam; exit;
-					$rsFam = $this->conn->query($sqlFam);
-					if($r = $rsFam->fetch_object()){
-						$family = $r->sciname;
-					}
-					$rsFam->free();
-				}
-				
-				$sqlNewTaxUpdate = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', parenttid = '.$parTid.', '.
-                    'family = '.($family?'"'.Sanitizer::cleanInStr($this->conn,$family).'"':'NULL').' '.
-                    'WHERE tid = '.$tid.' ';
-				//echo "sqlNewTaxUpdate: ".$sqlNewTaxUpdate;
-				if($this->conn->query($sqlNewTaxUpdate)) {
-                    $sqlEnumTree = 'INSERT INTO taxaenumtree(tid,parenttid) '.
-                        'SELECT '.$tid.' as tid, parenttid FROM taxaenumtree WHERE tid = '.$parTid;
-                    if($this->conn->query($sqlEnumTree)){
-                        $sqlEnumTree2 = 'INSERT INTO taxaenumtree(tid,parenttid) '.
-                            'VALUES ('.$tid.','.$parTid.')';
-                        if(!$this->conn->query($sqlEnumTree2)){
-                            echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree(2).';
-                        }
-                    }
-                    else{
-                        echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree.';
-                    }
-
-                    $sql1 = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = t.sciname SET o.tid = t.tid ';
-                    if($dataArr['securitystatus'] === 1) {
-                        $sql1 .= ',o.localitysecurity = 1 ';
-                    }
-                    $sql1 .= 'WHERE o.sciname = "'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'" ';
-                    if(!$this->conn->query($sql1)){
-                        echo 'WARNING: Taxon loaded into taxa, but update occurrences with matching name.';
-                    }
-
-                    $sql2 = 'UPDATE omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
-                        'SET i.tid = o.tid '.
-                        'WHERE ISNULL(i.tid) AND o.tid IS NOT NULL';
-                    $this->conn->query($sql2);
-                    if(!$this->conn->query($sql2)){
-                        echo 'WARNING: Taxon loaded into taxa, but update occurrence images with matching name.';
-                    }
-                }
-				else {
-                    $retStr = 'ERROR: Taxon loaded into taxa, but failed to load acceptance and parent linkages.';
-				}
-			}
-			else{
-                $retStr = 'ERROR loading taxon due to missing parentTid';
-			}
+		 	if((int)$dataArr['acceptstatus'] === 1){
+                $sqlNewTaxUpdate = 'UPDATE taxa SET tidaccepted = '.$tid.' WHERE tid = '.$tid.' ';
+                //echo "sqlNewTaxUpdate: ".$sqlNewTaxUpdate;
+                $this->conn->query($sqlNewTaxUpdate);
+            }
 		}
-		else{
-            $retStr = 'ERROR inserting new taxon.';
-		}
-		if($tid){
-            $retStr = $tid;
-        }
-		return $retStr;
+		return $tid;
 	}
+
+    public function validateNewTaxonArr($dataArr): array
+    {
+        if(!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family']){
+            $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE SciName = "'.Sanitizer::cleanInStr($this->conn,$dataArr['parentname']).'" ';
+            //echo $sqlKg; exit;
+            $rsKg = $this->conn->query($sqlKg);
+            if($r = $rsKg->fetch_object()){
+                $dataArr['kingdomid'] = $r->kingdomId;
+                $dataArr['family'] = $r->family;
+            }
+            $rsKg->free();
+            if(!$dataArr['family'] && (int)$dataArr['rankid'] === 140){
+                $dataArr['family'] = $dataArr['sciname'];
+            }
+        }
+        if(!array_key_exists('unitname1',$dataArr) || !$dataArr['unitname1']){
+            $sciNameArr = (new TaxonomyUtilities)->parseScientificName($dataArr['sciname'],$dataArr['rankid']);
+            $dataArr['unitind1'] = array_key_exists('unitind1',$sciNameArr) ? $sciNameArr['unitind1'] : '';
+            $dataArr['unitname1'] = array_key_exists('unitname1',$sciNameArr) ? $sciNameArr['unitname1'] : '';
+            $dataArr['unitind2'] = array_key_exists('unitind2',$sciNameArr) ? $sciNameArr['unitind2'] : '';
+            $dataArr['unitname2'] = array_key_exists('unitname2',$sciNameArr) ? $sciNameArr['unitname2'] : '';
+            $dataArr['unitind3'] = array_key_exists('unitind3',$sciNameArr) ? $sciNameArr['unitind3'] : '';
+            $dataArr['unitname3'] = array_key_exists('unitname3',$sciNameArr) ? $sciNameArr['unitname3'] : '';
+        }
+        if(!array_key_exists('source',$dataArr)){
+            $dataArr['source'] = '';
+        }
+        if(!array_key_exists('notes',$dataArr)){
+            $dataArr['notes'] = '';
+        }
+        if(!array_key_exists('securitystatus',$dataArr)){
+            $dataArr['securitystatus'] = 0;
+        }
+        return $dataArr;
+    }
+
+    public function updateOccurrencesNewTaxon($dataArr): void
+    {
+        if($dataArr){
+            $sql1 = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = t.sciname SET o.tid = t.tid ';
+            if($dataArr['securitystatus'] === 1) {
+                $sql1 .= ',o.localitysecurity = 1 ';
+            }
+            $sql1 .= 'WHERE o.sciname = "'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'" ';
+            $this->conn->query($sql1);
+
+            $sql2 = 'UPDATE omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+                'SET i.tid = o.tid '.
+                'WHERE ISNULL(i.tid) AND o.tid IS NOT NULL';
+            $this->conn->query($sql2);
+
+            $sql3 = 'UPDATE omoccurrences AS o INNER JOIN media AS m ON o.occid = m.occid '.
+                'SET m.tid = o.tid '.
+                'WHERE ISNULL(m.tid) AND o.tid IS NOT NULL';
+            $this->conn->query($sql3);
+        }
+    }
 
 	public function verifyDeleteTaxon(): array
 	{

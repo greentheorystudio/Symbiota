@@ -510,27 +510,18 @@ class TaxonomyUpload{
 	public function transferUpload(): void
 	{
 		$this->outputMsg('Starting data transfer...');
-		$sql = 'INSERT INTO taxa(SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
-			'SELECT DISTINCT SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
+		$sql = 'INSERT INTO taxa(SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, tidaccepted, parenttid, family, `Source`, Notes) '.
+			'SELECT DISTINCT SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, TidAccepted, ParentTid, Family, `Source`, Notes '.
 			'FROM uploadtaxa '.
 			'WHERE ISNULL(TID) AND rankid = 10 ';
-		if($this->conn->query($sql)){
-			$sql = 'UPDATE taxa SET tidaccepted = tid, parenttid = tid '.
-				'WHERE rankid = 10 AND ISNULL(parenttid)';
-			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: Transferring upload 1.',1);
-			}
-		}
-		else{
-            $this->outputMsg('ERROR: Transferring upload 2.',1);
-		}
+        $this->conn->query($sql);
 
 		$loopCnt = 0;
 		do{
 			$this->outputMsg('Starting loop '.$loopCnt);
 			$this->outputMsg('Transferring taxa to taxon table... ',1);
-			$sql = 'INSERT IGNORE INTO taxa(SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
-				'SELECT DISTINCT SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
+			$sql = 'INSERT IGNORE INTO taxa(SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, tidaccepted, parenttid, family, `Source`, Notes) '.
+				'SELECT DISTINCT SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, TidAccepted, ParentTid, Family, `Source`, Notes '.
 				'FROM uploadtaxa '.
 				'WHERE ISNULL(tid) AND parenttid IS NOT NULL AND rankid IS NOT NULL AND ISNULL(ErrorStatus) '.
 				'ORDER BY RankId ASC ';

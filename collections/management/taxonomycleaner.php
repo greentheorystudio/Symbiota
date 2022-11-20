@@ -692,20 +692,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                     echo $collMap[(int)$collid]['collectionname'].' ('.$collMap[(int)$collid]['code'].')';
                     ?>
                 </div>
-                <div style="margin:20px;clear:both;">
-                    <?php
-                    /*if($action){
-                        if($action === 'AnalyzingNames'){
-                            echo '<ul>';
-                            $cleanManager->setAutoClean($autoClean);
-                            $cleanManager->setTargetKingdom($targetKingdom);
-                            $cleanManager->setTargetKingdom($targetKingdom);
-                            $startIndex = $cleanManager->analyzeTaxa($taxResource, $startIndex, $limit);
-                            echo '</ul>';
-                        }
-                    }*/
-                    ?>
-                </div>
                 <div style="margin:15px 0;padding:10px;">
                     <div style="margin-left:10px;margin-top:8px;font-weight:bold;font-size:1.3em;">
                         <u>Occurrences not linked to taxonomic thesaurus</u>: <span id="unlinkedOccCnt"></span><br/>
