@@ -256,9 +256,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     resultObj['accepted'] = false;
                                     resultObj['accepted_id'] = acceptedObj['id'];
                                     resultObj['accepted_sciname'] = acceptedObj['name'];
-                                    resultObj['accepted_author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
-                                    resultObj['accepted_rankname'] = acceptedObj['rank'].toLowerCase();
-                                    resultObj['accepted_rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
                                 }
                                 colInitialSearchResults.push(resultObj);
                             }
@@ -300,19 +297,21 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     for(let i in resArr){
                                         if(resArr.hasOwnProperty(i)){
                                             const taxResult = resArr[i];
-                                            const rankname = taxResult['rank'].toLowerCase();
-                                            const rankid = Number(rankArr[rankname]);
-                                            if(recognizedRanks.includes(rankid)){
-                                                const resultObj = {};
-                                                resultObj['id'] = taxResult['id'];
-                                                resultObj['sciname'] = taxResult['name'];
-                                                resultObj['author'] = taxResult.hasOwnProperty('authorship') ? taxResult['authorship'] : '';
-                                                resultObj['rankname'] = rankname;
-                                                resultObj['rankid'] = rankid;
-                                                if(rankname === 'family'){
-                                                    taxon['family'] = resultObj['sciname'];
+                                            if(taxResult['name'] !== taxon['sciname']){
+                                                const rankname = taxResult['rank'].toLowerCase();
+                                                const rankid = Number(rankArr[rankname]);
+                                                if(recognizedRanks.includes(rankid)){
+                                                    const resultObj = {};
+                                                    resultObj['id'] = taxResult['id'];
+                                                    resultObj['sciname'] = taxResult['name'];
+                                                    resultObj['author'] = taxResult.hasOwnProperty('authorship') ? taxResult['authorship'] : '';
+                                                    resultObj['rankname'] = rankname;
+                                                    resultObj['rankid'] = rankid;
+                                                    if(rankname === 'family'){
+                                                        taxon['family'] = resultObj['sciname'];
+                                                    }
+                                                    hierarchyArr.push(resultObj);
                                                 }
-                                                hierarchyArr.push(resultObj);
                                             }
                                         }
                                     }
@@ -399,7 +398,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     const acceptedName = acceptedNameArr[0];
                                     nameSearchResults[0]['accepted_id'] = acceptedName['acceptedTsn'];
                                     nameSearchResults[0]['accepted_sciname'] = acceptedName['acceptedName'];
-                                    nameSearchResults[0]['accepted_author'] = acceptedName['author'] ? acceptedName['author'] : '';
                                     getITISNameSearchResultsHierarchy();
                                 }
                                 else{
@@ -435,19 +433,21 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             for(let i in resArr){
                                 if(resArr.hasOwnProperty(i)){
                                     const taxResult = resArr[i];
-                                    const rankname = taxResult['rankName'].toLowerCase();
-                                    const rankid = Number(rankArr[rankname]);
-                                    if(rankid < foundNameRank && recognizedRanks.includes(rankid)){
-                                        const resultObj = {};
-                                        resultObj['id'] = taxResult['tsn'];
-                                        resultObj['sciname'] = taxResult['taxonName'];
-                                        resultObj['author'] = taxResult['author'] ? taxResult['author'] : '';
-                                        resultObj['rankname'] = rankname;
-                                        resultObj['rankid'] = rankid;
-                                        if(rankname === 'family'){
-                                            nameSearchResults[0]['family'] = resultObj['sciname'];
+                                    if(taxResult['taxonName'] !== nameSearchResults[0]['sciname']){
+                                        const rankname = taxResult['rankName'].toLowerCase();
+                                        const rankid = Number(rankArr[rankname]);
+                                        if(rankid < foundNameRank && recognizedRanks.includes(rankid)){
+                                            const resultObj = {};
+                                            resultObj['id'] = taxResult['tsn'];
+                                            resultObj['sciname'] = taxResult['taxonName'];
+                                            resultObj['author'] = taxResult['author'] ? taxResult['author'] : '';
+                                            resultObj['rankname'] = rankname;
+                                            resultObj['rankid'] = rankid;
+                                            if(rankname === 'family'){
+                                                nameSearchResults[0]['family'] = resultObj['sciname'];
+                                            }
+                                            hierarchyArr.push(resultObj);
                                         }
-                                        hierarchyArr.push(resultObj);
                                     }
                                 }
                             }
@@ -484,7 +484,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     resultObj['accepted'] = false;
                                     resultObj['accepted_id'] = resObj['valid_AphiaID'];
                                     resultObj['accepted_sciname'] = resObj['valid_name'];
-                                    resultObj['accepted_author'] = resObj['valid_authority'] ? resObj['valid_authority'] : '';
                                 }
                                 nameSearchResults.push(resultObj);
                                 getWoRMSNameSearchResultsHierarchy();
@@ -528,7 +527,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             firstObj['rankid'] = firstrankid;
                             hierarchyArr.push(firstObj);
                             while(childObj = childObj['child']){
-                                if(Number(rankArr[childObj['rank'].toLowerCase()]) < foundNameRank){
+                                if(Number(rankArr[childObj['rank'].toLowerCase()]) <= foundNameRank && childObj['scientificname'] !== nameSearchResults[0]['sciname']){
                                     const rankname = childObj['rank'].toLowerCase();
                                     const rankid = Number(rankArr[rankname]);
                                     if(recognizedRanks.includes(rankid)){
@@ -568,16 +567,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         }
                         else{
                             const addHierchyTemp = nameSearchResults[0]['hierarchy'];
-                            if(!nameSearchResults[0]['accepted']){
-                                const acceptedObj = {};
-                                acceptedObj['id'] = nameSearchResults[0]['accepted_id'];
-                                acceptedObj['sciname'] = nameSearchResults[0]['accepted_sciname'];
-                                acceptedObj['author'] = nameSearchResults[0]['accepted_author'];
-                                acceptedObj['rankname'] = nameSearchResults[0].hasOwnProperty('accepted_rankname') ? nameSearchResults[0]['accepted_rankname'] : nameSearchResults[0]['rankname'];
-                                acceptedObj['rankid'] = nameSearchResults[0].hasOwnProperty('accepted_rankid') ? nameSearchResults[0]['accepted_rankid'] : nameSearchResults[0]['rankid'];
-                                acceptedObj['family'] = acceptedObj['rankid'] >= 140 ? nameSearchResults[0]['family'] : null;
-                                addHierchyTemp.push(acceptedObj);
-                            }
                             addHierchyTemp.sort((a, b) => {
                                 return a.rankid - b.rankid;
                             });
@@ -718,8 +707,8 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         if(http.readyState === 4) {
                             if(http.status === 200 && Number(http.responseText) > 0){
                                 nameTidIndex[nameSearchResults[0]['sciname']] = Number(http.responseText);
-                                processSuccessResponse(30,'Successfully added ' + nameSearchResults[0]['sciname']);
-                                processAddTaxaArr();
+                                processSuccessResponse(15,'Successfully added ' + nameSearchResults[0]['sciname']);
+                                updateOccurrenceLinkages();
                             }
                             else{
                                 processErrorResponse(15,false,'Error loading taxon');
@@ -738,17 +727,17 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                     //console.log(occTaxonomyApi+'?'+params);
                     sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
                         if(status === 200) {
-                            processSuccessResponse(30,'Complete: ' + res + ' records updated');
+                            processSuccessResponse(15,'Complete: ' + res + ' records updated');
                             addProgressLine('<li style="margin-left:15px;">Updating linkages of associated determination records to the Taxonomic Thesaurus ' + processStatus + '</li>');
                             params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateDetThesaurusLinkages';
                             sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
                                 if(status === 200) {
-                                    processSuccessResponse(30,'Complete: ' + res + ' records updated');
+                                    processSuccessResponse(15,'Complete: ' + res + ' records updated');
                                     addProgressLine('<li style="margin-left:15px;">Updating linkages of media records to the Taxonomic Thesaurus ' + processStatus + '</li>');
                                     params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateMediaThesaurusLinkages';
                                     sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
                                         if(status === 200) {
-                                            processSuccessResponse(30,'Complete: ' + res + ' records updated');
+                                            processSuccessResponse(15,'Complete: ' + res + ' records updated');
                                             runScinameDataSourceSearch();
                                         }
                                     },http);
