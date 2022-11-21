@@ -615,6 +615,10 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 }
                             },http);
                         }
+                        else{
+                            processingArr.splice(0, 1);
+                            setTaxaToAdd();
+                        }
                     }
                     else{
                         processSuccessResponse(0);
