@@ -47,6 +47,37 @@ class OccurrenceTaxonomyCleaner extends Manager{
 		return $retCnt;
 	}
 
+    public function updateOccRecordsWithNewScinameTid($sciname,$tid): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql = 'UPDATE omoccurrences SET tid = '.$tid.' '.
+                'WHERE collid = '.$this->collid.' AND sciname = "' . $sciname . '" ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt = $this->conn->affected_rows;
+                $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
+                    'SET d.tid = '.$tid.' '.
+                    'WHERE o.collid = '.$this->collid.' AND d.sciname = "' . $sciname . '" ';
+                //echo $sql2;
+                $this->conn->query($sql2);
+
+                $sql3 = 'UPDATE omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
+                    'SET i.tid = o.tid '.
+                    'WHERE o.collid = '.$this->collid.' AND o.sciname = "' . $sciname . '" ';
+                //echo $sql3;
+                $this->conn->query($sql3);
+
+                $sql4 = 'UPDATE omoccurrences AS o LEFT JOIN media AS m ON o.occid = m.occid '.
+                    'SET m.tid = o.tid '.
+                    'WHERE o.collid = '.$this->collid.' AND o.sciname = "' . $sciname . '" ';
+                //echo $sql4;
+                $this->conn->query($sql4);
+            }
+        }
+        return $retCnt;
+    }
+
     public function updateOccTaxonomicThesaurusLinkages($kingdomId): int
     {
         $retCnt = 0;

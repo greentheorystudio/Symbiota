@@ -5,6 +5,8 @@ include_once(__DIR__ . '/../../classes/OccurrenceTaxonomyCleaner.php');
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $kingdomid = array_key_exists('kingdomid',$_REQUEST)?(int)$_REQUEST['kingdomid']:0;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$sciname = array_key_exists('sciname',$_REQUEST)?$_REQUEST['sciname']:'';
+$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:'';
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
@@ -46,5 +48,8 @@ if($isEditor && $collid && $action){
     }
     elseif($action === 'getUnlinkedOccSciNames'){
         echo $cleanManager->getUnlinkedSciNames();
+    }
+    elseif($action === 'updateOccWithNewSciname'){
+        echo $cleanManager->updateOccRecordsWithNewScinameTid($sciname,$tid);
     }
 }

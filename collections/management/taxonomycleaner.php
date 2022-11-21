@@ -576,11 +576,16 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     addHierchyTemp[i]['parentName'] = parentName;
                                     addHierchyTemp[i]['family'] = addHierchyTemp[i]['rankid'] >= 140 ? nameSearchResults[0]['family'] : null;
                                     parentName = addHierchyTemp[i]['sciname'];
+                                    if(!nameSearchResults[0]['accepted'] && addHierchyTemp[i]['sciname'] === nameSearchResults[0]['accepted_sciname']){
+                                        nameSearchResults[0]['parentName'] = addHierchyTemp[i]['parentName'];
+                                    }
                                 }
                             }
-                            nameSearchResults[0]['parentName'] = parentName;
+                            if(!nameSearchResults[0].hasOwnProperty('parentName') || nameSearchResults[0]['parentName'] === ''){
+                                nameSearchResults[0]['parentName'] = parentName;
+                            }
                             processingArr = addHierchyTemp;
-                            addProgressLine('<li style="margin-left:15px;">Matching parent and accepted taxa to Taxonomic Thesaurus ' + processStatus + '</li>');
+                            addProgressLine('<li style="margin-left:15px;">Matching parent and accepted taxa to the Taxonomic Thesaurus ' + processStatus + '</li>');
                             setTaxaToAdd();
                         }
                     }
@@ -726,32 +731,19 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 
             function updateOccurrenceLinkages(){
                 if(!processCancelled){
-                    addProgressLine('<li style="margin-left:15px;">Updating linkages of occurrence records to the Taxonomic Thesaurus ' + processStatus + '</li>');
-                    let params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateOccThesaurusLinkages';
+                    const newSciname = nameSearchResults[0]['sciname'];
+                    const newScinameTid = nameTidIndex[nameSearchResults[0]['sciname']];
+                    addProgressLine('<li style="margin-left:15px;">Updating linkages of occurrence records to ' + newSciname + ' ' + processStatus + '</li>');
+                    let params = 'collid=' + collId + '&sciname=' + newSciname + '&tid=' + newScinameTid + '&kingdomid=' + targetKingdomId + '&action=updateOccWithNewSciname';
                     //console.log(occTaxonomyApi+'?'+params);
                     sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
                         if(status === 200) {
                             processSuccessResponse(15,'Complete: ' + res + ' records updated');
-                            addProgressLine('<li style="margin-left:15px;">Updating linkages of associated determination records to the Taxonomic Thesaurus ' + processStatus + '</li>');
-                            params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateDetThesaurusLinkages';
-                            sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
-                                if(status === 200) {
-                                    processSuccessResponse(15,'Complete: ' + res + ' records updated');
-                                    addProgressLine('<li style="margin-left:15px;">Updating linkages of media records to the Taxonomic Thesaurus ' + processStatus + '</li>');
-                                    params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateMediaThesaurusLinkages';
-                                    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
-                                        if(status === 200) {
-                                            processSuccessResponse(15,'Complete: ' + res + ' records updated');
-                                            runScinameDataSourceSearch();
-                                        }
-                                    },http);
-                                }
-                            },http);
                         }
                         else{
                             processErrorResponse(15,true);
-                            runScinameDataSourceSearch();
                         }
+                        runScinameDataSourceSearch();
                     },http);
                 }
             }
