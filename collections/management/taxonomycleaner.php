@@ -244,9 +244,24 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             if(status !== 'common name'){
                                 const resultObj = {};
                                 resultObj['id'] = taxResult['id'];
-                                resultObj['sciname'] = taxResult['name'];
                                 resultObj['author'] = taxResult.hasOwnProperty('author') ? taxResult['author'] : '';
-                                resultObj['rankname'] = taxResult['rank'].toLowerCase();
+                                let rankName = taxResult['rank'].toLowerCase();
+                                if(rankName === 'infraspecies'){
+                                    resultObj['sciname'] = taxResult['genus'] + ' ' + taxResult['species'] + ' ' + taxResult['infraspeciesMarker'] + ' ' + taxResult['infraspecies'];
+                                    if(taxResult['infraspeciesMarker'] === 'var.'){
+                                        rankName = 'variety';
+                                    }
+                                    else if(taxResult['infraspeciesMarker'] === 'subsp.'){
+                                        rankName = 'subspecies';
+                                    }
+                                    else if(taxResult['infraspeciesMarker'] === 'f.'){
+                                        rankName = 'form';
+                                    }
+                                }
+                                else{
+                                    resultObj['sciname'] = taxResult['name'];
+                                }
+                                resultObj['rankname'] = rankName;
                                 resultObj['rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
                                 if(status === 'accepted name'){
                                     resultObj['accepted'] = true;
@@ -300,7 +315,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                             if(taxResult['name'] !== taxon['sciname']){
                                                 const rankname = taxResult['rank'].toLowerCase();
                                                 const rankid = Number(rankArr[rankname]);
-                                                if(recognizedRanks.includes(rankid)){
+                                                if(recognizedRanks.includes(rankid) || (!taxon['accepted'] && taxon['accepted_sciname'] === taxResult['name'])){
                                                     const resultObj = {};
                                                     resultObj['id'] = taxResult['id'];
                                                     resultObj['sciname'] = taxResult['name'];
@@ -429,14 +444,18 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             const resObj = JSON.parse(res);
                             const resArr = resObj['hierarchyList'];
                             const hierarchyArr = [];
-                            const foundNameRank = nameSearchResults[0]['rankid'];
+                            let foundNameRank = nameSearchResults[0]['rankid'];
+                            if(!nameSearchResults[0]['accepted']){
+                                const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === nameSearchResults[0]['accepted_sciname']);
+                                foundNameRank = Number(rankArr[acceptedObj['rankName'].toLowerCase()]);
+                            }
                             for(let i in resArr){
                                 if(resArr.hasOwnProperty(i)){
                                     const taxResult = resArr[i];
                                     if(taxResult['taxonName'] !== nameSearchResults[0]['sciname']){
                                         const rankname = taxResult['rankName'].toLowerCase();
                                         const rankid = Number(rankArr[rankname]);
-                                        if(rankid < foundNameRank && recognizedRanks.includes(rankid)){
+                                        if(rankid <= foundNameRank && recognizedRanks.includes(rankid)){
                                             const resultObj = {};
                                             resultObj['id'] = taxResult['tsn'];
                                             resultObj['sciname'] = taxResult['taxonName'];
@@ -515,22 +534,24 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         if(status === 200){
                             const resObj = JSON.parse(res);
                             const hierarchyArr = [];
-                            const foundNameRank = nameSearchResults[0]['rankid']
+                            const foundNameRank = nameSearchResults[0]['rankid'];
                             let childObj = resObj['child'];
                             const firstObj = {};
                             const firstrankname = childObj['rank'].toLowerCase();
                             const firstrankid = Number(rankArr[firstrankname]);
+                            const newTaxonAccepted = nameSearchResults[0]['accepted'];
                             firstObj['id'] = childObj['AphiaID'];
                             firstObj['sciname'] = childObj['scientificname'];
                             firstObj['author'] = '';
                             firstObj['rankname'] = firstrankname;
                             firstObj['rankid'] = firstrankid;
                             hierarchyArr.push(firstObj);
-                            while(childObj = childObj['child']){
-                                if(Number(rankArr[childObj['rank'].toLowerCase()]) <= foundNameRank && childObj['scientificname'] !== nameSearchResults[0]['sciname']){
+                            let stopLoop = false;
+                            while((childObj = childObj['child']) && !stopLoop){
+                                if(childObj['scientificname'] !== nameSearchResults[0]['sciname']){
                                     const rankname = childObj['rank'].toLowerCase();
                                     const rankid = Number(rankArr[rankname]);
-                                    if(recognizedRanks.includes(rankid)){
+                                    if((newTaxonAccepted && rankid < foundNameRank && recognizedRanks.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'] || recognizedRanks.includes(rankid)))){
                                         const resultObj = {};
                                         resultObj['id'] = childObj['AphiaID'];
                                         resultObj['sciname'] = childObj['scientificname'];
@@ -541,6 +562,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                             nameSearchResults[0]['family'] = resultObj['sciname'];
                                         }
                                         hierarchyArr.push(resultObj);
+                                    }
+                                    if((newTaxonAccepted && resultObj['rankid'] === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'])){
+                                        stopLoop = true;
                                     }
                                 }
                             }
