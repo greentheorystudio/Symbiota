@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
+header('Content-Type: application/json;' .$GLOBALS['CHARSET']);
 
 $url = str_replace(' ','%20',$_REQUEST['url']);
 $action = $_REQUEST['action'];
@@ -29,5 +30,5 @@ if(session_id() === $sessionId){
     $result = curl_exec($curl);
     curl_close($curl);
 
-    echo $result;
+    echo mb_convert_encoding($result, $GLOBALS['CHARSET'], 'UTF-8,ISO-8859-1');
 }
