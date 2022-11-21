@@ -267,10 +267,34 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     resultObj['accepted'] = true;
                                 }
                                 else if(status === 'synonym'){
+                                    const hierarchyArr = [];
+                                    const resultHObj = {};
                                     const acceptedObj = taxResult['accepted_name'];
                                     resultObj['accepted'] = false;
                                     resultObj['accepted_id'] = acceptedObj['id'];
-                                    resultObj['accepted_sciname'] = acceptedObj['name'];
+                                    resultHObj['id'] = acceptedObj['id'];
+                                    resultHObj['author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
+                                    let rankName = acceptedObj['rank'].toLowerCase();
+                                    if(rankName === 'infraspecies'){
+                                        resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + acceptedObj['infraspeciesMarker'] + ' ' + acceptedObj['infraspecies'];
+                                        if(acceptedObj['infraspeciesMarker'] === 'var.'){
+                                            rankName = 'variety';
+                                        }
+                                        else if(acceptedObj['infraspeciesMarker'] === 'subsp.'){
+                                            rankName = 'subspecies';
+                                        }
+                                        else if(acceptedObj['infraspeciesMarker'] === 'f.'){
+                                            rankName = 'form';
+                                        }
+                                    }
+                                    else{
+                                        resultHObj['sciname'] = acceptedObj['name'];
+                                    }
+                                    resultObj['accepted_sciname'] = resultHObj['sciname'];
+                                    resultHObj['rankname'] = rankName;
+                                    resultHObj['rankid'] = rankArr.hasOwnProperty(resultHObj['rankname']) ? rankArr[resultHObj['rankname']] : null;
+                                    hierarchyArr.push(resultHObj);
+                                    resultObj['hierarchy'] = hierarchyArr;
                                 }
                                 colInitialSearchResults.push(resultObj);
                             }
@@ -308,7 +332,10 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 const resArr = JSON.parse(res);
                                 const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
                                 if(kingdomObj && kingdomObj['name'].toLowerCase() === targetKingdomName.toLowerCase()){
-                                    const hierarchyArr = [];
+                                    let hierarchyArr = [];
+                                    if(taxon.hasOwnProperty('hierarchy')){
+                                        hierarchyArr = taxon['hierarchy'];
+                                    }
                                     for(let i in resArr){
                                         if(resArr.hasOwnProperty(i)){
                                             const taxResult = resArr[i];
