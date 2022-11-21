@@ -599,12 +599,12 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             const params = 'sciname=' + sciname + '&kingdomid=' + targetKingdomId;
                             //console.log(taxaTidLookupApi+'?'+params);
                             sendAPIPostRequest(taxaTidLookupApi,params,function(status,res){
-                                if(dataSource === 'worms' && (status !== 200 || !res)){
+                                if(dataSource === 'worms' && !res){
                                     getWoRMSAddTaxonAuthor();
                                 }
                                 else{
                                     const currentTaxon = processingArr[0];
-                                    if(status === 200 && res){
+                                    if(res){
                                         nameTidIndex[currentTaxon['sciname']] = Number(res);
                                     }
                                     else{
@@ -802,7 +802,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 <?php
                                 $kingdomArr = $utilitiesManager->getKingdomArr();
                                 foreach($kingdomArr as $kTid => $kSciname){
-                                    echo '<option value="'.$kTid.':'.$kSciname.'" '.($targetKingdom === (int)$kTid?'SELECTED':'').'>'.$kSciname.'</option>';
+                                    echo '<option value="'.$kTid.'" '.($targetKingdom === (int)$kTid?'SELECTED':'').'>'.$kSciname.'</option>';
                                 }
                                 ?>
                             </select>

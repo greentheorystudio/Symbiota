@@ -531,15 +531,13 @@ ALTER TABLE `userroles`
 ALTER TABLE `users`
     ADD COLUMN `middleinitial` varchar(2) AFTER `firstname`;
 
-UPDATE taxonkingdoms AS k LEFT JOIN taxa AS t
-ON k.kingdom_name = t.SciName
+UPDATE taxonkingdoms AS k LEFT JOIN taxa AS t ON k.kingdom_name = t.SciName
     SET t.kingdomid = k.kingdom_id
-WHERE t.TID IS NOT NULL;
+    WHERE t.TID IS NOT NULL;
 
-UPDATE taxa AS t LEFT JOIN taxonkingdoms AS k
-ON t.kingdomName = k.kingdom_name
+UPDATE taxa AS t LEFT JOIN taxonkingdoms AS k ON t.kingdomName = k.kingdom_name
     SET t.kingdomid = k.kingdom_id
-WHERE (t.kingdomid = 100) AND t.kingdomName IS NOT NULL AND k.kingdom_id IS NOT NULL;
+    WHERE (t.kingdomid = 100) AND t.kingdomName IS NOT NULL AND k.kingdom_id IS NOT NULL;
 
 UPDATE taxa AS t LEFT JOIN taxaenumtree AS e
 ON t.TID = e.tid
