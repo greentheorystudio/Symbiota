@@ -214,10 +214,10 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             addProgressLine('<li>Searching the World Register of Marine Species (WoRMS) for ' + currentSciname + ' ' + processStatus + '</li>');
                             const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + currentSciname + '?marine_only=false';
                             sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
-                                if(status === 200 && res){
+                                if(status === 200 && res && Number(res) > 0){
                                     getWoRMSNameSearchResultsRecord(res);
                                 }
-                                else if(status === 204 || !res){
+                                else if(status === 204 || !res || Number(res) <= 0){
                                     processErrorResponse(15,false,'Not found');
                                     runScinameDataSourceSearch();
                                 }
@@ -526,7 +526,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 if(namestatus === 'accepted'){
                                     resultObj['accepted'] = true;
                                 }
-                                else if(namestatus === 'unaccepted'){
+                                else{
                                     resultObj['accepted'] = false;
                                     resultObj['accepted_id'] = resObj['valid_AphiaID'];
                                     resultObj['accepted_sciname'] = resObj['valid_name'];
@@ -590,7 +590,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                         }
                                         hierarchyArr.push(resultObj);
                                     }
-                                    if((newTaxonAccepted && resultObj['rankid'] === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'])){
+                                    if((newTaxonAccepted && rankid === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'])){
                                         stopLoop = true;
                                     }
                                 }
@@ -789,7 +789,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                     //console.log(occTaxonomyApi+'?'+params);
                     sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
                         if(status === 200) {
-                            processSuccessResponse(15,'Complete: ' + res + ' records updated');
+                            processSuccessResponse(15, res + ' records updated');
                         }
                         else{
                             processErrorResponse(15,true);
