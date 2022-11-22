@@ -928,30 +928,16 @@ function validateITISInitialNameSearchResults(){
             sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
                 if(status === 200){
                     const resObj = JSON.parse(res);
-                    const taxonRankData = resObj['taxRank'];
-                    taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
-                    taxon['rankid'] = Number(taxonRankData['rankId']);
                     const coreMetadata = resObj['coreMetadata'];
                     const namestatus = coreMetadata['taxonUsageRating'];
                     if(namestatus === 'accepted'){
+                        const taxonRankData = resObj['taxRank'];
+                        taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
+                        taxon['rankid'] = Number(taxonRankData['rankId']);
                         taxon['accepted'] = true;
                         nameSearchResults.push(taxon);
-                        validateITISInitialNameSearchResults();
                     }
-                    else if(namestatus === 'not accepted'){
-                        taxon['accepted'] = false;
-                        const acceptedNameList = resObj['acceptedNameList'];
-                        const acceptedNameArr = acceptedNameList['acceptedNames'];
-                        if(acceptedNameArr.length > 0){
-                            const acceptedName = acceptedNameArr[0];
-                            if(taxon['sciname'] !== acceptedName['acceptedName']){
-                                taxon['accepted_id'] = acceptedName['acceptedTsn'];
-                                taxon['accepted_sciname'] = acceptedName['acceptedName'];
-                                nameSearchResults.push(taxon);
-                            }
-                        }
-                        validateITISInitialNameSearchResults();
-                    }
+                    validateITISInitialNameSearchResults();
                 }
                 else{
                     processErrorResponse(15,false,'Unable to retrieve taxon record');
