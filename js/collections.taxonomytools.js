@@ -103,8 +103,12 @@ function callCleaningController(step){
     }
     if(!processCancelled){
         if(step === 'clean-sp'){
-            addProgressLine('<li>Cleaning scientific names ending in sp. or containing spp. ' + processStatus + '</li>');
+            addProgressLine('<li>Cleaning scientific names containing sp., sp. nov., or spp. ' + processStatus + '</li>');
             params = 'collid=' + collId + '&action=cleanSpNames';
+        }
+        else if(step === 'clean-infra'){
+            addProgressLine('<li>Normalizing infraspecific rank abbreviations ' + processStatus + '</li>');
+            params = 'collid=' + collId + '&action=cleanInfra';
         }
         else if(step === 'clean-qualifier'){
             addProgressLine('<li>Cleaning scientific names containing cf. or aff. ' + processStatus + '</li>');
@@ -497,6 +501,9 @@ function processCleaningControllerResponse(step,status,res){
         callCleaningController('clean-sp');
     }
     else if(step === 'clean-sp'){
+        callCleaningController('clean-infra');
+    }
+    else if(step === 'clean-infra'){
         callCleaningController('clean-qualifier');
     }
     else if(step === 'clean-qualifier'){

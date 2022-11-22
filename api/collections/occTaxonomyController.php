@@ -40,6 +40,9 @@ if($isEditor && $collid && $action){
     elseif($action === 'cleanSpNames'){
         echo $cleanManager->cleanSpNames();
     }
+    elseif($action === 'cleanInfra'){
+        echo $cleanManager->cleanInfraAbbrNames();
+    }
     elseif($action === 'cleanQualifierNames'){
         echo $cleanManager->cleanQualifierNames();
     }

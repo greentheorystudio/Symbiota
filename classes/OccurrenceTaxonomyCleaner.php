@@ -170,8 +170,8 @@ class OccurrenceTaxonomyCleaner extends Manager{
         $retCnt = 0;
         if($this->collid){
             $sql1 = 'UPDATE omoccurrences '.
-                'SET sciname = SUBSTRING(sciname,1, CHAR_LENGTH(sciname) - 4) '.
-                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp." ';
+                'SET sciname = REPLACE(sciname," sp.","") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp.%" ';
             //echo $sql1;
             if($this->conn->query($sql1)){
                 $retCnt += $this->conn->affected_rows;
@@ -179,7 +179,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
 
             $sql2 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," sp. nov.","") '.
-                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp. nov." ';
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp. nov.%" ';
             //echo $sql2;
             if($this->conn->query($sql2)){
                 $retCnt += $this->conn->affected_rows;
@@ -192,7 +192,14 @@ class OccurrenceTaxonomyCleaner extends Manager{
             if($this->conn->query($sql3)){
                 $retCnt += $this->conn->affected_rows;
             }
+        }
+        return $retCnt;
+    }
 
+    public function cleanInfraAbbrNames(): int
+    {
+        $retCnt = 0;
+        if($this->collid){
             $sql4 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," ssp. "," subsp. ") '.
                 'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% ssp. %" ';
