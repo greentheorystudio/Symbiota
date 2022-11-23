@@ -95,7 +95,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221121" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221113" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221114" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';

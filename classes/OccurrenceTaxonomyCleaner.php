@@ -171,7 +171,15 @@ class OccurrenceTaxonomyCleaner extends Manager{
         if($this->collid){
             $sql1 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," sp.","") '.
-                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp.%" ';
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp." ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp","") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp" ';
             //echo $sql1;
             if($this->conn->query($sql1)){
                 $retCnt += $this->conn->affected_rows;
@@ -179,7 +187,31 @@ class OccurrenceTaxonomyCleaner extends Manager{
 
             $sql2 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," sp. nov.","") '.
-                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp. nov.%" ';
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp. nov." ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp. nov","") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp. nov" ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp nov.","") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp nov." ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp nov","") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% sp nov" ';
             //echo $sql2;
             if($this->conn->query($sql2)){
                 $retCnt += $this->conn->affected_rows;
@@ -187,7 +219,15 @@ class OccurrenceTaxonomyCleaner extends Manager{
 
             $sql3 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," spp.","") '.
-                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% spp.%" ';
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% spp." ';
+            //echo $sql3;
+            if($this->conn->query($sql3)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql3 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," spp","") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% spp" ';
             //echo $sql3;
             if($this->conn->query($sql3)){
                 $retCnt += $this->conn->affected_rows;
@@ -208,6 +248,14 @@ class OccurrenceTaxonomyCleaner extends Manager{
                 $retCnt += $this->conn->affected_rows;
             }
 
+            $sql4 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," ssp "," subsp. ") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% ssp %" ';
+            //echo $sql4;
+            if($this->conn->query($sql4)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
             $sql5 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," subspec. "," subsp. ") '.
                 'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% subspec. %" ';
@@ -216,9 +264,25 @@ class OccurrenceTaxonomyCleaner extends Manager{
                 $retCnt += $this->conn->affected_rows;
             }
 
+            $sql5 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," subspec "," subsp. ") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% subspec %" ';
+            //echo $sql5;
+            if($this->conn->query($sql5)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
             $sql6 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," fo. "," f. ") '.
                 'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% fo. %" ';
+            //echo $sql6;
+            if($this->conn->query($sql6)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql6 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," fo "," f. ") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% fo %" ';
             //echo $sql6;
             if($this->conn->query($sql6)){
                 $retCnt += $this->conn->affected_rows;

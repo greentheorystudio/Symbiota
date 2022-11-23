@@ -104,7 +104,7 @@ function callCleaningController(step){
     }
     if(!processCancelled){
         if(step === 'clean-sp'){
-            addProgressLine('<li>Cleaning scientific names containing sp., sp. nov., or spp. ' + processStatus + '</li>');
+            addProgressLine('<li>Cleaning scientific names ending in sp., sp. nov., or spp. ' + processStatus + '</li>');
             params = 'collid=' + collId + '&action=cleanSpNames';
         }
         else if(step === 'clean-infra'){
