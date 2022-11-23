@@ -26,7 +26,7 @@ if($target){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxonomy Explorer: ' .$taxonDisplayObj->getTargetStr(); ?></title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxonomy Explorer' .($target ? ': ' . $taxonDisplayObj->getTargetStr() : ''); ?></title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />

@@ -166,41 +166,35 @@ class TaxonomyUtilities {
 		}
 	}
 
-	public function buildHierarchyEnumTree(){
-		$status = true;
-        $complete = false;
+    public function primeHierarchyTable(): int
+    {
+        $retCnt = 0;
         $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
             'SELECT DISTINCT tid, parenttid FROM taxa '.
-            'WHERE tid NOT IN(SELECT tid FROM taxaenumtree)';
-        //echo '<div>SQL1: '.$sql.'</div>';
-        if(!$this->conn->query($sql)){
-            $status = 'ERROR seeding taxaenumtree.';
+            'WHERE tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
+        //echo $sql;
+        if($this->conn->query($sql)){
+            $retCnt += $this->conn->affected_rows;
         }
-        if($status === true){
-            $sql2 = 'INSERT INTO taxaenumtree(tid,parenttid) '.
-                'SELECT DISTINCT e.tid, t.parenttid '.
-                'FROM taxaenumtree AS e INNER JOIN taxa AS t ON e.parenttid = t.tid '.
-                'LEFT JOIN taxaenumtree AS e2 ON e.tid = e2.tid AND t.parenttid = e2.parenttid '.
-                'WHERE ISNULL(e2.tid) ';
-            //echo '<div>SQL2: '.$sql2.'</div>';
-            $cnt = 0;
-            do{
-                if(!$this->conn->query($sql2)){
-                    $status = 'ERROR building taxaenumtree.';
-                    $complete = true;
-                }
-                if(!$this->conn->affected_rows) {
-                    $complete = true;
-                }
-                $cnt++;
-            }
-            while($cnt < 100 && !$complete);
+        return $retCnt;
+    }
+
+    public function populateHierarchyTable(): int
+    {
+        $retCnt = 0;
+        $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
+            'SELECT DISTINCT e.tid, t.parenttid '.
+            'FROM taxaenumtree AS e INNER JOIN taxa AS t ON e.parenttid = t.tid '.
+            'LEFT JOIN taxaenumtree AS e2 ON e.tid = e2.tid AND t.parenttid = e2.parenttid '.
+            'WHERE ISNULL(e2.tid) AND t.parenttid IS NOT NULL ';
+        //echo $sql;
+        if($this->conn->query($sql)){
+            $retCnt += $this->conn->affected_rows;
         }
+        return $retCnt;
+    }
 
-		return $status;
-	}
-
-    public function getTidAccepted($tid): int
+	public function getTidAccepted($tid): int
     {
         $retTid = 0;
         $sql = 'SELECT tidaccepted FROM taxa WHERE tid = '.$tid.' ';

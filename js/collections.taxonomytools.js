@@ -13,6 +13,7 @@ let nameTidIndex = {};
 let processingArr = [];
 let taxaToAddArr = [];
 let taxaLoaded = 0;
+let rebuildHierarchyLoop = 0;
 
 function addProgressLine(lineHtml){
     document.getElementById("progressDisplayList").innerHTML += lineHtml;
@@ -154,10 +155,12 @@ function callTaxThesaurusLinkController(step = ''){
     }
 }
 
-function cancelProcess(){
+function cancelProcess(adjustUI = true){
     processCancelled = true;
     http.abort();
-    adjustUIEnd();
+    if(adjustUI){
+        adjustUIEnd();
+    }
 }
 
 function clearProgressDisplay(){
@@ -177,96 +180,92 @@ function getDataSourceName(){
 }
 
 function getITISNameSearchResultsHierarchy(){
-    if(!processCancelled){
-        let id;
-        if(nameSearchResults[0]['accepted']){
-            id = nameSearchResults[0]['id'];
-        }
-        else{
-            id = nameSearchResults[0]['accepted_id'];
-        }
-        const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
-        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
-            if(status === 200){
-                const resObj = JSON.parse(res);
-                const resArr = resObj['hierarchyList'];
-                const hierarchyArr = [];
-                let foundNameRank = nameSearchResults[0]['rankid'];
-                if(!nameSearchResults[0]['accepted']){
-                    const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === nameSearchResults[0]['accepted_sciname']);
-                    foundNameRank = Number(rankArr[acceptedObj['rankName'].toLowerCase()]);
-                }
-                for(let i in resArr){
-                    if(resArr.hasOwnProperty(i)){
-                        const taxResult = resArr[i];
-                        if(taxResult['taxonName'] !== nameSearchResults[0]['sciname']){
-                            const rankname = taxResult['rankName'].toLowerCase();
-                            const rankid = Number(rankArr[rankname]);
-                            if(rankid <= foundNameRank && recognizedRanks.includes(rankid)){
-                                const resultObj = {};
-                                resultObj['id'] = taxResult['tsn'];
-                                resultObj['sciname'] = taxResult['taxonName'];
-                                resultObj['author'] = taxResult['author'] ? taxResult['author'] : '';
-                                resultObj['rankname'] = rankname;
-                                resultObj['rankid'] = rankid;
-                                if(rankname === 'family'){
-                                    nameSearchResults[0]['family'] = resultObj['sciname'];
-                                }
-                                hierarchyArr.push(resultObj);
+    let id;
+    if(nameSearchResults[0]['accepted']){
+        id = nameSearchResults[0]['id'];
+    }
+    else{
+        id = nameSearchResults[0]['accepted_id'];
+    }
+    const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
+    sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+        if(status === 200){
+            const resObj = JSON.parse(res);
+            const resArr = resObj['hierarchyList'];
+            const hierarchyArr = [];
+            let foundNameRank = nameSearchResults[0]['rankid'];
+            if(!nameSearchResults[0]['accepted']){
+                const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === nameSearchResults[0]['accepted_sciname']);
+                foundNameRank = Number(rankArr[acceptedObj['rankName'].toLowerCase()]);
+            }
+            for(let i in resArr){
+                if(resArr.hasOwnProperty(i)){
+                    const taxResult = resArr[i];
+                    if(taxResult['taxonName'] !== nameSearchResults[0]['sciname']){
+                        const rankname = taxResult['rankName'].toLowerCase();
+                        const rankid = Number(rankArr[rankname]);
+                        if(rankid <= foundNameRank && recognizedRanks.includes(rankid)){
+                            const resultObj = {};
+                            resultObj['id'] = taxResult['tsn'];
+                            resultObj['sciname'] = taxResult['taxonName'];
+                            resultObj['author'] = taxResult['author'] ? taxResult['author'] : '';
+                            resultObj['rankname'] = rankname;
+                            resultObj['rankid'] = rankid;
+                            if(rankname === 'family'){
+                                nameSearchResults[0]['family'] = resultObj['sciname'];
                             }
+                            hierarchyArr.push(resultObj);
                         }
                     }
                 }
-                nameSearchResults[0]['hierarchy'] = hierarchyArr;
-                processSuccessResponse(0);
-                validateNameSearchResults();
             }
-            else{
-                processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
-                runScinameDataSourceSearch();
-            }
-        },http);
-    }
+            nameSearchResults[0]['hierarchy'] = hierarchyArr;
+            processSuccessResponse(0);
+            validateNameSearchResults();
+        }
+        else{
+            processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
+            runScinameDataSourceSearch();
+        }
+    });
 }
 
 function getITISNameSearchResultsRecord(){
-    if(!processCancelled){
-        const id = nameSearchResults[0]['id'];
-        const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
-        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
-            if(status === 200){
-                const resObj = JSON.parse(res);
-                const taxonRankData = resObj['taxRank'];
-                nameSearchResults[0]['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
-                nameSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
-                const coreMetadata = resObj['coreMetadata'];
-                const namestatus = coreMetadata['taxonUsageRating'];
-                if(namestatus === 'accepted'){
-                    nameSearchResults[0]['accepted'] = true;
+    const id = nameSearchResults[0]['id'];
+    const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
+    sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+        if(status === 200){
+            const resObj = JSON.parse(res);
+            const taxonRankData = resObj['taxRank'];
+            nameSearchResults[0]['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
+            nameSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
+            const coreMetadata = resObj['coreMetadata'];
+            const namestatus = coreMetadata['taxonUsageRating'];
+            if(namestatus === 'accepted'){
+                nameSearchResults[0]['accepted'] = true;
+                getITISNameSearchResultsHierarchy();
+            }
+            else if(namestatus === 'not accepted'){
+                nameSearchResults[0]['accepted'] = false;
+                const acceptedNameList = resObj['acceptedNameList'];
+                const acceptedNameArr = acceptedNameList['acceptedNames'];
+                if(acceptedNameArr.length > 0){
+                    const acceptedName = acceptedNameArr[0];
+                    nameSearchResults[0]['accepted_id'] = acceptedName['acceptedTsn'];
+                    nameSearchResults[0]['accepted_sciname'] = acceptedName['acceptedName'];
                     getITISNameSearchResultsHierarchy();
                 }
-                else if(namestatus === 'not accepted'){
-                    nameSearchResults[0]['accepted'] = false;
-                    const acceptedNameList = resObj['acceptedNameList'];
-                    const acceptedNameArr = acceptedNameList['acceptedNames'];
-                    if(acceptedNameArr.length > 0){
-                        const acceptedName = acceptedNameArr[0];
-                        nameSearchResults[0]['accepted_id'] = acceptedName['acceptedTsn'];
-                        nameSearchResults[0]['accepted_sciname'] = acceptedName['acceptedName'];
-                        getITISNameSearchResultsHierarchy();
-                    }
-                    else{
-                        processErrorResponse(15,false,'Unable to distinguish taxon by name');
-                        runScinameDataSourceSearch();
-                    }
+                else{
+                    processErrorResponse(15,false,'Unable to distinguish taxon by name');
+                    runScinameDataSourceSearch();
                 }
             }
-            else{
-                processErrorResponse(15,false,'Unable to retrieve taxon record');
-                runScinameDataSourceSearch();
-            }
-        },http);
-    }
+        }
+        else{
+            processErrorResponse(15,false,'Unable to retrieve taxon record');
+            runScinameDataSourceSearch();
+        }
+    });
 }
 
 function getWoRMSAddTaxonAuthor(){
@@ -287,107 +286,104 @@ function getWoRMSAddTaxonAuthor(){
 }
 
 function getWoRMSNameSearchResultsHierarchy(){
-    if(!processCancelled){
-        let id;
-        if(nameSearchResults[0]['accepted']){
-            id = nameSearchResults[0]['id'];
-        }
-        else{
-            id = nameSearchResults[0]['accepted_id'];
-        }
-        const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
-        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
-            if(status === 200){
-                const resObj = JSON.parse(res);
-                const hierarchyArr = [];
-                const foundNameRank = nameSearchResults[0]['rankid'];
-                let childObj = resObj['child'];
-                const firstObj = {};
-                const firstrankname = childObj['rank'].toLowerCase();
-                const firstrankid = Number(rankArr[firstrankname]);
-                const newTaxonAccepted = nameSearchResults[0]['accepted'];
-                firstObj['id'] = childObj['AphiaID'];
-                firstObj['sciname'] = childObj['scientificname'];
-                firstObj['author'] = '';
-                firstObj['rankname'] = firstrankname;
-                firstObj['rankid'] = firstrankid;
-                hierarchyArr.push(firstObj);
-                let stopLoop = false;
-                while((childObj = childObj['child']) && !stopLoop){
-                    if(childObj['scientificname'] !== nameSearchResults[0]['sciname']){
-                        const rankname = childObj['rank'].toLowerCase();
-                        const rankid = Number(rankArr[rankname]);
-                        if((newTaxonAccepted && rankid < foundNameRank && recognizedRanks.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'] || recognizedRanks.includes(rankid)))){
-                            const resultObj = {};
-                            resultObj['id'] = childObj['AphiaID'];
-                            resultObj['sciname'] = childObj['scientificname'];
-                            resultObj['author'] = '';
-                            resultObj['rankname'] = rankname;
-                            resultObj['rankid'] = rankid;
-                            if(rankname === 'family'){
-                                nameSearchResults[0]['family'] = resultObj['sciname'];
-                            }
-                            hierarchyArr.push(resultObj);
+    let id;
+    if(nameSearchResults[0]['accepted']){
+        id = nameSearchResults[0]['id'];
+    }
+    else{
+        id = nameSearchResults[0]['accepted_id'];
+    }
+    const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
+    sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+        if(status === 200){
+            const resObj = JSON.parse(res);
+            const hierarchyArr = [];
+            const foundNameRank = nameSearchResults[0]['rankid'];
+            let childObj = resObj['child'];
+            const firstObj = {};
+            const firstrankname = childObj['rank'].toLowerCase();
+            const firstrankid = Number(rankArr[firstrankname]);
+            const newTaxonAccepted = nameSearchResults[0]['accepted'];
+            firstObj['id'] = childObj['AphiaID'];
+            firstObj['sciname'] = childObj['scientificname'];
+            firstObj['author'] = '';
+            firstObj['rankname'] = firstrankname;
+            firstObj['rankid'] = firstrankid;
+            hierarchyArr.push(firstObj);
+            let stopLoop = false;
+            while((childObj = childObj['child']) && !stopLoop){
+                if(childObj['scientificname'] !== nameSearchResults[0]['sciname']){
+                    const rankname = childObj['rank'].toLowerCase();
+                    const rankid = Number(rankArr[rankname]);
+                    if((newTaxonAccepted && rankid < foundNameRank && recognizedRanks.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'] || recognizedRanks.includes(rankid)))){
+                        const resultObj = {};
+                        resultObj['id'] = childObj['AphiaID'];
+                        resultObj['sciname'] = childObj['scientificname'];
+                        resultObj['author'] = '';
+                        resultObj['rankname'] = rankname;
+                        resultObj['rankid'] = rankid;
+                        if(rankname === 'family'){
+                            nameSearchResults[0]['family'] = resultObj['sciname'];
                         }
-                        if((newTaxonAccepted && rankid === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'])){
-                            stopLoop = true;
-                        }
+                        hierarchyArr.push(resultObj);
+                    }
+                    if((newTaxonAccepted && rankid === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'])){
+                        stopLoop = true;
                     }
                 }
-                nameSearchResults[0]['hierarchy'] = hierarchyArr;
-                processSuccessResponse(0);
-                validateNameSearchResults();
             }
-            else{
-                processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
-                runScinameDataSourceSearch();
-            }
-        },http);
-    }
+            nameSearchResults[0]['hierarchy'] = hierarchyArr;
+            processSuccessResponse(0);
+            validateNameSearchResults();
+        }
+        else{
+            processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
+            runScinameDataSourceSearch();
+        }
+    });
 }
 
 function getWoRMSNameSearchResultsRecord(id){
-    if(!processCancelled){
-        const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
-        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
-            if(status === 200){
-                const resObj = JSON.parse(res);
-                if(resObj['kingdom'].toLowerCase() === targetKingdomName.toLowerCase()){
-                    const resultObj = {};
-                    resultObj['id'] = resObj['AphiaID'];
-                    resultObj['sciname'] = resObj['scientificname'];
-                    resultObj['author'] = resObj['authority'] ? resObj['authority'] : '';
-                    resultObj['rankname'] = resObj['rank'].toLowerCase();
-                    resultObj['rankid'] = Number(resObj['taxonRankID']);
-                    const namestatus = resObj['status'];
-                    if(namestatus === 'accepted'){
-                        resultObj['accepted'] = true;
-                    }
-                    else{
-                        resultObj['accepted'] = false;
-                        resultObj['accepted_id'] = resObj['valid_AphiaID'];
-                        resultObj['accepted_sciname'] = resObj['valid_name'];
-                    }
-                    nameSearchResults.push(resultObj);
-                    getWoRMSNameSearchResultsHierarchy();
+    const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
+    sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+        if(status === 200){
+            const resObj = JSON.parse(res);
+            if(resObj['kingdom'].toLowerCase() === targetKingdomName.toLowerCase()){
+                const resultObj = {};
+                resultObj['id'] = resObj['AphiaID'];
+                resultObj['sciname'] = resObj['scientificname'];
+                resultObj['author'] = resObj['authority'] ? resObj['authority'] : '';
+                resultObj['rankname'] = resObj['rank'].toLowerCase();
+                resultObj['rankid'] = Number(resObj['taxonRankID']);
+                const namestatus = resObj['status'];
+                if(namestatus === 'accepted'){
+                    resultObj['accepted'] = true;
                 }
                 else{
-                    processErrorResponse(15,false,'Not found');
-                    runScinameDataSourceSearch();
+                    resultObj['accepted'] = false;
+                    resultObj['accepted_id'] = resObj['valid_AphiaID'];
+                    resultObj['accepted_sciname'] = resObj['valid_name'];
                 }
+                nameSearchResults.push(resultObj);
+                getWoRMSNameSearchResultsHierarchy();
             }
             else{
-                processErrorResponse(15,false,'Unable to retrieve taxon record');
+                processErrorResponse(15,false,'Not found');
                 runScinameDataSourceSearch();
             }
-        },http);
-    }
+        }
+        else{
+            processErrorResponse(15,false,'Unable to retrieve taxon record');
+            runScinameDataSourceSearch();
+        }
+    });
 }
 
 function initializeDataSourceSearch(){
     if(targetKingdomId){
         processCancelled = false;
         nameTidIndex = {};
+        taxaLoaded = 0;
         setDataSource();
         adjustUIStart('resolveFromTaxaDataSource');
         addProgressLine('<li>Setting rank data for processing search returns ' + processStatus + '</li>');
@@ -409,89 +405,133 @@ function initializeDataSourceSearch(){
     }
 }
 
-function processAddTaxaArr(){
-    if(!processCancelled){
-        if(taxaToAddArr.length > 0){
-            const taxonToAdd = taxaToAddArr[0];
-            addProgressLine('<li style="margin-left:15px;">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
-            const newTaxonObj = {};
-            newTaxonObj['sciname'] = taxonToAdd['sciname'];
-            newTaxonObj['author'] = taxonToAdd['author'];
-            newTaxonObj['kingdomid'] = targetKingdomId;
-            newTaxonObj['rankid'] = taxonToAdd['rankid'];
-            newTaxonObj['acceptstatus'] = 1;
-            newTaxonObj['tidaccepted'] = '';
-            newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
-            newTaxonObj['family'] = taxonToAdd['family'];
-            newTaxonObj['source'] = getDataSourceName();
-            newTaxonObj['source-name'] = dataSource;
-            newTaxonObj['source-id'] = taxonToAdd['id'];
-            const formData = new FormData();
-            formData.append('taxon', JSON.stringify(newTaxonObj));
-            formData.append('action', 'addTaxon');
-            http.open("POST", taxaApi, true);
-            http.onreadystatechange = function() {
-                if(http.readyState === 4) {
-                    if(http.responseText && Number(http.responseText) > 0){
-                        nameTidIndex[taxaToAddArr[0]['sciname']] = Number(http.responseText);
-                        taxaToAddArr.splice(0, 1);
-                        processSuccessResponse(0);
-                        processAddTaxaArr();
-                    }
-                    else{
-                        processErrorResponse(15,false,'Error loading taxon');
-                        runScinameDataSourceSearch();
-                    }
+function populateTaxonomicHierarchy(){
+    if(rebuildHierarchyLoop < 40){
+        let params = 'action=populateHierarchyTable';
+        //console.log(occTaxonomyApi+'?'+params);
+        sendAPIPostRequest(taxaApi,params,function(status,res){
+            if(status === 200) {
+                if(Number(res) > 0){
+                    rebuildHierarchyLoop++;
+                    populateTaxonomicHierarchy();
                 }
-            };
-            http.send(formData);
+                else{
+                    processSuccessResponse(15,'Complete');
+                    adjustUIEnd();
+                }
+            }
+            else{
+                processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
+            }
+        });
+    }
+    else{
+        processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
+    }
+}
+
+function primeTaxonomicHierarchy(){
+    rebuildHierarchyLoop = 0;
+    addProgressLine('<li>Populating taxonomic hierarchy with new taxa ' + processStatus + '</li>');
+    let params = 'action=primeHierarchyTable';
+    //console.log(occTaxonomyApi+'?'+params);
+    sendAPIPostRequest(taxaApi,params,function(status,res){
+        if(status === 200) {
+            if(Number(res) > 0){
+                rebuildHierarchyLoop++;
+                populateTaxonomicHierarchy();
+            }
+            else{
+                adjustUIEnd();
+            }
         }
         else{
-            processAddTaxon();
+            processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
         }
+    });
+}
+
+function processAddTaxaArr(){
+    if(taxaToAddArr.length > 0){
+        const taxonToAdd = taxaToAddArr[0];
+        addProgressLine('<li style="margin-left:15px;">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
+        const newTaxonObj = {};
+        newTaxonObj['sciname'] = taxonToAdd['sciname'];
+        newTaxonObj['author'] = taxonToAdd['author'];
+        newTaxonObj['kingdomid'] = targetKingdomId;
+        newTaxonObj['rankid'] = taxonToAdd['rankid'];
+        newTaxonObj['acceptstatus'] = 1;
+        newTaxonObj['tidaccepted'] = '';
+        newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
+        newTaxonObj['family'] = taxonToAdd['family'];
+        newTaxonObj['source'] = getDataSourceName();
+        newTaxonObj['source-name'] = dataSource;
+        newTaxonObj['source-id'] = taxonToAdd['id'];
+        const formData = new FormData();
+        formData.append('taxon', JSON.stringify(newTaxonObj));
+        formData.append('action', 'addTaxon');
+        const addHttp = new XMLHttpRequest();
+        addHttp.open("POST", taxaApi, true);
+        addHttp.onreadystatechange = function() {
+            if(addHttp.readyState === 4) {
+                if(addHttp.responseText && Number(addHttp.responseText) > 0){
+                    nameTidIndex[taxaToAddArr[0]['sciname']] = Number(addHttp.responseText);
+                    taxaToAddArr.splice(0, 1);
+                    processSuccessResponse(0);
+                    processAddTaxaArr();
+                }
+                else{
+                    processErrorResponse(15,false,'Error loading taxon');
+                    runScinameDataSourceSearch();
+                }
+            }
+        };
+        addHttp.send(formData);
+    }
+    else{
+        processAddTaxon();
     }
 }
 
 function processAddTaxon(){
-    if(!processCancelled){
-        const taxonToAdd = nameSearchResults[0];
-        addProgressLine('<li style="margin-left:15px;">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
-        if(nameTidIndex.hasOwnProperty(taxonToAdd['sciname'])){
-            processSuccessResponse(15,nameSearchResults[0]['sciname'] + 'already added');
-            updateOccurrenceLinkages();
-        }
-        else{
-            const newTaxonObj = {};
-            newTaxonObj['sciname'] = taxonToAdd['sciname'];
-            newTaxonObj['author'] = taxonToAdd['author'];
-            newTaxonObj['kingdomid'] = targetKingdomId;
-            newTaxonObj['rankid'] = taxonToAdd['rankid'];
-            newTaxonObj['acceptstatus'] = taxonToAdd['accepted'] ? 1 : 0;
-            newTaxonObj['tidaccepted'] = !taxonToAdd['accepted'] ? nameTidIndex[taxonToAdd['accepted_sciname']] : '';
-            newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
-            newTaxonObj['family'] = taxonToAdd['family'];
-            newTaxonObj['source'] = getDataSourceName();
-            newTaxonObj['source-name'] = dataSource;
-            newTaxonObj['source-id'] = taxonToAdd['id'];
-            const formData = new FormData();
-            formData.append('taxon', JSON.stringify(newTaxonObj));
-            formData.append('action', 'addTaxon');
-            http.open("POST", taxaApi, true);
-            http.onreadystatechange = function() {
-                if(http.readyState === 4) {
-                    if(http.responseText && Number(http.responseText) > 0){
-                        nameTidIndex[nameSearchResults[0]['sciname']] = Number(http.responseText);
-                        processSuccessResponse(15,'Successfully added ' + nameSearchResults[0]['sciname']);
-                        updateOccurrenceLinkages();
-                    }
-                    else{
-                        processErrorResponse(15,false,'Error loading taxon');
-                        runScinameDataSourceSearch();
-                    }
+    const taxonToAdd = nameSearchResults[0];
+    addProgressLine('<li style="margin-left:15px;">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
+    if(nameTidIndex.hasOwnProperty(taxonToAdd['sciname'])){
+        processSuccessResponse(15,nameSearchResults[0]['sciname'] + 'already added');
+        updateOccurrenceLinkages();
+    }
+    else{
+        const newTaxonObj = {};
+        newTaxonObj['sciname'] = taxonToAdd['sciname'];
+        newTaxonObj['author'] = taxonToAdd['author'];
+        newTaxonObj['kingdomid'] = targetKingdomId;
+        newTaxonObj['rankid'] = taxonToAdd['rankid'];
+        newTaxonObj['acceptstatus'] = taxonToAdd['accepted'] ? 1 : 0;
+        newTaxonObj['tidaccepted'] = !taxonToAdd['accepted'] ? nameTidIndex[taxonToAdd['accepted_sciname']] : '';
+        newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
+        newTaxonObj['family'] = taxonToAdd['family'];
+        newTaxonObj['source'] = getDataSourceName();
+        newTaxonObj['source-name'] = dataSource;
+        newTaxonObj['source-id'] = taxonToAdd['id'];
+        const formData = new FormData();
+        formData.append('taxon', JSON.stringify(newTaxonObj));
+        formData.append('action', 'addTaxon');
+        const addHttp = new XMLHttpRequest();
+        addHttp.open("POST", taxaApi, true);
+        addHttp.onreadystatechange = function() {
+            if(addHttp.readyState === 4) {
+                if(addHttp.responseText && Number(addHttp.responseText) > 0){
+                    nameTidIndex[nameSearchResults[0]['sciname']] = Number(addHttp.responseText);
+                    processSuccessResponse(15,'Successfully added ' + nameSearchResults[0]['sciname']);
+                    updateOccurrenceLinkages();
                 }
-            };
-            http.send(formData);
-        }
+                else{
+                    processErrorResponse(15,false,'Error loading taxon');
+                    runScinameDataSourceSearch();
+                }
+            }
+        };
+        addHttp.send(formData);
     }
 }
 
@@ -707,7 +747,7 @@ function runScinameDataSourceSearch(){
                     else{
                         processErrorResponse(15,false);
                     }
-                },http);
+                });
             }
             else if(dataSource === 'itis'){
                 itisInitialSearchResults = [];
@@ -720,7 +760,7 @@ function runScinameDataSourceSearch(){
                     else{
                         processErrorResponse(15,false);
                     }
-                },http);
+                });
             }
             else if(dataSource === 'worms'){
                 addProgressLine('<li>Searching the World Register of Marine Species (WoRMS) for ' + currentSciname + ' ' + processStatus + '</li>');
@@ -736,12 +776,15 @@ function runScinameDataSourceSearch(){
                     else{
                         processErrorResponse(15,false);
                     }
-                },http);
+                });
             }
         }
         else{
-            adjustUIEnd();
+            primeTaxonomicHierarchy()
         }
+    }
+    else{
+        primeTaxonomicHierarchy();
     }
 }
 
@@ -764,38 +807,36 @@ function setKingdomId(){
 }
 
 function setTaxaToAdd(){
-    if(!processCancelled){
-        if(processingArr.length > 0){
-            const sciname = processingArr[0]['sciname'];
-            if(!nameTidIndex.hasOwnProperty(sciname)){
-                const params = 'sciname=' + sciname + '&kingdomid=' + targetKingdomId;
-                //console.log(taxaTidLookupApi+'?'+params);
-                sendAPIPostRequest(taxaTidLookupApi,params,function(status,res){
-                    if(dataSource === 'worms' && !res){
-                        getWoRMSAddTaxonAuthor();
+    if(processingArr.length > 0){
+        const sciname = processingArr[0]['sciname'];
+        if(!nameTidIndex.hasOwnProperty(sciname)){
+            const params = 'sciname=' + sciname + '&kingdomid=' + targetKingdomId;
+            //console.log(taxaTidLookupApi+'?'+params);
+            sendAPIPostRequest(taxaTidLookupApi,params,function(status,res){
+                if(dataSource === 'worms' && !res){
+                    getWoRMSAddTaxonAuthor();
+                }
+                else{
+                    const currentTaxon = processingArr[0];
+                    if(res){
+                        nameTidIndex[currentTaxon['sciname']] = Number(res);
                     }
                     else{
-                        const currentTaxon = processingArr[0];
-                        if(res){
-                            nameTidIndex[currentTaxon['sciname']] = Number(res);
-                        }
-                        else{
-                            taxaToAddArr.push(currentTaxon);
-                        }
-                        processingArr.splice(0, 1);
-                        setTaxaToAdd();
+                        taxaToAddArr.push(currentTaxon);
                     }
-                },http);
-            }
-            else{
-                processingArr.splice(0, 1);
-                setTaxaToAdd();
-            }
+                    processingArr.splice(0, 1);
+                    setTaxaToAdd();
+                }
+            });
         }
         else{
-            processSuccessResponse(0);
-            processAddTaxaArr();
+            processingArr.splice(0, 1);
+            setTaxaToAdd();
         }
+    }
+    else{
+        processSuccessResponse(0);
+        processAddTaxaArr();
     }
 }
 
@@ -857,151 +898,167 @@ function updateOccLocalitySecurity(){
     },http);
 }
 
+function updateOccurrenceLinkages(){
+    const newSciname = nameSearchResults[0]['sciname'];
+    const newScinameTid = nameTidIndex[nameSearchResults[0]['sciname']];
+    addProgressLine('<li style="margin-left:15px;">Updating linkages of occurrence records to ' + newSciname + ' ' + processStatus + '</li>');
+    let params = 'collid=' + collId + '&sciname=' + newSciname + '&tid=' + newScinameTid + '&kingdomid=' + targetKingdomId + '&action=updateOccWithNewSciname';
+    //console.log(occTaxonomyApi+'?'+params);
+    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+        if(status === 200) {
+            processSuccessResponse(15, res + ' records updated');
+        }
+        else{
+            processErrorResponse(15,true);
+        }
+        taxaLoaded++;
+        if(taxaLoaded > 30){
+            setUnlinkedRecordCounts();
+            taxaLoaded = 0;
+        }
+        runScinameDataSourceSearch();
+    });
+}
+
 function validateCOLInitialNameSearchResults(){
-    if(!processCancelled){
-        if(colInitialSearchResults.length > 0){
-            let id;
-            const taxon = colInitialSearchResults[0];
-            colInitialSearchResults.splice(0, 1);
-            if(taxon['accepted']){
-                id = taxon['id'];
-            }
-            else{
-                id = taxon['accepted_id'];
-            }
-            const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/classification';
-            sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
-                if(status === 200){
-                    const resArr = JSON.parse(res);
-                    const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
-                    if(kingdomObj && kingdomObj['name'].toLowerCase() === targetKingdomName.toLowerCase()){
-                        let hierarchyArr = [];
-                        if(taxon.hasOwnProperty('hierarchy')){
-                            hierarchyArr = taxon['hierarchy'];
-                        }
-                        for(let i in resArr){
-                            if(resArr.hasOwnProperty(i)){
-                                const taxResult = resArr[i];
-                                if(taxResult['name'] !== taxon['sciname']){
-                                    const rankname = taxResult['rank'].toLowerCase();
-                                    const rankid = Number(rankArr[rankname]);
-                                    if(recognizedRanks.includes(rankid) || (!taxon['accepted'] && taxon['accepted_sciname'] === taxResult['name'])){
-                                        const resultObj = {};
-                                        resultObj['id'] = taxResult['id'];
-                                        resultObj['sciname'] = taxResult['name'];
-                                        resultObj['author'] = taxResult.hasOwnProperty('authorship') ? taxResult['authorship'] : '';
-                                        resultObj['rankname'] = rankname;
-                                        resultObj['rankid'] = rankid;
-                                        if(rankname === 'family'){
-                                            taxon['family'] = resultObj['sciname'];
-                                        }
-                                        hierarchyArr.push(resultObj);
+    if(colInitialSearchResults.length > 0){
+        let id;
+        const taxon = colInitialSearchResults[0];
+        colInitialSearchResults.splice(0, 1);
+        if(taxon['accepted']){
+            id = taxon['id'];
+        }
+        else{
+            id = taxon['accepted_id'];
+        }
+        const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/classification';
+        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+            if(status === 200){
+                const resArr = JSON.parse(res);
+                const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
+                if(kingdomObj && kingdomObj['name'].toLowerCase() === targetKingdomName.toLowerCase()){
+                    let hierarchyArr = [];
+                    if(taxon.hasOwnProperty('hierarchy')){
+                        hierarchyArr = taxon['hierarchy'];
+                    }
+                    for(let i in resArr){
+                        if(resArr.hasOwnProperty(i)){
+                            const taxResult = resArr[i];
+                            if(taxResult['name'] !== taxon['sciname']){
+                                const rankname = taxResult['rank'].toLowerCase();
+                                const rankid = Number(rankArr[rankname]);
+                                if(recognizedRanks.includes(rankid) || (!taxon['accepted'] && taxon['accepted_sciname'] === taxResult['name'])){
+                                    const resultObj = {};
+                                    resultObj['id'] = taxResult['id'];
+                                    resultObj['sciname'] = taxResult['name'];
+                                    resultObj['author'] = taxResult.hasOwnProperty('authorship') ? taxResult['authorship'] : '';
+                                    resultObj['rankname'] = rankname;
+                                    resultObj['rankid'] = rankid;
+                                    if(rankname === 'family'){
+                                        taxon['family'] = resultObj['sciname'];
                                     }
+                                    hierarchyArr.push(resultObj);
                                 }
                             }
                         }
-                        taxon['hierarchy'] = hierarchyArr;
-                        nameSearchResults.push(taxon);
                     }
-                    validateCOLInitialNameSearchResults();
+                    taxon['hierarchy'] = hierarchyArr;
+                    nameSearchResults.push(taxon);
                 }
-                else{
-                    validateCOLInitialNameSearchResults();
-                }
-            },http);
-        }
-        else if(nameSearchResults.length === 1){
-            processSuccessResponse(0);
-            validateNameSearchResults();
-        }
-        else if(nameSearchResults.length === 0){
-            processErrorResponse(15,false,'Not found');
-            runScinameDataSourceSearch();
-        }
-        else if(nameSearchResults.length > 1){
-            processErrorResponse(15,false,'Unable to distinguish taxon by name');
-            runScinameDataSourceSearch();
-        }
+                validateCOLInitialNameSearchResults();
+            }
+            else{
+                validateCOLInitialNameSearchResults();
+            }
+        });
+    }
+    else if(nameSearchResults.length === 1){
+        processSuccessResponse(0);
+        validateNameSearchResults();
+    }
+    else if(nameSearchResults.length === 0){
+        processErrorResponse(15,false,'Not found');
+        runScinameDataSourceSearch();
+    }
+    else if(nameSearchResults.length > 1){
+        processErrorResponse(15,false,'Unable to distinguish taxon by name');
+        runScinameDataSourceSearch();
     }
 }
 
 function validateITISInitialNameSearchResults(){
-    if(!processCancelled){
-        if(itisInitialSearchResults.length > 0){
-            const taxon = itisInitialSearchResults[0];
-            itisInitialSearchResults.splice(0, 1);
-            const id = taxon['id'];
-            const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
-            sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
-                if(status === 200){
-                    const resObj = JSON.parse(res);
-                    const coreMetadata = resObj['coreMetadata'];
-                    const namestatus = coreMetadata['taxonUsageRating'];
-                    if(namestatus === 'accepted'){
-                        const taxonRankData = resObj['taxRank'];
-                        taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
-                        taxon['rankid'] = Number(taxonRankData['rankId']);
-                        taxon['accepted'] = true;
-                        nameSearchResults.push(taxon);
-                    }
-                    validateITISInitialNameSearchResults();
+    if(itisInitialSearchResults.length > 0){
+        const taxon = itisInitialSearchResults[0];
+        itisInitialSearchResults.splice(0, 1);
+        const id = taxon['id'];
+        const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
+        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+            if(status === 200){
+                const resObj = JSON.parse(res);
+                const coreMetadata = resObj['coreMetadata'];
+                const namestatus = coreMetadata['taxonUsageRating'];
+                if(namestatus === 'accepted'){
+                    const taxonRankData = resObj['taxRank'];
+                    taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
+                    taxon['rankid'] = Number(taxonRankData['rankId']);
+                    taxon['accepted'] = true;
+                    nameSearchResults.push(taxon);
                 }
-                else{
-                    processErrorResponse(15,false,'Unable to retrieve taxon record');
-                    runScinameDataSourceSearch();
-                }
-            },http);
-        }
-        else if(nameSearchResults.length === 1){
-            getITISNameSearchResultsHierarchy();
-        }
-        else if(nameSearchResults.length === 0){
-            processErrorResponse(15,false,'Not found');
-            runScinameDataSourceSearch();
-        }
-        else if(nameSearchResults.length > 1){
-            processErrorResponse(15,false,'Unable to distinguish taxon by name');
-            runScinameDataSourceSearch();
-        }
+                validateITISInitialNameSearchResults();
+            }
+            else{
+                processErrorResponse(15,false,'Unable to retrieve taxon record');
+                runScinameDataSourceSearch();
+            }
+        });
+    }
+    else if(nameSearchResults.length === 1){
+        getITISNameSearchResultsHierarchy();
+    }
+    else if(nameSearchResults.length === 0){
+        processErrorResponse(15,false,'Not found');
+        runScinameDataSourceSearch();
+    }
+    else if(nameSearchResults.length > 1){
+        processErrorResponse(15,false,'Unable to distinguish taxon by name');
+        runScinameDataSourceSearch();
     }
 }
 
 function validateNameSearchResults(){
-    if(!processCancelled){
-        processingArr = new Array();
-        taxaToAddArr = new Array();
-        if(nameSearchResults.length === 1){
-            if(!nameSearchResults[0]['accepted'] && !nameSearchResults[0]['accepted_sciname']){
-                processErrorResponse(15,false,'Unable to distinguish accepted name');
-                runScinameDataSourceSearch();
-            }
-            else{
-                const addHierchyTemp = nameSearchResults[0]['hierarchy'];
-                addHierchyTemp.sort((a, b) => {
-                    return a.rankid - b.rankid;
-                });
-                let parentName = addHierchyTemp[0]['sciname'];
-                for(let i in addHierchyTemp){
-                    if(addHierchyTemp.hasOwnProperty(i) && addHierchyTemp[i]['sciname'] !== parentName){
-                        addHierchyTemp[i]['parentName'] = parentName;
-                        addHierchyTemp[i]['family'] = addHierchyTemp[i]['rankid'] >= 140 ? nameSearchResults[0]['family'] : null;
-                        parentName = addHierchyTemp[i]['sciname'];
-                        if(!nameSearchResults[0]['accepted'] && addHierchyTemp[i]['sciname'] === nameSearchResults[0]['accepted_sciname']){
-                            nameSearchResults[0]['parentName'] = addHierchyTemp[i]['parentName'];
-                        }
-                    }
-                }
-                if(!nameSearchResults[0].hasOwnProperty('parentName') || nameSearchResults[0]['parentName'] === ''){
-                    nameSearchResults[0]['parentName'] = parentName;
-                }
-                processingArr = addHierchyTemp;
-                addProgressLine('<li style="margin-left:15px;">Matching parent and accepted taxa to the Taxonomic Thesaurus ' + processStatus + '</li>');
-                setTaxaToAdd();
-            }
-        }
-        else{
-            processErrorResponse(15,false,'Unable to distinguish taxon by name');
+    processingArr = new Array();
+    taxaToAddArr = new Array();
+    if(nameSearchResults.length === 1){
+        if(!nameSearchResults[0]['accepted'] && !nameSearchResults[0]['accepted_sciname']){
+            processErrorResponse(15,false,'Unable to distinguish accepted name');
             runScinameDataSourceSearch();
         }
+        else{
+            const addHierchyTemp = nameSearchResults[0]['hierarchy'];
+            addHierchyTemp.sort((a, b) => {
+                return a.rankid - b.rankid;
+            });
+            let parentName = addHierchyTemp[0]['sciname'];
+            for(let i in addHierchyTemp){
+                if(addHierchyTemp.hasOwnProperty(i) && addHierchyTemp[i]['sciname'] !== parentName){
+                    addHierchyTemp[i]['parentName'] = parentName;
+                    addHierchyTemp[i]['family'] = addHierchyTemp[i]['rankid'] >= 140 ? nameSearchResults[0]['family'] : null;
+                    parentName = addHierchyTemp[i]['sciname'];
+                    if(!nameSearchResults[0]['accepted'] && addHierchyTemp[i]['sciname'] === nameSearchResults[0]['accepted_sciname']){
+                        nameSearchResults[0]['parentName'] = addHierchyTemp[i]['parentName'];
+                    }
+                }
+            }
+            if(!nameSearchResults[0].hasOwnProperty('parentName') || nameSearchResults[0]['parentName'] === ''){
+                nameSearchResults[0]['parentName'] = parentName;
+            }
+            processingArr = addHierchyTemp;
+            addProgressLine('<li style="margin-left:15px;">Matching parent and accepted taxa to the Taxonomic Thesaurus ' + processStatus + '</li>');
+            setTaxaToAdd();
+        }
+    }
+    else{
+        processErrorResponse(15,false,'Unable to distinguish taxon by name');
+        runScinameDataSourceSearch();
     }
 }

@@ -40,9 +40,6 @@ if($editable){
 		$tidAccepted = $_REQUEST['tidaccepted'];
 		$statusStr = $taxonEditorObj->submitChangeToNotAccepted($tid,$tidAccepted);
 	}
-	elseif($submitAction === 'updatehierarchy'){
-		$taxonEditorObj->rebuildHierarchy($tid);
-	}
 	elseif($submitAction === 'Remap Taxon'){
 		$statusStr = $taxonEditorObj->transferResources($_REQUEST['remaptid']);
 		header('Location: index.php?target='.$_REQUEST['genusstr'].'&statusstr='.$statusStr.'&tabindex=1');
@@ -451,16 +448,6 @@ if($editable){
             <div id="hierarchydiv" style="min-height:400px;">
                 <fieldset style="width:420px;padding:25px;">
                     <legend><b>Quick Query Taxonomic Hierarchy</b></legend>
-                    <div style="float:right;" title="Rebuild Hierarchy">
-                        <form name="updatehierarchyform" action="taxonomyeditor.php" method="post">
-                            <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid(); ?>"/>
-                            <input type="hidden" name="submitaction" value="updatehierarchy" />
-                            <input type="hidden" name="tabindex" value="2" />
-                            <button type="submit" name="imagesubmit">
-                                <i style="height:20px;width:20px;" class="fas fa-undo-alt"></i>
-                            </button>
-                        </form>
-                    </div>
                     <?php
                     if($hierarchyArr = $taxonEditorObj->getHierarchyArr()){
                         $indent = 0;

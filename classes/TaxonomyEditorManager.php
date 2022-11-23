@@ -204,11 +204,8 @@ class TaxonomyEditorManager{
 			$sql = 'UPDATE taxa '.
 				'SET parenttid = '.$parentTid.' '.
 				'WHERE tid = '.$this->tid.' ';
-			if($this->conn->query($sql)){
-				$this->rebuildHierarchy();
-			}
-			else{
-				$status = 'Unable to edit taxonomic placement. SQL: '.$sql; 
+			if(!$this->conn->query($sql)){
+                $status = 'Unable to edit taxonomic placement.';
 			}
 		}
 		return $status;
@@ -319,84 +316,6 @@ class TaxonomyEditorManager{
 				'AND t2.RankId = 220 AND t1.tid = '.$tid.' AND ISNULL(d2.CID) ';
 			//echo $sqlAdd2b;
 			$this->conn->query($sqlAdd3);
-		}
-	}
-
-	public function rebuildHierarchy($tid = null): void
-	{
-		if(!$tid) {
-			$tid = $this->tid;
-		}
-		if(!$this->rankid) {
-			$this->setTaxon();
-		}
-		$parentArr = array();
-		$parCnt = 0;
-		$targetTid = $tid;
-		do{
-			$sql1 = 'SELECT DISTINCT parenttid FROM taxa '.
-				'WHERE tid = '.$targetTid.' ';
-			//echo $sqlParents;
-			$targetTid = 0;
-			$rs1 = $this->conn->query($sql1);
-			if(($r1 = $rs1->fetch_object()) && $r1->parenttid) {
-				if(in_array($r1->parenttid, $parentArr, true)) {
-					break;
-				}
-				$parentArr[] = $r1->parenttid;
-				$targetTid = $r1->parenttid;
-			}
-			$rs1->free();
-			$parCnt++;
-		}while($targetTid && $parCnt < 16);
-
-        $trueHierarchyStr = implode(',',array_reverse($parentArr));
-		if($parentArr !== $this->hierarchyArr){
-			$branchTidArr = array($tid);
-			$sql2 = 'SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$tid;
-			$rs2 = $this->conn->query($sql2);
-			while($r2 = $rs2->fetch_object()){
-				$branchTidArr[] = $r2->tid;
-			}
-			$rs2->free();
-			if($this->hierarchyArr){
-				$sql2a = 'DELETE FROM taxaenumtree '.
-					'WHERE parenttid IN('.implode(',',$this->hierarchyArr).') AND tid IN('.implode(',',$branchTidArr).') ';
-				//echo $sql2a; exit;
-				$this->conn->query($sql2a);
-			}
-
-			$sql3 = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) ';
-			foreach($parentArr as $pid){
-				$sql3a = $sql3.'SELECT DISTINCT tid,'.$pid.' FROM taxaenumtree WHERE parenttid = '.$tid;
-				$this->conn->query($sql3a);
-				//echo $sql3a.'<br/>';
-				$sql3b = $sql3.'VALUES('.$tid.','.$pid.')';
-				$this->conn->query($sql3b);
-				//echo $sql3b.'<br/>';
-			}
-			$this->setHierarchy();
-		}
-
-		if($this->rankid > 140){
-			$newFam = '';
-			$sqlFam1 = 'SELECT sciname FROM taxa WHERE tid IN('.$trueHierarchyStr.') AND rankid = 140';
-			$rsFam1 = $this->conn->query($sqlFam1);
-			if($r1 = $rsFam1->fetch_object()){
-				$newFam = $r1->sciname;
-			}
-			$rsFam1->free();
-			
-			$sqlFam2 = 'SELECT family FROM taxa WHERE tid = '.$tid.' ';
-			$rsFam2 = $this->conn->query($sqlFam2);
-			if(($rFam2 = $rsFam2->fetch_object()) && $newFam !== $rFam2->family) {
-				$sql = 'UPDATE taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
-					'SET t.family = '.($newFam?'"'.Sanitizer::cleanInStr($this->conn,$newFam).'"':'Not assigned').' '.
-					'WHERE (t.tid = '.$tid.' OR e.parenttid = '.$tid.')';
-				//echo $sql;
-				$this->conn->query($sql);
-			}
-			$rsFam2->free();
 		}
 	}
 

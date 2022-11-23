@@ -31,8 +31,6 @@ class TaxonomyDisplayManager{
 
 	private function setTaxa(): array
 	{
-		$this->primeTaxaEnumTree();
-		
 		$subGenera = array();
 		$taxaParentIndex = array();
 		if($this->targetStr){
@@ -257,8 +255,6 @@ class TaxonomyDisplayManager{
 	public function getDynamicTreePath(): array
 	{
 		$retArr = array();
-		$this->primeTaxaEnumTree();
-		
 		if($this->targetStr){
 			$tid = '';
 			$acceptedTid = '';
@@ -322,22 +318,6 @@ class TaxonomyDisplayManager{
 			}
 		}
 		return $retArr;
-	}
-
-	private function primeTaxaEnumTree(): void
-	{
-		$sql = 'SELECT tid FROM taxaenumtree LIMIT 1';
-		$rs = $this->conn->query($sql);
-		if(!$rs->num_rows){
-			echo '<div style="color:red;margin:30px;">';
-			echo 'NOTICE: Building new taxonomic hierarchy table (taxaenumtree).<br/>';
-			echo 'This may take a few minutes, but only needs to be done once.<br/>';
-			echo 'Do not terminate this process early.';
-			echo '</div>';
-			flush();
-			(new TaxonomyUtilities)->buildHierarchyEnumTree();
-		}
-		$rs->free();
 	}
 
 	public function setTargetStr($target): void

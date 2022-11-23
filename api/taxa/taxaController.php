@@ -19,4 +19,12 @@ if($isEditor && $action){
         $taxManager = new TaxonomyEditorManager();
         echo $taxManager->loadNewName(json_decode($_POST['taxon'], true));
     }
+    elseif($action === 'primeHierarchyTable'){
+        $taxUtilities = new TaxonomyUtilities();
+        echo $taxUtilities->primeHierarchyTable();
+    }
+    elseif($action === 'populateHierarchyTable'){
+        $taxUtilities = new TaxonomyUtilities();
+        echo $taxUtilities->populateHierarchyTable();
+    }
 }

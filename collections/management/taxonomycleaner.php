@@ -95,7 +95,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221121" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221110" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221113" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -109,36 +109,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             $( document ).ready(function() {
 				setUnlinkedRecordCounts();
             });
-
-            function updateOccurrenceLinkages(){
-                if(!processCancelled){
-                    const newSciname = nameSearchResults[0]['sciname'];
-                    const newScinameTid = nameTidIndex[nameSearchResults[0]['sciname']];
-                    addProgressLine('<li style="margin-left:15px;">Updating linkages of occurrence records to ' + newSciname + ' ' + processStatus + '</li>');
-                    let params = 'collid=' + collId + '&sciname=' + newSciname + '&tid=' + newScinameTid + '&kingdomid=' + targetKingdomId + '&action=updateOccWithNewSciname';
-                    //console.log(occTaxonomyApi+'?'+params);
-                    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
-                        if(status === 200) {
-                            processSuccessResponse(15, res + ' records updated');
-                        }
-                        else{
-                            processErrorResponse(15,true);
-                        }
-                        taxaLoaded++;
-                        if(taxaLoaded > 30){
-                            setUnlinkedRecordCounts();
-                            taxaLoaded = 0;
-                        }
-                        runScinameDataSourceSearch();
-                    },http);
-                }
-            }
-
-            function cancelSearchProcess(){
-                processCancelled = true;
-                http.abort();
-                adjustUIEnd();
-            }
         </script>
 	</head>
 	<body>
@@ -257,7 +227,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     <span style="margin-right:10px;">
                                         <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
                                     </span>
-                                    <button onclick="cancelProcess();">Cancel</button>
+                                    <button onclick="cancelProcess(false);">Cancel</button>
                                 </div>
                             </div>
                         </div>
