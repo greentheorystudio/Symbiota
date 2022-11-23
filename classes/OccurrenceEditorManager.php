@@ -35,7 +35,7 @@ class OccurrenceEditorManager {
             $connection = new DbConnection();
             $this->conn = $connection->getConnection();
         }
-        $this->occFieldArr = array('dbpk', 'catalognumber', 'othercatalognumbers', 'occurrenceid','family', 'scientificname', 'sciname',
+        $this->occFieldArr = array('dbpk', 'catalognumber', 'othercatalognumbers', 'occurrenceid','family', 'verbatimscientificname', 'sciname',
             'tid', 'scientificnameauthorship', 'identifiedby', 'dateidentified', 'identificationreferences',
             'identificationremarks', 'taxonremarks', 'identificationqualifier', 'typestatus', 'recordedby', 'recordnumber',
             'associatedcollectors', 'eventdate', 'year', 'month', 'day', 'startdayofyear', 'enddayofyear', 'fieldnotes',

@@ -707,7 +707,7 @@ class SpecUploadBase extends SpecUpload{
         $this->outputMsg('<li>Updating existing records... </li>');
         $fieldArr = array('basisOfRecord', 'catalogNumber','otherCatalogNumbers','occurrenceid',
             'ownerInstitutionCode','institutionID','collectionID','institutionCode','collectionCode',
-            'family','scientificName','sciname','tid','genus','specificEpithet','datasetID','taxonRank','infraspecificEpithet',
+            'family','verbatimScientificName','sciname','tid','genus','specificEpithet','datasetID','taxonRank','infraspecificEpithet',
             'scientificNameAuthorship','identifiedBy','dateIdentified','identificationReferences','identificationRemarks',
             'taxonRemarks','identificationQualifier','typeStatus','recordedBy','recordNumber','associatedCollectors',
             'eventDate','Year','Month','Day','startDayOfYear','endDayOfYear','verbatimEventDate',

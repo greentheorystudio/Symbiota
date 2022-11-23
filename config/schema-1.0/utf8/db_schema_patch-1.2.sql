@@ -581,7 +581,8 @@ ALTER TABLE `configurations`
     ADD UNIQUE INDEX `configurationname`(`configurationname`);
 
 ALTER TABLE `omoccurdeterminations`
-    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`;
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`,
+    ADD COLUMN `verbatimScientificName` varchar(255) NULL AFTER `sciname`
 
 UPDATE omoccurdeterminations AS d LEFT JOIN taxa AS t ON d.sciname = t.SciName
     SET d.tid = t.TID
@@ -592,7 +593,8 @@ UPDATE omoccurdeterminations AS d LEFT JOIN taxa AS t ON d.sciname = t.SciName
 WHERE ISNULL(t.TID);
 
 ALTER TABLE `omoccurrences`
-    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`;
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`,
+    CHANGE COLUMN `scientificName` `verbatimScientificName` varchar(255) NULL DEFAULT NULL AFTER `family`
 
 UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName
     SET o.tid = t.TID
@@ -634,4 +636,5 @@ UPDATE taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid
     SET t.tidaccepted = ts.tidaccepted, t.parenttid = ts.parenttid, t.family = ts.family;
 
 ALTER TABLE `uploadspectemp`
-    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`;
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`,
+    CHANGE COLUMN `scientificName` `verbatimScientificName` varchar(255) NULL DEFAULT NULL AFTER `family`;
