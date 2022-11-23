@@ -87,11 +87,14 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 color: red;
                 font-weight: bold;
             }
+            .current-status {
+                margin-left: 10px;
+            }
         </style>
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-        <script src="../../js/shared.js?ver=20221117" type="text/javascript"></script>
+        <script src="../../js/shared.js?ver=20221121" type="text/javascript"></script>
         <script src="../../js/collections.taxonomytools.js?ver=20221110" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
@@ -100,7 +103,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             const taxaApi = "../../api/taxa/taxaController.php";
             const taxaTidLookupApi = "../../api/taxa/gettid.php";
             const proxyUrl = "../../api/proxy.php";
-            const processStatus = '<span class="current-status"><img src="../../images/workingcircle.gif" style="width:15px;" /></span>';
+            const processStatus = '<span class="current-status">' + getSmallWorkingSpinnerHtml(11) + '</span>';
             const recognizedRanks = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 
             $( document ).ready(function() {
@@ -129,6 +132,12 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                         runScinameDataSourceSearch();
                     },http);
                 }
+            }
+
+            function cancelSearchProcess(){
+                processCancelled = true;
+                http.abort();
+                adjustUIEnd();
             }
         </script>
 	</head>
@@ -185,7 +194,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     <button class="start-button" onclick="updateOccLocalitySecurity();">Start</button>
                                 </div>
                                 <div class="cancel-div" id="updateOccLocalitySecurityCancel" style="display:none;">
-                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <span style="margin-right:10px;">
+                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                    </span>
                                     <button onclick="cancelProcess();">Cancel</button>
                                 </div>
                             </div>
@@ -199,7 +210,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     <button class="start-button" onclick="callCleaningController('leading-trailing-spaces');">Start</button>
                                 </div>
                                 <div class="cancel-div" id="cleanProcessesCancel" style="display:none;">
-                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <span style="margin-right:10px;">
+                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                    </span>
                                     <button onclick="cancelProcess();">Cancel</button>
                                 </div>
                             </div>
@@ -215,7 +228,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     <button class="start-button" onclick="callTaxThesaurusLinkController();">Start</button>
                                 </div>
                                 <div class="cancel-div" id="updateWithTaxThesaurusCancel" style="display:none;">
-                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <span style="margin-right:10px;">
+                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                    </span>
                                     <button onclick="cancelProcess();">Cancel</button>
                                 </div>
                             </div>
@@ -239,7 +254,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     <button class="start-button" onclick="initializeDataSourceSearch();">Start</button>
                                 </div>
                                 <div class="cancel-div" id="resolveFromTaxaDataSourceCancel" style="display:none;">
-                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <span style="margin-right:10px;">
+                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                    </span>
                                     <button onclick="cancelProcess();">Cancel</button>
                                 </div>
                             </div>
@@ -256,7 +273,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     <button class="start-button" onclick="resolveFromTaxThesaurusFuzzy();">Start</button>
                                 </div>
                                 <div class="cancel-div" id="resolveFromTaxThesaurusFuzzyCancel" style="display:none;">
-                                    <img src="../../images/workingcircle.gif" style="width:15px;margin-right:10px;" />
+                                    <span style="margin-right:10px;">
+                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                    </span>
                                     <button onclick="cancelProcess();">Cancel</button>
                                 </div>
                             </div>

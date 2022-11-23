@@ -96,7 +96,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221117"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221121"></script>
 	<script type="text/javascript">
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>

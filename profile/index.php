@@ -107,7 +107,7 @@ else{
 			return true;
 		}
 	</script>
-	<script src="../js/shared.js?ver=20221117" type="text/javascript"></script>
+	<script src="../js/shared.js?ver=20221121" type="text/javascript"></script>
 </head>
 <body>
 

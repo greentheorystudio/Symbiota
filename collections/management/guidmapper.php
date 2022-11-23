@@ -25,7 +25,7 @@ $uuidManager = new UuidFactory();
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> GUID/UUID Generator</title>
 	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
     <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-    <script type="text/javascript" src="../../js/shared.js?ver=20221117"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221121"></script>
 </head>
 <body>
 <?php 

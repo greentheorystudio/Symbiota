@@ -800,7 +800,7 @@ function setTaxaToAdd(){
 }
 
 function setUnlinkedRecordCounts(){
-    const loadingMessage = '<img src="../../images/workingcircle.gif" style="width:15px;" />';
+    const loadingMessage = getSmallWorkingSpinnerHtml(12);
     document.getElementById("unlinkedOccCnt").innerHTML = loadingMessage;
     document.getElementById("unlinkedTaxaCnt").innerHTML = loadingMessage;
     const recHttp = new XMLHttpRequest();
