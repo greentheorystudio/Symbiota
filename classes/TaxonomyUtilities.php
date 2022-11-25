@@ -150,6 +150,54 @@ class TaxonomyUtilities {
 		return $retArr;
 	}
 
+    public function formatScientificName($inStr){
+        $sciNameStr = trim($inStr);
+        $sciNameStr = preg_replace('/\s\s+/', ' ',$sciNameStr);
+        $tokens = explode(' ',$sciNameStr);
+        if($tokens){
+            $sciNameStr = array_shift($tokens);
+            if(strlen($sciNameStr) < 2) {
+                $sciNameStr = ' ' . array_shift($tokens);
+            }
+            if($tokens){
+                $term = array_shift($tokens);
+                $sciNameStr .= ' '.$term;
+                if($term === 'x') {
+                    $sciNameStr .= ' ' . array_shift($tokens);
+                }
+            }
+            $tRank = '';
+            $infraSp = '';
+            foreach($tokens as $c => $v){
+                switch($v) {
+                    case 'subsp.':
+                    case 'subsp':
+                    case 'ssp.':
+                    case 'ssp':
+                    case 'subspecies':
+                    case 'var.':
+                    case 'var':
+                    case 'variety':
+                    case 'forma':
+                    case 'form':
+                    case 'f.':
+                    case 'fo.':
+                        if(array_key_exists($c+1,$tokens) && ctype_lower($tokens[$c+1])){
+                            $tRank = $v;
+                            if(($tRank === 'ssp' || $tRank === 'subsp' || $tRank === 'var') && substr($tRank,-1) !== '.') {
+                                $tRank .= '.';
+                            }
+                            $infraSp = $tokens[$c+1];
+                        }
+                }
+            }
+            if($infraSp){
+                $sciNameStr .= ' '.$tRank.' '.$infraSp;
+            }
+        }
+        return $sciNameStr;
+    }
+
 	private static function setInfraNode($sciStr, &$sciNameArr, &$retArr, &$authorArr, $rankTag): void
 	{
 		if($sciNameArr){
@@ -166,30 +214,51 @@ class TaxonomyUtilities {
 		}
 	}
 
-    public function primeHierarchyTable(): int
+    public function primeHierarchyTable($tid = null): int
     {
         $retCnt = 0;
-        $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
-            'SELECT DISTINCT tid, parenttid FROM taxa '.
-            'WHERE tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
-        //echo $sql;
-        if($this->conn->query($sql)){
-            $retCnt += $this->conn->affected_rows;
+        $tidStr = '';
+        if($tid){
+            if(is_array($tid)){
+                $tidStr = implode(',', $tid);
+            }
+            elseif(is_numeric($tid)){
+                $tidStr = $tid;
+            }
+            if($tidStr){
+                $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
+                    'SELECT DISTINCT tid, parenttid FROM taxa '.
+                    'WHERE tid IN('.$tidStr.') AND tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
+                //echo $sql;
+                if($this->conn->query($sql)){
+                    $retCnt += $this->conn->affected_rows;
+                }
+            }
         }
         return $retCnt;
     }
 
-    public function populateHierarchyTable(): int
+    public function populateHierarchyTable($tid = null): int
     {
         $retCnt = 0;
-        $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
-            'SELECT DISTINCT e.tid, t.parenttid '.
-            'FROM taxaenumtree AS e INNER JOIN taxa AS t ON e.parenttid = t.tid '.
-            'LEFT JOIN taxaenumtree AS e2 ON e.tid = e2.tid AND t.parenttid = e2.parenttid '.
-            'WHERE ISNULL(e2.tid) AND t.parenttid IS NOT NULL ';
-        //echo $sql;
-        if($this->conn->query($sql)){
-            $retCnt += $this->conn->affected_rows;
+        $tidStr = '';
+        if($tid){
+            if(is_array($tid)){
+                $tidStr = implode(',', $tid);
+            }
+            elseif(is_numeric($tid)){
+                $tidStr = $tid;
+            }
+            if($tidStr){
+                $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
+                    'SELECT DISTINCT e.tid, t.parenttid '.
+                    'FROM taxaenumtree AS e LEFT JOIN taxa AS t ON e.parenttid = t.tid '.
+                    'WHERE e.tid IN('.$tidStr.') AND t.parenttid NOT IN(SELECT parenttid FROM taxaenumtree WHERE tid IN('.$tidStr.')) ';
+                //echo $sql;
+                if($this->conn->query($sql)){
+                    $retCnt += $this->conn->affected_rows;
+                }
+            }
         }
         return $retCnt;
     }

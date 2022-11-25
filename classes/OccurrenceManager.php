@@ -373,8 +373,8 @@ class OccurrenceManager{
                     $sqlWhere .= 'AND (ISNULL(o.eventdate)) ';
                     $this->localSearchArr[] = 'Date IS NULL';
                 }
-                elseif($eDate1 = $this->formatDate($dateArr[0])){
-                    $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
+                elseif($eDate1 = OccurrenceUtilities::formatDate($dateArr[0])){
+                    $eDate2 = (count($dateArr)>1?OccurrenceUtilities::formatDate($dateArr[1]):'');
                     if($eDate2){
                         $sqlWhere .= 'AND (o.eventdate BETWEEN "'.Sanitizer::cleanInStr($this->conn,$eDate1).'" AND "'.Sanitizer::cleanInStr($this->conn,$eDate2).'") ';
                     }
@@ -530,8 +530,8 @@ class OccurrenceManager{
                     $dateArr[] = $this->searchTermsArr['uploaddate2'];
                 }
             }
-            if($dateArr && $eDate1 = $this->formatDate($dateArr[0])){
-                $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
+            if($dateArr && $eDate1 = OccurrenceUtilities::formatDate($dateArr[0])){
+                $eDate2 = (count($dateArr)>1?OccurrenceUtilities::formatDate($dateArr[1]):'');
                 if($eDate2){
                     $sqlWhere .= 'AND (i.InitialTimeStamp BETWEEN "'.Sanitizer::cleanInStr($this->conn,$eDate1).'" AND "'.Sanitizer::cleanInStr($this->conn,$eDate2).'") ';
                 }
@@ -576,10 +576,6 @@ class OccurrenceManager{
             $rs->free();
         }
         return $retArr;
-    }
-
-    protected function formatDate($inDate){
-        return OccurrenceUtilities::formatDate($inDate);
     }
 
     protected function setTableJoins($sqlWhere): string

@@ -1,6 +1,8 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/OccurrenceUtilities.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 include_once(__DIR__ . '/UuidFactory.php');
 include_once(__DIR__ . '/Sanitizer.php');
 
@@ -972,7 +974,7 @@ class ImageLocalProcessor {
 								$recMap['sciname'] = $sn;
 							}
 							elseif(array_key_exists('scientificname',$recMap) && $recMap['scientificname']){
-								$recMap['sciname'] = $this->formatScientificName($recMap['scientificname']);
+								$recMap['sciname'] = (new TaxonomyUtilities)->formatScientificName($recMap['scientificname']);
 							}
 							if(array_key_exists('sciname',$recMap)){
 								$symbMap['sciname']['type'] = 'string';
@@ -982,7 +984,7 @@ class ImageLocalProcessor {
 						
 						if(!array_key_exists('eventdate',$recMap) || !$recMap['eventdate']){
 							if(array_key_exists('verbatimeventdate',$recMap) && $recMap['verbatimeventdate']){
-								$dateStr = $this->formatDate($recMap['verbatimeventdate']); 
+								$dateStr = OccurrenceUtilities::formatDate($recMap['verbatimeventdate']);
 								if($dateStr){
 									$recMap['eventdate'] = $dateStr;
 									if($dateStr === $recMap['verbatimeventdate']) {
@@ -1105,7 +1107,7 @@ class ImageLocalProcessor {
 													}
 												}
 												elseif($type === 'date'){
-													$dateStr = $this->formatDate($activeValue); 
+													$dateStr = OccurrenceUtilities::formatDate($activeValue);
 													if($dateStr){
 														$updateValueArr[$activeField] = $activeValue;
 													} 
@@ -1165,7 +1167,7 @@ class ImageLocalProcessor {
 										}
 									}
 									elseif($type === 'date'){
-										$dateStr = $this->formatDate($value);
+										$dateStr = OccurrenceUtilities::formatDate($value);
 										if($dateStr){
 											$sqlIns2 .= ',"'.$dateStr.'"';
 										}
@@ -1523,131 +1525,6 @@ class ImageLocalProcessor {
 		$this->logPath = $path;
 	}
 
-	private function formatDate($inStr){
-		$dateStr = trim($inStr);
-		if(!$dateStr) {
-			return false;
-		}
-		$t = '';
-		$y = '';
-		$m = '00';
-		$d = '00';
-		if(preg_match('/\d{2}:\d{2}:\d{2}/',$dateStr,$match)){
-			$t = $match[0];
-		}
-		if(preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2})\D*/',$dateStr,$match)){
-			$y = $match[1];
-			$m = $match[2];
-			$d = $match[3];
-		}
-		elseif(preg_match('/^(\d{1,2})\s(\D{3,})\.*\s(\d{2,4})/',$dateStr,$match)){
-			$d = $match[1];
-			$mStr = $match[2];
-			$y = $match[3];
-			$mStr = strtolower(substr($mStr,0,3));
-			$m = $this->monthNames[$mStr];
-		}
-		elseif(preg_match('/^(\d{1,2})-(\D{3,})-(\d{2,4})/',$dateStr,$match)){
-			$d = $match[1];
-			$mStr = $match[2];
-			$y = $match[3];
-			$mStr = strtolower(substr($mStr,0,3));
-			$m = $this->monthNames[$mStr];
-		}
-		elseif(preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/',$dateStr,$match)){
-			$m = $match[1];
-			$d = $match[2];
-			$y = $match[3];
-		}
-		elseif(preg_match('/^(\D{3,})\.*\s(\d{1,2}),?\s(\d{2,4})/',$dateStr,$match)){
-			$mStr = $match[1];
-			$d = $match[2];
-			$y = $match[3];
-			$mStr = strtolower(substr($mStr,0,3));
-			$m = $this->monthNames[$mStr];
-		}
-		elseif(preg_match('/^(\d{1,2})-(\d{1,2})-(\d{2,4})/',$dateStr,$match)){
-			$m = $match[1];
-			$d = $match[2];
-			$y = $match[3];
-		}
-		elseif(preg_match('/^(\D{3,})\.*\s([1,2][0,5-9]\d{2})/',$dateStr,$match)){
-			$mStr = strtolower(substr($match[1],0,3));
-			$m = $this->monthNames[$mStr];
-			$y = $match[2];
-		}
-		elseif(preg_match('/([1,2][0,5-9]\d{2})/',$dateStr,$match)){
-			$y = $match[1];
-		}
-		if($y && strlen($y) === 4){
-			if(strlen($m) === 1) {
-				$m = '0' . $m;
-			}
-			if(strlen($d) === 1) {
-				$d = '0' . $d;
-			}
-			$dateStr = $y.'-'.$m.'-'.$d;
-		}
-		else{
-			$timeStr = strtotime($dateStr);
-			if($timeStr) {
-				$dateStr = date('Y-m-d H:i:s', $timeStr);
-			}
-		}
-		if($t){
-			$dateStr .= ' '.$t;
-		}
-		return $dateStr;
-	}
-	
-	private function formatScientificName($inStr){
-		$sciNameStr = trim($inStr);
-		$sciNameStr = preg_replace('/\s\s+/', ' ',$sciNameStr);
-		$tokens = explode(' ',$sciNameStr);
-		if($tokens){
-			$sciNameStr = array_shift($tokens);
-			if(strlen($sciNameStr) < 2) {
-				$sciNameStr = ' ' . array_shift($tokens);
-			}
-			if($tokens){
-				$term = array_shift($tokens);
-				$sciNameStr .= ' '.$term;
-				if($term === 'x') {
-					$sciNameStr .= ' ' . array_shift($tokens);
-				}
-			}
-			$tRank = '';
-			$infraSp = '';
-			foreach($tokens as $c => $v){
-				switch($v) {
-					case 'subsp.':
-					case 'subsp':
-					case 'ssp.':
-					case 'ssp':
-					case 'subspecies':
-					case 'var.':
-					case 'var':
-					case 'variety':
-					case 'forma':
-					case 'form':
-					case 'f.':
-					case 'fo.':
-						if(array_key_exists($c+1,$tokens) && ctype_lower($tokens[$c+1])){
-							$tRank = $v;
-							if(($tRank === 'ssp' || $tRank === 'subsp' || $tRank === 'var') && substr($tRank,-1) !== '.') {
-								$tRank .= '.';
-							}
-							$infraSp = $tokens[$c+1];
-						}
-				}
-			}
-			if($infraSp){
-				$sciNameStr .= ' '.$tRank.' '.$infraSp;
-			}
-		}
-		return $sciNameStr;
-	}
-	
 	private function uriExists($url) {
 		$exists = false;
 		$localUrl = '';

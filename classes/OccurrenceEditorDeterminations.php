@@ -11,7 +11,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 	{
 		$retArr = array();
 		$hasCurrent = 0;
-		$sql = 'SELECT detid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, ' .
+		$sql = 'SELECT detid, identifiedBy, dateIdentified, sciname, verbatimscientificname, scientificNameAuthorship, ' .
 			'identificationQualifier, iscurrent, appliedstatus, identificationReferences, identificationRemarks, sortsequence ' .
 			'FROM omoccurdeterminations ' .
 			'WHERE (occid = ' .$this->occid. ') ORDER BY iscurrent DESC, sortsequence';
@@ -22,6 +22,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$retArr[$detId]['identifiedby'] = Sanitizer::cleanOutStr($row->identifiedBy);
 			$retArr[$detId]['dateidentified'] = Sanitizer::cleanOutStr($row->dateIdentified);
 			$retArr[$detId]['sciname'] = Sanitizer::cleanOutStr($row->sciname);
+            $retArr[$detId]['verbatimscientificname'] = Sanitizer::cleanOutStr($row->verbatimscientificname);
 			$retArr[$detId]['scientificnameauthorship'] = Sanitizer::cleanOutStr($row->scientificNameAuthorship);
 			$retArr[$detId]['identificationqualifier'] = Sanitizer::cleanOutStr($row->identificationQualifier);
 			if((int)$row->iscurrent === 1) {
@@ -96,10 +97,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				$status .= ' (Warning: GUID mapping #1 failed)';
 			}
 			if($isCurrent){
-				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
-					'identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
-					'SELECT occid, tid, IFNULL(identifiedby,"unknown"), IFNULL(dateidentified,"unknown"), '.
-					'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 '.
+				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, verbatimScientificName, '.
+                    'scientificNameAuthorship, identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
+					'SELECT occid, tid, IFNULL(identifiedby,"unknown"), IFNULL(dateidentified,"unknown"), sciname, verbatimScientificName, '.
+                    'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 '.
 					'FROM omoccurrences WHERE (occid = '.$this->occid.')';
 				//echo "<div>".$sqlInsert."</div>";
 				if($this->conn->query($sqlInsert)){
@@ -269,11 +270,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 
 	public function makeDeterminationCurrent($detId): void
 	{
-		$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+		$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, verbatimScientificName, scientificNameAuthorship, '.
 			'identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
-			'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, '.
-			'IFNULL(dateidentified,"unknown") AS iddate, sciname, scientificnameauthorship, '.
-			'identificationqualifier, identificationreferences, identificationremarks, 10 AS sortseq '.
+			'SELECT occid, IFNULL(identifiedby,"unknown"), IFNULL(dateidentified,"unknown"), sciname, verbatimScientificName, scientificnameauthorship, '.
+			'identificationqualifier, identificationreferences, identificationremarks, 10 '.
 			'FROM omoccurrences WHERE (occid = '.$this->occid.')';
 		if($this->conn->query($sqlInsert)){
 			$guid = UuidFactory::getUuidV4();
@@ -311,7 +311,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		
 		$sqlNewDet = 'UPDATE omoccurrences AS o INNER JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
 			'SET o.identifiedBy = d.identifiedBy, o.dateIdentified = d.dateIdentified,o.family = '.($family?'"'.$family.'"':'NULL').','.
-			'o.sciname = d.sciname,o.genus = NULL,o.specificEpithet = NULL,o.taxonRank = NULL,o.infraspecificepithet = NULL,o.scientificname = NULL,'.
+			'o.sciname = d.sciname,o.verbatimscientificname = d.verbatimscientificname,o.genus = NULL,o.specificEpithet = NULL,o.taxonRank = NULL,o.infraspecificepithet = NULL,o.scientificname = NULL,'.
 			'o.scientificNameAuthorship = d.scientificnameauthorship,o.identificationQualifier = d.identificationqualifier,'.
 			'o.identificationReferences = d.identificationreferences,o.identificationRemarks = d.identificationremarks,'.
 			'o.tid = '.($tid?:'NULL').', o.localitysecurity = '.$sStatus.

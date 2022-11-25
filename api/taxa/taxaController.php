@@ -4,6 +4,7 @@ include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$kingdomid = array_key_exists('kingdomid',$_REQUEST)?(int)$_REQUEST['kingdomid']:0;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
@@ -19,12 +20,12 @@ if($isEditor && $action){
         $taxManager = new TaxonomyEditorManager();
         echo $taxManager->loadNewName(json_decode($_POST['taxon'], true));
     }
-    elseif($action === 'primeHierarchyTable'){
+    elseif($action === 'primeHierarchyTable' && array_key_exists('tidarr',$_POST)){
         $taxUtilities = new TaxonomyUtilities();
-        echo $taxUtilities->primeHierarchyTable();
+        echo $taxUtilities->primeHierarchyTable(json_decode($_POST['tidarr'],false));
     }
-    elseif($action === 'populateHierarchyTable'){
+    elseif($action === 'populateHierarchyTable' && array_key_exists('tidarr',$_POST)){
         $taxUtilities = new TaxonomyUtilities();
-        echo $taxUtilities->populateHierarchyTable();
+        echo $taxUtilities->populateHierarchyTable(json_decode($_POST['tidarr'],false));
     }
 }

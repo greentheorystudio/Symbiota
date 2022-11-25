@@ -36,6 +36,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
         <style>
             .processor-container {
                 width: 95%;
+                height: 700px;
                 margin: 20px auto;
                 display: flex;
                 justify-content: space-between;
@@ -43,17 +44,25 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             }
             .processor-control-container {
                 width: 40%;
-                padding:20px 30px;
-                font-size: 1.2em;
+                height: 650px;
+                padding: 15px;
                 border: 2px #aaaaaa solid;
                 -webkit-border-radius: 5px;
                 -moz-border-radius: 5px;
                 border-radius: 5px;
             }
+            .processor-accordion-panel {
+                width: 100%-2px;
+                height: 650px;
+            }
             .processor-display-container {
                 width: 50%;
                 height: 650px;
                 padding: 15px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                font-family: Arial, sans-serif;
+                background-color: #f5f5f5;
                 border: 2px black solid;
                 -webkit-border-radius: 10px;
                 -moz-border-radius: 10px;
@@ -95,7 +104,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221121" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221114" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221116" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -107,7 +116,12 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             const recognizedRanks = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 
             $( document ).ready(function() {
-				setUnlinkedRecordCounts();
+				$("#processor-accordion").accordion({
+                    icons: null,
+                    collapsible: true,
+                    heightStyle: "fill"
+                });
+                setUnlinkedRecordCounts();
             });
         </script>
 	</head>
@@ -157,100 +171,126 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 </div>
                 <div class="processor-container">
                     <div class="processor-control-container">
-                        Update locality security settings for occurrence records of protected species.
-                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                            <div>
-                                <div class="start-div" id="updateOccLocalitySecurityStart">
-                                    <button class="start-button" onclick="updateOccLocalitySecurity();">Start</button>
+                        <div id="processor-accordion">
+                            <h3 class="tabtitle">Cleaning Utilities</h3>
+                            <div class="processor-accordion-panel">
+                                Run cleaning processes on occurrence record scientific names that are not linked to
+                                the Taxonomic Thesaurus to remove unnecessary endings, identification qualifiers, and normalize
+                                infraspecific rank references.
+                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                                    <div>
+                                        <div class="start-div" id="cleanProcessesStart">
+                                            <button class="start-button" onclick="callCleaningController('leading-trailing-spaces');">Start</button>
+                                        </div>
+                                        <div class="cancel-div" id="cleanProcessesCancel" style="display:none;">
+                                            <span style="margin-right:10px;">
+                                                <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                            </span>
+                                            <button onclick="cancelProcess();">Cancel</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="cancel-div" id="updateOccLocalitySecurityCancel" style="display:none;">
-                                    <span style="margin-right:10px;">
-                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
-                                    </span>
-                                    <button onclick="cancelProcess();">Cancel</button>
+                                <hr style="margin: 10px 0;"/>
+                                Run cleaning processes to remove the scientific name authority from occurrence record scientific
+                                names that are not linked to the Taxonomic Thesaurus.
+                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                                    <div>
+                                        <div class="start-div" id="cleanScinameAuthorStart">
+                                            <button class="start-button" onclick="callCleanScinameAuthorController();">Start</button>
+                                        </div>
+                                        <div class="cancel-div" id="cleanScinameAuthorCancel" style="display:none;">
+                                            <span style="margin-right:10px;">
+                                                <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                            </span>
+                                            <button onclick="cancelProcess();">Cancel</button>
+                                        </div>
+                                    </div>
                                 </div>
+                                <hr style="margin: 10px 0;"/>
+                                Set occurrence record linkages to the Taxonomic Thesaurus.
+                                <div style="clear:both;margin-top:5px;">
+                                    <input type='checkbox' id='updatedetimage' /> Also set associated determination, image, and media linkages.
+                                </div>
+                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                                    <div>
+                                        <div class="start-div" id="updateWithTaxThesaurusStart">
+                                            <button class="start-button" onclick="callTaxThesaurusLinkController();">Start</button>
+                                        </div>
+                                        <div class="cancel-div" id="updateWithTaxThesaurusCancel" style="display:none;">
+                                            <span style="margin-right:10px;">
+                                                <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                            </span>
+                                            <button onclick="cancelProcess();">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="margin: 10px 0;"/>
+                                Update locality security settings for occurrence records of protected species.
+                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                                    <div>
+                                        <div class="start-div" id="updateOccLocalitySecurityStart">
+                                            <button class="start-button" onclick="updateOccLocalitySecurity();">Start</button>
+                                        </div>
+                                        <div class="cancel-div" id="updateOccLocalitySecurityCancel" style="display:none;">
+                                            <span style="margin-right:10px;">
+                                                <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                            </span>
+                                            <button onclick="cancelProcess();">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="margin: 10px 0;"/>
+                            </div>
+
+                            <h3 class="tabtitle">Search Utilities</h3>
+                            <div class="processor-accordion-panel">
+                                <div style="margin-bottom:10px;">
+                                    Search for occurrence record scientific names that are not currently linked to the Taxonomic Thesaurus
+                                    from an external Taxonomic Data Source.
+                                </div>
+                                <div style="margin-bottom:10px;">
+                                    <fieldset style="padding:5px;">
+                                        <legend><b>Taxonomic Data Source</b></legend>
+                                        <input id="colradio" name="taxresource" type="radio" value="col" checked /> Catalogue of Life (COL)<br/>
+                                        <input id="itisradio" name="taxresource" type="radio" value="itis" /> Integrated Taxonomic Information System (ITIS)<br/>
+                                        <input id="wormsradio" name="taxresource" type="radio" value="worms" /> World Register of Marine Species (WoRMS)
+                                    </fieldset>
+                                </div>
+                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                                    <div>
+                                        <div class="start-div" id="resolveFromTaxaDataSourceStart">
+                                            <button class="start-button" onclick="initializeDataSourceSearch();">Start</button>
+                                        </div>
+                                        <div class="cancel-div" id="resolveFromTaxaDataSourceCancel" style="display:none;">
+                                            <span style="margin-right:10px;">
+                                                <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                            </span>
+                                            <button onclick="cancelProcess(false);">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="margin: 10px 0;"/>
+                                Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
+                                with taxa currently in the Taxonomic Thesaurus.
+                                <div style="clear:both;margin-top:5px;">
+                                    Character difference tolerance: <input type="text" id="levvalue" style="width:30px;" value="2" />
+                                </div>
+                                <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
+                                    <div>
+                                        <div class="start-div" id="resolveFromTaxThesaurusFuzzyStart">
+                                            <button class="start-button" onclick="resolveFromTaxThesaurusFuzzy();">Start</button>
+                                        </div>
+                                        <div class="cancel-div" id="resolveFromTaxThesaurusFuzzyCancel" style="display:none;">
+                                            <span style="margin-right:10px;">
+                                                <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
+                                            </span>
+                                            <button onclick="cancelProcess();">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="margin: 10px 0;"/>
                             </div>
                         </div>
-                        <hr style="margin: 10px 0;"/>
-                        Run cleaning processes on occurrence record scientific names for records that are not linked to
-                        the Taxonomic Thesaurus.
-                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                            <div>
-                                <div class="start-div" id="cleanProcessesStart">
-                                    <button class="start-button" onclick="callCleaningController('leading-trailing-spaces');">Start</button>
-                                </div>
-                                <div class="cancel-div" id="cleanProcessesCancel" style="display:none;">
-                                    <span style="margin-right:10px;">
-                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
-                                    </span>
-                                    <button onclick="cancelProcess();">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                        <hr style="margin: 10px 0;"/>
-                        Set occurrence record linkages to the Taxonomic Thesaurus.
-                        <div style="clear:both;margin-top:5px;">
-                            <input type='checkbox' id='updatedetimage' /> Also set associated determination, image, and media linkages.
-                        </div>
-                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                            <div>
-                                <div class="start-div" id="updateWithTaxThesaurusStart">
-                                    <button class="start-button" onclick="callTaxThesaurusLinkController();">Start</button>
-                                </div>
-                                <div class="cancel-div" id="updateWithTaxThesaurusCancel" style="display:none;">
-                                    <span style="margin-right:10px;">
-                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
-                                    </span>
-                                    <button onclick="cancelProcess();">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                        <hr style="margin: 10px 0;"/>
-                        <div style="margin-bottom:10px;">
-                            Search for occurrence record scientific names that are not currently linked to the Taxonomic Thesaurus
-                            from an external Taxonomic Data Source.
-                        </div>
-                        <div style="margin-bottom:10px;">
-                            <fieldset style="padding:5px;">
-                                <legend><b>Taxonomic Data Source</b></legend>
-                                <input id="colradio" name="taxresource" type="radio" value="col" checked /> Catalogue of Life (COL)<br/>
-                                <input id="itisradio" name="taxresource" type="radio" value="itis" /> Integrated Taxonomic Information System (ITIS)<br/>
-                                <input id="wormsradio" name="taxresource" type="radio" value="worms" /> World Register of Marine Species (WoRMS)
-                            </fieldset>
-                        </div>
-                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                            <div>
-                                <div class="start-div" id="resolveFromTaxaDataSourceStart">
-                                    <button class="start-button" onclick="initializeDataSourceSearch();">Start</button>
-                                </div>
-                                <div class="cancel-div" id="resolveFromTaxaDataSourceCancel" style="display:none;">
-                                    <span style="margin-right:10px;">
-                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
-                                    </span>
-                                    <button onclick="cancelProcess(false);">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                        <hr style="margin: 10px 0;"/>
-                        Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
-                        with taxa currently in the Taxonomic Thesaurus.
-                        <div style="clear:both;margin-top:5px;">
-                            Character difference tolerance: <input type='text' id='levvalue' />
-                        </div>
-                        <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
-                            <div>
-                                <div class="start-div" id="resolveFromTaxThesaurusFuzzyStart">
-                                    <button class="start-button" onclick="resolveFromTaxThesaurusFuzzy();">Start</button>
-                                </div>
-                                <div class="cancel-div" id="resolveFromTaxThesaurusFuzzyCancel" style="display:none;">
-                                    <span style="margin-right:10px;">
-                                        <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
-                                    </span>
-                                    <button onclick="cancelProcess();">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                        <hr style="margin: 10px 0;"/>
                     </div>
 
                     <div class="processor-display-container">

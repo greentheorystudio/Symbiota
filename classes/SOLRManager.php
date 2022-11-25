@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/OccurrenceManager.php');
+include_once(__DIR__ . '/OccurrenceUtilities.php');
 
 class SOLRManager extends OccurrenceManager{
 
@@ -880,8 +881,8 @@ class SOLRManager extends OccurrenceManager{
                     $qArr[] = '(-eventDate:["" TO *])';
                     $this->localSearchArr[] = 'Date IS NULL';
                 }
-                elseif($eDate1 = $this->formatDate($dateArr[0])){
-                    $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
+                elseif($eDate1 = OccurrenceUtilities::formatDate($dateArr[0])){
+                    $eDate2 = (count($dateArr)>1?OccurrenceUtilities::formatDate($dateArr[1]):'');
                     if($eDate2){
                         $qArr[] = '(eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate2.'T23:59:59.999Z])';
                     }

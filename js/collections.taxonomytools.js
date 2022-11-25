@@ -12,6 +12,7 @@ let nameSearchResults = [];
 let nameTidIndex = {};
 let processingArr = [];
 let taxaToAddArr = [];
+let newTidArr = [];
 let taxaLoaded = 0;
 let rebuildHierarchyLoop = 0;
 
@@ -70,6 +71,7 @@ function adjustUIEnd(){
     document.getElementById('colradio').disabled = false;
     document.getElementById('itisradio').disabled = false;
     document.getElementById('wormsradio').disabled = false;
+    document.getElementById('levvalue').disabled = false;
     unlinkedNamesArr = [];
     dataSource = '';
     setUnlinkedRecordCounts();
@@ -92,6 +94,7 @@ function adjustUIStart(id){
     document.getElementById('colradio').disabled = true;
     document.getElementById('itisradio').disabled = true;
     document.getElementById('wormsradio').disabled = true;
+    document.getElementById('levvalue').disabled = true;
 }
 
 function callCleaningController(step){
@@ -241,11 +244,11 @@ function getITISNameSearchResultsRecord(){
             nameSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
             const coreMetadata = resObj['coreMetadata'];
             const namestatus = coreMetadata['taxonUsageRating'];
-            if(namestatus === 'accepted'){
+            if(namestatus === 'accepted' || namestatus === 'valid'){
                 nameSearchResults[0]['accepted'] = true;
                 getITISNameSearchResultsHierarchy();
             }
-            else if(namestatus === 'not accepted'){
+            else{
                 nameSearchResults[0]['accepted'] = false;
                 const acceptedNameList = resObj['acceptedNameList'];
                 const acceptedNameArr = acceptedNameList['acceptedNames'];
@@ -407,48 +410,63 @@ function initializeDataSourceSearch(){
 
 function populateTaxonomicHierarchy(){
     if(rebuildHierarchyLoop < 40){
-        let params = 'action=populateHierarchyTable';
-        //console.log(occTaxonomyApi+'?'+params);
-        sendAPIPostRequest(taxaApi,params,function(status,res){
-            if(status === 200) {
-                if(Number(res) > 0){
-                    rebuildHierarchyLoop++;
-                    populateTaxonomicHierarchy();
+        const formData = new FormData();
+        formData.append('tidarr', JSON.stringify(newTidArr));
+        formData.append('action', 'populateHierarchyTable');
+        const http = new XMLHttpRequest();
+        http.open("POST", taxaApi, true);
+        http.onreadystatechange = function() {
+            if(http.readyState === 4) {
+                if(http.status === 200) {
+                    if(Number(http.responseText) > 0){
+                        rebuildHierarchyLoop++;
+                        populateTaxonomicHierarchy();
+                    }
+                    else{
+                        processSuccessResponse(15,'Complete');
+                        adjustUIEnd();
+                    }
                 }
                 else{
-                    processSuccessResponse(15,'Complete');
+                    processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
                     adjustUIEnd();
                 }
             }
-            else{
-                processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
-            }
-        });
+        };
+        http.send(formData);
     }
     else{
         processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
+        adjustUIEnd();
     }
 }
 
 function primeTaxonomicHierarchy(){
     rebuildHierarchyLoop = 0;
     addProgressLine('<li>Populating taxonomic hierarchy with new taxa ' + processStatus + '</li>');
-    let params = 'action=primeHierarchyTable';
-    //console.log(occTaxonomyApi+'?'+params);
-    sendAPIPostRequest(taxaApi,params,function(status,res){
-        if(status === 200) {
-            if(Number(res) > 0){
-                rebuildHierarchyLoop++;
-                populateTaxonomicHierarchy();
+    const formData = new FormData();
+    formData.append('tidarr', JSON.stringify(newTidArr));
+    formData.append('action', 'primeHierarchyTable');
+    const http = new XMLHttpRequest();
+    http.open("POST", taxaApi, true);
+    http.onreadystatechange = function() {
+        if(http.readyState === 4) {
+            if(http.status === 200) {
+                if(Number(http.responseText) > 0){
+                    rebuildHierarchyLoop++;
+                    populateTaxonomicHierarchy();
+                }
+                else{
+                    adjustUIEnd();
+                }
             }
             else{
+                processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
                 adjustUIEnd();
             }
         }
-        else{
-            processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
-        }
-    });
+    };
+    http.send(formData);
 }
 
 function processAddTaxaArr(){
@@ -475,7 +493,9 @@ function processAddTaxaArr(){
         addHttp.onreadystatechange = function() {
             if(addHttp.readyState === 4) {
                 if(addHttp.responseText && Number(addHttp.responseText) > 0){
-                    nameTidIndex[taxaToAddArr[0]['sciname']] = Number(addHttp.responseText);
+                    const newTid = Number(addHttp.responseText);
+                    nameTidIndex[taxaToAddArr[0]['sciname']] = newTid;
+                    newTidArr.push(newTid);
                     taxaToAddArr.splice(0, 1);
                     processSuccessResponse(0);
                     processAddTaxaArr();
@@ -521,7 +541,9 @@ function processAddTaxon(){
         addHttp.onreadystatechange = function() {
             if(addHttp.readyState === 4) {
                 if(addHttp.responseText && Number(addHttp.responseText) > 0){
-                    nameTidIndex[nameSearchResults[0]['sciname']] = Number(addHttp.responseText);
+                    const newTid = Number(addHttp.responseText);
+                    nameTidIndex[nameSearchResults[0]['sciname']] = newTid;
+                    newTidArr.push(newTid);
                     processSuccessResponse(15,'Successfully added ' + nameSearchResults[0]['sciname']);
                     updateOccurrenceLinkages();
                 }
@@ -779,12 +801,18 @@ function runScinameDataSourceSearch(){
                 });
             }
         }
+        else if(newTidArr.length > 0){
+            primeTaxonomicHierarchy();
+        }
         else{
-            primeTaxonomicHierarchy()
+            adjustUIEnd();
         }
     }
-    else{
+    else if(newTidArr.length > 0){
         primeTaxonomicHierarchy();
+    }
+    else{
+        adjustUIEnd();
     }
 }
 

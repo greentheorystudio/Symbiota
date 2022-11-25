@@ -286,7 +286,7 @@ if($GLOBALS['SYMB_UID']){
                 $tabTarget = 1;
             }
             elseif($action === 'Make Determination Current'){
-                $statusStr = $occManager->makeDeterminationCurrent($_POST['detid']);
+                $occManager->makeDeterminationCurrent($_POST['detid']);
                 if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
@@ -480,12 +480,12 @@ else{
     <?php
     if($crowdSourceMode === 1){
         ?>
-        <link href="../../css/occureditorcrowdsource.css?ver=1805" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditorcrowdsource.css?ver=20221125" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
     }
     else{
         ?>
-        <link href="../../css/occureditor.css?ver=20220110" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditor.css?ver=20221125" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
         if(isset($CSSARR)){
             foreach($CSSARR as $cssVal){
@@ -908,6 +908,10 @@ else{
                                                 </div>
                                             </div>
                                             <div  id="idrefdiv">
+                                                <div id="verbatimScientificNameDiv">
+                                                    <?php echo (defined('VERBATIMSCIENTIFICNAMELABEL')?VERBATIMSCIENTIFICNAMELABEL:'Verbatim Scientific Name'); ?>:
+                                                    <input type="text" name="verbatimscientificname" tabindex="36" value="<?php echo array_key_exists('verbatimscientificname',$occArr)?$occArr['verbatimscientificname']:''; ?>" onchange="fieldChanged('verbatimscientificname');" />
+                                                </div>
                                                 <div id="identificationReferencesDiv">
                                                     <?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'ID References'); ?>:
                                                     <a href="#" onclick="return dwcDoc('identificationReferences')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
