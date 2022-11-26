@@ -15,6 +15,7 @@ let taxaToAddArr = [];
 let newTidArr = [];
 let taxaLoaded = 0;
 let rebuildHierarchyLoop = 0;
+let levValue = 0;
 
 function addProgressLine(lineHtml){
     document.getElementById("progressDisplayList").innerHTML += lineHtml;
@@ -382,11 +383,30 @@ function getWoRMSNameSearchResultsRecord(id){
     });
 }
 
+function initializeCleanScinameAuthor(){
+    processCancelled = false;
+    adjustUIStart('cleanScinameAuthor');
+    addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+    const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
+    //console.log(occTaxonomyApi+'?'+params);
+    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+        if(status === 200) {
+            processSuccessResponse(15,'Complete');
+            unlinkedNamesArr = JSON.parse(res);
+            runCleanScinameAuthorProcess();
+        }
+        else{
+            processErrorResponse(15,true);
+        }
+    },http);
+}
+
 function initializeDataSourceSearch(){
     if(targetKingdomId){
         processCancelled = false;
         nameTidIndex = {};
         taxaLoaded = 0;
+        newTidArr = [];
         setDataSource();
         adjustUIStart('resolveFromTaxaDataSource');
         addProgressLine('<li>Setting rank data for processing search returns ' + processStatus + '</li>');
@@ -545,7 +565,21 @@ function processAddTaxon(){
                     nameTidIndex[nameSearchResults[0]['sciname']] = newTid;
                     newTidArr.push(newTid);
                     processSuccessResponse(15,'Successfully added ' + nameSearchResults[0]['sciname']);
-                    updateOccurrenceLinkages();
+                    if(currentSciname === nameSearchResults[0]['sciname']){
+                        updateOccurrenceLinkages();
+                    }
+                    else{
+                        addProgressLine('<li style="margin-left:15px;">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
+                        updateOccurrencesWithCleanedSciname(currentSciname,nameSearchResults[0]['sciname'],function(status,res){
+                            if(status === 200) {
+                                processSuccessResponse(15,(res + ' records updated'));
+                            }
+                            else{
+                                processErrorResponse(15,true,'Error updating occurrence records');
+                            }
+                            updateOccurrenceLinkages();
+                        });
+                    }
                 }
                 else{
                     processErrorResponse(15,false,'Error loading taxon');
@@ -752,6 +786,50 @@ function processUpdateCleanResponse(term,status,res){
     }
 }
 
+function runCleanScinameAuthorProcess(){
+    if(!processCancelled){
+        if(unlinkedNamesArr.length > 0){
+            currentSciname = unlinkedNamesArr[0];
+            unlinkedNamesArr.splice(0, 1);
+            addProgressLine('<li>Attempting to parse author name from: ' + currentSciname + ' ' + processStatus + '</li>');
+            const formData = new FormData();
+            formData.append('sciname', currentSciname);
+            formData.append('action', 'parseSciName');
+            const http = new XMLHttpRequest();
+            http.open("POST", taxaApi, true);
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    const parsedName = JSON.parse(http.responseText);
+                    if(parsedName.hasOwnProperty('author') && parsedName['author'] !== ''){
+                        processSuccessResponse(15,'Found author: ' + parsedName['author']);
+                        addProgressLine('<li style="margin-left:15px;">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
+                        updateOccurrencesWithCleanedSciname(currentSciname,parsedName['sciname'],function(status,res){
+                            if(status === 200) {
+                                processSuccessResponse(15,(res + ' records updated'));
+                            }
+                            else{
+                                processErrorResponse(15,false,'Error updating occurrence records');
+                            }
+                            runCleanScinameAuthorProcess();
+                        });
+                    }
+                    else{
+                        processErrorResponse(15,false,'No author found in scientific name');
+                        runCleanScinameAuthorProcess();
+                    }
+                }
+            };
+            http.send(formData);
+        }
+        else{
+            adjustUIEnd();
+        }
+    }
+    else{
+        adjustUIEnd();
+    }
+}
+
 function runScinameDataSourceSearch(){
     if(!processCancelled){
         if(unlinkedNamesArr.length > 0){
@@ -768,6 +846,7 @@ function runScinameDataSourceSearch(){
                     }
                     else{
                         processErrorResponse(15,false);
+                        runScinameDataSourceSearch();
                     }
                 });
             }
@@ -781,6 +860,7 @@ function runScinameDataSourceSearch(){
                     }
                     else{
                         processErrorResponse(15,false);
+                        runScinameDataSourceSearch();
                     }
                 });
             }
@@ -797,6 +877,7 @@ function runScinameDataSourceSearch(){
                     }
                     else{
                         processErrorResponse(15,false);
+                        runScinameDataSourceSearch();
                     }
                 });
             }
@@ -946,6 +1027,22 @@ function updateOccurrenceLinkages(){
         }
         runScinameDataSourceSearch();
     });
+}
+
+function updateOccurrencesWithCleanedSciname(oldName,cleanedName,callback){
+    const formData = new FormData();
+    formData.append('collid', collId);
+    formData.append('sciname', oldName);
+    formData.append('cleanedsciname', cleanedName);
+    formData.append('action', 'updateOccWithCleanedName');
+    const http = new XMLHttpRequest();
+    http.open("POST", occTaxonomyApi, true);
+    http.onreadystatechange = function() {
+        if(http.readyState === 4) {
+            callback(http.status,http.responseText);
+        }
+    };
+    http.send(formData);
 }
 
 function validateCOLInitialNameSearchResults(){

@@ -104,7 +104,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221121" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221116" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221118" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -123,6 +123,30 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 });
                 setUnlinkedRecordCounts();
             });
+
+            function initializeTaxThesaurusFuzzyMatch(){
+                levValue = document.getElementById("levvalue").value;
+                if(levValue && Number(levValue) > 0){
+                    processCancelled = false;
+                    adjustUIStart('taxThesaurusFuzzyMatch');
+                    addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+                    const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
+                    //console.log(occTaxonomyApi+'?'+params);
+                    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+                        if(status === 200) {
+                            processSuccessResponse(15,'Complete');
+                            unlinkedNamesArr = JSON.parse(res);
+                            runScinameDataSourceSearch();
+                        }
+                        else{
+                            processErrorResponse(15,true);
+                        }
+                    },http);
+                }
+                else{
+                    alert('Please select a character difference tolerance value greater than zero.');
+                }
+            }
         </script>
 	</head>
 	<body>
@@ -191,12 +215,12 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     </div>
                                 </div>
                                 <hr style="margin: 10px 0;"/>
-                                Run cleaning processes to remove the scientific name authority from occurrence record scientific
+                                Run cleaning processes to remove the scientific name authors from occurrence record scientific
                                 names that are not linked to the Taxonomic Thesaurus.
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
                                         <div class="start-div" id="cleanScinameAuthorStart">
-                                            <button class="start-button" onclick="callCleanScinameAuthorController();">Start</button>
+                                            <button class="start-button" onclick="initializeCleanScinameAuthor();">Start</button>
                                         </div>
                                         <div class="cancel-div" id="cleanScinameAuthorCancel" style="display:none;">
                                             <span style="margin-right:10px;">
@@ -277,10 +301,10 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 </div>
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
-                                        <div class="start-div" id="resolveFromTaxThesaurusFuzzyStart">
-                                            <button class="start-button" onclick="resolveFromTaxThesaurusFuzzy();">Start</button>
+                                        <div class="start-div" id="taxThesaurusFuzzyMatchStart">
+                                            <button class="start-button" onclick="initializeTaxThesaurusFuzzyMatch();">Start</button>
                                         </div>
-                                        <div class="cancel-div" id="resolveFromTaxThesaurusFuzzyCancel" style="display:none;">
+                                        <div class="cancel-div" id="taxThesaurusFuzzyMatchCancel" style="display:none;">
                                             <span style="margin-right:10px;">
                                                 <span class="sm-native-spinner" style="width:12px;height:12px;"></span>
                                             </span>

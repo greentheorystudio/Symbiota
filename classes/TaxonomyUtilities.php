@@ -62,13 +62,34 @@ class TaxonomyUtilities {
                         $retArr['unitname2'] = array_shift($sciNameArr);
                     }
                 }
-				if($retArr['unitname2'] && !preg_match('/^[\-a-z]+$/', $retArr['unitname2'])) {
-					$retArr['unitname2'] = strtolower($retArr['unitname2']);
-					if(!preg_match('/^[a-z]+$/',$retArr['unitname2'])){
-						$retArr['unitname2'] = '';
-						unset($sciNameArr);
-					}
-				}
+				if(isset($sciNameArr) && $retArr['unitname2'] && !preg_match('/^[\-\'a-z]+$/',$retArr['unitname2'])){
+                    if(preg_match('/[A-Z][\-\'a-z]+/',$retArr['unitname2'])){
+                        $sql = 'SELECT tid FROM taxa '.
+                            'WHERE unitname1 = "'.$retArr['unitname1'].'" AND unitname2 = "'.$retArr['unitname2'].'" ';
+                        //echo $sql.'<br/>';
+                        $rs = $this->conn->query($sql);
+                        if($rs->num_rows){
+                            if(isset($retArr['author'])){
+                                unset($retArr['author']);
+                            }
+                        }
+                        else{
+                            $retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+                            $retArr['unitname2'] = '';
+                            unset($sciNameArr);
+                        }
+                        $rs->free();
+                        $this->conn->close();
+                    }
+                    if(isset($sciNameArr) && $retArr['unitname2']){
+                        $retArr['unitname2'] = strtolower($retArr['unitname2']);
+                        if(!preg_match('/^[\-\'a-z]+$/',$retArr['unitname2'])){
+                            $retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+                            $retArr['unitname2'] = '';
+                            unset($sciNameArr);
+                        }
+                    }
+                }
 			}
 			if(isset($sciNameArr) && $sciNameArr){
 				if($rankId === 220){
@@ -78,24 +99,29 @@ class TaxonomyUtilities {
 					$authorArr = array();
 					while($sciStr = array_shift($sciNameArr)){
 						$sciStrTest = strtolower($sciStr);
-						if($sciStrTest === 'f.' || $sciStrTest === 'fo.' || $sciStrTest === 'fo' || $sciStrTest === 'forma'){
-							self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'f.');
-						}
-						elseif($sciStrTest === 'var.' || $sciStrTest === 'var' || $sciStrTest === 'v.'){
-							self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'var.');
-						}
-						elseif($sciStrTest === 'ssp.' || $sciStrTest === 'ssp' || $sciStrTest === 'subsp.' || $sciStrTest === 'subsp' || $sciStrTest === 'sudbsp.'){
-							self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'subsp.');
-						}
-						elseif(!$retArr['unitname3'] && ($rankId === 230 || preg_match('/^[a-z]{5,}$/',$sciStr))){
-							$retArr['unitind3'] = '';
-							$retArr['unitname3'] = $sciStr;
-							unset($authorArr);
-							$authorArr = array();
-						}
-						else{
-							$authorArr[] = $sciStr;
-						}
+						if(stripos($sciStrTest,' x ') === false){
+                            if($sciStrTest === 'f.' || $sciStrTest === 'fo.' || $sciStrTest === 'fo' || $sciStrTest === 'forma'){
+                                self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'f.');
+                            }
+                            elseif($sciStrTest === 'var.' || $sciStrTest === 'var' || $sciStrTest === 'v.'){
+                                self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'var.');
+                            }
+                            elseif($sciStrTest === 'ssp.' || $sciStrTest === 'ssp' || $sciStrTest === 'subsp.' || $sciStrTest === 'subsp' || $sciStrTest === 'sudbsp.'){
+                                self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'subsp.');
+                            }
+                            elseif($sciStrTest === 'x' || $sciStrTest === 'X'){
+                                self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'X');
+                            }
+                            elseif(!$retArr['unitname3'] && ($rankId === 230 || preg_match('/^[a-z]{5,}$/',$sciStr))){
+                                $retArr['unitind3'] = '';
+                                $retArr['unitname3'] = $sciStr;
+                                unset($authorArr);
+                                $authorArr = array();
+                            }
+                            else{
+                                $authorArr[] = $sciStr;
+                            }
+                        }
 					}
 					$retArr['author'] = implode(' ', $authorArr);
 					if(!$retArr['unitname3'] && $retArr['author']){
@@ -120,9 +146,9 @@ class TaxonomyUtilities {
 			if(array_key_exists('unitind3',$retArr) && $retArr['unitind3'] === 'ssp.'){
 				$retArr['unitind3'] = 'subsp.';
 			}
-			$sciname = (isset($retArr['unitind1'])?$retArr['unitind1'].' ':'').$retArr['unitname1'].' ';
-			$sciname .= (isset($retArr['unitind2'])?$retArr['unitind2'].' ':'').$retArr['unitname2'].' ';
-			$sciname .= $retArr['unitind3'].' '.$retArr['unitname3'];
+			$sciname = ((isset($retArr['unitind1']) && $retArr['unitind1'])?$retArr['unitind1'].' ':'').$retArr['unitname1'].' ';
+			$sciname .= ((isset($retArr['unitind2']) && $retArr['unitind2'])?$retArr['unitind2'].' ':'').$retArr['unitname2'].' ';
+			$sciname .= ((isset($retArr['unitind3']) && $retArr['unitind3'])?$retArr['unitind3'].' ':'').$retArr['unitname3'];
 			$retArr['sciname'] = trim($sciname);
 			if($rankId && is_numeric($rankId)){
 				$retArr['rankid'] = $rankId;
@@ -198,7 +224,7 @@ class TaxonomyUtilities {
         return $sciNameStr;
     }
 
-	private static function setInfraNode($sciStr, &$sciNameArr, &$retArr, &$authorArr, $rankTag): void
+    private static function setInfraNode($sciStr, &$sciNameArr, &$retArr, &$authorArr, $rankTag): void
 	{
 		if($sciNameArr){
 			$infraStr = array_shift($sciNameArr);
@@ -226,7 +252,7 @@ class TaxonomyUtilities {
                 $tidStr = $tid;
             }
             if($tidStr){
-                $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
+                $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
                     'SELECT DISTINCT tid, parenttid FROM taxa '.
                     'WHERE tid IN('.$tidStr.') AND tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
                 //echo $sql;
@@ -250,7 +276,7 @@ class TaxonomyUtilities {
                 $tidStr = $tid;
             }
             if($tidStr){
-                $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
+                $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
                     'SELECT DISTINCT e.tid, t.parenttid '.
                     'FROM taxaenumtree AS e LEFT JOIN taxa AS t ON e.parenttid = t.tid '.
                     'WHERE e.tid IN('.$tidStr.') AND t.parenttid NOT IN(SELECT parenttid FROM taxaenumtree WHERE tid IN('.$tidStr.')) ';
@@ -328,7 +354,7 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
-    public function getRankNameArr(): string
+    public function getRankNameArr(): array
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT rankname, rankid FROM taxonunits ';
@@ -339,6 +365,6 @@ class TaxonomyUtilities {
             $retArr[$rankName] = (int)$r->rankid;
         }
         $rs->free();
-        return json_encode($retArr);
+        return $retArr;
     }
 }

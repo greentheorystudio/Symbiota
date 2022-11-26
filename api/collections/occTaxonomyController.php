@@ -55,4 +55,7 @@ if($isEditor && $collid && $action){
     elseif($action === 'updateOccWithNewSciname'){
         echo $cleanManager->updateOccRecordsWithNewScinameTid($sciname,$tid);
     }
+    elseif($action === 'updateOccWithCleanedName'){
+        echo $cleanManager->updateOccRecordsWithCleanedSciname($_POST['sciname'],$_POST['cleanedsciname']);
+    }
 }

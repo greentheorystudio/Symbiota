@@ -116,20 +116,6 @@ class OccurrenceUtilities {
         return $retDate;
     }
 
-    public static function parseScientificName($inStr, $rankId = null): array
-    {
-        $taxonArr = (new TaxonomyUtilities)->parseScientificName($inStr, $rankId);
-        if(array_key_exists('unitind1',$taxonArr)){
-            $taxonArr['unitname1'] = $taxonArr['unitind1'].' '.$taxonArr['unitname1'];
-            unset($taxonArr['unitind1']);
-        }
-        if(array_key_exists('unitind2',$taxonArr)){
-            $taxonArr['unitname2'] = $taxonArr['unitind2'].' '.$taxonArr['unitname2'];
-            unset($taxonArr['unitind2']);
-        }
-        return $taxonArr;
-    }
-
     public static function parseVerbatimElevation($inStr): array
     {
         $retArr = array();

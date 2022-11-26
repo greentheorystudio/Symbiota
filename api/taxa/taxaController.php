@@ -14,7 +14,7 @@ if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array
 if($isEditor && $action){
     if($action === 'getRankNameArr'){
         $taxUtilities = new TaxonomyUtilities();
-        echo $taxUtilities->getRankNameArr();
+        echo json_encode($taxUtilities->getRankNameArr());
     }
     elseif($action === 'addTaxon'){
         $taxManager = new TaxonomyEditorManager();
@@ -27,5 +27,9 @@ if($isEditor && $action){
     elseif($action === 'populateHierarchyTable' && array_key_exists('tidarr',$_POST)){
         $taxUtilities = new TaxonomyUtilities();
         echo $taxUtilities->populateHierarchyTable(json_decode($_POST['tidarr'],false));
+    }
+    elseif($action === 'parseSciName' && array_key_exists('sciname',$_POST)){
+        $taxUtilities = new TaxonomyUtilities();
+        echo json_encode($taxUtilities->parseScientificName($_POST['sciname']));
     }
 }

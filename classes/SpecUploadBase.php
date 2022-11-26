@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/SpecUpload.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/OccurrenceUtilities.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 include_once(__DIR__ . '/UuidFactory.php');
 include_once(__DIR__ . '/Sanitizer.php');
 
@@ -1140,7 +1141,13 @@ class SpecUploadBase extends SpecUpload{
                 }
                 unset($recMap['genus'], $recMap['specificepithet'], $recMap['taxonrank'], $recMap['infraspecificepithet']);
                 if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
-                    $parsedArr = OccurrenceUtilities::parseScientificName($recMap['sciname']);
+                    $parsedArr = (new TaxonomyUtilities)->parseScientificName($recMap['sciname']);
+                    if(array_key_exists('unitind1',$parsedArr)){
+                        $parsedArr['unitname1'] = $parsedArr['unitind1'].' '.$parsedArr['unitname1'];
+                    }
+                    if(array_key_exists('unitind2',$parsedArr)){
+                        $parsedArr['unitname2'] = $parsedArr['unitind2'].' '.$parsedArr['unitname2'];
+                    }
                     if(array_key_exists('author',$parsedArr)){
                         $recMap['scientificnameauthorship'] = $parsedArr['author'];
                         $recMap['sciname'] = trim($parsedArr['unitname1'].' '.$parsedArr['unitname2'].' '.$parsedArr['unitind3'].' '.$parsedArr['unitname3']);

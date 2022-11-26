@@ -78,6 +78,25 @@ class OccurrenceTaxonomyCleaner extends Manager{
         return $retCnt;
     }
 
+    public function updateOccRecordsWithCleanedSciname($sciname,$cleanedSciname): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql = 'UPDATE omoccurrences SET verbatimscientificname = sciname '.
+                'WHERE collid = '.$this->collid.' AND sciname = "' . $sciname . '" ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $sql2 = 'UPDATE omoccurrences SET sciname = "'.$cleanedSciname.'" '.
+                    'WHERE collid = '.$this->collid.' AND sciname = "' . $sciname . '" ';
+                //echo $sql2;
+                if($this->conn->query($sql2)){
+                    $retCnt = $this->conn->affected_rows;
+                }
+            }
+        }
+        return $retCnt;
+    }
+
     public function updateOccTaxonomicThesaurusLinkages($kingdomId): int
     {
         $retCnt = 0;
@@ -413,125 +432,6 @@ class OccurrenceTaxonomyCleaner extends Manager{
         }
         return $retCnt;
     }
-
-	private function indexOccurrenceTaxa(): void
-	{
-		$this->logOrEcho('Populating null kingdom name tags...');
-		$sql = 'UPDATE taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
-			'INNER JOIN taxa AS t2 ON e.parenttid = t2.tid '.
-			'SET t.kingdomname = t2.sciname '.
-			'WHERE t2.rankid = 10 AND ISNULL(t.kingdomName) ';
-		if($this->conn->query($sql)){
-			$this->logOrEcho($this->conn->affected_rows.' taxon records updated',1);
-		}
-		else{
-			$this->logOrEcho('ERROR updating kingdoms.');
-		}
-		flush();
-
-		$this->logOrEcho('Populating null family tags...');
-		$sql = 'UPDATE taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
-			'INNER JOIN taxa AS t2 ON e.parenttid = t2.tid '.
-			'SET t.family = t2.sciname '.
-			'WHERE t2.rankid = 140 AND ISNULL(t.family) ';
-		if($this->conn->query($sql)){
-			$this->logOrEcho($this->conn->affected_rows.' taxon records updated',1);
-		}
-		else{
-			$this->logOrEcho('ERROR family tags.');
-		}
-		flush();
-
-		$this->logOrEcho('Indexing names based on exact matches...');
-		$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = t.sciname '.
-			'SET o.tid = t.tid '.
-			'WHERE o.collid IN('.$this->collid.') AND ISNULL(o.tid) ';
-		if($this->targetKingdom) {
-			$sql .= 'AND t.kingdomname = "' . $this->targetKingdom . '" ';
-		}
-		if($this->conn->query($sql)){
-			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
-		}
-		else{
-			$this->logOrEcho('ERROR linking new data to occurrences.');
-		}
-		flush();
-	}
-
-	public function remapOccurrenceTaxon($collid, $oldSciname, $tid, $idQualifierIn = null): int
-	{
-		$affectedRows = 0;
-		$idQualifier = '';
-		if(is_numeric($collid) && $oldSciname && is_numeric($tid)){
-			$hasEditType = false;
-			$rsTest = $this->conn->query('SHOW COLUMNS FROM omoccuredits WHERE field = "editType"');
-			if($rsTest->num_rows) {
-				$hasEditType = true;
-			}
-			$rsTest->free();
-
-			$newSciname = '';
-			$newAuthor= '';
-			$sql = 'SELECT sciname, author FROM taxa WHERE (tid = '.$tid.')';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$newSciname = $r->sciname;
-				$newAuthor = $r->author;
-			}
-			$rs->free();
-
-			$oldSciname = Sanitizer::cleanInStr($this->conn,$oldSciname);
-			if($idQualifierIn) {
-				$idQualifier = Sanitizer::cleanInStr($this->conn,$idQualifierIn);
-			}
-			$sqlWhere = 'WHERE collid IN('.$collid.') AND sciname = "'.$oldSciname.'" AND ISNULL(tid) ';
-			$sql1 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
-				'SELECT occid, "sciname", "'.$newSciname.'", sciname, '.$GLOBALS['SYMB_UID'].', 1, 1'.($hasEditType?',1':'').' FROM omoccurrences '.$sqlWhere;
-			if($this->conn->query($sql1)){
-				if($newAuthor){
-					$sql2 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
-						'SELECT occid, "scientificNameAuthorship" AS fieldname, "'.$newAuthor.'", IFNULL(scientificNameAuthorship,""), '.$GLOBALS['SYMB_UID'].', 1, 1 '.($hasEditType?',1 ':'').
-						'FROM omoccurrences '.$sqlWhere.'AND (scientificNameAuthorship != "'.$newAuthor.'")';
-					if(!$this->conn->query($sql2)){
-						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (author).',1);
-					}
-				}
-				if($idQualifier){
-					$sql3 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
-						'SELECT occid, "identificationQualifier" AS fieldname, CONCAT_WS("; ",identificationQualifier,"'.$idQualifier.'") AS idqual, '.
-						'IFNULL(identificationQualifier,""), '.$GLOBALS['SYMB_UID'].', 1, 1 '.($hasEditType?',1 ':'').
-						'FROM omoccurrences '.$sqlWhere;
-					if(!$this->conn->query($sql3)){
-						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (idQual).',1);
-					}
-				}
-				$sqlFinal = 'UPDATE omoccurrences '.
-					'SET tid = '.$tid.', sciname = "'.$newSciname.'" ';
-				if($newAuthor){
-					$sqlFinal .= ', scientificNameAuthorship = "'.$newAuthor.'" ';
-				}
-				if($idQualifier){
-					$sqlFinal .= ', identificationQualifier = CONCAT_WS("; ",identificationQualifier,"'.$idQualifier.'") ';
-				}
-				$sqlFinal .= $sqlWhere;
-				if($this->conn->query($sqlFinal)){
-					$affectedRows = $this->conn->affected_rows;
-				}
-				else{
-					$this->logOrEcho('ERROR thrown remapping occurrence taxon.',1);
-				}
-			}
-			else{
-				$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (E1).',1);
-			}
-		}
-		return $affectedRows;
-	}
-
-	public function getVerificationCounts(): array
-	{
-		return [];
-	}
 
 	public function getCollMap(): array
 	{
