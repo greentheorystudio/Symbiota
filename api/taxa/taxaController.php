@@ -32,4 +32,8 @@ if($isEditor && $action){
         $taxUtilities = new TaxonomyUtilities();
         echo json_encode($taxUtilities->parseScientificName($_POST['sciname']));
     }
+    elseif($action === 'getSciNameFuzzyMatches' && array_key_exists('sciname',$_POST) && array_key_exists('lev',$_POST)){
+        $taxUtilities = new TaxonomyUtilities();
+        echo json_encode($taxUtilities->getCloseTaxaMatches($_POST['sciname'],$_POST['lev'],$kingdomid));
+    }
 }

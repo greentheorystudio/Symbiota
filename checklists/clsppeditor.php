@@ -128,7 +128,7 @@ $clArray = $vManager->getChecklistData();
 				self.close();
 			}
 		</script>
-		<script type="text/javascript" src="../js/shared.js?ver=20221121"></script>
+		<script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
 	</head>
 	<body onload="<?php  echo (!$status?$followUpAction:''); ?>" >
 		<div id='innertext'>

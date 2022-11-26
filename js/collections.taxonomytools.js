@@ -89,6 +89,7 @@ function adjustUIEnd(){
     unlinkedNamesArr = [];
     dataSource = '';
     setUnlinkedRecordCounts();
+    disableFuzzyMatchButtons();
 }
 
 function adjustUIStart(id){
@@ -182,6 +183,15 @@ function cancelProcess(adjustUI = true){
 
 function clearProgressDisplay(){
     document.getElementById("progressDisplayList").innerHTML = '';
+}
+
+function disableFuzzyMatchButtons(){
+    const buttonElements = document.getElementsByClassName('fuzzy-button');
+    for(let i in buttonElements){
+        if(buttonElements.hasOwnProperty(i)){
+            buttonElements[i].disabled = true;
+        }
+    }
 }
 
 function getDataSourceName(){
@@ -441,6 +451,33 @@ function initializeDataSourceSearch(){
     }
 }
 
+function initializeTaxThesaurusFuzzyMatch(){
+    levValue = document.getElementById("levvalue").value;
+    if(targetKingdomId && levValue && Number(levValue) > 0){
+        processCancelled = false;
+        adjustUIStart('taxThesaurusFuzzyMatch');
+        addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+        const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
+        //console.log(occTaxonomyApi+'?'+params);
+        sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+            if(status === 200) {
+                processSuccessResponse(15,'Complete');
+                unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
+                runTaxThesaurusFuzzyMatchProcess();
+            }
+            else{
+                processErrorResponse(15,true);
+            }
+        },http);
+    }
+    else if(!targetKingdomId){
+        alert('Please select a Target Kingdom from the dropdown menu above.');
+    }
+    else{
+        alert('Please select a character difference tolerance value greater than zero.');
+    }
+}
+
 function populateTaxonomicHierarchy(){
     if(rebuildHierarchyLoop < 40){
         const formData = new FormData();
@@ -643,6 +680,21 @@ function processErrorResponse(indent,setCounts,messageText = ''){
     if(setCounts){
         setUnlinkedRecordCounts();
     }
+}
+
+function processFuzzyMatches(fuzzyMatches){
+    for(let i in fuzzyMatches){
+        if(fuzzyMatches.hasOwnProperty(i)){
+            const fuzzyMatchName = fuzzyMatches[i];
+            const selectFuzzyMatchInner = "'" + currentSciname.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "','" + fuzzyMatchName.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "'";
+            const selectButtonHtml = '<button class="fuzzy-button" onclick="selectFuzzyMatch(' + selectFuzzyMatchInner + ');">Select</button>';
+            addProgressLine('<li style="margin-left:15px;margin-top:10px;"><b>Match: ' + fuzzyMatchName + '</b> ' + selectButtonHtml + '<span class="current-status"></span></li>');
+            processSuccessResponse(0);
+        }
+    }
+    const skipButtonHtml = '<button class="fuzzy-button" onclick="runTaxThesaurusFuzzyMatchProcess();">Skip to Next Scientific Name</button>';
+    addProgressLine('<li style="margin-left:15px;margin-top:10px;margin-bottom:10px;">' + skipButtonHtml + '<span class="current-status"></span></li>');
+    processSuccessResponse(0);
 }
 
 function processGetCOLTaxonByScinameResponse(res){
@@ -934,6 +986,60 @@ function runScinameDataSourceSearch(){
     else{
         adjustUIEnd();
     }
+}
+
+function runTaxThesaurusFuzzyMatchProcess(){
+    disableFuzzyMatchButtons();
+    if(!processCancelled){
+        if(unlinkedNamesArr.length > 0){
+            currentSciname = unlinkedNamesArr[0];
+            unlinkedNamesArr.splice(0, 1);
+            addProgressLine('<li>Finding fuzzy matches for: ' + currentSciname + ' ' + processStatus + '</li>');
+            const formData = new FormData();
+            formData.append('kingdomid', targetKingdomId);
+            formData.append('sciname', currentSciname);
+            formData.append('lev', levValue);
+            formData.append('action', 'getSciNameFuzzyMatches');
+            const http = new XMLHttpRequest();
+            http.open("POST", taxaApi, true);
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    const fuzzyMatches = JSON.parse(http.responseText);
+                    if(checkObjectNotEmpty(fuzzyMatches)){
+                        processSuccessResponse(0);
+                        processFuzzyMatches(fuzzyMatches);
+                    }
+                    else{
+                        processErrorResponse(15,false,'No fuzzy matched found');
+                        runTaxThesaurusFuzzyMatchProcess();
+                    }
+                }
+            };
+            http.send(formData);
+        }
+        else{
+            adjustUIEnd();
+        }
+    }
+    else{
+        adjustUIEnd();
+    }
+}
+
+function selectFuzzyMatch(sciName,newName){
+    disableFuzzyMatchButtons();
+    addProgressLine('<li style="margin-left:15px;">Updating occurrence records with selected scientific name ' + processStatus + '</li>');
+    updateOccurrencesWithCleanedSciname(sciName,newName,function(status,res,current,parsed){
+        if(status === 200) {
+            processSuccessResponse(15,(res + ' records updated'));
+            addRunCleanScinameAuthorUndoButton(current,parsed);
+            runTaxThesaurusFuzzyMatchProcess();
+        }
+        else{
+            processErrorResponse(15,false,'Error updating occurrence records');
+            runTaxThesaurusFuzzyMatchProcess();
+        }
+    });
 }
 
 function setDataSource(){

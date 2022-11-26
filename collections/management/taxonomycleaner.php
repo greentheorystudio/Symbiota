@@ -94,12 +94,15 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             .current-status {
                 margin-left: 10px;
             }
+            .current-status {
+                margin-left: 10px;
+            }
         </style>
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-        <script src="../../js/shared.js?ver=20221121" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221121" type="text/javascript"></script>
+        <script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221122" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -118,30 +121,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 });
                 setUnlinkedRecordCounts();
             });
-
-            function initializeTaxThesaurusFuzzyMatch(){
-                levValue = document.getElementById("levvalue").value;
-                if(levValue && Number(levValue) > 0){
-                    processCancelled = false;
-                    adjustUIStart('taxThesaurusFuzzyMatch');
-                    addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
-                    const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
-                    //console.log(occTaxonomyApi+'?'+params);
-                    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
-                        if(status === 200) {
-                            processSuccessResponse(15,'Complete');
-                            unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
-                            runScinameDataSourceSearch();
-                        }
-                        else{
-                            processErrorResponse(15,true);
-                        }
-                    },http);
-                }
-                else{
-                    alert('Please select a character difference tolerance value greater than zero.');
-                }
-            }
         </script>
 	</head>
 	<body>

@@ -26,6 +26,87 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 });
 
+function arrayIndexSort(obj){
+	const keys = [];
+	for(const key in obj){
+		if(obj.hasOwnProperty(key)){
+			keys.push(key);
+		}
+	}
+	return keys;
+}
+
+function checkObjectNotEmpty(obj){
+	for(const i in obj){
+		if(obj.hasOwnProperty(i) && obj[i]){
+			return true;
+		}
+	}
+	return false;
+}
+
+function formatCheckDate(dateStr){
+	if(dateStr !== ""){
+		const dateArr = parseDate(dateStr);
+		if(dateArr['y'] === 0){
+			alert("Please use the following date formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
+			return false;
+		}
+		else{
+			if(dateArr['m'] > 12){
+				alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
+				return false;
+			}
+
+			if(dateArr['d'] > 28){
+				if(dateArr['d'] > 31
+					|| (dateArr['d'] === 30 && dateArr['m'] === 2)
+					|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
+					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
+					return false;
+				}
+			}
+
+			let mStr = dateArr['m'];
+			if(mStr.length === 1){
+				mStr = "0" + mStr;
+			}
+			let dStr = dateArr['d'];
+			if(dStr.length === 1){
+				dStr = "0" + dStr;
+			}
+			return dateArr['y'] + "-" + mStr + "-" + dStr;
+		}
+	}
+}
+
+function generateRandColor(){
+	let hexColor = '';
+	const x = Math.round(0xffffff * Math.random()).toString(16);
+	const y = (6 - x.length);
+	const z = '000000';
+	const z1 = z.substring(0, y);
+	hexColor = z1 + x;
+	return hexColor;
+}
+
+function getISOStrFromDateObj(dObj){
+	const dYear = dObj.getFullYear();
+	const dMonth = ((dObj.getMonth() + 1) > 9 ? (dObj.getMonth() + 1) : '0' + (dObj.getMonth() + 1));
+	const dDay = (dObj.getDate() > 9 ? dObj.getDate() : '0' + dObj.getDate());
+
+	return dYear+'-'+dMonth+'-'+dDay;
+}
+
+function getRgbaStrFromHexOpacity(hex,opacity) {
+	const rgbArr = hexToRgb(hex);
+	let retStr = '';
+	if(rgbArr){
+		retStr = 'rgba('+rgbArr['r']+','+rgbArr['g']+','+rgbArr['b']+','+opacity+')';
+	}
+	return retStr;
+}
+
 function getSmallWorkingSpinnerHtml(size = null){
 	return '<div class="sm-spinner-circle-fade"' + (size ? ' style="width:'+size+'px;height:'+size+'px;"' : '') + '>' +
 		'    <div class="sm-spinner-circle-fade-dot"></div>' +
@@ -92,78 +173,6 @@ function getVineWorkingSpinnerHtml(size = null){
 		'    </clipPath>' +
 		'    <path class="path" clip-path="url(#vinePath)" d="M 66.249976,61.659254 C 59.810751,70.633869 47.315358,72.689205 38.340746,66.249976 29.366131,59.810751 27.310795,47.315358 33.750024,38.340746 40.189249,29.366131 52.684642,27.310795 61.659254,33.750024 70.633869,40.189249 72.689205,52.684642 66.249976,61.659254" />' +
 		'</svg>';
-}
-
-function arrayIndexSort(obj){
-	const keys = [];
-	for(const key in obj){
-		if(obj.hasOwnProperty(key)){
-			keys.push(key);
-		}
-	}
-	return keys;
-}
-
-function formatCheckDate(dateStr){
-	if(dateStr !== ""){
-		const dateArr = parseDate(dateStr);
-		if(dateArr['y'] === 0){
-			alert("Please use the following date formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
-			return false;
-		}
-		else{
-			if(dateArr['m'] > 12){
-				alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
-				return false;
-			}
-
-			if(dateArr['d'] > 28){
-				if(dateArr['d'] > 31
-					|| (dateArr['d'] === 30 && dateArr['m'] === 2)
-					|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
-					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
-					return false;
-				}
-			}
-
-			let mStr = dateArr['m'];
-			if(mStr.length === 1){
-				mStr = "0" + mStr;
-			}
-			let dStr = dateArr['d'];
-			if(dStr.length === 1){
-				dStr = "0" + dStr;
-			}
-			return dateArr['y'] + "-" + mStr + "-" + dStr;
-		}
-	}
-}
-
-function generateRandColor(){
-	let hexColor = '';
-	const x = Math.round(0xffffff * Math.random()).toString(16);
-	const y = (6 - x.length);
-	const z = '000000';
-	const z1 = z.substring(0, y);
-	hexColor = z1 + x;
-	return hexColor;
-}
-
-function getISOStrFromDateObj(dObj){
-	const dYear = dObj.getFullYear();
-	const dMonth = ((dObj.getMonth() + 1) > 9 ? (dObj.getMonth() + 1) : '0' + (dObj.getMonth() + 1));
-	const dDay = (dObj.getDate() > 9 ? dObj.getDate() : '0' + dObj.getDate());
-
-	return dYear+'-'+dMonth+'-'+dDay;
-}
-
-function getRgbaStrFromHexOpacity(hex,opacity) {
-	const rgbArr = hexToRgb(hex);
-	let retStr = '';
-	if(rgbArr){
-		retStr = 'rgba('+rgbArr['r']+','+rgbArr['g']+','+rgbArr['b']+','+opacity+')';
-	}
-	return retStr;
 }
 
 function hexToRgb(hex) {

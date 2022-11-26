@@ -761,15 +761,6 @@ function changeRecordPage(page){
     http.send(params);
 }
 
-function checkObjectNotEmpty(obj){
-    for(const i in obj){
-        if(obj.hasOwnProperty(i) && obj[i]){
-            return true;
-        }
-    }
-    return false;
-}
-
 function checkPointToolSource(selector){
     if(!(selections.length >= 3)){
         document.getElementById(selector).value = 'all';

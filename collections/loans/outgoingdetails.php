@@ -6,7 +6,7 @@
 /** @var string $eMode */
 $specList = $loanManager->getSpecList($loanId);
 ?>
-<script type="text/javascript" src="../../js/shared.js?ver=20221121"></script>
+<script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221125"></script>
 <div id="tabs" style="margin:0;">
     <ul>

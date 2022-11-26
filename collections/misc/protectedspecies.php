@@ -37,7 +37,7 @@ $rsArr = $rsManager->getProtectedSpeciesList();
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221121"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script>
 		$(document).ready(function() {
 			$("#speciestoadd").autocomplete({ source: "../../api/taxa/speciessuggest.php" },{ minLength: 3, autoFocus: true });
