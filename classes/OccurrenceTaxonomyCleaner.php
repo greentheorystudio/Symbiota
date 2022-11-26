@@ -192,7 +192,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
                 'SET verbatimscientificname = sciname '.
                 'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND (sciname LIKE "% sp." OR sciname LIKE "% sp" OR '.
                 'sciname LIKE "% sp. nov." OR sciname LIKE "% sp. nov" OR sciname LIKE "% sp nov." OR sciname LIKE "% sp nov" OR '.
-                'sciname LIKE "% spp." OR sciname LIKE "% spp") ';
+                'sciname LIKE "% spp." OR sciname LIKE "% spp" OR sciname LIKE "% group") ';
             //echo $sql1;
             if($this->conn->query($sql1)){
                 $retCnt += $this->conn->affected_rows;
@@ -257,6 +257,14 @@ class OccurrenceTaxonomyCleaner extends Manager{
             $sql3 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," spp","") '.
                 'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% spp" ';
+            //echo $sql3;
+            if($this->conn->query($sql3)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql3 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," group","") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% group" ';
             //echo $sql3;
             if($this->conn->query($sql3)){
                 $retCnt += $this->conn->affected_rows;
