@@ -594,7 +594,8 @@ WHERE ISNULL(t.TID);
 
 ALTER TABLE `omoccurrences`
     CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`,
-    CHANGE COLUMN `scientificName` `verbatimScientificName` varchar(255) NULL DEFAULT NULL AFTER `family`;
+    CHANGE COLUMN `scientificName` `verbatimScientificName` varchar(255) NULL DEFAULT NULL AFTER `family`,
+    ADD INDEX `Index_ verbatimScientificName`(`verbatimScientificName`);
 
 UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName
     SET o.tid = t.TID

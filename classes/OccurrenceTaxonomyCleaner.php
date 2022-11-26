@@ -6,8 +6,6 @@ include_once(__DIR__ . '/Sanitizer.php');
 class OccurrenceTaxonomyCleaner extends Manager{
 
 	private $collid = 0;
-	private $targetKingdom;
-	private $autoClean = 0;
 
 	public function __construct(){
 		parent::__construct();
@@ -52,7 +50,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
         $retCnt = 0;
         if($this->collid){
             $sql = 'UPDATE omoccurrences SET tid = '.$tid.' '.
-                'WHERE collid = '.$this->collid.' AND sciname = "' . $sciname . '" ';
+                'WHERE collid = '.$this->collid.' AND sciname = "' . Sanitizer::cleanInStr($this->conn,$sciname) . '" ';
             //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt = $this->conn->affected_rows;
@@ -83,15 +81,29 @@ class OccurrenceTaxonomyCleaner extends Manager{
         $retCnt = 0;
         if($this->collid){
             $sql = 'UPDATE omoccurrences SET verbatimscientificname = sciname '.
-                'WHERE collid = '.$this->collid.' AND sciname = "' . $sciname . '" ';
+                'WHERE collid = '.$this->collid.' AND sciname = "' . Sanitizer::cleanInStr($this->conn,$sciname) . '" ';
             //echo $sql;
             if($this->conn->query($sql)){
-                $sql2 = 'UPDATE omoccurrences SET sciname = "'.$cleanedSciname.'" '.
-                    'WHERE collid = '.$this->collid.' AND sciname = "' . $sciname . '" ';
+                $sql2 = 'UPDATE omoccurrences SET sciname = "'.Sanitizer::cleanInStr($this->conn,$cleanedSciname).'" '.
+                    'WHERE collid = '.$this->collid.' AND sciname = "' . Sanitizer::cleanInStr($this->conn,$sciname) . '" ';
                 //echo $sql2;
                 if($this->conn->query($sql2)){
                     $retCnt = $this->conn->affected_rows;
                 }
+            }
+        }
+        return $retCnt;
+    }
+
+    public function undoOccRecordsCleanedScinameChange($oldSciname,$newSciname): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql = 'UPDATE omoccurrences SET sciname = verbatimscientificname, verbatimscientificname = NULL, tid = NULL '.
+                'WHERE collid = '.$this->collid.' AND verbatimscientificname = "' . Sanitizer::cleanInStr($this->conn,$oldSciname) . '" AND sciname = "' . Sanitizer::cleanInStr($this->conn,$newSciname) . '" ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt = $this->conn->affected_rows;
             }
         }
         return $retCnt;
@@ -103,7 +115,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
         if($this->collid && $kingdomId){
             $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName '.
                 'SET o.tid = t.tid '.
-                'WHERE o.collid = '.$this->collid.' AND ISNULL(o.tid) AND t.kingdomId = ' . $kingdomId . ' ';
+                'WHERE o.collid = '.$this->collid.' AND ISNULL(o.tid) AND t.kingdomId = ' . (int)$kingdomId . ' ';
             //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt = $this->conn->affected_rows;
@@ -119,7 +131,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
             $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
                 'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
                 'SET d.tid = t.tid '.
-                'WHERE o.collid = '.$this->collid.' AND ISNULL(d.tid) AND t.kingdomId = ' . $kingdomId . ' ';
+                'WHERE o.collid = '.$this->collid.' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' ';
             //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt = $this->conn->affected_rows;
@@ -492,22 +504,10 @@ class OccurrenceTaxonomyCleaner extends Manager{
         return $status;
     }
 
-	public function setTargetKingdom($k): void
-	{
-		$this->targetKingdom = $k;
-	}
-
-	public function setAutoClean($v): void
-	{
-		if(is_numeric($v)) {
-			$this->autoClean = $v;
-		}
-	}
-
 	public function setCollId($collid): void
 	{
 		if(is_numeric($collid)){
-			$this->collid = $collid;
+			$this->collid = (int)$collid;
 		}
 	}
 }

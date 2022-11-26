@@ -12,11 +12,6 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$autoClean = array_key_exists('autoclean',$_POST)?(int)$_POST['autoclean']:0;
-$targetKingdom = array_key_exists('targetkingdom',$_POST)?(int)$_POST['targetkingdom']:0;
-$taxResource = array_key_exists('taxresource',$_POST)?htmlspecialchars($_POST['taxresource']):'';
-$startIndex = array_key_exists('startindex',$_POST)?$_POST['startindex']:'';
-$limit = array_key_exists('limit',$_POST)?(int)$_POST['limit']:20;
 
 $cleanManager = new OccurrenceTaxonomyCleaner();
 $utilitiesManager = new TaxonomyUtilities();
@@ -104,7 +99,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221121" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221118" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221121" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -135,7 +130,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                     sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
                         if(status === 200) {
                             processSuccessResponse(15,'Complete');
-                            unlinkedNamesArr = JSON.parse(res);
+                            unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
                             runScinameDataSourceSearch();
                         }
                         else{
@@ -185,11 +180,17 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 <option value="">--------------------------</option>
                                 <?php
                                 $kingdomArr = $utilitiesManager->getKingdomArr();
-                                foreach($kingdomArr as $kTid => $kSciname){
-                                    echo '<option value="'.$kTid.'" '.($targetKingdom === (int)$kTid?'SELECTED':'').'>'.$kSciname.'</option>';
+                                foreach($kingdomArr as $kid => $kSciname){
+                                    echo '<option value="'.$kid.'">'.$kSciname.'</option>';
                                 }
                                 ?>
                             </select>
+                        </div>
+                        <div style="margin-top:5px;">
+                            Processing start index: <input type="text" id="startIndex" style="width:250px;" value="" />
+                        </div>
+                        <div style="margin-top:5px;">
+                            Processing batch limit: <input type="text" id="processingLimit" style="width:50px;" value="" onchange="verifyBatchLimitChange();" />
                         </div>
                     </div>
                 </div>

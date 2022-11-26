@@ -27,6 +27,13 @@ function addProgressLine(lineHtml){
     }
 }
 
+function addRunCleanScinameAuthorUndoButton(oldName,newName){
+    const undoChangedScinameInner = "'" + oldName.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "','" + newName.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "'";
+    const undoButtonHtml = '<button class="undo-button" onclick="undoChangedSciname(' + undoChangedScinameInner + ');" disabled>Undo</button>';
+    addProgressLine('<li style="margin-left:15px;">' + undoButtonHtml + '<span class="current-status"></span></li>');
+    processSuccessResponse(0);
+}
+
 function adjustUIEnd(){
     const cancelButtonDivElements = document.getElementsByClassName('cancel-div');
     for(let i in cancelButtonDivElements){
@@ -64,6 +71,12 @@ function adjustUIEnd(){
         for(let i in startButtonElements){
             if(startButtonElements.hasOwnProperty(i)){
                 startButtonElements[i].disabled = false;
+            }
+        }
+        const undoButtonElements = document.getElementsByClassName('undo-button');
+        for(let i in undoButtonElements){
+            if(undoButtonElements.hasOwnProperty(i)){
+                undoButtonElements[i].disabled = false;
             }
         }
     }
@@ -108,7 +121,7 @@ function callCleaningController(step){
     }
     if(!processCancelled){
         if(step === 'clean-sp'){
-            addProgressLine('<li>Cleaning scientific names ending in sp., sp. nov., or spp. ' + processStatus + '</li>');
+            addProgressLine('<li>Cleaning scientific names ending in sp., sp. nov., spp., or group ' + processStatus + '</li>');
             params = 'collid=' + collId + '&action=cleanSpNames';
         }
         else if(step === 'clean-infra'){
@@ -392,7 +405,7 @@ function initializeCleanScinameAuthor(){
     sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
         if(status === 200) {
             processSuccessResponse(15,'Complete');
-            unlinkedNamesArr = JSON.parse(res);
+            unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
             runCleanScinameAuthorProcess();
         }
         else{
@@ -570,14 +583,16 @@ function processAddTaxon(){
                     }
                     else{
                         addProgressLine('<li style="margin-left:15px;">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
-                        updateOccurrencesWithCleanedSciname(currentSciname,nameSearchResults[0]['sciname'],function(status,res){
+                        updateOccurrencesWithCleanedSciname(currentSciname,nameSearchResults[0]['sciname'],function(status,res,current,parsed){
                             if(status === 200) {
                                 processSuccessResponse(15,(res + ' records updated'));
+                                addRunCleanScinameAuthorUndoButton(current,parsed);
+                                updateOccurrenceLinkages();
                             }
                             else{
                                 processErrorResponse(15,true,'Error updating occurrence records');
+                                updateOccurrenceLinkages();
                             }
-                            updateOccurrenceLinkages();
                         });
                     }
                 }
@@ -777,6 +792,28 @@ function processTaxThesaurusLinkControllerResponse(step,status,res){
     }
 }
 
+function processUnlinkedNamesArr(inArr){
+    if(Array.isArray(inArr) && inArr.length > 0){
+        const startIndex = document.getElementById("startIndex").value;
+        const limitValue = document.getElementById("processingLimit").value;
+        if(startIndex){
+            let nameArrLength = inArr.length;
+            let startIndexVal = 0;
+            for(let i = 0 ; i < nameArrLength; i++) {
+                if(inArr.hasOwnProperty(i) && inArr[i] > startIndex){
+                    startIndexVal = i;
+                    break;
+                }
+            }
+            inArr = inArr.splice(startIndexVal, (nameArrLength - startIndexVal));
+        }
+        if(limitValue){
+            inArr = inArr.splice(0, limitValue);
+        }
+    }
+    return inArr;
+}
+
 function processUpdateCleanResponse(term,status,res){
     if(status === 200) {
         processSuccessResponse(15,'Complete: ' + res + ' records ' + term);
@@ -803,14 +840,16 @@ function runCleanScinameAuthorProcess(){
                     if(parsedName.hasOwnProperty('author') && parsedName['author'] !== ''){
                         processSuccessResponse(15,'Found author: ' + parsedName['author']);
                         addProgressLine('<li style="margin-left:15px;">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
-                        updateOccurrencesWithCleanedSciname(currentSciname,parsedName['sciname'],function(status,res){
+                        updateOccurrencesWithCleanedSciname(currentSciname,parsedName['sciname'],function(status,res,current,parsed){
                             if(status === 200) {
                                 processSuccessResponse(15,(res + ' records updated'));
+                                addRunCleanScinameAuthorUndoButton(current,parsed);
+                                runCleanScinameAuthorProcess();
                             }
                             else{
                                 processErrorResponse(15,false,'Error updating occurrence records');
+                                runCleanScinameAuthorProcess();
                             }
-                            runCleanScinameAuthorProcess();
                         });
                     }
                     else{
@@ -986,7 +1025,7 @@ function setUnlinkedTaxaList(){
         sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
             if(status === 200) {
                 processSuccessResponse(15,'Complete');
-                unlinkedNamesArr = JSON.parse(res);
+                unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
                 runScinameDataSourceSearch();
             }
             else{
@@ -994,6 +1033,28 @@ function setUnlinkedTaxaList(){
             }
         },http);
     }
+}
+
+function undoChangedSciname(oldName,newName){
+    addProgressLine('<li>Reverting scientific name change from ' + oldName + ' to ' + newName + ' ' + processStatus + '</li>');
+    const formData = new FormData();
+    formData.append('collid', collId);
+    formData.append('oldsciname', oldName);
+    formData.append('newsciname', newName);
+    formData.append('action', 'undoOccScinameChange');
+    const http = new XMLHttpRequest();
+    http.open("POST", occTaxonomyApi, true);
+    http.onreadystatechange = function() {
+        if(http.readyState === 4) {
+            if(http.status === 200) {
+                processSuccessResponse(15,(http.responseText + ' records reverted'));
+            }
+            else{
+                processErrorResponse(15,false,'Error undoing name change');
+            }
+        }
+    };
+    http.send(formData);
 }
 
 function updateOccLocalitySecurity(){
@@ -1039,7 +1100,7 @@ function updateOccurrencesWithCleanedSciname(oldName,cleanedName,callback){
     http.open("POST", occTaxonomyApi, true);
     http.onreadystatechange = function() {
         if(http.readyState === 4) {
-            callback(http.status,http.responseText);
+            callback(http.status,http.responseText,oldName,cleanedName);
         }
     };
     http.send(formData);
@@ -1185,5 +1246,13 @@ function validateNameSearchResults(){
     else{
         processErrorResponse(15,false,'Unable to distinguish taxon by name');
         runScinameDataSourceSearch();
+    }
+}
+
+function verifyBatchLimitChange(){
+    const limitValue = document.getElementById("processingLimit").value;
+    if(limitValue && (isNaN(limitValue) || Number(limitValue) <= 0)){
+        alert('Processing batch limit must be a number greater than zero.');
+        document.getElementById("processingLimit").value = '';
     }
 }

@@ -12,8 +12,8 @@ class TaxonomyUtilities {
 
 	public function parseScientificName($inStr, $rankId = null): array
 	{
-		$retArr = array('unitname1'=>'','unitname2'=>'','unitind3'=>'','unitname3'=>'');
-		if($inStr && is_string($inStr)){
+        $retArr = array('unitname1'=>'','unitname2'=>'','unitind3'=>'','unitname3'=>'');
+        if($inStr && is_string($inStr)){
 			$inStr = preg_replace('/_+/',' ',$inStr);
 			$inStr = str_replace(array('?','*'),'',$inStr);
 
@@ -41,17 +41,22 @@ class TaxonomyUtilities {
 
 			$sciNameArr = explode(' ',$inStr);
 			if($sciNameArr){
-				if(strtolower($sciNameArr[0]) === 'x'){
+                if(strtolower($sciNameArr[0]) === 'x'){
 					$retArr['unitind1'] = array_shift($sciNameArr);
 				}
 				$retArr['unitname1'] = ucfirst(strtolower(array_shift($sciNameArr)));
 				if(count($sciNameArr)){
-                    if(strtolower($sciNameArr[0]) === 'x'){
+                    $secondStr = $sciNameArr[0];
+                    if($secondStr[0] === '"' || $secondStr[0] === "'" || $sciNameArr[0] === 'sect.' || $sciNameArr[0] === 'sp' || $sciNameArr[0] === 'sp.'){
+                        unset($sciNameArr);
+                    }
+                    elseif(strtolower($sciNameArr[0]) === 'x'){
                         $retArr['unitind2'] = array_shift($sciNameArr);
                         $retArr['unitname2'] = array_shift($sciNameArr);
                     }
                     elseif(strpos($sciNameArr[0],'.') !== false){
                         $retArr['author'] = implode(' ',$sciNameArr);
+                        $retArr['author2'] = $sciNameArr[0];
                         unset($sciNameArr);
                     }
                     else{
@@ -62,7 +67,7 @@ class TaxonomyUtilities {
                         $retArr['unitname2'] = array_shift($sciNameArr);
                     }
                 }
-				if(isset($sciNameArr) && $retArr['unitname2'] && !preg_match('/^[\-\'a-z]+$/',$retArr['unitname2'])){
+                if(isset($sciNameArr) && $retArr['unitname2'] && !preg_match('/^[\-\'a-z]+$/',$retArr['unitname2'])){
                     if(preg_match('/[A-Z][\-\'a-z]+/',$retArr['unitname2'])){
                         $sql = 'SELECT tid FROM taxa '.
                             'WHERE unitname1 = "'.$retArr['unitname1'].'" AND unitname2 = "'.$retArr['unitname2'].'" ';
@@ -92,14 +97,15 @@ class TaxonomyUtilities {
                 }
 			}
 			if(isset($sciNameArr) && $sciNameArr){
-				if($rankId === 220){
-					$retArr['author'] = implode(' ',$sciNameArr);
+                $testAuthor = implode(' ',$sciNameArr);
+                if($rankId === 220 || preg_match('~^\p{Lu}~u', $testAuthor) || $testAuthor[0] === '('){
+                    $retArr['author'] = $testAuthor;
 				}
 				else{
 					$authorArr = array();
 					while($sciStr = array_shift($sciNameArr)){
 						$sciStrTest = strtolower($sciStr);
-						if(stripos($sciStrTest,' x ') === false){
+                        if(stripos($sciStrTest,' x ') === false && strpos($sciStrTest,'"') === false && substr_count($sciStrTest,"'") < 2){
                             if($sciStrTest === 'f.' || $sciStrTest === 'fo.' || $sciStrTest === 'fo' || $sciStrTest === 'forma'){
                                 self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'f.');
                             }
@@ -118,8 +124,11 @@ class TaxonomyUtilities {
                                 unset($authorArr);
                                 $authorArr = array();
                             }
-                            else{
+                            elseif(preg_match('/[A-Z]+/',$sciStr)){
                                 $authorArr[] = $sciStr;
+                            }
+                            else{
+                                $authorArr = array();
                             }
                         }
 					}
@@ -135,7 +144,13 @@ class TaxonomyUtilities {
 							if($r = $rs->fetch_object()){
 								$retArr['unitind3'] = $r->unitind3;
 								$retArr['unitname3'] = $firstWord;
-								$retArr['author'] = implode(' ',$arr);
+                                $authorStr = implode(' ',$arr);
+								if(preg_match('/[A-Z]+/',$authorStr)){
+                                    $retArr['author'] = implode(' ',$arr);
+                                }
+                                else{
+                                    $retArr['author'] = '';
+                                }
 							}
 							$rs->free();
 							$this->conn->close();

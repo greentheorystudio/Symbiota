@@ -58,4 +58,9 @@ if($isEditor && $collid && $action){
     elseif($action === 'updateOccWithCleanedName'){
         echo $cleanManager->updateOccRecordsWithCleanedSciname($_POST['sciname'],$_POST['cleanedsciname']);
     }
+    elseif($action === 'undoOccScinameChange'){
+        $oldName = str_replace(array('%squot;', '%dquot;'), array("'", '"'), $_POST['oldsciname']);
+        $newName = str_replace(array('%squot;', '%dquot;'), array("'", '"'), $_POST['newsciname']);
+        echo $cleanManager->undoOccRecordsCleanedScinameChange($oldName,$newName);
+    }
 }
