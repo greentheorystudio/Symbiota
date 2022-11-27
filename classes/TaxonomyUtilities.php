@@ -47,7 +47,7 @@ class TaxonomyUtilities {
 				$retArr['unitname1'] = ucfirst(strtolower(array_shift($sciNameArr)));
 				if(count($sciNameArr)){
                     $secondStr = $sciNameArr[0];
-                    if($secondStr[0] === '"' || $secondStr[0] === "'" || $sciNameArr[0] === 'sect.' || $sciNameArr[0] === 'sp' || $sciNameArr[0] === 'sp.'){
+                    if($secondStr[0] === '"' || $secondStr[0] === "'" || $sciNameArr[0] === 'sect.' || $sciNameArr[0] === 'sp' || $sciNameArr[0] === 'sp.' || $sciNameArr[0] === 'subgenus'){
                         unset($sciNameArr);
                     }
                     elseif(strtolower($sciNameArr[0]) === 'x'){

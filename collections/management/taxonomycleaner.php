@@ -97,12 +97,19 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             .current-status {
                 margin-left: 10px;
             }
+            ul.processor-display-list li.first-indent {
+                margin-left: 15px;
+                list-style-type: none;
+            }
+            .undo-button {
+                margin-bottom: 5px;
+            }
         </style>
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221122" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221123" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -299,7 +306,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 
                     <div class="processor-display-container">
                         <div id="processor-display">
-                            <ul id="progressDisplayList"></ul>
+                            <ul class="processor-display-list" id="progressDisplayList"></ul>
                         </div>
                     </div>
                 </div>

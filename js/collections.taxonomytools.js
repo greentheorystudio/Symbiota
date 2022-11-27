@@ -17,8 +17,13 @@ let taxaLoaded = 0;
 let rebuildHierarchyLoop = 0;
 let levValue = 0;
 
-function addProgressLine(lineHtml){
-    document.getElementById("progressDisplayList").innerHTML += lineHtml;
+function addProgressLine(lineHtml,element = null){
+    if(element){
+        element.innerHTML = lineHtml;
+    }
+    else{
+        document.getElementById("progressDisplayList").innerHTML += lineHtml;
+    }
     const processorWindowBounds = document.getElementById('processor-display').getBoundingClientRect();
     const currentStatus = document.getElementsByClassName('current-status')[0];
     if(currentStatus.getBoundingClientRect().bottom > processorWindowBounds.bottom){
@@ -28,9 +33,10 @@ function addProgressLine(lineHtml){
 }
 
 function addRunCleanScinameAuthorUndoButton(oldName,newName){
-    const undoChangedScinameInner = "'" + oldName.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "','" + newName.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "'";
+    const cleanedOldName = oldName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
+    const undoChangedScinameInner = "'" + cleanedOldName + "','" + newName.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "'";
     const undoButtonHtml = '<button class="undo-button" onclick="undoChangedSciname(' + undoChangedScinameInner + ');" disabled>Undo</button>';
-    addProgressLine('<li style="margin-left:15px;">' + undoButtonHtml + '<span class="current-status"></span></li>');
+    addProgressLine('<li class="first-indent undo-button" id="undo-' + cleanedOldName + '">' + undoButtonHtml + '<span class="current-status"></span></li>');
     processSuccessResponse(0);
 }
 
@@ -542,7 +548,7 @@ function primeTaxonomicHierarchy(){
 function processAddTaxaArr(){
     if(taxaToAddArr.length > 0){
         const taxonToAdd = taxaToAddArr[0];
-        addProgressLine('<li style="margin-left:15px;">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
+        addProgressLine('<li class="first-indent">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
         const newTaxonObj = {};
         newTaxonObj['sciname'] = taxonToAdd['sciname'];
         newTaxonObj['author'] = taxonToAdd['author'];
@@ -585,7 +591,7 @@ function processAddTaxaArr(){
 
 function processAddTaxon(){
     const taxonToAdd = nameSearchResults[0];
-    addProgressLine('<li style="margin-left:15px;">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
+    addProgressLine('<li class="first-indent">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
     if(nameTidIndex.hasOwnProperty(taxonToAdd['sciname'])){
         processSuccessResponse(15,nameSearchResults[0]['sciname'] + 'already added');
         updateOccurrenceLinkages();
@@ -619,7 +625,7 @@ function processAddTaxon(){
                         updateOccurrenceLinkages();
                     }
                     else{
-                        addProgressLine('<li style="margin-left:15px;">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
+                        addProgressLine('<li class="first-indent">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
                         updateOccurrencesWithCleanedSciname(currentSciname,nameSearchResults[0]['sciname'],function(status,res,current,parsed){
                             if(status === 200) {
                                 processSuccessResponse(15,(res + ' records updated'));
@@ -891,7 +897,7 @@ function runCleanScinameAuthorProcess(){
                     const parsedName = JSON.parse(http.responseText);
                     if(parsedName.hasOwnProperty('author') && parsedName['author'] !== ''){
                         processSuccessResponse(15,'Found author: ' + parsedName['author']);
-                        addProgressLine('<li style="margin-left:15px;">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
+                        addProgressLine('<li class="first-indent">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
                         updateOccurrencesWithCleanedSciname(currentSciname,parsedName['sciname'],function(status,res,current,parsed){
                             if(status === 200) {
                                 processSuccessResponse(15,(res + ' records updated'));
@@ -1028,7 +1034,7 @@ function runTaxThesaurusFuzzyMatchProcess(){
 
 function selectFuzzyMatch(sciName,newName){
     disableFuzzyMatchButtons();
-    addProgressLine('<li style="margin-left:15px;">Updating occurrence records with selected scientific name ' + processStatus + '</li>');
+    addProgressLine('<li class="first-indent">Updating occurrence records with selected scientific name ' + processStatus + '</li>');
     updateOccurrencesWithCleanedSciname(sciName,newName,function(status,res,current,parsed){
         if(status === 200) {
             processSuccessResponse(15,(res + ' records updated'));
@@ -1142,7 +1148,10 @@ function setUnlinkedTaxaList(){
 }
 
 function undoChangedSciname(oldName,newName){
-    addProgressLine('<li>Reverting scientific name change from ' + oldName + ' to ' + newName + ' ' + processStatus + '</li>');
+    const progressLineElementId = 'undo-' + oldName;
+    const progressLineElement = document.getElementById(progressLineElementId);
+    const progressLineElementHtml = 'Reverting scientific name change from ' + oldName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' to ' + newName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' ' + processStatus;
+    addProgressLine(progressLineElementHtml,progressLineElement);
     const formData = new FormData();
     formData.append('collid', collId);
     formData.append('oldsciname', oldName);
@@ -1177,7 +1186,7 @@ function updateOccLocalitySecurity(){
 function updateOccurrenceLinkages(){
     const newSciname = nameSearchResults[0]['sciname'];
     const newScinameTid = nameTidIndex[nameSearchResults[0]['sciname']];
-    addProgressLine('<li style="margin-left:15px;">Updating linkages of occurrence records to ' + newSciname + ' ' + processStatus + '</li>');
+    addProgressLine('<li class="first-indent">Updating linkages of occurrence records to ' + newSciname + ' ' + processStatus + '</li>');
     let params = 'collid=' + collId + '&sciname=' + newSciname + '&tid=' + newScinameTid + '&kingdomid=' + targetKingdomId + '&action=updateOccWithNewSciname';
     //console.log(occTaxonomyApi+'?'+params);
     sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
@@ -1345,7 +1354,7 @@ function validateNameSearchResults(){
                 nameSearchResults[0]['parentName'] = parentName;
             }
             processingArr = addHierchyTemp;
-            addProgressLine('<li style="margin-left:15px;">Matching parent and accepted taxa to the Taxonomic Thesaurus ' + processStatus + '</li>');
+            addProgressLine('<li class="first-indent">Matching parent and accepted taxa to the Taxonomic Thesaurus ' + processStatus + '</li>');
             setTaxaToAdd();
         }
     }
