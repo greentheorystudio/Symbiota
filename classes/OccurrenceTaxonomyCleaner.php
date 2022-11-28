@@ -394,6 +394,15 @@ class OccurrenceTaxonomyCleaner extends Manager{
         $retCnt = 0;
         if($this->collid){
             $sql1 = 'UPDATE omoccurrences '.
+                'SET verbatimscientificname = sciname '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND (sciname LIKE "% cf. %" OR sciname LIKE "% cf %" OR '.
+                'sciname LIKE "% aff. %" OR sciname LIKE "% aff %") ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql1 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," cf. "," "), identificationQualifier = "cf." '.
                 'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% cf. %" ';
             //echo $sql1;
@@ -422,6 +431,29 @@ class OccurrenceTaxonomyCleaner extends Manager{
                 'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "% aff %" ';
             //echo $sql4;
             if($this->conn->query($sql4)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function cleanQuestionMarks(): int
+    {
+        $retCnt = 0;
+        if($this->collid){
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET verbatimscientificname = sciname '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "%?%" ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname,"?","") '.
+                'WHERE collid = '.$this->collid.' AND ISNULL(tid) AND sciname LIKE "%?%" ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
                 $retCnt += $this->conn->affected_rows;
             }
         }

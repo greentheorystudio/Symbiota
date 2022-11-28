@@ -123,7 +123,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221125" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221126" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -188,10 +188,10 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             </select>
                         </div>
                         <div style="margin-top:5px;">
-                            Processing start index: <input type="text" id="startIndex" style="width:250px;" value="" />
+                            Processing Start Index: <input type="text" id="startIndex" style="width:250px;" value="" />
                         </div>
                         <div style="margin-top:5px;">
-                            Processing batch limit: <input type="text" id="processingLimit" style="width:50px;" value="" onchange="verifyBatchLimitChange();" />
+                            Processing Batch Limit: <input type="text" id="processingLimit" style="width:50px;" value="" onchange="verifyBatchLimitChange();" />
                         </div>
                     </div>
                     <div style="margin-right:30px;font-weight:bold;font-size:130%;">
@@ -207,13 +207,13 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 <div class="process-header">
                                     General Cleaning
                                 </div>
-                                Run cleaning processes on occurrence record scientific names that are not linked to
-                                the Taxonomic Thesaurus to remove unnecessary endings, identification qualifiers, and normalize
-                                infraspecific rank references.
+                                Run cleaning processes to remove unnecessary endings, identification qualifiers and question marks, and normalize
+                                infraspecific rank references in occurrence record scientific names that are not linked to
+                                the Taxonomic Thesaurus.
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
                                         <div class="start-div" id="cleanProcessesStart">
-                                            <button class="start-button" onclick="callCleaningController('leading-trailing-spaces');">Start</button>
+                                            <button class="start-button" onclick="callCleaningController('question-marks');">Start</button>
                                         </div>
                                         <div class="cancel-div" id="cleanProcessesCancel" style="display:none;">
                                             <span style="margin-right:10px;">
@@ -227,7 +227,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 <div class="process-header">
                                     Scientific Name Authorship Cleaning
                                 </div>
-                                Run cleaning processes to remove the scientific name authors from occurrence record scientific
+                                Run a cleaning process to remove the scientific name authors from occurrence record scientific
                                 names that are not linked to the Taxonomic Thesaurus.
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
@@ -248,7 +248,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                 </div>
                                 Set occurrence record linkages to the Taxonomic Thesaurus.
                                 <div style="clear:both;margin-top:5px;">
-                                    <input type='checkbox' id='updatedetimage' /> Also set associated determination linkages.
+                                    <input type='checkbox' id='updatedetimage' /> Include associated determination records
                                 </div>
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>

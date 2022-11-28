@@ -6,7 +6,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Mapping Configuration Manager Tutorial</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Management Module Tutorial</title>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />
@@ -53,9 +53,8 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             <h2>Index of Topics</h2>
                             <ul class="topic-list">
                                 <li><a href="overview.php?collid=<?php echo $collid; ?>">Overview</a></li>
-                                <li><a href="map-window-tab.php">Map Window Tab</a></li>
-                                <li><a href="symbology-tab.php">Symbology Tab</a></li>
-                                <li><a href="layers-tab.php">Layers Tab</a></li>
+                                <li><a href="maintenance-utilities-panel.php?collid=<?php echo $collid; ?>">Maintenance Utilities Panel</a></li>
+                                <li><a href="search-utilities-panel.php?collid=<?php echo $collid; ?>">Search Utilities Panel</a></li>
                             </ul>
                         </div>
                     </div>

@@ -31,6 +31,9 @@ if($isEditor && $collid && $action){
     elseif($action === 'updateLocalitySecurity'){
         echo $cleanManager->protectGlobalSpecies($collid);
     }
+    elseif($action === 'cleanQuestionMarks'){
+        echo $cleanManager->cleanQuestionMarks();
+    }
     elseif($action === 'cleanTrimNames'){
         echo $cleanManager->cleanTrimNames();
     }

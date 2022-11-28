@@ -120,11 +120,11 @@ function adjustUIStart(id){
 
 function callCleaningController(step){
     let params = '';
-    if(step === 'leading-trailing-spaces'){
+    if(step === 'question-marks'){
         processCancelled = false;
         adjustUIStart('cleanProcesses');
-        addProgressLine('<li>Cleaning leading and trailing spaces in scientific names ' + processStatus + '</li>');
-        params = 'collid=' + collId + '&action=cleanTrimNames';
+        addProgressLine('<li>Cleaning question marks from scientific names ' + processStatus + '</li>');
+        params = 'collid=' + collId + '&action=cleanQuestionMarks';
     }
     if(!processCancelled){
         if(step === 'clean-sp'){
@@ -142,6 +142,10 @@ function callCleaningController(step){
         else if(step === 'double-spaces'){
             addProgressLine('<li>Cleaning scientific names containing double spaces ' + processStatus + '</li>');
             params = 'collid=' + collId + '&action=cleanDoubleSpaces';
+        }
+        else if(step === 'leading-trailing-spaces'){
+            addProgressLine('<li>Cleaning leading and trailing spaces in scientific names ' + processStatus + '</li>');
+            params = 'collid=' + collId + '&action=cleanTrimNames';
         }
         //console.log(occTaxonomyApi+'?'+params);
         sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
@@ -647,7 +651,7 @@ function processAddTaxon(){
 
 function processCleaningControllerResponse(step,status,res){
     processUpdateCleanResponse('cleaned',status,res);
-    if(step === 'leading-trailing-spaces'){
+    if(step === 'question-marks'){
         callCleaningController('clean-sp');
     }
     else if(step === 'clean-sp'){
@@ -660,6 +664,9 @@ function processCleaningControllerResponse(step,status,res){
         callCleaningController('double-spaces');
     }
     else if(step === 'double-spaces'){
+        callCleaningController('leading-trailing-spaces');
+    }
+    else if(step === 'leading-trailing-spaces'){
         adjustUIEnd();
     }
 }
@@ -891,7 +898,7 @@ function runCleanScinameAuthorProcess(){
                 if(http.readyState === 4 && http.status === 200) {
                     const parsedName = JSON.parse(http.responseText);
                     if(parsedName.hasOwnProperty('author') && parsedName['author'] !== ''){
-                        processSuccessResponse(15,'Found author: ' + parsedName['author']);
+                        processSuccessResponse(15,'Parsed author: ' + parsedName['author'] + '<br />Cleaned scientific name: ' + parsedName['sciname']);
                         addProgressLine('<li class="first-indent">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
                         updateOccurrencesWithCleanedSciname(currentSciname,parsedName['sciname'],function(status,res,current,parsed){
                             if(status === 200) {
