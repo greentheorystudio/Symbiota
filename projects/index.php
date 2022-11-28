@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']:0;
 $editMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
@@ -140,7 +140,7 @@ if(!$researchList && !$editMode){
                 alert("Project name field cannot be empty.");
                 return false;
             }
-            else if(!isNumeric(f.sortsequence.value)){
+            else if(isNaN(f.sortsequence.value)){
                 alert("Sort sequence can only be a numeric value.");
                 return false;
             }
@@ -163,19 +163,6 @@ if(!$researchList && !$editMode){
             if(f.uid.value === ""){
                 alert("Choose a user from the pull-down");
                 return false;
-            }
-            return true;
-        }
-
-        function isNumeric(sText){
-            const validChars = "0123456789-.";
-            let ch;
-
-            for(let i = 0; i < sText.length; i++){
-                ch = sText.charAt(i);
-                if(validChars.indexOf(ch) === -1) {
-                    return false;
-                }
             }
             return true;
         }

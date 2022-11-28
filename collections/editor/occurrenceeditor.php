@@ -7,7 +7,6 @@ include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
-header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
 ini_set('max_execution_time', 600);
 
 $occId = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
@@ -287,7 +286,7 @@ if($GLOBALS['SYMB_UID']){
                 $tabTarget = 1;
             }
             elseif($action === 'Make Determination Current'){
-                $statusStr = $occManager->makeDeterminationCurrent($_POST['detid']);
+                $occManager->makeDeterminationCurrent($_POST['detid']);
                 if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
@@ -481,12 +480,12 @@ else{
     <?php
     if($crowdSourceMode === 1){
         ?>
-        <link href="../../css/occureditorcrowdsource.css?ver=1805" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditorcrowdsource.css?ver=20221125" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
     }
     else{
         ?>
-        <link href="../../css/occureditor.css?ver=20220110" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditor.css?ver=20221125" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
         if(isset($CSSARR)){
             foreach($CSSARR as $cssVal){
@@ -536,11 +535,12 @@ else{
             });
         }
     </script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
     <script type="text/javascript" src="../../js/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221025"></script>
-    <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221025"></script>
+    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221125"></script>
+    <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221125"></script>
     <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20220921"></script>
-    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221025"></script>
+    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
 </head>
 <body>
 <div id="innertext">
@@ -848,7 +848,7 @@ else{
                                                     <a href="#" onclick="return dwcDoc('scientificName')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
                                                     <br/>
                                                     <input type="text" id="ffsciname" name="sciname" maxlength="250" tabindex="28" value="<?php echo array_key_exists('sciname',$occArr)?$occArr['sciname']:''; ?>" onchange="fieldChanged('sciname');" <?php echo ((!$isEditor || $isEditor === 3)?'disabled ':''); ?> />
-                                                    <input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo array_key_exists('tidinterpreted',$occArr)?$occArr['tidinterpreted']:''; ?>" />
+                                                    <input type="hidden" id="tid" name="tid" value="<?php echo array_key_exists('tid',$occArr)?$occArr['tid']:''; ?>" />
                                                     <?php
                                                     if(!$isEditor){
                                                         echo '<div style="clear:both;color:red;margin-left:5px;">Note: Full editing permissions are needed to edit an identification</div>';
@@ -908,6 +908,10 @@ else{
                                                 </div>
                                             </div>
                                             <div  id="idrefdiv">
+                                                <div id="verbatimScientificNameDiv">
+                                                    <?php echo (defined('VERBATIMSCIENTIFICNAMELABEL')?VERBATIMSCIENTIFICNAMELABEL:'Verbatim Scientific Name'); ?>:
+                                                    <input type="text" name="verbatimscientificname" tabindex="36" value="<?php echo array_key_exists('verbatimscientificname',$occArr)?$occArr['verbatimscientificname']:''; ?>" onchange="fieldChanged('verbatimscientificname');" />
+                                                </div>
                                                 <div id="identificationReferencesDiv">
                                                     <?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'ID References'); ?>:
                                                     <a href="#" onclick="return dwcDoc('identificationReferences')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>

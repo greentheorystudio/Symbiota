@@ -30,14 +30,13 @@ class DynamicChecklistManager {
 		if($this->conn->query($sql)){
 			$dynPk = $this->conn->insert_id;
 			$sql2 = 'INSERT INTO fmdyncltaxalink (dynclid, tid) '.
-				'SELECT DISTINCT '.$dynPk.' AS dynpk, IF(t.rankid=220,t.tid,ts2.parenttid) AS tid '.
-				'FROM omoccurrences AS o INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid '.
-				'INNER JOIN taxstatus AS ts2 ON ts.tidaccepted = ts2.tid '.
-				'INNER JOIN taxa AS t ON ts2.tid = t.tid ';
+				'SELECT DISTINCT '.$dynPk.' AS dynpk, IF(t2.rankid=220,t2.tid,t2.parenttid) AS tid '.
+				'FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
+				'INNER JOIN taxa AS t2 ON t.tidaccepted = t2.tid ';
 			if($tidFilter){
-				$sql2 .= 'INNER JOIN taxaenumtree AS e ON ts2.tid = e.tid ';
+				$sql2 .= 'INNER JOIN taxaenumtree AS e ON t2.tid = e.tid ';
 			}
-			$sql2 .= 'WHERE o.tidinterpreted IS NOT NULL AND o.decimalLatitude IS NOT NULL AND o.decimalLongitude IS NOT NULL AND (t.rankid IN(220,230,240,260)) '.
+			$sql2 .= 'WHERE o.tid IS NOT NULL AND o.decimalLatitude IS NOT NULL AND o.decimalLongitude IS NOT NULL AND (t2.rankid IN(220,230,240,260)) '.
 				'AND ((3959 * ACOS(COS(RADIANS(o.decimalLatitude)) * COS(RADIANS('.$lat.')) * COS(RADIANS('.$lng.') - RADIANS(o.decimalLongitude)) + SIN(RADIANS(o.decimalLatitude)) * SIN(RADIANS('.$lat.')))) <= '.$whereRadius.') ';
             if($tidFilter){
 				$sql2 .= 'AND e.parentTid = '.$tidFilter;

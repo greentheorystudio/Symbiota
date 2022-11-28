@@ -12,8 +12,8 @@ class TaxonomyUtilities {
 
 	public function parseScientificName($inStr, $rankId = null): array
 	{
-		$retArr = array('unitname1'=>'','unitname2'=>'','unitind3'=>'','unitname3'=>'');
-		if($inStr && is_string($inStr)){
+        $retArr = array('unitname1'=>'','unitname2'=>'','unitind3'=>'','unitname3'=>'');
+        if($inStr && is_string($inStr)){
 			$inStr = preg_replace('/_+/',' ',$inStr);
 			$inStr = str_replace(array('?','*'),'',$inStr);
 
@@ -41,17 +41,22 @@ class TaxonomyUtilities {
 
 			$sciNameArr = explode(' ',$inStr);
 			if($sciNameArr){
-				if(strtolower($sciNameArr[0]) === 'x'){
+                if(strtolower($sciNameArr[0]) === 'x'){
 					$retArr['unitind1'] = array_shift($sciNameArr);
 				}
 				$retArr['unitname1'] = ucfirst(strtolower(array_shift($sciNameArr)));
 				if(count($sciNameArr)){
-                    if(strtolower($sciNameArr[0]) === 'x'){
+                    $secondStr = $sciNameArr[0];
+                    if($secondStr[0] === '"' || $secondStr[0] === "'" || $sciNameArr[0] === 'sect.' || $sciNameArr[0] === 'sp' || $sciNameArr[0] === 'sp.' || $sciNameArr[0] === 'subgenus' || $sciNameArr[0] === 'subsect.'){
+                        unset($sciNameArr);
+                    }
+                    elseif(strtolower($sciNameArr[0]) === 'x'){
                         $retArr['unitind2'] = array_shift($sciNameArr);
                         $retArr['unitname2'] = array_shift($sciNameArr);
                     }
                     elseif(strpos($sciNameArr[0],'.') !== false){
                         $retArr['author'] = implode(' ',$sciNameArr);
+                        $retArr['author2'] = $sciNameArr[0];
                         unset($sciNameArr);
                     }
                     else{
@@ -62,40 +67,70 @@ class TaxonomyUtilities {
                         $retArr['unitname2'] = array_shift($sciNameArr);
                     }
                 }
-				if($retArr['unitname2'] && !preg_match('/^[\-a-z]+$/', $retArr['unitname2'])) {
-					$retArr['unitname2'] = strtolower($retArr['unitname2']);
-					if(!preg_match('/^[a-z]+$/',$retArr['unitname2'])){
-						$retArr['unitname2'] = '';
-						unset($sciNameArr);
-					}
-				}
+                if(isset($sciNameArr) && $retArr['unitname2'] && !preg_match('/^[\-\'a-z]+$/',$retArr['unitname2'])){
+                    if(preg_match('/[A-Z][\-\'a-z]+/',$retArr['unitname2'])){
+                        $sql = 'SELECT tid FROM taxa '.
+                            'WHERE unitname1 = "'.$retArr['unitname1'].'" AND unitname2 = "'.$retArr['unitname2'].'" ';
+                        //echo $sql.'<br/>';
+                        $rs = $this->conn->query($sql);
+                        if($rs->num_rows){
+                            if(isset($retArr['author'])){
+                                unset($retArr['author']);
+                            }
+                        }
+                        else{
+                            $retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+                            $retArr['unitname2'] = '';
+                            unset($sciNameArr);
+                        }
+                        $rs->free();
+                        $this->conn->close();
+                    }
+                    if(isset($sciNameArr) && $retArr['unitname2']){
+                        $retArr['unitname2'] = strtolower($retArr['unitname2']);
+                        if(!preg_match('/^[\-\'a-z]+$/',$retArr['unitname2'])){
+                            $retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+                            $retArr['unitname2'] = '';
+                            unset($sciNameArr);
+                        }
+                    }
+                }
 			}
 			if(isset($sciNameArr) && $sciNameArr){
-				if($rankId === 220){
-					$retArr['author'] = implode(' ',$sciNameArr);
+                $testAuthor = implode(' ',$sciNameArr);
+                if($rankId === 220 || preg_match('~^\p{Lu}~u', $testAuthor) || $testAuthor[0] === '('){
+                    $retArr['author'] = $testAuthor;
 				}
 				else{
 					$authorArr = array();
 					while($sciStr = array_shift($sciNameArr)){
 						$sciStrTest = strtolower($sciStr);
-						if($sciStrTest === 'f.' || $sciStrTest === 'fo.' || $sciStrTest === 'fo' || $sciStrTest === 'forma'){
-							self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'f.');
-						}
-						elseif($sciStrTest === 'var.' || $sciStrTest === 'var' || $sciStrTest === 'v.'){
-							self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'var.');
-						}
-						elseif($sciStrTest === 'ssp.' || $sciStrTest === 'ssp' || $sciStrTest === 'subsp.' || $sciStrTest === 'subsp' || $sciStrTest === 'sudbsp.'){
-							self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'subsp.');
-						}
-						elseif(!$retArr['unitname3'] && ($rankId === 230 || preg_match('/^[a-z]{5,}$/',$sciStr))){
-							$retArr['unitind3'] = '';
-							$retArr['unitname3'] = $sciStr;
-							unset($authorArr);
-							$authorArr = array();
-						}
-						else{
-							$authorArr[] = $sciStr;
-						}
+                        if(stripos($sciStrTest,' x ') === false && strpos($sciStrTest,'"') === false && substr_count($sciStrTest,"'") < 2){
+                            if($sciStrTest === 'f.' || $sciStrTest === 'fo.' || $sciStrTest === 'fo' || $sciStrTest === 'forma'){
+                                self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'f.');
+                            }
+                            elseif($sciStrTest === 'var.' || $sciStrTest === 'var' || $sciStrTest === 'v.'){
+                                self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'var.');
+                            }
+                            elseif($sciStrTest === 'ssp.' || $sciStrTest === 'ssp' || $sciStrTest === 'subsp.' || $sciStrTest === 'subsp' || $sciStrTest === 'sudbsp.'){
+                                self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'subsp.');
+                            }
+                            elseif($sciStrTest === 'x' || $sciStrTest === 'X'){
+                                self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'X');
+                            }
+                            elseif(!$retArr['unitname3'] && ($rankId === 230 || preg_match('/^[a-z]{5,}$/',$sciStr))){
+                                $retArr['unitind3'] = '';
+                                $retArr['unitname3'] = $sciStr;
+                                unset($authorArr);
+                                $authorArr = array();
+                            }
+                            elseif(preg_match('/[A-Z]+/',$sciStr)){
+                                $authorArr[] = $sciStr;
+                            }
+                            else{
+                                $authorArr = array();
+                            }
+                        }
 					}
 					$retArr['author'] = implode(' ', $authorArr);
 					if(!$retArr['unitname3'] && $retArr['author']){
@@ -109,7 +144,13 @@ class TaxonomyUtilities {
 							if($r = $rs->fetch_object()){
 								$retArr['unitind3'] = $r->unitind3;
 								$retArr['unitname3'] = $firstWord;
-								$retArr['author'] = implode(' ',$arr);
+                                $authorStr = implode(' ',$arr);
+								if(preg_match('/[A-Z]+/',$authorStr)){
+                                    $retArr['author'] = implode(' ',$arr);
+                                }
+                                else{
+                                    $retArr['author'] = '';
+                                }
 							}
 							$rs->free();
 							$this->conn->close();
@@ -120,9 +161,9 @@ class TaxonomyUtilities {
 			if(array_key_exists('unitind3',$retArr) && $retArr['unitind3'] === 'ssp.'){
 				$retArr['unitind3'] = 'subsp.';
 			}
-			$sciname = (isset($retArr['unitind1'])?$retArr['unitind1'].' ':'').$retArr['unitname1'].' ';
-			$sciname .= (isset($retArr['unitind2'])?$retArr['unitind2'].' ':'').$retArr['unitname2'].' ';
-			$sciname .= $retArr['unitind3'].' '.$retArr['unitname3'];
+			$sciname = ((isset($retArr['unitind1']) && $retArr['unitind1'])?$retArr['unitind1'].' ':'').$retArr['unitname1'].' ';
+			$sciname .= ((isset($retArr['unitind2']) && $retArr['unitind2'])?$retArr['unitind2'].' ':'').$retArr['unitname2'].' ';
+			$sciname .= ((isset($retArr['unitind3']) && $retArr['unitind3'])?$retArr['unitind3'].' ':'').$retArr['unitname3'];
 			$retArr['sciname'] = trim($sciname);
 			if($rankId && is_numeric($rankId)){
 				$retArr['rankid'] = $rankId;
@@ -150,7 +191,55 @@ class TaxonomyUtilities {
 		return $retArr;
 	}
 
-	private static function setInfraNode($sciStr, &$sciNameArr, &$retArr, &$authorArr, $rankTag): void
+    public function formatScientificName($inStr){
+        $sciNameStr = trim($inStr);
+        $sciNameStr = preg_replace('/\s\s+/', ' ',$sciNameStr);
+        $tokens = explode(' ',$sciNameStr);
+        if($tokens){
+            $sciNameStr = array_shift($tokens);
+            if(strlen($sciNameStr) < 2) {
+                $sciNameStr = ' ' . array_shift($tokens);
+            }
+            if($tokens){
+                $term = array_shift($tokens);
+                $sciNameStr .= ' '.$term;
+                if($term === 'x') {
+                    $sciNameStr .= ' ' . array_shift($tokens);
+                }
+            }
+            $tRank = '';
+            $infraSp = '';
+            foreach($tokens as $c => $v){
+                switch($v) {
+                    case 'subsp.':
+                    case 'subsp':
+                    case 'ssp.':
+                    case 'ssp':
+                    case 'subspecies':
+                    case 'var.':
+                    case 'var':
+                    case 'variety':
+                    case 'forma':
+                    case 'form':
+                    case 'f.':
+                    case 'fo.':
+                        if(array_key_exists($c+1,$tokens) && ctype_lower($tokens[$c+1])){
+                            $tRank = $v;
+                            if(($tRank === 'ssp' || $tRank === 'subsp' || $tRank === 'var') && substr($tRank,-1) !== '.') {
+                                $tRank .= '.';
+                            }
+                            $infraSp = $tokens[$c+1];
+                        }
+                }
+            }
+            if($infraSp){
+                $sciNameStr .= ' '.$tRank.' '.$infraSp;
+            }
+        }
+        return $sciNameStr;
+    }
+
+    private static function setInfraNode($sciStr, &$sciNameArr, &$retArr, &$authorArr, $rankTag): void
 	{
 		if($sciNameArr){
 			$infraStr = array_shift($sciNameArr);
@@ -166,50 +255,131 @@ class TaxonomyUtilities {
 		}
 	}
 
-	public function buildHierarchyEnumTree(){
-		$status = true;
-        $complete = false;
-        $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
-            'SELECT DISTINCT ts.tid, ts.parenttid '.
-            'FROM taxstatus ts '.
-            'WHERE ts.tid NOT IN(SELECT tid FROM taxaenumtree)';
-        //echo '<div>SQL1: '.$sql.'</div>';
-        if(!$this->conn->query($sql)){
-            $status = 'ERROR seeding taxaenumtree.';
-        }
-        if($status === true){
-            $sql2 = 'INSERT INTO taxaenumtree(tid,parenttid) '.
-                'SELECT DISTINCT e.tid, ts.parenttid '.
-                'FROM taxaenumtree e INNER JOIN taxstatus ts ON e.parenttid = ts.tid '.
-                'LEFT JOIN taxaenumtree e2 ON e.tid = e2.tid AND ts.parenttid = e2.parenttid '.
-                'WHERE ISNULL(e2.tid)';
-            //echo '<div>SQL2: '.$sql2.'</div>';
-            $cnt = 0;
-            do{
-                if(!$this->conn->query($sql2)){
-                    $status = 'ERROR building taxaenumtree.';
-                    $complete = true;
-                }
-                if(!$this->conn->affected_rows) {
-                    $complete = true;
-                }
-                $cnt++;
+    public function primeHierarchyTable($tid = null): int
+    {
+        $retCnt = 0;
+        $tidStr = '';
+        if($tid){
+            if(is_array($tid)){
+                $tidStr = implode(',', $tid);
             }
-            while($cnt < 100 && !$complete);
+            elseif(is_numeric($tid)){
+                $tidStr = $tid;
+            }
+            if($tidStr){
+                $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
+                    'SELECT DISTINCT tid, parenttid FROM taxa '.
+                    'WHERE tid IN('.$tidStr.') AND tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
+                //echo $sql;
+                if($this->conn->query($sql)){
+                    $retCnt += $this->conn->affected_rows;
+                }
+            }
         }
+        return $retCnt;
+    }
 
-		return $status;
-	}
+    public function populateHierarchyTable($tid = null): int
+    {
+        $retCnt = 0;
+        $tidStr = '';
+        if($tid){
+            if(is_array($tid)){
+                $tidStr = implode(',', $tid);
+            }
+            elseif(is_numeric($tid)){
+                $tidStr = $tid;
+            }
+            if($tidStr){
+                $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
+                    'SELECT DISTINCT e.tid, t.parenttid '.
+                    'FROM taxaenumtree AS e LEFT JOIN taxa AS t ON e.parenttid = t.tid '.
+                    'WHERE e.tid IN('.$tidStr.') AND t.parenttid NOT IN(SELECT parenttid FROM taxaenumtree WHERE tid IN('.$tidStr.')) ';
+                //echo $sql;
+                if($this->conn->query($sql)){
+                    $retCnt += $this->conn->affected_rows;
+                }
+            }
+        }
+        return $retCnt;
+    }
 
-    public function getTidAccepted($tid): int
+	public function getTidAccepted($tid): int
     {
         $retTid = 0;
-        $sql = 'SELECT tidaccepted FROM taxstatus WHERE (tid = '.$tid.')';
+        $sql = 'SELECT tidaccepted FROM taxa WHERE tid = '.$tid.' ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $retTid = (int)$r->tidaccepted;
         }
         $rs->free();
         return $retTid;
+    }
+
+    public function getKingdomArr(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT k.kingdom_id, t.sciname '.
+            'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.kingdom_name = t.SciName '.
+            'WHERE t.TID IS NOT NULL '.
+            'ORDER BY t.SciName ';
+        //echo $sql;
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $retArr[$r->kingdom_id] = $r->sciname;
+        }
+        $rs->free();
+        asort($retArr);
+        return $retArr;
+    }
+
+    public function getSensitiveTaxa(): array
+    {
+        $sensitiveArr = array();
+        $sql = 'SELECT DISTINCT tid FROM taxa WHERE (SecurityStatus > 0)';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $sensitiveArr[] = $r->tid;
+        }
+        $rs->free();
+        $sql2 = 'SELECT DISTINCT tidaccepted FROM taxa '.
+            'WHERE SecurityStatus > 0 AND tid <> tidaccepted ';
+        $rs2 = $this->conn->query($sql2);
+        while($r2 = $rs2->fetch_object()){
+            $sensitiveArr[] = $r2->tidaccepted;
+        }
+        $rs2->free();
+        return $sensitiveArr;
+    }
+
+    public function getCloseTaxaMatches($name,$levDistance,$kingdomId = null): array
+    {
+        $retArr = array();
+        $sql = 'SELECT tid, sciname FROM taxa ';
+        if($kingdomId){
+            $sql .= 'WHERE kingdomId = ' . $kingdomId;
+        }
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                if($name !== $r->sciname && levenshtein($name,$r->sciname) <= $levDistance){
+                    $retArr[$r->tid] = $r->sciname;
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getRankNameArr(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT rankname, rankid FROM taxonunits ';
+        //echo $sql;
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $rankName = strtolower($r->rankname);
+            $retArr[$rankName] = (int)$r->rankid;
+        }
+        $rs->free();
+        return $retArr;
     }
 }

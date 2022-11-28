@@ -12,26 +12,22 @@ if($queryString) {
         $type = (int)$type;
         $sql = '';
         if($type === 5){
-            $sql = 'SELECT DISTINCT v.vernacularname AS sciname ' .
-                'FROM taxavernaculars v ' .
+            $sql = 'SELECT DISTINCT v.vernacularname AS sciname FROM taxavernaculars AS v ' .
                 "WHERE v.vernacularname LIKE '%".$queryString."%' ".
                 'limit 50 ';
         }
         elseif($type === 4){
-            $sql = 'SELECT sciname ' .
-                'FROM taxa ' .
+            $sql = 'SELECT sciname FROM taxa ' .
                 "WHERE rankid > 20 AND rankid < 140 AND sciname LIKE '".$queryString."%' ".
                 'LIMIT 20';
         }
         elseif($type === 2){
-            $sql = 'SELECT DISTINCT family AS sciname ' .
-                'FROM taxstatus ' .
+            $sql = 'SELECT DISTINCT family AS sciname FROM taxa ' .
                 "WHERE family LIKE '".$queryString."%' ".
-                'LIMIT 20';
+                'LIMIT 20 ';
         }
         else{
-            $sql = 'SELECT DISTINCT sciname ' .
-                'FROM taxa ' .
+            $sql = 'SELECT DISTINCT sciname FROM taxa ' .
                 "WHERE sciname LIKE '".$queryString."%' ";
             if($type === 3){
                 $sql .= 'AND rankid > 140 ';
@@ -43,9 +39,8 @@ if($queryString) {
         }
     }
     else{
-        $sql = 'SELECT DISTINCT ts.tidaccepted, t.SciName, v.VernacularName '.
-            'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
-            'LEFT JOIN taxavernaculars AS v ON t.TID = v.TID '.
+        $sql = 'SELECT DISTINCT t.tidaccepted, t.SciName, v.VernacularName '.
+            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.TID = v.TID '.
             'WHERE (t.SciName LIKE "'.$queryString.'%" OR v.VernacularName LIKE "'.$queryString.'%") AND t.RankId < 185 '.
             'LIMIT 10 ';
     }

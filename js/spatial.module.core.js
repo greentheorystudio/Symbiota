@@ -739,7 +739,7 @@ function changeRasterColorScale(layerId,value){
 
 function changeRecordPage(page){
     let params;
-    document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
+    document.getElementById("queryrecords").innerHTML = '<div>Loading...<span style="margin-left:15px;">' + getSmallWorkingSpinnerHtml(12) + '</span></div>';
     const selJson = JSON.stringify(selections);
     const http = new XMLHttpRequest();
     const url = "../api/search/changemaprecordpage.php";
@@ -759,15 +759,6 @@ function changeRecordPage(page){
         }
     };
     http.send(params);
-}
-
-function checkObjectNotEmpty(obj){
-    for(const i in obj){
-        if(obj.hasOwnProperty(i) && obj[i]){
-            return true;
-        }
-    }
-    return false;
 }
 
 function checkPointToolSource(selector){

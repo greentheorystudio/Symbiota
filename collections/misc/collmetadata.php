@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -101,6 +101,7 @@ if($collid){
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/external/tiny_mce/tiny_mce.js"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script>
         tinyMCE.init({
             mode : "textareas",
@@ -153,7 +154,7 @@ if($collid){
 				alert("The Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
 				return false;
 			}
-			else if(!isNumeric(f.latitudedecimal.value) || !isNumeric(f.longitudedecimal.value)){
+			else if(isNaN(f.latitudedecimal.value) || isNaN(f.longitudedecimal.value)){
 				alert("Latitdue and longitude values must be in the decimal format (numeric only)");
 				return false;
 			}
@@ -162,7 +163,7 @@ if($collid){
 				return false;
 			}
 			try{
-				if(!isNumeric(f.sortseq.value)){
+				if(isNaN(f.sortseq.value)){
 					alert("Sort sequence must be numeric only");
 					return false;
 				}
@@ -201,21 +202,6 @@ if($collid){
 			return true;
 		}
 		
-		function toggle(target){
-            const divs = document.getElementsByTagName("span");
-            for (let h = 0; h < divs.length; h++) {
-                const divObj = divs[h];
-                if(divObj.className === target){
-                    if(divObj.style.display === "none"){
-                        divObj.style.display="inline-block";
-                    }
-                    else {
-                        divObj.style.display="none";
-                    }
-                }
-            }
-		}
-		
 		function verifyIconImage(){
             const iconImageFile = document.getElementById("iconfile").value;
             if(iconImageFile){
@@ -250,22 +236,7 @@ if($collid){
 				alert("The url you have entered is not for a supported image file. Please enter a url for a jpg, png, or gif file.");
 			}
 		}
-
-		function isNumeric(sText){
-            const ValidChars = "0123456789-.";
-            let IsNumber = true;
-            let Char;
-
-            for(let i = 0; i < sText.length && IsNumber === true; i++){
-			   Char = sText.charAt(i); 
-				if(ValidChars.indexOf(Char) === -1){
-					IsNumber = false;
-					break;
-		      	}
-		   	}
-			return IsNumber;
-		}
-	</script>
+    </script>
 </head>
 <body>
 	<?php
@@ -594,10 +565,10 @@ if($collid){
 									</span>
 								</span>
                                 <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'display:none;':''); ?>">
-									<a href="#" onclick="toggle('targetelem');return false;">Enter URL</a>
+									<a href="#" onclick="toggle('targetelem','inline-block');return false;">Enter URL</a>
 								</span>
                                 <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'':'display:none;'); ?>">
-									<a href="#" onclick="toggle('targetelem');return false;">Upload Local Image</a>
+									<a href="#" onclick="toggle('targetelem','inline-block');return false;">Upload Local Image</a>
 								</span>
                             </div>
                             <?php

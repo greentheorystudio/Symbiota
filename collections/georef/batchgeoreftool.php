@@ -111,7 +111,8 @@ if($editor && $submitAction){
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js"></script>
 		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js"></script>
-		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.georef.batchgeoreftool.js?ver=20210420"></script>
+        <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221126"></script>
+		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.georef.batchgeoreftool.js?ver=20221115"></script>
         <script type="text/javascript">
             function openSpatialInputWindow(type) {
                 let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
@@ -262,7 +263,7 @@ if($editor && $submitAction){
 										<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
 										<input name="submitaction" type="submit" value="Generate List" />
 										<span id="qworkingspan" style="display:none;">
-											<img src="../../images/workingcircle.gif" />
+											<span class="sm-native-spinner" style="width:12px;height:12px;"></span>
 										</span>
 									</div>
 									<div style="float:left">
@@ -518,7 +519,7 @@ if($editor && $submitAction){
 										<td colspan="3">
 											<input name="submitaction" type="submit" value="Update Coordinates" />
 											<span id="workingspan" style="display:none;">
-												<img src="../../images/workingcircle.gif" />
+												<span class="sm-native-spinner" style="width:12px;height:12px;"></span>
 											</span>
 											<input name="qcountry" type="hidden" value="<?php echo $qCountry; ?>" />
 											<input name="qstate" type="hidden" value="<?php echo $qState; ?>" />

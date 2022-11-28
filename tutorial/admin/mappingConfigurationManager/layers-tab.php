@@ -16,7 +16,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     <body>
         <div class="reveal">
             <div class="slides">
-                <section id="layers-tab" data-background-iframe="../../../admin/mapping/index.php" data-background-interactive data-preload>
+                <section id="layers-tab" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/admin/mapping/index.php" data-background-interactive data-preload>
                     <div class="tutorial-frame tutorial-display-toggle-slide">
                         <div id="hideToggle" class="index-link tutorial-display-toggle"><a style="cursor:pointer;" onclick="hideTutorial();">Hide Tutorial</a></div>
                         <div id="showToggle" class="index-link tutorial-display-toggle" style="display:none;"><a style="cursor:pointer;" onclick="showTutorial();">Show Tutorial</a></div>
@@ -32,16 +32,16 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>The Layers tab can be accessed by clicking on the Layers tab. In the Layers tab you can upload
-                            map data layers and create layer groups, which will be available in the <a href="../../spatial/layers-panel.php#/layers-panel/0">Layers Panel</a>
-                            of the <a href="../../spatial/index.php#/intro">Mapping module</a>. You can also edit metadata
-                            for, set initial symbology, arrange the order of display in the <a href="../../spatial/layers-panel.php#/layers-panel/0">Layers Panel</a>
+                            map data layers and create layer groups, which will be available in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/layers-panel.php#/layers-panel/0">Layers Panel</a>
+                            of the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php#/intro">Mapping module</a>. You can also edit metadata
+                            for, set initial symbology, arrange the order of display in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/layers-panel.php#/layers-panel/0">Layers Panel</a>
                             of, and delete layers and layer groups.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Adding Layers</h3>
                         <p>Click the Add Layer button to open the Add Layer box, where you can choose the layer data file to be
                             used and enter a layer name, description, provided by, source URL, and date acquired for the layer.
-                            This information will be displayed with the layer in the <a href="../../spatial/layers-panel.php#/layers-panel/0">Layers Panel</a>.</p>
+                            This information will be displayed with the layer in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/layers-panel.php#/layers-panel/0">Layers Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Adding Layers</h3>
@@ -65,7 +65,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Adding Layer Groups</h3>
                         <p>Click the Add Layer Group button to open the Add Layer Group box, where you can enter a name for
-                            the layer group. The name entered will be used as the label for the layer group in the <a href="../../spatial/layers-panel.php#/layers-panel/0">Layers Panel</a>.</p>
+                            the layer group. The name entered will be used as the label for the layer group in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/layers-panel.php#/layers-panel/0">Layers Panel</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Adding Layer Groups</h3>

@@ -352,11 +352,11 @@ $specUploadManager->readUploadParameters();
                 }
                 sfArr[sfArr.length] = obj.value;
                 if(!possibleMappingErr){
-                    if(isNumeric(obj.value)){
+                    if(!isNaN(obj.value)){
                         possibleMappingErr = true;
                     }
                     if(obj.value.length > 7){
-                        if(isNumeric(obj.value.substring(5))){
+                        if(!isNaN(obj.value.substring(5))){
                             possibleMappingErr = true;
                         }
                         else if(obj.value.slice(-5) === "aceae" || obj.value.slice(-4) === "idae"){

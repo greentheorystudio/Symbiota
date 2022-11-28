@@ -94,7 +94,7 @@ class OccurrenceIndividualManager extends Manager{
     private function loadOccurData(): void
     {
         $sql = 'SELECT o.occid, collid, o.institutioncode AS secondaryinstcode, o.collectioncode AS secondarycollcode, '.
-            'o.occurrenceid, o.catalognumber, o.occurrenceremarks, o.tidinterpreted, o.family, o.sciname, '.
+            'o.occurrenceid, o.catalognumber, o.occurrenceremarks, o.tid, o.family, o.sciname, '.
             'o.scientificnameauthorship, o.identificationqualifier, o.identificationremarks, o.identificationreferences, o.taxonremarks, '.
             'o.identifiedby, o.dateidentified, o.recordedby, o.associatedcollectors, o.recordnumber, o.eventdate, MAKEDATE(YEAR(o.eventDate),o.enddayofyear) AS eventdateend, '.
             'o.verbatimeventdate, o.country, o.stateprovince, o.county, o.municipality, o.locality, o.fieldnotes, '.
@@ -729,11 +729,11 @@ class OccurrenceIndividualManager extends Manager{
         if($editTidArr){
             $occTidArr = array();
             $sql = '';
-            if($this->occArr['tidinterpreted']){
-                $occTidArr[] = $this->occArr['tidinterpreted'];
+            if($this->occArr['tid']){
+                $occTidArr[] = $this->occArr['tid'];
                 $sql = 'SELECT parenttid '.
                     'FROM taxaenumtree '.
-                    'WHERE (tid = '.$this->occArr['tidinterpreted'].')';
+                    'WHERE (tid = '.$this->occArr['tid'].')';
             }
             elseif($this->occArr['sciname'] || $this->occArr['family']){
                 $sql = 'SELECT e.parenttid '.

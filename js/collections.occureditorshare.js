@@ -337,32 +337,6 @@ function toggleCustomDiv5(){
 	toggle('customdiv5');
 }
 
-function toggle(target){
-	const ele = document.getElementById(target);
-	if(ele){
-		if(ele.style.display === "none" || ele.style.display === ""){
-			ele.style.display="block";
-  		}
-	 	else {
-	 		ele.style.display="none";
-	 	}
-	}
-	else{
-		const divObjs = document.getElementsByTagName("div");
-		for (let i = 0; i < divObjs.length; i++) {
-			const divObj = divObjs[i];
-			if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
-				if(divObj.style.display === "none"){
-					divObj.style.display="";
-				}
-			 	else {
-			 		divObj.style.display="none";
-			 	}
-			}
-		}
-	}
-}
-
 function toggleSearch(){
 	if(document.getElementById("batchupdatediv")) {
 		document.getElementById("batchupdatediv").style.display = "none";

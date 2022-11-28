@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSkeletal.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -44,8 +44,8 @@ if($collid){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/collections.occurskeletalsubmit.js?ver=20221025" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
+	<script src="../../js/collections.occurskeletalsubmit.js?ver=20221115" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -127,7 +127,7 @@ if($collid){
 							<div id="scinamediv" style="float:left"> 
 								<b>Scientific Name:</b> 
 								<input id="fsciname" name="sciname" type="text" value="" style="width:300px"/>
-								<input id="ftidinterpreted" name="tidinterpreted" type="hidden" value="" />
+								<input id="ftid" name="tid" type="hidden" value="" />
 							</div>
 							<div id="authordiv" style="float:left"> 
 								<input id="fscientificnameauthorship" name="scientificnameauthorship" type="text" value="" />

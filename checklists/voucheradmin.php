@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
 include_once(__DIR__ . '/../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
@@ -49,6 +49,7 @@ $clManager->setCollectionVariables();
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
 	<script type="text/javascript">
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
@@ -64,7 +65,7 @@ $clManager->setCollectionVariables();
             });
         }
     </script>
-	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20221025"></script>
+	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20221115"></script>
 	<style>
 		li{margin:5px;}
 	</style>
@@ -343,8 +344,8 @@ if($clid && $isEditor){
 										foreach($tArr as $tid => $sciname){
 											?>
 											<div>
-												<a href="#" onclick="openPopup('../taxa/index.php?taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
-												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
+												<a href="#" onclick="openPopup('../taxa/index.php?taxon=<?php echo $tid.'&cl='.$clid; ?>');return false;"><?php echo $sciname; ?></a>
+												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>');return false;">
 													<i style='width:15px;height:15px;' title="Link Voucher Occurrences" class="fas fa-link"></i>
 												</a>
 											</div>
@@ -392,7 +393,7 @@ if($clid && $isEditor){
 						<li><a href="reports/voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?php echo $clid; ?>">Full species list with vouchers (CSV)</a></li>
 						<li><a href="checklist.php?printmode=1&showvouchers=1&defaultoverride=1&cl=<?php echo $clid; ?>" target="_blank">Full species list with vouchers (Print Friendly)</a></li>
 						<li><a href="reports/voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo $clid; ?>" target="_blank">Pensoft Excel Export</a></li>
-						<li><a href="#" onclick="openPopup('reports/download.php?clid=<?php echo $clid; ?>','repvouchers');return false;">Occurrence vouchers only (DwC-A, CSV, Tab-delimited)</a></li>
+						<li><a href="#" onclick="openPopup('reports/download.php?clid=<?php echo $clid; ?>');return false;">Occurrence vouchers only (DwC-A, CSV, Tab-delimited)</a></li>
 						<li>Possible species additions based on occurrence vouchers</li>
 					</ul>
 					<ul style="margin:-10px 0 0 25px;list-style-type:circle">

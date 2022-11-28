@@ -5,6 +5,7 @@ include_once(__DIR__ . '/../../classes/TaxonomyAPIManager.php');
 $queryString = $_REQUEST['term'];
 $hideAuth = array_key_exists('hideauth',$_REQUEST)?$_REQUEST['hideauth']:false;
 $hideProtected = array_key_exists('hideprotected',$_REQUEST)?$_REQUEST['hideprotected']:false;
+$acceptedOnly = array_key_exists('acceptedonly',$_REQUEST)?$_REQUEST['acceptedonly']:false;
 $rankLimit = array_key_exists('rlimit',$_REQUEST)?(int)$_REQUEST['rlimit']:0;
 $rankLow = array_key_exists('rlow',$_REQUEST)?(int)$_REQUEST['rlow']:0;
 $rankHigh = array_key_exists('rhigh',$_REQUEST)?(int)$_REQUEST['rhigh']:0;

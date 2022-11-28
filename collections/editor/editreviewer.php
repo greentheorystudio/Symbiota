@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceEditReview.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -181,7 +181,7 @@ $navStr .= '</div>';
                 }
 			}
 		</script>
-		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220809" type="text/javascript" ></script>
+		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221126" type="text/javascript" ></script>
 	</head>
 	<body>
 		<?php

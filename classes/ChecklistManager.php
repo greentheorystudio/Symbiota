@@ -276,13 +276,12 @@ class ChecklistManager {
 	private function setImages($tidReturn): void
 	{
 		if($tidReturn){
-			$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
-				'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
-				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-				'INNER JOIN images i ON ts2.tid = i.tid '.
+			$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images AS i INNER JOIN '.
+				'(SELECT t.tidaccepted AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
+				'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
 				'WHERE i.sortsequence < 500 '.
-				'AND (ts1.tid IN('.implode(',',$tidReturn).')) '.
-				'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
+				'AND t.tidaccepted IN('.implode(',',$tidReturn).') '.
+				'GROUP BY t.tidaccepted) AS i2 ON i.imgid = i2.imgid';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			$matchedArr = array();
@@ -294,13 +293,12 @@ class ChecklistManager {
 			$rs->free();
 			$missingArr = array_diff(array_keys($this->taxaList),$matchedArr);
 			if($missingArr){
-				$sql2 = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
-					'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
-					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-					'INNER JOIN images i ON ts2.tid = i.tid '.
+				$sql2 = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images AS i INNER JOIN '.
+					'(SELECT t.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
+					'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
 					'WHERE i.sortsequence < 500 '.
-					'AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
-					'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
+					'AND t.parenttid IN('.implode(',',$missingArr).') '.
+					'GROUP BY ts1.tid) AS i2 ON i.imgid = i2.imgid';
 				//echo $sql;
 				$rs2 = $this->conn->query($sql2);
 				while($row2 = $rs2->fetch_object()){
@@ -315,10 +313,9 @@ class ChecklistManager {
 	private function setVernaculars($tidReturn): void
 	{
 		if($tidReturn){
-			$sql = 'SELECT ts1.tid, v.vernacularname '.
-				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-				'INNER JOIN taxavernaculars v ON ts2.tid = v.tid '.
-				'WHERE (ts1.tid IN('.implode(',',$tidReturn).')) ';
+			$sql = 'SELECT t.tid, v.vernacularname '.
+				'FROM taxa AS t INNER JOIN taxavernaculars AS v ON t.tidaccepted = v.tid '.
+				'WHERE t.tid IN('.implode(',',$tidReturn).') ';
 			$sql .= 'ORDER BY v.sortsequence DESC ';
 			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
@@ -335,11 +332,10 @@ class ChecklistManager {
     {
         if($this->taxaList){
             $tempArr = array();
-            $sql = 'SELECT ts.tid, t.sciname, t.author '.
-                'FROM taxstatus AS ts INNER JOIN taxstatus AS ts2 ON ts.tidaccepted = ts2.tidaccepted '.
-                'INNER JOIN taxa AS t ON ts2.tid = t.tid '.
-                'WHERE (ts.tid IN('.implode(',',array_keys($this->taxaList)).')) AND (ts.tid != ts2.tid) '.
-                'ORDER BY t.sciname';
+            $sql = 'SELECT t.tid, t2.sciname, t2.author '.
+                'FROM taxa AS t INNER JOIN taxa AS t2 ON t.tidaccepted = t2.tid '.
+                'WHERE t.tid IN('.implode(',',array_keys($this->taxaList)).') AND t.tid <> t2.tid '.
+                'ORDER BY t2.sciname';
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
@@ -396,30 +392,27 @@ class ChecklistManager {
 				$clidStr .= ','.implode(',',$this->childClidArr);
 			}
             if($this->thesFilter){
-                $this->basicSql = 'SELECT DISTINCT t.tid, IFNULL(ctl.familyoverride,ts2.family) AS family, '.
-                    't.sciname, t.author, ctl.habitat, ctl.abundance, ctl.notes, ctl.source '.
-                    'FROM fmchklsttaxalink AS ctl INNER JOIN taxstatus AS ts ON ctl.tid = ts.tid '.
-                    'INNER JOIN taxa AS t ON ts.tidaccepted = t.tid '.
-                    'INNER JOIN taxstatus AS ts2 ON t.tid = ts2.tid '.
-                    'WHERE (ctl.clid IN ('.$clidStr.')) ';
+                $this->basicSql = 'SELECT DISTINCT t2.tid, IFNULL(ctl.familyoverride,t2.family) AS family, '.
+                    't2.sciname, t2.author, ctl.habitat, ctl.abundance, ctl.notes, ctl.source '.
+                    'FROM fmchklsttaxalink AS ctl INNER JOIN taxa AS t ON ctl.tid = t.tid '.
+                    'INNER JOIN taxa AS t2 ON t.tidaccepted = t2.tid '.
+                    'WHERE ctl.clid IN('.$clidStr.') ';
             }
             else{
-                $this->basicSql = 'SELECT DISTINCT t.tid, IFNULL(ctl.familyoverride,ts.family) AS family, '.
+                $this->basicSql = 'SELECT DISTINCT t.tid, IFNULL(ctl.familyoverride,t.family) AS family, '.
                     't.sciname, t.author, ctl.habitat, ctl.abundance, ctl.notes, ctl.source '.
                     'FROM taxa AS t INNER JOIN fmchklsttaxalink AS ctl ON t.tid = ctl.tid '.
-                    'INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-                    'WHERE (ctl.clid IN ('.$clidStr.')) ';
+                    'WHERE ctl.clid IN('.$clidStr.') ';
             }
 		}
 		else{
-			$this->basicSql = 'SELECT DISTINCT t.tid, ts.family, t.sciname, t.author '.
-				'FROM taxa AS t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'INNER JOIN fmdyncltaxalink AS ctl ON t.tid = ctl.tid '.
-    	  		'WHERE (ctl.dynclid = '.$this->dynClid.') ';
+			$this->basicSql = 'SELECT DISTINCT t.tid, t.family, t.sciname, t.author '.
+				'FROM taxa AS t INNER JOIN fmdyncltaxalink AS ctl ON t.tid = ctl.tid '.
+    	  		'WHERE ctl.dynclid = '.$this->dynClid.' ';
 		}
 		if($this->taxonFilter){
 			if($this->searchCommon){
-				$this->basicSql .= 'AND ts.tidaccepted IN(SELECT ts2.tidaccepted FROM taxavernaculars AS v INNER JOIN taxstatus AS ts2 ON v.tid = ts2.tid WHERE (v.vernacularname LIKE "%'.$this->taxonFilter.'%")) ';
+				$this->basicSql .= 'AND t.tidaccepted IN(SELECT t.tidaccepted FROM taxavernaculars AS v INNER JOIN taxa AS t ON v.tid = t.tid WHERE v.vernacularname LIKE "%'.$this->taxonFilter.'%") ';
 			}
 			else{
 				$sqlWhere = 'OR (t.SciName Like "'.$this->taxonFilter.'%") ';
@@ -427,8 +420,8 @@ class ChecklistManager {
 					$sqlWhere .= "OR (ctl.familyoverride = '".$this->taxonFilter."') ";
 				}
 				if($this->searchSynonyms){
-					$sqlWhere .= 'OR (ts.tidaccepted IN(SELECT ts2.tidaccepted FROM taxa AS t2 INNER JOIN taxstatus AS ts2 ON t2.tid = ts2.tid ' .
-						"WHERE (t2.sciname Like '".$this->taxonFilter."%'))) ";
+					$sqlWhere .= 'OR (t.tidaccepted IN(SELECT tidaccepted FROM taxa ' .
+						"WHERE sciname LIKE '".$this->taxonFilter."%')) ";
 				}
 				$sqlWhere .= 'OR (t.tid IN(SELECT e.tid '.
 					'FROM taxa AS t3 INNER JOIN taxaenumtree AS e ON t3.tid = e.parenttid '.

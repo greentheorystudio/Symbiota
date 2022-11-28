@@ -74,22 +74,7 @@ $collArr = $occManager->getCollectionArr($GLOBALS['IS_ADMIN']?'all':$collEditorA
 				});
 		    }
 		}
-
-	    function isNumeric(inStr){
-            const validChars = "0123456789-.";
-            let isNumber = true;
-            let charVar;
-
-            for(let i = 0; i < inStr.length && isNumber === true; i++){
-	       		charVar = inStr.charAt(i); 
-	    		if(validChars.indexOf(charVar) === -1){
-	    			isNumber = false;
-	    			break;
-	          	}
-	       	}
-	    	return isNumber;
-	    }
-	</script>
+    </script>
 </head>
 <body style="background-color: white;">
 	<div id="innertext">
