@@ -36,7 +36,7 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 				alert("If latitude has a value, longitude must also have a value");
 				return false;
 			}
-			if(!isNumeric(f.latcentroid.value)){
+			if(isNaN(f.latcentroid.value)){
 				alert("Latitude must be strictly numeric (decimal format: e.g. 34.2343)");
 				return false;
 			}
@@ -50,7 +50,7 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 				alert("If longitude has a value, latitude must also have a value");
 				return false;
 			}
-			if(!isNumeric(f.longcentroid.value)){
+			if(isNaN(f.longcentroid.value)){
 				alert("Longitude must be strictly numeric (decimal format: e.g. -112.2343)");
 				return false;
 			}
@@ -59,7 +59,7 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 				return false;
 			}
 		}
-		if(!isNumeric(f.pointradiusmeters.value)){
+		if(isNaN(f.pointradiusmeters.value)){
 			alert("Point radius must be a numeric value only");
 			return false;
 		}

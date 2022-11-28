@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $ometId = array_key_exists('ometid',$_REQUEST)?(int)$_REQUEST['ometid']:0;
 $omenId = array_key_exists('omenid',$_REQUEST)?(int)$_REQUEST['omenid']:0;
@@ -77,7 +77,7 @@ if($formSubmit === 'dlexsiccati'){
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/shared.js?ver=20220809"></script>
+	<script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script type="text/javascript">
 		function toggleExsEditDiv(){
 			toggle('exseditdiv');
@@ -160,7 +160,7 @@ if($formSubmit === 'dlexsiccati'){
 				alert("Catalog Number or Collector needs to be filled in");
 				return false;
 			}
-			if(f.ranking.value && !isNumeric(f.ranking.value)){
+			if(f.ranking.value && isNaN(f.ranking.value)){
 				alert("Ranking can only be a number");
 				return false;
 			}

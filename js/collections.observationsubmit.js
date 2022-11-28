@@ -34,32 +34,6 @@ $(document).ready(function() {
 	});
 });
 
-function toggle(target){
-	const ele = document.getElementById(target);
-	if(ele){
-		if(ele.style.display === "none"){
-			ele.style.display="block";
-  		}
-	 	else {
-	 		ele.style.display="none";
-	 	}
-	}
-	else{
-		const divObjs = document.getElementsByTagName("div");
-		for (let i = 0; i < divObjs.length; i++) {
-			const divObj = divObjs[i];
-			if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
-				if(divObj.style.display === "none"){
-					divObj.style.display="block";
-				}
-			 	else {
-			 		divObj.style.display="none";
-			 	}
-			}
-		}
-	}
-}
-
 function insertLatLng(f) {
 	const latDeg = document.getElementById("latdeg").value.replaceAll(/^\s+|\s+$/g, "");
 	let latMin = document.getElementById("latmin").value.replaceAll(/^\s+|\s+$/g, "");
@@ -82,7 +56,7 @@ function insertLatLng(f) {
 		if(lngSec === "") {
 			lngSec = 0;
 		}
-		if(isNumeric(latDeg) && isNumeric(latMin) && isNumeric(latSec) && isNumeric(lngDeg) && isNumeric(lngMin) && isNumeric(lngSec)){
+		if(!isNaN(latDeg) && !isNaN(latMin) && !isNaN(latSec) && !isNaN(lngDeg) && !isNaN(lngMin) && !isNaN(lngSec)){
 			if(latDeg < 0 || latDeg > 90){
 				alert("Latitude degree must be between 0 and 90 degrees");
 			}
@@ -155,11 +129,11 @@ function verifyObsForm(f){
 		window.alert("Coordinate uncertainty (in meters) is required.");
 		return false;
     }
-    if(isNumeric(f.decimallatitude.value) == false){
+    if(isNaN(f.decimallatitude.value)){
 		window.alert("Latitude must be in the decimal format with numeric characters only (34.5335). ");
 		return false;
     }
-    if(isNumeric(f.decimallongitude.value) == false){
+    if(isNaN(f.decimallongitude.value)){
 		window.alert("Longitude must be in the decimal format with numeric characters only. Note that the western hemisphere is represented as a negitive number (-110.5335). ");
 		return false;
     }
@@ -167,11 +141,11 @@ function verifyObsForm(f){
 		window.alert("For North America, the decimal format of longitude should be negitive value. ");
 		return false;
     }
-    if(isNumeric(f.coordinateuncertaintyinmeters.value) == false){
+    if(isNaN(f.coordinateuncertaintyinmeters.value)){
 		window.alert("Coordinate Uncertainty must be a numeric value only (in meters). ");
 		return false;
     }
-    if(isNumeric(f.minimumelevationinmeters.value) == false){
+    if(isNaN(f.minimumelevationinmeters.value)){
 		window.alert("Elevation must be a numeric value only. ");
 		return false;
     }
@@ -229,56 +203,6 @@ function verifyDate(eventDateInput){
 	return true;
 }
 
-function parseDate(dateStr){
-	const dateObj = new Date(dateStr);
-	let dateTokens;
-	let y = 0;
-	let m = 0;
-	let d = 0;
-	let mText;
-	try {
-		const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/;
-		const validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/;
-		const validformat3 = /^\d{1,2} \D+ \d{2,4}$/;
-		if (validformat1.test(dateStr)) {
-			dateTokens = dateStr.split("-");
-			y = dateTokens[0];
-			m = dateTokens[1];
-			d = dateTokens[2];
-		} else if (validformat2.test(dateStr)) {
-			dateTokens = dateStr.split("/");
-			m = dateTokens[0];
-			d = dateTokens[1];
-			y = dateTokens[2];
-			if (y.length === 2) {
-				y = 0;
-			}
-		} else if (validformat3.test(dateStr)) {
-			dateTokens = dateStr.split(" ");
-			d = dateTokens[0];
-			mText = dateTokens[1];
-			y = dateTokens[2];
-			if (y.length === 2) {
-				y = 0;
-			}
-			mText = mText.substring(0, 3);
-			mText = mText.toLowerCase();
-			const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-			m = mNames.indexOf(mText) + 1;
-		} else if (dateObj instanceof Date) {
-			y = dateObj.getFullYear();
-			m = dateObj.getMonth() + 1;
-			d = dateObj.getDate();
-		}
-	} catch (ex) {
-	}
-	const retArr = [];
-	retArr["y"] = y.toString();
-	retArr["m"] = m.toString();
-	retArr["d"] = d.toString();
-	return retArr;
-}
-
 function verifyLatValue(f){
 	const inputObj = f.decimallatitude.value;
 	inputIsNumeric(inputObj, 'Decimal Latitude');
@@ -316,24 +240,7 @@ function verifyImageSize(inputObj,maxSize){
 }
 
 function inputIsNumeric(inputObj, titleStr){
-	if(!isNumeric(inputObj.value)){
+	if(isNaN(inputObj.value)){
 		alert("Input value for " + titleStr + " must be a number value only! " );
 	}
-}
-
-function isNumeric(sText){
-	let IsNumber = true;
-
-	if(sText){
-		const ValidChars = "0123456789-.";
-		let Char;
-		for(let i = 0; i < sText.length && IsNumber == true; i++){
-		   Char = sText.charAt(i); 
-			if(ValidChars.indexOf(Char) === -1){
-				IsNumber = false;
-				break;
-	      	}
-	   	}
-	}
-	return IsNumber;
 }

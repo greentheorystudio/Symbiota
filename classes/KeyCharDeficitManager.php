@@ -103,14 +103,14 @@ class KeyCharDeficitManager{
 		$targetTid = $t;
 		$parentList[] = $targetTid;
 		while($targetTid){
-			$sql = 'SELECT ts.ParentTID FROM taxstatus ts WHERE (ts.TID = '.$targetTid.')';
+			$sql = 'SELECT parenttid FROM taxa WHERE TID = '.$targetTid.' ';
 			//echo $sql;
 			$result = $this->con->query($sql);
 		    if ($row = $result->fetch_object()){
-		    	if($targetTid === $row->ParentTID){
+		    	if($targetTid === $row->parenttid){
 		    		break;
 		    	}
-				$targetTid = $row->ParentTID;
+				$targetTid = $row->parenttid;
 				if($targetTid) {
 					$parentList[] = $targetTid;
 				}
@@ -124,16 +124,15 @@ class KeyCharDeficitManager{
 	{
 		$returnArray = array();
 		$sppStr = $this->getChildren($cidVal, $cfVal, $clVal);
-		$sql = 'SELECT DISTINCT t.TID, ts.Family, t.SciName ' .
-			'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) ' .
-			'LEFT JOIN (SELECT DISTINCT d1.TID FROM kmdescr d1 WHERE (d1.CID = ' .$cidVal. ')) AS d ON t.TID = d.TID ' .
-			'WHERE (t.TID IN (' .$sppStr. ') AND (d.TID) Is Null) ' .
-			'ORDER BY ts.Family, t.SciName';
+		$sql = 'SELECT DISTINCT t.TID, t.family, t.SciName FROM taxa AS t ' .
+			'LEFT JOIN (SELECT DISTINCT d1.TID FROM kmdescr AS d1 WHERE (d1.CID = ' .$cidVal. ')) AS d ON t.TID = d.TID ' .
+			'WHERE t.TID IN(' .$sppStr. ') AND ISNULL(d.TID) ' .
+			'ORDER BY t.family, t.SciName';
 		//echo $sql;
 		$result = $this->con->query($sql);
 		$this->taxaCount = 0;
 		while($row = $result->fetch_object()){
-			$returnArray[$row->Family][$row->TID] = $row->SciName;
+			$returnArray[$row->family][$row->TID] = $row->SciName;
 			$this->taxaCount++;
 		}
 		$result->free();
@@ -158,13 +157,11 @@ class KeyCharDeficitManager{
 				unset($targetList);
 			}
 			$targetList = array();
-			$sql = 'SELECT DISTINCT t.TID, t.rankid, cl.clid ' .
-				'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) ' .
-				'LEFT JOIN (SELECT ctl.tid, ctl.clid From fmchklsttaxalink ctl WHERE (ctl.clid = ' .$clVal. ')) AS cl ' .
-				'ON ts.TID = cl.tid ' .
-				'WHERE (ts.ParentTID IN(' .$targetStr. ')) ';
+			$sql = 'SELECT DISTINCT t.TID, t.rankid, cl.clid FROM taxa AS t ' .
+				'LEFT JOIN (SELECT ctl.tid, ctl.clid From fmchklsttaxalink ctl WHERE ctl.clid = ' .$clVal. ') AS cl ON t.TID = cl.tid ' .
+				'WHERE t.parenttid IN(' .$targetStr. ') ';
 			if($excludeStr) {
-				$sql .= 'AND (t.TID NOT IN(' . $excludeStr . '))';
+				$sql .= 'AND t.TID NOT IN(' . $excludeStr . ') ';
 			}
 			//echo $sql."<br/><br/>";
 			$rankId = 0;

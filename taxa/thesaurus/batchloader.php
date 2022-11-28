@@ -188,7 +188,6 @@ if($isEditor){
         elseif($action === 'Activate Taxa'){
             echo '<ul>';
             $loaderManager->transferUpload();
-            $taxaUtilities->buildHierarchyEnumTree();
             echo '<li>Taxa upload was successful.</li>';
             echo "<li>Go to the <a href='../taxonomydynamicdisplay.php'>Taxonomy Explorer</a> to search for a loaded name.</li>";
             echo '</ul>';

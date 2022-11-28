@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/ObservationSubmitManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -70,8 +70,9 @@ if($collMap){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script src="../../js/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
-	<script src="../../js/collections.observationsubmit.js?ver=20221025" type="text/javascript"></script>
+	<script src="../../js/collections.observationsubmit.js?ver=20221115" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");

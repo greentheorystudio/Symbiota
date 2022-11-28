@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverPublisher.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $emode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
@@ -84,7 +84,7 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title>Darwin Core Archiver Publisher</title>
+	<title>Darwin Core Archive Publisher</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
@@ -95,34 +95,8 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=20221025"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script type="text/javascript">
-		function toggle(target){
-            const objDiv = document.getElementById(target);
-            if(objDiv){
-				if(objDiv.style.display==="none"){
-					objDiv.style.display = "block";
-				}
-				else{
-					objDiv.style.display = "none";
-				}
-			}
-			else{
-                const divs = document.getElementsByTagName("div");
-                for (let h = 0; h < divs.length; h++) {
-                    const divObj = divs[h];
-                    if(divObj.className === target){
-						if(divObj.style.display === "none"){
-							divObj.style.display="block";
-						}
-					 	else {
-					 		divObj.style.display="none";
-					 	}
-					}
-				}
-			}
-			return false;
-		}
-
 		function verifyDwcaAdminForm(){
             const dbElements = document.getElementsByName("coll[]");
             for(let i = 0; i < dbElements.length; i++){
@@ -163,7 +137,7 @@ include(__DIR__ . '/../../header.php');
 	<?php
 	if($collId){
 		?>
-		<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management</a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
 		<?php
 	}
 	else{

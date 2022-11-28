@@ -36,12 +36,12 @@ class ReportsManager{
 	public function getNewIdentBySpecialistReport(): array
     {
 		$retArr = array();
-		$sql = 'SELECT CONCAT_WS(" ", firstname, lastname) as fullname, t.sciname AS family, c.numberOfDet FROM usertaxonomy ut ' .
-            'INNER JOIN users u ON ut.uid = u.uid INNER JOIN taxa t ' .
-            'ON ut.tid = t.tid INNER JOIN taxstatus ts ON t.tid = ts.tid INNER JOIN (SELECT ts.family, count(*) '.
-            'as numberOfDet FROM omoccurdeterminations d INNER JOIN taxa t ON d.sciname = t.sciname INNER JOIN '.
-            'taxstatus ts ON t.tid = ts.tid WHERE (t.rankid IN(220,230,240,260)) AND ((dateIdentified LIKE "%2013%") OR (dateIdentified '.
-            'LIKE "%2014%") OR (dateIdentified LIKE "%2015%")) GROUP BY ts.family) c ON c.family = t.sciname GROUP BY ut.idusertaxonomy ORDER BY '.
+		$sql = 'SELECT CONCAT_WS(" ", firstname, lastname) AS fullname, t.sciname AS family, c.numberOfDet FROM usertaxonomy AS ut ' .
+            'INNER JOIN users AS u ON ut.uid = u.uid INNER JOIN taxa AS t ' .
+            'ON ut.tid = t.tid INNER JOIN (SELECT t.family, count(*) '.
+            'AS numberOfDet FROM omoccurdeterminations AS d INNER JOIN taxa AS t ON d.sciname = t.sciname '.
+            'WHERE (t.rankid IN(220,230,240,260)) AND ((dateIdentified LIKE "%2013%") OR (dateIdentified '.
+            'LIKE "%2014%") OR (dateIdentified LIKE "%2015%")) GROUP BY t.family) c ON c.family = t.sciname GROUP BY ut.idusertaxonomy ORDER BY '.
             'u.lastname, u.firstname, t.sciname;';
 
 		$rs = $this->conn->query($sql);
@@ -58,10 +58,10 @@ class ReportsManager{
     public function getNewIdentByFamilyReport(): array
     {
         $retArr = array();
-        $sql = 'SELECT ts.family, count(*) as numberOfDet FROM omoccurdeterminations d INNER JOIN taxa t '.
-            'ON d.sciname = t.sciname INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE (t.rankid IN(220,230,240,260)) '.
+        $sql = 'SELECT t.family, count(*) AS numberOfDet FROM omoccurdeterminations AS d INNER JOIN taxa AS t '.
+            'ON d.sciname = t.sciname WHERE (t.rankid IN(220,230,240,260)) '.
             'AND (dateIdentified LIKE "%2013%" OR dateIdentified LIKE "%2014%" OR dateIdentified LIKE "%2015%") AND family '.
-            'IS NOT NULL GROUP BY ts.family;';
+            'IS NOT NULL GROUP BY t.family;';
 
         $rs = $this->conn->query($sql);
         if($rs){

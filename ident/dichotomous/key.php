@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DbConnection.php');
 include_once(__DIR__ . '/../../classes/DichoKeyManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
@@ -16,39 +16,6 @@ $dichoKeyManager = new DichoKeyManager();
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<meta name='keywords' content='' />
-	<script>
-        let cseXmlHttp;
-        let targetStr;
-
-        function toggle(target){
-            let obj;
-            const divObjs = document.getElementsByTagName("div");
-            for (let i = 0; i < divObjs.length; i++) {
-                obj = divObjs[i];
-                if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-					if(obj.style.display === "none"){
-						obj.style.display="block";
-					}
-					else {
-						obj.style.display="none";
-					}
-				}
-			}
-
-            const spanObjs = document.getElementsByTagName("span");
-            for (let i = 0; i < spanObjs.length; i++) {
-                obj = spanObjs[i];
-                if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-					if(obj.style.display === "none"){
-						obj.style.display="inline";
-					}
-					else {
-						obj.style.display="none";
-					}
-				}
-			}
-		}
-    </script>
 </head>
 <body>
     <?php

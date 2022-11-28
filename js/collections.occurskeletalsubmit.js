@@ -7,7 +7,7 @@ $(document).ready(function() {
 		minLength: 3,
 		autoFocus: true,
 		change: function() {
-			$( "#ftidinterpreted" ).val("");
+			$( "#ftid" ).val("");
 			$( '#fscientificnameauthorship' ).val("");
 			$( '#ffamily' ).val("");
 			$( '#flocalitysecurity' ).prop('checked', false);
@@ -63,7 +63,7 @@ function verifySciName(){
 		data: { term: $( "#fsciname" ).val() }
 	}).done(function( data ) {
 		if(data){
-			$( "#ftidinterpreted" ).val(data.tid);
+			$( "#ftid" ).val(data.tid);
 			$( '#ffamily' ).val(data.family);
 			$( '#fscientificnameauthorship' ).val(data.author);
 			if(data.status == 1){
@@ -85,7 +85,7 @@ function verifySciName(){
 }
 
 function localitySecurityCheck(){
-	const tidIn = $("#ftidinterpreted").val();
+	const tidIn = $("#ftid").val();
 	const stateIn = $("#stateprovince").val();
 	if(tidIn !== "" && stateIn !== ""){
 		$.ajax({
@@ -102,7 +102,7 @@ function localitySecurityCheck(){
 }
 
 function stateProvinceChanged(stateVal){
-	const tidVal = $("#ftidinterpreted").val();
+	const tidVal = $("#ftid").val();
 	if(tidVal !== "" && stateVal !== ""){
 		localitySecurityCheck();
 	}
@@ -341,22 +341,7 @@ function openEditPopup(occidStr,targetImgTab){
 	return false;
 }
 
-function isNumeric(sText){
-	const validChars = "0123456789-.";
-	let isNumber = true;
-	let charVar;
-
-	for(let i = 0; i < sText.length && isNumber == true; i++){
-   		charVar = sText.charAt(i); 
-		if(validChars.indexOf(charVar) === -1){
-			isNumber = false;
-			break;
-	  	}
-   	}
-	return isNumber;
-}
-
-function pad( val ){ 
+function pad( val ){
 	return val > 9 ? val : "0" + val; 
 }
 

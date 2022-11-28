@@ -313,9 +313,9 @@ class OccurrenceCrowdSource {
 		$family = array();
 		$sciname = array();
 		$sql = 'SELECT DISTINCT o.family, o.sciname, t.unitname1 '.
-			'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-			'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
-			'LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.
+			'FROM omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+			'LEFT JOIN omcrowdsourcequeue AS q ON o.occid = q.occid '.
+			'LEFT JOIN taxa t ON o.tid = t.tid '.
 			'WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){

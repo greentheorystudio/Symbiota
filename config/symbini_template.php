@@ -26,7 +26,6 @@ $GLOBALS['IMAGE_ROOT_PATH'] = $GLOBALS['SERVER_ROOT'].'/content/imglib';			//Wri
 $GLOBALS['IMG_WEB_WIDTH'] = 1400;
 $GLOBALS['IMG_TN_WIDTH'] = 200;
 $GLOBALS['IMG_LG_WIDTH'] = 3200;
-$GLOBALS['IPLANT_IMAGE_IMPORT_PATH'] = '';		//Path used to map/import images uploaded to the iPlant image server (e.g. /home/shared/project-name/--INSTITUTION_CODE--/, the --INSTITUTION_CODE-- text will be replaced with collection's institution code)
 
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
@@ -52,7 +51,6 @@ $GLOBALS['DISPLAY_COMMON_NAMES'] = 1;			//Display common names in species profil
 $GLOBALS['ACTIVATE_EXSICCATI'] = 0;			//Activates exsiccati fields within data entry pages; adding link to exsiccati search tools to portal menu is recommended
 $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT'] = 0;			//Activates checklist fieldguide export tool
 $GLOBALS['GENBANK_SUB_TOOL_PATH'] = '';	//Path to GenBank Submission tool installation
-$GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT'] = 0;	//Activates GeoLocate Toolkit located within the Processing Toolkit menu items
 
 $GLOBALS['RIGHTS_TERMS'] = array(
     'CC0 1.0 (Public-domain)' => 'http://creativecommons.org/publicdomain/zero/1.0/',

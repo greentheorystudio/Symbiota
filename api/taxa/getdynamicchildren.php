@@ -32,10 +32,8 @@ if($taxId === 'root'){
 	}
 	$retArr['children'] = array();
 	$lowestRank = '';
-	$sql = 'SELECT MIN(t.RankId) AS RankId '.
-		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-        'WHERE RankId > 0 '.
-		'LIMIT 1 ';
+	$sql = 'SELECT MIN(RankId) AS RankId FROM taxa '.
+        'WHERE RankId > 0 LIMIT 1 ';
 	//echo $sql."<br>";
 	$rs = $con->query($sql);
 	while($row = $rs->fetch_object()){
@@ -43,8 +41,7 @@ if($taxId === 'root'){
 	}
 	$rs->free();
 	$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
-		'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
+		'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid '.
 		'WHERE t.RankId = '.$lowestRank.' ';
 	//echo '<div>' .$sql1. '</div>';
 	$rs1 = $con->query($sql1);
@@ -81,7 +78,7 @@ if($taxId === 'root'){
 			$childArr[$i]['children'] = true;
 		}
 		else{
-			$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE tidaccepted = '.$row1->tid.' ';
+			$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxa WHERE tidaccepted = '.$row1->tid.' ';
 			//echo "<div>".$sql4."</div>";
 			$rs4 = $con->query($sql4);
 			while($row4 = $rs4->fetch_object()){
@@ -98,10 +95,8 @@ if($taxId === 'root'){
 }
 else{
 	$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
-		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
-		'WHERE (ts.tid = ts.tidaccepted) '.
-		'AND (ts.parenttid = '.$taxId.' AND t.rankid > 1) ';
+		'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid '.
+		'WHERE t.tid = t.tidaccepted AND t.parenttid = '.$taxId.' AND t.rankid > 1 ';
 	//echo $sql2."<br>";
 	$rs2 = $con->query($sql2);
 	$i = 0;
@@ -153,7 +148,7 @@ else{
 				$childArr[$i]['children'] = true;
 			}
 			else{
-				$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE tidaccepted = '.$row2->tid.' ';
+				$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxa WHERE tidaccepted = '.$row2->tid.' ';
 				//echo "<div>".$sql4."</div>";
 				$rs4 = $con->query($sql4);
 				while($row4 = $rs4->fetch_object()){
@@ -170,9 +165,8 @@ else{
 	$rs2->free();
 	
 	$sqlSyns = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
-		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
-		'WHERE (ts.tid <> ts.tidaccepted) AND (ts.tidaccepted = '.$taxId.')';
+		'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid '.
+		'WHERE t.tid <> t.tidaccepted AND t.tidaccepted = '.$taxId.' ';
 	//echo $sqlSyns;
 	$rsSyns = $con->query($sqlSyns);
 	while($row = $rsSyns->fetch_object()){

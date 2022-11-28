@@ -114,7 +114,7 @@ if($userChecklists || $checklistArr){
                             }
                             ?>
                         </select>
-                        <input name="tidvoucher" type="hidden" value="<?php echo $occArr['tidinterpreted']; ?>" />
+                        <input name="tidvoucher" type="hidden" value="<?php echo $occArr['tid']; ?>" />
                         <input name="csmode" type="hidden" value="<?php echo $crowdSourceMode; ?>" />
                         <input name="occid" type="hidden" value="<?php echo $occid; ?>" />
                         <input name="tabtarget" type="hidden" value="3" />

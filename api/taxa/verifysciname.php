@@ -9,19 +9,17 @@ $retArr = array();
 $term = trim($con->real_escape_string($_REQUEST['term']));
 if($term){
 	if(is_numeric($term)){
-        $sql = 'SELECT DISTINCT ts.tidaccepted, t.author, ts.family, t.securitystatus '.
-            'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-            'WHERE t.tid = '.$term.' ';
+        $sql = 'SELECT DISTINCT tid, author, family, securitystatus '.
+            'FROM taxa WHERE tid = '.$term.' ';
     }
     else{
-        $sql = 'SELECT DISTINCT ts.tidaccepted, t.author, ts.family, t.securitystatus '.
-            'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-            'WHERE t.sciname = "'.$term.'" ';
+        $sql = 'SELECT DISTINCT tid, author, family, securitystatus '.
+            'FROM taxa WHERE sciname = "'.$term.'" ';
     }
     //echo $sql;
     $rs = $con->query($sql);
     while ($r = $rs->fetch_object()) {
-        $retArr['tid'] = $r->tidaccepted;
+        $retArr['tid'] = $r->tid;
         $retArr['family'] = $r->family;
         $retArr['author'] = $r->author;
         $retArr['status'] = $r->securitystatus;

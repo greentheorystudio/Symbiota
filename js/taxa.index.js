@@ -7,21 +7,6 @@ $(document).ready(function() {
 
 });
 
-function toggle(target){
-	const divObjs = document.getElementsByTagName("span");
-	for (let i = 0; i < divObjs.length; i++) {
-		const divObj = divObjs[i];
-		if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
-			if(divObj.style.display === "none"){
-				divObj.style.display="";
-			}
-			else {
-				divObj.style.display="none";
-			}
-		}
-	}
-}
-
 function toggleLinks(target){
 	const ele = document.getElementById(target);
 	if(ele){

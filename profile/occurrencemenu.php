@@ -142,24 +142,9 @@ foreach($collArr as $id => $collectionArr){
             }
         }
         ?>
-        <fieldset>
-            <legend>Miscellaneous Tools</legend>
-            <ul>
-                <li><a href="../collections/datasets/index.php">Dataset Management</a></li>
-                <?php
-                if((count($cArr)+count($oArr)) > 1){
-                    ?>
-                    <li><a href="../collections/georef/batchgeoreftool.php">Cross Collection Georeferencing Tool</a></li>
-                    <?php
-                    if(isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && count(array_diff($GLOBALS['USER_RIGHTS']['CollAdmin'],array_keys($genAdminArr))) > 1){
-                        ?>
-                        <li><a href="../collections/management/taxonomycleaner.php">Cross Collection Taxonomy Cleaning Tool</a></li>
-                        <?php
-                    }
-                }
-                ?>
-            </ul>
-        </fieldset>
+        <ul>
+            <li><a href="../collections/datasets/index.php">Dataset Management</a></li>
+        </ul>
         <?php
     }
     ?>
