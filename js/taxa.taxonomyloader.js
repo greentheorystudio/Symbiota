@@ -8,8 +8,20 @@ var acceptedIdValid = false;
 var taxonExistsValid = false;
 
 $(document).ready(function() {
-	$("#acceptedstr").autocomplete({ 
-		source: "../../api/taxa/getacceptedsuggest.php",
+	$("#acceptedstr").autocomplete({
+		source: function( request, response ) {
+			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, acceptedonly: 1 }, response );
+		},
+		select: function( event, ui ) {
+			document.getElementById('tidaccepted').value = ui.item.id;
+		},
+		change: function (event, ui) {
+			if(!ui.item){
+				this.value = '';
+				document.getElementById('tidaccepted').value = '';
+				alert("You must select an Accepted Taxon from the list");
+			}
+		},
 		minLength: 2, 
 		autoFocus: true 
 	});
@@ -18,8 +30,15 @@ $(document).ready(function() {
 		source: function( request, response ) {
 			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, rhigh: $("#rankid").val() }, response );
 		},
-		change: function() {
-			checkParentExistance(document.loaderform);
+		select: function( event, ui ) {
+			document.getElementById('parenttid').value = ui.item.id;
+		},
+		change: function (event, ui) {
+			if(!ui.item){
+				this.value = '';
+				document.getElementById('parenttid').value = '';
+				alert("You must select a Parent Taxon from the list.");
+			}
 		},
 		minLength: 2,
 		autoFocus: true
@@ -75,10 +94,7 @@ function validateLoadForm(f){
 		parentNameValid = true;
 	}
 
-	if(f.parenttid.value === "" && rankId > 10){
-		checkParentExistance(f);
-	}
-	else{
+	if(f.parenttid.value !== "" || rankId > 10){
 		parentIdValid = true;
 	}
 
@@ -91,10 +107,7 @@ function validateLoadForm(f){
 			acceptedNameValid = true;
 		}
 
-		if(f.tidaccepted.value === ""){
-			checkAcceptedExistance(f);
-		}
-		else{
+		if(f.tidaccepted.value !== ""){
 			acceptedIdValid = true;
 		}
 	}
@@ -109,7 +122,7 @@ function validateLoadForm(f){
 		async: false,
 		data: { sciname: f.sciname.value, rankid: f.rankid.value, author: f.author.value }
 	}).done(function( msg ) {
-		if(msg !== '0'){
+		if(msg){
 			const sciName = document.getElementById("sciname").value;
 			alert("Taxon "+sciName+" "+f.author.value+" ("+msg+") already exists in database");
 		}
@@ -214,34 +227,6 @@ function acceptanceChanged(f){
 	}
 }
 
-function checkAcceptedExistance(f){
-	if(f.acceptedstr.value){
-		$.ajax({
-			type: "POST",
-			url: "../../api/taxa/gettid.php",
-			async: false,
-			data: { sciname: f.acceptedstr.value }
-		}).done(function( msg ) {
-			if(msg === 0){
-				alert("Accepted does not exist. Add parent to thesaurus before adding this name.");
-			}
-			else{
-				if(msg.indexOf(",") === -1){
-					f.tidaccepted.value = msg;
-					acceptedIdValid = true;
-					checkValidations();
-				}
-				else{
-					alert("Accepted is matching two different names in the thesaurus. Please select taxon with the correct author.");
-				}
-			}
-		});
-	}
-	else{
-		return false;
-	}
-}
-
 function checkParentExistance(f){
 	const parentStr = f.parentname.value;
 	if(parentStr){
@@ -251,18 +236,13 @@ function checkParentExistance(f){
 			async: false,
 			data: { sciname: parentStr }
 		}).done(function( msg ) {
-			if(msg == 0){
+			if(!msg){
 				alert("Parent does not exist. Please first add parent to system.");
 			}
 			else{
-				if(msg.indexOf(",") === -1){
-					f.parenttid.value = msg;
-					parentIdValid = true;
-					checkValidations();
-				}
-				else{
-					alert("Parent is matching two different names in the thesaurus. Please select taxon with the correct author.");
-				}
+				f.parenttid.value = msg;
+				parentIdValid = true;
+				checkValidations();
 			}
 		});
 	}

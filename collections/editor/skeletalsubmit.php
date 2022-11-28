@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSkeletal.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -37,15 +37,15 @@ if($collid){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Skeletal Record Submission</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Create Skeletal Record</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/collections.occurskeletalsubmit.js?ver=20221025" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
+	<script src="../../js/collections.occurskeletalsubmit.js?ver=20221115" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -53,8 +53,8 @@ if($collid){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-		<b>Occurrence Skeletal Record Submission</b>
+		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+		<b>Create Skeletal Record</b>
 	</div>
 	<div id="innertext">
 		<div style="float:right;"><a href="#" onclick="toggle('descriptiondiv')"><b>Display Instructions</b></a></div>
@@ -127,7 +127,7 @@ if($collid){
 							<div id="scinamediv" style="float:left"> 
 								<b>Scientific Name:</b> 
 								<input id="fsciname" name="sciname" type="text" value="" style="width:300px"/>
-								<input id="ftidinterpreted" name="tidinterpreted" type="hidden" value="" />
+								<input id="ftid" name="tid" type="hidden" value="" />
 							</div>
 							<div id="authordiv" style="float:left"> 
 								<input id="fscientificnameauthorship" name="scientificnameauthorship" type="text" value="" />

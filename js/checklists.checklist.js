@@ -24,58 +24,6 @@ function toggleVoucherDiv(tid){
 	return false;
 }
 
-function toggle(target){
-	const ele = document.getElementById(target);
-	if(ele){
-		if(ele.style.display === "none"){
-			ele.style.display="";
-  		}
-	 	else{
-	 		ele.style.display="none";
-	 	}
-	}
-	else{
-		const divObjs = document.getElementsByTagName("div");
-		for (let i = 0; i < divObjs.length; i++) {
-			const divObj = divObjs[i];
-			if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
-				if(divObj.style.display === "none"){
-					divObj.style.display="";
-				}
-			 	else {
-			 		divObj.style.display="none";
-			 	}
-			}
-		}
-		const spanObjs = document.getElementsByTagName("span");
-		for (let i = 0; i < spanObjs.length; i++) {
-			const spanObj = spanObjs[i];
-			if(spanObj.getAttribute("class") == target || spanObj.getAttribute("className") == target){
-				if(spanObj.style.display === "none"){
-					spanObj.style.display = "";
-				}
-			 	else {
-			 		spanObj.style.display="none";
-			 	}
-			}
-		}
-	}
-}
-
-function openIndividualPopup(occid){
-	const indUrl = "../collections/individual/index.php?occid=" + occid;
-	openPopup(indUrl,"indwindow");
-	return false;
-}
-
-function openPopup(urlStr,windowName){
-	let newWindow = window.open(urlStr, windowName, 'scrollbars=1,toolbar=1,resizable=1,width=1000,height=800,left=400,top=40');
-	if (newWindow.opener == null) {
-		newWindow.opener = self
-	}
-	return false;
-}
-	
 function showImagesChecked(f){
 	if(f.showimages.checked){
 		document.getElementById("wordicondiv").style.display = "none";
@@ -98,18 +46,16 @@ function validateAddSpecies(f){
 		return false;
 	}
 	else{
-		cseXmlHttp=GetXmlHttpObject();
-		if (cseXmlHttp==null){
-	  		alert ("Your browser does not support AJAX!");
-	  		return false;
-	  	}
-		let url = "../api/taxa/gettid.php";
-		url=url+"?sciname="+sciName;
-		url=url+"&sid="+Math.random();
-		cseXmlHttp.onreadystatechange=function(){
-			if(cseXmlHttp.readyState == 4 && cseXmlHttp.status == 200){
-				const testTid = cseXmlHttp.responseText;
-				if(testTid === ""){
+		const http = new XMLHttpRequest();
+		const url = "../api/taxa/gettid.php";
+		const params = 'sciname=' + sciName;
+		//console.log(url+'?'+params);
+		http.open("POST", url, true);
+		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		http.onreadystatechange = function() {
+			if(http.readyState === 4 && http.status == 200) {
+				const testTid = http.responseText;
+				if(!testTid){
 					alert("ERROR: Scientific name does not exist in database. Did you spell it correctly? If so, contact your data administrator to add this species to the Taxonomic Thesaurus.");
 				}
 				else{
@@ -118,8 +64,7 @@ function validateAddSpecies(f){
 				}
 			}
 		};
-		cseXmlHttp.open("POST",url,true);
-		cseXmlHttp.send(null);
+		http.send(params);
 		return false;
 	}
 }
@@ -127,22 +72,6 @@ function validateAddSpecies(f){
 function changeOptionFormAction(action,target){
 	document.optionform.action = action;
 	document.optionform.target = target;
-}
-
-function GetXmlHttpObject(){
-	let xmlHttp = null;
-	try{
-		xmlHttp=new XMLHttpRequest();
-  	}
-	catch (e){
-  		try{
-    		xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
-    	}
-  		catch(e){
-    		xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-    	}
-  	}
-	return xmlHttp;
 }
 
 const timeout = 500;

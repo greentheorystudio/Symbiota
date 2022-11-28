@@ -34,34 +34,9 @@ class OccurrenceMaintenance {
 		$status = true;
 
 		if($this->verbose) {
-			$this->outputMsg('Updating null families of family rank identifications... ', 1);
-		}
-		$sql1 = 'SELECT occid FROM omoccurrences WHERE (family IS NULL) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae")';
-		$rs1 = $this->conn->query($sql1);
-		$occidArr1 = array();
-		while($r1 = $rs1->fetch_object()){
-			$occidArr1[] = $r1->occid;
-		}
-		$rs1->free();
-		if($occidArr1){
-			$sql = 'UPDATE omoccurrences '.
-				'SET family = sciname '.
-				'WHERE occid IN('.implode(',',$occidArr1).')';
-			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update family.';
-				$this->errorArr[] = $errStr;
-				if($this->verbose) {
-					$this->outputMsg($errStr, 2);
-				}
-				$status = false;
-			}
-		}
-		unset($occidArr1);
-		
-		if($this->verbose) {
 			$this->outputMsg('Updating null scientific names of family rank identifications... ', 1);
 		}
-		$sql1 = 'SELECT occid FROM omoccurrences WHERE family IS NOT NULL AND sciname IS NULL';
+		$sql1 = 'SELECT occid FROM omoccurrences WHERE collid = '.$collId.' AND family IS NOT NULL AND ISNULL(sciname) ';
 		$rs1 = $this->conn->query($sql1);
 		$occidArr2 = array();
 		while($r1 = $rs1->fetch_object()){
@@ -82,10 +57,10 @@ class OccurrenceMaintenance {
 		unset($occidArr2);
 		
 		if($this->verbose) {
-			$this->outputMsg('Indexing valid scientific names (e.g. populating tidinterpreted)... ', 1);
+			$this->outputMsg('Indexing valid scientific names (e.g. populating tid)... ', 1);
 		}
-		$sql1 = 'SELECT o.occid FROM omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname '.
-			'WHERE o.collid IN('.$collId.') AND o.TidInterpreted IS NULL';
+		$sql1 = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = t.sciname '.
+			'WHERE o.collid IN('.$collId.') AND ISNULL(o.tid) ';
 		$rs1 = $this->conn->query($sql1);
 		$occidArr3 = array();
 		while($r1 = $rs1->fetch_object()){
@@ -93,11 +68,11 @@ class OccurrenceMaintenance {
 		}
 		$rs1->free();
 		if($occidArr3){
-			$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname '.
-				'SET o.TidInterpreted = t.tid '. 
+			$sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.sciname = t.sciname '.
+				'SET o.tid = t.tid '.
 				'WHERE o.occid IN('.implode(',',$occidArr3).') ';
 			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update tidinterpreted.';
+				$errStr = 'WARNING: unable to update tid.';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -110,8 +85,8 @@ class OccurrenceMaintenance {
 		if($this->verbose) {
 			$this->outputMsg('Updating and indexing occurrence images... ', 1);
 		}
-		$sql1 = 'SELECT o.occid FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-			'WHERE o.collid IN('.$collId.') AND (i.tid IS NULL) AND (o.tidinterpreted IS NOT NULL)';
+		$sql1 = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+			'WHERE o.collid IN('.$collId.') AND ISNULL(i.tid) AND o.tid IS NOT NULL ';
 		$rs1 = $this->conn->query($sql1);
 		$occidArr4 = array();
 		while($r1 = $rs1->fetch_object()){
@@ -119,8 +94,8 @@ class OccurrenceMaintenance {
 		}
 		$rs1->free();
 		if($occidArr4){
-			$sql = 'UPDATE omoccurrences o INNER JOIN images i ON o.occid = i.occid '. 
-				'SET i.tid = o.tidinterpreted '. 
+			$sql = 'UPDATE omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+				'SET i.tid = o.tid '.
 				'WHERE o.occid IN('.implode(',',$occidArr4).')';
 			if(!$this->conn->query($sql)){
 				$errStr = 'WARNING: unable to update image tid field.';
@@ -132,58 +107,6 @@ class OccurrenceMaintenance {
 			}
 		}
 		unset($occidArr4);
-		
-		if($this->verbose) {
-			$this->outputMsg('Updating null families using taxonomic thesaurus... ', 1);
-		}
-		$sql1 = 'SELECT o.occid FROM omoccurrences o INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid '.
-			'WHERE o.collid IN('.$collId.') AND (ts.family IS NOT NULL) AND (o.family IS NULL)';
-		$rs1 = $this->conn->query($sql1);
-		$occidArr5 = array();
-		while($r1 = $rs1->fetch_object()){
-			$occidArr5[] = $r1->occid;
-		}
-		$rs1->free();
-		if($occidArr5){
-			$sql = 'UPDATE omoccurrences o INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid '. 
-				'SET o.family = ts.family '. 
-				'WHERE o.occid IN('.implode(',',$occidArr5).')';
-			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update family in omoccurrence table.';
-				$this->errorArr[] = $errStr;
-				if($this->verbose) {
-					$this->outputMsg($errStr, 2);
-				}
-				$status = false;
-			}
-		}
-		unset($occidArr5);
-
-		if($this->verbose) {
-			$this->outputMsg('Updating null scientific authors using taxonomic thesaurus... ', 1);
-		}
-		$sql1 = 'SELECT o.occid FROM omoccurrences o INNER JOIN taxa t ON o.tidinterpreted = t.tid '.
-			'WHERE o.scientificNameAuthorship IS NULL AND t.author IS NOT NULL LIMIT 5000 ';
-		$rs1 = $this->conn->query($sql1);
-		$occidArr6 = array();
-		while($r1 = $rs1->fetch_object()){
-			$occidArr6[] = $r1->occid;
-		}
-		$rs1->free();
-		if($occidArr6){
-			$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.tidinterpreted = t.tid '. 
-				'SET o.scientificNameAuthorship = t.author '. 
-				'WHERE (o.occid IN('.implode(',',$occidArr6).'))';
-			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update author.';
-				$this->errorArr[] = $errStr;
-				if($this->verbose) {
-					$this->outputMsg($errStr, 2);
-				}
-				$status = false;
-			}
-		}
-		unset($occidArr6);
 		
 		return $status;
 	}
@@ -207,19 +130,18 @@ class OccurrenceMaintenance {
 			$sensitiveArr[] = $r->tid; 
 		}
 		$rs->free();
-		$sql2 = 'SELECT DISTINCT ts.tid '.
-			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
-			'WHERE (t.SecurityStatus > 0) AND (t.tid != ts.tid)';
+		$sql2 = 'SELECT DISTINCT tidaccepted FROM taxa '.
+			'WHERE SecurityStatus > 0 AND tid <> tidaccepted ';
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){
-			$sensitiveArr[] = $r2->tid;
+			$sensitiveArr[] = $r2->tidaccepted;
 		}
 		$rs2->free();
 		
 		if($sensitiveArr){
-			$sql2 = 'UPDATE omoccurrences o '.
-				'SET o.LocalitySecurity = 1 '.
-				'WHERE (o.LocalitySecurity IS NULL OR o.LocalitySecurity = 0) AND (o.localitySecurityReason IS NULL) AND (o.tidinterpreted IN('.implode(',',$sensitiveArr).'))';
+			$sql2 = 'UPDATE omoccurrences '.
+				'SET localitySecurity = 1 '.
+				'WHERE (ISNULL(localitySecurity) OR localitySecurity = 0) AND ISNULL(localitySecurityReason) AND tid IN('.implode(',',$sensitiveArr).') ';
 			if(!$this->conn->query($sql2)){
 				$errStr = 'WARNING: unable to protect globally rare species.';
 				$this->errorArr[] = $errStr;
@@ -238,11 +160,10 @@ class OccurrenceMaintenance {
 		if($this->verbose) {
 			$this->outputMsg('Protecting state level rare species... ', 1);
 		}
-		$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
-			'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-			'INNER JOIN fmchecklists c ON o.stateprovince = c.locality '. 
-			'INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid AND ts2.tid = cl.tid '.
-			'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) AND (c.type = "rarespp") ';
+		$sql = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
+			'INNER JOIN fmchecklists AS c ON o.stateprovince = c.locality '.
+			'INNER JOIN fmchklsttaxalink AS cl ON c.clid = cl.clid AND t.tidaccepted = cl.tid '.
+			'WHERE (ISNULL(o.localitysecurity) OR o.localitysecurity = 0) AND ISNULL(o.localitySecurityReason) AND c.type = "rarespp" ';
 		if($collid) {
 			$sql .= ' AND o.collid IN(' . $collid . ') ';
 		}
@@ -269,56 +190,7 @@ class OccurrenceMaintenance {
 		return $status;
 	}
 
-    public function protectGlobalSpecies($collid = null){
-        $status = 0;
-        if($this->verbose) {
-            $this->outputMsg('Protecting globally rare species... ', 1);
-        }
-        $sensitiveArr = $this->getSensitiveTaxa();
-
-        if($sensitiveArr){
-            $sql = 'UPDATE omoccurrences '.
-                'SET LocalitySecurity = 1 '.
-                'WHERE (LocalitySecurity IS NULL OR LocalitySecurity = 0) AND (localitySecurityReason IS NULL) AND (tidinterpreted IN('.implode(',',$sensitiveArr).')) ';
-            if($collid) {
-                $sql .= 'AND (collid = ' . $collid . ') ';
-            }
-            if($this->conn->query($sql)){
-                $status += $this->conn->affected_rows;
-            }
-            else{
-                $errStr = 'WARNING: unable to protect globally rare species; '.$this->conn->error;
-                $this->errorArr[] = $errStr;
-                if($this->verbose) {
-                    $this->outputMsg($errStr, 2);
-                }
-                $status = false;
-            }
-        }
-        return $status;
-    }
-
-    private function getSensitiveTaxa(): array
-    {
-        $sensitiveArr = array();
-        $sql = 'SELECT DISTINCT tid FROM taxa WHERE (SecurityStatus > 0)';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $sensitiveArr[] = $r->tid;
-        }
-        $rs->free();
-        $sql2 = 'SELECT DISTINCT ts.tid '.
-            'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
-            'WHERE (t.SecurityStatus > 0) AND (t.tid != ts.tid)';
-        $rs2 = $this->conn->query($sql2);
-        while($r2 = $rs2->fetch_object()){
-            $sensitiveArr[] = $r2->tid;
-        }
-        $rs2->free();
-        return $sensitiveArr;
-    }
-
-	public function updateCollectionStats($collid, $full = null): bool
+    public function updateCollectionStats($collid, $full = null): bool
 	{
         set_time_limit(600);
 		$recordCnt = 0;
@@ -337,8 +209,8 @@ class OccurrenceMaintenance {
 				'COUNT(CASE WHEN t.RankId >= 220 THEN o.occid ELSE NULL END) AS SpecimensCountID, '.
 				'COUNT(DISTINCT CASE WHEN t.RankId = 220 THEN t.SciName ELSE NULL END) AS SpeciesCount, '.
 				'COUNT(DISTINCT CASE WHEN t.RankId >= 220 THEN t.SciName ELSE NULL END) AS TotalTaxaCount '.
-				'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.TID '.
-				'WHERE (o.collid IN('.$collid.')) ';
+				'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+				'WHERE o.collid IN('.$collid.') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$recordCnt = $r->SpecimenCount;
@@ -356,8 +228,8 @@ class OccurrenceMaintenance {
 				$this->outputMsg('Calculating number of occurrences imaged... ', 1);
 			}
 			$sql = 'SELECT count(DISTINCT o.occid) as imgcnt '.
-				'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-				'WHERE (o.collid IN('.$collid.')) ';
+				'FROM omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+				'WHERE o.collid IN('.$collid.') ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$statsArr['imgcnt'] = $r->imgcnt;
@@ -369,8 +241,8 @@ class OccurrenceMaintenance {
 			}
 			$sql = 'SELECT COUNT(CASE WHEN g.resourceurl LIKE "http://www.boldsystems%" THEN o.occid ELSE NULL END) AS boldcnt, '.
 				'COUNT(CASE WHEN g.resourceurl LIKE "http://www.ncbi%" THEN o.occid ELSE NULL END) AS gencnt '.
-				'FROM omoccurrences o INNER JOIN omoccurgenetic g ON o.occid = g.occid '.
-				'WHERE (o.collid IN('.$collid.')) ';
+				'FROM omoccurrences AS o INNER JOIN omoccurgenetic AS g ON o.occid = g.occid '.
+				'WHERE o.collid IN('.$collid.') ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$statsArr['boldcnt'] = $r->boldcnt;
@@ -381,9 +253,9 @@ class OccurrenceMaintenance {
 			if($this->verbose) {
 				$this->outputMsg('Calculating reference counts... ', 1);
 			}
-			$sql = 'SELECT count(r.occid) as refcnt '.
-				'FROM omoccurrences o INNER JOIN referenceoccurlink r ON o.occid = r.occid '.
-				'WHERE (o.collid IN('.$collid.')) ';
+			$sql = 'SELECT count(r.occid) AS refcnt '.
+				'FROM omoccurrences AS o INNER JOIN referenceoccurlink AS r ON o.occid = r.occid '.
+				'WHERE o.collid IN('.$collid.') ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$statsArr['refcnt'] = $r->refcnt;
@@ -396,8 +268,8 @@ class OccurrenceMaintenance {
 			$sql = 'SELECT o.family, COUNT(o.occid) AS SpecimensPerFamily, COUNT(o.decimalLatitude) AS GeorefSpecimensPerFamily, '.
 				'COUNT(CASE WHEN t.RankId >= 220 THEN o.occid ELSE NULL END) AS IDSpecimensPerFamily, '.
 				'COUNT(CASE WHEN t.RankId >= 220 AND o.decimalLatitude IS NOT NULL THEN o.occid ELSE NULL END) AS IDGeorefSpecimensPerFamily '.
-				'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.TID '.
-				'WHERE (o.collid IN('.$collid.')) '.
+				'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+				'WHERE o.collid IN('.$collid.') '.
 				'GROUP BY o.family ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -417,8 +289,8 @@ class OccurrenceMaintenance {
 			$sql = 'SELECT o.country, COUNT(o.occid) AS CountryCount, COUNT(o.decimalLatitude) AS GeorefSpecimensPerCountry, '.
 				'COUNT(CASE WHEN t.RankId >= 220 THEN o.occid ELSE NULL END) AS IDSpecimensPerCountry, '.
 				'COUNT(CASE WHEN t.RankId >= 220 AND o.decimalLatitude IS NOT NULL THEN o.occid ELSE NULL END) AS IDGeorefSpecimensPerCountry '.
-				'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.TID '.
-				'WHERE (o.collid IN('.$collid.')) '.
+				'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+				'WHERE o.collid IN('.$collid.') '.
 				'GROUP BY o.country ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -451,8 +323,8 @@ class OccurrenceMaintenance {
 			$sql = 'SELECT COUNT(o.occid) AS SpecimenCount, COUNT(o.decimalLatitude) AS GeorefCount, COUNT(DISTINCT o.family) AS FamilyCount, '.
 				'COUNT(DISTINCT CASE WHEN t.RankId >= 180 THEN t.UnitName1 ELSE NULL END) AS GeneraCount, '.
 				'COUNT(DISTINCT CASE WHEN t.RankId = 220 THEN t.SciName ELSE NULL END) AS SpeciesCount '.
-				'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.TID '.
-				'WHERE (o.collid IN('.$collid.')) ';
+				'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+				'WHERE o.collid IN('.$collid.') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$recordCnt = $r->SpecimenCount;
@@ -463,7 +335,7 @@ class OccurrenceMaintenance {
 			}
 		}
 		
-		$sql = 'UPDATE omcollectionstats cs '.
+		$sql = 'UPDATE omcollectionstats AS cs '.
 			'SET cs.recordcnt = '.$recordCnt.',cs.georefcnt = '.$georefCnt.',cs.familycnt = '.$familyCnt.',cs.genuscnt = '.$genusCnt.
 			',cs.speciescnt = '.$speciesCnt.', cs.datelastmodified = CURDATE() '.
 			'WHERE cs.collid IN('.$collid.')';

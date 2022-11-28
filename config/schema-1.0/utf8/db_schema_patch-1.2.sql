@@ -219,14 +219,12 @@ DELETE
 SET NULL ON UPDATE SET NULL;
 
 ALTER TABLE `taxadescrblock`
-DROP
-FOREIGN KEY `FK_taxadescrblock_tid`;
+    DROP FOREIGN KEY `FK_taxadescrblock_tid`;
 
 ALTER TABLE `taxadescrblock`
-DROP INDEX `Index_unique`,
-  ADD INDEX `FK_taxadescrblock_tid_idx`(`tid`),
-  ADD CONSTRAINT `FK_taxadescrblock_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON
-UPDATE CASCADE;
+    DROP INDEX `Index_unique`,
+    ADD INDEX `FK_taxadescrblock_tid_idx`(`tid`),
+    ADD CONSTRAINT `FK_taxadescrblock_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON UPDATE CASCADE;
 
 ALTER TABLE `taxadescrstmts`
     MODIFY COLUMN `heading` varchar (75) NULL DEFAULT NULL AFTER `tdbid`;
@@ -237,16 +235,15 @@ CREATE TABLE `taxaidentifiers` (
    `name` varchar(45) NOT NULL,
    `identifier` varchar(255) NOT NULL,
    PRIMARY KEY (`tidentid`),
-   KEY `FK_tid` (`tid`),
-   KEY `name` (`name`),
+   UNIQUE KEY `tid_name_unique` (`tid`,`name`),
    KEY `identifier` (`identifier`),
    CONSTRAINT `FK_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE `taxavernaculars`
     MODIFY COLUMN `Language` varchar (15) NULL DEFAULT NULL AFTER `VernacularName`,
-DROP INDEX `unique-key`,
-  ADD UNIQUE INDEX `unique-key`(`VernacularName`, `TID`, `langid`);
+    DROP INDEX `unique-key`,
+    ADD UNIQUE INDEX `unique-key`(`VernacularName`, `TID`, `langid`);
 
 SET
 FOREIGN_KEY_CHECKS = 0;
@@ -256,10 +253,7 @@ TRUNCATE TABLE `taxonunits`;
 ALTER TABLE `taxonunits`
     ADD COLUMN `kingdomid` int(11) NOT NULL AFTER `taxonunitid`,
     ADD UNIQUE INDEX `INDEX-Unique`(`kingdomid`, `rankid`),
-    ADD CONSTRAINT `FK-kingdomid` FOREIGN KEY (`kingdomid`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON
-UPDATE CASCADE
-ON
-DELETE CASCADE;
+    ADD CONSTRAINT `FK-kingdomid` FOREIGN KEY (`kingdomid`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON UPDATE CASCADE ON DELETE CASCADE;
 
 INSERT INTO `taxonunits`(`kingdomid`, `rankid`, `rankname`, `dirparentrankid`, `reqparentrankid`)
 VALUES (1, 10, 'Kingdom', 10, 10),
@@ -470,8 +464,8 @@ FOREIGN_KEY_CHECKS = 1;
 
 ALTER TABLE `taxstatus`
     ADD COLUMN `modifiedBy` varchar(45) NULL AFTER `SortSequence`,
-DROP INDEX `Index_hierarchy`,
-  ADD INDEX `Index_tid`(`tid`);
+    DROP INDEX `Index_hierarchy`,
+    ADD INDEX `Index_tid`(`tid`);
 
 ALTER TABLE `uploadimagetemp`
     CHANGE COLUMN `specimengui` `sourceIdentifier` varchar (150) NULL DEFAULT NULL AFTER `dbpk`,
@@ -523,7 +517,7 @@ CREATE TRIGGER `uploadspectemp_delete` BEFORE DELETE ON `uploadspectemp` FOR EAC
 END;
 
 ALTER TABLE `uploadtaxa`
-DROP INDEX `UNIQUE_sciname` ,
+    DROP INDEX `UNIQUE_sciname` ,
     ADD COLUMN `kingdomId` int(11) NULL AFTER `Family`,
     ADD COLUMN `kingdomName` varchar(250) NULL AFTER `kingdomId`,
     ADD UNIQUE INDEX `UNIQUE_sciname` (`SciName` ASC, `RankId` ASC, `Author` ASC, `AcceptedStr` ASC),
@@ -537,15 +531,13 @@ ALTER TABLE `userroles`
 ALTER TABLE `users`
     ADD COLUMN `middleinitial` varchar(2) AFTER `firstname`;
 
-UPDATE taxonkingdoms AS k LEFT JOIN taxa AS t
-ON k.kingdom_name = t.SciName
+UPDATE taxonkingdoms AS k LEFT JOIN taxa AS t ON k.kingdom_name = t.SciName
     SET t.kingdomid = k.kingdom_id
-WHERE t.TID IS NOT NULL;
+    WHERE t.TID IS NOT NULL;
 
-UPDATE taxa AS t LEFT JOIN taxonkingdoms AS k
-ON t.kingdomName = k.kingdom_name
+UPDATE taxa AS t LEFT JOIN taxonkingdoms AS k ON t.kingdomName = k.kingdom_name
     SET t.kingdomid = k.kingdom_id
-WHERE (t.kingdomid = 100) AND t.kingdomName IS NOT NULL AND k.kingdom_id IS NOT NULL;
+    WHERE (t.kingdomid = 100) AND t.kingdomName IS NOT NULL AND k.kingdom_id IS NOT NULL;
 
 UPDATE taxa AS t LEFT JOIN taxaenumtree AS e
 ON t.TID = e.tid
@@ -587,3 +579,63 @@ ALTER TABLE `taxstatus`
 
 ALTER TABLE `configurations`
     ADD UNIQUE INDEX `configurationname`(`configurationname`);
+
+ALTER TABLE `omoccurdeterminations`
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`,
+    ADD COLUMN `verbatimScientificName` varchar(255) NULL AFTER `sciname`;
+
+UPDATE omoccurdeterminations AS d LEFT JOIN taxa AS t ON d.sciname = t.SciName
+    SET d.tid = t.TID
+WHERE t.TID IS NOT NULL;
+
+UPDATE omoccurdeterminations AS d LEFT JOIN taxa AS t ON d.sciname = t.SciName
+    SET d.tid = NULL
+WHERE ISNULL(t.TID);
+
+ALTER TABLE `omoccurrences`
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`,
+    CHANGE COLUMN `scientificName` `verbatimScientificName` varchar(255) NULL DEFAULT NULL AFTER `family`,
+    ADD INDEX `Index_ verbatimScientificName`(`verbatimScientificName`);
+
+UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName
+    SET o.tid = t.TID
+    WHERE t.TID IS NOT NULL;
+
+UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName
+    SET o.tid = NULL
+    WHERE ISNULL(t.TID);
+
+ALTER TABLE `taxa` DROP FOREIGN KEY `FK_kingdom_id`;
+
+UPDATE taxa AS t LEFT JOIN taxaenumtree AS te ON t.TID = te.tid
+    LEFT JOIN taxa AS t2 ON te.parenttid = t2.TID
+    LEFT JOIN taxonkingdoms AS k ON t2.SciName = k.kingdom_name
+    SET t.kingdomId = k.kingdom_id
+    WHERE t2.RankId = 10 AND ISNULL(t.kingdomId);
+
+ALTER TABLE `taxa`
+    MODIFY COLUMN `kingdomId` int(11) NOT NULL DEFAULT 100 AFTER `kingdomName`,
+    ADD COLUMN `tidaccepted` int(10) UNSIGNED NULL AFTER `Author`,
+    ADD COLUMN `parenttid` int(10) UNSIGNED NULL AFTER `tidaccepted`,
+    ADD COLUMN `family` varchar(50) NULL AFTER `parenttid`,
+    ADD CONSTRAINT `FK_kingdom_id` FOREIGN KEY (`kingdomId`) REFERENCES `symbiota`.`taxonkingdoms` (`kingdom_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE `taxa`
+    DROP COLUMN `kingdomName`,
+    DROP COLUMN `PhyloSortSequence`,
+    DROP COLUMN `Status`,
+    DROP COLUMN `locked`;
+
+ALTER TABLE `taxa`
+    DROP INDEX `sciname_unique`,
+    ADD UNIQUE INDEX `sciname_unique`(`SciName`, `kingdomId`),
+    ADD INDEX `tidaccepted`(`tidaccepted`),
+    ADD INDEX `parenttid`(`parenttid`),
+    ADD INDEX `family`(`family`);
+
+UPDATE taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid
+    SET t.tidaccepted = ts.tidaccepted, t.parenttid = ts.parenttid, t.family = ts.family;
+
+ALTER TABLE `uploadspectemp`
+    CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`,
+    CHANGE COLUMN `scientificName` `verbatimScientificName` varchar(255) NULL DEFAULT NULL AFTER `family`;

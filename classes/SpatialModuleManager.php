@@ -89,12 +89,11 @@ class SpatialModuleManager{
     public function getOccPointMapGeoJson($pageRequest,$cntPerPage){
         $geomArr = array();
         $featuresArr = array();
-        $sql = 'SELECT DISTINCT o.occid, o.collid, o.family, o.sciname, o.tidinterpreted, o.`year`, o.`month`, o.`day`, '.
-            'o.decimalLatitude, o.decimalLongitude, c.CollectionName, c.CollType, ts.family AS accFamily, '.
+        $sql = 'SELECT DISTINCT o.occid, o.collid, o.family, o.sciname, o.tid, o.`year`, o.`month`, o.`day`, '.
+            'o.decimalLatitude, o.decimalLongitude, c.CollectionName, c.CollType, t.family AS accFamily, '.
             'c.InstitutionCode, o.catalogNumber, o.recordedBy, o.recordNumber, o.eventDate AS displayDate '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+            'INNER JOIN taxa AS t ON o.tid = t.TID ';
         $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
@@ -119,7 +118,7 @@ class SpatialModuleManager{
             $geoArr['properties']['CollType'] = utf8_encode($row->CollType);
             $geoArr['properties']['collid'] = utf8_encode($row->collid);
             $geoArr['properties']['coll_year'] = utf8_encode($row->year);
-            $geoArr['properties']['tidinterpreted'] = utf8_encode($row->tidinterpreted);
+            $geoArr['properties']['tid'] = utf8_encode($row->tid);
             $geoArr['properties']['coll_day'] = utf8_encode($row->day);
             $geoArr['properties']['id'] = utf8_encode($row->occid);
             $geoArr['properties']['CollectionName'] = utf8_encode($row->CollectionName);
@@ -153,11 +152,10 @@ class SpatialModuleManager{
             'o.`country`, o.stateProvince, o.`county`, o.municipality, o.locality, o.substrate, o.minimumDepthInMeters, '.
             'o.decimalLatitude, o.decimalLongitude, o.minimumElevationInMeters, o.geodeticDatum, o.coordinateUncertaintyInMeters, '.
             'o.maximumElevationInMeters, o.lifeStage, o.sex, o.individualCount, o.identificationQualifier, o.maximumDepthInMeters,  '.
-            'c.InstitutionCode, c.CollectionCode, c.CollectionName, IFNULL(ts.family,o.family) AS family, o.fieldnumber, '.
+            'c.InstitutionCode, c.CollectionCode, c.CollectionName, IFNULL(t.family,o.family) AS family, o.fieldnumber, '.
             'o.occurrenceRemarks, o.dynamicProperties, o.reproductiveCondition, o.lifeStage, o.sex, o.individualCount '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+            'INNER JOIN taxa AS t ON o.tid = t.TID ';
         $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
@@ -239,8 +237,7 @@ class SpatialModuleManager{
 
     public function setRecordCnt(): void
     {
-        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid '.
-            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID ';
+        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.TID ';
         $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
@@ -263,11 +260,10 @@ class SpatialModuleManager{
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT o.occid, o.collid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
-            'o.eventdate, o.family, o.sciname, o.tidinterpreted, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
+            'o.eventdate, o.family, o.sciname, o.tid, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+            'INNER JOIN taxa AS t ON o.tid = t.TID ';
         $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
@@ -299,7 +295,7 @@ class SpatialModuleManager{
             $retArr[$occId]['l'] = Sanitizer::cleanOutStr($r->locality);
             $retArr[$occId]['lat'] = Sanitizer::cleanOutStr($r->DecimalLatitude);
             $retArr[$occId]['lon'] = Sanitizer::cleanOutStr($r->DecimalLongitude);
-            $retArr[$occId]['tid'] = Sanitizer::cleanOutStr($r->tidinterpreted);
+            $retArr[$occId]['tid'] = Sanitizer::cleanOutStr($r->tid);
             $localitySecurity = $r->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
                 || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
@@ -326,7 +322,7 @@ class SpatialModuleManager{
     {
         $sqlJoin = '';
         if(array_key_exists('taxontype',$this->searchTermsArr) && (int)$this->searchTermsArr['taxontype'] === 4) {
-            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tidinterpreted = te.tid ';
+            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';

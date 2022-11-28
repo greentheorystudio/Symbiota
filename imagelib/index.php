@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $taxon = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']): '';
 $target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']): '';

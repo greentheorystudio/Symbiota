@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/UserTaxonomy.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
 
@@ -70,7 +70,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 			return true;
 		}
 	</script>
-	<script type="text/javascript" src="../js/shared.js?ver=20220809"></script>
+	<script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
 </head>
 <body>
 	<?php

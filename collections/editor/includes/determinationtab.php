@@ -253,6 +253,15 @@ $specImgArr = $occManager->getImageMap();
 						}
 						?>
 					</div>
+                    <?php
+                    if($detRec['verbatimscientificname']){
+                        ?>
+                        <div style='margin:3px 0 0 15px;'>
+                            <b>Verbatim Scientific Name:</b> <?php echo $detRec['verbatimscientificname']; ?>
+                        </div>
+                        <?php
+                    }
+                    ?>
 					<div style='margin:3px 0 0 15px;'>
 						<b>Determiner:</b> <?php echo $detRec['identifiedby']; ?>
 						<span style="margin-left:40px;">

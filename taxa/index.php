@@ -6,8 +6,9 @@
 /** @var array $footerRowElements */
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
+include_once(__DIR__ . '/../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
 $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
@@ -21,6 +22,7 @@ if(!$taxonValue && array_key_exists('quicksearchtaxon',$_REQUEST)){
 }
 
 $taxonManager = new TaxonProfileManager();
+$taxonUtilities = new TaxonomyUtilities();
 if($clValue) {
     $taxonManager->setClName($clValue);
 }
@@ -95,7 +97,8 @@ else{
         const allImages = <?php echo ($showAllImages?'true':'false'); ?>;
         let tid = <?php echo $taxonManager->getTid(); ?>;
     </script>
-    <script src="../js/taxa.index.js?ver=20220921" type="text/javascript"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
+    <script src="../js/taxa.index.js?ver=20221115" type="text/javascript"></script>
     <?php
     if(isset($CSSARR)){
         foreach($CSSARR as $cssVal){

@@ -272,10 +272,10 @@ class MediaShared{
 			}
 
 			if(!$this->tid && $this->occid){
-				$sql1 = 'SELECT tidinterpreted FROM omoccurrences WHERE tidinterpreted IS NOT NULL AND occid = '.$this->occid;
+				$sql1 = 'SELECT tid FROM omoccurrences WHERE tid IS NOT NULL AND occid = '.$this->occid;
 				$rs1 = $this->conn->query($sql1);
 				if($r1 = $rs1->fetch_object()){
-					$this->tid = $r1->tidinterpreted;
+					$this->tid = $r1->tid;
 				}
 				$rs1->free();
 			}
