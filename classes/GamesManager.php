@@ -115,9 +115,8 @@ class GamesManager {
 					$previous[] = $randTaxa;
 					$ootdInfo['clid'] = $clid;
 
-					$sql2 = 'SELECT t.TID, t.SciName, t.UnitName1, s.family '.
-						'FROM taxa AS t INNER JOIN taxstatus AS s ON t.TID = s.tid '.
-						'WHERE t.TID = '.$randTaxa.' ';
+					$sql2 = 'SELECT TID, SciName, UnitName1, family FROM taxa '.
+						'WHERE TID = '.$randTaxa.' ';
 					//echo '<div>'.$sql2.'</div>';
 					$rs = $this->conn->query($sql2);
 					while($row = $rs->fetch_object()){
@@ -189,19 +188,17 @@ class GamesManager {
 			if(!$this->clidStr) {
 				$this->setClidStr();
 			}
-			$sql = 'SELECT DISTINCT t.tid, t.sciname, ts.tidaccepted '.
-				'FROM taxa t INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
-				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE (ctl.clid IN('.$this->clidStr.')) ';
+			$sql = 'SELECT DISTINCT t.tid, t.sciname, t.tidaccepted '.
+				'FROM taxa AS t INNER JOIN fmchklsttaxalink AS ctl ON t.tid = ctl.tid '.
+				'WHERE ctl.clid IN('.$this->clidStr.') ';
 		}
 		else{
-			$sql = 'SELECT DISTINCT t.tid, t.sciname, ts.tidaccepted '.
-				'FROM taxa t INNER JOIN fmdyncltaxalink ctl ON t.tid = ctl.tid '.
-				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE (ctl.dynclid = '.$this->dynClid.') ';
+			$sql = 'SELECT DISTINCT t.tid, t.sciname, t.tidaccepted '.
+				'FROM taxa AS t INNER JOIN fmdyncltaxalink AS ctl ON t.tid = ctl.tid '.
+				'WHERE ctl.dynclid = '.$this->dynClid.' ';
 		}
 		if($this->taxonFilter) {
-			$sql .= 'AND (ts.Family = "' . $this->taxonFilter . '" OR t.sciname Like "' . $this->taxonFilter . '%") ';
+			$sql .= 'AND (t.family = "' . $this->taxonFilter . '" OR t.sciname LIKE "' . $this->taxonFilter . '%") ';
 		}
 		$sql .= 'ORDER BY RAND() LIMIT 1000 ';
 		//echo 'sql: '.$sql; exit;
@@ -218,9 +215,9 @@ class GamesManager {
 			$tidComplete = array();
 
 			if($this->showCommon){
-				$sqlV = 'SELECT ts.tidaccepted, v.vernacularname '.
-					'FROM taxavernaculars v INNER JOIN taxstatus ts ON v.tid = ts.tid '.
-					'WHERE v.Language = "'.$this->lang.'" AND ts.tidaccepted IN('.$tidStr.') '.
+				$sqlV = 'SELECT t.tidaccepted, v.vernacularname '.
+					'FROM taxavernaculars AS v INNER JOIN taxa AS t ON v.tid = t.tid '.
+					'WHERE v.Language = "'.$this->lang.'" AND t.tidaccepted IN('.$tidStr.') '.
 					'ORDER BY v.SortSequence';
 				if($rsV = $this->conn->query($sqlV)){
 					while($rV = $rsV->fetch_object()){
@@ -232,8 +229,8 @@ class GamesManager {
 				}
 			}
 
-			$sqlImg = 'SELECT DISTINCT i.url, ts.tidaccepted FROM images i INNER JOIN taxstatus ts ON i.tid = ts.tid '.
-				'WHERE ts.tidaccepted IN('.$tidStr.') AND i.occid IS NULL '.
+			$sqlImg = 'SELECT DISTINCT i.url, t.tidaccepted FROM images AS i INNER JOIN taxa AS t ON i.tid = t.tid '.
+				'WHERE t.tidaccepted IN('.$tidStr.') AND ISNULL(i.occid) '.
 				'ORDER BY i.sortsequence';
 			//echo $sql;
 			$rsImg = $this->conn->query($sqlImg);
@@ -257,8 +254,8 @@ class GamesManager {
 
 			if(count($tidComplete) < count($retArr)){
 				$newTidStr = implode(',',array_keys(array_diff_key($retArr,$tidComplete)));
-				$sqlImg2 = 'SELECT DISTINCT i.url, ts.parenttid FROM images i INNER JOIN taxstatus ts ON i.tid = ts.tid '.
-					'WHERE ts.parenttid IN('.$newTidStr.') AND i.occid IS NULL '.
+				$sqlImg2 = 'SELECT DISTINCT i.url, t.parenttid FROM images AS i INNER JOIN taxa AS t ON i.tid = t.tid '.
+					'WHERE t.parenttid IN('.$newTidStr.') AND ISNULL(i.occid) '.
 					'ORDER BY i.sortsequence';
 				$rsImg2 = $this->conn->query($sqlImg2);
 				while($rImg2 = $rsImg2->fetch_object()){
@@ -289,16 +286,14 @@ class GamesManager {
 				if(!$this->clidStr) {
 					$this->setClidStr();
 				}
-				$sqlFamily = 'SELECT DISTINCT IFNULL(ctl.familyoverride,ts.Family) AS family '.
-					'FROM taxa t INNER JOIN taxstatus ts ON t.TID = ts.TID '.
-					'INNER JOIN fmchklsttaxalink ctl ON t.TID = ctl.TID '.
-					'WHERE (ctl.clid IN('.$this->clidStr.')) ';
+				$sqlFamily = 'SELECT DISTINCT IFNULL(ctl.familyoverride,t.family) AS family '.
+					'FROM taxa AS t INNER JOIN fmchklsttaxalink ctl ON t.TID = ctl.TID '.
+					'WHERE ctl.clid IN('.$this->clidStr.') ';
 			}
 			else{
-				$sqlFamily = 'SELECT DISTINCT ts.Family AS family '.
-					'FROM taxa t INNER JOIN taxstatus ts ON t.TID = ts.TID '.
-					'INNER JOIN fmdyncltaxalink ctl ON t.TID = ctl.TID '.
-					'WHERE (ctl.dynclid = '.$this->dynClid.') ';
+				$sqlFamily = 'SELECT DISTINCT t.family AS family '.
+					'FROM taxa AS t INNER JOIN fmdyncltaxalink AS ctl ON t.TID = ctl.TID '.
+					'WHERE ctl.dynclid = '.$this->dynClid.' ';
 			}
 			//echo $sqlFamily."<br>";
 			$rsFamily = $this->conn->query($sqlFamily);
@@ -341,15 +336,13 @@ class GamesManager {
 		$sql = '';
 		if($this->clid){
 			$this->setClidStr();
-			$sql = 'SELECT DISTINCT IFNULL(cl.familyoverride,ts.family) AS family, CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2) AS sciname '.
-				'FROM fmchklsttaxalink cl INNER JOIN taxa t ON cl.tid = t.tid '.
-				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
+			$sql = 'SELECT DISTINCT IFNULL(cl.familyoverride,t.family) AS family, CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2) AS sciname '.
+				'FROM fmchklsttaxalink AS cl INNER JOIN taxa AS t ON cl.tid = t.tid '.
 				'WHERE cl.clid IN('.$this->clidStr.') ORDER BY RAND() LIMIT 25';
 		}
 		elseif($this->dynClid){
-			$sql = 'SELECT DISTINCT ts.family, CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2) AS sciname '.
-				'FROM fmdyncltaxalink cl INNER JOIN taxa t ON cl.tid = t.tid '.
-				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
+			$sql = 'SELECT DISTINCT t.family, CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2) AS sciname '.
+				'FROM fmdyncltaxalink AS cl INNER JOIN taxa AS t ON cl.tid = t.tid '.
 				'WHERE cl.dynclid = '.$this->dynClid.' ORDER BY RAND() LIMIT 25';
 		}
 		//echo $sql.'<br/><br/>';

@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceEditorImages.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -54,14 +54,14 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Image Submission</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Create New Record From Image</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/collections.imageoccursubmit.js?ver=20221025" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
+	<script src="../../js/collections.imageoccursubmit.js?ver=20221110" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
 	<script type="text/javascript">
 	function validateImgOccurForm(f){
 		if(f.imgfile.value === "" && f.imgurl.value === ""){
@@ -108,8 +108,8 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-		<b>Occurrence Image Submission</b>
+		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+		<b>Create New Record From Image</b>
 	</div>
 	<div id="innertext">
 		<h1><?php echo $collMap['collectionname']; ?></h1>
@@ -169,7 +169,7 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 						<b>Scientific Name:</b> 
 						<input id="sciname" name="sciname" type="text" value="<?php echo ($_POST['sciname'] ?? ''); ?>" style="width:300px"/>
 						<input name="scientificnameauthorship" type="text" value="<?php echo ($_POST['scientificnameauthorship'] ?? ''); ?>" /><br/>
-						<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo ($_POST['tidinterpreted'] ?? ''); ?>" />
+						<input type="hidden" id="tid" name="tid" value="<?php echo ($_POST['tid'] ?? ''); ?>" />
 						<b>Family:</b> <input name="family" type="text" value="<?php echo ($_POST['family'] ?? ''); ?>" />
 					</div>
 					<div> 

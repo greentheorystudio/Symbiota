@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/UuidFactory.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 3600);
 
 if(!$GLOBALS['SYMB_UID']) {
@@ -25,45 +25,24 @@ $uuidManager = new UuidFactory();
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> GUID/UUID Generator</title>
 	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
     <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-	<script type="text/javascript">
-		function toggle(target){
-            const objDiv = document.getElementById(target);
-            if(objDiv){
-				if(objDiv.style.display === "none"){
-					objDiv.style.display = "block";
-				}
-				else{
-					objDiv.style.display = "none";
-				}
-			}
-			else{
-                const divs = document.getElementsByTagName("div");
-                for (let h = 0; h < divs.length; h++) {
-                    const divObj = divs[h];
-                    if(divObj.className === target){
-						if(divObj.style.display === "none"){
-							divObj.style.display="block";
-						}
-					 	else {
-					 		divObj.style.display="none";
-					 	}
-					}
-				}
-			}
-			return false;
-		}
-    </script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 </head>
 <body>
 <?php 
 include(__DIR__ . '/../../header.php');
 ?>
+<div class="navpath">
+    <a href="../../index.php">Home</a> &gt;&gt;
+    <?php
+    if($collId){
+        echo '<a href="../../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">Collection Control Panel</a> &gt;&gt;';
+    }
+    ?>
+    <b>GUID/UUID Generator</b>
+</div>
 <div id="innertext">
 	<?php 
 	if($isEditor){
-		?>
-		<h3>GUID/UUID Generator</h3>
-		<?php
 		if($action === 'Generate Collection GUIDs/UUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids($collId);

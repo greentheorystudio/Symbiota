@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 1200);
 
 $catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
@@ -45,7 +45,7 @@ else{
 		<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="../../js/external/jquery.js"></script>
 		<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-		<script type="text/javascript" src="../../js/search.term.manager.js?ver=20220921"></script>
+		<script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
 	</head>
 	<body>
 		<?php

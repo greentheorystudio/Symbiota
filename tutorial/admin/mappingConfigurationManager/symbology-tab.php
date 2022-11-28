@@ -16,7 +16,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     <body>
         <div class="reveal">
             <div class="slides">
-                <section id="symbology-tab" data-background-iframe="../../../admin/mappingConfigurationManager.php" data-background-interactive data-preload>
+                <section id="symbology-tab" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/admin/mapping/index.php" data-background-interactive data-preload>
                     <div class="tutorial-frame tutorial-display-toggle-slide">
                         <div id="hideToggle" class="index-link tutorial-display-toggle"><a style="cursor:pointer;" onclick="hideTutorial();">Hide Tutorial</a></div>
                         <div id="showToggle" class="index-link tutorial-display-toggle" style="display:none;"><a style="cursor:pointer;" onclick="showTutorial();">Show Tutorial</a></div>
@@ -32,7 +32,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>The Symbology tab can be accessed by clicking on the Symbology tab. It contains several symbology
-                            settings for the <a href="../../spatial/index.php#/intro">Mapping module</a> arranged in three groups, Points Layer, Shapes Layer, and Drag
+                            settings for the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php#/intro">Mapping module</a> arranged in three groups, Points Layer, Shapes Layer, and Drag
                             and Dropped Layers, which can be set and saved as the initial setting. We will go through each
                             of the settings in each of these groups here:</p>
                     </div>
@@ -101,47 +101,47 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Shapes Layer</h4>
                         <h3>Border color</h3>
-                        <p>This sets the border color for all features in the <a href="../../spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
+                        <p>This sets the border color for all features in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Shapes Layer</h4>
                         <h3>Fill color</h3>
-                        <p>This sets the fill color for all features in the <a href="../../spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
+                        <p>This sets the fill color for all features in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Shapes Layer</h4>
                         <h3>Border width</h3>
-                        <p>This sets the border width, in pixels, for all features in the <a href="../../spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
+                        <p>This sets the border width, in pixels, for all features in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Shapes Layer</h4>
                         <h3>Point radius</h3>
-                        <p>This sets the point radius, in pixels, for all point features in the <a href="../../spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
+                        <p>This sets the point radius, in pixels, for all point features in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Shapes Layer</h4>
                         <h3>Fill Opacity</h3>
-                        <p>This sets the fill color opacity for all features in the <a href="../../spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
+                        <p>This sets the fill color opacity for all features in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Shapes Layer</h4>
                         <h3>Selections Border color</h3>
-                        <p>This sets the border color for all selected features in the <a href="../../spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
+                        <p>This sets the border color for all selected features in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Shapes Layer</h4>
                         <h3>Selections Fill color</h3>
-                        <p>This sets the fill color for all selected features in the <a href="../../spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
+                        <p>This sets the fill color for all selected features in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Shapes Layer</h4>
                         <h3>Selections Border width</h3>
-                        <p>This sets the border width, in pixels, for all selected features in the <a href="../../spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
+                        <p>This sets the border width, in pixels, for all selected features in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Shapes Layer</h4>
                         <h3>Selections Opacity</h3>
-                        <p>This sets the fill color opacity for all selected features in the <a href="../../spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
+                        <p>This sets the fill color opacity for all selected features in the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/map-layers.php#/map-layers/5">Shapes Layer</a> on the map.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h4>Drag and Dropped Layers</h4>

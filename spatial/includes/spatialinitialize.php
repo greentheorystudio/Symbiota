@@ -18,7 +18,7 @@ if($stArrJson){
     }
 }
 ?>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20221026" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20221110" type="text/javascript"></script>
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     let searchTermsArr = {};
@@ -86,7 +86,7 @@ if($stArrJson){
                         }
                         //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
                         $.getJSON( source, {
-                            term: extractLast( request.term ),
+                            term: request.term.split( /,\s*/ ).pop(),
                             rlow: rankLow,
                             rhigh: rankHigh,
                             rlimit: rankLimit,
@@ -96,7 +96,7 @@ if($stArrJson){
                     },
                     appendTo: "#taxa_autocomplete",
                     search: function() {
-                        const term = extractLast( this.value );
+                        const term = this.value.split( /,\s*/ ).pop();
                         if ( term.length < 4 ) {
                             return false;
                         }
@@ -105,7 +105,7 @@ if($stArrJson){
                         return false;
                     },
                     select: function( event, ui ) {
-                        const terms = split( this.value );
+                        const terms = this.value.split( /,\s*/ );
                         terms.pop();
                         terms.push( ui.item.value );
                         this.value = terms.join( ", " );

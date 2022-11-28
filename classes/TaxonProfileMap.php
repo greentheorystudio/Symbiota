@@ -27,12 +27,12 @@ class TaxonProfileMap {
 	{
 		if($tValue){
 			$taxonValue = $this->conn->real_escape_string($tValue);
-			$sql = 'SELECT t.tid, t.sciname FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted ';
+			$sql = 'SELECT t.tid, t.sciname FROM taxa AS t ';
 			if(is_numeric($taxonValue)){
-				$sql .= 'WHERE (ts.tid = '.$taxonValue.')';
+				$sql .= 'WHERE t.tidaccepted = '.$taxonValue.' ';
 			}
 			else{
-				$sql .= 'INNER JOIN taxa t2 ON ts.tid = t2.tid WHERE (t2.sciname = "'.$taxonValue.'")';
+				$sql .= 'INNER JOIN taxa AS t2 ON t.tidaccepted = t2.tid WHERE t2.sciname = "'.$taxonValue.'" ';
 			}
 			//echo '<div>'.$sql.'</div>';
 			$result = $this->conn->query($sql);
@@ -55,8 +55,8 @@ class TaxonProfileMap {
 	{
 		$retArr = array();
 		if($inArr){
-			$sql = 'SELECT t.tid, t.sciname FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.tid '.
-				'WHERE ts.parenttid IN('.implode(',',$inArr).') AND (ts.tid = ts.tidaccepted)';
+			$sql = 'SELECT tid, sciname FROM taxa '.
+				'WHERE parenttid IN('.implode(',',$inArr).') AND tid = tidaccepted ';
 			//echo '<div>SQL: '.$sql.'</div>';
 	        $rs = $this->conn->query($sql);
 	        while($r = $rs->fetch_object()){
@@ -74,8 +74,8 @@ class TaxonProfileMap {
 	private function setTaxaSynonyms($inArray): void
 	{
 		if($inArray){
-			$sql = 'SELECT s.tid, s.tidaccepted, t.SciName FROM taxa t LEFT JOIN taxstatus s on t.TID = s.tid '.
-				'WHERE s.tidaccepted IN('.implode(',',$inArray).') AND (s.tid <> s.tidaccepted)';
+			$sql = 'SELECT tid, tidaccepted, SciName FROM taxa '.
+				'WHERE tidaccepted IN('.implode(',',$inArray).') AND tid <> tidaccepted ';
 			//echo '<div>SQL: '.$sql.'</div>';
 	        $rs = $this->conn->query($sql);
 	        while($r = $rs->fetch_object()){
@@ -89,7 +89,7 @@ class TaxonProfileMap {
 	private function getTaxaWhere(): string
 	{
 		$sql = '';
-		$sql .= 'WHERE (o.tidinterpreted IN('.implode(',',array_keys($this->synMap)).')) '.
+		$sql .= 'WHERE (o.tid IN('.implode(',',array_keys($this->synMap)).')) '.
 			'AND (o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
 		if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) &&
 			!array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS']) && array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){

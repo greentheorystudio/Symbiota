@@ -5,7 +5,7 @@ include_once(__DIR__ . '/../../classes/ImageLocalProcessor.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -55,78 +55,57 @@ $statusStr = '';
 			if($isEditor){
 				$specManager->setProjVariables($spprid);
 				if($action === 'Process Images'){
-					if($specManager->getProjectType() === 'iplant'){
-						$imageProcessor = new ImageProcessor($specManager->getConn());
-						echo '<ul>';
-						$imageProcessor->setLogMode(3);
-						$imageProcessor->setCollid($collid);
-						$imageProcessor->setSpprid($spprid);
-						$imageProcessor->processIPlantImages($specManager->getSpecKeyPattern(), $_POST);
-						echo '</ul>';
-					}
-					else{
-						echo '<div style="padding:15px;">'."\n";
-						$imageProcessor = new ImageLocalProcessor();
+                    echo '<div style="padding:15px;">'."\n";
+                    $imageProcessor = new ImageLocalProcessor();
 
-						$imageProcessor->setLogMode(3);
-						$GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'content/logs/imgProccessing';
-						if(!file_exists($GLOBALS['LOG_PATH']) && !mkdir($GLOBALS['LOG_PATH']) && !is_dir($GLOBALS['LOG_PATH'])) {
-                            throw new RuntimeException(sprintf('Directory "%s" was not created', $GLOBALS['LOG_PATH']));
-                        }
-						$imageProcessor->setLogPath($GLOBALS['LOG_PATH']);
-						$logFile = $collid.'_'.$specManager->getInstitutionCode();
-						if($specManager->getCollectionCode()) {
-                            $logFile .= '-' . $specManager->getCollectionCode();
-                        }
-						$imageProcessor->initProcessor($logFile);
-						$imageProcessor->setCollArr(array($collid => array('pmterm' => $specManager->getSpecKeyPattern(),'prpatt' => $specManager->getPatternReplace(),'prrepl' => $specManager->getReplaceStr())));
-						$imageProcessor->setMatchCatalogNumber((array_key_exists('matchcatalognumber', $_POST)?1:0));
-						$imageProcessor->setMatchOtherCatalogNumbers((array_key_exists('matchothercatalognumbers', $_POST)?1:0));
-						$imageProcessor->setDbMetadata(1);
-						$imageProcessor->setSourcePathBase($specManager->getSourcePath());
-						$imageProcessor->setTargetPathBase($specManager->getTargetPath());
-						$imageProcessor->setImgUrlBase($specManager->getImgUrlBase());
-						$imageProcessor->setServerRoot($GLOBALS['SERVER_ROOT']);
-						if($specManager->getWebPixWidth()) {
-                            $imageProcessor->setWebPixWidth($specManager->getWebPixWidth());
-                        }
-						if($specManager->getTnPixWidth()) {
-                            $imageProcessor->setTnPixWidth($specManager->getTnPixWidth());
-                        }
-						if($specManager->getLgPixWidth()) {
-                            $imageProcessor->setLgPixWidth($specManager->getLgPixWidth());
-                        }
-						if($specManager->getWebMaxFileSize()) {
-                            $imageProcessor->setWebFileSizeLimit($specManager->getWebMaxFileSize());
-                        }
-						if($specManager->getLgMaxFileSize()) {
-                            $imageProcessor->setLgFileSizeLimit($specManager->getLgMaxFileSize());
-                        }
-						if($specManager->getJpgQuality()) {
-                            $imageProcessor->setJpgQuality($specManager->getJpgQuality());
-                        }
-						$imageProcessor->setUseImageMagick($specManager->getUseImageMagick());
-						$imageProcessor->setWebImg($_POST['webimg']);
-						$imageProcessor->setTnImg($_POST['createtnimg']);
-						$imageProcessor->setLgImg($_POST['createlgimg']);
-						$imageProcessor->setCreateNewRec($_POST['createnewrec']);
-						$imageProcessor->setImgExists($_POST['imgexists']);
-						$imageProcessor->setKeepOrig(0);
-						$imageProcessor->setSkeletalFileProcessing($_POST['skeletalFileProcessing']);
+                    $imageProcessor->setLogMode(3);
+                    $GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'content/logs/imgProccessing';
+                    if(!file_exists($GLOBALS['LOG_PATH']) && !mkdir($GLOBALS['LOG_PATH']) && !is_dir($GLOBALS['LOG_PATH'])) {
+                        throw new RuntimeException(sprintf('Directory "%s" was not created', $GLOBALS['LOG_PATH']));
+                    }
+                    $imageProcessor->setLogPath($GLOBALS['LOG_PATH']);
+                    $logFile = $collid.'_'.$specManager->getInstitutionCode();
+                    if($specManager->getCollectionCode()) {
+                        $logFile .= '-' . $specManager->getCollectionCode();
+                    }
+                    $imageProcessor->initProcessor($logFile);
+                    $imageProcessor->setCollArr(array($collid => array('pmterm' => $specManager->getSpecKeyPattern(),'prpatt' => $specManager->getPatternReplace(),'prrepl' => $specManager->getReplaceStr())));
+                    $imageProcessor->setMatchCatalogNumber((array_key_exists('matchcatalognumber', $_POST)?1:0));
+                    $imageProcessor->setMatchOtherCatalogNumbers((array_key_exists('matchothercatalognumbers', $_POST)?1:0));
+                    $imageProcessor->setDbMetadata(1);
+                    $imageProcessor->setSourcePathBase($specManager->getSourcePath());
+                    $imageProcessor->setTargetPathBase($specManager->getTargetPath());
+                    $imageProcessor->setImgUrlBase($specManager->getImgUrlBase());
+                    $imageProcessor->setServerRoot($GLOBALS['SERVER_ROOT']);
+                    if($specManager->getWebPixWidth()) {
+                        $imageProcessor->setWebPixWidth($specManager->getWebPixWidth());
+                    }
+                    if($specManager->getTnPixWidth()) {
+                        $imageProcessor->setTnPixWidth($specManager->getTnPixWidth());
+                    }
+                    if($specManager->getLgPixWidth()) {
+                        $imageProcessor->setLgPixWidth($specManager->getLgPixWidth());
+                    }
+                    if($specManager->getWebMaxFileSize()) {
+                        $imageProcessor->setWebFileSizeLimit($specManager->getWebMaxFileSize());
+                    }
+                    if($specManager->getLgMaxFileSize()) {
+                        $imageProcessor->setLgFileSizeLimit($specManager->getLgMaxFileSize());
+                    }
+                    if($specManager->getJpgQuality()) {
+                        $imageProcessor->setJpgQuality($specManager->getJpgQuality());
+                    }
+                    $imageProcessor->setUseImageMagick($specManager->getUseImageMagick());
+                    $imageProcessor->setWebImg($_POST['webimg']);
+                    $imageProcessor->setTnImg($_POST['createtnimg']);
+                    $imageProcessor->setLgImg($_POST['createlgimg']);
+                    $imageProcessor->setCreateNewRec($_POST['createnewrec']);
+                    $imageProcessor->setImgExists($_POST['imgexists']);
+                    $imageProcessor->setKeepOrig(0);
+                    $imageProcessor->setSkeletalFileProcessing($_POST['skeletalFileProcessing']);
 
-						$imageProcessor->batchLoadImages();
-						echo '</div>'."\n";
-					}
-				}
-				elseif($action === 'Process Output File'){
-					$imageProcessor = new ImageProcessor($specManager->getConn());
-					echo '<ul>';
-					$imageProcessor->setLogMode(3);
-					$imageProcessor->setSpprid($spprid);
-					$imageProcessor->setCollid($collid);
-					$imageProcessor->processiDigBioOutput($specManager->getSpecKeyPattern(),$_POST);
-					echo '</ul>';
-
+                    $imageProcessor->batchLoadImages();
+                    echo '</div>'."\n";
 				}
 				elseif($action === 'Load Image Data'){
 					$imageProcessor = new ImageProcessor($specManager->getConn());

@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonomyDisplayManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']: '';
 $displayAuthor = array_key_exists('displayauthor',$_REQUEST)?(int)$_REQUEST['displayauthor']:0;
@@ -26,7 +26,7 @@ if($target){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxonomy Explorer: ' .$taxonDisplayObj->getTargetStr(); ?></title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxonomy Explorer' .($target ? ': ' . $taxonDisplayObj->getTargetStr() : ''); ?></title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />

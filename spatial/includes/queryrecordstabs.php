@@ -171,14 +171,14 @@ $obsArr = ($collList['obs'] ?? null);
         <div style="margin-bottom:15px;">
             <div style="float:left;margin-top:20px;">
                 <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">
                         <g>
                             <circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
                         </g>
                     </svg> = Specimen
                 </div>
                 <div style="margin-top:5px;" >
-                    <svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
+                    <svg style="height:14px;width:14px;margin-bottom:-2px;" xmlns="http://www.w3.org/2000/svg">
                         <g>
                             <path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
                         </g>
@@ -236,14 +236,14 @@ $obsArr = ($collList['obs'] ?? null);
         <div style="margin-bottom:15px;">
             <div style="float:left;margin-top:20px;">
                 <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">
                         <g>
                             <circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
                         </g>
                     </svg> = Specimen
                 </div>
                 <div style="margin-top:5px;" >
-                    <svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
+                    <svg style="height:14px;width:14px;margin-bottom:-2px;" xmlns="http://www.w3.org/2000/svg">
                         <g>
                             <path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
                         </g>

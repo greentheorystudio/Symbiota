@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonomyDynamicListManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 header('Cache-Control: no-cache, must-revalidate, max-age=0');
 
 $descLimit = array_key_exists('desclimit',$_REQUEST)?(int)$_REQUEST['desclimit']:0;

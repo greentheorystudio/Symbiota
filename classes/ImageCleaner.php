@@ -407,13 +407,12 @@ class ImageCleaner extends Manager{
 	{
 		if(is_numeric($id)){
 			$this->tidArr[] = $id;
-			$sql = 'SELECT DISTINCT ts.tid '.
-				'FROM taxstatus ts INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted '.
-				'WHERE (ts2.tid = '.$id.')';
+			$sql = 'SELECT DISTINCT tidaccepted FROM taxa '.
+				'WHERE tid = '.$id.' ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->tid !== $id) {
-					$this->tidArr[] = $r->tid;
+					$this->tidArr[] = $r->tidaccepted;
 				}
 			}
 			$rs->free();

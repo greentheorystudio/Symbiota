@@ -27,7 +27,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     <body>
         <div class="reveal">
             <div class="slides">
-                <section id="intro" data-background-iframe="../../../admin/mappingConfigurationManager.php" data-background-interactive data-preload>
+                <section id="intro" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/admin/mapping/index.php" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:20%; width:40%;">
                         <div class="tutorial-frame" style="position:relative;left: -50%;">
                             <h2>Mapping Configurations Tutorial</h2>
@@ -44,7 +44,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                 </section>
-                <section id="index" data-background-iframe="../../../admin/mappingConfigurationManager.php" data-preload>
+                <section id="index" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/admin/mapping/index.php" data-preload>
                     <div class="topic-list-container">
                         <div class="tutorial-frame" style="position:relative;left: -50%;">
                             <h2>Index of Topics</h2>
@@ -57,7 +57,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                 </section>
-                <section data-background-iframe="../../../admin/mappingConfigurationManager.php" data-background-interactive data-preload>
+                <section data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/admin/mapping/index.php" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:20%; width:40%;">
                         <div class="tutorial-frame" style="position:relative;left: -50%;">
                             <h3><a href="overview.php">Start Tutorial</a></h3>
