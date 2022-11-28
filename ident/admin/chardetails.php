@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../ident/admin/index.php');
@@ -80,7 +80,7 @@ $headingAdminUrl = 'headingadmin.php';
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-	<script type="text/javascript" src="../../js/shared.js?ver=20220809"></script>
+	<script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script type="text/javascript">
 		let tabIndex = <?php echo $tabIndex; ?>;
 
@@ -117,7 +117,7 @@ $headingAdminUrl = 'headingadmin.php';
 				alert("Character type must not be null");
 				return false;
 			} 
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
+			if(f.sortsequence.value && isNaN(f.sortsequence.value)){
 				alert("Sort Sequence can only be a numeric value");
 				return false;
 			} 
@@ -129,7 +129,7 @@ $headingAdminUrl = 'headingadmin.php';
 				alert("Character state must not be null");
 				return false;
 			} 
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
+			if(f.sortsequence.value && isNaN(f.sortsequence.value)){
 				alert("Sort sequence can only be a numeric value");
 				return false;
 			} 
@@ -137,7 +137,7 @@ $headingAdminUrl = 'headingadmin.php';
 		}
 		
 		function validateStateEditForm(f){
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
+			if(f.sortsequence.value && isNaN(f.sortsequence.value)){
 				alert("Sort Sequence field must be numeric");
 				return false;
 			}

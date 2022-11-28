@@ -1,11 +1,11 @@
 <?php
-include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/../classes/ConfigurationManager.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
+include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['IS_ADMIN']) {
-    header('Location: ../index.php');
+    header('Location: ../../index.php');
 }
 
 $confManager = new ConfigurationManager();
@@ -21,82 +21,17 @@ $fullConfArr = $confManager->getConfigurationsArr();
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/admin.spatial.css?ver=20221103" type="text/css" rel="stylesheet" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.nestedSortable.js?ver=20220624" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jscolor/jscolor.js?ver=13" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220809" type="text/javascript"></script>
-    <style>
-        .map {
-            width:95%;
-            height:650px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        #mapinfo, #mapscale_us, #mapscale_metric {
-            display: none;
-        }
-        .placeholder {
-            outline: 1px dashed #4183C4;
-        }
-        .layer-group-header {
-            margin-top: 5px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-content: center;
-            align-items: center;
-        }
-        .layer-header {
-            display: flex;
-            justify-content: space-between;
-            align-content: center;
-            align-items: center;
-        }
-        .layer-group-container, .layerContent{
-            background: #FFF;
-        }
-        .layer-group-container{
-            padding: 10px;
-        }
-        .layerContent{
-            padding: 5px;
-        }
-        ol.sortable{
-            padding: 0 10px;
-        }
-        ol.sortable, ol.sortable ol {
-            list-style-type: none;
-        }
-
-        ol.sortable li, ol.sortable ol li {
-            display: list-item;
-        }
-        ol.sortable li, ol.sortable li ol li {
-            border: 1px solid #d4d4d4;
-            -webkit-border-radius: 3px;
-            -moz-border-radius: 3px;
-            border-radius: 3px;
-            cursor: move;
-            border-color: #D4D4D4 #D4D4D4 #BCBCBC;
-            background: #EBEBEB;
-            margin: 10px 0;
-        }
-        li.group {
-            padding: 0 5px 5px 5px;
-        }
-        li.layer {
-            padding: 5px 5px 5px 5px;
-        }
-        ol.sortable li ol {
-            padding: 10px;
-        }
-    </style>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221126" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221025" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.spatial.js?ver=20221025" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221126" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.spatial.js?ver=20221115" type="text/javascript"></script>
     <script type="text/javascript">
         const maxUploadSizeMB = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
         let serverayerArrObject;
@@ -225,12 +160,12 @@ $fullConfArr = $confManager->getConfigurationsArr();
 </head>
 <body>
 <?php
-include(__DIR__ . '/../header.php');
+include(__DIR__ . '/../../header.php');
 ?>
 <div id="innertext">
     <div style="padding: 0 20px 10px;display:flex;justify-content: space-between;">
         <div id="statusStr" style="font-weight:bold;color:red;"></div>
-        <div onclick="openTutorialWindow('../tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">
+        <div onclick="openTutorialWindow('../../tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">
             <i style="height:20px;width:20px;cursor:pointer;" class="far fa-question-circle"></i>
         </div>
     </div>
@@ -253,7 +188,7 @@ include(__DIR__ . '/../header.php');
                     </div>
                 </div>
             </fieldset>
-            <?php include_once(__DIR__ . '/../spatial/viewerElement.php'); ?>
+            <?php include_once(__DIR__ . '/../../spatial/viewerElement.php'); ?>
             <div style="clear:both;width:100%;height:40px;"></div>
         </div>
 
@@ -677,10 +612,10 @@ include(__DIR__ . '/../header.php');
     </div>
 </div>
 <?php
-include(__DIR__ . '/../footer.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 <div class="loadingModal">
-    <div id="loaderAnimation"></div>
+    <div class="vine-native-spinner" style="width:200px;height:200px;"></div>
 </div>
 </body>
 </html>

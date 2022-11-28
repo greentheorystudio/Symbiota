@@ -15,12 +15,12 @@ class KeyEditorManager extends KeyManager{
 	public function setTid($t): void
 	{
         $this->tid = $t;
-        $sql = 'SELECT t.SciName, ts.ParentTID, t.RankId ' .
-            'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE (t.TID = ' .$this->tid.')';
+        $sql = 'SELECT SciName, parenttid, RankId ' .
+            'FROM taxa WHERE TID = ' .$this->tid.' ';
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
             $this->taxonName = $row->SciName;
-            $this->parentTid = $row->ParentTID;
+            $this->parentTid = $row->parenttid;
             $this->rankId = $row->RankId;
         }
         $result->free();

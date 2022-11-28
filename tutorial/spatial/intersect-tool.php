@@ -21,7 +21,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     <body>
         <div class="reveal">
             <div class="slides">
-                <section id="intersect-tool" data-background-iframe="../../spatial/index.php" data-background-interactive data-preload>
+                <section id="intersect-tool" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" data-background-interactive data-preload>
                     <div class="tutorial-frame tutorial-display-toggle-slide">
                         <div id="hideToggle" class="index-link tutorial-display-toggle"><a style="cursor:pointer;" onclick="hideTutorial();">Hide Tutorial</a></div>
                         <div id="showToggle" class="index-link tutorial-display-toggle" style="display:none;"><a style="cursor:pointer;" onclick="showTutorial();">Show Tutorial</a></div>

@@ -15,9 +15,8 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 		$returnVec = array();
 		$this->checklistTaxaCnt = 0;
 		$sqlWhere = $this->getSqlWhere();
-        $sql = 'SELECT DISTINCT IFNULL(ts.family,o.family) AS family, o.sciname '.
-            'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.
-            'LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
+        $sql = 'SELECT DISTINCT IFNULL(t.family,o.family) AS family, o.sciname '.
+            'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid ';
         $sql .= $this->setTableJoins($sqlWhere);
         $sql .= $sqlWhere;
         $sql .= ' AND (o.sciname IS NOT NULL) ';
@@ -42,11 +41,8 @@ class OccurrenceChecklistManager extends OccurrenceManager{
         $returnVec = array();
         $tidStr = implode(',',$tidArr);
         $this->checklistTaxaCnt = 0;
-        $sql = 'SELECT DISTINCT ts.family, t.sciname '.
-            'FROM (taxstatus AS ts1 LEFT JOIN taxa AS t ON ts1.TidAccepted = t.Tid) '.
-            'LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
-            'WHERE ts1.tid IN('.$tidStr.') '.
-            'AND t.RankId > 140 ';
+        $sql = 'SELECT DISTINCT family, sciname FROM taxa '.
+            'WHERE tidaccepted IN('.$tidStr.') AND RankId > 140 ';
         //echo "<div>".$sql."</div>";
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -82,8 +78,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
             else{
             	$sqlWhere = $this->getSqlWhere();
             	$sqlTaxaInsert .= 'SELECT DISTINCT t.tid, ' .$dynClid.' '.
-                    'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.
-                    'LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
+                    'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid ';
                 $sqlTaxaInsert .= $this->setTableJoins($sqlWhere);
                 $sqlTaxaInsert .= $sqlWhere;
                 $sqlTaxaInsert .= ' AND (t.tid IS NOT NULL) ';

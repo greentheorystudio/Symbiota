@@ -4,7 +4,7 @@ $(document).ready(function() {
 		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		change: function(event, ui) {
-			$( "#tidinterpreted" ).val("");
+			$( "#tid" ).val("");
 			$( 'input[name=scientificnameauthorship]' ).val("");
 			$( 'input[name=family]' ).val("");
 			$( 'input[name=localitysecurity]' ).prop('checked', false);
@@ -12,7 +12,7 @@ $(document).ready(function() {
 				verifySciName();
 			}
 			else{
-				$( "#tidinterpreted" ).val("");
+				$( "#tid" ).val("");
 				$( 'input[name=scientificnameauthorship]' ).val("");
 				$( 'input[name=family]' ).val("");
 				$( 'input[name=localitysecurity]' ).prop('checked', false);
@@ -60,7 +60,7 @@ function verifySciName(){
 		data: { term: $( "#sciname" ).val() }
 	}).done(function( data ) {
 		if(data){
-			$( "#tidinterpreted" ).val(data.tid);
+			$( "#tid" ).val(data.tid);
 			$( 'input[name=family]' ).val(data.family);
 			$( 'input[name=scientificnameauthorship]' ).val(data.author);
 			if(data.status == 1){
@@ -82,7 +82,7 @@ function verifySciName(){
 }
 
 function localitySecurityCheck(f){
-	const tidIn = f.tidinterpreted.value;
+	const tidIn = f.tid.value;
 	const stateIn = f.stateprovince.value;
 	if(tidIn !== "" && stateIn !== ""){
 		$.ajax({

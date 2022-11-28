@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 
@@ -19,9 +19,9 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
     <script src="../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20220809"></script>
-    <script type="text/javascript" src="../js/collections.harvestparams.js?ver=20221026"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220921"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
+    <script type="text/javascript" src="../js/collections.harvestparams.js?ver=20221115"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=20221110"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script type="text/javascript">

@@ -11,7 +11,7 @@ $smManager = new SiteMapManager();
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
 	<link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="js/shared.js?ver=20220809"></script>
+	<script type="text/javascript" src="js/shared.js?ver=20221126"></script>
 </head>
 <body>
 	<?php
@@ -82,10 +82,10 @@ $smManager = new SiteMapManager();
                         <h3>Administrative Tools</h3>
                         <ul>
                             <li>
-                                <a href="admin/portalConfigurationManager.php">Portal Configurations</a>
+                                <a href="admin/portal/index.php">Portal Configurations</a>
                             </li>
                             <li>
-                                <a href="admin/mappingConfigurationManager.php">Mapping Configurations</a>
+                                <a href="admin/mapping/index.php">Mapping Configurations</a>
                             </li>
                             <li>
                                 <a href="profile/usermanagement.php">User Management</a>

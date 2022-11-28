@@ -182,6 +182,93 @@ dragAndDropInteraction.on('addfeatures', function(event) {
             }
         }
     }
+    else if(fileType === 'tif' || fileType === 'tiff'){
+        if(setRasterDragDropTarget()){
+            event.file.arrayBuffer().then((data) => {
+                const extent = ol.extent.createEmpty();
+                const infoArr = [];
+                infoArr['id'] = dragDropTarget;
+                infoArr['type'] = 'userLayer';
+                infoArr['fileType'] = 'tif';
+                infoArr['layerName'] = filename;
+                infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
+                infoArr['removable'] = true;
+                infoArr['sortable'] = true;
+                infoArr['symbology'] = true;
+                infoArr['query'] = false;
+                const sourceIndex = dragDropTarget + 'Source';
+                const dataIndex = dragDropTarget + 'Data';
+                const tiff = GeoTIFF.parse(data);
+                const image = tiff.getImage();
+                const rawBox = image.getBoundingBox();
+                const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
+                const bands = image.readRasters();
+                const meta = image.getFileDirectory();
+                const x_min = meta.ModelTiepoint[3];
+                const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                const y_min = meta.ModelTiepoint[4];
+                const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+                const imageWidth = image.getWidth();
+                const imageHeight = image.getHeight();
+                let minValue = 0;
+                let maxValue = 0;
+                bands[0].forEach(function(item, index) {
+                    if(item < minValue && ((minValue - item) < 5000)){
+                        minValue = item;
+                    }
+                    if(item > maxValue){
+                        maxValue = item;
+                    }
+                });
+                layersObj[dataIndex] = {};
+                layersObj[dataIndex]['data'] = bands[0];
+                layersObj[dataIndex]['bbox'] = image.getBoundingBox();
+                layersObj[dataIndex]['resolution'] = (Number(meta.ModelPixelScale[0]) * 100) * 1.6;
+                layersObj[dataIndex]['x_min'] = x_min;
+                layersObj[dataIndex]['x_max'] = x_max;
+                layersObj[dataIndex]['y_min'] = y_min;
+                layersObj[dataIndex]['y_max'] = y_max;
+                layersObj[dataIndex]['imageWidth'] = imageWidth;
+                layersObj[dataIndex]['imageHeight'] = imageHeight;
+                layersObj[dataIndex]['minValue'] = minValue;
+                layersObj[dataIndex]['maxValue'] = maxValue;
+                const canvasElement = document.createElement('canvas');
+                const plot = new plotty.plot({
+                    canvas: canvasElement,
+                    data: bands[0],
+                    width: imageWidth,
+                    height: imageHeight,
+                    domain: [minValue, maxValue],
+                    colorScale: dragDropRasterColorScale
+                });
+                plot.render();
+                layersObj[sourceIndex] = new ol.source.ImageStatic({
+                    url: canvasElement.toDataURL("image/png"),
+                    imageExtent: box,
+                    projection: 'EPSG:4326'
+                });
+                layersObj[dragDropTarget].setSource(layersObj[sourceIndex]);
+                map.addLayer(layersObj[dragDropTarget]);
+                processAddLayerControllerElement(infoArr,document.getElementById("dragDropLayers"),true);
+                addRasterLayerToTargetList(dragDropTarget,filename);
+                toggleLayerDisplayMessage();
+                const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
+                const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
+                const bottomLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[1]]));
+                const bottomRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[1]]));
+                ol.extent.extend(extent, topRight.getExtent());
+                ol.extent.extend(extent, topLeft.getExtent());
+                ol.extent.extend(extent, bottomLeft.getExtent());
+                ol.extent.extend(extent, bottomRight.getExtent());
+                map.getView().fit(extent, map.getSize());
+                hideWorking();
+            });
+        }
+    }
+    else if(fileType === 'shp' || fileType === 'dbf'){
+        hideWorking();
+        alert('In order to load a shapefile, the entire shapefile zip file must be dragged and dropped onto the map.');
+    }
     else{
         alert('The drag and drop file loading only supports GeoJSON, kml, and shapefile zip archives.');
     }

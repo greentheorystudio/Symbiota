@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DbConnection.php');
 include_once(__DIR__ . '/../../classes/DichoManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $nodeId = array_key_exists('nodeid',$_REQUEST)?(int)$_REQUEST['nodeid']:0;
 $stmtId = array_key_exists('stmtid',$_REQUEST)?(int)$_REQUEST['stmtid']:0;
@@ -49,89 +49,38 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script>
-        let cseXmlHttp;
         let targetStr;
 
-        function toggle(target){
-            let obj;
-            const divObjs = document.getElementsByTagName("div");
-            for (let i = 0; i < divObjs.length; i++) {
-                obj = divObjs[i];
-                if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-					if(obj.style.display === "none"){
-						obj.style.display="block";
-					}
-					else {
-						obj.style.display="none";
-					}
-				}
-			}
-
-            const spanObjs = document.getElementsByTagName("span");
-            for (let i = 0; i < spanObjs.length; i++) {
-                obj = spanObjs[i];
-                if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-					if(obj.style.display === "none"){
-						obj.style.display="inline";
-					}
-					else {
-						obj.style.display="none";
-					}
-				}
-			}
-		}
-
-		function checkScinameExistance(inputObj,tStr){
+        function checkScinameExistance(inputObj,tStr){
 			targetStr = tStr;
             const sciname = inputObj.value;
             if (sciname.length === 0){
 		  		return;
 		  	}
-			cseXmlHttp=GetXmlHttpObject();
-			if (cseXmlHttp==null){
-		  		alert ("Your browser does not support AJAX!");
-		  		return;
-		  	}
-            let url = "../../api/taxa/gettid.php";
-            url=url+"?sciname="+sciname;
-			cseXmlHttp.onreadystatechange=cseStateChanged;
-			cseXmlHttp.open("POST",url,true);
-			cseXmlHttp.send(null);
+            const http = new XMLHttpRequest();
+			const url = "../../api/taxa/gettid.php";
+            const params = 'sciname=' + sciname;
+            //console.log(occTaxonomyApi+'?'+params);
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function() {
+                if(http.readyState === 4) {
+                    const responseStr = http.responseText;
+                    if(!responseStr){
+                        alert("INVALID TAXON: Name does not exist in database.");
+                    }
+                    else{
+                        document.getElementById(targetStr).value = responseStr;
+                    }
+                }
+            };
+            http.send(params);
 		} 
-		
-		function cseStateChanged(){
-			if (cseXmlHttp.readyState === 4){
-                const responseStr = cseXmlHttp.responseText;
-                if(responseStr === ""){
-					alert("INVALID TAXON: Name does not exist in database.");
-				}
-				else{
-					document.getElementById(targetStr).value = responseStr;
-				}
-			}
-		}
-
-		function GetXmlHttpObject(){
-            let xmlHttp;
-            try{
-				xmlHttp=new XMLHttpRequest();
-		  	}
-			catch (e){
-		  		try{
-		    		xmlHttp=new ActiveXObject("<?php echo $MsxmlStr; ?>");
-		    	}
-		  		catch(e){
-		    		xmlHttp=new ActiveXObject("<?php echo $MicrosoftStr; ?>");
-		    	}
-		  	}
-			return xmlHttp;
-		}
 	</script>
 </head>
-
 <body>
-
 	<?php
 	include(__DIR__ . '/../../header.php');
 	?>

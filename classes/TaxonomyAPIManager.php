@@ -12,6 +12,7 @@ class TaxonomyAPIManager{
     private $limit = 0;
     private $hideAuth = false;
     private $hideProtected = false;
+    private $acceptedOnly = false;
 
     public function __construct(){
         $connection = new DbConnection();
@@ -27,22 +28,24 @@ class TaxonomyAPIManager{
     public function generateSciNameList($queryString): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT t.SciName, t.Author, t.TID '.
-            'FROM taxa AS t ';
-        $sql .= 'WHERE t.SciName LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        $sql = 'SELECT DISTINCT SciName, Author, TID FROM taxa ';
+        $sql .= 'WHERE SciName LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
         if($this->rankLimit){
-            $sql .= 'AND t.RankId = '.$this->rankLimit.' ';
+            $sql .= 'AND RankId = '.$this->rankLimit.' ';
         }
         else{
             if($this->rankLow){
-                $sql .= 'AND t.RankId >= '.$this->rankLow.' ';
+                $sql .= 'AND RankId >= '.$this->rankLow.' ';
             }
             if($this->rankHigh){
-                $sql .= 'AND t.RankId <= '.$this->rankHigh.' ';
+                $sql .= 'AND RankId <= '.$this->rankHigh.' ';
             }
         }
         if($this->hideProtected){
-            $sql .= 'AND t.SecurityStatus <> 2 ';
+            $sql .= 'AND SecurityStatus <> 1 ';
+        }
+        if($this->acceptedOnly){
+            $sql .= 'AND TID = tidaccepted ';
         }
         if($this->limit){
             $sql .= 'LIMIT '.$this->limit.' ';
@@ -99,11 +102,21 @@ class TaxonomyAPIManager{
 
     public function setHideAuth($val): void
     {
-        if($val === 'true'){
+        if($val === 'true' || (int)$val === 1){
             $this->hideAuth = true;
         }
         else{
             $this->hideAuth = false;
+        }
+    }
+
+    public function setAcceptedOnly($val): void
+    {
+        if($val === 'true' || (int)$val === 1){
+            $this->acceptedOnly = true;
+        }
+        else{
+            $this->acceptedOnly = false;
         }
     }
 

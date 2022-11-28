@@ -13,7 +13,7 @@ if(is_numeric($clid)){
 	$queryString = $conn->real_escape_string($_REQUEST['term']);
 		
 	$sql = 'SELECT t.sciname '. 
-		'FROM taxa t INNER JOIN fmchklsttaxalink cl ON t.tid = cl.tid '.
+		'FROM taxa AS t INNER JOIN fmchklsttaxalink AS cl ON t.tid = cl.tid '.
 		'WHERE t.sciname LIKE "'.$queryString.'%" AND cl.clid = '.$clid;
 	//echo $sql;
 	$result = $conn->query($sql);
@@ -22,9 +22,9 @@ if(is_numeric($clid)){
 	}
 	$result->free();
 	
-	$sql = 'SELECT DISTINCT ts.family '. 
-		'FROM fmchklsttaxalink cl INNER JOIN taxstatus ts ON cl.tid = ts.tid '.
-		'WHERE ts.family LIKE "'.$queryString.'%" AND cl.clid = '.$clid.' ';
+	$sql = 'SELECT DISTINCT t.family '.
+		'FROM fmchklsttaxalink AS cl INNER JOIN taxa AS t ON cl.tid = t.tid '.
+		'WHERE t.family LIKE "'.$queryString.'%" AND cl.clid = '.$clid.' ';
 	//echo $sql;
 	$result = $conn->query($sql);
 	while ($r = $result->fetch_object()) {

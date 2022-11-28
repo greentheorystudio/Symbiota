@@ -390,10 +390,10 @@ class OccurrenceDuplicate {
                 'o.habitat', 'o.substrate', 'o.occurrenceRemarks', 'o.associatedTaxa', 'o.dynamicProperties',
                 'o.verbatimAttributes','o.reproductiveCondition', 'o.cultivationStatus', 'o.establishmentMeans', 'o.typeStatus');
             $relArr = array();
-            $sql = 'SELECT c.collectionName, c.institutionCode, c.collectionCode, o.occid, o.collid, o.tidinterpreted, '.
+            $sql = 'SELECT c.collectionName, c.institutionCode, c.collectionCode, o.occid, o.collid, o.tid, '.
                 'o.catalogNumber, o.otherCatalogNumbers, '.implode(',',$targetFields).
-                ' FROM omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid '.
-                'WHERE (o.occid IN('.$occidQuery.')) '.
+                ' FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
+                'WHERE o.occid IN('.$occidQuery.') '.
                 'ORDER BY recordnumber';
             //echo $sql;
             $result = $this->conn->query($sql);
@@ -538,14 +538,14 @@ class OccurrenceDuplicate {
                     'INNER JOIN omoccurrences o ON dl1.occid = o.occid '.
                     'INNER JOIN omoccurduplicatelink dl2 ON d.duplicateid = dl2.duplicateid '.
                     'INNER JOIN omoccurrences o2 ON dl2.occid = o2.occid '.
-                    'WHERE o.collid = '.$collid.($this->obsUid?' AND o.observeruid = '.$this->obsUid:'').' AND o.tidinterpreted <> o2.tidinterpreted ';
+                    'WHERE o.collid = '.$collid.($this->obsUid?' AND o.observeruid = '.$this->obsUid:'').' AND o.tid <> o2.tid ';
             }
             elseif($dupeDepth === 2){
                 $sqlSuffix = 'FROM omoccurduplicates d INNER JOIN omoccurduplicatelink dl1 ON d.duplicateid = dl1.duplicateid '.
                     'INNER JOIN omoccurrences o ON dl1.occid = o.occid '.
                     'INNER JOIN omoccurduplicatelink dl2 ON d.duplicateid = dl2.duplicateid '.
                     'INNER JOIN omoccurrences o2 ON dl2.occid = o2.occid '.
-                    'WHERE o.collid = '.$collid.($this->obsUid?' AND o.observeruid = '.$this->obsUid:'').' AND o.tidinterpreted <> o2.tidinterpreted '.
+                    'WHERE o.collid = '.$collid.($this->obsUid?' AND o.observeruid = '.$this->obsUid:'').' AND o.tid <> o2.tid '.
                     'AND (o2.dateidentified IS NOT NULL OR o2.identifiedBy IS NOT NULL) ';
             }
             elseif($dupeDepth === 3){
@@ -554,7 +554,7 @@ class OccurrenceDuplicate {
                     'INNER JOIN omoccurduplicatelink dl2 ON d.duplicateid = dl2.duplicateid '.
                     'INNER JOIN omoccurrences o2 ON dl2.occid = o2.occid '.
                     'INNER JOIN omoccurdeterminations i ON o2.occid = i.occid '.
-                    'WHERE o.collid = '.$collid.($this->obsUid?' AND o.observeruid = '.$this->obsUid:'').' AND o.tidinterpreted <> o2.tidinterpreted '.
+                    'WHERE o.collid = '.$collid.($this->obsUid?' AND o.observeruid = '.$this->obsUid:'').' AND o.tid <> o2.tid '.
                     'AND (o2.dateidentified IS NOT NULL OR o2.identifiedBy IS NOT NULL) ';
             }
             else{
@@ -582,10 +582,10 @@ class OccurrenceDuplicate {
             $rs->free();
             if($retArr){
                 $sql = 'SELECT dl.duplicateid, o.occid, IFNULL(IFNULL(o.catalognumber,othercatalognumbers),"Undefined Identifier") AS identifier, '.
-                    'o.sciname, o.tidinterpreted, o.recordedby, o.recordnumber, CONCAT_WS(":",c.institutioncode ,c.collectioncode) as code, '.
+                    'o.sciname, o.tid, o.recordedby, o.recordnumber, CONCAT_WS(":",c.institutioncode ,c.collectioncode) as code, '.
                     'o.identifiedby, o.dateidentified '.
-                    'FROM omoccurduplicatelink dl INNER JOIN omoccurrences o ON dl.occid = o.occid '.
-                    'INNER JOIN omcollections c ON o.collid = c.collid '.
+                    'FROM omoccurduplicatelink AS dl INNER JOIN omoccurrences AS o ON dl.occid = o.occid '.
+                    'INNER JOIN omcollections AS c ON o.collid = c.collid '.
                     'WHERE dl.duplicateid IN ('.implode(',',array_keys($retArr)).')';
                 //echo $sql;
                 $rs = $this->conn->query($sql);
@@ -599,7 +599,7 @@ class OccurrenceDuplicate {
                     }
                     $retArr[$r->duplicateid][$r->occid]['id'] = $idStr;
                     $retArr[$r->duplicateid][$r->occid]['sciname'] = $r->sciname;
-                    $retArr[$r->duplicateid][$r->occid]['tid'] = $r->tidinterpreted;
+                    $retArr[$r->duplicateid][$r->occid]['tid'] = $r->tid;
                     $retArr[$r->duplicateid][$r->occid]['idby'] = $r->identifiedby;
                     $retArr[$r->duplicateid][$r->occid]['dateid'] = $r->dateidentified;
                     $retArr[$r->duplicateid][$r->occid]['recby'] = $r->recordedby.' '.$r->recordnumber;

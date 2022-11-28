@@ -12,11 +12,10 @@ class TPDescEditorManager extends TPEditorManager{
 	{
 		$descrArr = array();
 		$sql = 'SELECT t.tid, t.sciname, tdb.tdbid, tdb.caption, tdb.source, tdb.sourceurl, tdb.displaylevel, tdb.notes, tdb.language '.
-			'FROM (taxstatus ts INNER JOIN taxadescrblock tdb ON ts.tid = tdb.tid) '.
-			'INNER JOIN taxa t ON ts.tid = t.tid '.
-			'WHERE (ts.TidAccepted = '.$this->tid.') ';
+			'FROM taxa AS t INNER JOIN taxadescrblock AS tdb ON t.tid = tdb.tid '.
+			'WHERE t.tidaccepted = '.$this->tid.' ';
 		if(!$editor){
-			$sql .= 'AND (tdb.Language = "'.$this->language.'") ';
+			$sql .= 'AND tdb.Language = "'.$this->language.'" ';
 		}
 		$sql .= 'ORDER BY tdb.DisplayLevel ';
 		//echo $sql;

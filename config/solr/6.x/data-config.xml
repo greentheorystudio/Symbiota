@@ -8,7 +8,7 @@
                 password="[Database Password]" />
     <document>
         <entity name="omoccurrences"
-                query="SELECT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.family, o.sciname, o.tidinterpreted,
+                query="SELECT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.family, o.sciname, o.tid,
                     CONCAT_WS('-',IFNULL(o.family,'not entered'),o.sciname) AS familyscinamecode,
                     o.scientificNameAuthorship, o.identifiedBy, o.dateIdentified, o.typeStatus, o.recordedBy, o.recordNumber,
                     CASE WHEN o.eventdate NOT LIKE '%-00%' THEN DATE_FORMAT(o.eventdate,'%Y-%m-%dT%TZ') ELSE NULL END AS eventDate,
@@ -20,7 +20,7 @@
                     o.maximumElevationInMeters, o.observeruid, o.lifeStage, o.sex, o.individualCount,
                     c.InstitutionCode, c.CollectionCode, c.CollectionName, c.icon, c.CollType, c.SortSeq
                     FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid"
-                deltaImportQuery="SELECT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.family, o.sciname, o.tidinterpreted,
+                deltaImportQuery="SELECT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.family, o.sciname, o.tid,
                     CONCAT_WS('-',IFNULL(o.family,'not entered'),o.sciname) AS familyscinamecode,
                     o.scientificNameAuthorship, o.identifiedBy, o.dateIdentified, o.typeStatus, o.recordedBy, o.recordNumber,
                     CASE WHEN o.eventdate NOT LIKE '%-00%' THEN DATE_FORMAT(o.eventdate,'%Y-%m-%dT%TZ') ELSE NULL END AS eventDate,
@@ -42,7 +42,7 @@
                 <field column="otherCatalogNumbers" name="otherCatalogNumbers"/>
                 <field column="family" name="family"/>
                 <field column="sciname" name="sciname"/>
-                <field column="tidinterpreted" name="tidinterpreted"/>
+                <field column="tid" name="tid"/>
                 <field column="familyscinamecode" name="familyscinamecode"/>
                 <field column="scientificNameAuthorship" name="scientificNameAuthorship"/>
                 <field column="identifiedBy" name="identifiedBy"/>
@@ -102,11 +102,11 @@
                   <field column="CLID" name="CLID"/>
                 </entity>
                 <entity name="taxa_inner"
-                  query="SELECT ts.family FROM taxstatus AS ts WHERE ts.tid ='${omoccurrences.tidinterpreted}'">
+                  query="SELECT family FROM taxa WHERE tid ='${omoccurrences.tid}'">
                   <field column="family" name="accFamily"/>
                 </entity>
                 <entity name="parenttaxa_inner"
-                  query="SELECT te.parenttid FROM taxaenumtree AS te WHERE te.tid ='${omoccurrences.tidinterpreted}'">
+                  query="SELECT te.parenttid FROM taxaenumtree AS te WHERE te.tid ='${omoccurrences.tid}'">
                   <field column="parenttid" name="parenttid"/>
                 </entity>
         </entity>

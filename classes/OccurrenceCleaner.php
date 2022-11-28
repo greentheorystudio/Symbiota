@@ -323,16 +323,16 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function getBadStateCount($country = null): array
+	public function getBadStateCount($country = null): int
     {
-		$retCnt = array();
+		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT o.stateprovince) AS cnt '.$this->getBadStateSqlBase();
 		if($country) {
 			$sql .= 'AND o.country = "' . Sanitizer::cleanInStr($this->conn,$country) . '" ';
 		}
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retCnt = $r->cnt;
+			$retCnt = (int)$r->cnt;
 		}
 		$rs->free();
 		return $retCnt;
@@ -442,16 +442,16 @@ class OccurrenceCleaner extends Manager{
 			'WHERE (collid = '.$this->collid.') AND ISNULL(stateprovince) AND (county IS NOT NULL) AND (country IS NOT NULL) ';
 	}
 
-	public function getBadCountyCount($state = null): array
+	public function getBadCountyCount($state = null): int
     {
-		$retCnt = array();
+		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT o.county) AS cnt '.$this->getBadCountySqlFrag();
 		if($state) {
 			$sql .= 'AND o.stateprovince = "' . Sanitizer::cleanInStr($this->conn,$state) . '" ';
 		}
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
-			$retCnt = $r->cnt;
+			$retCnt = (int)$r->cnt;
 		}
 		$rs->free();
 		return $retCnt;
