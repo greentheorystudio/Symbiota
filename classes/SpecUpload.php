@@ -222,7 +222,7 @@ class SpecUpload{
 
 	private function getPendingImportSql($searchVariables): string
 	{
-		$occFieldArr = array('catalognumber', 'othercatalognumbers', 'occurrenceid','family', 'scientificname', 'sciname',
+		$occFieldArr = array('catalognumber', 'othercatalognumbers', 'occurrenceid','family', 'verbatimscientificname', 'sciname',
 			'scientificnameauthorship', 'identifiedby', 'dateidentified', 'identificationreferences',
 			'identificationremarks', 'taxonremarks', 'identificationqualifier', 'typestatus', 'recordedby', 'recordnumber',
 			'associatedcollectors', 'eventdate', 'year', 'month', 'day', 'startdayofyear', 'enddayofyear',

@@ -92,11 +92,11 @@ class ChecklistFGExportManager {
     public function primeDataArr(): void
     {
         $taxaArr = array();
-        $sql = 'SELECT DISTINCT t.tid, ts.family, t.sciname, t.author '.
-            'FROM '.$this->linkTable.' AS ctl LEFT JOIN taxstatus AS ts ON ctl.tid = ts.tid '.
-            'LEFT JOIN taxa AS t ON ts.tidaccepted = t.TID '.
+        $sql = 'SELECT DISTINCT t2.tid, t2.family, t2.sciname, t2.author '.
+            'FROM '.$this->linkTable.' AS ctl LEFT JOIN taxa AS t1 ON ctl.tid = t1.tid '.
+            'LEFT JOIN taxa AS t2 ON t1.tidaccepted = t.TID '.
             'WHERE '.$this->sqlWhereVar.' '.
-            'ORDER BY ts.family, t.sciname ';
+            'ORDER BY t2.family, t2.sciname ';
         if($this->index || $this->recLimit) {
             $sql .= 'LIMIT ' . $this->index . ',' . $this->recLimit;
         }
@@ -183,7 +183,6 @@ class ChecklistFGExportManager {
                 'IFNULL(ti.photographer,IFNULL(CONCAT_WS(" ",u.firstname,u.lastname),CONCAT_WS(" ",u2.firstname,u2.lastname))) AS photographer '.
                 'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
                 'LEFT JOIN users AS u2 ON ti.username = u2.username '.
-                'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
                 'WHERE ti.tid IN('.$this->sqlTaxaStr.') AND ti.SortSequence < 500 ';
             if($photogNameStr || $photogIdStr){
                 $tempSql = 'AND (';
@@ -282,7 +281,6 @@ class ChecklistFGExportManager {
         $photogList = array();
         $sql = 'SELECT DISTINCT ti.photographeruid, ti.photographer, u.firstname, u.lastname '.
             'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
-            'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
             'WHERE ti.tid IN('.$this->sqlTaxaStr.') AND ti.SortSequence < 500 ';
         //echo $sql;
         $rs = $this->conn->query($sql);

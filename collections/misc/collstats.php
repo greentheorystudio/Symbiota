@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 1200);
 
 $catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
@@ -238,17 +238,11 @@ if($action !== 'Update Statistics'){
             <script src="../../js/external/all.min.js" type="text/javascript"></script>
             <script type="text/javascript" src="../../js/external/jquery.js"></script>
 			<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-			<script type="text/javascript" src="../../js/search.term.manager.js?ver=20220921"></script>
+            <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
+			<script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
-
-                    function split( val ) {
-                        return val.split( /,\s*/ );
-                    }
-                    function extractLast( term ) {
-                        return split( term ).pop();
-                    }
 
                     $( "#taxon" )
                         .bind( "keydown", function( event ) {
@@ -260,11 +254,11 @@ if($action !== 'Update Statistics'){
                         .autocomplete({
                             source: function( request, response ) {
                                 $.getJSON( "../../api/taxa/speciessuggest.php", {
-                                    term: extractLast( request.term )
+                                    term: request.term.split( /,\s*/ ).pop()
                                 }, response );
                             },
                             search: function() {
-                                const term = extractLast(this.value);
+                                const term = this.value.split( /,\s*/ ).pop();
                                 if ( term.length < 4 ) {
                                     return false;
                                 }
@@ -273,7 +267,7 @@ if($action !== 'Update Statistics'){
                                 return false;
                             },
                             select: function( event, ui ) {
-                                const terms = split(this.value);
+                                const terms = this.value.split( /,\s*/ );
                                 terms.pop();
                                 terms.push( ui.item.value );
                                 this.value = terms.join( ", " );

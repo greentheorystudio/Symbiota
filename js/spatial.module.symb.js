@@ -97,9 +97,9 @@ function buildTaxaKey(){
     for(let i in taxaSymbology){
         if(taxaSymbology.hasOwnProperty(i)){
             const family = taxaSymbology[i]['family'];
-            const tidinterpreted = taxaSymbology[i]['tidinterpreted'];
+            const tid = taxaSymbology[i]['tid'];
             const sciname = taxaSymbology[i]['sciname'];
-            buildTaxaKeyPiece(i,family,tidinterpreted,sciname);
+            buildTaxaKeyPiece(i,family,tid,sciname);
         }
     }
     keyHTML = '';
@@ -139,7 +139,7 @@ function buildTaxaKey(){
     jscolor.init();
 }
 
-function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
+function buildTaxaKeyPiece(key,family,tid,sciname){
     let keyHTML = '';
     let keyLabel = "'" + key + "'";
     const color = taxaSymbology[key]['color'];
@@ -147,7 +147,7 @@ function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
     keyHTML += '<div style="display:table-row;">';
     keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="taxaColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0;" value="'+color+'" onchange="changeTaxaColor(this.value,'+keyLabel+');" /></div>';
     keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-left:8px;"> = </div>';
-    if(!tidinterpreted){
+    if(!tid){
         keyHTML += "<div style='display:table-cell;vertical-align:middle;padding-left:8px;'><i>"+sciname+"</i></div>";
     }
     else{
@@ -375,7 +375,7 @@ function primeSymbologyData(features){
         if(features.hasOwnProperty(f)){
             const collName = features[f].get('CollectionName');
             const collid = features[f].get('collid');
-            const tidinterpreted = features[f].get('tidinterpreted');
+            const tid = features[f].get('tid');
             const sciname = features[f].get('sciname');
             let family = (features[f].get('accFamily') ? features[f].get('accFamily') : features[f].get('family'));
             if(family){
@@ -384,7 +384,7 @@ function primeSymbologyData(features){
             else{
                 family = 'undefined';
             }
-            //var namestring = (sciname?sciname:'')+(tidinterpreted?tidinterpreted:'');
+            //var namestring = (sciname?sciname:'')+(tid?tid:'');
             let namestring = (sciname ? sciname : '');
             namestring = namestring.replaceAll(" ","");
             namestring = namestring.toLowerCase();
@@ -398,7 +398,7 @@ function primeSymbologyData(features){
                 taxaCnt++;
                 taxaSymbology[namestring] = [];
                 taxaSymbology[namestring]['sciname'] = sciname;
-                taxaSymbology[namestring]['tidinterpreted'] = tidinterpreted;
+                taxaSymbology[namestring]['tid'] = tid;
                 taxaSymbology[namestring]['family'] = family;
                 taxaSymbology[namestring]['color'] = pointLayerFillColor;
                 taxaSymbology[namestring]['count'] = 1;

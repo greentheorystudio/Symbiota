@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../classes/ChecklistManager.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
 include_once(__DIR__ . '/../classes/ChecklistFGExportManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
 $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
@@ -49,6 +49,7 @@ if($clValue || $dynClid){
 }
 $activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
 $showDetails = 0;
+$clid = 0;
 if($clArray){
     if($clArray['defaultSettings']){
         $defaultArr = json_decode($clArray['defaultSettings'], true);
@@ -197,6 +198,7 @@ if($clArray){
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
+    <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221126"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         <?php
@@ -230,7 +232,7 @@ if($clArray){
             http.send(params);
         }
     </script>
-    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20221025"></script>
+    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20221119"></script>
     <?php
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>
@@ -667,7 +669,7 @@ if(!$printMode){
                                 if($isEditor){
                                     ?>
                                     <span class="editspp" style="display:<?php echo ($editMode?'inline':'none'); ?>;">
-                                        <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');"></i>
+                                        <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>');"></i>
                                     </span>
                                     <?php
                                 }
@@ -712,13 +714,13 @@ if(!$printMode){
                         if($isEditor){
                             ?>
                             <span class="editspp" style="display:<?php echo ($editMode?'inline':'none'); ?>;">
-                                <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');"></i>
+                                <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>');"></i>
                             </span>
                             <?php
                             if($showVouchers && array_key_exists('dynamicsql',$clArray) && $clArray['dynamicsql']){
                                 ?>
                                 <span class="editspp" style="display:none;">
-                                    <i style='width:13px;height:13px;cursor:pointer;' title='Link Voucher Occurrences' class="fas fa-link" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>','editorwindow');"></i>
+                                    <i style='width:13px;height:13px;cursor:pointer;' title='Link Voucher Occurrences' class="fas fa-link" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>');"></i>
                                 </span>
                                 <?php
                             }
@@ -738,7 +740,8 @@ if(!$printMode){
                                             '<span id="voucdiv-'.$tid.'" style="display:none;">';
                                     }
                                     if(!$printMode) {
-                                        $voucStr .= '<a href="#" onclick="return openIndividualPopup(' . $occid . ')">';
+                                        $openPopupArgs = "'../collections/individual/index.php'," . $occid;
+                                        $voucStr .= '<a href="#" onclick="return openIndividualPopup(' . $openPopupArgs . ')">';
                                     }
                                     $voucStr .= $collName;
                                     if(!$printMode) {
@@ -890,7 +893,7 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']){
     </div>
 
     <div class="loadingModal">
-        <div id="loaderAnimation"></div>
+        <div class="vine-native-spinner" style="width:200px;height:200px;"></div>
         <div id="loaderMessage">This may take several minutes...</div>
     </div>
     <?php

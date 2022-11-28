@@ -164,8 +164,8 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		if($targetOccid){
 			$sql = 'UPDATE images SET occid = '.$targetOccid.' WHERE (imgid = '.$imgId.')';
 			if($this->conn->query($sql)){
-				$imgSql = 'UPDATE images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
-					'SET i.tid = o.tidinterpreted WHERE (i.imgid = '.$imgId.')';
+				$imgSql = 'UPDATE images AS i INNER JOIN omoccurrences AS o ON i.occid = o.occid '.
+					'SET i.tid = o.tid WHERE i.imgid = '.$imgId.' ';
 				//echo $imgSql;
 				$this->conn->query($imgSql);
 			}
@@ -257,8 +257,8 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
             $imgManager->uploadImage();
 		}
 		$imgManager->setOccid($this->occid);
-		if(isset($this->occurrenceMap[$this->occid]['tidinterpreted'])) {
-            $imgManager->setTid($this->occurrenceMap[$this->occid]['tidinterpreted']);
+		if(isset($this->occurrenceMap[$this->occid]['tid'])) {
+            $imgManager->setTid($this->occurrenceMap[$this->occid]['tid']);
         }
 		if($imgManager->processImage()){
 			$this->activeImgId = $imgManager->getActiveImgId();

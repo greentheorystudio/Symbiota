@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecLoans.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 180);
 
 $collId = (int)$_REQUEST['collid'];
@@ -96,10 +96,11 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script type="text/javascript">
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script type="text/javascript" src="../../js/collections.loans.js?ver=20221025"></script>
+	<script type="text/javascript" src="../../js/collections.loans.js?ver=20221115"></script>
 </head>
 <body>
 	<?php
@@ -107,8 +108,8 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
     ?>
     <div class='navpath'>
         <a href='../../index.php'>Home</a> &gt;&gt;
-        <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
-        <a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management Main Menu</b></a>
+        <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+        <a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management</b></a>
     </div>
 	<div id="innertext">
 		<?php 
@@ -224,8 +225,8 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 									echo '<li>';
 									echo '<a href="index.php?collid='.$collId.'&loanid='.$k.'&loantype=out">';
 									echo $loanArr['loanidentifierown'];
-									echo '</a>: '.$loanArr['institutioncode'].' ('.$loanArr['forwhom'].')';
-									echo ' - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
+									echo ': '.$loanArr['institutioncode'].' ('.$loanArr['forwhom'].')';
+									echo ' - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>').'</a>';
 									echo '</li>';
 								}
 								echo '</ul>';

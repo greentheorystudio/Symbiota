@@ -379,14 +379,14 @@ class OccurrenceDownload{
                 $occStr = implode(',',$this->occArr);
                 $sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
                     'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
-                    'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.tid '.
+                    'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid '.
                     'WHERE o.occid IN('.$occStr.') AND o.sciname IS NOT NULL '.
                     'ORDER BY IFNULL(o.family,"not entered"), o.sciname ';
             }
             else{
 				$sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
 					'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
-					'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid ';
+					'FROM omoccurrences o LEFT JOIN taxa t ON o.tid = t.tid ';
 				$sql .= $this->setTableJoins($this->sqlWhere);
 				$sql .= $this->sqlWhere.'AND o.SciName NOT LIKE "%aceae" AND o.SciName NOT LIKE "%idea" AND o.SciName NOT IN ("Plantae","Polypodiophyta") ';
 				if($this->redactLocalities){
@@ -416,9 +416,9 @@ class OccurrenceDownload{
 					'IFNULL(o.modified,o.datelastmodified) AS modified, o.occid, CONCAT("urn:uuid:",g.guid) AS recordId ';
 			}
 
-			$sql .= 'FROM omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid '.
-				'LEFT JOIN guidoccurrences g ON o.occid = g.occid '.
-				'LEFT JOIN taxa t ON o.tidinterpreted = t.tid ';
+			$sql .= 'FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
+				'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid '.
+				'LEFT JOIN taxa t ON o.tid = t.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
 			$this->applyConditions();
             if($GLOBALS['SOLR_MODE'] && $this->occArr){

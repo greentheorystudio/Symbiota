@@ -234,6 +234,14 @@ body{
 	width:	200px;
 }
 
+#verbatimScientificNameDiv{
+	padding:	3px 0 0 10px;
+}
+
+#verbatimScientificNameDiv input{
+	width: 95%;
+}
+
 #identificationReferencesDiv{
 	padding:	3px 0 0 10px;
 }

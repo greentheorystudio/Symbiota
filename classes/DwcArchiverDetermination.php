@@ -14,8 +14,8 @@ class DwcArchiverDetermination{
 		$fieldArr['identificationQualifier'] = 'd.identificationQualifier';
 		$termArr['scientificName'] = 'https://dwc.tdwg.org/terms/#scientificName';
 		$fieldArr['scientificName'] = 'd.sciName AS scientificName';
-		$termArr['tidInterpreted'] = '';
-		$fieldArr['tidInterpreted'] = 'd.tidinterpreted';
+		$termArr['tidAccepted'] = '';
+		$fieldArr['tidAccepted'] = 't.tidaccepted';
 		$termArr['identificationIsCurrent'] = '';
 		$fieldArr['identificationIsCurrent'] = 'd.iscurrent';
 		$termArr['scientificNameAuthorship'] = 'https://dwc.tdwg.org/terms/#scientificNameAuthorship';
@@ -47,13 +47,13 @@ class DwcArchiverDetermination{
 		$trimArr = array();
 		if($schemaType === 'dwc'){
 			$trimArr[] = 'identifiedByID';
-			$trimArr[] = 'tidInterpreted';
+			$trimArr[] = 'tidAccepted';
 			$trimArr[] = 'identificationIsCurrent';
 		}
 		elseif($schemaType === 'native'){
 			if(!$extended){
 				$trimArr[] = 'identifiedByID';
-				$trimArr[] = 'tidInterpreted';
+				$trimArr[] = 'tidAccepted';
 			}
 		}
 		elseif($schemaType === 'backup'){
@@ -76,25 +76,25 @@ class DwcArchiverDetermination{
                 }
 			}
 			$sql = 'SELECT '.trim($sqlFrag,', ').
-				' FROM omoccurdeterminations d INNER JOIN omoccurrences o ON d.occid = o.occid '.
-				'INNER JOIN guidoccurdeterminations g ON d.detid = g.detid '.
-				'INNER JOIN guidoccurrences og ON o.occid = og.occid '.
-				'LEFT JOIN taxa t ON d.tidinterpreted = t.tid ';
+				' FROM omoccurdeterminations AS d INNER JOIN omoccurrences AS o ON d.occid = o.occid '.
+				'INNER JOIN guidoccurdeterminations AS g ON d.detid = g.detid '.
+				'INNER JOIN guidoccurrences AS og ON o.occid = og.occid '.
+				'LEFT JOIN taxa AS t ON d.tid = t.tid ';
 			if(strpos($conditionSql,'v.clid')){
-				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid ';
+				$sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
 			}
 			if(strpos($conditionSql,'p.point')){
-				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
+				$sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
 			}
 			if(strpos($conditionSql,'MATCH(f.recordedby)') || strpos($conditionSql,'MATCH(f.locality)')){
-				$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+				$sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
 			}
 			if(stripos($conditionSql,'a.stateid')){
-				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid ';
+				$sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid ';
 			}
 			elseif(stripos($conditionSql,'s.traitid')){
-				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid '.
-					'INNER JOIN tmstates s ON a.stateid = s.stateid ';
+				$sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid '.
+					'INNER JOIN tmstates AS s ON a.stateid = s.stateid ';
 			}
 			$sql .= $conditionSql.'AND d.appliedstatus = 1 '.
 				'ORDER BY o.collid';

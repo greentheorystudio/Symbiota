@@ -110,24 +110,22 @@ class OccurrenceAttributes extends Manager {
 	
 	private function setSqlBody(): void
 	{
-		$this->sqlBody = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-			'LEFT JOIN tmattributes a ON i.occid = a.occid '.
-			'WHERE (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') ';
+		$this->sqlBody = 'FROM omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+			'LEFT JOIN tmattributes AS a ON i.occid = a.occid '.
+			'WHERE ISNULL(a.occid) AND o.collid = '.$this->collidStr.' ';
 		if($this->tidFilter){
 			$tidArr = array();
-			$sql = 'SELECT ts1.tid '.
-				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '. 
-				'WHERE ts2.tid = '.$this->tidFilter.'';
+			$sql = 'SELECT tidaccepted FROM taxa WHERE tid = '.$this->tidFilter.' ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$tidArr[] = $r->tid;
+				$tidArr[] = $r->tidaccepted;
 			}
 			$rs->free();
-			$this->sqlBody = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-				'INNER JOIN taxaenumtree e ON i.tid = e.tid '.
-				'LEFT JOIN tmattributes a ON i.occid = a.occid '.
-				'WHERE (e.parenttid IN('.$this->tidFilter.') OR e.tid IN('.implode(',',$tidArr).')) '.
-				'AND (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') ';
+			$this->sqlBody = 'FROM omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
+				'INNER JOIN taxaenumtree AS e ON i.tid = e.tid '.
+				'LEFT JOIN tmattributes AS a ON i.occid = a.occid '.
+				'WHERE e.parenttid IN('.$this->tidFilter.') OR e.tid IN('.implode(',',$tidArr).') '.
+				'AND ISNULL(a.occid) AND o.collid = '.$this->collidStr.' ';
 		}
 	}
 
@@ -546,12 +544,12 @@ class OccurrenceAttributes extends Manager {
 	{
 		$sql = '';
 		if($tidFilter){
-			$sql = 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
+			$sql = 'INNER JOIN taxaenumtree AS e ON o.tid = e.tid ';
 		}
 		$sql .= 'WHERE (o.'.$fieldName.' IS NOT NULL) '.
-			'AND (o.occid NOT IN(SELECT t.occid FROM tmattributes t INNER JOIN tmstates s ON t.stateid = s.stateid WHERE s.traitid = '.$traitID.')) ';
+			'AND (o.occid NOT IN(SELECT t.occid FROM tmattributes AS t INNER JOIN tmstates AS s ON t.stateid = s.stateid WHERE s.traitid = '.$traitID.')) ';
 		if($tidFilter){
-			$sql .= 'AND (e.parenttid = '.$tidFilter.' OR o.tidinterpreted = '.$tidFilter.') ';
+			$sql .= 'AND (e.parenttid = '.$tidFilter.' OR o.tid = '.$tidFilter.') ';
 		}
 		if($this->collidStr !== 'all'){
 			$sql .= 'AND (o.collid IN('.$this->collidStr.')) ';

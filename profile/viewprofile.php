@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Person.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $userId = array_key_exists('userid',$_REQUEST)?(int)$_REQUEST['userid']:0;
@@ -150,7 +150,7 @@ if($isEditor){
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
     <script type="text/javascript" src="../js/profile.viewprofile.js?ver=20221025"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20220809"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
 </head>
 <body>
 <?php
