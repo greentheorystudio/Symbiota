@@ -50,17 +50,18 @@ if($GLOBALS['SYMB_UID']){
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
-	<link href="../../css/external/jquery-ui.css?ver=20220720?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/occureditor.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
+	<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
+	<link href="../../css/occureditor.css?ver=20221125" type="text/css" rel="stylesheet" id="editorCssLink" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
         const collId = "<?php echo $collid; ?>";
     </script>
-	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221025"></script>
-	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221025"></script>
-	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221025"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
+	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221125"></script>
+	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221125"></script>
+	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
@@ -386,7 +387,7 @@ if($GLOBALS['SYMB_UID']){
 									<a href="#" onclick="return dwcDoc('scientificName')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
 									<br/>
 									<input type="text" id="ffsciname" name="sciname" maxlength="250" tabindex="28" value="<?php echo array_key_exists('sciname',$occArr)?$occArr['sciname']:''; ?>" onchange="fieldChanged('sciname');" <?php echo (((!$isEditor || $isEditor === 3) && $occArr['sciname'])?'disabled ':''); ?> />
-									<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="" />
+									<input type="hidden" id="tid" name="tid" value="" />
 									<?php
 									if(!$isEditor && isset($occArr['sciname']) && $occArr['sciname'] !== ''){
 										echo '<div style="clear:both;color:red;margin-left:5px;">Note: Full editing permissions are needed to edit an identification</div>';

@@ -56,10 +56,9 @@ class ChecklistLoaderManager {
                         $rankId = 0;
                         $family = '';
                         $sciNameArr = (new TaxonomyUtilities)->parseScientificName($sciNameStr);
-                        $sql = 'SELECT t.tid, t.sciname, ts.family, t.rankid '.
-                            'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ';
+                        $sql = 'SELECT tid, sciname, family, rankid FROM taxa ';
                         $cleanSciName = $this->encodeString($sciNameArr['sciname']);
-                        $sql .= 'WHERE (t.sciname IN("'.$sciNameStr.'"'.($cleanSciName?',"'.$cleanSciName.'"':'').'))';
+                        $sql .= 'WHERE (sciname IN("'.$sciNameStr.'"'.($cleanSciName?',"'.$cleanSciName.'"':'').'))';
                         $rs = $this->conn->query($sql);
                         if($rs){
                             while($row = $rs->fetch_object()){

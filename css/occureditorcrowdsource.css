@@ -198,6 +198,10 @@ body{
 	display:none;
 }
 
+#verbatimScientificNameDiv{
+	display:none;
+}
+
 #identificationReferencesDiv{
 	display:none;
 }

@@ -39,7 +39,7 @@ function checkScinameExistance(sciname){
 			url: "../api/taxa/gettid.php",
 			data: { term: sciname }
 		}).done(function( msg ) {
-			if(msg === ""){
+			if(!msg){
 				alert("ERROR: Scientific name does not exist in database. Did you spell it correctly? It may have to be added to database.");
 			}
 			else{

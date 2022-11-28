@@ -62,13 +62,11 @@ class KeyManager{
 			$sql = 'INSERT IGNORE INTO kmdescr( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
 				'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
 				'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-				'FROM taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID '.
-				'INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid '.
-				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID '.
-				'INNER JOIN taxa t2 ON ts2.tid = t2.tid '.
+				'FROM taxa AS t1 INNER JOIN kmdescr AS d1 ON t1.TID = d1.TID '.
+				'INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.parenttid '.
 				'LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) '.
-				'WHERE (ts2.tid = ts2.tidaccepted) '.
-				'AND (d1.cid IN('.$cidStr.')) AND (t2.tid IN('.$childrenStr.')) AND (d2.CID Is Null) AND (t2.RankId <= 220)';
+				'WHERE t2.tid = t2.tidaccepted '.
+				'AND d1.cid IN('.$cidStr.') AND t2.tid IN('.$childrenStr.') AND ISNULL(d2.CID) AND t2.RankId <= 220 ';
 			//echo $sql.'<br/><br/>';
 			if(!$this->conn->query($sql)){
 				echo 'ERROR setting inheritance.';
@@ -88,9 +86,8 @@ class KeyManager{
 					unset($targetList);
 				}
 				$targetList = array();
-				$sql = 'SELECT t.tid '.
-					'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-					'WHERE (ts.ParentTID In ('.$targetStr.')) AND (ts.tid = ts.tidaccepted)';
+				$sql = 'SELECT tid FROM taxa '.
+					'WHERE parenttid IN('.$targetStr.') AND tid = tidaccepted ';
 				$rs = $this->conn->query($sql);
 				while($row = $rs->fetch_object()){
 					$targetList[] = $row->tid;
@@ -112,8 +109,8 @@ class KeyManager{
  		if($tid){
 			$targetTid = $tid;
 			while($targetTid){
-				$sql = 'SELECT parenttid FROM taxstatus '.
-					'WHERE (tid = '.$targetTid.')';
+				$sql = 'SELECT parenttid FROM taxa '.
+					'WHERE tid = '.$targetTid.' ';
 				//echo $sql;
 				$rs = $this->conn->query($sql);
 			    if($row = $rs->fetch_object()){

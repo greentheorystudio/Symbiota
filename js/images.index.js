@@ -1,20 +1,3 @@
-function toggle(target){
-	const ele = document.getElementById(target);
-	if(ele){
-		if(ele.style.display === "none"){
-			if(ele.id.substring(0,5) === "minus" || ele.id.substring(0,4) === "plus"){
-				ele.style.display = "inline";
-	  		}
-			else{
-				ele.style.display = "block";
-			}
-  		}
-	 	else {
-	 		ele.style.display="none";
-	 	}
-	}
-}
-
 function toggleCat(catid){
 	toggle("minus-"+catid);
 	toggle("plus-"+catid);

@@ -866,7 +866,7 @@ class OccurrenceCollectionProfile {
 			'COUNT(DISTINCT CASE WHEN t.RankId = 220 THEN t.SciName ELSE NULL END) AS SpeciesCount, '.
 			'COUNT(DISTINCT CASE WHEN t.RankId >= 220 THEN t.SciName ELSE NULL END) AS TotalTaxaCount, '.
 			'COUNT(DISTINCT i.occid) AS OccurrenceImageCount '.
-			'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+			'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
 			'INNER JOIN omcollections AS c ON o.collid = c.CollID '.
 			'LEFT JOIN images AS i ON o.occid = i.occid '.
 			'WHERE c.CollID IN('.$collId.') '.
@@ -885,7 +885,7 @@ class OccurrenceCollectionProfile {
 			'COUNT(DISTINCT CASE WHEN t.RankId = 220 THEN t.SciName ELSE NULL END) AS SpeciesCount, '.
 			'COUNT(DISTINCT CASE WHEN t.RankId >= 220 THEN t.SciName ELSE NULL END) AS TotalTaxaCount, '.
             'COUNT(DISTINCT CASE WHEN i.occid IS NOT NULL THEN i.occid ELSE NULL END) AS TotalImageCount '.
-			'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.TID '.
+			'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
 			'LEFT JOIN images AS i ON o.occid = i.occid '.
 			'WHERE o.collid IN('.$collId.') ';
 		//echo $sql3;
@@ -906,7 +906,7 @@ class OccurrenceCollectionProfile {
 	{
         $returnArr = array();
         $pTID = '';
-        $sqlFrom = 'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+        $sqlFrom = 'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
             'LEFT JOIN omcollections AS c ON o.collid = c.CollID ';
         $sqlWhere = 'WHERE o.collid IN('.$collId.') ';
         if($taxon){
@@ -915,7 +915,7 @@ class OccurrenceCollectionProfile {
             while($r = $rs->fetch_object()){
                 $pTID = $r->TID;
             }
-            $sqlWhere .= 'AND ((o.sciname = "'.$taxon.'") OR (o.tidinterpreted IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid IN('.$pTID.')))) ';
+            $sqlWhere .= 'AND (o.sciname = "'.$taxon.'" OR (o.tid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid IN('.$pTID.')))) ';
         }
         if($country){
             $sqlWhere .= 'AND o.country = "'.$country.'" ';
@@ -1092,9 +1092,9 @@ class OccurrenceCollectionProfile {
             'COUNT(DISTINCT CASE WHEN o.decimalLatitude IS NOT NULL THEN o.occid ELSE NULL END) AS GeorefSpecimensPerOrder, '.
             'COUNT(DISTINCT CASE WHEN t2.RankId >= 220 THEN o.occid ELSE NULL END) AS IDSpecimensPerOrder, '.
             'COUNT(DISTINCT CASE WHEN t2.RankId >= 220 AND o.decimalLatitude IS NOT NULL THEN o.occid ELSE NULL END) AS IDGeorefSpecimensPerOrder '.
-            'FROM omoccurrences AS o LEFT JOIN taxaenumtree AS e ON o.tidinterpreted = e.tid '.
+            'FROM omoccurrences AS o LEFT JOIN taxaenumtree AS e ON o.tid = e.tid '.
             'LEFT JOIN taxa AS t ON e.parenttid = t.TID '.
-            'LEFT JOIN taxa AS t2 ON o.tidinterpreted = t2.TID '.
+            'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
             'WHERE (o.collid IN('.$collId.')) AND (t.RankId = 100 OR t2.RankId = 100) '.
             'GROUP BY SciName ';
         $rs = $this->conn->query($sql);
@@ -1102,10 +1102,10 @@ class OccurrenceCollectionProfile {
         while($r = $rs->fetch_object()){
             $order = str_replace(array('"',"'"), '',$r->SciName);
             if($order && (is_numeric($order) || is_string($order))){
-                $statsArr[$order]['SpecimensPerOrder'] = $r->SpecimensPerOrder;
-                $statsArr[$order]['GeorefSpecimensPerOrder'] = $r->GeorefSpecimensPerOrder;
-                $statsArr[$order]['IDSpecimensPerOrder'] = $r->IDSpecimensPerOrder;
-                $statsArr[$order]['IDGeorefSpecimensPerOrder'] = $r->IDGeorefSpecimensPerOrder;
+                $statsArr[(int)$order]['SpecimensPerOrder'] = $r->SpecimensPerOrder;
+                $statsArr[(int)$order]['GeorefSpecimensPerOrder'] = $r->GeorefSpecimensPerOrder;
+                $statsArr[(int)$order]['IDSpecimensPerOrder'] = $r->IDSpecimensPerOrder;
+                $statsArr[(int)$order]['IDGeorefSpecimensPerOrder'] = $r->IDGeorefSpecimensPerOrder;
             }
         }
         $rs->free();

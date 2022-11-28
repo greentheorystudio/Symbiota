@@ -149,12 +149,11 @@ class ChecklistAdmin{
 		//echo $sql; exit;
 		if($this->conn->query($sql)){
 			if(($postArr['type'] === 'rarespp') && $postArr['locality']) {
-                $sql = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
-                    'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-                    'INNER JOIN fmchklsttaxalink cl ON ts2.tid = cl.tid '.
+                $sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
+                    'INNER JOIN fmchklsttaxalink AS cl ON t.tidaccepted = cl.tid '.
                     'SET o.localitysecurity = 1 '.
-                    'WHERE (cl.clid = '.$this->clid.') AND (o.stateprovince = "'.$postArr['locality'].'") AND (o.localitySecurityReason IS NULL) '.
-                    'AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';
+                    'WHERE cl.clid = '.$this->clid.' AND o.stateprovince = "'.$postArr['locality'].'" AND ISNULL(o.localitySecurityReason) '.
+                    'AND (ISNULL(o.localitysecurity) OR o.localitysecurity = 0) ';
                 if(!$this->conn->query($sql)){
                     $statusStr = 'Error updating rare state species.';
                 }
@@ -346,11 +345,10 @@ class ChecklistAdmin{
 				$clMeta = $this->getMetaData();
 				$state = $clMeta['locality'];
 				if($state && $dataArr['tid']){
-					$sqlRare = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
-						'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
+					$sqlRare = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
 						'SET o.localitysecurity = 1 '.
-						'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) '.
-						'AND (o.stateprovince = "'.$state.'") AND (ts2.tid = '.$dataArr['tid'].')';
+						'WHERE (ISNULL(o.localitysecurity) OR o.localitysecurity = 0) AND ISNULL(o.localitySecurityReason) '.
+						'AND o.stateprovince = "'.$state.'" AND t.tidaccepted = '.$dataArr['tid'].' ';
 					//echo $sqlRare; exit;
 					$this->conn->query($sqlRare);
 				}

@@ -11,7 +11,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 	{
 		$retArr = array();
 		$hasCurrent = 0;
-		$sql = 'SELECT detid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, ' .
+		$sql = 'SELECT detid, identifiedBy, dateIdentified, sciname, verbatimscientificname, scientificNameAuthorship, ' .
 			'identificationQualifier, iscurrent, appliedstatus, identificationReferences, identificationRemarks, sortsequence ' .
 			'FROM omoccurdeterminations ' .
 			'WHERE (occid = ' .$this->occid. ') ORDER BY iscurrent DESC, sortsequence';
@@ -22,6 +22,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$retArr[$detId]['identifiedby'] = Sanitizer::cleanOutStr($row->identifiedBy);
 			$retArr[$detId]['dateidentified'] = Sanitizer::cleanOutStr($row->dateIdentified);
 			$retArr[$detId]['sciname'] = Sanitizer::cleanOutStr($row->sciname);
+            $retArr[$detId]['verbatimscientificname'] = Sanitizer::cleanOutStr($row->verbatimscientificname);
 			$retArr[$detId]['scientificnameauthorship'] = Sanitizer::cleanOutStr($row->scientificNameAuthorship);
 			$retArr[$detId]['identificationqualifier'] = Sanitizer::cleanOutStr($row->identificationQualifier);
 			if((int)$row->iscurrent === 1) {
@@ -79,9 +80,9 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		if($isEditor === 3 && is_numeric($detArr['confidenceranking'])) {
 			$notes .= ($notes?'; ':'').'ConfidenceRanking: '.$detArr['confidenceranking'];
 		}
-		$sql = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+		$sql = 'INSERT INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
 			'identificationQualifier, iscurrent, printqueue, appliedStatus, identificationReferences, identificationRemarks, sortsequence) '.
-			'VALUES ('.$this->occid.',"'.Sanitizer::cleanInStr($this->conn,$detArr['identifiedby']).'","'.Sanitizer::cleanInStr($this->conn,$detArr['dateidentified']).'","'.
+			'VALUES ('.$this->occid.','.($detArr['tidtoadd']?(int)$detArr['tidtoadd']:'NULL').',"'.Sanitizer::cleanInStr($this->conn,$detArr['identifiedby']).'","'.Sanitizer::cleanInStr($this->conn,$detArr['dateidentified']).'","'.
 			$sciname.'",'.($detArr['scientificnameauthorship']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['scientificnameauthorship']).'"':'NULL').','.
 			($detArr['identificationqualifier']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
 			$detArr['makecurrent'].','.$detArr['printqueue'].','.($isEditor === 3?0:1).','.
@@ -96,10 +97,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				$status .= ' (Warning: GUID mapping #1 failed)';
 			}
 			if($isCurrent){
-				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
-					'identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
-					'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"unknown") AS di, '.
-					'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 AS sortseq '.
+				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, verbatimScientificName, '.
+                    'scientificNameAuthorship, identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
+					'SELECT occid, tid, IFNULL(identifiedby,"unknown"), IFNULL(dateidentified,"unknown"), sciname, verbatimScientificName, '.
+                    'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 '.
 					'FROM omoccurrences WHERE (occid = '.$this->occid.')';
 				//echo "<div>".$sqlInsert."</div>";
 				if($this->conn->query($sqlInsert)){
@@ -125,12 +126,11 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 					$rsSs->free();
 					if(!$sStatus){
 						$sql2 = 'SELECT c.clid '.
-							'FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid '.
-							'INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
-							'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-							'INNER JOIN omoccurrences o ON c.locality = o.stateprovince '.
+							'FROM fmchecklists AS c INNER JOIN fmchklsttaxalink AS cl ON c.clid = cl.clid '.
+							'INNER JOIN taxa AS t ON cl.tid = t.tid '.
+							'INNER JOIN omoccurrences AS o ON c.locality = o.stateprovince '.
 							'WHERE c.type = "rarespp" '.
-							'AND (ts2.tid = '.$tidToAdd.') AND (o.occid = '.$this->occid.')';
+							'AND t.tidaccepted = '.$tidToAdd.' AND o.occid = '.$this->occid.' ';
 						//echo $sql; exit;
 						$rsSs2 = $this->conn->query($sql2);
 						if($rsSs2->num_rows){
@@ -148,7 +148,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 					'identificationQualifier = '.($detArr['identificationqualifier']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
 					'identificationReferences = '.($detArr['identificationreferences']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationreferences']).'"':'NULL').','.
 					'identificationRemarks = '.($detArr['identificationremarks']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationremarks']).'"':'NULL').', '.
-					'tidinterpreted = '.($tidToAdd?:'NULL').', localitysecurity = '.$sStatus.
+					'tid = '.($tidToAdd?:'NULL').', localitysecurity = '.$sStatus.
 					' WHERE (occid = '.$this->occid.')';
 				//echo "<div>".$sqlNewDet."</div>";
 				$this->conn->query($sqlNewDet);
@@ -270,11 +270,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 
 	public function makeDeterminationCurrent($detId): void
 	{
-		$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+		$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, verbatimScientificName, scientificNameAuthorship, '.
 			'identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
-			'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, '.
-			'IFNULL(dateidentified,"unknown") AS iddate, sciname, scientificnameauthorship, '.
-			'identificationqualifier, identificationreferences, identificationremarks, 10 AS sortseq '.
+			'SELECT occid, IFNULL(identifiedby,"unknown"), IFNULL(dateidentified,"unknown"), sciname, verbatimScientificName, scientificnameauthorship, '.
+			'identificationqualifier, identificationreferences, identificationremarks, 10 '.
 			'FROM omoccurrences WHERE (occid = '.$this->occid.')';
 		if($this->conn->query($sqlInsert)){
 			$guid = UuidFactory::getUuidV4();
@@ -283,10 +282,9 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$tid = 0;
 		$sStatus = 0;
 		$family = '';
-		$sqlTid = 'SELECT t.tid, t.securitystatus, ts.family '.
-			'FROM omoccurdeterminations d INNER JOIN taxa t ON d.sciname = t.sciname '.
-			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (d.detid = '.$detId.')';
+		$sqlTid = 'SELECT t.tid, t.securitystatus, t.family '.
+			'FROM omoccurdeterminations AS d INNER JOIN taxa AS t ON d.sciname = t.sciname '.
+			'WHERE d.detid = '.$detId.' ';
 		$rs = $this->conn->query($sqlTid);
 		if($r = $rs->fetch_object()){
 			$tid = $r->tid;
@@ -298,12 +296,11 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$rs->free();
 		if(!$sStatus && $tid){
 			$sql2 = 'SELECT c.clid '.
-				'FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid '.
-				'INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
-				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-				'INNER JOIN omoccurrences o ON c.locality = o.stateprovince '.
+				'FROM fmchecklists AS c INNER JOIN fmchklsttaxalink AS cl ON c.clid = cl.clid '.
+				'INNER JOIN taxa AS t ON cl.tid = t.tid '.
+				'INNER JOIN omoccurrences AS o ON c.locality = o.stateprovince '.
 				'WHERE c.type = "rarespp" '.
-				'AND (ts2.tid = '.$tid.') AND (o.occid = '.$this->occid.')';
+				'AND t.tidaccepted = '.$tid.' AND o.occid = '.$this->occid.' ';
 			//echo $sql; exit;
 			$rsSs2 = $this->conn->query($sql2);
 			if($rsSs2->num_rows){
@@ -312,12 +309,12 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$rsSs2->free();
 		}
 		
-		$sqlNewDet = 'UPDATE omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid '.
+		$sqlNewDet = 'UPDATE omoccurrences AS o INNER JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
 			'SET o.identifiedBy = d.identifiedBy, o.dateIdentified = d.dateIdentified,o.family = '.($family?'"'.$family.'"':'NULL').','.
-			'o.sciname = d.sciname,o.genus = NULL,o.specificEpithet = NULL,o.taxonRank = NULL,o.infraspecificepithet = NULL,o.scientificname = NULL,'.
+			'o.sciname = d.sciname,o.verbatimscientificname = d.verbatimscientificname,o.genus = NULL,o.specificEpithet = NULL,o.taxonRank = NULL,o.infraspecificepithet = NULL,o.scientificname = NULL,'.
 			'o.scientificNameAuthorship = d.scientificnameauthorship,o.identificationQualifier = d.identificationqualifier,'.
 			'o.identificationReferences = d.identificationreferences,o.identificationRemarks = d.identificationremarks,'.
-			'o.tidinterpreted = '.($tid?:'NULL').', o.localitysecurity = '.$sStatus.
+			'o.tid = '.($tid?:'NULL').', o.localitysecurity = '.$sStatus.
 			' WHERE (detid = '.$detId.')';
 		//echo "<div>".$sqlNewDet."</div>";
 		$this->conn->query($sqlNewDet);

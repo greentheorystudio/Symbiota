@@ -90,7 +90,7 @@ class ImageExplorer{
 		}
 		
 		if (isset($searchCriteria['text']) && $searchCriteria['text']) {
-			$sqlWhere .= 'AND o.scientificName like "%'.Sanitizer::cleanInStr($this->conn,$searchCriteria['text'][0]).'%" ';
+			$sqlWhere .= 'AND o.sciname like "%'.Sanitizer::cleanInStr($this->conn,$searchCriteria['text'][0]).'%" ';
 		}
 
 		if(isset($searchCriteria['country']) && $searchCriteria['country']){
@@ -132,7 +132,7 @@ class ImageExplorer{
 		    if(isset($searchCriteria['idNeeded']) && $searchCriteria['idNeeded']){
 	   		    $includeVerification = TRUE;
 	   		    $sqlWhere .= 'AND ( ' .
-					'   (o.occid NOT IN (SELECT occid FROM omoccurverification WHERE (category = "identification")) AND (t.rankid < 220 OR o.tidinterpreted IS NULL) ) ' .
+					'   (o.occid NOT IN (SELECT occid FROM omoccurverification WHERE (category = "identification")) AND (t.rankid < 220 OR ISNULL(o.tid)) ) ' .
 					' ) ';
 		    }
 		    if(isset($searchCriteria['idToSpecies']) && $searchCriteria['idToSpecies']){
@@ -149,20 +149,19 @@ class ImageExplorer{
 		    }
 		}
 
-		$sqlStr = 'SELECT DISTINCT i.imgid, ts.tidaccepted, i.url, i.thumbnailurl, i.originalurl, '.
-			'u.uid, CONCAT_WS(", ",u.lastname,u.firstname) as photographer, i.caption, '.
-			'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode, '.
+		$sqlStr = 'SELECT DISTINCT i.imgid, t.tidaccepted, i.url, i.thumbnailurl, i.originalurl, '.
+			'u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS photographer, i.caption, '.
+			'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) AS instcode, '.
 			'i.initialtimestamp '.
-			'FROM images i LEFT JOIN taxa t ON i.tid = t.tid '.
-			'LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
-			'LEFT JOIN users u ON i.photographeruid = u.uid '.
-			'LEFT JOIN omoccurrences o ON i.occid = o.occid '.
-			'LEFT JOIN omcollections c ON o.collid = c.collid ';
+			'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
+			'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
+			'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+			'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
 		if($includeVerification){
-			$sqlStr .= 'LEFT JOIN omoccurverification v ON o.occid = v.occid ';
+			$sqlStr .= 'LEFT JOIN omoccurverification AS v ON o.occid = v.occid ';
 		}
 		if(isset($searchCriteria['tags']) && $searchCriteria['tags']){
-			$sqlStr .= 'LEFT JOIN imagetag it ON i.imgid = it.imgid ';
+			$sqlStr .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
 		}
 		if($sqlWhere) {
 			$sqlStr .= 'WHERE ' . substr($sqlWhere, 3);
@@ -170,7 +169,7 @@ class ImageExplorer{
 		
 		if(isset($searchCriteria['countPerCategory'])){
 			if($searchCriteria['countPerCategory'] === 'taxon'){
-				$sqlStr .= 'GROUP BY ts.tidaccepted ';
+				$sqlStr .= 'GROUP BY t.tidaccepted ';
 			}
 			elseif($searchCriteria['countPerCategory'] === 'specimen'){
 				$sqlStr .= 'GROUP BY o.occid ';
@@ -187,7 +186,7 @@ class ImageExplorer{
 	private function getAcceptedTid($inTidArr): array
 	{
 		$retArr = array();
-		$sql = 'SELECT tidaccepted, tid FROM taxstatus WHERE tid IN('. ltrim(implode(',', $inTidArr), ',') .') ';
+		$sql = 'SELECT tidaccepted, tid FROM taxa WHERE tid IN('. ltrim(implode(',', $inTidArr), ',') .') ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->tid] = $r->tidaccepted;
@@ -199,11 +198,11 @@ class ImageExplorer{
 	private function getChildTids($inTid): string
 	{
         $result = $inTid;
-        $sqlInner = 'SELECT DISTINCT ts.tid '.
-			'FROM taxstatus ts INNER JOIN taxaenumtree e ON ts.tid = e.tid '.
-			'WHERE ts.tid = ts.tidaccepted '.
-			'AND (e.parenttid = '.$inTid.' OR ts.parenttid = '.$inTid.' ) ';
-		$sql = 'SELECT DISTINCT tid FROM taxstatus '. 
+        $sqlInner = 'SELECT DISTINCT t.tid '.
+			'FROM taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
+			'WHERE t.tid = t.tidaccepted '.
+			'AND (e.parenttid = '.$inTid.' OR t.parenttid = '.$inTid.' ) ';
+		$sql = 'SELECT DISTINCT tid FROM taxa '.
 			'WHERE (tidaccepted = '.$inTid.' OR tidaccepted IN('.$sqlInner.'))';
         $rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -218,10 +217,10 @@ class ImageExplorer{
 	{
 		$childArr = array();
 		foreach($inTidArr as $tid){
-			$sql = 'SELECT DISTINCT ts.tid '.
-				'FROM taxstatus ts INNER JOIN taxaenumtree e ON ts.tid = e.tid '.
-				'WHERE ts.tid = ts.tidaccepted '.
-				'AND (e.parenttid = '.$tid.' OR ts.parenttid = '.$tid.') ';
+			$sql = 'SELECT DISTINCT t.tid '.
+				'FROM taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
+				'WHERE t.tid = t.tidaccepted '.
+				'AND (e.parenttid = '.$tid.' OR t.parenttid = '.$tid.') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$childArr[] = $r->tid;
@@ -236,8 +235,8 @@ class ImageExplorer{
 		$synArr = array();
 		$searchStr = implode(',',$inTidArr);
 		$sql = 'SELECT tid, tidaccepted '.
-			'FROM taxstatus '.
-			'WHERE (tidaccepted IN('.$searchStr.'))';
+			'FROM taxa '.
+			'WHERE tidaccepted IN('.$searchStr.') ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$synArr[] = $r->tid;

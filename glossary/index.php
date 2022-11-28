@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $glossId = array_key_exists('glossid',$_REQUEST)?(int)$_REQUEST['glossid']:0;
 $glossgrpId = array_key_exists('glossgrpid',$_REQUEST)?(int)$_REQUEST['glossgrpid']:0;
@@ -66,6 +66,7 @@ $indTermUrl = 'individual.php';
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
 	<script type="text/javascript">
 		const langArr = {<?php
 			$d = '';
@@ -139,7 +140,7 @@ $indTermUrl = 'individual.php';
 		}
 
 	</script>
-	<script src="../js/glossary.index.js?ver=20221025" type="text/javascript"></script>
+	<script src="../js/glossary.index.js?ver=20221115" type="text/javascript"></script>
 </head>
 <body>
 	<?php

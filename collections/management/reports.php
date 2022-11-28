@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
+include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 
@@ -11,8 +12,10 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $menu = array_key_exists('menu',$_REQUEST)&&$_REQUEST['menu']?(int)$_REQUEST['menu']:0;
 $formAction = array_key_exists('formaction',$_REQUEST)?$_REQUEST['formaction']:'';
 
+$cleanManager = new OccurrenceCleaner();
 $procManager = new SpecProcessorManager();
 $procManager->setCollId($collid);
+$cleanManager->setCollId($collid);
 $tabIndex = 1;
 
 $isEditor = false;
@@ -23,7 +26,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 <div id="innertext" style="background-color:white;">
 	<?php
 	if($isEditor){
-		$reportTypes = array(0 => 'General Stats', 1 => 'User Stats');
+		$reportTypes = array(0 => 'General Stats', 1 => 'User Stats', 2 => 'Georeference Stats');
 		?>
 		<form name="filterForm" action="index.php" method="get">
 			<b>Report Type:</b>
@@ -160,7 +163,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 				$processingStatus = ($_GET['processingstatus'] ?? 0);
 				$excludeBatch = ($_GET['excludebatch'] ?? '');
 				?>
-				<fieldset style="padding:15px;width:400px">
+				<fieldset style="padding:15px;width:400px;">
 					<legend><b>Filter</b></legend>
 					<form name="userStatsFilterForm" method="get" action="index.php">
 						<div style="margin:2px">
@@ -256,6 +259,65 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 					echo '</table>';
 				}
 			}
+            elseif($menu === 2){
+                ?>
+                <ul>
+                    <?php
+                    $statsArr = $cleanManager->getCoordStats();
+                    ?>
+                    <li>Georeferenced: <?php echo $statsArr['coord']; ?>
+                        <?php
+                        if($statsArr['coord']){
+                            ?>
+                            <a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+                                <i style="height:15px;width:15px;" class="far fa-edit"></i>
+                            </a>
+                            <?php
+                        }
+                        ?>
+                    </li>
+                    <li>Lacking coordinates: <?php echo $statsArr['noCoord']; ?>
+                        <?php
+                        if($statsArr['noCoord']){
+                            ?>
+                            <a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+                                <i style="height:15px;width:15px;" class="far fa-edit"></i>
+                            </a>
+                            <a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
+                                <i style="height:15px;width:15px;" class="far fa-edit"></i><span style="font-size:70%;margin-left:-3px;">b-geo</span>
+                            </a>
+                            <?php
+                        }
+                        ?>
+                    </li>
+                    <li style="margin-left:15px">Lacking coordinates with verbatim coordinates: <?php echo $statsArr['noCoord_verbatim']; ?>
+                        <?php
+                        if($statsArr['noCoord_verbatim']){
+                            ?>
+                            <a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+                                <i style="height:15px;width:15px;" class="far fa-edit"></i>
+                            </a>
+                            <?php
+                        }
+                        ?>
+                    </li>
+                    <li style="margin-left:15px">Lacking coordinates without verbatim coordinates: <?php echo $statsArr['noCoord_noVerbatim']; ?>
+                        <?php
+                        if($statsArr['noCoord_noVerbatim']){
+                            ?>
+                            <a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+                                <i style="height:15px;width:15px;" class="far fa-edit"></i>
+                            </a>
+                            <?php
+                        }
+                        ?>
+                    </li>
+                    <li>
+                        <a href="coordinatevalidator.php?collid=<?php echo $collid; ?>">Check coordinates against political boundaries</a>
+                    </li>
+                </ul>
+                <?php
+            }
 			?>
 		</fieldset>
 		<?php

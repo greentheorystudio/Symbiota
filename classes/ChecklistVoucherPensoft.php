@@ -127,10 +127,9 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 		$clArr = array();
 		$kingdomArr = array();
 		$sql = 'SELECT t.tid, t.kingdomId, t.sciname, t.author, t.unitname1, t.unitname2, t.unitind3, t.unitname3, t.rankid, c.familyoverride '.
-			'FROM fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid '.
-			'INNER JOIN taxstatus ts ON c.tid = ts.tid '.
-			'WHERE (c.clid IN('.$clidStr.')) '.
-			'ORDER BY IFNULL(c.familyoverride, ts.family), t.sciname';
+			'FROM fmchklsttaxalink AS c INNER JOIN taxa AS t ON c.tid = t.tid '.
+			'WHERE c.clid IN('.$clidStr.') '.
+			'ORDER BY IFNULL(c.familyoverride, t.family), t.sciname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if($r->kingdomId){

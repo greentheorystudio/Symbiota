@@ -36,7 +36,7 @@ function verifyGeorefForm(f){
 		alert("Please enter coordinates into lat/long decimal fields");
 		return false;
 	}
-	if(!isNumeric(f.decimallatitude.value) || !isNumeric(f.decimallongitude.value)){
+	if(isNaN(f.decimallatitude.value) || isNaN(f.decimallongitude.value)){
 		alert("Decimal coordinates must be numeric values only");
 		return false;
 	}
@@ -48,11 +48,11 @@ function verifyGeorefForm(f){
 		alert("Decimal Longitude must be between -180 and 180 degrees");
 		return false;
 	}
-	if(!isNumeric(f.minimumelevationinmeters.value) || !isNumeric(f.maximumelevationinmeters.value)){
+	if(isNaN(f.minimumelevationinmeters.value) || isNaN(f.maximumelevationinmeters.value)){
 		alert("Elevation field can only contain numeric values");
 		return false;
 	}
-	if(!isNumeric(f.coordinateuncertaintyinmeters.value)){
+	if(isNaN(f.coordinateuncertaintyinmeters.value)){
 		alert("Coordinate Uncertainity can only contain numeric values");
 		return false;
 	}
@@ -68,7 +68,7 @@ function updateLatDec(f){
 	const latMin = parseFloat(f.latmin.value);
 	const latSec = parseFloat(f.latsec.value);
 	const latNS = f.latns.value;
-	if(!isNumeric(latDec) || !isNumeric(latMin) || !isNumeric(latSec)){
+	if(isNaN(latDec) || isNaN(latMin) || isNaN(latSec)){
 		alert('Degree, minute, and second values must be numeric only');
 		return false;
 	}
@@ -104,7 +104,7 @@ function updateLngDec(f){
 	const lngMin = parseFloat(f.lngmin.value);
 	const lngSec = parseFloat(f.lngsec.value);
 	const lngEW = f.lngew.value;
-	if(!isNumeric(lngDec) || !isNumeric(lngMin) || !isNumeric(lngSec)){
+	if(isNaN(lngDec) || isNaN(lngMin) || isNaN(lngSec)){
 		alert("Degree, minute, and second values must be numeric only");
 		return false;
 	}
@@ -132,7 +132,7 @@ function updateLngDec(f){
 }
 
 function verifyCoordUncertainty(inputObj){
-	if(!isNumeric(inputObj.value)){
+	if(isNaN(inputObj.value)){
 		alert("Coordinate Uncertainity can only contain numeric values");
 	}
 }
@@ -327,9 +327,9 @@ function insertUtm(f) {
 	const eValue = f.utmeast.value.replaceAll(/^\s+|\s+$/g, "");
 	const nValue = f.utmnorth.value.replaceAll(/^\s+|\s+$/g, "");
 	if(zValue && eValue && nValue){
-		if(isNumeric(eValue) && isNumeric(nValue)){
+		if(!isNaN(eValue) && !isNaN(nValue)){
 			const zNum = parseInt(zValue);
-			if(isNumeric(zNum)){
+			if(!isNaN(zNum)){
 				const latLngStr = utm2LatLng(zNum, eValue, nValue, f.geodeticdatum.value);
 				const llArr = latLngStr.split(',');
 				if(llArr){
@@ -397,45 +397,4 @@ function updateMinElev(minFeetValue){
 function updateMaxElev(maxFeetValue){
 	const f = document.georefform;
 	f.maximumelevationinmeters.value = Math.round(maxFeetValue*.0305)*10;
-}
-
-function toggle(target){
-	const objDiv = document.getElementById(target);
-	if(objDiv){
-		if(objDiv.style.display === "none"){
-			objDiv.style.display = "block";
-		}
-		else{
-			objDiv.style.display = "none";
-		}
-	}
-	else{
-		const divs = document.getElementsByTagName("div");
-		for (let h = 0; h < divs.length; h++) {
-			const divObj = divs[h];
-			if(divObj.className == target){
-				if(divObj.style.display === "none"){
-					divObj.style.display="block";
-				}
-			 	else {
-			 		divObj.style.display="none";
-			 	}
-			}
-		}
-	}
-}
-
-function isNumeric(sText){
-	const validChars = "0123456789-.";
-	let isNumber = true;
-	let charVar;
-
-	for(let i = 0; i < sText.length && isNumber == true; i++){
-   		charVar = sText.charAt(i); 
-		if(validChars.indexOf(charVar) === -1){
-			isNumber = false;
-			break;
-      	}
-   	}
-	return isNumber;
 }

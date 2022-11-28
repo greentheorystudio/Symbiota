@@ -120,7 +120,7 @@
     <field name="otherCatalogNumbers" type="string" indexed="true" stored="true"/>
     <field name="family" type="string" indexed="true" stored="true"/>
     <field name="sciname" type="string" indexed="true" stored="true"/>
-    <field name="tidinterpreted" type="pint" indexed="true" stored="true"/>
+    <field name="tid" type="pint" indexed="true" stored="true"/>
     <field name="familyscinamecode" type="string" indexed="true" stored="true"/>
     <field name="scientificNameAuthorship" type="string" indexed="true" stored="true"/>
     <field name="identifiedBy" type="string" indexed="true" stored="true"/>
