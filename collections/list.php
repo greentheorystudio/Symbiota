@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
@@ -47,8 +47,9 @@ if($stArrJson){
     <script type="text/javascript" src="../js/external/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
     <script type="text/javascript" src="../js/collections.search.js?ver=20221025"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220921"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=20221110"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
@@ -81,7 +82,7 @@ if($stArrJson){
         });
 
         function setOccurrenceList(listPage){
-            document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
+            document.getElementById("queryrecords").innerHTML = '<div>Loading...<span style="margin-left:15px;">' + getSmallWorkingSpinnerHtml(12) + '</span></div>';
             const http = new XMLHttpRequest();
             const url = "../api/search/getoccurrencelist.php";
             const queryid = document.getElementById('queryId').value;

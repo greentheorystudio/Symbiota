@@ -77,7 +77,6 @@ class ConfigurationManager{
         'DISPLAY_COMMON_NAMES',
         'ACTIVATE_EXSICCATI',
         'ACTIVATE_CHECKLIST_FG_EXPORT',
-        'ACTIVATE_GEOLOCATE_TOOLKIT',
         'PARAMS_ARR',
         'USER_RIGHTS',
         'CSS_VERSION',
@@ -145,7 +144,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20220724';
+        $GLOBALS['CSS_VERSION'] = '20221110';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();

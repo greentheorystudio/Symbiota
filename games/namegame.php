@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GamesManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $clName = (array_key_exists('listname',$_REQUEST)?$_REQUEST['listname']: '');
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
@@ -120,17 +120,7 @@ if(!$clName){
         const step = 5;
         let repeat = "";
         
-        function toggle(divID) {
-            const ele = document.getElementById(divID);
-            if(ele.style.display === "block") {
-		    	ele.style.display = "none";
-			}
-			else {
-				ele.style.display = "block";
-			}
-		} 
-
-		function getWordList(){
+        function getWordList(){
 			$.ajax({
 				method: "POST",
 				url: "../api/games/getwordlist.php",

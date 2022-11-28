@@ -1,11 +1,4 @@
 $(document).ready(function() {
-	function split( val ) {
-		return val.split( /,\s*/ );
-	}
-	function extractLast( term ) {
-		return split( term ).pop();
-	}
-
 	$( "#family_answer" )
 		.bind( "keydown", function( event ) {
 			if ( event.keyCode == $.ui.keyCode.TAB &&
@@ -16,11 +9,11 @@ $(document).ready(function() {
 		.autocomplete({
 			source: function( request, response ) {
 				$.getJSON( "../../api/games/ootdfamilylist.php", {
-					term: extractLast( request.term ), t: function() { return document.answers.family_answer.value; }
+					term: request.term.split( /,\s*/ ).pop(), t: function() { return document.answers.family_answer.value; }
 				}, response );
 			},
 			search: function() {
-				const term = extractLast(this.value);
+				const term = this.value.split( /,\s*/ ).pop();
 				if ( term.length < 4 ) {
 					return false;
 				}
@@ -29,7 +22,7 @@ $(document).ready(function() {
 				return false;
 			},
 			select: function( event, ui ) {
-				const terms = split(this.value);
+				const terms = this.value.split( /,\s*/ );
 				terms.pop();
 				terms.push( ui.item.label );
 				document.getElementById('family_answer').value = ui.item.value;
@@ -48,11 +41,11 @@ $(document).ready(function() {
 		.autocomplete({
 			source: function( request, response ) {
 				$.getJSON( "../../api/games/ootdscinamelist.php", {
-					term: extractLast( request.term ), t: function() { return document.answers.sciname_answer.value; }
+					term: request.term.split( /,\s*/ ).pop(), t: function() { return document.answers.sciname_answer.value; }
 				}, response );
 			},
 			search: function() {
-				const term = extractLast(this.value);
+				const term = this.value.split( /,\s*/ ).pop();
 				if ( term.length < 4 ) {
 					return false;
 				}
@@ -61,7 +54,7 @@ $(document).ready(function() {
 				return false;
 			},
 			select: function( event, ui ) {
-				const terms = split(this.value);
+				const terms = this.value.split( /,\s*/ );
 				terms.pop();
 				terms.push( ui.item.label );
 				document.getElementById('sciname_answer').value = '';

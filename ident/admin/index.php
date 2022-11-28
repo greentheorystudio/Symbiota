@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -30,7 +30,7 @@ $headingAdminUrl = 'headingadmin.php';
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/shared.js?ver=20220809"></script>
+	<script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script type="text/javascript">
 		function validateNewCharForm(f){
 			if(f.charname.value === ""){
@@ -41,7 +41,7 @@ $headingAdminUrl = 'headingadmin.php';
 				alert("A character type must be selected");
 				return false;
 			} 
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
+			if(f.sortsequence.value && isNaN(f.sortsequence.value)){
 				alert("Sort Sequence must be a numeric value only");
 				return false;
 			}

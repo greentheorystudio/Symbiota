@@ -50,8 +50,9 @@ if($stArrJson){
     <script src="../js/external/jquery.js" type="text/javascript"></script>
     <script src="../js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
     <script src="../js/collections.search.js?ver=20221025" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20220921"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=20221110"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
@@ -84,7 +85,7 @@ if($stArrJson){
             sortfield1 = document.sortform.sortfield1.value;
             sortfield2 = document.sortform.sortfield2.value;
             sortorder = document.sortform.sortorder.value;
-            document.getElementById("tablediv").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
+            document.getElementById("tablediv").innerHTML = '<div>Loading...<span style="margin-left:15px;">' + getSmallWorkingSpinnerHtml(12) + '</span></div>';
             const http = new XMLHttpRequest();
             const url = "../api/search/changetablepage.php";
             const queryid = document.getElementById('queryId').value;

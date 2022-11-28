@@ -272,12 +272,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
                 <input type="checkbox" id="ACTIVATE_CHECKLIST_FG_EXPORT" value="1" onchange="processCheckConfigurationChange('ACTIVATE_CHECKLIST_FG_EXPORT');" <?php echo (array_key_exists('ACTIVATE_CHECKLIST_FG_EXPORT',$coreConfArr) && $coreConfArr['ACTIVATE_CHECKLIST_FG_EXPORT']?'CHECKED':''); ?> />
             </span>
         </div>
-        <div class="field-block">
-            <span class="field-label">Activate GeoLocate Toolkit:</span>
-            <span class="field-elem">
-                <input type="checkbox" id="ACTIVATE_GEOLOCATE_TOOLKIT" value="1" onchange="processCheckConfigurationChange('ACTIVATE_GEOLOCATE_TOOLKIT');" <?php echo (array_key_exists('ACTIVATE_GEOLOCATE_TOOLKIT',$coreConfArr) && $coreConfArr['ACTIVATE_GEOLOCATE_TOOLKIT']?'CHECKED':''); ?> />
-            </span>
-        </div>
     </fieldset>
     <div style="margin-top:20px;">
         <b>php version:</b> <?php echo $confManager->getPhpVersion(); ?><br />

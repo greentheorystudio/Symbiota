@@ -144,14 +144,14 @@ $commentArr = $indManager->getCommentArr($isEditor);
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
     <?php
     if($displayMap){
         ?>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220809" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221025" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221126" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -211,32 +211,6 @@ $commentArr = $indManager->getCommentArr($isEditor);
             });
         });
 
-        function toggle(target){
-            const objDiv = document.getElementById(target);
-            if(objDiv){
-                if(objDiv.style.display === "none"){
-                    objDiv.style.display = "block";
-                }
-                else{
-                    objDiv.style.display = "none";
-                }
-            }
-            else{
-                const divObjs = document.getElementsByTagName("div");
-                for (let i = 0; i < divObjs.length; i++) {
-                    const obj = divObjs[i];
-                    if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-                        if(obj.style.display === "none"){
-                            obj.style.display="inline";
-                        }
-                        else {
-                            obj.style.display="none";
-                        }
-                    }
-                }
-            }
-        }
-
         function verifyVoucherForm(f){
             const clTarget = f.elements["clid"].value;
             if(clTarget === "0"){
@@ -262,7 +236,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         }
     </script>
 </head>
-<body <?php echo ($fullWindow ? '' : 'style="border:0;"'); ?>>
+<body <?php echo ($fullWindow ? '' : 'style="border:0;width:950px;"'); ?>>
 <div id="fb-root"></div>
 <script>
     (function(d, s, id) {
@@ -278,7 +252,7 @@ if($fullWindow){
     include(__DIR__ . '/../../header.php');
 }
 ?>
-<div id="innertext">
+<div>
     <?php
     if($statusStr){
         ?>
@@ -310,7 +284,7 @@ if($fullWindow){
                 }
                 ?>
                 <li id="indCommentsTab"><a href="#commenttab"><span><?php echo ($commentArr?count($commentArr).' ':''); ?>Comments</span></a></li>
-                <li id="indLinkedResourcesTab"><a href="linkedresources.php?occid=<?php echo $occid.'&tid='.$occArr['tidinterpreted'].'&clid='.$clid.'&collid='.$collid; ?>"><span>Linked Resources</span></a></li>
+                <li id="indLinkedResourcesTab"><a href="linkedresources.php?occid=<?php echo $occid.'&tid='.$occArr['tid'].'&clid='.$clid.'&collid='.$collid; ?>"><span>Linked Resources</span></a></li>
                 <?php
                 if($isEditor){
                     ?>
@@ -364,9 +338,9 @@ if($fullWindow){
                     ?>
                 </div>
                 <div style="float:left;padding:25px;">
-						<span style="font-size:18px;font-weight:bold;vertical-align:60%;">
-							<?php echo $collMetadata['collectionname']; ?>
-						</span>
+                    <span style="font-size:18px;font-weight:bold;vertical-align:60%;">
+                        <?php echo $collMetadata['collectionname']; ?>
+                    </span>
                 </div>
                 <div style="clear:both;margin-left:60px;">
                     <div>
@@ -1079,7 +1053,7 @@ if($fullWindow){
             <?php
             if($displayMap){
                 ?>
-                <div id="maptab" style="height: 640px;">
+                <div id="maptab" style="height: 600px;">
                     <?php include_once(__DIR__ . '/../../spatial/viewerElement.php'); ?>
                 </div>
                 <?php

@@ -202,15 +202,14 @@ class VoucherManager {
 	
 	private function setStateRare($rareLocality): void
 	{
-		$sql = 'SELECT IFNULL(securitystatus,0) as securitystatus FROM taxa WHERE tid = '.$this->tid;
+		$sql = 'SELECT IFNULL(securitystatus,0) AS securitystatus FROM taxa WHERE tid = '.$this->tid;
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		if(($r = $rs->fetch_object()) && $r->securitystatus === 0) {
-			$sqlRare = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
-				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
+			$sqlRare = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
 				'SET o.localitysecurity = NULL '.
-				'WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) '.
-				'AND o.stateprovince = "'.$rareLocality.'" AND ts2.tid = '.$this->tid;
+				'WHERE o.localitysecurity = 1 AND ISNULL(o.localitySecurityReason) '.
+				'AND o.stateprovince = "'.$rareLocality.'" AND t.tidaccepted = '.$this->tid;
 			//echo $sqlRare; exit;
 			if(!$this->conn->query($sqlRare)){
 				$statusStr = 'ERROR resetting locality security during taxon delete.';
@@ -268,8 +267,8 @@ class VoucherManager {
             $status = $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
             if($status){
                 $sqlInsertCl = 'INSERT INTO fmchklsttaxalink ( clid, TID ) '.
-                    'SELECT '.$this->clid.' AS clid, o.TidInterpreted '.
-                    'FROM omoccurrences o WHERE (o.occid = '.$vOccId.')';
+                    'SELECT '.$this->clid.' AS clid, o.tid '.
+                    'FROM omoccurrences AS o WHERE o.occid = '.$vOccId.' ';
                 //echo "<div>sqlInsertCl: ".$sqlInsertCl."</div>";
                 if($this->conn->query($sqlInsertCl)){
                     $returnStr = $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
@@ -284,11 +283,9 @@ class VoucherManager {
 		$returnStr = 'ERROR: Neither the target taxon nor a sysnonym is present in this checklists. Taxon needs to be added.';
 	    $sql = 'SELECT DISTINCT o.occid, ctl.tid, ctl.clid, o.recordedby, o.recordnumber, '.
 			'"'.$vNotes.'" AS Notes, "'.$vEditNotes.'" AS editnotes '.
-			'FROM ((omoccurrences o INNER JOIN taxstatus ts1 ON o.TidInterpreted = ts1.tid) '.
-			'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted) '.
-			'INNER JOIN fmchklsttaxalink ctl ON ts2.tid = ctl.tid '.
-			'WHERE (ctl.clid = '.$this->clid.') AND (o.occid = '.
-			$vOccId.') '.
+			'FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
+			'INNER JOIN fmchklsttaxalink AS ctl ON t.tidaccepted = ctl.tid '.
+			'WHERE ctl.clid = '.$this->clid.' AND o.occid = '. $vOccId.' '.
 			'LIMIT 1';
 		//echo "addVoucherSql: ".$sql."<br/>";
 		$rs = $this->conn->query($sql);

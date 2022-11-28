@@ -290,7 +290,7 @@ class DwcArchiverCore extends Manager{
         $sql = '';
         if($this->conditionSql){
             if(stripos($this->conditionSql,' te.')){
-                $sql .= 'INNER JOIN taxaenumtree AS te ON o.tidinterpreted = te.tid ';
+                $sql .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
             }
             if(stripos($this->conditionSql,'v.clid')){
                 $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';

@@ -6,7 +6,7 @@
  *
  * if($taxonRank){
  *      if($taxonRank > 180){
- *          $topRowElements = array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
+ *          $topRowElements = array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv);
  *          $leftColumnElements = array($familyDiv,$vernacularsDiv,$synonymsDiv,$centralImageDiv);
  *          $rightColumnElements = array($descTabsDiv);
  *          $bottomRowElements = array($mapThumbDiv,$imgDiv,$imgTabDiv);

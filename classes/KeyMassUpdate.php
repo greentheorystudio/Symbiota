@@ -52,15 +52,13 @@ class KeyMassUpdate extends KeyManager{
 		$sqlBase = '';
 		$sqlWhere = '';
 		if($tidFilter){
-			$sqlBase .= 'INNER JOIN taxaenumtree e ON ts.tid = e.tid ';
-			$sqlWhere .= 'AND (e.parenttid = '.$tidFilter.') ';
+			$sqlBase .= 'INNER JOIN taxaenumtree AS e ON t.tid = e.tid ';
+			$sqlWhere .= 'AND e.parenttid = '.$tidFilter.' ';
 		}
 		if(!$generaOnly){
-			$sql = 'SELECT DISTINCT t.tid, t.sciname, ts2.parenttid '.
-				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
-				'INNER JOIN taxstatus ts2 ON t.tid = ts2.tid '.
-				'INNER JOIN fmchklsttaxalink c ON ts.tid = c.tid '.$sqlBase.
-				'WHERE (t.rankid = 220) AND (c.clid = '.$this->clid.') '.$sqlWhere;
+			$sql = 'SELECT DISTINCT t.tid, t.sciname, t.parenttid '.
+				'FROM taxa AS t INNER JOIN fmchklsttaxalink AS c ON t.tid = c.tid '.$sqlBase.
+				'WHERE t.rankid = 220 AND c.clid = '.$this->clid.' '.$sqlWhere;
 			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -71,12 +69,10 @@ class KeyMassUpdate extends KeyManager{
 		}
 		
 		$famArr = array();
-		$sql2 = 'SELECT DISTINCT t.tid, t.sciname, ts2.parenttid, t.rankid '.
-			'FROM taxa t INNER JOIN taxaenumtree e2 ON t.tid = e2.parenttid '.
-			'INNER JOIN taxstatus ts2 ON t.tid = ts2.tid '.
-			'INNER JOIN taxstatus ts ON e2.tid = ts.tidaccepted '.
-			'INNER JOIN fmchklsttaxalink c ON ts.tid = c.tid '.$sqlBase.
-			'WHERE (t.rankid <= 220) AND (t.rankid >= 140) AND (c.clid = '.$this->clid.') '.$sqlWhere;
+		$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.parenttid, t.rankid '.
+			'FROM taxa AS t INNER JOIN taxaenumtree AS e2 ON t.tid = e2.parenttid '.
+			'INNER JOIN fmchklsttaxalink AS c ON t.parenttid = c.tid '.$sqlBase.
+			'WHERE t.rankid <= 220 AND t.rankid >= 140 AND (c.clid = '.$this->clid.') '.$sqlWhere;
 		//echo $sql2; exit;
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){

@@ -9,11 +9,11 @@ $(document).ready(function() {
         .autocomplete({
             source: function( request, response ) {
                 $.getJSON( "../api/taxa/taxalist.php", {
-                    term: extractLast( request.term ), t: function() { return document.harvestparams.taxontype.value; }
+                    term: request.term.split( /,\s*/ ).pop(), t: function() { return document.harvestparams.taxontype.value; }
                 }, response );
             },
             search: function() {
-                const term = extractLast(this.value);
+                const term = this.value.split( /,\s*/ ).pop();
                 if ( term.length < 4 ) {
                     return false;
                 }
@@ -22,7 +22,7 @@ $(document).ready(function() {
                 return false;
             },
             select: function( event, ui ) {
-                const terms = split(this.value);
+                const terms = this.value.split( /,\s*/ );
                 terms.pop();
                 terms.push( ui.item.value );
                 this.value = terms.join( ", " );

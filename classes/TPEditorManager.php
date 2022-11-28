@@ -29,40 +29,37 @@ class TPEditorManager {
  	
  	public function setTid($t){
 		if(is_numeric($t)){
-			$sql = 'SELECT t.tid, ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus, ts.TidAccepted '. 
-				'FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID '.
-				'WHERE (t.TID = '.$t.')';
+			$sql = 'SELECT tid, family, SciName, Author, RankId, parenttid, SecurityStatus, tidaccepted '.
+				'FROM taxa WHERE TID = '.$t.' ';
 		}
 		else{
-			$sql = 'SELECT t.tid, ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus, ts.TidAccepted '. 
-				'FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID '.
-				'WHERE (t.sciname = "'.$this->taxonCon->real_escape_string($t).'")';
+			$sql = 'SELECT tid, family, SciName, Author, RankId, parenttid, SecurityStatus, tidaccepted '.
+				'FROM taxa WHERE sciname = "'.$this->taxonCon->real_escape_string($t).'" ';
 		}
 		if($sql){
 			$result = $this->taxonCon->query($sql);
 			if($row = $result->fetch_object()){
-				if($row->tid === $row->TidAccepted){
+				if($row->tid === $row->tidaccepted){
 					$this->tid = $row->tid;
 					$this->sciName = $row->SciName;
 					$this->family = $row->family;
 					$this->author = $row->Author;
 					$this->rankId = $row->RankId;
-					$this->parentTid = $row->ParentTID;
+					$this->parentTid = $row->parenttid;
 				}
 				else{
 					$this->submittedTid = $row->tid;
 					$this->submittedSciName = $row->SciName;
-					$this->tid = $row->TidAccepted;
-					$sqlNew = 'SELECT ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus, ts.TidAccepted ' .
-						'FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID ' .
-						'WHERE (t.TID = ' .$this->tid. ')';
+					$this->tid = $row->tidaccepted;
+					$sqlNew = 'SELECT family, SciName, Author, RankId, parenttid, SecurityStatus, tidaccepted ' .
+						'FROM taxa WHERE TID = ' .$this->tid. ' ';
 					$resultNew = $this->taxonCon->query($sqlNew);
 					if($rowNew = $resultNew->fetch_object()){
 						$this->sciName = $rowNew->SciName;
 						$this->family = $rowNew->family;
 						$this->author = $rowNew->Author;
 						$this->rankId = $rowNew->RankId;
-						$this->parentTid = $rowNew->ParentTID;
+						$this->parentTid = $rowNew->parenttid;
 					}
 					$resultNew->close();
 				}
@@ -94,40 +91,20 @@ class TPEditorManager {
 	public function getSynonym(): array
 	{
  		$synArr = array();
-		$sql = 'SELECT t2.tid, t2.SciName, ts.SortSequence ' .
-			'FROM (taxa t1 INNER JOIN taxstatus ts ON t1.tid = ts.tidaccepted) ' .
-			'INNER JOIN taxa t2 ON ts.tid = t2.tid ' .
-			'WHERE (ts.tid <> ts.TidAccepted) AND (t1.tid = ' .$this->tid. ') ' .
-			'ORDER BY ts.SortSequence, t2.SciName';
+		$sql = 'SELECT t2.tid, t2.SciName ' .
+			'FROM taxa AS t1 INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.tid ' .
+			'WHERE t.tid <> t.tidaccepted AND t1.tid = ' .$this->tid. ' ' .
+			'ORDER BY t2.SciName';
 		//echo $sql."<br>";
 		$result = $this->taxonCon->query($sql);
 		while($row = $result->fetch_object()){
 			$synArr[$row->tid]['sciname'] = $row->SciName;
-			$synArr[$row->tid]['sortsequence'] = $row->SortSequence;
 		}
 		$result->close();
  		return $synArr;
  	}
  	
-	public function editSynonymSort($synSort): string
-	{
-		$status = '';
-		foreach($synSort as $editKey => $editValue){
-			if(is_numeric($editKey) && is_numeric($editValue)){
-				$sql = 'UPDATE taxstatus SET SortSequence = '.$editValue.' WHERE (tid = '.$editKey.') AND (TidAccepted = '.$this->tid.')';
-				//echo $sql."<br>";
-				if(!$this->taxonCon->query($sql)){
-					$status .= 'Error editing synonym.<br/> ';
-				}
-			}
-		}
-		if($status) {
-			$status = 'Errors with editVernacularSort method:<br/> ' . $status;
-		}
-		return $status;
-	}
-
- 	public function getVernaculars(): array
+	public function getVernaculars(): array
 	{
 		$vernArr = array();
 		$sql = 'SELECT v.VID, v.VernacularName, v.Language, v.Source, v.username, v.notes, v.SortSequence ' .

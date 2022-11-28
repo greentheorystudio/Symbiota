@@ -3,13 +3,14 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $status = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $loaderObj = new TaxonomyEditorManager();
 
@@ -18,10 +19,11 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
     $isEditor = true;
 }
 
-if($isEditor && array_key_exists('sciname', $_POST)) {
-    $status = $loaderObj->loadNewName($_POST);
-    if(is_int($status)){
-        header('Location: taxonomyeditor.php?tid=' .$status);
+if($isEditor && $action === 'Submit New Name') {
+    $tid = $loaderObj->loadNewName($_POST);
+    if($tid){
+        $loaderObj->updateOccurrencesNewTaxon($_POST);
+        header('Location: taxonomyeditor.php?tid=' .$tid);
     }
 }
 $tRankArr = $loaderObj->getRankArr();
@@ -35,7 +37,7 @@ $tRankArr = $loaderObj->getRankArr();
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
+	<script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
 	<script>
         $(document).ready(function() {
             $('#tabs').tabs({

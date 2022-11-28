@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/SpecUploadBase.php');
+include_once(__DIR__ . '/Utilities.php');
 
 class SpecUploadDwca extends SpecUploadBase{
 
@@ -527,7 +528,7 @@ class SpecUploadDwca extends SpecUploadBase{
             closedir($handle);
         }
         if(stripos($dirPath,$this->uploadTargetPath) === 0){
-            rmdir($dirPath);
+            Utilities::deleteDirectory($dirPath);
         }
     }
 

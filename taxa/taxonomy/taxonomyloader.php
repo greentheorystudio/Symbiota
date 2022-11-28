@@ -3,7 +3,7 @@
 /** @var string $status */
 /** @var array $tRankArr */
 ?>
-<script src="../../js/taxa.taxonomyloader.js?ver=20221025"></script>
+<script src="../../js/taxa.taxonomyloader.js?ver=20221120"></script>
 <div>
     <?php
     if($status){
@@ -53,8 +53,8 @@
                 <div style="float:left;width:170px;">Parent Taxon:</div>
                 <input type="text" id="parentname" name="parentname" style="width:300px;border:inset;" onchange="clearValidations();" />
                 <span id="addparentspan" style="display:none;">
-							<a id="addparentanchor" href="index.php?target=" target="_blank">Add Parent</a>
-						</span>
+                    <a id="addparentanchor" href="index.php?target=" target="_blank">Add Parent</a>
+                </span>
                 <input type="hidden" id="parenttid" name="parenttid" value="" />
             </div>
             <div style="clear:both;">
@@ -81,8 +81,8 @@
                     </div>
                     <div id="accdiv" style="display:none;margin-top:3px;">
                         Accepted Taxon:
-                        <input id="acceptedstr" name="acceptedstr" type="text" style="width:400px;border:inset;" onchange="checkAcceptedExistance(this.form);clearValidations();" />
-                        <input type="hidden" name="tidaccepted" />
+                        <input id="acceptedstr" name="acceptedstr" type="text" style="width:400px;border:inset;" onchange="clearValidations();" />
+                        <input type="hidden" name="tidaccepted" id="tidaccepted" />
                         <div style="margin-top:3px;">
                             Unacceptability Reason:
                             <input type='text' id='unacceptabilityreason' name='unacceptabilityreason' style='width:350px;border:inset;' />

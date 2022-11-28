@@ -3,7 +3,6 @@
 /** @var string $editButtonDiv */
 /** @var string $scinameHeaderDiv */
 /** @var string $ambiguousDiv */
-/** @var string $webLinksDiv */
 /** @var string $taxonNotesDiv */
 /** @var string $taxonSourcesDiv */
 /** @var string $familyDiv */
@@ -31,7 +30,7 @@ $footerRowElements = array();
 
 if($taxonRank){
     if($taxonRank > 180){
-        $topRowElements = array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
+        $topRowElements = array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv);
         $leftColumnElements = array($taxonNotesDiv,$taxonSourcesDiv,$familyDiv,$vernacularsDiv,$synonymsDiv,$centralImageDiv);
         $rightColumnElements = array($descTabsDiv);
         $bottomRowElements = array($mapThumbDiv,$imgDiv,$imgTabDiv);

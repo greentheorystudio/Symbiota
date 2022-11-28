@@ -1,12 +1,12 @@
 <?php
 /** @var int $collid */
 /** @var int $isEditor */
-/** @var string $action */
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
 
 $spprid = array_key_exists('spprid',$_REQUEST)?(int)$_REQUEST['spprid']:0;
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $specManager = new SpecProcessorManager();
 $specManager->setCollId($collid);
@@ -145,15 +145,15 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
             return false;
         }
         if(f.projecttype.value === 'local'){
-            if(!isNumeric(f.webpixwidth.value)){
+            if(isNaN(f.webpixwidth.value)){
                 alert("Central image pixel width can only be a numeric value");
                 return false;
             }
-            else if(!isNumeric(f.tnpixwidth.value)){
+            else if(isNaN(f.tnpixwidth.value)){
                 alert("Thumbnail pixel width can only be a numeric value");
                 return false;
             }
-            else if(!isNumeric(f.lgpixwidth.value)){
+            else if(isNaN(f.lgpixwidth.value)){
                 alert("Large image pixel width can only be a numeric value");
                 return false;
             }
@@ -161,7 +161,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                 alert("Title cannot be empty");
                 return false;
             }
-            else if(!isNumeric(f.jpgcompression.value) || f.jpgcompression.value < 30 || f.jpgcompression.value > 100){
+            else if(isNaN(f.jpgcompression.value) || f.jpgcompression.value < 30 || f.jpgcompression.value > 100){
                 alert("JPG compression needs to be a numeric value between 30 and 100");
                 return false;
             }

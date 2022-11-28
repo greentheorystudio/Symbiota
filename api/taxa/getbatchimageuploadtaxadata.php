@@ -13,9 +13,8 @@ $replaceChars  = array('\\', '[', ']');
 $fixedTaxaStr = str_replace($replaceChars, '', $taxaJsonStr);
 
 $sqlWhere = '';
-$sql = 'SELECT DISTINCT t.sciname, ts.tidaccepted '.
-    'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tid '.
-    'WHERE t.sciname IN('.$fixedTaxaStr.')';
+$sql = 'SELECT DISTINCT sciname, tidaccepted FROM taxa '.
+    'WHERE sciname IN('.$fixedTaxaStr.')';
 //echo $sql;
 $result = $con->query($sql);
 while ($row = $result->fetch_object()) {

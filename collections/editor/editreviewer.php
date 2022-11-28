@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceEditReview.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -111,7 +111,7 @@ $navStr .= '</div>';
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title>Specimen Edit Reviewer</title>
+		<title>Review/Verify Occurrence Edits</title>
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
@@ -181,7 +181,7 @@ $navStr .= '</div>';
                 }
 			}
 		</script>
-		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20220809" type="text/javascript" ></script>
+		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221126" type="text/javascript" ></script>
 	</head>
 	<body>
 		<?php
@@ -192,9 +192,9 @@ $navStr .= '</div>';
 			echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Occurrence Management</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
 		}
-		echo '<b>Specimen Edits Reviewer</b>';
+		echo '<b>Review/Verify Occurrence Edits</b>';
 		echo '</div>';
 		?>
 		<div id="innertext" style="min-width:1100px">

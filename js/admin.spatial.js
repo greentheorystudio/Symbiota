@@ -899,6 +899,10 @@ function validateFileUpload(ele){
         alert("The file you are trying to upload is a type that is not supported. Only GeoJSON, KML, shapefile, and TIF file formats are supported.");
         input.value = '';
     }
+    else if(fileType === 'shp' || fileType === 'dbf'){
+        alert('In order to upload a shapefile, the entire shapefile zip file must be uploaded.');
+        input.value = '';
+    }
     else if(Number(file.size) > (maxUploadSizeMB * 1000 * 1000)){
         alert("The file you are trying to upload is larger than the maximum upload size of " + maxUploadSizeMB + "MB");
         input.value = '';

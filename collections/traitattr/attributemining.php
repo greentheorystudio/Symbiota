@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -161,7 +161,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 			}
 		</script>
 		<script src="../../js/collections.traitattr.js?ver=20221025" type="text/javascript"></script>
-		<script src="../../js/shared.js?ver=20220809" type="text/javascript"></script>
+		<script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
 	</head>
 	<body style="width:900px">
 		<?php

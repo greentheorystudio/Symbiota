@@ -14,32 +14,6 @@ function selectAll(cb){
 	}
 }
 
-function toggle(target){
-	const objDiv = document.getElementById(target);
-	if(objDiv){
-		if(objDiv.style.display === "none"){
-			objDiv.style.display = "block";
-		}
-		else{
-			objDiv.style.display = "none";
-		}
-	}
-	else{
-		const divs = document.getElementsByTagName("div");
-		for (let h = 0; h < divs.length; h++) {
-			const divObj = divs[h];
-			if(divObj.className == target){
-				if(divObj.style.display === "none"){
-					divObj.style.display="block";
-				}
-			 	else {
-			 		divObj.style.display="none";
-			 	}
-			}
-		}
-	}
-}
-
 function ProcessReport(){
 	if(document.pressed === 'invoice'){
 		document.reportsform.action ="reports/defaultinvoice.php";
@@ -246,21 +220,6 @@ function openEditorPopup(occid){
 	openPopup('../editor/occurrenceeditor.php?occid=' + occid);
 }
 
-function openPopup(urlStr){
-	let wWidth = 900;
-	if(document.getElementById('innertext').offsetWidth){
-		wWidth = document.getElementById('innertext').offsetWidth*1.05;
-	}
-	else if(document.body.offsetWidth){
-		wWidth = document.body.offsetWidth*0.9;
-	}
-	let newWindow = window.open(urlStr, 'popup', 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
-	if (newWindow.opener == null) {
-		newWindow.opener = self;
-	}
-	return false;
-}
-
 function verifyDate(eventDateInput){
 	const dateStr = eventDateInput.value;
 	if(dateStr === "") return true;
@@ -347,55 +306,6 @@ function verifyDueDate(eventDateInput){
 		eventDateInput.value = dateArr['y'] + "-" + mStr + "-" + dStr;
 	}
 	return true;
-}
-
-function parseDate(dateStr){
-	const dateObj = new Date(dateStr);
-	let dateTokens;
-	let y = 0;
-	let m = 0;
-	let d = 0;
-	let mText;
-	try {
-		const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/;
-		const validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/;
-		const validformat3 = /^\d{1,2} \D+ \d{2,4}$/;
-		if (validformat1.test(dateStr)) {
-			dateTokens = dateStr.split("-");
-			y = dateTokens[0];
-			m = dateTokens[1];
-			d = dateTokens[2];
-		} else if (validformat2.test(dateStr)) {
-			dateTokens = dateStr.split("/");
-			m = dateTokens[0];
-			d = dateTokens[1];
-			y = dateTokens[2];
-			if (y.length === 2) {
-				y = 0;
-			}
-		} else if (validformat3.test(dateStr)) {
-			dateTokens = dateStr.split(" ");
-			d = dateTokens[0];
-			mText = dateTokens[1];
-			y = dateTokens[2];
-			if (y.length === 2) {
-				y = 0;
-			}
-			mText = mText.substring(0, 3);
-			mText = mText.toLowerCase();
-			const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-			m = mNames.indexOf(mText) + 1;
-		} else if (dateObj instanceof Date) {
-			y = dateObj.getFullYear();
-			m = dateObj.getMonth() + 1;
-			d = dateObj.getDate();
-		}
-	} catch (ex) {}
-	const retArr = [];
-	retArr["y"] = y.toString();
-	retArr["m"] = m.toString();
-	retArr["d"] = d.toString();
-	return retArr;
 }
 
 function outIdentCheck(collid){

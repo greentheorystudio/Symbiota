@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/PermissionsManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -61,7 +61,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $collMetadata['collectionname']; ?> Collection Permissions</title>
+	<title><?php echo $collMetadata['collectionname']; ?> Manage Permissions</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script>
@@ -78,7 +78,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 		}
 	</script>
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/shared.js?ver=20220809"></script>
+	<script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 </head>
 <body>
 	<?php
@@ -86,8 +86,8 @@ if($collMetadata['colltype'] === 'General Observations') {
     ?>
     <div class='navpath'>
         <a href='../../index.php'>Home</a> &gt;&gt;
-        <a href='collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Management</a> &gt;&gt;
-        <b><?php echo $collMetadata['collectionname'].' Permissions'; ?></b>
+        <a href='collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Control Panel</a> &gt;&gt;
+        <b>Manage Permissions</b>
     </div>
 
 	<div id="innertext">

@@ -22,7 +22,7 @@ class OccurrenceEditorMedia extends OccurrenceEditorManager {
 		$medId = $_REQUEST['medid'];
 	 	$url = $_REQUEST['accessuri'];
 	 	$occId = $_REQUEST['occid'];
-        $tId = $this->occurrenceMap[$this->occid]['tidinterpreted'];
+        $tId = $this->occurrenceMap[$this->occid]['tid'];
 		$title = Sanitizer::cleanInStr($this->conn,$_REQUEST['title']);
 		$creator = Sanitizer::cleanInStr($this->conn,$_REQUEST['creator']);
 		$creatoruid = (array_key_exists('creatoruid',$_REQUEST)?(int)$_REQUEST['creatoruid']:'');
@@ -91,7 +91,7 @@ class OccurrenceEditorMedia extends OccurrenceEditorManager {
 			$sql = 'UPDATE media SET occid = '.$targetOccid.' WHERE (mediaid = '.$medId.')';
 			if($this->conn->query($sql)){
 				$imgSql = 'UPDATE media AS m INNER JOIN omoccurrences AS o ON m.occid = o.occid '.
-					'SET m.tid = o.tidinterpreted WHERE (m.mediaid = '.$medId.')';
+					'SET m.tid = o.tid WHERE m.mediaid = '.$medId.' ';
 				//echo $imgSql;
 				$this->conn->query($imgSql);
 			}
@@ -198,8 +198,8 @@ class OccurrenceEditorMedia extends OccurrenceEditorManager {
             $medManager->uploadMedia();
 		}
 		$medManager->setOccid($this->occid);
-		if(isset($this->occurrenceMap[$this->occid]['tidinterpreted'])) {
-            $medManager->setTid($this->occurrenceMap[$this->occid]['tidinterpreted']);
+		if(isset($this->occurrenceMap[$this->occid]['tid'])) {
+            $medManager->setTid($this->occurrenceMap[$this->occid]['tid']);
         }
 		if($medManager->processMedia()){
 			$this->activeImgId = $medManager->getActiveMedId();

@@ -51,7 +51,6 @@ $GLOBALS['DISPLAY_COMMON_NAMES'] = 1;			//Display common names in species profil
 $GLOBALS['ACTIVATE_EXSICCATI'] = 0;			//Activates exsiccati fields within data entry pages; adding link to exsiccati search tools to portal menu is recommended
 $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT'] = 0;			//Activates checklist fieldguide export tool
 $GLOBALS['GENBANK_SUB_TOOL_PATH'] = '';	//Path to GenBank Submission tool installation
-$GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT'] = 0;	//Activates GeoLocate Toolkit located within the Processing Toolkit menu items
 
 $GLOBALS['RIGHTS_TERMS'] = array(
     'CC0 1.0 (Public-domain)' => 'http://creativecommons.org/publicdomain/zero/1.0/',

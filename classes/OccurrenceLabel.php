@@ -185,10 +185,9 @@ class OccurrenceLabel{
             if(preg_match('/^[,\d]+$/', $occidStr)) {
                 $sqlWhere = 'WHERE (o.occid IN('.$occidStr.')) ';
                 $sql1 = 'SELECT o.occid, o.sciname, t.UnitName1, t.UnitName2, t.UnitInd3, '.
-                    't.UnitName3, t.RankId, ts.family, t.Author AS author, t2.Author AS parentauthor '.
-                    'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.tid '.
-                    'LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
-                    'LEFT JOIN taxa AS t2 ON ts.parenttid = t2.tid '.
+                    't.UnitName3, t.RankId, t.family, t.Author AS author, t2.Author AS parentauthor '.
+                    'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid '.
+                    'LEFT JOIN taxa AS t2 ON t.parenttid = t2.tid '.
                     $sqlWhere.' ';
                 //echo $sql1; exit;
                 if($rs1 = $this->conn->query($sql1)){
@@ -502,10 +501,9 @@ class OccurrenceLabel{
             $authorArr = array();
             $sqlWhere = 'WHERE (d.detid IN('.implode(',',$detidArr).')) ';
             $sql1 = 'SELECT d.detid, t2.author '.
-                'FROM (taxa AS t INNER JOIN omoccurrences AS o ON t.tid = o.tidinterpreted) '.
+                'FROM (taxa AS t INNER JOIN omoccurrences AS o ON t.tid = o.tid) '.
                 'INNER JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
-                'INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-                'INNER JOIN taxa AS t2 ON ts.parenttid = t2.tid '.
+                'INNER JOIN taxa AS t2 ON t.parenttid = t2.tid '.
                 $sqlWhere.' AND t.rankid > 220 ';
             if(!$speciesAuthors){
                 $sql1 .= 'AND t.unitname2 = t.unitname3 ';
