@@ -76,7 +76,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
         return $retCnt;
     }
 
-    public function updateOccRecordsWithCleanedSciname($sciname,$cleanedSciname): int
+    public function updateOccRecordsWithCleanedSciname($sciname,$cleanedSciname,$tid): int
     {
         $retCnt = 0;
         if($this->collid){
@@ -84,7 +84,8 @@ class OccurrenceTaxonomyCleaner extends Manager{
                 'WHERE collid = '.$this->collid.' AND sciname = "' . Sanitizer::cleanInStr($this->conn,$sciname) . '" ';
             //echo $sql;
             if($this->conn->query($sql)){
-                $sql2 = 'UPDATE omoccurrences SET sciname = "'.Sanitizer::cleanInStr($this->conn,$cleanedSciname).'" '.
+                $sql2 = 'UPDATE omoccurrences SET sciname = "'.Sanitizer::cleanInStr($this->conn,$cleanedSciname).'"'.
+                    ((int)$tid > 0 ? ', tid = ' . (int)$tid . ' ' : ' ').
                     'WHERE collid = '.$this->collid.' AND sciname = "' . Sanitizer::cleanInStr($this->conn,$sciname) . '" ';
                 //echo $sql2;
                 if($this->conn->query($sql2)){
@@ -119,6 +120,18 @@ class OccurrenceTaxonomyCleaner extends Manager{
             //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt = $this->conn->affected_rows;
+
+                $sql = 'UPDATE omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
+                    'SET i.tid = o.tid '.
+                    'WHERE o.collid = '.$this->collid.' AND i.imgid IS NOT NULL ';
+                //echo $sql;
+                $this->conn->query($sql);
+
+                $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN media AS m ON o.occid = m.occid '.
+                    'SET m.tid = o.tid '.
+                    'WHERE o.collid = '.$this->collid.' AND m.mediaid IS NOT NULL ';
+                //echo $sql2;
+                $this->conn->query($sql2);
             }
         }
         return $retCnt;
@@ -140,30 +153,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
         return $retCnt;
     }
 
-    public function updateMediaTaxonomicThesaurusLinkages(): int
-    {
-        $retCnt = 0;
-        if($this->collid){
-            $sql = 'UPDATE omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
-                'SET i.tid = o.tid '.
-                'WHERE o.collid = '.$this->collid.' AND i.imgid IS NOT NULL ';
-            //echo $sql;
-            if($this->conn->query($sql)){
-                $retCnt += $this->conn->affected_rows;
-            }
-
-            $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN media AS m ON o.occid = m.occid '.
-                'SET m.tid = o.tid '.
-                'WHERE o.collid = '.$this->collid.' AND m.mediaid IS NOT NULL ';
-            //echo $sql2;
-            if($this->conn->query($sql2)){
-                $retCnt += $this->conn->affected_rows;
-            }
-        }
-        return $retCnt;
-    }
-
-	public function getUnlinkedSciNames(): string
+    public function getUnlinkedSciNames(): string
     {
         $retArr = array();
         if($this->collid){

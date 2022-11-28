@@ -8,7 +8,7 @@ include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
 include_once(__DIR__ . '/../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
 $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;

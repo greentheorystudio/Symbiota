@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 

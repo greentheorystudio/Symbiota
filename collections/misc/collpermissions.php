@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/PermissionsManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;

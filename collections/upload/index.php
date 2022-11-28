@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 3600);
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));

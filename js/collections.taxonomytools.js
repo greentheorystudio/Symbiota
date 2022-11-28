@@ -164,10 +164,6 @@ function callTaxThesaurusLinkController(step = ''){
                 addProgressLine('<li>Updating linkages of associated determination records to the Taxonomic Thesaurus ' + processStatus + '</li>');
                 params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateDetThesaurusLinkages';
             }
-            else if(step === 'update-image-linkages'){
-                addProgressLine('<li>Updating linkages of associated media records to the Taxonomic Thesaurus ' + processStatus + '</li>');
-                params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateMediaThesaurusLinkages';
-            }
             //console.log(occTaxonomyApi+'?'+params);
             sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
                 processTaxThesaurusLinkControllerResponse(step,status,res);
@@ -636,7 +632,7 @@ function processAddTaxon(){
                                 processErrorResponse(15,true,'Error updating occurrence records');
                                 updateOccurrenceLinkages();
                             }
-                        });
+                        },newTid);
                     }
                 }
                 else{
@@ -689,17 +685,19 @@ function processErrorResponse(indent,setCounts,messageText = ''){
 }
 
 function processFuzzyMatches(fuzzyMatches){
+    const cleanedCurrentName = currentSciname.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
     for(let i in fuzzyMatches){
         if(fuzzyMatches.hasOwnProperty(i)){
             const fuzzyMatchName = fuzzyMatches[i];
-            const selectFuzzyMatchInner = "'" + currentSciname.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "','" + fuzzyMatchName.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "'";
-            const selectButtonHtml = '<button class="fuzzy-button" onclick="selectFuzzyMatch(' + selectFuzzyMatchInner + ');">Select</button>';
-            addProgressLine('<li style="margin-left:15px;margin-top:10px;"><b>Match: ' + fuzzyMatchName + '</b> ' + selectButtonHtml + '<span class="current-status"></span></li>');
+            const cleanedFuzzyMatchName = fuzzyMatchName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
+            const selectFuzzyMatchInner = "'" + cleanedCurrentName + "','" + cleanedFuzzyMatchName + "'," + i;
+            const selectButtonHtml = '<button class="fuzzy-button fuzzy-select-button" onclick="selectFuzzyMatch(' + selectFuzzyMatchInner + ');">Select</button>';
+            addProgressLine('<li class="first-indent fuzzy-select-button-li"><span class="fuzzy-match">Match: ' + fuzzyMatchName + '</span> ' + selectButtonHtml + '<span class="current-status"></span></li>');
             processSuccessResponse(0);
         }
     }
-    const skipButtonHtml = '<button class="fuzzy-button" onclick="runTaxThesaurusFuzzyMatchProcess();">Skip to Next Scientific Name</button>';
-    addProgressLine('<li style="margin-left:15px;margin-top:10px;margin-bottom:10px;">' + skipButtonHtml + '<span class="current-status"></span></li>');
+    const skipButtonHtml = '<button class="fuzzy-button" onclick="runTaxThesaurusFuzzyMatchProcess();">Skip Taxon</button>';
+    addProgressLine('<li class="first-indent fuzzy-select-button-li fuzzy-skip-button-li">' + skipButtonHtml + '<span class="current-status"></span></li>');
     processSuccessResponse(0);
 }
 
@@ -841,9 +839,6 @@ function processTaxThesaurusLinkControllerResponse(step,status,res){
     processUpdateCleanResponse('updated',status,res);
     if(!step && includeDetsImages){
         callTaxThesaurusLinkController('update-det-linkages');
-    }
-    else if(step === 'update-det-linkages'){
-        callTaxThesaurusLinkController('update-image-linkages');
     }
     else{
         adjustUIEnd();
@@ -1032,7 +1027,7 @@ function runTaxThesaurusFuzzyMatchProcess(){
     }
 }
 
-function selectFuzzyMatch(sciName,newName){
+function selectFuzzyMatch(sciName,newName,newtid){
     disableFuzzyMatchButtons();
     addProgressLine('<li class="first-indent">Updating occurrence records with selected scientific name ' + processStatus + '</li>');
     updateOccurrencesWithCleanedSciname(sciName,newName,function(status,res,current,parsed){
@@ -1045,7 +1040,7 @@ function selectFuzzyMatch(sciName,newName){
             processErrorResponse(15,false,'Error updating occurrence records');
             runTaxThesaurusFuzzyMatchProcess();
         }
-    });
+    },newtid);
 }
 
 function setDataSource(){
@@ -1205,11 +1200,12 @@ function updateOccurrenceLinkages(){
     });
 }
 
-function updateOccurrencesWithCleanedSciname(oldName,cleanedName,callback){
+function updateOccurrencesWithCleanedSciname(oldName,cleanedName,callback,tid = null){
     const formData = new FormData();
     formData.append('collid', collId);
     formData.append('sciname', oldName);
     formData.append('cleanedsciname', cleanedName);
+    formData.append('tid', tid);
     formData.append('action', 'updateOccWithCleanedName');
     const http = new XMLHttpRequest();
     http.open("POST", occTaxonomyApi, true);

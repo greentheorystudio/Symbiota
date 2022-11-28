@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $ometId = array_key_exists('ometid',$_REQUEST)?(int)$_REQUEST['ometid']:0;
 $omenId = array_key_exists('omenid',$_REQUEST)?(int)$_REQUEST['omenid']:0;

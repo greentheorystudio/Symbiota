@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
 $searchTerm = array_key_exists('keyword',$_REQUEST)?$_REQUEST['keyword']:'';

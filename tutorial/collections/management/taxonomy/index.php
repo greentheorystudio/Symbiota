@@ -1,6 +1,8 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbbase.php');
+include_once(__DIR__ . '/../../../../config/symbbase.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
@@ -27,13 +29,14 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     <body>
         <div class="reveal">
             <div class="slides">
-                <section id="intro" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/admin/mapping/index.php" data-background-interactive data-preload>
+                <section id="intro" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/management/taxonomycleaner.php?collid=<?php echo $collid; ?>" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:20%; width:40%;">
                         <div class="tutorial-frame" style="position:relative;left: -50%;">
-                            <h2>Mapping Configurations Tutorial</h2>
-                            <p>Welcome to the mapping configurations manager tutorial! This tutorial will explain the different
-                                settings that can be configured within this module. It will also explain how to upload and
-                                configure map data layers, and configure map layer groups in the Layers Tab.</p>
+                            <h2>Taxonomy Management Module Tutorial</h2>
+                            <p>Welcome to the taxonomy management module tutorial! This tutorial will explain the different
+                                processes that can be run within this module and how to use them together to improve the accuracy
+                                and consistency of scientific names within occurrence records and increase the amount of occurrence
+                                records that are linked to the taxonomic thesaurus.</p>
                             <p>Use the red arrows located in
                                 the bottom-right corner of this screen to progress forwards and backwards. The left and right arrow
                                 keys on your keyboard can also be used for progression, however if anything is clicked outside
@@ -44,12 +47,12 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                 </section>
-                <section id="index" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/admin/mapping/index.php" data-preload>
+                <section id="index" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/management/taxonomycleaner.php?collid=<?php echo $collid; ?>" data-preload>
                     <div class="topic-list-container">
                         <div class="tutorial-frame" style="position:relative;left: -50%;">
                             <h2>Index of Topics</h2>
                             <ul class="topic-list">
-                                <li><a href="overview.php">Overview</a></li>
+                                <li><a href="overview.php?collid=<?php echo $collid; ?>">Overview</a></li>
                                 <li><a href="map-window-tab.php">Map Window Tab</a></li>
                                 <li><a href="symbology-tab.php">Symbology Tab</a></li>
                                 <li><a href="layers-tab.php">Layers Tab</a></li>
@@ -57,10 +60,10 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                         </div>
                     </div>
                 </section>
-                <section data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/admin/mapping/index.php" data-background-interactive data-preload>
+                <section data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/management/taxonomycleaner.php?collid=<?php echo $collid; ?>" data-background-interactive data-preload>
                     <div style="position:absolute;left: 50%; bottom:20%; width:40%;">
                         <div class="tutorial-frame" style="position:relative;left: -50%;">
-                            <h3><a href="overview.php">Start Tutorial</a></h3>
+                            <h3><a href="overview.php?collid=<?php echo $collid; ?>">Start Tutorial</a></h3>
                         </div>
                     </div>
                 </section>

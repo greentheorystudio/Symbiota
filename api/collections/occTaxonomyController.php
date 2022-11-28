@@ -28,9 +28,6 @@ if($isEditor && $collid && $action){
     elseif($action === 'updateDetThesaurusLinkages'){
         echo $cleanManager->updateDetTaxonomicThesaurusLinkages($kingdomid);
     }
-    elseif($action === 'updateMediaThesaurusLinkages'){
-        echo $cleanManager->updateMediaTaxonomicThesaurusLinkages();
-    }
     elseif($action === 'updateLocalitySecurity'){
         echo $cleanManager->protectGlobalSpecies($collid);
     }
@@ -56,7 +53,7 @@ if($isEditor && $collid && $action){
         echo $cleanManager->updateOccRecordsWithNewScinameTid($sciname,$tid);
     }
     elseif($action === 'updateOccWithCleanedName'){
-        echo $cleanManager->updateOccRecordsWithCleanedSciname($_POST['sciname'],$_POST['cleanedsciname']);
+        echo $cleanManager->updateOccRecordsWithCleanedSciname($_POST['sciname'],$_POST['cleanedsciname'],$_POST['tid']);
     }
     elseif($action === 'undoOccScinameChange'){
         $oldName = str_replace(array('%squot;', '%dquot;'), array("'", '"'), $_POST['oldsciname']);

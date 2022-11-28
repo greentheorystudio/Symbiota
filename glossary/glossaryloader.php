@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryUpload.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/glossary/glossaryloader.php');

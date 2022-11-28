@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ImageDetailManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $imgId = (int)$_REQUEST['imgid'];
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';

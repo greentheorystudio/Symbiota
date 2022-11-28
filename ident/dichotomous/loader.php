@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DbConnection.php');
 include_once(__DIR__ . '/../../classes/DichoManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $nodeId = array_key_exists('nodeid',$_REQUEST)?(int)$_REQUEST['nodeid']:0;
 $stmtId = array_key_exists('stmtid',$_REQUEST)?(int)$_REQUEST['stmtid']:0;

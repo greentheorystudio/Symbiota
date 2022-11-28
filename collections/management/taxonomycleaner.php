@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceTaxonomyCleaner.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 6000);
 
 if(!$GLOBALS['SYMB_UID']) {
@@ -101,15 +101,29 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 margin-left: 15px;
                 list-style-type: none;
             }
-            .undo-button {
+            .fuzzy-select-button-li {
+                margin-top: 10px;
+            }
+            .undo-button, .fuzzy-skip-button-li {
                 margin-bottom: 5px;
+            }
+            .fuzzy-match {
+                font-weight: bold;
+                font-size: 1.1em;
+            }
+            .fuzzy-select-button {
+                margin-left: 15px;
+            }
+            .process-header {
+                margin-bottom: 5px;
+                font-weight: bold;
             }
         </style>
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221123" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221125" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -150,15 +164,16 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 			$collMap = $cleanManager->getCollMap();
 			if($collid && $isEditor){
                 ?>
-                <div style="float:left;font-weight: bold; font-size: 130%; margin-bottom: 10px">
-                    <?php
-                    echo $collMap[(int)$collid]['collectionname'].' ('.$collMap[(int)$collid]['code'].')';
-                    ?>
+                <div style="display:flex;justify-content: space-between;margin-bottom:8px;">
+                    <div style="font-weight: bold;font-size: 130%;margin-left:30px;">
+                        <?php echo $collMap[(int)$collid]['collectionname'].' ('.$collMap[(int)$collid]['code'].')'; ?>
+                    </div>
+                    <div onclick="openTutorialWindow('../../tutorial/collections/management/taxonomy/index.php?collid=<?php echo $collid; ?>');" title="Open Tutorial Window">
+                        <i style="height:20px;width:20px;cursor:pointer;" class="far fa-question-circle"></i>
+                    </div>
                 </div>
-                <div style="margin:15px 0;padding:10px;">
-                    <div style="margin-left:10px;margin-top:8px;font-weight:bold;font-size:1.3em;">
-                        <u>Occurrences not linked to taxonomic thesaurus</u>: <span id="unlinkedOccCnt"></span><br/>
-                        <u>Unique scientific names</u>: <span id="unlinkedTaxaCnt"></span><br/>
+                <div style="display:flex;justify-content: space-between;margin-bottom:8px;">
+                    <div style="margin-left:30px;font-weight:bold;font-size: 130%;">
                         <div style="margin-top:5px;">
                             Target Kingdom:
                             <select id="targetkingdomselect" onchange="setKingdomId();">
@@ -179,12 +194,19 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             Processing batch limit: <input type="text" id="processingLimit" style="width:50px;" value="" onchange="verifyBatchLimitChange();" />
                         </div>
                     </div>
+                    <div style="margin-right:30px;font-weight:bold;font-size:130%;">
+                        <u>Occurrences not linked to taxonomic thesaurus</u>: <span id="unlinkedOccCnt"></span><br/>
+                        <u>Unique scientific names</u>: <span id="unlinkedTaxaCnt"></span><br/>
+                    </div>
                 </div>
                 <div class="processor-container">
                     <div class="processor-control-container">
                         <div id="processor-accordion">
-                            <h3 class="tabtitle">Cleaning Utilities</h3>
+                            <h3 class="tabtitle">Maintenance Utilities</h3>
                             <div class="processor-accordion-panel">
+                                <div class="process-header">
+                                    General Cleaning
+                                </div>
                                 Run cleaning processes on occurrence record scientific names that are not linked to
                                 the Taxonomic Thesaurus to remove unnecessary endings, identification qualifiers, and normalize
                                 infraspecific rank references.
@@ -202,6 +224,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     </div>
                                 </div>
                                 <hr style="margin: 10px 0;"/>
+                                <div class="process-header">
+                                    Scientific Name Authorship Cleaning
+                                </div>
                                 Run cleaning processes to remove the scientific name authors from occurrence record scientific
                                 names that are not linked to the Taxonomic Thesaurus.
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
@@ -218,9 +243,12 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     </div>
                                 </div>
                                 <hr style="margin: 10px 0;"/>
+                                <div class="process-header">
+                                    Set Taxonomic Thesaurus Linkages
+                                </div>
                                 Set occurrence record linkages to the Taxonomic Thesaurus.
                                 <div style="clear:both;margin-top:5px;">
-                                    <input type='checkbox' id='updatedetimage' /> Also set associated determination, image, and media linkages.
+                                    <input type='checkbox' id='updatedetimage' /> Also set associated determination linkages.
                                 </div>
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
@@ -236,6 +264,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     </div>
                                 </div>
                                 <hr style="margin: 10px 0;"/>
+                                <div class="process-header">
+                                    Update Locality Security Settings
+                                </div>
                                 Update locality security settings for occurrence records of protected species.
                                 <div style="clear:both;display:flex;justify-content:flex-end;margin-top:5px;">
                                     <div>
@@ -255,6 +286,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 
                             <h3 class="tabtitle">Search Utilities</h3>
                             <div class="processor-accordion-panel">
+                                <div class="process-header">
+                                    Search Taxonomic Data Sources
+                                </div>
                                 <div style="margin-bottom:10px;">
                                     Search for occurrence record scientific names that are not currently linked to the Taxonomic Thesaurus
                                     from an external Taxonomic Data Source.
@@ -281,6 +315,9 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                                     </div>
                                 </div>
                                 <hr style="margin: 10px 0;"/>
+                                <div class="process-header">
+                                    Taxonomic Thesaurus Fuzzy Search
+                                </div>
                                 Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
                                 with taxa currently in the Taxonomic Thesaurus.
                                 <div style="clear:both;margin-top:5px;">

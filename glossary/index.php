@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $glossId = array_key_exists('glossid',$_REQUEST)?(int)$_REQUEST['glossid']:0;
 $glossgrpId = array_key_exists('glossgrpid',$_REQUEST)?(int)$_REQUEST['glossgrpid']:0;

@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 
 $login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
 $remMe = array_key_exists('remember',$_POST)?$_POST['remember']:'';

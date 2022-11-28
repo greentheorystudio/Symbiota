@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 180);
 
 $collid = (array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0);
