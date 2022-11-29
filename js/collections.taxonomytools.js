@@ -858,12 +858,15 @@ function processUnlinkedNamesArr(inArr){
         const limitValue = document.getElementById("processingLimit").value;
         if(startIndex){
             let nameArrLength = inArr.length;
-            let startIndexVal = 0;
+            let startIndexVal = null;
             for(let i = 0 ; i < nameArrLength; i++) {
-                if(inArr.hasOwnProperty(i) && inArr[i] > startIndex){
+                if(inArr.hasOwnProperty(i) && inArr[i].toLowerCase() > startIndex.toLowerCase()){
                     startIndexVal = i;
                     break;
                 }
+            }
+            if(!startIndexVal){
+                startIndexVal = nameArrLength;
             }
             inArr = inArr.splice(startIndexVal, (nameArrLength - startIndexVal));
         }
