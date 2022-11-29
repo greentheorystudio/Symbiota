@@ -642,3 +642,6 @@ ALTER TABLE `uploadspectemp`
 
 ALTER TABLE `omcollections`
     MODIFY COLUMN `InstitutionCode` varchar(45) NULL AFTER `CollID`;
+
+ALTER TABLE `institutions`
+    MODIFY COLUMN `InstitutionCode` varchar(45) NULL AFTER `iid`;

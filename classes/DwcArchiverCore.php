@@ -489,9 +489,12 @@ class DwcArchiverCore extends Manager{
             if(count($this->collArr) === 1){
                 $firstColl = $this->collArr[$collid];
                 if($firstColl){
-                    $fileNameSeed = $firstColl['instcode'];
+                    $fileNameSeed = $firstColl['instcode'] ?: '';
                     if($firstColl['collcode']) {
-                        $fileNameSeed .= '-' . $firstColl['collcode'];
+                        $fileNameSeed .= ($fileNameSeed?'-':'') . $firstColl['collcode'];
+                    }
+                    if(!$fileNameSeed){
+                        $fileNameSeed = 'OccurrenceDataOutput_'.$this->ts;
                     }
                 }
                 if($this->schemaType === 'backup'){
@@ -1119,11 +1122,11 @@ class DwcArchiverCore extends Manager{
             $itemAttr = $newDoc->createAttribute('collid');
             $itemAttr->value = $cArr['collid'];
             $itemElem->appendChild($itemAttr);
-            $instCode = $cArr['institutioncode'];
+            $instCode = $cArr['institutioncode'] ?: '';
             if($cArr['collectioncode']) {
-                $instCode .= '-' . $cArr['collectioncode'];
+                $instCode .= ($instCode?'-':'') . $cArr['collectioncode'];
             }
-            $title = $instCode;
+            $title = $instCode ?: $cArr['collectionname'];
             $itemTitleElem = $newDoc->createElement('title');
             $itemTitleElem->appendChild($newDoc->createTextNode($title));
             $itemElem->appendChild($itemTitleElem);

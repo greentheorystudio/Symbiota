@@ -43,7 +43,7 @@ class InstitutionManager {
 		$status = true;
 		if($postData['institutioncode'] && $postData['institutionname']){
 			$sql = 'UPDATE institutions SET '.
-				'institutioncode = "'.Sanitizer::cleanInStr($this->conn,$postData['institutioncode']).'",'.
+				'institutioncode = '.($postData['institutioncode']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutioncode']).'"':'NULL').','.
 				'institutionname = "'.Sanitizer::cleanInStr($this->conn,$postData['institutionname']).'",'.
 				'institutionname2 = '.($postData['institutionname2']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutionname2']).'"':'NULL').','.
 				'address1 = '.($postData['address1']?'"'.Sanitizer::cleanInStr($this->conn,$postData['address1']).'"':'NULL').','.
@@ -67,11 +67,12 @@ class InstitutionManager {
 		return $status;
 	}
 
-	public function submitInstitutionAdd($postData){
+	public function submitInstitutionAdd($postData): int
+    {
 		$newIID = 0;
 		$sql = 'INSERT INTO institutions (institutioncode, institutionname, institutionname2, address1, address2, city, '.
 			'stateprovince, postalcode, country, phone, contact, email, url, notes) '.
-			'VALUES ("'.$postData['institutioncode'].'","'.
+			'VALUES ("'.($postData['institutioncode']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutioncode']).'"':'NULL').',"'.
 			Sanitizer::cleanInStr($this->conn,$postData['institutionname']).'",'.
 			($postData['institutionname2']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutionname2']).'"':'NULL').','.
 			($postData['address1']?'"'.Sanitizer::cleanInStr($this->conn,$postData['address1']).'"':'NULL').','.
@@ -102,16 +103,27 @@ class InstitutionManager {
 	public function deleteInstitution($delIid): bool
 	{
 		$status = true;
-		$sql = 'SELECT collid, CONCAT_WS(" ",CollectionName,CONCAT(InstitutionCode,IFNULL(CONCAT(":",CollectionCode),""))) AS name '.
+		$sql = 'SELECT collid, CollectionName, InstitutionCode, CollectionCode '.
 			'FROM omcollections WHERE iid = '.$delIid.' ORDER BY CollectionName,InstitutionCode,CollectionCode';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		if($rs->num_rows){
 			$status = false;
-			$this->errorStr = 'ERROR deleting institution: Following collections need to be unlinked to institution before deletion is allowed';
+            $this->errorStr = 'ERROR deleting institution: Following collections need to be unlinked to institution before deletion is allowed';
 			$this->errorStr .= '<ul style="margin-left:20px">';
 			while($r = $rs->fetch_object()){
-				$this->errorStr .= '<li>'.$r->name.'</li>';
+                $code = '';
+                $name = $r->CollectionName;
+                if($r->InstitutionCode){
+                    $code .= $r->InstitutionCode;
+                }
+                if($r->CollectionCode){
+                    $code .= ($code?':':'') . $r->CollectionCode;
+                }
+                if($code){
+                    $name .= ' ' . $code;
+                }
+                $this->errorStr .= '<li>'.$name.'</li>';
 			}
 			$this->errorStr .= '</ul><br/>';
 		}
@@ -181,8 +193,7 @@ class InstitutionManager {
 	public function getInstitutionList(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT i.iid, c.collid, i.institutioncode, i.institutionname, i.institutionname2, i.address1, i.address2, i.city, '.
-			'i.stateprovince, i.postalcode, i.country, i.phone, i.contact, i.email, i.url, i.notes '.
+		$sql = 'SELECT i.iid, c.collid, i.institutioncode, i.institutionname '.
 			'FROM institutions i LEFT JOIN omcollections c ON i.iid = c.iid '.
 			'ORDER BY i.institutionname, i.institutioncode';
 		//echo $sql;
@@ -191,6 +202,8 @@ class InstitutionManager {
 			if(isset($retArr[$r->iid])){
 				$collStr = $retArr[$r->iid]['collid'].','.$r->collid;
 				$retArr[$r->iid]['collid'] = $collStr;
+                $retArr[$r->iid]['institutionname'] = $r->institutionname;
+                $retArr[$r->iid]['institutioncode'] = $r->institutioncode;
 			}
 			else{
 				$retArr[$r->iid] = Sanitizer::cleanOutArray($r);
@@ -203,13 +216,24 @@ class InstitutionManager {
 	public function getCollectionList(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT collid, iid, CONCAT(collectionname, " (", CONCAT_WS("-",institutioncode, collectioncode),")") AS collname '.
+		$sql = 'SELECT collid, iid, collectionname, institutioncode, collectioncode '.
 			'FROM omcollections '.
 			'ORDER BY collectionname,institutioncode';
 		//echo $sql; exit;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->collid]['name'] = $r->collname;
+			$code = '';
+            $collName = $r->collectionname;
+            if($r->institutioncode){
+                $code .= $r->institutioncode;
+            }
+            if($r->collectioncode){
+                $code .= ($code?'-':'') . $r->collectioncode;
+            }
+            if($code){
+                $collName = ' (' . $r->collectionname . ')';
+            }
+            $retArr[$r->collid]['name'] = $collName;
 			$retArr[$r->collid]['iid'] = $r->iid;
 		}
 		$rs->free();

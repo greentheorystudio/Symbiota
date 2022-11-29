@@ -201,6 +201,16 @@ if(!$GLOBALS['IS_ADMIN']){
         <div id="paragraphview" style="display:block;">
             <?php
             foreach($occArr as $occId => $occObj){
+                $collName = '';
+                if($occObj['institutionCode']){
+                    $collName .= $occObj['institutionCode'];
+                }
+                if($occObj['collectionCode']){
+                    $collName .= ($collName?':':'') . $occObj['collectionCode'];
+                }
+                if(!$collName){
+                    $collName = $occObj['collectionName'];
+                }
                 if($GLOBALS['IS_ADMIN'] || in_array($occObj['collid'], $collRightsArr, true)){
                     ?>
                     <div style="float:right;margin:10px;">
@@ -212,7 +222,7 @@ if(!$GLOBALS['IS_ADMIN']){
                 }
                 ?>
                 <div style="clear:both;font-weight:bold;font-size:120%;">
-                    <?php echo $occObj['institutionCode'].($occObj['collectionCode']?':'.$occObj['collectionCode']:''); ?>
+                    <?php echo $collName; ?>
                 </div>
                 <?php if($collId === $occObj['collid'] && ($dupeType === 'exact' || $dupeType === 'exsic')){
                     ?>

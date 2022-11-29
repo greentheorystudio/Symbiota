@@ -144,10 +144,7 @@ class ObservationSubmitManager {
 	{
 		$status = true;
 		$imgManager = new ImageShared();
-		$subTargetPath = $this->collMap['institutioncode'];
-		if($this->collMap['collectioncode']) {
-			$subTargetPath .= '_' . $this->collMap['collectioncode'];
-		}
+        $subTargetPath = $this->collId;
 		
 		for($i=1;$i<=5;$i++){
 			$imgManager->setTargetPath($subTargetPath.'/'.date('Ym').'/');

@@ -133,11 +133,7 @@ if($collid){
         }
 
 		function verifyCollEditForm(f){
-			if(f.institutioncode.value === ''){
-				alert("Institution Code must have a value");
-				return false;
-			}
-			else if(f.collectionname.value === ''){
+			if(f.collectionname.value === ''){
 				alert("Collection Name must have a value");
 				return false;
 			}
@@ -260,7 +256,7 @@ if($collid){
             <?php
             if($isEditor){
                 if($collid){
-                    echo '<h1>'.$collData['collectionname'].(array_key_exists('institutioncode',$collData)?' ('.$collData['institutioncode'].')':'').'</h1>';
+                    echo '<h1>'.$collData['collectionname'].($collData['institutioncode']?' ('.$collData['institutioncode'].')':'').'</h1>';
                 }
                 ?>
                 <div id="colledit">
@@ -275,7 +271,7 @@ if($collid){
                                         <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
 									<span id="instcodeinfodialog">
-										The name (or acronym) in use by the institution having custody of the occurrence records. This field is required.
+										The name (or acronym) in use by the institution having custody of the occurrence records.
                                         For more details, see <a href="https://dwc.tdwg.org/terms/#institutionCode" target="_blank">Darwin Core definition</a>
 									</span>
 								</span>
@@ -288,7 +284,7 @@ if($collid){
                                         <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
 									<span id="collcodeinfodialog">
-										The name, acronym, or code identifying the collection or data set from which the record was derived. This field is optional.
+										The name, acronym, or code identifying the collection or data set from which the record was derived.
                                         For more details, see <a href="https://dwc.tdwg.org/terms/#collectionCode" target="_blank">Darwin Core definition</a>.
 									</span>
 								</span>
