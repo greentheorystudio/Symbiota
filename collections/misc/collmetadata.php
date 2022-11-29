@@ -100,17 +100,8 @@ if($collid){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/external/tiny_mce/tiny_mce.js"></script>
     <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script>
-        tinyMCE.init({
-            mode : "textareas",
-            theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
-            theme_advanced_buttons2 : "",
-            theme_advanced_buttons3 : "",
-            valid_elements: "*[*]"
-        });
-
         $(document).ready(function() {
             const dialogArr = ["instcode", "collcode", "pedits", "pubagg", "rights", "rightsholder", "accessrights", "guid", "colltype", "management", "icon", "collectionguid", "sourceurl", "sort", "collectionid"];
             let dialogStr = "";
