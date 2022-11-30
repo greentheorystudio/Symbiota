@@ -102,10 +102,13 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $collID;
 			$itemElem->appendChild($itemAttr);
-			$instCode = $cArr['instcode'];
+			$instCode = $cArr['instcode'] ?: '';
 			if($cArr['collcode']) {
-				$instCode .= '-' . $cArr['collcode'];
+				$instCode .= ($instCode?'-':'') . $cArr['collcode'];
 			}
+            if(!$instCode){
+                $instCode = $cArr['collname'];
+            }
 			$title = $instCode.' DwC-Archive';
 			$itemTitleElem = $newDoc->createElement('title');
 			$itemTitleElem->appendChild($newDoc->createTextNode($title));
@@ -228,7 +231,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$sql .= 'ORDER BY c.collectionname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->collid]['name'] = $r->collectionname.' ('.$r->instcode.')';
+			$retArr[$r->collid]['name'] = $r->collectionname.($r->instcode?' ('.$r->instcode.')':'');
 			$retArr[$r->collid]['guid'] = $r->guidtarget;
 			$retArr[$r->collid]['url'] = $r->dwcaurl;
 		}

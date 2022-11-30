@@ -7,7 +7,7 @@ class OccurrenceCrowdSource {
 	private $conn;
 	private $collid;
 	private $omcsid;
-	private $headArr = array('catalogNumber','family','sciname','identifiedBy','dateIdentified','recordedBy','recordNumber',
+	public $headArr = array('catalogNumber','family','sciname','identifiedBy','dateIdentified','recordedBy','recordNumber',
         'associatedCollectors','eventDate','verbatimEventDate','country','stateProvince','county','locality',
         'decimalLatitude','decimalLongitude','coordinateUncertaintyInMeters','verbatimCoordinates','minimumElevationInMeters',
         'maximumElevationInMeters','verbatimElevation','habitat','reproductiveCondition','substrate','occurrenceRemarks',
@@ -35,7 +35,7 @@ class OccurrenceCrowdSource {
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
-				$retArr['name'] = $r->collectionname.' ('.$r->collcode.')';
+				$retArr['name'] = $r->collectionname.($r->collcode?' ('.$r->collcode.')':'');
 				$retArr['instr'] = $r->instructions;
 				$retArr['url'] = $r->trainingurl;
 				$retArr['omcsid'] = $r->omcsid;
@@ -185,7 +185,7 @@ class OccurrenceCrowdSource {
 		$nonVolunteerCnt = 0;
 		$totalCnt = 0;
 		while($r = $rs->fetch_object()){
-			$retArr[$r->collid]['name'] = $r->collectionname.' ('.$r->collcode.')';
+			$retArr[$r->collid]['name'] = $r->collectionname.($r->collcode?' ('.$r->collcode.')':'');
 			$retArr[$r->collid]['cnt'][$r->reviewstatus] = $r->cnt;
 			if($r->isvolunteer) {
 				$retArr[$r->collid]['points'][$r->reviewstatus] = $r->points;

@@ -992,42 +992,6 @@ class ProfileManager extends Manager{
         return $pkArr;
     }
 
-    public function generateAccessPacket(): array
-    {
-        $pkArr = array();
-        $sql = 'SELECT ul.role, ul.tablename, ul.tablepk, c.CollectionName, c.CollectionCode, c.InstitutionCode, fc.`Name`, fp.projname '.
-            'FROM userroles AS ul LEFT JOIN omcollections AS c ON ul.tablepk = c.CollID '.
-            'LEFT JOIN fmchecklists AS fc ON ul.tablepk = fc.CLID '.
-            'LEFT JOIN fmprojects AS fp ON ul.tablepk = fp.pid '.
-            'WHERE ul.uid = '.$this->uid.' ';
-        //echo $sql;
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                if($r->role === 'CollAdmin' || $r->role === 'CollEditor' || $r->role === 'CollTaxon'){
-                    $pkArr['collections'][$r->role][$r->tablepk]['CollectionName'] = $r->CollectionName;
-                    $pkArr['collections'][$r->role][$r->tablepk]['CollectionCode'] = $r->CollectionCode;
-                    $pkArr['collections'][$r->role][$r->tablepk]['InstitutionCode'] = $r->InstitutionCode;
-                }
-                elseif($r->role === 'ClAdmin'){
-                    $pkArr['checklists'][$r->role][$r->tablepk]['ChecklistName'] = $r->Name;
-                }
-                elseif($r->role === 'ProjAdmin'){
-                    $pkArr['projects'][$r->role][$r->tablepk]['ProjectName'] = $r->projname;
-                }
-                else{
-                    $pkArr['portal'][] = $r->role;
-                }
-            }
-            $rs->close();
-        }
-        if(in_array('SuperAdmin', $pkArr['portal'], true)){
-            $pkArr['collections']['CollAdmin'] = $this->getCollectionArr();
-            $pkArr['checklists']['ClAdmin'] = $this->getChecklistArr();
-            $pkArr['projects']['ProjAdmin'] = $this->getProjectArr();
-        }
-        return $pkArr;
-    }
-
     public function createToken(): void
     {
         $token = '';

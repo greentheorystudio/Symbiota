@@ -457,7 +457,14 @@ class OccurrenceDuplicate {
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
-                $retArr[$r->occid]['collname'] = $r->collectionname.' ('.$r->institutioncode.($r->collectioncode?'-'.$r->collectioncode:'').')';
+                $collCode = '';
+                if($r->institutioncode){
+                    $collCode .= $r->institutioncode;
+                }
+                if($r->collectioncode){
+                    $collCode .= ($collCode?'-':'') . $r->collectioncode;
+                }
+                $retArr[$r->occid]['collname'] = $r->collectionname.($collCode?' ('.$collCode.')':'');
                 $retArr[$r->occid]['catalognumber'] = $r->catalognumber;
                 $retArr[$r->occid]['recordedby'] = $r->recordedby;
                 $retArr[$r->occid]['recordnumber'] = $r->recordnumber;
@@ -592,10 +599,10 @@ class OccurrenceDuplicate {
                 while($r = $rs->fetch_object()){
                     $idStr = $r->identifier;
                     if(is_numeric($idStr) || $idStr === 'Undefined Identifier') {
-                        $idStr = $r->code . ':' . $idStr;
+                        $idStr = ($r->code?$r->code . ':':'') . $idStr;
                     }
                     if(!$idStr) {
-                        $idStr = $r->code . ':' . 'undefined';
+                        $idStr = ($r->code?$r->code . ':':'') . 'undefined';
                     }
                     $retArr[$r->duplicateid][$r->occid]['id'] = $idStr;
                     $retArr[$r->duplicateid][$r->occid]['sciname'] = $r->sciname;

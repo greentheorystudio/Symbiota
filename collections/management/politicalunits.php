@@ -149,7 +149,7 @@ if($action && $isEditor){
 			<hr/>
 			<?php 
 		} 
-		echo '<h2>'.$collMap['collectionname'].' ('.$collMap['code'].')</h2>';
+		echo '<h2>'.$collMap['collectionname'].($collMap['code']?' ('.$collMap['code'].')':'').'</h2>';
 		if($isEditor){
 			?>
 			<fieldset style="padding:20px;position:relative">

@@ -123,7 +123,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
         <script src="../../js/shared.js?ver=20221126" type="text/javascript"></script>
-        <script src="../../js/collections.taxonomytools.js?ver=20221126" type="text/javascript"></script>
+        <script src="../../js/collections.taxonomytools.js?ver=20221127" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
             const sessionId = '<?php echo session_id(); ?>';
@@ -166,7 +166,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                 ?>
                 <div style="display:flex;justify-content: space-between;margin-bottom:8px;">
                     <div style="font-weight: bold;font-size: 130%;margin-left:30px;">
-                        <?php echo $collMap[(int)$collid]['collectionname'].' ('.$collMap[(int)$collid]['code'].')'; ?>
+                        <?php echo $collMap[(int)$collid]['collectionname'].($collMap[(int)$collid]['code']?' ('.$collMap[(int)$collid]['code'].')':''); ?>
                     </div>
                     <div onclick="openTutorialWindow('../../tutorial/collections/management/taxonomy/index.php?collid=<?php echo $collid; ?>');" title="Open Tutorial Window">
                         <i style="height:20px;width:20px;cursor:pointer;" class="far fa-question-circle"></i>

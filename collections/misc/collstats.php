@@ -467,12 +467,14 @@ if($action !== 'Update Statistics'){
 																			<div class="collectiontitle">
 																				<a href='collprofiles.php?collid=<?php echo $collid; ?>'>
 																					<?php
-																					$codeStr = ' ('.$collName2['instcode'];
-																					if($collName2['collcode']) {
-                                                                                        $codeStr .= '-' . $collName2['collcode'];
+                                                                                    $codeStr = '';
+                                                                                    if($collName2['instcode']){
+                                                                                        $codeStr .= $collName2['instcode'];
                                                                                     }
-																					$codeStr .= ')';
-																					echo $collName2['collname'].$codeStr;
+																					if($collName2['collcode']) {
+                                                                                        $codeStr .= ($codeStr?'-':'') . $collName2['collcode'];
+                                                                                    }
+																					echo $collName2['collname'].($codeStr?' ('.$codeStr.')':'');
 																					?>
 																				</a>
 																				<a href='collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
@@ -511,12 +513,14 @@ if($action !== 'Update Statistics'){
 														<div class="collectiontitle">
 															<a href='collprofiles.php?collid=<?php echo $collid; ?>'>
 																<?php
-																$codeStr = ' ('.$cArr['instcode'];
-																if($cArr['collcode']) {
-                                                                    $codeStr .= '-' . $cArr['collcode'];
+																$codeStr = '';
+                                                                if($cArr['instcode']){
+                                                                    $codeStr .= $cArr['instcode'];
                                                                 }
-																$codeStr .= ')';
-																echo $cArr['collname'].$codeStr;
+                                                                if($cArr['collcode']) {
+                                                                    $codeStr .= ($codeStr?'-':'') . $cArr['collcode'];
+                                                                }
+                                                                echo $cArr['collname'].($codeStr?' ('.$codeStr.')':'');
 																?>
 															</a>
 															<a href='collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
@@ -614,12 +618,14 @@ if($action !== 'Update Statistics'){
 																			<div class="collectiontitle">
 																				<a href = 'collprofiles.php?collid=<?php echo $collid; ?>'>
 																					<?php
-																					$codeStr = ' ('.$collName2['instcode'];
-																					if($collName2['collcode']) {
-                                                                                        $codeStr .= '-' . $collName2['collcode'];
+																					$codeStr = '';
+                                                                                    if($collName2['instcode']){
+                                                                                        $codeStr .= $collName2['instcode'];
                                                                                     }
-																					$codeStr .= ')';
-																					echo $collName2['collname'].$codeStr;
+                                                                                    if($collName2['collcode']) {
+                                                                                        $codeStr .= ($codeStr?'-':'') . $collName2['collcode'];
+                                                                                    }
+                                                                                    echo $collName2['collname'].($codeStr?' ('.$codeStr.')':'');
 																					?>
 																				</a>
 																				<a href = 'collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
@@ -658,12 +664,14 @@ if($action !== 'Update Statistics'){
 														<div class="collectiontitle">
 															<a href = 'collprofiles.php?collid=<?php echo $collid; ?>'>
 																<?php
-																$codeStr = ' ('.$cArr['instcode'];
-																if($cArr['collcode']) {
-                                                                    $codeStr .= '-' . $cArr['collcode'];
+																$codeStr = '';
+                                                                if($cArr['instcode']){
+                                                                    $codeStr .= $cArr['instcode'];
                                                                 }
-																$codeStr .= ')';
-																echo $cArr['collname'].$codeStr;
+                                                                if($cArr['collcode']) {
+                                                                    $codeStr .= ($codeStr?'-':'') . $cArr['collcode'];
+                                                                }
+                                                                echo $cArr['collname'].($codeStr?' ('.$codeStr.')':'');
 																?>
 															</a>
 															<a href = 'collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>

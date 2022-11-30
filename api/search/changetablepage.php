@@ -155,9 +155,15 @@ if($recArr){
                 || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((int)$occArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
             $isEditor = true;
         }
-        $collection = $occArr['institutioncode'];
+        $collection = '';
+        if($occArr['institutioncode']){
+            $collection .= $occArr['institutioncode'];
+        }
         if($occArr['collectioncode']) {
-            $collection .= ':' . $occArr['collectioncode'];
+            $collection .= ($collection?':':'') . $occArr['collectioncode'];
+        }
+        if(!$collection){
+            $collection = $occArr['collectionname'];
         }
         if($occArr['sciname']) {
             $occArr['sciname'] = '<i>' . $occArr['sciname'] . '</i> ';
