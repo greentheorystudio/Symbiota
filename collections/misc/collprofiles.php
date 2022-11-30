@@ -121,12 +121,14 @@ if($GLOBALS['SYMB_UID']){
 		}
 		if($collid){
 			$collData = $collData[$collid];
-			$codeStr = ' ('.$collData['institutioncode'];
-			if($collData['collectioncode']) {
-                $codeStr .= '-' . $collData['collectioncode'];
+			$codeStr = '';
+            if($collData['institutioncode']){
+                $codeStr .= $collData['institutioncode'];
             }
-			$codeStr .= ')';
-			echo '<h1>'.$collData['collectionname'].$codeStr.'</h1>';
+			if($collData['collectioncode']) {
+                $codeStr .= ($codeStr?'-':'') . $collData['collectioncode'];
+            }
+			echo '<h1>'.$collData['collectionname'].($codeStr?' ('.$codeStr.')':'').'</h1>';
 			if($editCode > 0){
 				?>
 				<div id="controlpanel" style="clear:both;display:<?php echo ($eMode?'block':'none'); ?>;">
@@ -463,9 +465,15 @@ if($GLOBALS['SYMB_UID']){
 								?>
 								<img src='<?php echo $iconStr; ?>' style='border-width:1px;height:30px;width:30px;' /><br/>
 								<?php
-								echo $collArr['institutioncode'];
-								if($collArr['collectioncode']) {
-                                    echo '-' . $collArr['collectioncode'];
+								$label = '';
+                                if($collArr['institutioncode']) {
+                                    $label .= $collArr['institutioncode'];
+                                }
+                                if($collArr['collectioncode']) {
+                                    $label .= ($label?'-':'') . $collArr['collectioncode'];
+                                }
+                                if($label) {
+                                    echo $label;
                                 }
 							}
 							?>

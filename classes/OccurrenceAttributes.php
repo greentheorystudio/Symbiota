@@ -569,7 +569,7 @@ class OccurrenceAttributes extends Manager {
 		}
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->collid] = $r->collectionname.' ('.$r->instcode.')';
+			$retArr[$r->collid] = $r->collectionname.($r->instcode?' ('.$r->instcode.')':'');
 		}
 		$rs->free();
 		return $retArr;

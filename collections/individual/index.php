@@ -319,12 +319,18 @@ if($fullWindow){
                         <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo (strncmp($collMetadata['icon'], 'images', 6) === 0 ?'../../':'').$collMetadata['icon']; ?>'/><br/>
                         <?php
                     }
-                    echo $collMetadata['institutioncode'];
-                    if(isset($collMetadata['collectioncode'])){
-                        echo (strlen($collMetadata['institutioncode'])<7?' : ':'<br/>').$collMetadata['collectioncode'];
+                    $collCode = '';
+                    if($collMetadata['institutioncode']){
+                        $collCode .= $collMetadata['institutioncode'];
                     }
-                    elseif(!isset($occArr['secondaryinstcode']) && isset($occArr['secondarycollcode'])){
-                        echo (strlen($collMetadata['institutioncode'])<7?' : ':'<br/>').$occArr['secondarycollcode'];
+                    if($collMetadata['collectioncode']){
+                        $collCode .= (($collCode && strlen($collCode) < 7)?' : ':'<br/>') . $collMetadata['collectioncode'];
+                    }
+                    elseif(!$occArr['secondaryinstcode'] && $occArr['secondarycollcode']){
+                        $collCode .= (($collCode && strlen($collCode) < 7)?' : ':'<br/>') . $occArr['secondarycollcode'];
+                    }
+                    if($collCode){
+                        echo $collCode;
                     }
                     if($occArr['secondaryinstcode']){
                         echo '<div>';
@@ -1109,8 +1115,15 @@ if($fullWindow){
                             $innerDupArr = $dArr['o'];
                             foreach($innerDupArr as $dupOccid => $dupArr){
                                 if($dupOccid !== $occid){
+                                    $collCode = '';
+                                    if($dupArr['instcode']){
+                                        $collCode .= $dupArr['instcode'];
+                                    }
+                                    if($dupArr['collcode']){
+                                        $collCode .= ($collCode?':':'') . $dupArr['collcode'];
+                                    }
                                     echo '<div style="clear:both;margin:15px;">';
-                                    echo '<div style="font-weight:bold;font-size:120%;">'.$dupArr['collname'].' ('.$dupArr['instcode'].($dupArr['collcode']?':'.$dupArr['collcode']:'').')</div>';
+                                    echo '<div style="font-weight:bold;font-size:120%;">'.$dupArr['collname'].($collCode?' ('.$collCode.')':'').'</div>';
                                     echo '<div style="float:left;margin:5px 15px">';
                                     if($dupArr['recordedby']) {
                                         echo '<div>' . $dupArr['recordedby'] . ' ' . $dupArr['recordnumber'] . '<span style="margin-left:40px;">' . $dupArr['eventdate'] . '</span></div>';

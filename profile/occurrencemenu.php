@@ -30,7 +30,14 @@ foreach($collArr as $id => $collectionArr){
             echo '<div style="margin:40px 15px;font-weight:bold">You do not yet have management permissions for any occurrence projects</div>';
         }
         foreach($genArr as $collId => $secArr){
-            $cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
+            $collCode = '';
+            if($secArr['institutioncode']){
+                $collCode .= $secArr['institutioncode'];
+            }
+            if($secArr['collectioncode']){
+                $collCode .= ($collCode?'-':'') . $secArr['collectioncode'];
+            }
+            $cName = $secArr['collectionname'].($collCode?' ('.$collCode.')':'');
             ?>
             <fieldset>
                 <legend><?php echo $cName; ?></legend>
@@ -99,7 +106,14 @@ foreach($collArr as $id => $collectionArr){
                 <ul>
                     <?php
                     foreach($cArr as $collId => $secArr){
-                        $cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
+                        $collCode = '';
+                        if($secArr['institutioncode']){
+                            $collCode .= $secArr['institutioncode'];
+                        }
+                        if($secArr['collectioncode']){
+                            $collCode .= ($collCode?'-':'') . $secArr['collectioncode'];
+                        }
+                        $cName = $secArr['collectionname'].($collCode?' ('.$collCode.')':'');
                         echo '<li><a href="../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">'.$cName.'</a></li>';
                     }
                     ?>
@@ -114,7 +128,14 @@ foreach($collArr as $id => $collectionArr){
                 <ul>
                     <?php
                     foreach($oArr as $collId => $secArr){
-                        $cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
+                        $collCode = '';
+                        if($secArr['institutioncode']){
+                            $collCode .= $secArr['institutioncode'];
+                        }
+                        if($secArr['collectioncode']){
+                            $collCode .= ($collCode?'-':'') . $secArr['collectioncode'];
+                        }
+                        $cName = $secArr['collectionname'].($collCode?' ('.$collCode.')':'');
                         echo '<li><a href="../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">'.$cName.'</a></li>';
                     }
                     ?>
@@ -132,7 +153,14 @@ foreach($collArr as $id => $collectionArr){
                     <ul>
                         <?php
                         foreach($genAdminArr as $id => $secArr){
-                            $cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
+                            $collCode = '';
+                            if($secArr['institutioncode']){
+                                $collCode .= $secArr['institutioncode'];
+                            }
+                            if($secArr['collectioncode']){
+                                $collCode .= ($collCode?'-':'') . $secArr['collectioncode'];
+                            }
+                            $cName = $secArr['collectionname'].($collCode?' ('.$collCode.')':'');
                             echo '<li><a href="../collections/misc/collprofiles.php?collid='.$id.'&emode=1">'.$cName.'</a></li>';
                         }
                         ?>

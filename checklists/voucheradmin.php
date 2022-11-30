@@ -301,7 +301,7 @@ if($clid && $isEditor){
                                                         echo $oArr['eventdate'] . '<br/>';
                                                     }
 													echo '<a href="../collections/individual/index.php?occid='.$occid.'" target="_blank">';
-													echo $oArr['collcode'];
+                                                    echo $oArr['collcode'] ?: 'Full Record Details';
 													echo '</a>';
 													echo '</td>';
 													echo '<td>'.$oArr['locality'].'</td>';

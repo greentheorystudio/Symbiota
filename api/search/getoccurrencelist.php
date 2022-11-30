@@ -86,7 +86,7 @@ $htmlStr .= '</div>';
 $htmlStr .= '<div style="clear:both;"></div>';
 $lastPage = (int)($collManager->getRecordCnt() / $cntPerPage) + 1;
 $startPage = ($pageNumber > 4?$pageNumber - 4:1);
-$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
+$endPage = (min($lastPage, $startPage + 9));
 $paginationStr = '<div><div style="clear:both;"><hr/></div>';
 $pageBar = '';
 if($lastPage > $startPage){
@@ -104,7 +104,7 @@ if($lastPage > $startPage){
         }
     }
     if(($lastPage - $startPage) >= 10){
-        $pageBar .= "<span class='pagination' style='margin-left:5px;'><a href='' onclick='setOccurrenceList(".(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)).");return false;'>&gt;&gt;</a></span>";
+        $pageBar .= "<span class='pagination' style='margin-left:5px;'><a href='' onclick='setOccurrenceList(".(min(($pageNumber + 10), $lastPage)).");return false;'>&gt;&gt;</a></span>";
         $pageBar .= "<span class='pagination' style='margin-left:5px;'><a href='' onclick='setOccurrenceList(".$lastPage.");return false;'>Last</a></span>";
     }
     $pageBar .= '</div><div style="float:right;margin:5px;">';
@@ -171,9 +171,12 @@ if($occurArr){
             $htmlStr .= '<a href="misc/collprofiles.php?collid='.$collId.'">'.$fieldArr['collectionname'].'</a>';
             $htmlStr .= '</h2><hr /></td></tr>';
         }
-        $instCode = $fieldArr['institutioncode'];
+        $instCode = '';
+        if($fieldArr['institutioncode']){
+            $instCode .= $fieldArr['institutioncode'];
+        }
         if($fieldArr['collectioncode']) {
-            $instCode .= ':' . $fieldArr['collectioncode'];
+            $instCode .= ($instCode?':':'') . $fieldArr['collectioncode'];
         }
         $htmlStr .= '<tr><td style="width:60px;vertical-align:top;text-align:center;">';
         $htmlStr .= '<a href="misc/collprofiles.php?collid='.$collId.'">';
@@ -182,9 +185,11 @@ if($occurArr){
             $htmlStr .= '<img align="bottom" src="'.$icon.'" style="width:35px;border:0px;" />';
         }
         $htmlStr .= '</a>';
-        $htmlStr .= '<div style="font-weight:bold;font-size:75%;">';
-        $htmlStr .= $instCode;
-        $htmlStr .= '</div>';
+        if($instCode){
+            $htmlStr .= '<div style="font-weight:bold;font-size:75%;">';
+            $htmlStr .= $instCode;
+            $htmlStr .= '</div>';
+        }
         $htmlStr .= '<div style="margin-top:10px"><span class="dataset-div checkbox-elem" style="display:none;"><input name="occid[]" type="checkbox" value="'.$occid.'" /></span></div>';
         $htmlStr .= '</td><td>';
         if($isEditor || ($GLOBALS['SYMB_UID'] && $GLOBALS['SYMB_UID'] === $fieldArr['observeruid'])){
@@ -248,7 +253,7 @@ if($occurArr){
     $htmlStr .= "<input id='specoccjson' type='hidden' value='".$specOccJson."' />";
     $htmlStr .= '</table>';
     $htmlStr .= '</form>';
-    $htmlStr .= $paginationStr.'<hr/>';
+    $htmlStr .= $paginationStr;
 }
 else{
     $htmlStr .= '<div><h3>Your query did not return any results. Please modify your query parameters</h3>';
