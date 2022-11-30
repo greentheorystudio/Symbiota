@@ -82,7 +82,14 @@ if($GLOBALS['SYMB_UID']){
 			?>
 			<div id="titleDiv">
 				<?php
-				echo $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')';
+                $code = '';
+                if($collMap['institutioncode']){
+                    $code .= $collMap['institutioncode'];
+                }
+                if($collMap['collectioncode']){
+                    $code .= ($code?':':'') . $collMap['collectioncode'];
+                }
+                echo $collMap['collectionname'].($code?' ('.$code.')':'');
 				?>
 			</div>
 			<div class='navpath'>

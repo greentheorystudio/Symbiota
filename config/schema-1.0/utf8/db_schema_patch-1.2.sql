@@ -595,7 +595,7 @@ WHERE ISNULL(t.TID);
 ALTER TABLE `omoccurrences`
     CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`,
     CHANGE COLUMN `scientificName` `verbatimScientificName` varchar(255) NULL DEFAULT NULL AFTER `family`,
-    ADD INDEX `Index_ verbatimScientificName`(`verbatimScientificName`);
+    ADD INDEX `Index_verbatimScientificName`(`verbatimScientificName`);
 
 UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName
     SET o.tid = t.TID
@@ -618,7 +618,7 @@ ALTER TABLE `taxa`
     ADD COLUMN `tidaccepted` int(10) UNSIGNED NULL AFTER `Author`,
     ADD COLUMN `parenttid` int(10) UNSIGNED NULL AFTER `tidaccepted`,
     ADD COLUMN `family` varchar(50) NULL AFTER `parenttid`,
-    ADD CONSTRAINT `FK_kingdom_id` FOREIGN KEY (`kingdomId`) REFERENCES `symbiota`.`taxonkingdoms` (`kingdom_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+    ADD CONSTRAINT `FK_kingdom_id` FOREIGN KEY (`kingdomId`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE `taxa`
     DROP COLUMN `kingdomName`,
@@ -639,3 +639,9 @@ UPDATE taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid
 ALTER TABLE `uploadspectemp`
     CHANGE COLUMN `tidinterpreted` `tid` int(10) UNSIGNED NULL DEFAULT NULL AFTER `sciname`,
     CHANGE COLUMN `scientificName` `verbatimScientificName` varchar(255) NULL DEFAULT NULL AFTER `family`;
+
+ALTER TABLE `omcollections`
+    MODIFY COLUMN `InstitutionCode` varchar(45) NULL AFTER `CollID`;
+
+ALTER TABLE `institutions`
+    MODIFY COLUMN `InstitutionCode` varchar(45) NULL AFTER `iid`;

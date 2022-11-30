@@ -114,10 +114,7 @@ class OccurrenceEditorMedia extends OccurrenceEditorManager {
     {
 		$medManager = new MediaShared();
 		
-		$subTargetPath = $this->collMap['institutioncode'];
-		if($this->collMap['collectioncode']) {
-            $subTargetPath .= '_' . $this->collMap['collectioncode'];
-        }
+		$subTargetPath = $this->collId;
 		$subTargetPath .= '/';
 		if(!$this->occurrenceMap) {
             $this->setOccurArr();

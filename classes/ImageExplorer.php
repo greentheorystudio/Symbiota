@@ -151,8 +151,7 @@ class ImageExplorer{
 
 		$sqlStr = 'SELECT DISTINCT i.imgid, t.tidaccepted, i.url, i.thumbnailurl, i.originalurl, '.
 			'u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS photographer, i.caption, '.
-			'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) AS instcode, '.
-			'i.initialtimestamp '.
+			'o.occid, o.stateprovince, o.catalognumber, i.initialtimestamp '.
 			'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
 			'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
 			'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.

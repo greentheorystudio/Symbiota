@@ -100,17 +100,8 @@ if($collid){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/external/tiny_mce/tiny_mce.js"></script>
     <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script>
-        tinyMCE.init({
-            mode : "textareas",
-            theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
-            theme_advanced_buttons2 : "",
-            theme_advanced_buttons3 : "",
-            valid_elements: "*[*]"
-        });
-
         $(document).ready(function() {
             const dialogArr = ["instcode", "collcode", "pedits", "pubagg", "rights", "rightsholder", "accessrights", "guid", "colltype", "management", "icon", "collectionguid", "sourceurl", "sort", "collectionid"];
             let dialogStr = "";
@@ -142,11 +133,7 @@ if($collid){
         }
 
 		function verifyCollEditForm(f){
-			if(f.institutioncode.value === ''){
-				alert("Institution Code must have a value");
-				return false;
-			}
-			else if(f.collectionname.value === ''){
+			if(f.collectionname.value === ''){
 				alert("Collection Name must have a value");
 				return false;
 			}
@@ -269,7 +256,7 @@ if($collid){
             <?php
             if($isEditor){
                 if($collid){
-                    echo '<h1>'.$collData['collectionname'].(array_key_exists('institutioncode',$collData)?' ('.$collData['institutioncode'].')':'').'</h1>';
+                    echo '<h1>'.$collData['collectionname'].($collData['institutioncode']?' ('.$collData['institutioncode'].')':'').'</h1>';
                 }
                 ?>
                 <div id="colledit">
@@ -284,7 +271,7 @@ if($collid){
                                         <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
 									<span id="instcodeinfodialog">
-										The name (or acronym) in use by the institution having custody of the occurrence records. This field is required.
+										The name (or acronym) in use by the institution having custody of the occurrence records.
                                         For more details, see <a href="https://dwc.tdwg.org/terms/#institutionCode" target="_blank">Darwin Core definition</a>
 									</span>
 								</span>
@@ -297,7 +284,7 @@ if($collid){
                                         <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
 									<span id="collcodeinfodialog">
-										The name, acronym, or code identifying the collection or data set from which the record was derived. This field is optional.
+										The name, acronym, or code identifying the collection or data set from which the record was derived.
                                         For more details, see <a href="https://dwc.tdwg.org/terms/#collectionCode" target="_blank">Darwin Core definition</a>.
 									</span>
 								</span>

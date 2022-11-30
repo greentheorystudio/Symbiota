@@ -345,7 +345,14 @@ class OccurrenceDataset {
             if(!$this->collArr) {
                 $this->setCollMetadata($collId);
             }
-            $collName = $this->collArr['collname'].' ('.$this->collArr['instcode'].($this->collArr['collcode']?':'.$this->collArr['collcode']:'').')';
+            $collCode = '';
+            if($this->collArr['instcode']){
+                $collCode .= $this->collArr['instcode'];
+            }
+            if($this->collArr['collcode']){
+                $collCode .= ($collCode?':':'') . $this->collArr['collcode'];
+            }
+            $collName = $this->collArr['collname'].($collCode?' ('.$collCode.')':'');
         }
         return $collName;
     }

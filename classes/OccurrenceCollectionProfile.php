@@ -279,7 +279,7 @@ class OccurrenceCollectionProfile {
 			$indUrl = Sanitizer::cleanInStr($this->conn,$postArr['individualurl']);
 
 			$sql = 'UPDATE omcollections '.
-				'SET institutioncode = "'.$instCode.'",'.
+				'SET institutioncode = '.($instCode?'"'.$instCode.'"':'NULL').','.
 				'collectioncode = '.($collCode?'"'.$collCode.'"':'NULL').','.
                 'collectionid = '.($collGUID?'"'.$collGUID.'"':'NULL').','.
 				'collectionname = "'.$coleName.'",'.
@@ -332,7 +332,8 @@ class OccurrenceCollectionProfile {
 		return $status;
 	}
 
-    public function submitCollAdd($postArr){
+    public function submitCollAdd($postArr): string
+    {
 		$instCode = Sanitizer::cleanInStr($this->conn,$postArr['institutioncode']);
 		$collCode = Sanitizer::cleanInStr($this->conn,$postArr['collectioncode']);
         $collGUID = Sanitizer::cleanInStr($this->conn,$postArr['collectionid']);
@@ -368,7 +369,7 @@ class OccurrenceCollectionProfile {
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
             'guidtarget,rights,rightsholder,accessrights,icon,'.
 			'managementtype,colltype,collectionguid,individualurl,sortseq) '.
-			'VALUES ("'.$instCode.'",'.
+			'VALUES ('.($instCode?'"'.$instCode.'"':'NULL').',"'.
 			($collCode?'"'.$collCode.'"':'NULL').',"'.
 			$coleName.'",'.
 			($fullDesc?'"'.$fullDesc.'"':'NULL').','.
@@ -428,7 +429,6 @@ class OccurrenceCollectionProfile {
 		if($p = strrpos($fileName, '.')) {
 			$imgExt = strtolower(substr($fileName, $p));
 		}
-		$fileName = strtolower($_REQUEST['institutioncode'].($_REQUEST['collectioncode']?'-'.$_REQUEST['collectioncode']:''));
 		$fileName = str_replace(array('%20', '%23', ' ', '__'), '_',$fileName);
 		if(strlen($fileName) > 30) {
 			$fileName = substr($fileName, 0, 30);
@@ -1011,7 +1011,7 @@ class OccurrenceCollectionProfile {
 	public function getYearStatsDataArr($collId,$days): array
 	{
 		$statArr = array();
-		$sql = 'SELECT CONCAT_WS("-",c.institutioncode,c.collectioncode) as collcode, c.collectionname '.
+		$sql = 'SELECT c.collid, c.collectionname '.
 			'FROM omoccurrences AS o INNER JOIN omcollections AS c ON o.collid = c.collid '.
 			'LEFT JOIN images AS i ON o.occid = i.occid '.
 			'WHERE o.collid in('.$collId.') AND ((o.dateLastModified IS NOT NULL AND datediff(curdate(), o.dateLastModified) < '.$days.') OR (datediff(curdate(), i.InitialTimeStamp) < '.$days.')) '.
@@ -1019,11 +1019,10 @@ class OccurrenceCollectionProfile {
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$statArr[$r->collcode]['collcode'] = $r->collcode;
-			$statArr[$r->collcode]['collectionname'] = $r->collectionname;
+			$statArr[$r->collid]['collectionname'] = $r->collectionname;
 		}
 
-		$sql = 'SELECT CONCAT_WS("-",c.institutioncode,c.collectioncode) as collcode, CONCAT_WS("-",year(o.dateEntered),month(o.dateEntered)) as dateEntered, '.
+		$sql = 'SELECT c.collid, CONCAT_WS("-",year(o.dateEntered),month(o.dateEntered)) as dateEntered, '.
 			'c.collectionname, month(o.dateEntered) as monthEntered, year(o.dateEntered) as yearEntered, COUNT(o.occid) AS speccnt '.
 			'FROM omoccurrences AS o INNER JOIN omcollections AS c ON o.collid = c.collid '.
 			'WHERE o.collid in('.$collId.') AND o.dateEntered IS NOT NULL AND datediff(curdate(), o.dateEntered) < '.$days.' '.
@@ -1031,10 +1030,10 @@ class OccurrenceCollectionProfile {
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$statArr[$r->collcode]['stats'][$r->dateEntered]['speccnt'] = $r->speccnt;
+			$statArr[$r->collid]['stats'][$r->dateEntered]['speccnt'] = $r->speccnt;
 		}
 
-		$sql = 'SELECT CONCAT_WS("-",c.institutioncode,c.collectioncode) as collcode, CONCAT_WS("-",year(o.dateLastModified),month(o.dateLastModified)) as dateEntered, '.
+		$sql = 'SELECT c.collid, CONCAT_WS("-",year(o.dateLastModified),month(o.dateLastModified)) as dateEntered, '.
 			'c.collectionname, month(o.dateLastModified) as monthEntered, year(o.dateLastModified) as yearEntered, '.
 			'COUNT(CASE WHEN o.processingstatus = "unprocessed" THEN o.occid ELSE NULL END) AS unprocessedCount, '.
 			'COUNT(CASE WHEN o.processingstatus = "stage 1" THEN o.occid ELSE NULL END) AS stage1Count, '.
@@ -1046,13 +1045,13 @@ class OccurrenceCollectionProfile {
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$statArr[$r->collcode]['stats'][$r->dateEntered]['unprocessedCount'] = $r->unprocessedCount;
-			$statArr[$r->collcode]['stats'][$r->dateEntered]['stage1Count'] = $r->stage1Count;
-			$statArr[$r->collcode]['stats'][$r->dateEntered]['stage2Count'] = $r->stage2Count;
-			$statArr[$r->collcode]['stats'][$r->dateEntered]['stage3Count'] = $r->stage3Count;
+			$statArr[$r->collid]['stats'][$r->dateEntered]['unprocessedCount'] = $r->unprocessedCount;
+			$statArr[$r->collid]['stats'][$r->dateEntered]['stage1Count'] = $r->stage1Count;
+			$statArr[$r->collid]['stats'][$r->dateEntered]['stage2Count'] = $r->stage2Count;
+			$statArr[$r->collid]['stats'][$r->dateEntered]['stage3Count'] = $r->stage3Count;
 		}
 
-		$sql2 = 'SELECT CONCAT_WS("-",c.institutioncode,c.collectioncode) as collcode, CONCAT_WS("-",year(i.InitialTimeStamp),month(i.InitialTimeStamp)) as dateEntered, '.
+		$sql2 = 'SELECT c.collid, CONCAT_WS("-",year(i.InitialTimeStamp),month(i.InitialTimeStamp)) as dateEntered, '.
 			'c.collectionname, month(i.InitialTimeStamp) as monthEntered, year(i.InitialTimeStamp) as yearEntered, '.
 			'COUNT(i.imgid) AS imgcnt '.
 			'FROM omoccurrences AS o INNER JOIN omcollections AS c ON o.collid = c.collid '.
@@ -1062,10 +1061,10 @@ class OccurrenceCollectionProfile {
 		//echo $sql2;
 		$rs = $this->conn->query($sql2);
 		while($r = $rs->fetch_object()){
-			$statArr[$r->collcode]['stats'][$r->dateEntered]['imgcnt'] = $r->imgcnt;
+			$statArr[$r->collid]['stats'][$r->dateEntered]['imgcnt'] = $r->imgcnt;
 		}
 
-		$sql3 = 'SELECT CONCAT_WS("-",c.institutioncode,c.collectioncode) as collcode, CONCAT_WS("-",year(e.InitialTimeStamp),month(e.InitialTimeStamp)) as dateEntered, '.
+		$sql3 = 'SELECT c.collid, CONCAT_WS("-",year(e.InitialTimeStamp),month(e.InitialTimeStamp)) as dateEntered, '.
 			'c.collectionname, month(e.InitialTimeStamp) as monthEntered, year(e.InitialTimeStamp) as yearEntered, '.
 			'COUNT(DISTINCT e.occid) AS georcnt '.
 			'FROM omoccurrences AS o INNER JOIN omcollections AS c ON o.collid = c.collid '.
@@ -1077,7 +1076,7 @@ class OccurrenceCollectionProfile {
 		//echo $sql2;
 		$rs = $this->conn->query($sql3);
 		while($r = $rs->fetch_object()){
-			$statArr[$r->collcode]['stats'][$r->dateEntered]['georcnt'] = $r->georcnt;
+			$statArr[$r->collid]['stats'][$r->dateEntered]['georcnt'] = $r->georcnt;
 		}
 		$rs->free();
 
@@ -1121,7 +1120,7 @@ class OccurrenceCollectionProfile {
       	'ORDER BY institutionname,institutioncode ';
     	$rs = $this->conn->query($sql);
     	while($r = $rs->fetch_object()){
-    		$retArr[$r->iid] = $r->institutionname.' ('.$r->institutioncode.')';
+    		$retArr[$r->iid] = $r->institutionname.($r->institutioncode?' ('.$r->institutioncode.')':'');
     	}
     	return $retArr;
     }

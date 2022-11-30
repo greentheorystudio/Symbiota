@@ -33,7 +33,7 @@ class ImageCleaner extends Manager{
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$id = $r->collid;
-			$name = $r->collectionname.' ('.$r->collcode.')';
+			$name = $r->collectionname.($r->collcode?' ('.$r->collcode.')':'');
 			if(!$id){
 				$id = 0;
 				$name = 'Field images (not linked to occurrences)';
