@@ -110,7 +110,7 @@ elseif($action === 'listdupsrecordedby'){
 
 	<div id="innertext" style="background-color:white;">
 		<?php
-		echo '<h2>'.$collMap['collectionname'].' ('.$collMap['code'].')</h2>';
+        echo '<h2>'.$collMap['collectionname'].($collMap['code']?' ('.$collMap['code'].')':'').'</h2>';
 		if($isEditor){
 			if($action === 'listdupscatalog' || $action === 'listdupsothercatalog' || $action === 'listdupsrecordedby'){
 				if($dupArr){

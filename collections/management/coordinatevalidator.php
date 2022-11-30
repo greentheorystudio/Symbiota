@@ -72,7 +72,7 @@ if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
 			<hr/>
 			<?php
 		}
-		echo '<h2>'.$collMap['collectionname'].' ('.$collMap['code'].')</h2>';
+        echo '<h2>'.$collMap['collectionname'].($collMap['code']?' ('.$collMap['code'].')':'').'</h2>';
 		if($isEditor){
 			?>
 			<div style="margin:15px">

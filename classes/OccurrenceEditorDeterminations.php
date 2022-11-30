@@ -398,7 +398,14 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 	
 	public function getCollName(): string
 	{
-		return $this->collMap['collectionname'].' ('.$this->collMap['institutioncode'].($this->collMap['collectioncode']?':'.$this->collMap['collectioncode']:'').')';
+		$code = '';
+        if($this->collMap['institutioncode']){
+            $code .= $this->collMap['institutioncode'];
+        }
+        if($this->collMap['collectioncode']){
+            $code .= ($code?':':'') . $this->collMap['collectioncode'];
+        }
+        return $this->collMap['collectionname'].($code?' ('.$code.')':'');
 	}
 
 }

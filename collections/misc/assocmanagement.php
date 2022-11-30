@@ -75,7 +75,18 @@ if($GLOBALS['SYMB_UID']){
 							$statArr = $assocHandler->getParsingStats($collid);
 							echo '<div style="margin:10px 0;font-weight:bold;font-size:120%;">';
 							if($collmeta){
-								echo $collmeta['collname'].' ('.$collmeta['instcode'].($collmeta['collcode']?'-'.$collmeta['instcode']:'').')';
+								$code = '';
+                                $label = $collmeta['collname'];
+                                if($collmeta['instcode']){
+                                    $code .= $collmeta['instcode'];
+                                }
+                                if($collmeta['collcode']){
+                                    $code .= ($code?'-':'') . $collmeta['collcode'];
+                                }
+                                if($code){
+                                    $label .= ' (' . $collmeta['collname'] . ')';
+                                }
+                                echo $label;
 							}
 							else{
 								echo 'All Collections';

@@ -751,12 +751,19 @@ class OccurrenceLabel{
 
     public function getCollName(): string
     {
-        return $this->collArr['collname'].' ('.$this->collArr['instcode'].($this->collArr['collcode']?':'.$this->collArr['collcode']:'').')';
+        $collCode = '';
+        if($this->collArr['instcode']){
+            $collCode .= $this->collArr['instcode'];
+        }
+        if($this->collArr['collcode']){
+            $collCode .= ($collCode?':':'') . $this->collArr['collcode'];
+        }
+        return $this->collArr['collname'].($collCode?' ('.$collCode.')':'');
     }
 
     public function getAnnoCollName(): string
     {
-        return $this->collArr['collname'].' ('.$this->collArr['instcode'].')';
+        return $this->collArr['collname'].($this->collArr['instcode']?' ('.$this->collArr['instcode'].')':'');
     }
 
     public function getMetaDataTerm($key){
