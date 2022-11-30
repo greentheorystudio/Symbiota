@@ -483,7 +483,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
 			$collArr = array_merge($collArr, explode(',', $this->collid));
 		}
 		$sql = 'SELECT collid, CONCAT_WS("-",institutioncode, collectioncode) AS code, collectionname, icon, colltype, managementtype FROM omcollections '.
-			'WHERE colltype IN("Preserved Specimens","Observations") AND collid IN('.implode(',', $collArr).') '.
+			'WHERE collid IN('.implode(',', $collArr).') '.
 			'ORDER BY collectionname, collectioncode ';
 		//echo $sql;
 		$rs = $this->conn->query($sql);

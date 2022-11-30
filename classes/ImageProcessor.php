@@ -55,10 +55,7 @@ class ImageProcessor {
                 throw new RuntimeException(sprintf('Directory "%s" was not created', $GLOBALS['LOG_PATH']));
             }
             if(file_exists($GLOBALS['LOG_PATH'])){
-                $logFile = $GLOBALS['LOG_PATH'].$this->collid.'_'.$this->collArr['instcode'];
-                if($this->collArr['collcode']) {
-                    $logFile .= '-' . $this->collArr['collcode'];
-                }
+                $logFile = $GLOBALS['LOG_PATH'].$this->collid;
                 $logFile .= '_'.date('Y-m-d').'.log';
                 $this->logFH = fopen($logFile, 'ab');
             }

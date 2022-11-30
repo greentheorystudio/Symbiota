@@ -104,10 +104,21 @@ class ImageLibraryManager{
     public function getCollectionImageList(): array
     {
         $stagingArr = array();
-        $sql = 'SELECT collid, CONCAT(collectionname, " (", CONCAT_WS("-",institutioncode,collectioncode),")") as collname, colltype FROM omcollections ORDER BY collectionname';
+        $sql = 'SELECT collid, collectionname, institutioncode, collectioncode, colltype FROM omcollections ORDER BY collectionname';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
-            $stagingArr[$r->collid]['name'] = $r->collname;
+            $collCode = '';
+            $collName = $r->collectionname;
+            if($r->institutioncode){
+                $collCode .= $r->institutioncode;
+            }
+            if($r->collectioncode){
+                $collCode .= ($collCode?'-':'') . $r->collectioncode;
+            }
+            if($collCode){
+                $collName .= ' (' . $collCode . ')';
+            }
+            $stagingArr[$r->collid]['name'] = $collName;
             $stagingArr[$r->collid]['type'] = (strpos($r->colltype,'Observations') !== false?'obs':'coll');
         }
         $rs->free();

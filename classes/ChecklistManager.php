@@ -254,7 +254,9 @@ class ChecklistManager {
                         else {
                             $collector .= ' ' . $row->eventdate;
                         }
-                        $collector .= ' ['.$row->institutioncode.']';
+                        if($row->institutioncode){
+                            $collector .= ' ['.$row->institutioncode.']';
+                        }
                         $this->voucherArr[$row->tid][$row->occid] = $collector;
                     }
                     $vResult->close();
