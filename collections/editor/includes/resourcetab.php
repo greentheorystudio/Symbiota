@@ -170,10 +170,17 @@ if($userChecklists || $checklistArr){
 					$innerDupArr = $dupArr['o'];
 					foreach($innerDupArr as $dupeOccid => $dArr){
 						if($occid !== $dupeOccid){
-							?>
+							$collCode = '';
+                            if($dArr['instcode']){
+                                $collCode .= $dArr['instcode'];
+                            }
+                            if($dArr['collcode']){
+                                $collCode .= ($collCode?':':'') . $dArr['collcode'];
+                            }
+                            ?>
 							<div id="dupediv-<?php echo $dupeOccid; ?>" style="clear:both;margin:15px;">
 								<div style="font-weight:bold;font-size:120%;">
-									<?php echo $dArr['collname'].' ('.$dArr['instcode'].($dArr['collcode']?':'.$dArr['collcode']:'').')'; ?>
+									<?php echo $dArr['collname'].($collCode?' ('.$collCode.')':''); ?>
 								</div>
 								<div style="float:right;">
 									<button name="unlinkdupebut" onclick="deleteDuplicateLink(<?php echo $dupid.','.$dupeOccid; ?>)">Unlink</button>

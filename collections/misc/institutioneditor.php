@@ -557,7 +557,7 @@ include(__DIR__ . '/../../header.php');
                     if($instList){
                         foreach($instList as $iid => $iArr){
                             echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
-                            echo $iArr['institutionname'].' ('.$iArr['institutioncode'].')';
+                            echo $iArr['institutionname'].($iArr['institutioncode']?' ('.$iArr['institutioncode'].')':'');
                             if($editorCode === 3 || array_intersect(explode(',',$iArr['collid']),$GLOBALS['USER_RIGHTS']['CollAdmin'])){
                                 echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><i style="height:15px;width:15px;" title="Edit Institution" class="far fa-edit"></i></a>';
                             }

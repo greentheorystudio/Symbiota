@@ -779,12 +779,14 @@ class OccurrenceManager{
                                                     <div class="collectiontitle">
                                                         <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'>
                                                             <?php
-                                                            $codeStr = ' ('.$collName2['instcode'];
-                                                            if($collName2['collcode']) {
-                                                                $codeStr .= '-' . $collName2['collcode'];
+                                                            $codeStr = '';
+                                                            if($collName2['instcode']){
+                                                                $codeStr .= $collName2['instcode'];
                                                             }
-                                                            $codeStr .= ')';
-                                                            echo $collName2['collname'].$codeStr;
+                                                            if($collName2['collcode']) {
+                                                                $codeStr .= ($codeStr?'-':'') . $collName2['collcode'];
+                                                            }
+                                                            echo $collName2['collname'].($codeStr?' ('.$codeStr.')':'');
                                                             ?>
                                                         </a>
                                                     </div>
@@ -841,7 +843,7 @@ class OccurrenceManager{
                                                 </td>
                                                 <td style="padding:6px;">
                                                     <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
-                                                        <?php echo $collName2['collname']. ' (' .$collName2['instcode']. ')'; ?>
+                                                        <?php echo $collName2['collname'].($collName2['instcode']?' (' .$collName2['instcode']. ')':''); ?>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -885,12 +887,14 @@ class OccurrenceManager{
                                 <div class="collectiontitle">
                                     <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'>
                                         <?php
-                                        $codeStr = ' ('.$cArr['instcode'];
-                                        if($cArr['collcode']) {
-                                            $codeStr .= '-' . $cArr['collcode'];
+                                        $codeStr = '';
+                                        if($cArr['instcode']){
+                                            $codeStr .= $cArr['instcode'];
                                         }
-                                        $codeStr .= ')';
-                                        echo $cArr['collname'].$codeStr;
+                                        if($cArr['collcode']) {
+                                            $codeStr .= ($codeStr?'-':'') . $cArr['collcode'];
+                                        }
+                                        echo $cArr['collname'].($codeStr?' ('.$codeStr.')':'');
                                         ?>
                                     </a>
                                 </div>
@@ -918,7 +922,7 @@ class OccurrenceManager{
                             </td>
                             <td style="padding:6px">
                                 <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
-                                    <?php echo $cArr['collname']. ' (' .$cArr['instcode']. ')'; ?>
+                                    <?php echo $cArr['collname'].($cArr['instcode']?' (' .$cArr['instcode']. ')':''); ?>
                                 </a>
                             </td>
                         </tr>
@@ -1000,11 +1004,16 @@ class OccurrenceManager{
         else{
             $cArr = explode(';',$this->searchTermsArr['db']);
             if($cArr){
-                $sql = 'SELECT collid, CONCAT_WS("-",institutioncode,collectioncode) as instcode '.
+                $sql = 'SELECT collid, collectionname, CONCAT_WS("-",institutioncode,collectioncode) as instcode '.
                     'FROM omcollections WHERE collid IN('.$cArr[0].') ORDER BY institutioncode,collectioncode';
                 $rs = $this->conn->query($sql);
                 while($r = $rs->fetch_object()){
-                    $retStr .= '; '.$r->instcode;
+                    if($r->instcode){
+                        $retStr .= '; '.$r->instcode;
+                    }
+                    else{
+                        $retStr .= '; '.$r->collectionname;
+                    }
                 }
                 $rs->free();
             }

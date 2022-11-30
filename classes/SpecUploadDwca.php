@@ -19,7 +19,7 @@ class SpecUploadDwca extends SpecUploadBase{
 
     public function uploadFile(): string
     {
-        $localFolder = $this->collMetadataArr['institutioncode'].($this->collMetadataArr['collectioncode']?$this->collMetadataArr['collectioncode'].'_':'').time();
+        $localFolder = $this->collMetadataArr['collid'].'_'.time();
         if (!mkdir($concurrentDirectory = $this->uploadTargetPath . $localFolder) && !is_dir($concurrentDirectory)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
@@ -417,11 +417,14 @@ class SpecUploadDwca extends SpecUploadBase{
                     if(!isset($this->fieldMap['dbpk']['field']) || !in_array($this->fieldMap['dbpk']['field'], $this->sourceArr, true)){
                         $this->fieldMap['dbpk']['field'] = strtolower($this->metaArr['occur']['fields'][$id]);
                     }
-                    $collName = $this->collMetadataArr['name'].' ('.$this->collMetadataArr['institutioncode'];
-                    if($this->collMetadataArr['collectioncode']) {
-                        $collName .= '-' . $this->collMetadataArr['collectioncode'];
+                    $collCode = '';
+                    if($this->collMetadataArr['institutioncode']){
+                        $collCode .= $this->collMetadataArr['institutioncode'];
                     }
-                    $collName .= ')';
+                    if($this->collMetadataArr['collectioncode']) {
+                        $collCode .= ($collCode?'-':'') . $this->collMetadataArr['collectioncode'];
+                    }
+                    $collName = $this->collMetadataArr['name'].($collCode?' ('.$collCode.')':'');
                     $this->outputMsg('<li>Uploading data for: '.$collName.'</li>');
                     $this->conn->query('SET autocommit=0');
                     $this->conn->query('SET unique_checks=0');

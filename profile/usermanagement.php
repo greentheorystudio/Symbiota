@@ -482,7 +482,16 @@ if($GLOBALS['IS_ADMIN']){
 											<td>
 												<?php 
 												echo $cArr['collectionname'];
-												echo ' ('.$cArr['institutioncode'].($cArr['collectioncode']?'-'.$cArr['collectioncode']:'').')'; 
+                                                $code = '';
+                                                if($cArr['institutioncode']){
+                                                    $code .= $cArr['institutioncode'];
+                                                }
+                                                if($cArr['collectioncode']){
+                                                    $code .= ($code?'-':'') . $cArr['institutioncode'];
+                                                }
+												if($code){
+                                                    echo ' ('.$code.')';
+                                                }
 												?>
 											</td>
 										</tr>
@@ -531,7 +540,16 @@ if($GLOBALS['IS_ADMIN']){
 											<td>
 												<?php 
 												echo $oArr['collectionname'];
-												echo ' ('.$oArr['institutioncode'].($oArr['collectioncode']?'-'.$oArr['collectioncode']:'').')'; 
+                                                $code = '';
+                                                if($oArr['institutioncode']){
+                                                    $code .= $oArr['institutioncode'];
+                                                }
+                                                if($oArr['collectioncode']){
+                                                    $code .= ($code?'-':'') . $oArr['institutioncode'];
+                                                }
+                                                if($code){
+                                                    echo ' ('.$code.')';
+                                                }
 												?>
 											</td>
 										</tr>

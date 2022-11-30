@@ -31,14 +31,18 @@ class OccurrenceEditReview extends Manager{
 				'FROM omcollections WHERE (collid = '.$id.')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$collName = $r->collectionname.' (';
-				$this->collAcronym = $r->institutioncode;
-				$collName .= $r->institutioncode;
+				$code = '';
+                $collName = $r->collectionname;
+				if($r->institutioncode){
+                    $code .= $r->institutioncode;
+                }
 				if($r->collectioncode){
-					$collName .= ':'.$r->collectioncode;
-					$this->collAcronym .= ':'.$r->collectioncode;
+                    $code .= ($code?':':'') . $r->collectioncode;
 				}
-				$collName .= ')';
+                $this->collAcronym = $code;
+				if($code){
+                    $collName .= ' (' . $code . ')';
+                }
 				if($r->colltype === 'General Observations') {
 					$this->obsUid = $GLOBALS['SYMB_UID'];
 				}

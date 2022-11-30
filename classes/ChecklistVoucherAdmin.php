@@ -275,7 +275,7 @@ class ChecklistVoucherAdmin {
 			}
 			if($includeAll === 1 || $includeAll === 2){
 				$sql = 'SELECT DISTINCT cl.tid AS cltid, t.sciname AS clsciname, o.occid, '.
-					'IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
+					'IFNULL(CONCAT_WS("-",c.institutioncode,c.collectioncode,o.catalognumber),"[no catalog number]") AS collcode, '.
 					'o.tid, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
 					'CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
 					'FROM omoccurrences AS o INNER JOIN omcollections AS c ON o.collid = c.collid '.
@@ -305,7 +305,7 @@ class ChecklistVoucherAdmin {
 			}
 			elseif($includeAll === 3){
 				$sql = 'SELECT DISTINCT t.tid AS cltid, t.sciname AS clsciname, o.occid, '.
-					'IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
+					'IFNULL(CONCAT_WS("-",c.institutioncode,c.collectioncode,o.catalognumber),"[no catalog number]") AS collcode, '.
 					'o.tid, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
 					'CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
 					'FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
@@ -359,7 +359,7 @@ class ChecklistVoucherAdmin {
 		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
 			$sqlBase = $this->getMissingTaxaBaseSql($sqlFrag);
-			$sql = 'SELECT DISTINCT o.occid, IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
+			$sql = 'SELECT DISTINCT o.occid, IFNULL(CONCAT_WS("-",c.institutioncode,c.collectioncode,o.catalognumber),"[no catalog number]") AS collcode, '.
 				'o.tid, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
 				'CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
 				$sqlBase.' LIMIT '.($limitIndex?($limitIndex*400).',':'').'400';
@@ -498,7 +498,7 @@ class ChecklistVoucherAdmin {
 	{
 		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
-			$sql = 'SELECT DISTINCT o.occid, IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
+			$sql = 'SELECT DISTINCT o.occid, IFNULL(CONCAT_WS("-",c.institutioncode,c.collectioncode,o.catalognumber),"[no catalog number]") AS collcode, '.
 				'o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
 				'CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
 				$this->getProblemTaxaSql($sqlFrag);
