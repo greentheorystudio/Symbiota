@@ -43,18 +43,18 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>General Cleaning</h3>
-                        <p>The General Cleaning process performs a multiple cleaning actions on the scientific names of occurrence
+                        <p>The General Cleaning process performs multiple cleaning actions on the scientific names of occurrence
                             records that are not linked to the taxonomic thesaurus, including: removing question marks, removing
                             unecessary endings (such as sp. or spp.), removing identification qualifiers (such as cf. or aff.)
                             and moving them to the identification qualifier field, normalizing infraspecific rank abbreviations
                             into universally accepted values, and removing double, leading, and trailing spaces. Any occurrence
-                            record that is edited during any of these actions, outside of removing spaces, will have the original
+                            record that is edited during these actions, outside of removing spaces, will have the original
                             scientific name saved in the verbatim scientific name field before any editing takes place.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>General Cleaning</h3>
                         <h4>Instructions</h4>
-                        <p>As this process does not iterate through a list of names, there is no need to set
+                        <p>As this process does not iterate through a list of scientific names, there is no need to set
                             the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/3">Processing Start Index</a>
                             or <a href="overview.php?collid=<?php echo $collid; ?>#/overview/4">Processing Batch Limit</a> before
                             running it. To run this process simply click on the Start button. Once the process has been started,
@@ -64,21 +64,21 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         <h3>General Cleaning</h3>
                         <h4>Results</h4>
                         <p>An indication of each cleaning action as it is being run, and the amount of occurrence records that
-                            were edited from that action will be displayed in the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/6">Process Display Window</a>.</p>
+                            were edited from that action, will be displayed in the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/6">Process Display Window</a>.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Scientific Name Authorship Cleaning</h3>
                         <p>The Scientific Name Authorship Cleaning process finds and removes the taxonomic author names from
                             the scientific names of occurrence records that are not linked to the taxonomic thesaurus. All occurrence
                             records that are edited during this process will have their original scientific names saved in
-                            the verbatim scientific name field before the editing takes place.</p>
+                            the verbatim scientific name field before editing takes place.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Scientific Name Authorship Cleaning</h3>
                         <h4>Instructions</h4>
-                        <p>As this process iterates through the list of unique scientific names, the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/3">Processing Start Index</a>
+                        <p>As this process iterates through the list of scientific names, the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/3">Processing Start Index</a>
                             and the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/4">Processing Batch Limit</a> can
-                            be set to adjust what scientific name the process starts at, and/or how many scientific names are processed before it completes.
+                            be set to adjust what scientific name the process starts with, and/or how many scientific names are processed before it completes.
                             To run this process click on the Start button. Once the process has been started, the Cancel
                             button can be clicked to stop it before it has completed.</p>
                     </div>
@@ -87,12 +87,12 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         <h4>Results</h4>
                         <p>As this process iterates through the list of unique scientific names, the current name being processed
                             will be displayed in the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/6">Process Display Window</a>.
-                            If a taxonomic author name is detected within the scietific name, the parsed authour, and the cleaned
+                            If a taxonomic author name is detected within the scietific name, the parsed author, and the cleaned
                             scieitific name without the author are displayed below the current name. Occurrence records containing
                             the original scientific name will then be updated with the cleaned scientific name and the amount of
                             occurrence records updated will be displayed below the cleaned scietifc name. Once the process has
                             completed, through either using the Cancel button or letting it run to completion, an Undo button
-                            will activate under the amount of occurrences editied that can be clicked to undo the edits related
+                            will activate under each name edited that can be clicked to undo the edits related
                             that specific name, and revert the occurrence records back to their original scientific name.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
@@ -100,15 +100,15 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         <p>The Set Taxonomic Thesaurus Linkages process attempts to match the scientific names of occurrence
                             records that are not currently linked to the taxonomic thesaurus, to those included within the
                             selected Target Kingdom in the Taxonomic Thesaurus. If a match is found, a linkage is established
-                            in the associated occurrence records with the Taxonomic Thesaurus. This process can also be set to additionally
-                            include the scientific names of occurrence record determinations.</p>
+                            in the associated occurrence records with the Taxonomic Thesaurus. This process can also be set to
+                            include the scientific names of occurrence record determinations as well.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Set Taxonomic Thesaurus Linkages</h3>
                         <h4>Instructions</h4>
                         <p>It is necessary to select a Target Kingdom from the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/2">Target Kingdom Selector</a>
-                            before running this process. Optinally the checkbox can be checked to include determination records
-                            in the processing. As this process does not iterate through a list of names, there is no need to
+                            before running this process. Optionally, the checkbox can be checked to include determination records
+                            in the processing. As this process does not iterate through a list of scientific names, there is no need to
                             set the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/3">Processing Start Index</a>
                             or <a href="overview.php?collid=<?php echo $collid; ?>#/overview/4">Processing Batch Limit</a> before
                             running it. To run the process click on the Start button. Once the process has been started, the
@@ -119,21 +119,21 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         <h4>Results</h4>
                         <p>An indication the process has started will be displayed in the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/6">Process Display Window</a>
                             followed by the amount of occurrence records that had linakges established as a result. If determinations
-                            were set to be included, a similar indicator and result will be displayed for that process following.</p>
+                            were included, a similar indicator and result will be displayed next, for that process.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Update Locality Security Settings</h3>
-                        <p>The Update Locality Security Settings process updates the locality security setting to obscure locality
-                            information for all occurrence records that contain scientific names matching those included the
+                        <p>The Update Locality Security Settings process updates the locality security settings, to obscure locality
+                            information, for all occurrence records that contain scientific names matching those included the
                             the portal's Protected Species list.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Update Locality Security Settings</h3>
                         <h4>Instructions</h4>
-                        <p>As this process does not iterate through a list of names, there is no need to set
+                        <p>As this process does not iterate through a list of scientific names, there is no need to set
                             the <a href="overview.php?collid=<?php echo $collid; ?>#/overview/3">Processing Start Index</a>
                             or <a href="overview.php?collid=<?php echo $collid; ?>#/overview/4">Processing Batch Limit</a> before
-                            running it. To run this process simply click on the Start button. Once the process has been started,
+                            running it. To run this process click on the Start button. Once the process has been started,
                             the Cancel button can be clicked to stop it before it has completed.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
