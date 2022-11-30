@@ -34,18 +34,17 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>The Taxonomy Management Module can be used to clean and normalize occurrence record scientific names,
-                            update the locality security setting for occurrence records based on the portal Protected Species list,
-                            and linking occurrence records to the Taxonomic Thesaurus. It also has the capability search the
+                            update the locality security setting for occurrence records based on the portal's Protected Species list,
+                            and linking occurrence records to the Taxonomic Thesaurus. It also has the capability to search the
                             Catalogue of Life, the Integrated Taxonomic Information System, and the World Register of Marine Species
-                            to find and add new taxa to the Taxonomic Thesaurus so that occurrence records for taxa not currently
+                            to find and add new taxa to the Taxonomic Thesaurus, so that occurrence records for taxa not currently
                             in the thesaurus can be linked.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <p>In the top portion of the module, just below the collection name, there are three settings that can
-                            be used for controlling some of the process available within the module (each of which will be
-                            discussed further in the following slides) on the left side, and both the counts for total amount
-                            of occurrence records not linked to the Taxonomic Thesaurus and the total unique scientific names
-                            those occurrence records recpresent on the right side.</p>
+                            be used for controlling some of the processes available within the module on the left side, and both
+                            the total amount of occurrence records not linked to the Taxonomic Thesaurus, and the total unique
+                            scientific names those occurrence records recpresent, on the right side.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Target Kingdom Selector</h3>
@@ -59,20 +58,20 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         <h3>Processing Start Index</h3>
                         <p>The Processing Start Index setting is located in the top portion of the module on the left side.
                             When some of the processes available within this module run, they iterate through an alphabetical
-                            list of the total unique scientific names found in occurrence records not linked to the Taxonomic Thesaurus
-                            (displayed in the top right side of the module). This setting can be used to set the alphabetic
-                            start point from which to start the iteration through the list of names, if a later start point is
-                            desired than the natural alphabetic start point. If nothing is entered in this setting, iteration
-                            through the list of names will begin at the alphabetic first name.</p>
+                            list of the scientific names found in occurrence records that are not linked to the Taxonomic
+                            Thesaurus. This setting can be used to set the alphabetic start point from which to start the
+                            iteration through the list of names, if a later start point is desired than the natural alphabetic
+                            start. If nothing is entered in this setting, iteration through the list of names will begin at
+                            the alphabetic first name.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Processing Batch Limit</h3>
                         <p>The Processing Batch Limit setting is located in the top portion of the module on the left side.
-                            When some of the processes available within this module run, they iterate through the entire
-                            list of the total unique scientific names found in occurrence records not linked to the Taxonomic Thesaurus
-                            (displayed in the top right side of the module). This setting can be used to set the amount of names
-                            a process will iterate through, if a number less than the total amount is desired. If no numeric
-                            value is entered in this setting, processes will iterate through the entire list of unique names.</p>
+                            When some of the processes available within this module run, they iterate through an alphabetical
+                            list of the scientific names found in occurrence records that are not linked to the Taxonomic Thesaurus.
+                            This setting can be used to set the amount of names a process will iterate through, if a number
+                            less than the total amount of names is desired. If no numeric value is entered in this setting,
+                            processes will iterate through the entire list of scientific names.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
                         <h3>Process Control Window</h3>
@@ -89,7 +88,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             will remain in the window until another process is started, at which point the window will be cleared.</p>
                     </div>
                     <div class="tutorial-frame fragment fade-in-then-out topic-content-slide">
-                        <h3><a href="map-window-tab.php">Go To Next Topic</a></h3>
+                        <h3><a href="maintenance-utilities-panel.php?collid=<?php echo $collid; ?>">Go To Next Topic</a></h3>
                     </div>
                 </section>
             </div>

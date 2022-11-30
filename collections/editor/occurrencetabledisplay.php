@@ -217,9 +217,16 @@ else{
 	<div>
 		<?php
 		if($collMap){
-			echo '<div>';
-			echo '<h2>'.$collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')</h2>';
-			echo '</div>';
+			$code = '';
+            if($collMap['institutioncode']){
+                $code .= $collMap['institutioncode'];
+            }
+            if($collMap['collectioncode']){
+                $code .= ($code?':':'') . $collMap['collectioncode'];
+            }
+            echo '<div>';
+			echo '<h2>'.$collMap['collectionname'].($code?' ('.$code.')':'').'</h2>';
+            echo '</div>';
 		}
 		if(($isEditor || $crowdSourceMode)){
 			?>

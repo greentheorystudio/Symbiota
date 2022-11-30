@@ -242,7 +242,7 @@ class OccurrenceDownload{
 			$itemTitleElem->appendChild($newDoc->createTextNode($titleStr));
 			$itemElem->appendChild($itemTitleElem);
 
-			$collLinkElem = $newDoc->createElement('collectionName',$r->collectionname.' ('.$r->instcode.')');
+			$collLinkElem = $newDoc->createElement('collectionName',$r->collectionname.($r->instcode?' ('.$r->instcode.')':''));
 			$itemElem->appendChild($collLinkElem);
 
 			$catalogLinkElem = $newDoc->createElement('catalogNumber',$r->catalognumber);
@@ -526,14 +526,11 @@ class OccurrenceDownload{
 	{
 		$retArr = array();
 		if(is_numeric($collid)){
-			$sql = 'SELECT institutioncode, collectioncode, collectionname, managementtype '.
+			$sql = 'SELECT managementtype '.
 				'FROM omcollections '.
 				'WHERE collid = '.$collid;
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
-				$retArr['instcode'] = $r->institutioncode;
-				$retArr['collcode'] = $r->collectioncode;
-				$retArr['collname'] = $r->collectionname;
 				$retArr['manatype'] = $r->managementtype;
 			}
 			$rs->free();

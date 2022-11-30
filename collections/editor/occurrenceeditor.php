@@ -549,7 +549,14 @@ else{
         ?>
         <div id="titleDiv">
             <?php
-            echo $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')';
+            $code = '';
+            if($collMap['institutioncode']){
+                $code .= $collMap['institutioncode'];
+            }
+            if($collMap['collectioncode']){
+                $code .= ($code?':':'') . $collMap['collectioncode'];
+            }
+            echo $collMap['collectionname'].($code?' ('.$code.')':'');
             if($isEditor === 1 || $isEditor === 2 || $crowdSourceMode){
                 ?>
                 <div id="querySymbolDiv">
@@ -668,8 +675,8 @@ else{
                                         $detVars = 'identby='.urlencode($occArr['identifiedby']).'&dateident='.urlencode($occArr['dateidentified']).
                                             '&sciname='.urlencode($occArr['sciname']).'&em='.$isEditor.
                                             '&annotatorname='.urlencode($GLOBALS['USER_DISPLAY_NAME']).'&annotatoremail='.urlencode($userEmail).
-                                            (isset($collMap['collectioncode'])?'&collectioncode='.urlencode($collMap['collectioncode']):'').
-                                            (isset($collMap['institutioncode'])?'&institutioncode='.urlencode($collMap['institutioncode']):'').
+                                            ($collMap['collectioncode']?'&collectioncode='.urlencode($collMap['collectioncode']):'').
+                                            ($collMap['institutioncode']?'&institutioncode='.urlencode($collMap['institutioncode']):'').
                                             '&catalognumber='.urlencode($occArr['catalognumber']);
                                         ?>
                                         <li id="detTab">
