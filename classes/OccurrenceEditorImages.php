@@ -188,10 +188,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
     {
 		$imgManager = new ImageShared();
 		
-		$subTargetPath = $this->collMap['institutioncode'];
-		if($this->collMap['collectioncode']) {
-            $subTargetPath .= '_' . $this->collMap['collectioncode'];
-        }
+		$subTargetPath = $this->collId;
 		$subTargetPath .= '/';
 		if(!$this->occurrenceMap) {
             $this->setOccurArr();

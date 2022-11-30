@@ -51,7 +51,7 @@ if($collManager->validateSearchTermsArr($stArr)){
         $lastPage = (int) ($recordCnt / $cntPerPage) + 1;
         $startPage = ($pageNumber > 4?$pageNumber - 4:1);
         if($lastPage > $startPage){
-            $endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
+            $endPage = (min($lastPage, $startPage + 9));
             $onclick = 'changeImagePage("","thumbnail",';
             $hrefPrefix = "<a href='#' onclick='".$onclick;
             $paginationStr = '<div style="display:flex;justify-content:space-between;margin-top:4px;margin-bottom:8px;"><div>';
@@ -126,8 +126,18 @@ if($collManager->validateSearchTermsArr($stArr)){
                     $recordListHtml .= '<br />';
                 }
                 if($imgArr['catalognumber']){
+                    $label = '';
+                    if($imgArr['instcode']){
+                        $label .= $imgArr['instcode'];
+                    }
+                    if($imgArr['catalognumber']){
+                        $label .= ($label?':':'') . $imgArr['catalognumber'];
+                    }
+                    if(!$label){
+                        $label = 'Full Record Details';
+                    }
                     $recordListHtml .= '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
-                    $recordListHtml .= $imgArr['instcode'] . ': ' . $imgArr['catalognumber'];
+                    $recordListHtml .= $label;
                     $recordListHtml .= '</a>';
                 }
                 elseif($imgArr['lastname']){

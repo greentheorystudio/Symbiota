@@ -34,7 +34,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         <div class="tutorial-frame" style="position:relative;left: -50%;">
                             <h2>Taxonomy Management Module Tutorial</h2>
                             <p>Welcome to the taxonomy management module tutorial! This tutorial will explain the different
-                                processes that can be run within this module and how to use them together to improve the accuracy
+                                processes that can be run within this module and how to use them to improve the accuracy
                                 and consistency of scientific names within occurrence records and increase the amount of occurrence
                                 records that are linked to the taxonomic thesaurus.</p>
                             <p>Use the red arrows located in
