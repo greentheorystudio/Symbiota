@@ -51,7 +51,7 @@ $activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
 $showDetails = 0;
 $clid = 0;
 if($clArray){
-    if($clArray['defaultSettings']){
+    if(array_key_exists('defaultSettings',$clArray) && $clArray['defaultSettings']){
         $defaultArr = json_decode($clArray['defaultSettings'], true);
         $showDetails = $defaultArr['ddetails'];
         if(!$defaultOverride){
