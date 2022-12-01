@@ -23,7 +23,7 @@ if($emailAddr && !$pHandler->validateEmailAddress($emailAddr)) {
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-if($action === 'Create Account'){
+if($action === 'Create Account' && $_POST['requestid'] === session_id()){
     if($pHandler->checkLogin($emailAddr)){
         if($pHandler->register($_POST)){
             header('Location: viewprofile.php');
@@ -344,6 +344,7 @@ if($action === 'Create Account'){
                     <tr>
                         <td colspan="2">
                             <div style="float:right;margin:20px;">
+                                <input name="requestid" type="hidden" value="<?php echo session_id(); ?>" />
                                 <input type="submit" id="submitButton" value="Create Account" name="submit" disabled />
                             </div>
                         </td>
