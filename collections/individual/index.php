@@ -134,7 +134,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
     <meta name="keywords" content="<?php echo $occArr['guid']; ?>">
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
-    <link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
+    <link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
     <style>
         .map {
             width: 100%;
@@ -148,8 +148,8 @@ $commentArr = $indManager->getCommentArr($isEditor);
     <?php
     if($displayMap){
         ?>
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" rel="stylesheet" type="text/css" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221126" type="text/javascript"></script>
         <?php

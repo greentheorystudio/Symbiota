@@ -5,8 +5,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
-        <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-        <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+        <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <meta name='keywords' content='' />
         <?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
     </head>

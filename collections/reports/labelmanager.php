@@ -39,9 +39,9 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Labels</title>
-		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
+		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+		<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
         <style>
             .checkboxLabel{
                 font-weight: bold;
