@@ -6,12 +6,12 @@ header('X-Frame-Options: SAMEORIGIN');
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title>Label Content Format Visual Editor</title>
-    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/external/bootstrap.min.css?ver=20220225" type="text/css" rel="stylesheet" />
-    <link href="../../css/external/jquery.mobile-1.4.0.min.css?ver=20220720" type="text/css" rel="stylesheet" />
-    <link href="../../css/jsongui.css?ver=20220617" type="text/css" rel="stylesheet" />
-    <link href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" rel="stylesheet" />
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/bootstrap.min.css?ver=20220225" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/jquery.mobile-1.4.0.min.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="../../css/jsongui.css?ver=20220617" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
