@@ -6,7 +6,7 @@
             <div style="">
                 <div style="font-size:16px;font-family:Verdana, sans-serif;margin-bottom:8px;">Brought to you by </div>
                 <a href="https://greentheorystudio.com/" target="_blank">
-                    <img style="width:400px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/gts_logo_light_white_70_lg.png" />
+                    <img style="width:400px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/gts_logo_light_white_70_lg.png" />
                 </a>
             </div>
         </div>

@@ -6,10 +6,10 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
         <td class="header">
             <div style="clear:both;">
                 <div style="float:left;">
-                    <img style="" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/Picture1.png" />
+                    <img style="" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/Picture1.png" />
                 </div>
                 <div style="float:left;">
-                    <img style="" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/title.png" />
+                    <img style="" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/title.png" />
                 </div>
             </div>
             <div id="top_navbar">
