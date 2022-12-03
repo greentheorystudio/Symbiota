@@ -6,7 +6,7 @@ header('X-Frame-Options: SAMEORIGIN');
 
 $login = array_key_exists('login',$_POST)?$_POST['login']:'';
 $emailAddr = array_key_exists('emailaddr',$_POST)?$_POST['emailaddr']:'';
-$action = array_key_exists('submit',$_REQUEST)?$_REQUEST['submit']:'';
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $pHandler = new ProfileManager();
 $middle = $pHandler->checkFieldExists('users','middleinitial');
@@ -84,55 +84,57 @@ if($action === 'Create Account' && $_POST['requestid'] === session_id()){
         }
 
         function validateform(f){
-			const pwd1 = f.pwd.value;
-			const pwd2 = f.pwd2.value;
-            const enteredValue = document.getElementById("human-entry").value;
-			if(pwd1 === "" || pwd2 === ""){
-				alert("Both password fields must contain a value");
-				return false;
-			}
-			if(pwd1.charAt(0) === " " || pwd1.slice(-1) === " "){
-				alert("Password cannot start or end with a space, but they can include spaces within the password");
-				return false;
-			}
-			if(pwd1.length < 7){
-				alert("Password must be greater than 6 characters");
-				return false;
-			}
-			if(pwd1 !== pwd2){
-				alert("Password do not match, please enter again");
-				f.pwd.value = "";
-				f.pwd2.value = "";
-				f.pwd2.focus();
-				return false;
-			}
-			if(f.login.value.replaceAll(/\s/g, "") === ""){
-				window.alert("User Name must contain a value");
-				return false;
-			}
-			if( /[^0-9A-Za-z_!@#$-+]/.test( f.login.value ) ) {
-		        alert("Login name should only contain 0-9A-Za-z_!@ (spaces are not allowed)");
-		        return false;
-		    }
-			if(f.emailaddr.value.replaceAll(/\s/g, "") === "" ){
-				window.alert("Email address is required");
-				return false;
-			}
-			if(f.firstname.value.replaceAll(/\s/g, "") === ""){
-				window.alert("First Name must contain a value");
-				return false;
-			}
-			if(f.lastname.value.replaceAll(/\s/g, "") === ""){
-				window.alert("Last Name must contain a value");
-				return false;
-			}
-            if(enteredValue.toString() !== randNumber.toString()){
-                window.alert("Enter the number displayed in the box to prove you're human");
-                return false;
+            const addressVal = document.getElementById("address").value.trim();
+            const urlVal = document.getElementById("url").value.trim();
+            const biographyVal = document.getElementById("biography").value.trim();
+            if((addressVal !== '' && !addressVal.includes(' ')) ||
+                (urlVal !== '' && !urlVal.includes('/') && !urlVal.includes('.')) ||
+                (biographyVal !== '' && !biographyVal.includes('/') && !biographyVal.includes('.') && !biographyVal.includes(' '))
+            ){
+                location.reload();
             }
-
-			return true;
-		}
+            else{
+                const pwd1 = f.pwd.value;
+                const pwd2 = f.pwd2.value;
+                const enteredValue = document.getElementById("human-entry").value;
+                if(pwd1 === "" || pwd2 === ""){
+                    alert("Both password fields must contain a value");
+                }
+                else if(pwd1.charAt(0) === " " || pwd1.slice(-1) === " "){
+                    alert("Password cannot start or end with a space, but they can include spaces within the password");
+                }
+                else if(pwd1.length < 7){
+                    alert("Password must be greater than 6 characters");
+                }
+                else if(pwd1 !== pwd2){
+                    alert("Password do not match, please enter again");
+                    f.pwd.value = "";
+                    f.pwd2.value = "";
+                    f.pwd2.focus();
+                }
+                else if(f.login.value.replaceAll(/\s/g, "") === ""){
+                    alert("User Name must contain a value");
+                }
+                else if( /[^0-9A-Za-z_!@#$-+]/.test( f.login.value ) ){
+                    alert("Login name should only contain 0-9A-Za-z_!@ (spaces are not allowed)");
+                }
+                else if(f.emailaddr.value.replaceAll(/\s/g, "") === "" ){
+                    alert("Email address is required");
+                }
+                else if(f.firstname.value.replaceAll(/\s/g, "") === ""){
+                    alert("First Name must contain a value");
+                }
+                else if(f.lastname.value.replaceAll(/\s/g, "") === ""){
+                    alert("Last Name must contain a value");
+                }
+                else if(enteredValue.toString() !== randNumber.toString()){
+                    alert("Enter the number displayed in the box to prove you're human");
+                }
+                else{
+                    document.getElementById("newProfileForm").submit();
+                }
+            }
+        }
 
         function verifyUserInput() {
             const enteredValue = document.getElementById("human-entry").value;
@@ -187,7 +189,7 @@ if($action === 'Create Account' && $_POST['requestid'] === session_id()){
 	?>
 	<fieldset style='margin:10px;width:95%;'>
 		<legend><b>Login Details</b></legend>
-		<form action="newprofile.php" method="post" onsubmit="return validateform(this);">
+		<form id="newProfileForm" action="newprofile.php" method="POST">
 			<div style="margin:15px;">
 				<table style="border-spacing:3px;">
 					<tr>
@@ -248,7 +250,7 @@ if($action === 'Create Account' && $_POST['requestid'] === session_id()){
 					<tr>
 						<td><span style="font-weight:bold;">Email Address:</span></td>
 						<td>
-							<span class="profile"><input name="emailaddr"  size="40" value="<?php echo $emailAddr; ?>"></span>
+							<span class="profile"><input name="emailaddr" size="40" value="<?php echo $emailAddr; ?>"></span>
 							<span style="color:red;">*</span>
 						</td>
 					</tr>
@@ -262,25 +264,25 @@ if($action === 'Create Account' && $_POST['requestid'] === session_id()){
 					<tr>
 						<td><b>Title:</b></td>
 						<td>
-							<span class="profile"><input name="title"  size="40" value="<?php echo (isset($_POST['title'])?htmlspecialchars($_POST['title']):''); ?>"></span>
+							<span class="profile"><input name="title" size="40" value="<?php echo (isset($_POST['title'])?htmlspecialchars($_POST['title']):''); ?>"></span>
 						</td>
 					</tr>
 					<tr>
 						<td><b>Institution:</b></td>
 						<td>
-							<span class="profile"><input name="institution"  size="40" value="<?php echo (isset($_POST['institution'])?htmlspecialchars($_POST['institution']):'') ?>"></span>
+							<span class="profile"><input name="institution" size="40" value="<?php echo (isset($_POST['institution'])?htmlspecialchars($_POST['institution']):'') ?>"></span>
 						</td>
 					</tr>
                     <tr>
                         <td><b>Department:</b></td>
                         <td>
-                            <span class="profile"><input name="department"  size="40" value="<?php echo (isset($_POST['department'])?htmlspecialchars($_POST['department']):'') ?>"></span>
+                            <span class="profile"><input name="department" size="40" value="<?php echo (isset($_POST['department'])?htmlspecialchars($_POST['department']):'') ?>"></span>
                         </td>
                     </tr>
                     <tr>
                         <td><b>Street Address:</b></td>
                         <td>
-                            <span class="profile"><input name="address"  size="40" value="<?php echo (isset($_POST['address'])?htmlspecialchars($_POST['address']):'') ?>"></span>
+                            <span class="profile"><input id="address" name="address" size="40" value="<?php echo (isset($_POST['address'])?htmlspecialchars($_POST['address']):'') ?>"></span>
                         </td>
                     </tr>
 					<tr>
@@ -292,32 +294,32 @@ if($action === 'Create Account' && $_POST['requestid'] === session_id()){
 					<tr>
 						<td><span style="font-weight:bold;">State:</span></td>
 						<td>
-							<span class="profile"><input id="state" name="state"  size="40" value="<?php echo (isset($_POST['state'])?htmlspecialchars($_POST['state']):''); ?>"></span>
+							<span class="profile"><input id="state" name="state" size="40" value="<?php echo (isset($_POST['state'])?htmlspecialchars($_POST['state']):''); ?>"></span>
 						</td>
 					</tr>
 					<tr>
 						<td><b>Zip Code:</b></td>
 						<td>
-							<span class="profile"><input name="zip"  size="40" value="<?php echo (isset($_POST['zip'])?htmlspecialchars($_POST['zip']):''); ?>"></span>
+							<span class="profile"><input name="zip" size="40" value="<?php echo (isset($_POST['zip'])?htmlspecialchars($_POST['zip']):''); ?>"></span>
 						</td>
 					</tr>
 					<tr>
 						<td><span style="font-weight:bold;">Country:</span></td>
 						<td>
-							<span class="profile"><input id="country" name="country"  size="40" value="<?php echo (isset($_POST['country'])?htmlspecialchars($_POST['country']):''); ?>"></span>
+							<span class="profile"><input id="country" name="country" size="40" value="<?php echo (isset($_POST['country'])?htmlspecialchars($_POST['country']):''); ?>"></span>
 						</td>
 					</tr>
 					<tr>
 						<td><b>Url:</b></td>
 						<td>
-							<span class="profile"><input name="url"  size="40" value="<?php echo (isset($_POST['url'])?htmlspecialchars($_POST['url']):''); ?>"></span>
+							<span class="profile"><input id="url" name="url" size="40" value="<?php echo (isset($_POST['url'])?htmlspecialchars($_POST['url']):''); ?>"></span>
 						</td>
 					</tr>
 					<tr>
 						<td><b>Biography:</b></td>
 						<td>
 							<span class="profile">
-								<textarea name="biography" rows="4" cols="40"><?php echo (isset($_POST['biography'])?htmlspecialchars($_POST['biography']):''); ?></textarea>
+								<textarea id="biography" name="biography" rows="4" cols="40"><?php echo (isset($_POST['biography'])?htmlspecialchars($_POST['biography']):''); ?></textarea>
 							</span>
 						</td>
 					</tr>
@@ -345,7 +347,8 @@ if($action === 'Create Account' && $_POST['requestid'] === session_id()){
                         <td colspan="2">
                             <div style="float:right;margin:20px;">
                                 <input name="requestid" type="hidden" value="<?php echo session_id(); ?>" />
-                                <input type="submit" id="submitButton" value="Create Account" name="submit" disabled />
+                                <input name="submitaction" type="hidden" value="Create Account" />
+                                <button type="button" id="submitButton" onclick="validateform(this.form);" disabled >Create Account</button>
                             </div>
                         </td>
                     </tr>
