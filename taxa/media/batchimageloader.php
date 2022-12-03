@@ -1,6 +1,6 @@
 <link href="../../css/external/bootstrap.min.css?ver=20220225" rel="stylesheet" />
-<link href="../../css/external/jquery.fileupload.css" type="text/css" rel="stylesheet" />
-<link href="../../css/external/jquery.fileupload-ui.css" type="text/css" rel="stylesheet" />
+<link href="../../css/external/jquery.fileupload.css" rel="stylesheet" type="text/css" />
+<link href="../../css/external/jquery.fileupload-ui.css" rel="stylesheet" type="text/css" />
 <style>
     #fileDropZone {
         border: 3px solid black;
