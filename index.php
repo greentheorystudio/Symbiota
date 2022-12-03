@@ -16,7 +16,7 @@ include(__DIR__ . '/header.php');
 ?>
 <div  id="innertext">
     <div style="float:right;width:380px;margin:15px;">
-        <img style="width:380px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/Plega_hal7-1x_pinremoved_web.jpg" />
+        <img style="width:380px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/Plega_hal7-1x_pinremoved_web.jpg" />
     </div>
     <h1>Welcome to BIOMNA</h1>
     <div style="padding: 0 15px;">
