@@ -422,7 +422,7 @@ class KeyDataManager extends Manager{
         $count = 0;
         while ($row = $result->fetch_object()){
             $sppArr = array();
-            $family = $row->Family;
+            $family = $row->family;
             $tid = $row->tid;
             $displayName = $row->DisplayName;
             if(array_key_exists($family, $returnArray)) {
@@ -442,7 +442,7 @@ class KeyDataManager extends Manager{
     public function setTaxaListSQL(): void
 	{
         if(!$this->sql){
-            $sqlBase = 'SELECT DISTINCT t.tid, t.Family, ' .($this->commonDisplay?'IFNULL(v.VernacularName,t.SciName)':'t.SciName'). ' AS DisplayName, ts.ParentTID ';
+            $sqlBase = 'SELECT DISTINCT t.tid, t.family, ' .($this->commonDisplay?'IFNULL(v.VernacularName,t.SciName)':'t.SciName'). ' AS DisplayName, t.parenttid ';
             if($this->dynClid){
                 $sqlFromBase = 'INNER JOIN fmdyncltaxalink AS clk ON t.tid = clk.tid ';
                 $sqlWhere = 'WHERE clk.dynclid = ' .$this->dynClid. ' AND t.RankId = 220 ';
@@ -483,7 +483,7 @@ class KeyDataManager extends Manager{
                     $sqlWhere .= ' AND (D' .$count. '.CID=' .$cid. ') AND (' .$stateStr. ') ';
                 }
             }
-            $sqlFrom = 'FROM ' .str_repeat('(',$count). '(taxa t ' .$sqlFromBase;
+            $sqlFrom = 'FROM ' .str_repeat('(',$count). 'taxa AS t ' .$sqlFromBase;
             $this->sql = $sqlBase.$sqlFrom.$sqlWhere;
         }
     }

@@ -23,7 +23,7 @@ if($emailAddr && !$pHandler->validateEmailAddress($emailAddr)) {
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-if($action === 'Create Account'){
+if($action === 'Create Account' && $_POST['requestid'] === session_id()){
     if($pHandler->checkLogin($emailAddr)){
         if($pHandler->register($_POST)){
             header('Location: viewprofile.php');
@@ -44,8 +44,8 @@ if($action === 'Create Account'){
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - New User Profile</title>
-	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <style>
         canvas {
             border: 1px solid #000;
@@ -344,6 +344,7 @@ if($action === 'Create Account'){
                     <tr>
                         <td colspan="2">
                             <div style="float:right;margin:20px;">
+                                <input name="requestid" type="hidden" value="<?php echo session_id(); ?>" />
                                 <input type="submit" id="submitButton" value="Create Account" name="submit" disabled />
                             </div>
                         </td>
