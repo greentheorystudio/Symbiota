@@ -50,7 +50,7 @@ if(!$addAuth){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Author Management</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
@@ -133,7 +133,7 @@ if(!$addAuth){
 							<div style="width:600px;">
 								<?php
 								if($authPubArr){
-									echo '<div style="font-weight:bold;font-size:120%;">Publications</div>';
+									echo '<div style="font-weight:bold;">Publications</div>';
 									echo '<div><ul>';
 									foreach($authPubArr as $refId => $recArr){
 										echo '<li>';
@@ -201,7 +201,7 @@ if(!$addAuth){
 					<?php
 					if(!$addAuth){
 						if($authExist){
-							echo '<div style="font-weight:bold;font-size:120%;">Authors</div>';
+							echo '<div style="font-weight:bold;">Authors</div>';
 							echo '<div><ul>';
 							foreach($authArr as $authId => $recArr){
 								echo '<li>';
@@ -211,7 +211,7 @@ if(!$addAuth){
 							echo '</ul></div>';
 						}
 						else{
-							echo '<div style="margin-top:10px;"><div style="font-weight:bold;font-size:120%;">There are currently no authors in the database.</div></div>';
+							echo '<div style="margin-top:10px;"><div style="font-weight:bold;">There are currently no authors in the database.</div></div>';
 						}
 					}
 				}

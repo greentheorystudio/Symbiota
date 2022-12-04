@@ -27,6 +27,7 @@ $printMode = array_key_exists('printmode',$_REQUEST)?(int)$_REQUEST['printmode']
 
 $statusStr='';
 $locStr = '';
+$isEditor = false;
 
 if($action !== 'Rebuild List' && $action !== 'Download List') {
     $searchSynonyms = 1;
@@ -130,7 +131,6 @@ if($clArray){
         $printMode = 1;
     }
 
-    $isEditor = false;
     if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
         $isEditor = true;
 
@@ -190,10 +190,10 @@ if($clArray){
 <head>
     <meta charset="<?php echo $GLOBALS['CHARSET']; ?>">
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Research Checklist: <?php echo $clManager->getClName(); ?></title>
-    <link type="text/css" href="../css/external/bootstrap.min.css?ver=20220225" rel="stylesheet" />
+    <link type="text/css" href="../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" />
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
@@ -270,11 +270,31 @@ if($clArray){
             position: absolute;
             top: 65%;
             z-index: 1;
-            font-size: 25px;
             font-weight: bold;
             text-align: center;
             width: 100%;
             color: #f3f3f3;
+        }
+
+        .checklist-header-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .checklist-header-element {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            text-decoration: none;
+            align-items: center;
+            align-content: center;
+        }
+
+        h1 {
+            margin: 15px 0 20px;
+        }
+        h3 {
+            margin: 0;
         }
     </style>
 </head>
@@ -284,53 +304,34 @@ if($clArray){
 if(!$printMode){
     include(__DIR__ . '/../header.php');
     echo '<div class="navpath">';
+    echo '<a href="../index.php">Home</a> &gt;&gt; ';
     if($pid){
-        echo '<a href="../index.php">Home</a> &gt;&gt; ';
         echo '<a href="'.$GLOBALS['CLIENT_ROOT'].'/projects/index.php?pid='.$pid.'">';
         echo $clManager->getProjName();
         echo '</a> &gt;&gt; ';
-        echo '<b>'.$clManager->getClName().'</b>';
     }
     else{
-        echo '<a href="../index.php">Home</a> &gt;&gt; ';
         echo '<a href="index.php">Checklists</a> &gt;&gt; ';
-        echo ' <b>'.$clManager->getClName().'</b>';
     }
+    echo '<b>'.$clManager->getClName().'</b>';
     echo '</div>';
 }
 ?>
 <div id='innertext' style="<?php echo ($printMode?'background-color:#ffffff;':''); ?>">
     <?php
     if($clValue || $dynClid){
-        if($clValue && $isEditor && !$printMode){
-            ?>
-            <div style="float:right;width:auto;">
-                <span>
-                    <a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Checklist Administration">
-                        <i style='width:20px;height:20px;' class="fas fa-cog"></i>
-                    </a>
-                </span>
-                <span>
-                    <a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Manage Linked Voucher">
-                        <i style='width:20px;height:20px;' class="fas fa-link"></i>
-                    </a>
-                </span>
-                <span onclick="toggle('editspp');">
-                    <i style='width:20px;height:20px;cursor:pointer;' class="fas fa-clipboard-list" title="Edit Species List"></i>
-                </span>
-            </div>
-            <?php
-        }
+        echo '<div class="checklist-header-row">';
+        echo '<div class="checklist-header-element">';
         ?>
-        <div style="float:left;color:#990000;font-size:20px;font-weight:bold;">
+        <div style="color:#990000;">
             <a href="checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>">
-                <?php echo $clManager->getClName(); ?>
+                <h1><?php echo $clManager->getClName(); ?></h1>
             </a>
         </div>
         <?php
         if($activateKey && !$printMode){
             ?>
-            <div style="float:left;padding:5px;">
+            <div>
                 <a href="../ident/key.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid;?>&taxon=All+Species">
                     <i style='width:15px; height:15px;' class="fas fa-key"></i>
                 </a>
@@ -339,7 +340,7 @@ if(!$printMode){
         }
         if(!$printMode && $taxaArray){
             ?>
-            <div style="padding:5px;">
+            <div>
                 <span onmouseover="mopen('m1')" onmouseout="mclosetime()">
                     <i class="fas fa-gamepad"></i>
                 </span>
@@ -355,23 +356,41 @@ if(!$printMode){
                     </li>
                 </ul>
             </div>
-            <div style="clear:both;"></div>
             <?php
         }
+        echo '</div>';
+        if($clValue && $isEditor && !$printMode){
+            ?>
+            <div class="checklist-header-element">
+                <span>
+                    <a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" title="Checklist Administration">
+                        <i style='width:20px;height:20px;' class="fas fa-cog"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" title="Manage Linked Voucher">
+                        <i style='width:20px;height:20px;' class="fas fa-link"></i>
+                    </a>
+                </span>
+                <span onclick="toggle('editspp');">
+                    <i style='width:20px;height:20px;cursor:pointer;' class="fas fa-clipboard-list" title="Edit Species List"></i>
+                </span>
+            </div>
+            <?php
+        }
+        echo '</div>';
         if($clValue){
             if($clArray['type'] === 'rarespp'){
                 echo '<div style="clear:both;">';
                 echo '<b>Sensitive species checklist for:</b> '.$clArray['locality'];
                 echo '</div>';
             }
-            ?>
-            <div style="clear:both;">
-					<span style="font-weight:bold;">
-						Authors:
-					</span>
-                <?php echo $clArray['authors']; ?>
-            </div>
-            <?php
+            if($clArray['authors']){
+                echo '<div style="clear:both;">';
+                echo '<h3>Authors:</h3>';
+                echo $clArray['authors'];
+                echo '</div>';
+            }
             if($clArray['publication']){
                 $pubStr = $clArray['publication'];
                 if(strncmp($pubStr, 'http', 4) === 0 && !strpos($pubStr,' ')) {
@@ -568,23 +587,19 @@ if(!$printMode){
             }
             ?>
             <div style="min-height: 450px;">
-                <div style="margin:3px;">
-                    <b>Families:</b>
-                    <?php echo $clManager->getFamilyCount(); ?>
-                </div>
-                <div style="margin:3px;">
-                    <b>Genera:</b>
-                    <?php echo $clManager->getGenusCount(); ?>
-                </div>
-                <div style="margin:3px;">
-                    <b>Species:</b>
-                    <?php echo $clManager->getSpeciesCount(); ?>
-                    (species rank)
-                </div>
-                <div style="margin:3px;">
-                    <b>Total Taxa:</b>
-                    <?php echo $clManager->getTaxaCount(); ?>
-                    (including subsp. and var.)
+                <div style="margin-bottom:15px;">
+                    <div style="margin:3px;">
+                        <h3>Families: <?php echo $clManager->getFamilyCount(); ?></h3>
+                    </div>
+                    <div style="margin:3px;">
+                        <h3>Genera: <?php echo $clManager->getGenusCount(); ?></h3>
+                    </div>
+                    <div style="margin:3px;">
+                        <h3>Species: <?php echo $clManager->getSpeciesCount(); ?></h3>
+                    </div>
+                    <div style="margin:3px;">
+                        <h3>Total Taxa: <?php echo $clManager->getTaxaCount(); ?> (including subsp. and var.)</h3>
+                    </div>
                 </div>
                 <?php
                 $taxaLimit = ($showImages?$clManager->getImageLimit():$clManager->getTaxaLimit());
@@ -688,7 +703,7 @@ if(!$printMode){
                             if($family !== $prevfam){
                                 $famUrl = "../taxa/index.php?taxon=$family&cl=".$clid;
                                 ?>
-                                <div class="familydiv" id="<?php echo $family;?>" style="margin:15px 0 5px 0;font-weight:bold;font-size:120%;">
+                                <div class="familydiv" id="<?php echo $family;?>" style="margin:15px 0 5px 0;font-weight:bold;">
                                     <a href="<?php echo $famUrl; ?>" target="_blank" style="color:black;"><?php echo $family;?></a>
                                 </div>
                                 <?php
@@ -771,7 +786,7 @@ if(!$printMode){
                     echo '<a href="checklist.php?pagenumber='.($pageNumber+1).$argStr.'"> Display next '.$taxaLimit.' taxa...</a></div>';
                 }
                 if(!$taxaArray) {
-                    echo "<h1 style='margin:40px;'>No Taxa Found</h1>";
+                    echo "<h2 style='margin:40px;'>No Taxa Found</h2>";
                 }
                 ?>
             </div>
@@ -795,7 +810,7 @@ if(!$printMode) {
 
 if($GLOBALS['CHECKLIST_FG_EXPORT']){
     ?>
-    <div id="fieldguideexport" data-role="popup" class="well" style="width:600px;min-height:250px;font-size:14px;">
+    <div id="fieldguideexport" data-role="popup" class="well" style="width:600px;min-height:250px;">
         <a class="boxclose fieldguideexport_close" id="boxclose"></a>
         <h2>Fieldguide Export Settings</h2>
 
@@ -827,10 +842,10 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']){
         <div style="margin-top:5px;">
             <b>Photographers:</b>
             <input data-role='none' name='fgUseAllPhotog' id='fgUseAllPhotog' type='checkbox' value='1' onclick="selectAllPhotog();" checked /> Use All
-            <a href="#" id='fgShowPhotog' title="Show Photographers List" style="margin-left:8px;font-size:10px;" onclick="toggle('fgPhotogBox');toggle('fgShowPhotog');toggle('fgHidePhotog');return false;">Show Photographers</a>
-            <a href="#" id='fgHidePhotog' title="Hide Photographers List" style="display:none;margin-left:8px;font-size:10px;" onclick="toggle('fgPhotogBox');toggle('fgShowPhotog');toggle('fgHidePhotog');return false;">Hide Photographers</a>
+            <a href="#" id='fgShowPhotog' title="Show Photographers List" style="margin-left:8px;" onclick="toggle('fgPhotogBox');toggle('fgShowPhotog');toggle('fgHidePhotog');return false;">Show Photographers</a>
+            <a href="#" id='fgHidePhotog' title="Hide Photographers List" style="display:none;margin-left:8px;" onclick="toggle('fgPhotogBox');toggle('fgShowPhotog');toggle('fgHidePhotog');return false;">Hide Photographers</a>
             <div id='fgPhotogBox' style="display:none;width:570px;margin-top:10px;margin-bottom:10px;">
-                <table style="font-family:Arial,serif;font-size:12px;">
+                <table style="font-family:Arial,serif;">
                     <?php
                     $photogList = array();
                     $i = 1;

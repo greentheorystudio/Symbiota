@@ -325,7 +325,7 @@ class KeyDataManager extends Manager{
 				foreach($cArray as $cid => $csArray){
 					if(array_key_exists($cid,$this->charArr) || count($csArray) > 2){
 						if($displayHeading){
-							$returnArray[] = "<div class='headingname' id='headingname".$HID."' style='font-weight:bold;margin-top:1em;font-size:125%;'>\n";
+							$returnArray[] = "<div class='headingname' id='headingname".$HID."' style='font-weight:bold;margin-top:1em;'>\n";
 							foreach($headNameArray as $langValue => $headValue){
 								$returnArray[] .= "<span lang='".$langValue."' style='".($langValue === $this->lang? '' : 'display:none;')."'>$headValue</span>\n";
 							}

@@ -26,7 +26,7 @@ $gameManager = new GamesManager();
 $gameInfo = $gameManager->setOOTD($oodID,$ootdGameChecklist);
 ?>
 <div style="float:right;margin-right:10px;width:290px;text-align:center;">
-	<div style="font-size:130%;font-weight:bold;">
+	<div style="font-weight:bold;">
 		<?php echo $ootdGameTitle; ?>
 	</div>
 	<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">

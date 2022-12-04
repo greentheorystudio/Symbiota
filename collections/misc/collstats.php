@@ -234,7 +234,7 @@ if($action !== 'Update Statistics'){
 			<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Statistics</title>
 			<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 			<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-			<link rel="stylesheet" href="../../css/external/jquery-ui.css?ver=20220720" type="text/css" />
+			<link rel="stylesheet" href="../../css/external/jquery-ui.css?ver=20221204" type="text/css" />
             <script src="../../js/external/all.min.js" type="text/javascript"></script>
             <script type="text/javascript" src="../../js/external/jquery.js"></script>
 			<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
@@ -367,7 +367,7 @@ if($action !== 'Update Statistics'){
                 <b>Collection Statistics</b>
             </div>
 			<div id="innertext">
-				<h1>Select Collections to be Analyzed</h1>
+				<h3>Select Collections to be Analyzed</h3>
 				<div id="tabs" style="margin:0;">
 					<ul>
 						<li><a href="#specobsdiv">Collections</a></li>
@@ -477,7 +477,7 @@ if($action !== 'Update Statistics'){
 																					echo $collName2['collname'].($codeStr?' ('.$codeStr.')':'');
 																					?>
 																				</a>
-																				<a href='collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+																				<a href='collprofiles.php?collid=<?php echo $collid; ?>'>
 																					more info
 																				</a>
 																			</div>
@@ -523,7 +523,7 @@ if($action !== 'Update Statistics'){
                                                                 echo $cArr['collname'].($codeStr?' ('.$codeStr.')':'');
 																?>
 															</a>
-															<a href='collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+															<a href='collprofiles.php?collid=<?php echo $collid; ?>'>
 																more info
 															</a>
 														</div>
@@ -628,7 +628,7 @@ if($action !== 'Update Statistics'){
                                                                                     echo $collName2['collname'].($codeStr?' ('.$codeStr.')':'');
 																					?>
 																				</a>
-																				<a href = 'collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+																				<a href = 'collprofiles.php?collid=<?php echo $collid; ?>'>
 																					more info
 																				</a>
 																			</div>
@@ -674,7 +674,7 @@ if($action !== 'Update Statistics'){
                                                                 echo $cArr['collname'].($codeStr?' ('.$codeStr.')':'');
 																?>
 															</a>
-															<a href = 'collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+															<a href = 'collprofiles.php?collid=<?php echo $collid; ?>'>
 																more info
 															</a>
 														</div>
@@ -712,7 +712,7 @@ if($action !== 'Update Statistics'){
                             <?php
                         }
 						else{
-							echo '<div style="margin-top:10px;"><div style="font-weight:bold;font-size:120%;">There are currently no collections to analyze.</div></div>';
+							echo '<div style="margin-top:10px;"><div style="font-weight:bold;">There are currently no collections to analyze.</div></div>';
 						}
 						?>
 					</div>
@@ -724,7 +724,7 @@ if($action !== 'Update Statistics'){
 							<div style="min-height:300px;">
 								<div style="height:100%;">
 									<h1>Selected Collection Statistics</h1>
-									<div style="font-weight:bold;font-size:105%;margin:10px;">
+									<div style="font-weight:bold;margin:10px;">
 										<div id="colllistlabel"><a href="#" onclick="toggle('colllist');toggle('colllistlabel');">Display List of Collections Analyzed</a></div>
 										<div id="colllist" style="display:none">
 											<?php echo $collStr; ?>
@@ -868,7 +868,7 @@ if($action !== 'Update Statistics'){
 
 								<fieldset id="statspercollbox" style="clear:both;margin-top:15px;width:90%;display:none;">
 									<legend><b>Statistics per Collection</b></legend>
-									<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+									<table class="styledtable" style="font-family:Arial,serif;">
 										<tr>
 											<th style="text-align:center;">Collection</th>
 											<th style="text-align:center;">Specimens</th>
@@ -899,7 +899,7 @@ if($action !== 'Update Statistics'){
 								</fieldset>
 								<fieldset id="famdistbox" style="clear:both;margin-top:15px;width:800px;display:none;">
 									<legend><b>Family Distribution</b></legend>
-									<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:780px;">
+									<table class="styledtable" style="font-family:Arial,serif;width:780px;">
 										<tr>
 											<th style="text-align:center;">Family</th>
 											<th style="text-align:center;">Specimens</th>
@@ -936,7 +936,7 @@ if($action !== 'Update Statistics'){
 								</fieldset>
 								<fieldset id="geodistbox" style="margin-top:15px;width:800px;display:none;">
 									<legend><b>Geographic Distribution</b></legend>
-									<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:780px;">
+									<table class="styledtable" style="font-family:Arial,serif;width:780px;">
 										<tr>
 											<th style="text-align:center;">Country</th>
 											<th style="text-align:center;">Specimens</th>

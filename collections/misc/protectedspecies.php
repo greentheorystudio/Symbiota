@@ -33,7 +33,7 @@ $rsArr = $rsManager->getProtectedSpeciesList();
     <title>Protected Species</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
@@ -106,7 +106,7 @@ include(__DIR__ . '/../../header.php');
                 echo '<div>Number of records affected: '.$cleanManager->protectGlobalSpecies().'</div>';
 			}
 			else{
-				echo '<div><a href="protectedspecies.php?submitaction=checkstats"><button style="font-size:70%">Verify protections</button></a></div>';
+				echo '<div><a href="protectedspecies.php?submitaction=checkstats"><button>Verify protections</button></a></div>';
 			}
 		}
 		?>
@@ -161,7 +161,7 @@ include(__DIR__ . '/../../header.php');
 			}
 			else{
 				?>
-				<div style="margin:20px;font-weight:bold;font-size:120%;">
+				<div style="margin:20px;font-weight:bold;">
 					No species were returned marked for global protection.
 				</div>
 				<?php
@@ -188,7 +188,7 @@ include(__DIR__ . '/../../header.php');
 			}
 			if($emptyList){
 				?>
-				<div style="margin:20px;font-weight:bold;font-size:120%;">
+				<div style="margin:20px;font-weight:bold;">
 					 No checklists returned
 				</div>
 				<?php

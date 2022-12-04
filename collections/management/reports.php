@@ -223,7 +223,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 				</fieldset>
 				<?php
 				if($formAction === 'displayReport'){
-					echo '<table class="styledtable" style="width:500px;font-size:12px;">';
+					echo '<table class="styledtable" style="width:500px;">';
 					echo '<tr><th>Time Period</th>';
 					echo '<th>User</th>';
 					if($processingStatus) {
@@ -284,7 +284,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
                                 <i style="height:15px;width:15px;" class="far fa-edit"></i>
                             </a>
                             <a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
-                                <i style="height:15px;width:15px;" class="far fa-edit"></i><span style="font-size:70%;margin-left:-3px;">b-geo</span>
+                                <i style="height:15px;width:15px;" class="far fa-edit"></i><span style="margin-left:-3px;">b-geo</span>
                             </a>
                             <?php
                         }

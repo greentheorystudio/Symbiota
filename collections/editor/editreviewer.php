@@ -114,7 +114,7 @@ $navStr .= '</div>';
 		<title>Review/Verify Occurrence Edits</title>
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
 		<script>
@@ -201,7 +201,7 @@ $navStr .= '</div>';
 			<?php 
 			if($collid && $isEditor){
 				?>
-				<div style="font-weight:bold;font-size:130%;"><?php echo $collName; ?></div>
+				<div style="font-weight:bold;"><?php echo $collName; ?></div>
 				<?php 
 				if($statusStr){ 
 					?>
@@ -328,7 +328,7 @@ $navStr .= '</div>';
 					<?php
 					echo '<div style="clear:both">'.$navStr.'</div>'; 
 					?>
-					<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+					<table class="styledtable" style="font-family:Arial,serif;">
 						<tr>
 							<th title="Select/Unselect All"><input name='selectall' type="checkbox" onclick="selectAllId(this)" /></th>
 							<th>Record #</th>
@@ -471,7 +471,7 @@ $navStr .= '</div>';
 							?>
 							<tr>
 								<td colspan="10">
-									<div style="font-weight:bold;font-size:150%;margin:20px;">There are no Edits matching search criteria.</div>
+									<div style="font-weight:bold;margin:20px;">There are no Edits matching search criteria.</div>
 								</td>
 							</tr>
 							<?php 

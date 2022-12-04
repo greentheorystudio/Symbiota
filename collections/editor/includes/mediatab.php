@@ -100,7 +100,7 @@ $occMediaArr = $occManager->getMediaMap();
 				<legend><b>Add a New Media File</b></legend>
 				<div style='padding:15px;width:90%;border:1px solid yellow;background-color:#FFFF99;'>
 					<div class="targetdiv" style="display:block;">
-						<div style="font-weight:bold;font-size:110%;margin-bottom:5px;">
+						<div style="font-weight:bold;margin-bottom:5px;">
 							Select a media file located on your computer:
 						</div>
 				    	<div>

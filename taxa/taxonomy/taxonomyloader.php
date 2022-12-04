@@ -7,7 +7,7 @@
 <div>
     <?php
     if($status){
-        echo "<div style='color:red;font-size:120%;'>".$status. '</div>';
+        echo "<div style='color:red;'>".$status. '</div>';
     }
     ?>
     <form id="loaderform" name="loaderform" action="index.php" method="post">

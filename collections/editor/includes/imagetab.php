@@ -23,7 +23,7 @@ $specImgArr = $occManager->getImageMap();
 				<legend><b>Add a New Image</b></legend>
 				<div style='padding:15px;width:90%;border:1px solid yellow;background-color:#FFFF99;'>
 					<div class="targetdiv" style="display:block;">
-						<div style="font-weight:bold;font-size:110%;margin-bottom:5px;">
+						<div style="font-weight:bold;margin-bottom:5px;">
 							Select an image file located on your computer that you want to upload:
 						</div>
 				    	<div>
@@ -155,7 +155,7 @@ $specImgArr = $occManager->getImageMap();
                             }
 							echo '<a href="'.$imgUrl.'" target="_blank">';
 							if(array_key_exists('error', $imgArr)){
-								echo '<div style="font-weight:bold;font-size:140%">'.$imgArr['error'].'</div>';
+								echo '<div style="font-weight:bold;">'.$imgArr['error'].'</div>';
 							}
 							else{
 								echo '<img src="'.$imgUrl.'" style="width:250px;" title="'.$imgArr['caption'].'" />';

@@ -27,7 +27,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Management Module</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-		<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+		<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
         <style>
             .processor-container {
                 width: 95%;
@@ -109,7 +109,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
             }
             .fuzzy-match {
                 font-weight: bold;
-                font-size: 1.1em;
             }
             .fuzzy-select-button {
                 margin-left: 15px;
@@ -165,7 +164,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 			if($collid && $isEditor){
                 ?>
                 <div style="display:flex;justify-content: space-between;margin-bottom:8px;">
-                    <div style="font-weight: bold;font-size: 130%;margin-left:30px;">
+                    <div style="font-weight: bold;margin-left:30px;">
                         <?php echo $collMap[(int)$collid]['collectionname'].($collMap[(int)$collid]['code']?' ('.$collMap[(int)$collid]['code'].')':''); ?>
                     </div>
                     <div onclick="openTutorialWindow('../../tutorial/collections/management/taxonomy/index.php?collid=<?php echo $collid; ?>');" title="Open Tutorial Window">
@@ -173,7 +172,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                     </div>
                 </div>
                 <div style="display:flex;justify-content: space-between;margin-bottom:8px;">
-                    <div style="margin-left:30px;font-weight:bold;font-size: 130%;">
+                    <div style="margin-left:30px;font-weight:bold;">
                         <div style="margin-top:5px;">
                             Target Kingdom:
                             <select id="targetkingdomselect" onchange="setKingdomId();">
@@ -194,7 +193,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
                             Processing Batch Limit: <input type="text" id="processingLimit" style="width:50px;" value="" onchange="verifyBatchLimitChange();" />
                         </div>
                     </div>
-                    <div style="margin-right:30px;font-weight:bold;font-size:130%;">
+                    <div style="margin-right:30px;font-weight:bold;">
                         <u>Occurrences not linked to taxonomic thesaurus</u>: <span id="unlinkedOccCnt"></span><br/>
                         <u>Unique scientific names</u>: <span id="unlinkedTaxaCnt"></span><br/>
                     </div>

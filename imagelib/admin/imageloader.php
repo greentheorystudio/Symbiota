@@ -54,7 +54,7 @@ include(__DIR__ . '/../../header.php');
 	<div>
 		<form name="uploadform" action="imageloader.php" method="post" enctype="multipart/form-data">
 			<fieldset style="width:90%;">
-				<legend style="font-weight:bold;font-size:120%;">Image Upload Form</legend>
+				<legend style="font-weight:bold;">Image Upload Form</legend>
 				<div style="margin:10px;">
 					This tool is designed to aid collection managers in batch importing image files 
 					that are defined within a comma delimited text file (CSV). The only two required fields are 

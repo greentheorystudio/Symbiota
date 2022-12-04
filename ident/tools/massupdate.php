@@ -139,7 +139,7 @@ include(__DIR__ . '/../../header.php');
 			$inheritStr = "&nbsp;<span title='State has been inherited from parent taxon'><b>(i)</b></span>";
 			?>
 			<div><?php echo $inheritStr; ?> = character state is inherited as true from a parent taxon (genus, family, etc)</div>
-		 	<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+		 	<table class="styledtable" style="font-family:Arial,serif;">
 				<?php
 				$muManager->echoTaxaList($taxonFilter,$generaOnly);
 				?>
@@ -175,7 +175,7 @@ include(__DIR__ . '/../../header.php');
                 <?php
                 $cList = $muManager->getCharList($taxonFilter);
                 foreach($cList as $h => $charData){
-                    echo "<div style='margin-top:1em;font-size:125%;font-weight:bold;'>$h</div>\n";
+                    echo "<div style='margin-top:1em;font-weight:bold;'>$h</div>\n";
                     ksort($charData);
                     foreach($charData as $cidKey => $charValue){
                         echo '<div> <input name="cid" type="radio" value="'.$cidKey.'" onclick="this.form.submit()">'.$charValue.'</div>'."\n";

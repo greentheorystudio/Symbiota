@@ -17,8 +17,8 @@ $fullConfArr = $confManager->getConfigurationsArr();
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Mapping Configuration Manager</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20220225" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/admin.spatial.css?ver=20221103" rel="stylesheet" type="text/css" />
@@ -208,56 +208,56 @@ include(__DIR__ . '/../../header.php');
                 <div style="padding:5px;margin-top:5px;display:flex;flex-direction:column;width:90%;margin-left:auto;margin-right:auto;">
                     <div style="display:flex;justify-content:space-evenly;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Cluster Points: </span>
+                            <span style="font-weight:bold;margin-right:10px;">Cluster Points: </span>
                             <input type='checkbox' id='pointsCluster' <?php echo ($GLOBALS['SPATIAL_POINT_CLUSTER']?'checked':''); ?>>
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Cluster Distance (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Cluster Distance (px): </span>
                             <input id="pointsClusterDistance" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE']; ?>" />
                         </div>
                     </div>
                     <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Display Heat Map: </span>
+                            <span style="font-weight:bold;margin-right:10px;">Display Heat Map: </span>
                             <input type='checkbox' id='pointsDisplayHeatMap' <?php echo ($GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP']?'checked':''); ?>>
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Heat Map Radius (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Heat Map Radius (px): </span>
                             <input id="pointsHeatMapRadius" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS']; ?>" />
 
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Heat Map Blur (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Heat Map Blur (px): </span>
                             <input id="pointsHeatMapBlur" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR']; ?>" />
                         </div>
                     </div>
                     <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
-                            <input id="pointsBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_POINT_BORDER_COLOR']; ?>" />
+                            <span style="font-weight:bold;margin-right:10px;">Border color: </span>
+                            <input id="pointsBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" value="<?php echo $GLOBALS['SPATIAL_POINT_BORDER_COLOR']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill color: </span>
-                            <input id="pointsFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_POINT_FILL_COLOR']; ?>" />
+                            <span style="font-weight:bold;margin-right:10px;">Fill color: </span>
+                            <input id="pointsFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" value="<?php echo $GLOBALS['SPATIAL_POINT_FILL_COLOR']; ?>" />
                         </div>
                     </div>
                     <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border width (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Border width (px): </span>
                             <input id="pointsBorderWidth" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_POINT_BORDER_WIDTH']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Point radius (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Point radius (px): </span>
                             <input id="pointsPointRadius" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_POINT_POINT_RADIUS']; ?>" />
                         </div>
                     </div>
                     <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Selections Border color: </span>
-                            <input id="pointsSelectionsBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_COLOR']; ?>" />
+                            <span style="font-weight:bold;margin-right:10px;">Selections Border color: </span>
+                            <input id="pointsSelectionsBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" value="<?php echo $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_COLOR']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Selections Border width (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Selections Border width (px): </span>
                             <input id="pointsSelectionsBorderWidth" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_WIDTH']; ?>" />
                         </div>
                     </div>
@@ -268,45 +268,45 @@ include(__DIR__ . '/../../header.php');
                 <div style="padding:5px;margin-top:5px;display:flex;flex-direction:column;width:90%;margin-left:auto;margin-right:auto;">
                     <div style="display:flex;justify-content:space-evenly;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
-                            <input id="shapesBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR']; ?>" />
+                            <span style="font-weight:bold;margin-right:10px;">Border color: </span>
+                            <input id="shapesBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill color: </span>
-                            <input id="shapesFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_FILL_COLOR']; ?>" />
+                            <span style="font-weight:bold;margin-right:10px;">Fill color: </span>
+                            <input id="shapesFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_FILL_COLOR']; ?>" />
                         </div>
                     </div>
                     <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border width (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Border width (px): </span>
                             <input id="shapesBorderWidth" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Point radius (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Point radius (px): </span>
                             <input id="shapesPointRadius" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill Opacity: </span>
+                            <span style="font-weight:bold;margin-right:10px;">Fill Opacity: </span>
                             <input id="shapesOpacity" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_OPACITY']; ?>" />
                         </div>
                     </div>
                     <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Selections Border color: </span>
-                            <input id="shapesSelectionsBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR']; ?>" />
+                            <span style="font-weight:bold;margin-right:10px;">Selections Border color: </span>
+                            <input id="shapesSelectionsBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Selections Fill color: </span>
-                            <input id="shapesSelectionsFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR']; ?>" />
+                            <span style="font-weight:bold;margin-right:10px;">Selections Fill color: </span>
+                            <input id="shapesSelectionsFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR']; ?>" />
                         </div>
                     </div>
                     <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Selections Border width (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Selections Border width (px): </span>
                             <input id="shapesSelectionsBorderWidth" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Selections Opacity: </span>
+                            <span style="font-weight:bold;margin-right:10px;">Selections Opacity: </span>
                             <input id="shapesSelectionsOpacity" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY']; ?>" />
                         </div>
                     </div>
@@ -318,7 +318,7 @@ include(__DIR__ . '/../../header.php');
                     <div style="display:flex;justify-content:space-evenly;">
                         <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                             <div style="display:flex;align-items:center;">
-                                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Raster color scale: </span>
+                                <span style="font-weight:bold;margin-right:10px;">Raster color scale: </span>
                                 <select id="dragDropRasterColorScale">
                                     <option value="autumn" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'autumn'?'selected':''); ?>>Autumn</option>
                                     <option value="blackbody" <?php echo ($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === 'blackbody'?'selected':''); ?>>Blackbody</option>
@@ -351,25 +351,25 @@ include(__DIR__ . '/../../header.php');
                             </div>
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
-                            <input id="dragDropBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']; ?>" />
+                            <span style="font-weight:bold;margin-right:10px;">Border color: </span>
+                            <input id="dragDropBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill color: </span>
-                            <input id="dragDropFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR']; ?>" />
+                            <span style="font-weight:bold;margin-right:10px;">Fill color: </span>
+                            <input id="dragDropFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR']; ?>" />
                         </div>
                     </div>
                     <div style="display:flex;justify-content:space-evenly;margin-top:15px;">
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border width (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Border width (px): </span>
                             <input id="dragDropBorderWidth" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Point radius (px): </span>
+                            <span style="font-weight:bold;margin-right:10px;">Point radius (px): </span>
                             <input id="dragDropPointRadius" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>" />
                         </div>
                         <div style="display:flex;align-items:center;">
-                            <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill Opacity: </span>
+                            <span style="font-weight:bold;margin-right:10px;">Fill Opacity: </span>
                             <input id="dragDropOpacity" style="width:25px;" value="<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>" />
                         </div>
                     </div>
@@ -398,7 +398,7 @@ include(__DIR__ . '/../../header.php');
                             <legend><b>Add Layer Group</b></legend>
                             <div style="display:flex;justify-content: space-between;">
                                 <div>
-                                    <span style="font-weight:bold;margin-right:10px;font-size:14px;">Group Name: </span>
+                                    <span style="font-weight:bold;margin-right:10px;">Group Name: </span>
                                     <input type="text" id="addLayerGroupName" style="width:400px;" value="" />
                                 </div>
                                 <div style="display:flex;justify-content: flex-end;gap:10px;">
@@ -412,31 +412,31 @@ include(__DIR__ . '/../../header.php');
                         <fieldset style="margin: 10px 0;padding:10px;">
                             <legend><b>Add Layer</b></legend>
                             <div style="display:flex;justify-content: space-between;align-content: center;align-items: center;">
-                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">File:</div>
+                                <div style="font-weight:bold;margin-right:10px;">File:</div>
                                 <div style="width:550px;display:flex;justify-content:flex-start;">
                                     <input id='addLayerFile' type='file' onchange="validateFileUpload('add');" />
                                 </div>
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Layer Name:</div>
+                                <div style="font-weight:bold;margin-right:10px;">Layer Name:</div>
                                 <div><input type="text" id="addLayerName" style="width:550px;" value="" /></div>
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Description:</div>
+                                <div style="font-weight:bold;margin-right:10px;">Description:</div>
                                 <div>
                                     <textarea id="addLayerDescription" style="width:550px;height:60px;resize:vertical;"></textarea>
                                 </div>
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Provided By:</div>
+                                <div style="font-weight:bold;margin-right:10px;">Provided By:</div>
                                 <div><input type="text" id="addLayerProvidedBy" style="width:550px;" value="" /></div>
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Source URL:</div>
+                                <div style="font-weight:bold;margin-right:10px;">Source URL:</div>
                                 <div><input type="text" id="addLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL('add');" /></div>
                             </div>
                             <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-                                <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
+                                <div style="font-weight:bold;margin-right:10px;">Date Aquired:</div>
                                 <div style="width:550px;display:flex;justify-content:flex-start;">
                                     <input type="text" id="addLayerDateAquired" style="width:100px;" />
                                 </div>
@@ -457,10 +457,10 @@ include(__DIR__ . '/../../header.php');
         </div>
     </div>
 </div>
-<div id="layergroupeditwindow" data-role="popup" class="well" style="width:60%;min-width:425px;height:150px;font-size:14px;">
+<div id="layergroupeditwindow" data-role="popup" class="well" style="width:60%;min-width:425px;height:150px;">
     <fieldset style="padding:15px;">
         <div>
-            <span style="font-weight:bold;margin-right:10px;font-size:14px;">Group Name: </span>
+            <span style="font-weight:bold;margin-right:10px;">Group Name: </span>
             <input type="text" id="editLayerGroupName" style="width:400px;" value="" />
             <input type="hidden" id="editLayerGroupId" value="" />
         </div>
@@ -479,41 +479,41 @@ include(__DIR__ . '/../../header.php');
         </div>
     </div>
 </div>
-<div id="layereditwindow" data-role="popup" class="well" style="width:60%;min-width:800px;min-height:300px;font-size:14px;">
+<div id="layereditwindow" data-role="popup" class="well" style="width:60%;min-width:800px;min-height:300px;">
     <fieldset style="padding:15px;">
         <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Layer Name:</div>
+            <div style="font-weight:bold;margin-right:10px;">Layer Name:</div>
             <div>
                 <input type="text" id="editLayerName" style="width:550px;" value="" />
                 <input type="hidden" id="editLayerId" value="" />
             </div>
         </div>
         <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Description:</div>
+            <div style="font-weight:bold;margin-right:10px;">Description:</div>
             <div>
                 <textarea id="editLayerDescription" style="width:550px;height:60px;resize:vertical;"></textarea>
             </div>
         </div>
         <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Provided By:</div>
+            <div style="font-weight:bold;margin-right:10px;">Provided By:</div>
             <div><input type="text" id="editLayerProvidedBy" style="width:550px;" value="" /></div>
         </div>
         <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Source URL:</div>
+            <div style="font-weight:bold;margin-right:10px;">Source URL:</div>
             <div><input type="text" id="editLayerSourceURL" style="width:550px;" value="" onchange="validateSourceURL('edit');" /></div>
         </div>
         <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Aquired:</div>
+            <div style="font-weight:bold;margin-right:10px;">Date Aquired:</div>
             <div style="width:550px;display:flex;justify-content:flex-start;">
                 <input type="text" id="editLayerDateAquired" style="width:100px;" />
             </div>
         </div>
         <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Date Uploaded:</div>
+            <div style="font-weight:bold;margin-right:10px;">Date Uploaded:</div>
             <div id="editLayerDateUploaded" style="width:550px;display:flex;justify-content:flex-start;"></div>
         </div>
         <div style="margin-top:8px;display:flex;justify-content: space-between;align-content: center;align-items: center;">
-            <div style="font-weight:bold;margin-right:10px;font-size:14px;">File:</div>
+            <div style="font-weight:bold;margin-right:10px;">File:</div>
             <div id="editLayerFile" style="width:550px;display:flex;justify-content:flex-start;"></div>
         </div>
     </fieldset>
@@ -521,25 +521,25 @@ include(__DIR__ . '/../../header.php');
         <legend><b>Initial Symbology</b></legend>
         <div style="display:flex;justify-content:space-evenly;">
             <div style="display:flex;align-items:center;">
-                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border color: </span>
-                <input id="editLayerBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" />
+                <span style="font-weight:bold;margin-right:10px;">Border color: </span>
+                <input id="editLayerBorderColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" />
             </div>
             <div style="display:flex;align-items:center;">
-                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill color: </span>
-                <input id="editLayerFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;font-size:0;" />
+                <span style="font-weight:bold;margin-right:10px;">Fill color: </span>
+                <input id="editLayerFillColor" class="color" style="cursor:pointer;border:1px black solid;height:15px;width:15px;margin-bottom:-2px;" />
             </div>
         </div>
         <div style="display:flex;justify-content:space-evenly;margin-top:10px;">
             <div style="display:flex;align-items:center;">
-                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Border width (px): </span>
+                <span style="font-weight:bold;margin-right:10px;">Border width (px): </span>
                 <input id="editLayerBorderWidth" style="width:25px;" />
             </div>
             <div style="display:flex;align-items:center;">
-                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Point radius (px): </span>
+                <span style="font-weight:bold;margin-right:10px;">Point radius (px): </span>
                 <input id="editLayerPointRadius" style="width:25px;" />
             </div>
             <div style="display:flex;align-items:center;">
-                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Fill Opacity: </span>
+                <span style="font-weight:bold;margin-right:10px;">Fill Opacity: </span>
                 <input id="editLayerOpacity" style="width:25px;" />
             </div>
         </div>
@@ -548,7 +548,7 @@ include(__DIR__ . '/../../header.php');
         <legend><b>Initial Symbology</b></legend>
         <div style="display:flex;justify-content:center;align-items:center;">
             <div>
-                <span style="font-weight:bold;margin-right:10px;font-size:12px;">Raster color scale: </span>
+                <span style="font-weight:bold;margin-right:10px;">Raster color scale: </span>
                 <select id="editLayerColorScale">
                     <option value="autumn">Autumn</option>
                     <option value="blackbody">Blackbody</option>
@@ -583,7 +583,7 @@ include(__DIR__ . '/../../header.php');
     </fieldset>
     <fieldset id="updateLayerFileBox" style="display:none;margin-top:10px;padding:15px;flex-direction:column;">
         <div style="display:flex;justify-content:flex-start;align-content:center;align-items:center;gap:15px;">
-            <div style="font-weight:bold;margin-right:10px;font-size:14px;">Update File:</div>
+            <div style="font-weight:bold;margin-right:10px;">Update File:</div>
             <div>
                 <input id='layerFileUpdate' type='file' onchange="validateFileUpload('edit');" />
             </div>
