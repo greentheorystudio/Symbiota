@@ -58,7 +58,7 @@ class ChecklistManager {
 					$this->clid = $row->clid;
 				}
 				else{
-					$retStr = '<h1>ERROR: invalid checklist identifier supplied ('.$clValue.')</h1>';
+					$retStr = '<h2>ERROR: invalid checklist identifier supplied ('.$clValue.')</h2>';
 				}
 				$rs->free();
 			}
@@ -300,7 +300,7 @@ class ChecklistManager {
 					'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
 					'WHERE i.sortsequence < 500 '.
 					'AND t.parenttid IN('.implode(',',$missingArr).') '.
-					'GROUP BY ts1.tid) AS i2 ON i.imgid = i2.imgid';
+					'GROUP BY t.tid) AS i2 ON i.imgid = i2.imgid';
 				//echo $sql;
 				$rs2 = $this->conn->query($sql2);
 				while($row2 = $rs2->fetch_object()){

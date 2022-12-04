@@ -12,7 +12,7 @@
             ?>
 
             <h3 class="tabtitle">Vector Tools</h3>
-            <div id="vectortoolstab" style="width:379px;padding:0;">
+            <div id="vectortoolstab">
                 <ul>
                     <li><a class="tabtitle" href="#polycalculatortab">Shapes</a></li>
                     <li><a class="tabtitle" href="#pointscalculatortab">Points</a></li>
@@ -22,7 +22,7 @@
             </div>
 
             <h3 class="tabtitle">Raster Tools</h3>
-            <div id="rastertoolstab" style="width:379px;padding:0;">
+            <div id="rastertoolstab">
                 <?php include_once(__DIR__ . '/rastertoolstab.php'); ?>
             </div>
             <?php

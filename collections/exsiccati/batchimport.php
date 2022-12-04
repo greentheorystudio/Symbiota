@@ -155,7 +155,7 @@ if($isEditor && $formSubmit){
 				<?php
 			}
 			else{
-				echo '<div style="margin:20px;font-size:120%;"><b>The system does not yet have occurrence linked to exsiccati that can be transferred</b></div>';
+				echo '<div style="margin:20px;"><b>The system does not yet have occurrence linked to exsiccati that can be transferred</b></div>';
 			}				
 		}
 		elseif($formSubmit === 'Show Exsiccati Table'){
@@ -163,14 +163,14 @@ if($isEditor && $formSubmit){
 			if($occurArr){
 				$exsMetadata = $exsManager->getTitleObj($ometid);
 				$exstitle = $exsMetadata['title'].' ['.$exsMetadata['editor'].']';
-				echo '<div style="font-size:120%;"><b>'.$exstitle.'</b></div>';
+				echo '<div style=""><b>'.$exstitle.'</b></div>';
 				?>
 				<form name="exstableform" method="post" action="batchimport.php" onsubmit="return verifyExsTableForm(this)">
 					<div style="margin:10px 0;">
 						Enter your catalog numbers in field associated with record and then transfer into your collection or download as a spreadsheet (CSV) 
 						for import into a local database application.   
 					</div>
-					<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+					<table class="styledtable" style="font-family:Arial,serif;">
 						<tr><th><input name="selectAllCB" type="checkbox" onchange="selectAll(this)" /></th><th>Catalog Number</th><th>Exsiccati #</th><th>Details</th></tr>
 						<?php 
 						foreach($occurArr as $omenid => $occArr){

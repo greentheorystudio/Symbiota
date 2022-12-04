@@ -131,7 +131,7 @@ if(!$GLOBALS['IS_ADMIN']){
         <?php
     }
     if($occArr){
-        echo '<div style="font-weight:bold;font-size:130%;">';
+        echo '<div style="font-weight:bold;">';
         if($dupeType === 'exsic'){
             echo '<span style="color:blue;">Exsiccati Duplicates</span>';
         }
@@ -150,7 +150,7 @@ if(!$GLOBALS['IS_ADMIN']){
         echo '</div><hr/>';
         ?>
         <div id="tableview" style="display:none;">
-            <table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+            <table class="styledtable" style="font-family:Arial,serif;">
                 <tr>
                     <th>&nbsp;</th>
                     <th>&nbsp;</th>
@@ -221,7 +221,7 @@ if(!$GLOBALS['IS_ADMIN']){
                     <?php
                 }
                 ?>
-                <div style="clear:both;font-weight:bold;font-size:120%;">
+                <div style="clear:both;font-weight:bold;">
                     <?php echo $collName; ?>
                 </div>
                 <?php if($collId === $occObj['collid'] && ($dupeType === 'exact' || $dupeType === 'exsic')){

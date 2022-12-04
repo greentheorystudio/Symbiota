@@ -42,7 +42,7 @@ else{
 		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Year Statistics</title>
 		<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 		<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-		<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+		<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="../../js/external/jquery.js"></script>
 		<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 		<script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
@@ -54,7 +54,7 @@ else{
 		<div id="innertext">
 			<fieldset id="yearstatsbox" style="clear:both;margin-top:15px;width:97%;">
 				<legend><b>Month Totals</b></legend>
-				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:98%;">
+				<table class="styledtable" style="font-family:Arial,serif;width:98%;">
 					<tr>
 						<th style="text-align:center;">Institution</th>
 						<th style="text-align:center;">Object</th>

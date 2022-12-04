@@ -115,7 +115,7 @@ $specImgArr = $occManager->getImageMap();
 			<?php 
 			if(!$detArr){
 				?>
-				<div style="font-weight:bold;margin:10px;font-size:120%;">
+				<div style="font-weight:bold;margin:10px;">
 					There are no historic annotations for this occurrence
 				</div>
 				<?php 

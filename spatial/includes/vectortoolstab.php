@@ -1,7 +1,7 @@
 <?php
 /** @var string $inputWindowMode */
 ?>
-<div id="polycalculatortab" style="width:379px;padding:0;">
+<div id="polycalculatortab">
     <div style="padding:10px;">
         <div style="height:45px;">
             <div style="float:<?php echo (!$inputWindowMode?'right':'left'); ?>;">

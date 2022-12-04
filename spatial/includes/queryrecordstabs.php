@@ -28,7 +28,7 @@ $obsArr = ($collList['obs'] ?? null);
                 </div>
                 <div style="margin:5px 0 5px 0;"><hr /></div>
                 <div>
-                    <h1 style="margin:0 0 8px 0;font-size:15px;">Collections to be Searched</h1>
+                    <h3 style="margin:0 0 8px 0;">Collections to be Searched</h3>
                 </div>
                 <?php
                 if($specArr || $obsArr){
@@ -302,7 +302,7 @@ $obsArr = ($collList['obs'] ?? null);
             </div>
         </div>
         <div style="clear:both;height:10px;"></div>
-        <table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;width:360px;">
+        <table class="styledtable" style="font-family:Arial,serif;margin-left:-15px;width:360px;">
             <thead>
             <tr>
                 <th style="width:10px;"></th>

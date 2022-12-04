@@ -8,7 +8,6 @@ body{
 }
 
 .title {
-	font-size: 40px;
 	font-weight: bold;
 }
 
@@ -169,7 +168,6 @@ div.navpath {
 .quicksearchselectorcontainer {
 	height: 20px;
 	width: 300px;
-	font-size: 16px;
 	display: flex;
 	justify-content: space-evenly;
 }
@@ -219,8 +217,4 @@ div.navpath {
 .quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
-}
-
-.taxon-desc-tab-text {
-	font-size: 14px;
 }

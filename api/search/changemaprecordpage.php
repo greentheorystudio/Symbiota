@@ -114,7 +114,7 @@ if($occArr){
 	$recordListHtml .= '<input name="" id="selectallcheck" value="" type="checkbox" style="margin-right:5px;" onclick="selectAll(this);" '.($allSelected === true? 'checked' : '').' />';
 	$recordListHtml .= 'Select/Deselect All Records';
 	$recordListHtml .= '</div>';
-	$recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;width:360px;">';
+	$recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;margin-left:-15px;width:360px;">';
 	$recordListHtml .= '<tr>';
 	$recordListHtml .= '<th style="width:10px;"></th>';
 	$recordListHtml .= '<th style="width:70px;">Catalog #</th>';
@@ -153,7 +153,7 @@ if($occArr){
     $recordListHtml .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px">'.$copyURL.'</textarea>';
 }
 else{
-	$recordListHtml .= '<div style="font-weight:bold;font-size:120%;">';
+	$recordListHtml .= '<div style="font-weight:bold;">';
 	$recordListHtml .= 'No records found matching the query';
 	$recordListHtml .= '</div>';
 }
