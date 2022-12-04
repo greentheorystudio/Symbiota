@@ -1,16 +1,18 @@
+html {
+	background-color: #598F90;
+	font-size: 90%;
+}
+
 body{
 	margin: 0 auto 8px;
 	width: 80%;
 	min-width: 950px;
-	background-color: #598F90;
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
 	line-height: 16px;
 }
 
 .title {
-	font-size: 40px;
 	font-weight: bold;
 }
 
@@ -38,13 +40,11 @@ body{
 	margin: 0 auto;
 	padding: 10px 15px 15px;
 	font-family: arial, helvetica, sans-serif;
-	font-size: 14px;
 	line-height: 16px;
 }
 
 h1 {
 	color: #990000;
-	font-size: 18px;
 }
 
 div.navpath {
@@ -182,7 +182,6 @@ div.navpath {
 .quicksearchselectorcontainer {
 	height: 20px;
 	width: 300px;
-	font-size: 16px;
 	display: flex;
 	justify-content: space-evenly;
 }
@@ -232,8 +231,4 @@ div.navpath {
 .quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
-}
-
-.taxon-desc-tab-text {
-	font-size: 14px;
 }
