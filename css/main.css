@@ -322,6 +322,7 @@ Accent: #E52A4D
 
 html{
 	background-color: #2E4107;
+	font-size: 90%;
 }
 
 body{
@@ -329,13 +330,11 @@ body{
 	min-width:950px;
 	margin-top:0;
 	font-family: 'Source Sans Pro';
-	font-size: 16px;
 	line-height: 18px;
 	border: 1px solid black;
 }
 
 .title {
-	font-size: 40px;
 	font-weight: bold;
 }
 
@@ -362,7 +361,6 @@ body{
 	padding: 20px;
 	background-color: #F6F6F6;
 	font-family: 'Source Sans Pro';
-	font-size: 16px;
 	line-height: 18px;
 }
 
@@ -372,12 +370,10 @@ div.navpath {
 	padding-left: 10px;
 	margin-bottom: 0;
 	font-family: 'Source Sans Pro';
-	font-size: 12pt;
 	font-variant: small-caps;
 }
 div.navpath a, div.navpath a:hover {
 	font-family: 'Source Sans Pro';
-	font-size: 12pt;
 	font-variant: small-caps;
 }
 
@@ -427,7 +423,6 @@ h5{
 }
 #horizontalDropDown{
 	list-style:none;
-	font-size: 16px;
 	width:auto;
 	color: white;
 	font-family: 'Source Sans Pro';
@@ -546,7 +541,6 @@ h5{
 .quicksearchselectorcontainer {
 	height: 20px;
 	width: 300px;
-	font-size: 16px;
 	display: flex;
 	justify-content: space-evenly;
 }
@@ -596,10 +590,6 @@ h5{
 .quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
-}
-
-.taxon-desc-tab-text {
-	font-size: 14px;
 }
 
 .footerContainer{
