@@ -45,12 +45,12 @@ function toggleCoordDiv(){
 
 function toggleCsMode(modeId){
 	if(modeId == 1){
-		document.getElementById("editorCssLink").href = "../../css/occureditorcrowdsource.css?ver=20221125";
+		document.getElementById("editorCssLink").href = "../../css/occureditorcrowdsource.css?ver=20221204";
 		document.getElementById("longtagspan").style.display = "block";
 		document.getElementById("shorttagspan").style.display = "none";
 	}
 	else{
-		document.getElementById("editorCssLink").href = "../../css/occureditor.css?ver=20221125";
+		document.getElementById("editorCssLink").href = "../../css/occureditor.css?ver=20221204";
 		document.getElementById("longtagspan").style.display = "none";
 		document.getElementById("shorttagspan").style.display = "block";
 	}

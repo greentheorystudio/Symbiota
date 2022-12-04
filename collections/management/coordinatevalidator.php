@@ -150,7 +150,7 @@ if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
 							}
 						}
 						else{
-							echo '<div style="margin:30px;font-weight:bold;font-size:150%">Nothing to be displayed</div>';
+							echo '<div style="margin:30px;font-weight:bold;">Nothing to be displayed</div>';
 						}
 						?>
 					</div>

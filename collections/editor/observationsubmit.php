@@ -56,7 +56,7 @@ if($collMap){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Observation Submission</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
 	<script type="text/javascript">
 		<?php 
 		$maxUpload = ini_get('upload_max_filesize');
@@ -104,7 +104,7 @@ if($collMap){
 					<div style="color:green;">
 						SUCCESS: Image loaded successfully!
 					</div>
-					<div style="font-size:120%;margin-top:10px;">
+					<div style="margin-top:10px;">
 						Open  
 						<a href="../individual/index.php?occid=<?php echo $occid; ?>" target="_blank">Occurrence Details Viewer</a> to see the new record 
 					</div>
@@ -233,7 +233,7 @@ if($collMap){
 							<span style="margin:15px 5px 0 5px;cursor:pointer;" onclick="openSpatialInputWindow('input-point,uncertainty');">
 								<i style="height:15px;width:15px;" title="Coordinate Map Aid" class="fas fa-globe"></i>
 							</span>
-							<span style="margin:15px 2px 0 2px;text-align:center;font-size:85%;font-weight:bold;color:maroon;background-color:#FFFFD7;padding:2px;border:1px outset #A0A0A0;cursor:pointer;" onclick="toggle('dmsdiv');">
+							<span style="margin:15px 2px 0 2px;text-align:center;font-weight:bold;color:maroon;background-color:#FFFFD7;padding:2px;border:1px outset #A0A0A0;cursor:pointer;" onclick="toggle('dmsdiv');">
 								DMS
 							</span>
 						</div>

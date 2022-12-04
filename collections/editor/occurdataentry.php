@@ -50,8 +50,8 @@ if($GLOBALS['SYMB_UID']){
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
-	<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
-	<link href="../../css/occureditor.css?ver=20221125" type="text/css" rel="stylesheet" id="editorCssLink" />
+	<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
+	<link href="../../css/occureditor.css?ver=20221204" type="text/css" rel="stylesheet" id="editorCssLink" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
@@ -59,8 +59,8 @@ if($GLOBALS['SYMB_UID']){
         const collId = "<?php echo $collid; ?>";
     </script>
     <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
-	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221125"></script>
-	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221125"></script>
+	<script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221204"></script>
+	<script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221204"></script>
 	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {

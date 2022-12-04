@@ -1,4 +1,4 @@
-<link href="../../css/external/bootstrap.min.css?ver=20220225" rel="stylesheet" />
+<link href="../../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" />
 <link href="../../css/external/jquery.fileupload.css" rel="stylesheet" type="text/css" />
 <link href="../../css/external/jquery.fileupload-ui.css" rel="stylesheet" type="text/css" />
 <style>
@@ -23,7 +23,6 @@
         background-color: white;
         margin: 0 auto;
         padding: 10px;
-        font-size: 18px;
         font-weight: bold;
         color: #a9a9a9;
     }
@@ -255,7 +254,7 @@
     });
 </script>
 <div>
-    <div style="margin-bottom:20px;font-size:16px;">
+    <div style="margin-bottom:20px;">
         To batch upload taxa images, either click the Add files button to select the files to be uploaded or drag and
         drop the files onto the box below. A csv spreadheet can also be uploaded to provide further metadata for the files.
         <a href="../../templates/batchTaxaImageData.csv"><b>Use this template for the csv spreadsheet.</b></a> For each
@@ -283,7 +282,7 @@
                         </button>
                     </div>
                     <div id="csvDataMessage" style="display:none;">
-                        <strong style="color:red;font-size:16px;">CSV Data Uploaded</strong>
+                        <strong style="color:red;">CSV Data Uploaded</strong>
                     </div>
                 </div>
             </div>

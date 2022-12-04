@@ -134,7 +134,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
     <meta name="keywords" content="<?php echo $occArr['guid']; ?>">
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
-    <link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <style>
         .map {
             width: 100%;
@@ -344,7 +344,7 @@ if($fullWindow){
                     ?>
                 </div>
                 <div style="float:left;padding:25px;">
-                    <span style="font-size:18px;font-weight:bold;vertical-align:60%;">
+                    <span style="font-weight:bold;vertical-align:60%;">
                         <?php echo $collMetadata['collectionname']; ?>
                     </span>
                 </div>
@@ -1090,9 +1090,9 @@ if($fullWindow){
                 ?>
                 <div id="dupestab">
                     <div style="margin:20px;">
-                        <div style="font-weight:bold;font-size:120%;margin-bottom:10px;"><u>Current Record</u></div>
+                        <div style="font-weight:bold;margin-bottom:10px;"><u>Current Record</u></div>
                         <?php
-                        echo '<div style="font-weight:bold;font-size:120%;">'.$collMetadata['collectionname'].' ('.$collMetadata['institutioncode'].($collMetadata['collectioncode']?':'.$collMetadata['collectioncode']:'').')</div>';
+                        echo '<div style="font-weight:bold;">'.$collMetadata['collectionname'].' ('.$collMetadata['institutioncode'].($collMetadata['collectioncode']?':'.$collMetadata['collectioncode']:'').')</div>';
                         echo '<div style="margin:5px 15px">';
                         if($occArr['recordedby']) {
                             echo '<div>' . $occArr['recordedby'] . ' ' . $occArr['recordnumber'] . '<span style="margin-left:40px;">' . $occArr['eventdate'] . '</span></div>';
@@ -1123,7 +1123,7 @@ if($fullWindow){
                                         $collCode .= ($collCode?':':'') . $dupArr['collcode'];
                                     }
                                     echo '<div style="clear:both;margin:15px;">';
-                                    echo '<div style="font-weight:bold;font-size:120%;">'.$dupArr['collname'].($collCode?' ('.$collCode.')':'').'</div>';
+                                    echo '<div style="font-weight:bold;">'.$dupArr['collname'].($collCode?' ('.$collCode.')':'').'</div>';
                                     echo '<div style="float:left;margin:5px 15px">';
                                     if($dupArr['recordedby']) {
                                         echo '<div>' . $dupArr['recordedby'] . ' ' . $dupArr['recordnumber'] . '<span style="margin-left:40px;">' . $dupArr['eventdate'] . '</span></div>';
@@ -1223,7 +1223,7 @@ if($fullWindow){
                     }
                 }
                 else{
-                    echo '<div style="font-weight:bold;font-size:120%;margin:20px;">No comments have been submitted</div>';
+                    echo '<div style="font-weight:bold;margin:20px;">No comments have been submitted</div>';
                 }
                 ?>
                 <fieldset style="padding:20px;">
@@ -1365,7 +1365,7 @@ if($fullWindow){
                         $accessStats = $indManager->getAccessStats();
                         if($accessStats){
                             echo '<div style="margin-top:30px"><b>Access Stats</b></div>';
-                            echo '<table class="styledtable" style="font-size:100%;width:300px;">';
+                            echo '<table class="styledtable" style="width:300px;">';
                             echo '<tr><th>Year</th><th>Access Type</th><th>Count</th></tr>';
                             foreach($accessStats as $accessDate => $arr1){
                                 foreach($arr1 as $accessType => $accessCnt){
@@ -1410,7 +1410,7 @@ if($fullWindow){
                         $imgs = $archArr['imgs'];
                         unset($archArr['imgs']);
                     }
-                    echo '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;"><tr><th>Field</th><th>Value</th></tr>';
+                    echo '<table class="styledtable" style="font-family:Arial,serif;"><tr><th>Field</th><th>Value</th></tr>';
                     foreach($archArr as $f => $v){
                         echo '<tr><td style="width:175px;"><b>'.$f.'</b></td><td>';
                         if(is_array($v)){

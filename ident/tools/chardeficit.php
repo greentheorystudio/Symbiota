@@ -119,7 +119,7 @@ $charStr = '';
                             if($tList){
                                 echo '<h3>Species Count: ' .$cdManager->getTaxaCount()."</h3>\n";
                                 foreach($tList as $f=>$sArr){
-                                    echo "<div style='margin-top:1em;font-size:125%;'>$f</div>\n";
+                                    echo "<div style='margin-top:1em;'>$f</div>\n";
                                     foreach($sArr as $idValue => $spValue){
                                         $onClickStr = "openPopup('editor.php?tid=".$idValue. '&char=' .$cidValue."','technical');";
                                         echo "<div style=''>&nbsp;&nbsp;<a href='editor.php?tid=".$idValue."&lang=English&lang=English' target='_blank'>$spValue</a> ";

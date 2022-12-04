@@ -179,7 +179,7 @@ if($userChecklists || $checklistArr){
                             }
                             ?>
 							<div id="dupediv-<?php echo $dupeOccid; ?>" style="clear:both;margin:15px;">
-								<div style="font-weight:bold;font-size:120%;">
+								<div style="font-weight:bold;">
 									<?php echo $dArr['collname'].($collCode?' ('.$collCode.')':''); ?>
 								</div>
 								<div style="float:right;">
@@ -237,7 +237,7 @@ if($userChecklists || $checklistArr){
 				}
 			}
 			elseif($dupClusterArr !== false) {
-                echo '<div style="font-weight:bold;font-size:120%;margin:15px 0;">No Linked Duplicate Records</div>';
+                echo '<div style="font-weight:bold;margin:15px 0;">No Linked Duplicate Records</div>';
             }
             else {
                 echo $dupManager->getErrorStr();

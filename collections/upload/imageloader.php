@@ -240,7 +240,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                     <fieldset>
                         <legend><b>Image File Upload Mapping</b></legend>
                         <div style="margin:15px;">
-                            <table class="styledtable" style="width:700px;font-family:Arial,serif;font-size:12px;">
+                            <table class="styledtable" style="width:700px;font-family:Arial,serif;">
                                 <tr><th>Source Field</th><th>Target Field</th></tr>
                                 <?php
                                 $imgProcessor = new ImageProcessor();

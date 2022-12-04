@@ -77,8 +77,8 @@ if(!$researchList && !$editMode){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Biotic Inventory Projects</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/external/bootstrap.min.css?ver=20220225" rel="stylesheet" type="text/css" />
-    <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+    <link href="../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <style>
         a.boxclose{
             float:right;
@@ -358,7 +358,7 @@ echo '</div>';
                 if($researchList){
                     $coordJson = $projManager->getResearchCoords();
                     ?>
-                    <div style="font-weight:bold;font-size:130%;">
+                    <div style="font-weight:bold;">
                         Research Checklists
                         <span onclick="toggleResearchInfoBox();" title="What is a Research Species List?" style="cursor:pointer;">
 								<i style="height:15px;width:15px;" class="far fa-question-circle"></i>
@@ -376,7 +376,7 @@ echo '</div>';
                     <?php
                     if($GLOBALS['KEY_MOD_IS_ACTIVE']){
                         ?>
-                        <div style="margin-left:15px;font-size:90%">
+                        <div style="margin-left:15px;">
                             The <i style="width: 12px;" class="fas fa-key"></i>
                             symbol opens the species list as an interactive key.
                         </div>

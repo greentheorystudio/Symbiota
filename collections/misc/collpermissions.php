@@ -346,7 +346,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 			}
 		}
 		else{
-			echo '<div style="font-weight:bold;font-size:120%;">';
+			echo '<div style="font-weight:bold;">';
 			echo 'Unauthorized to view this page. You must have administrative right for this collection.';
 			echo '</div>';
 		} 

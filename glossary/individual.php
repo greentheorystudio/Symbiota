@@ -48,7 +48,7 @@ if($glossId){
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
@@ -73,7 +73,7 @@ if($glossId){
 				}
 				?>
 				<div style="float:left;">
-						<?php echo '<span style="font-size:18px;font-weight:bold;">'.$termArr['term'].'</span> '.$redirectStr; ?>
+						<?php echo '<span style="font-weight:bold;">'.$termArr['term'].'</span> '.$redirectStr; ?>
 				</div>
 			</div>
 			<div style="clear:both;width:670px;">
@@ -190,7 +190,7 @@ if($glossId){
 							$sourceArr = $glosManager->getTaxonSources();
 							foreach($sourceArr as $tid => $arr){
 								echo '<div style="margin-left:20px">';
-								echo $arr['sciname'].' [<a href="#" onclick="toggle(\''.$tid.'-sourcesdiv\');return false;"><span style="font-size:90%">show sources</span></a>]';
+								echo $arr['sciname'].' [<a href="#" onclick="toggle(\''.$tid.'-sourcesdiv\');return false;"><span>show sources</span></a>]';
 								echo '</div>';
 							}
 							?>
@@ -244,7 +244,7 @@ if($glossId){
 									<?php
 									if($imgArr['createdBy']){
 										?>
-										<div style='overflow:hidden;width:250px;margin-top:2px;font-size:12px;' >
+										<div style='overflow:hidden;width:250px;margin-top:2px;' >
 											Image courtesy of: <?php echo wordwrap($imgArr['createdBy'], 370, "<br />\n"); ?>
 										</div>
 										<?php

@@ -23,7 +23,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Data Upload Module</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+	<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
@@ -50,7 +50,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
     <b>Occurrence Data Upload Module</b>
 </div>
 <div id="innertext">
-	<h1>Occurrence Data Upload Module</h1>
+	<h2>Occurrence Data Upload Module</h2>
 	<?php
 	if($isEditor && $collid){
 		?>
@@ -74,7 +74,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
         echo '<div>ERROR: collection identifier not defined. Contact administrator</div>';
     }
     else{
-        echo '<div style="font-weight:bold;font-size:120%;">ERROR: you are not authorized to upload to this collection</div>';
+        echo '<div style="font-weight:bold;">ERROR: you are not authorized to upload to this collection</div>';
     }
 	?>
 </div>

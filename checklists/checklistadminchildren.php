@@ -12,7 +12,7 @@ $clManager->setClid($clid);
 	<div style="float:right;">
 		<a href="#" onclick="toggle('addchilddiv')"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
 	</div>
-	<div style="margin:15px;font-weight:bold;font-size:120%;">
+	<div style="margin:15px;font-weight:bold;">
 		<u>Children Checklists</u>
 	</div>
 	<div style="margin:25px;clear:both;">
@@ -64,12 +64,12 @@ $clManager->setClid($clid);
 				}
 			}
 			else{
-				echo '<div style="font-size:110%;">There are no Children Checklists</div>';
+				echo '<div>There are no Children Checklists</div>';
 			}
 			?>
 		</ul>
 	</div>
-	<div style="margin:30px 15px;font-weight:bold;font-size:120%;">
+	<div style="margin:30px 15px;font-weight:bold;">
 		<u>Parent Checklists</u>
 	</div>
 	<div style="margin:15px;">
@@ -85,7 +85,7 @@ $clManager->setClid($clid);
 				}
 			}
 			else{
-				echo '<div style="font-size:110%;">There are no Parent Checklists</div>';
+				echo '<div>There are no Parent Checklists</div>';
 			}
 			?>
 		</ul>

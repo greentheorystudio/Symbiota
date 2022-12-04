@@ -123,7 +123,7 @@ if($recArr){
     $recordListHtml .= '</div>';
     $recordListHtml .= '</fieldset>';
     $recordListHtml .= '</div>';
-    $recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;"><tr>';
+    $recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;"><tr>';
     $recordListHtml .= '<th class="dataset-div checkbox-elem" style="display:none;"></th>';
     $recordListHtml .= '<th>ID</th>';
     $recordListHtml .= '<th>Collection</th>';
@@ -228,6 +228,6 @@ if($recArr){
     $recordListHtml .= '*Click on the identifier in the first column to see Full Record Details.';
 }
 else{
-    $recordListHtml .= '<div style="font-weight:bold;font-size:120%;">No records found matching the query</div>';
+    $recordListHtml .= '<div style="font-weight:bold;">No records found matching the query</div>';
 }
 echo $recordListHtml;

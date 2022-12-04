@@ -39,7 +39,7 @@ $clManager->setProj($pid);
 	echo '</div>';
 	?>
 	<div id="innertext">
-		<h1>Checklists</h1>
+		<h2>Checklists</h2>
         <div style='margin:20px;'>
 			<?php 
             $researchArr = $clManager->getChecklists();

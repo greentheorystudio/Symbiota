@@ -209,7 +209,7 @@ if($action && $isEditor){
 						?>
 						<div style="margin:20px">
 							<div style="margin:5px">
-								<div style="margin-bottom:10px;font-size:120%;">
+								<div style="margin-bottom:10px;">
 									<span style="text-decoration: underline; font-weight:bold">NULL countries and non-Null state:</span> <?php echo $cleanManager->getFeatureCount(); ?> possible issues
 								</div> 
 								<?php
@@ -300,7 +300,7 @@ if($action && $isEditor){
 						?>
 						<div style="margin:20px">
 							<div style="margin:5px">
-								<div style="margin-bottom:10px;font-size:120%;">
+								<div style="margin-bottom:10px;">
 									<span style="text-decoration: underline; font-weight:bold">NULL state/province and non-Null county:</span> <?php echo $cleanManager->getFeatureCount(); ?> possible issues
 								</div> 
 								<?php
@@ -409,7 +409,7 @@ if($action && $isEditor){
 						?>
 						<div style="margin:20px">
 							<div style="margin:5px">
-								<div style="margin-bottom:10px;font-size:120%;">
+								<div style="margin-bottom:10px;">
 									<span style="text-decoration: underline; font-weight:bold">NULL county and non-Null locality:</span> <?php echo $cleanManager->getFeatureCount(); ?> possible issues
 								</div> 
 								<?php

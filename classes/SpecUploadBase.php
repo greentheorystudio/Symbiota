@@ -241,7 +241,7 @@ class SpecUploadBase extends SpecUpload{
             echo '<div style="color:red">ERROR: input field does not contain proper identifier field (e.g. subject_references, recordID)</div>';
             return;
         }
-        echo '<table class="styledtable" style="width:600px;font-family:Arial,serif;font-size:12px;">';
+        echo '<table class="styledtable" style="width:600px;font-family:Arial,serif;">';
         echo '<tr><th>Source Field</th><th>Target Field</th></tr>'."\n";
         sort($symbFields);
         $autoMapArr = array();
