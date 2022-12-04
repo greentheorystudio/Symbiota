@@ -606,29 +606,35 @@ class ConfigurationManager{
         }
         $rs->free();
         $newCssVersion = $this->getCssVersion();
-        if(strpos($currentCssVersion, '-') !== false){
-            $versionParts = explode('-', $currentCssVersion);
-            if($versionParts){
-                $subVersion = (int)$versionParts[1];
-            }
-        }
-        if($currentCssVersion === (string)$newCssVersion || $subVersion){
-            if(!$subVersion){
-                $subVersion = 1;
-            }
-            do {
-                $versionParts = explode('-', $newCssVersion);
+        if($currentCssVersion){
+            if(strpos($currentCssVersion, '-') !== false){
+                $versionParts = explode('-', $currentCssVersion);
                 if($versionParts){
-                    $newCssVersion = $versionParts[0] . '-' . $subVersion;
+                    $subVersion = (int)$versionParts[1];
                 }
-                else{
-                    $newCssVersion .= '-' . $subVersion;
+            }
+            if($currentCssVersion === (string)$newCssVersion || $subVersion){
+                if(!$subVersion){
+                    $subVersion = 1;
                 }
-                $subVersion++;
-            } while($currentCssVersion === $newCssVersion);
+                do {
+                    $versionParts = explode('-', $newCssVersion);
+                    if($versionParts){
+                        $newCssVersion = $versionParts[0] . '-' . $subVersion;
+                    }
+                    else{
+                        $newCssVersion .= '-' . $subVersion;
+                    }
+                    $subVersion++;
+                } while($currentCssVersion === $newCssVersion);
+            }
+            $sql = 'UPDATE configurations '.
+                'SET configurationvalue = "'.$newCssVersion.'" WHERE configurationname = "CSS_VERSION_LOCAL" ';
         }
-        $sql = 'UPDATE configurations '.
-            'SET configurationvalue = "'.$newCssVersion.'" WHERE configurationname = "CSS_VERSION_LOCAL" ';
+        else{
+            $sql = 'INSERT INTO configurations(configurationname,configurationvalue) '.
+                'VALUES("CSS_VERSION_LOCAL","'.$newCssVersion.'")';
+        }
         return $this->conn->query($sql);
     }
 
