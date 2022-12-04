@@ -41,7 +41,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Labels</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-		<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+		<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
         <style>
             .checkboxLabel{
                 font-weight: bold;
@@ -308,7 +308,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                         if($occArr){
                             ?>
                             <form name="selectform" id="selectform" action="labelsbrowser.php" method="post" onsubmit="return validateSelectForm(this);">
-                                <table class="styledtable" style="font-family:Arial;font-size:12px;">
+                                <table class="styledtable" style="font-family:Arial;">
                                     <tr>
                                         <th title="Select/Deselect all Occurrences"><input type="checkbox" onclick="selectAll(this);" /></th>
                                         <th title="Label quantity">Qty</th>
@@ -401,7 +401,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                         }
                         else{
                             ?>
-                            <div style="font-weight:bold;margin:20px;font-size:150%;">
+                            <div style="font-weight:bold;margin:20px;">
                                 No records matched query parameters.
                             </div>
                             <?php
@@ -414,7 +414,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 		}
 		else{
 			?>
-			<div style="font-weight:bold;margin:20px;font-size:150%;">
+			<div style="font-weight:bold;margin:20px;">
 				You do not have permissions to print labels for this collection.
 				Please contact the site administrator to obtain the necessary permissions.
 			</div>

@@ -186,7 +186,7 @@ if($occurArr){
         }
         $htmlStr .= '</a>';
         if($instCode){
-            $htmlStr .= '<div style="font-weight:bold;font-size:75%;">';
+            $htmlStr .= '<div style="font-weight:bold;">';
             $htmlStr .= $instCode;
             $htmlStr .= '</div>';
         }

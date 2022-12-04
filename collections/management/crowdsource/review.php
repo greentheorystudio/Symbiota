@@ -176,7 +176,7 @@ $projArr = $csManager->getProjectDetails();
 						</fieldset>
 					</form>
 				</div>
-				<div style="font-weight:bold;font-size:130%;">
+				<div style="font-weight:bold;">
 					<?php echo ($collid?$projArr['name']:$GLOBALS['USER_DISPLAY_NAME']); ?>
 				</div>
 				<div style="clear:both;">
@@ -196,7 +196,7 @@ $projArr = $csManager->getProjectDetails();
 								echo '<input name="uid" type="hidden" value="'.$uid.'" />';
 							}
 							?>
-							<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+							<table class="styledtable" style="font-family:Arial,serif;">
 								<tr>
 									<?php
 									if($collid) {
@@ -283,7 +283,7 @@ $projArr = $csManager->getProjectDetails();
 				else if($collid && $rStatus === 5){
                     ?>
                     <div style="clear:both;margin:30px 15px;font-weight:bold;">
-                        <div style="font-size:120%;">
+                        <div style="">
                             There are no more records to review for this user
                         </div>
                         <div style="margin:15px;">
@@ -297,7 +297,7 @@ $projArr = $csManager->getProjectDetails();
                 }
                 else{
                     ?>
-                    <div style="clear:both;font-size:120%;padding-top:30px;font-weight:bold;">
+                    <div style="clear:both;padding-top:30px;font-weight:bold;">
                         There are no records matching search criteria
                     </div>
                     <?php

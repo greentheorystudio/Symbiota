@@ -35,7 +35,7 @@ elseif($action === 'addSelectedToDataset' && $GLOBALS['VALID_USER']){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Manager</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <style>
         fieldset{ padding:15px;margin:15px; }
         legend{ font-weight: bold; }

@@ -1,7 +1,7 @@
 <?php
 /** @var string $inputWindowMode */
 ?>
-<div id="pointscalculatortab" style="width:379px;padding:0;">
+<div id="pointscalculatortab">
     <div style="padding:10px;">
         <div>
             <button id="concavePolyButton" data-role="none" onclick="createConcavePoly();" disabled>Concave Hull Polygon</button> Creates a concave hull polygon or multipolygon for

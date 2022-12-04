@@ -454,7 +454,7 @@ $specUploadManager->readUploadParameters();
     $recReplaceMsg = '<span style="color:orange"><b>Caution:</b></span> Matching records will be replaced with incoming records';
     if($GLOBALS['SYMB_UID']){
         if($isEditor && $collid){
-            echo '<div style="font-weight:bold;font-size:130%;">'.$duManager->getCollInfo('name').'</div>';
+            echo '<div style="font-weight:bold;">'.$duManager->getCollInfo('name').'</div>';
             echo '<div style="margin:0 0 15px 15px;"><b>Last Upload Date:</b> '.($duManager->getCollInfo('uploaddate')?:'not recorded').'</div>';
             if($action === 'addprofile' || $action === 'editprofile') {
                 ?>
@@ -589,7 +589,7 @@ $specUploadManager->readUploadParameters();
                 ?>
                 <form name="uploadlistform" action="index.php" method="post" onsubmit="return checkUploadListForm(this);">
                     <fieldset>
-                        <legend style="font-weight:bold;font-size:120%;">Upload Options</legend>
+                        <legend style="font-weight:bold;">Upload Options</legend>
                         <div style="float:right;">
                             <?php
                             echo '<a href="index.php?collid='.$collid.'&action=addprofile"><i style="height:20px;width:20px;" title="Add a New Upload Profile" class="fas fa-plus"></i></a>';
@@ -627,7 +627,7 @@ $specUploadManager->readUploadParameters();
             }
             if($uploadType && $action !== 'addprofile' && $action !== 'editprofile'){
                 if(($action === 'Start Upload') || (!$action && ($uploadType === $STOREDPROCEDURE || $uploadType === $SCRIPTUPLOAD))){
-                    echo "<div style='font-weight:bold;font-size:120%'>Upload Status:</div>";
+                    echo "<div style='font-weight:bold;'>Upload Status:</div>";
                     echo "<ul style='margin:10px;font-weight:bold;'>";
                     $duManager->uploadData($finalTransfer);
                     echo '</ul>';
@@ -784,7 +784,7 @@ $specUploadManager->readUploadParameters();
                                 ?>
                                 <form name="fileuploadform" action="index.php" method="post" enctype="multipart/form-data" onsubmit="return verifyFileUploadForm(this)">
                                     <fieldset style="width:95%;">
-                                        <legend style="font-weight:bold;font-size:120%;<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle;?>: Identify Data Source</legend>
+                                        <legend style="font-weight:bold;<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle;?>: Identify Data Source</legend>
                                         <div>
                                             <div style="margin:10px">
                                                 <div>
@@ -824,7 +824,7 @@ $specUploadManager->readUploadParameters();
                                 ?>
                                 <form name="dwcauploadform" action="index.php" method="post" onsubmit="return verifyMappingForm(this)">
                                     <fieldset style="width:95%;">
-                                        <legend style="font-weight:bold;font-size:120%;"><?php echo $uploadTitle.': Field Mapping';?></legend>
+                                        <legend style="font-weight:bold;"><?php echo $uploadTitle.': Field Mapping';?></legend>
                                         <div style="margin:10px;">
                                             <b>Source Unique Identifier / Primary Key (<span style="color:red">required</span>): </b>
                                             <?php
@@ -974,7 +974,7 @@ $specUploadManager->readUploadParameters();
                         ?>
                         <form name="filemappingform" action="index.php" method="post" onsubmit="return verifyMappingForm(this)">
                             <fieldset style="width:95%;padding:15px">
-                                <legend style="font-weight:bold;font-size:120%;">Notes from Nature File Import</legend>
+                                <legend style="font-weight:bold;">Notes from Nature File Import</legend>
                                 <?php
                                 $duManager->echoFieldMapTable(true, 'spec')
                                 ?>
@@ -1008,7 +1008,7 @@ $specUploadManager->readUploadParameters();
                         ?>
                         <form name="filemappingform" action="index.php" method="post" onsubmit="return verifyMappingForm(this)">
                             <fieldset style="width:95%;">
-                                <legend style="font-weight:bold;font-size:120%;<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle; ?></legend>
+                                <legend style="font-weight:bold;<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle; ?></legend>
                                 <?php
                                 if(!$isLiveData && $uploadType !== $SKELETAL){
                                     ?>
@@ -1148,7 +1148,7 @@ $specUploadManager->readUploadParameters();
             echo '<div>ERROR: collection identifier not defined. Contact administrator</div>';
         }
         else{
-            echo '<div style="font-weight:bold;font-size:120%;">ERROR: you are not authorized to upload to this collection</div>';
+            echo '<div style="font-weight:bold;">ERROR: you are not authorized to upload to this collection</div>';
         }
     }
     ?>

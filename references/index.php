@@ -39,7 +39,7 @@ if($formSubmit !== 'Search References'){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Reference Management</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
@@ -127,7 +127,7 @@ if($formSubmit !== 'Search References'){
 				</div>
 				<?php
 				if($refExist){
-					echo '<div style="font-weight:bold;font-size:120%;">References</div>';
+					echo '<div style="font-weight:bold;">References</div>';
 					echo '<div><ul>';
 					foreach($refArr as $refId => $recArr){
 						echo '<li>';
@@ -151,10 +151,10 @@ if($formSubmit !== 'Search References'){
 					echo '</ul></div>';
 				}
 				elseif(($formSubmit === 'Search References') && !$refExist){
-					echo '<div style="margin-top:10px;"><div style="font-weight:bold;font-size:120%;">There were no references matching your criteria.</div></div>';
+					echo '<div style="margin-top:10px;"><div style="font-weight:bold;">There were no references matching your criteria.</div></div>';
 				}
 				else{
-					echo '<div style="margin-top:10px;"><div style="font-weight:bold;font-size:120%;">There are currently no references in the database.</div></div>';
+					echo '<div style="margin-top:10px;"><div style="font-weight:bold;">There are currently no references in the database.</div></div>';
 				}
 				?>
 			</div>

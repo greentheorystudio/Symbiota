@@ -174,7 +174,7 @@
 						</div>
 					</div>
 					<div style="padding-top:8px;padding-bottom:8px;">
-						<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+						<table class="styledtable" style="font-family:Arial,serif;">
 							<tr>
 								<th style="width:220px;text-align:center;">Gift Specimens</th>
 								<th style="width:220px;text-align:center;">Exchange Specimens</th>

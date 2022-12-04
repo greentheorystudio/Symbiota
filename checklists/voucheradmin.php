@@ -45,7 +45,7 @@ $clManager->setCollectionVariables();
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+	<link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
@@ -82,7 +82,7 @@ include(__DIR__ . '/../header.php');
 </div>
 
 <div id='innertext'>
-<div style="color:#990000;font-size:20px;font-weight:bold;margin:0 10px 10px 0;">
+<div style="color:#990000;font-weight:bold;margin:0 10px 10px 0;">
 	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
@@ -278,7 +278,7 @@ if($clid && $isEditor){
 								if($specArr = $clManager->getNewVouchers($startPos,$displayMode)){
 									?>
 									<form name="batchnonvoucherform" method="post" action="voucheradmin.php" onsubmit="return validateBatchNonVoucherForm()">
-										<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+										<table class="styledtable" style="font-family:Arial,serif;">
 											<tr>
 												<th>
 													<span title="Select All">
@@ -320,7 +320,7 @@ if($clid && $isEditor){
 								<?php
 								}
 								else{
-									echo '<div style="font-weight:bold;font-size:120%;">No vouchers located</div>';
+									echo '<div style="font-weight:bold;">No vouchers located</div>';
 								}
 								?>
 							</div>
@@ -407,10 +407,10 @@ if($clid && $isEditor){
 	}
 }
 elseif($clid) {
-    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>You do not have administrative permission for this checklist</div>';
+    echo '<div><span style="font-weight:bold;">Error:</span>You do not have administrative permission for this checklist</div>';
 }
 else {
-    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>Checklist identifier not set</div>';
+    echo '<div><span style="font-weight:bold;">Error:</span>Checklist identifier not set</div>';
 }
 ?>
 </div>

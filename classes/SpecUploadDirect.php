@@ -25,7 +25,7 @@ class SpecUploadDirect extends SpecUploadBase {
                     $status = true;
 				}
 				else{
-					echo '<div style="font-weight:bold;color:red;margin:25px;font-size:120%;">Query did not return any records</div>';
+					echo '<div style="font-weight:bold;color:red;margin:25px;">Query did not return any records</div>';
 				}
 				$rs->close();
 			}

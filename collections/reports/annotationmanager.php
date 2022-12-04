@@ -32,7 +32,7 @@ if($isEditor){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Annotation Labels</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
@@ -132,7 +132,7 @@ include(__DIR__ . '/../../header.php');
                             <input name="" value="" type="checkbox" onclick="selectAllAnno(this);" />
                             Select/Deselect all Occurrences
                         </div>
-                        <table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+                        <table class="styledtable" style="font-family:Arial,serif;">
                             <tr>
                                 <th style="width:25px;text-align:center;"></th>
                                 <th style="width:25px;text-align:center;">#</th>
@@ -209,7 +209,7 @@ include(__DIR__ . '/../../header.php');
                 }
                 else{
                     ?>
-                    <div style="font-weight:bold;margin:20px;font-size:150%;">
+                    <div style="font-weight:bold;margin:20px;">
                         There are no annotations queued to be printed.
                     </div>
                     <?php

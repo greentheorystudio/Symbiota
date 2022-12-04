@@ -107,7 +107,7 @@ if($editor && $submitAction){
 		<title>Batch Georeference Occurrences</title>
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-		<link type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+		<link type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js"></script>
 		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js"></script>
@@ -149,7 +149,7 @@ if($editor && $submitAction){
 	<body>
 		<div  id='innertext'>
 			<div style="float:left;">
-				<div style="font-weight:bold;font-size:150%;margin-top:6px;">
+				<div style="font-weight:bold;margin-top:6px;">
 					<?php echo $geoManager->getCollName(); ?>
 				</div>
 				<div class='navpath' style="margin:10px;">
@@ -509,7 +509,7 @@ if($editor && $submitAction){
 												<option value="reviewed">Reviewed</option>
 												<option value="closed">Closed</option>
 											</select>
-											<span style="margin-left:20px;font-size:80%">
+											<span style="margin-left:20px;">
 												Georefer by:
 												<input name="georeferencedby" type="text" value="<?php echo $GLOBALS['PARAMS_ARR']['un']; ?>" style="width:75px" readonly />
 											</span>
@@ -549,7 +549,7 @@ if($editor && $submitAction){
 				}
 				else{
 					?>
-					<div style='font-weight:bold;font-size:120%;'>
+					<div style='font-weight:bold;'>
 						ERROR: You do not have permission to edit this collection
 					</div>
 					<?php
@@ -557,7 +557,7 @@ if($editor && $submitAction){
 			}
 			else{
 				?>
-				<div style='font-weight:bold;font-size:120%;'>
+				<div style='font-weight:bold;'>
 					ERROR: Collection identifier is null
 				</div>
 				<?php

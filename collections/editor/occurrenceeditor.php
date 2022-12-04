@@ -394,7 +394,7 @@ if($GLOBALS['SYMB_UID']){
     if($qryCnt !== false){
         if($qryCnt === 0){
             if(!$goToMode){
-                $navStr .= '<div style="margin:20px;font-size:150%;font-weight:bold;">';
+                $navStr .= '<div style="margin:20px;font-weight:bold;">';
                 $navStr .= 'Search returned 0 records</div>'."\n";
             }
         }
@@ -476,16 +476,16 @@ else{
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.($occId?'Occurrence Editor':'Create New Record'); ?></title>
-    <link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <?php
     if($crowdSourceMode === 1){
         ?>
-        <link href="../../css/occureditorcrowdsource.css?ver=20221125" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditorcrowdsource.css?ver=20221204" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
     }
     else{
         ?>
-        <link href="../../css/occureditor.css?ver=20221125" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditor.css?ver=20221204" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
         if(isset($CSSARR)){
             foreach($CSSARR as $cssVal){
@@ -537,8 +537,8 @@ else{
     </script>
     <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
     <script type="text/javascript" src="../../js/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221125"></script>
-    <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221125"></script>
+    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221204"></script>
+    <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221204"></script>
     <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20220921"></script>
     <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
 </head>
@@ -634,7 +634,7 @@ else{
             if($occId && $isLocked){
                 ?>
                 <div style="margin:25px;border:2px double;padding:20px;width:90%;">
-                    <div style="color:red;font-weight:bold;font-size:110%;">
+                    <div style="color:red;font-weight:bold;">
                         Record Locked!
                     </div>
                     <div>
@@ -1548,7 +1548,7 @@ else{
         }
     }
     else if($action === 'Submit New Image'){
-        echo '<div style="font-weight:bold;font-size:130%;">';
+        echo '<div style="font-weight:bold;">';
         echo 'ERROR: You may have tried to upload an image that was too large for the system. ';
         echo 'There is a 10MB limit set within the application, though there may be tighter restrictions set on the server (PHP configurations). ';
         echo 'Check with your server administrator to check on options for importing larger images. ';

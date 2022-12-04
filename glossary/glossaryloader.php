@@ -60,7 +60,7 @@ if($isEditor){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Term Loader</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
 	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
@@ -143,7 +143,7 @@ if($isEditor){
 				?>
 				<form name="mapform" action="glossaryloader.php" method="post">
 					<fieldset style="width:90%;">
-						<legend style="font-weight:bold;font-size:120%;">Term Upload Form</legend>
+						<legend style="font-weight:bold;">Term Upload Form</legend>
 						<div style="margin:10px;">
 						</div>
 						<table style="border:1px solid black;border-spacing: 2px;">
@@ -217,7 +217,7 @@ if($isEditor){
 				?>
 				<form name="transferform" action="glossaryloader.php" method="post">
 					<fieldset style="width:450px;">
-						<legend style="font-weight:bold;font-size:120%;">Transfer Terms To Central Table</legend>
+						<legend style="font-weight:bold;">Transfer Terms To Central Table</legend>
 						<div style="margin:10px;">
 							Review upload statistics below before activating. Use the download option to review and/or adjust for reload if necessary.  
 						</div>
@@ -259,7 +259,7 @@ if($isEditor){
 				<div>
 					<form name="uploadform" action="glossaryloader.php" method="post" enctype="multipart/form-data" onsubmit="return verifyUploadForm(this)">
 						<fieldset style="width:90%;">
-							<legend style="font-weight:bold;font-size:120%;">Term Upload Form</legend>
+							<legend style="font-weight:bold;">Term Upload Form</legend>
 							<div style="margin:10px;">
 								Flat structured, CSV (comma delimited) text files can be uploaded here. 
 								Please specify the taxonomic groups for which the terms are related. 

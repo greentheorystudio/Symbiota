@@ -113,8 +113,8 @@ if($isEditor){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Manager</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/external/bootstrap.min.css?ver=20220225" rel="stylesheet" type="text/css" />
-    <link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <style>
         a.boxclose{
             float:right;
@@ -304,7 +304,7 @@ include(__DIR__ . '/../../header.php');
         echo '</div>';
     }
     if($datasetId){
-        echo '<div style="margin:10px 0 5px 20px;font-weight:bold;font-size:130%;">'.$mdArr['name'].'</div>';
+        echo '<div style="margin:10px 0 5px 20px;font-weight:bold;">'.$mdArr['name'].'</div>';
         if($role) {
             echo '<div style="margin-left:20px" title="' . $roleLabel . '">Role: ' . $role . '</div>';
         }
@@ -330,7 +330,7 @@ include(__DIR__ . '/../../header.php');
                             <div style="float:right;margin-right:10px">
                                 <b>Count: <?php echo count($occArr); ?> records</b>
                             </div>
-                            <table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+                            <table class="styledtable" style="font-family:Arial,serif;">
                                 <tr>
                                     <th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="Select/Deselect all occurrences" /></th>
                                     <th>catalog #</th>

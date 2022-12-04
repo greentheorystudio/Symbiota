@@ -38,7 +38,7 @@ $statusStr = '';
 		<h1>Crowdsourcing Score Board</h1>
         <div style="margin-left:20px;float:left;">
 			<h2>Top Scores</h2>
-			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:300px;">
+			<table class="styledtable" style="font-family:Arial,serif;width:300px;">
 				<tr><th><b>User</b></th><th><b>Score</b></th></tr>
 			<?php
 			$topScoreArr = $csManager->getTopScores($catid);
@@ -102,7 +102,7 @@ $statusStr = '';
 		</div>
 		<div style="padding:20px;clear:both;">
 			<h2>Your Stats by Collections</h2>
-			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+			<table class="styledtable" style="font-family:Arial,serif;">
 				<tr>
 					<th><b>Collection</b></th>
 					<th><b>Occurrence<br/>Count</b></th>

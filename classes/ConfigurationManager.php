@@ -113,7 +113,7 @@ class ConfigurationManager{
         $connection = new DbConnection();
         $this->conn = $connection->getConnection();
         if(!$this->conn || $this->conn->connect_errno) {
-            echo '<h1 style="color:red;">Cannot connect to the database</h1>';
+            echo '<h2 style="color:red;">Cannot connect to the database</h2>';
             $this->conn = null;
             exit();
         }
@@ -144,7 +144,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20221110';
+        $GLOBALS['CSS_VERSION'] = '20221204';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();

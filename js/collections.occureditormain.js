@@ -203,11 +203,11 @@ $(document).ready(function() {
 
 function toggleStyle(){
 	const cssObj = document.getElementById('editorCssLink');
-	if(cssObj.href === "../../css/occureditorcrowdsource.css?ver=20221125"){
-		cssObj.href = "../../css/occureditor.css?ver=20221125";
+	if(cssObj.href === "../../css/occureditorcrowdsource.css?ver=20221204"){
+		cssObj.href = "../../css/occureditor.css?ver=20221204";
 	}
 	else{
-		cssObj.href = "../../css/occureditorcrowdsource.css?ver=20221125";
+		cssObj.href = "../../css/occureditorcrowdsource.css?ver=20221204";
 	}
 }
 

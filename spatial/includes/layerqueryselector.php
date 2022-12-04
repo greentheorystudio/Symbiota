@@ -1,4 +1,4 @@
-<div id="layerqueryselector" data-role="popup" class="well" style="width:50%;height:225px;font-size:14px;">
+<div id="layerqueryselector" data-role="popup" class="well" style="width:50%;height:225px;">
     <a class="boxclose layerqueryselector_close" id="boxclose"></a>
     <h2>Query Selector</h2>
     <div style="display:flex;justify-content:center;gap:10px;">

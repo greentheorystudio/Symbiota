@@ -88,7 +88,7 @@ if($traitID){
 		<title>Occurrence Attribute batch Editor</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-		<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+		<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
@@ -239,7 +239,7 @@ if($traitID){
 		<?php
 		include(__DIR__ . '/../../header.php');
 		if($isEditor === 2){
-			echo '<div style="float:right;margin:0 3px;font-size:90%">';
+			echo '<div style="float:right;margin:0 3px;">';
 			if($mode === 1){
 				echo '<a href="occurattributes.php?collid='.$collid.'&mode=2&traitid='.$traitID.'"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
 			}
@@ -497,10 +497,10 @@ if($traitID){
 					<?php
 				}
 				else if($submitForm) {
-                    echo '<div style="margin:50px;color:red;font-weight:bold;font-size:140%">No images available matching taxon search criteria</div>';
+                    echo '<div style="margin:50px;color:red;font-weight:bold;">No images available matching taxon search criteria</div>';
                 }
                 else {
-                    echo '<div style="margin:50px;font-weight:bold;font-size:140%">Select a trait and submit filter in the form to the right to display images that have not yet been scored</div>';
+                    echo '<div style="margin:50px;font-weight:bold;">Select a trait and submit filter in the form to the right to display images that have not yet been scored</div>';
                 }
 				?>
 			</div>

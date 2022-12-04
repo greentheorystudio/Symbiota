@@ -8,10 +8,10 @@ header('X-Frame-Options: SAMEORIGIN');
     <title>Label Content Format Visual Editor</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/external/bootstrap.min.css?ver=20220225" rel="stylesheet" type="text/css" />
-    <link href="../../css/external/jquery.mobile-1.4.0.min.css?ver=20220720" rel="stylesheet" type="text/css" />
-    <link href="../../css/jsongui.css?ver=20220617" rel="stylesheet" type="text/css" />
-    <link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/jquery.mobile-1.4.0.min.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <link href="../../css/jsongui.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
@@ -106,7 +106,7 @@ include(__DIR__ . '/../../header.php');
         <input type="hidden" id="formid" value="" />
     </div>
 </div>
-<div id="fieldoptions" data-role="popup" class="well" style="width:500px;height:420px;font-size:14px;">
+<div id="fieldoptions" data-role="popup" class="well" style="width:500px;height:420px;">
     <h2>Field Options</h2>
     <fieldset class="fieldset-block">
         <legend>Prefix</legend>
@@ -263,7 +263,7 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('fieldoptions');">Close</button>
     </div>
 </div>
-<div id="blockoptions" data-role="popup" class="well" style="width:500px;height:250px;font-size:14px;">
+<div id="blockoptions" data-role="popup" class="well" style="width:500px;height:250px;">
     <h2>Block Options</h2>
     <fieldset class="fieldset-block">
         <div class="field-block">
@@ -338,7 +338,7 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('blockoptions');">Close</button>
     </div>
 </div>
-<div id="barcodeoptions" data-role="popup" class="well" style="width:500px;height:250px;font-size:14px;">
+<div id="barcodeoptions" data-role="popup" class="well" style="width:500px;height:250px;">
     <h2>Barcode Options</h2>
     <fieldset class="fieldset-block">
         <div class="field-block">
@@ -354,7 +354,7 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('barcodeoptions');">Close</button>
     </div>
 </div>
-<div id="qrcodeoptions" data-role="popup" class="well" style="width:500px;height:250px;font-size:14px;">
+<div id="qrcodeoptions" data-role="popup" class="well" style="width:500px;height:250px;">
     <h2>QR Code Options</h2>
     <fieldset class="fieldset-block">
         <div class="field-block">
