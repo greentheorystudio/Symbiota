@@ -115,7 +115,7 @@ if($editable && $action){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxon Editor: ' .$tEditor->getSciName(); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
@@ -182,9 +182,9 @@ if($editable && $action){
                 echo '<div style="width:98%;display:flex;justify-content:space-between;align-items:center;">';
                 echo '<div>';
                 if($tEditor->getSubmittedTid()){
-                    echo "<div style='font-size:16px;margin-top:5px;margin-left:10px;font-weight:bold;'>Redirected from: <i>".$tEditor->getSubmittedSciName(). '</i></div>';
+                    echo "<div style='margin-top:5px;margin-left:10px;font-weight:bold;'>Redirected from: <i>".$tEditor->getSubmittedSciName(). '</i></div>';
                 }
-                echo "<div style='font-size:16px;margin-top:15px;margin-left:10px;'><a href='../index.php?taxon=".$tEditor->getTid()."' style='color:#990000;text-decoration:none;'><b><i>".$tEditor->getSciName(). '</i></b></a> ' .$tEditor->getAuthor();
+                echo "<div style='margin-top:15px;margin-left:10px;'><a href='../index.php?taxon=".$tEditor->getTid()."' style='color:#990000;text-decoration:none;'><b><i>".$tEditor->getSciName(). '</i></b></a> ' .$tEditor->getAuthor();
                 if($tEditor->getRankId() > 140) {
                     echo "&nbsp;<a href='tpeditor.php?tid=" . $tEditor->getParentTid() . "'><i style='height:15px;width:15px;' title='Go to Parent' class='fas fa-level-up-alt'></i></a>";
                 }

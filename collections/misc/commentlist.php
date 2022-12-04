@@ -308,7 +308,7 @@ if($isEditor){
 					echo "<div style='clear:both;'><hr/></div></div>";
 				}
 				else{
-					echo '<div style="font-weight:bold;font-size:120%;margin:20px;">No comments have been submitted</div>';
+					echo '<div style="font-weight:bold;margin:20px;">No comments have been submitted</div>';
 				}
 			}
 			else{

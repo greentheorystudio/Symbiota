@@ -29,7 +29,7 @@ if($target){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxonomy Explorer' .($target ? ': ' . $taxonDisplayObj->getTargetStr() : ''); ?></title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+    <link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" media="screen">
     <style>
         .dijitLeaf,

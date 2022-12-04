@@ -67,7 +67,7 @@ if($isEditor){
 	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Batch Determinations/Nomenclatural Adjustments</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-		<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+		<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
@@ -368,7 +368,7 @@ if($isEditor){
 								<input name="accselectall" value="" type="checkbox" onclick="selectAll(this);" checked />
 								Select/Deselect all Occurrences
 							</div>
-							<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+							<table class="styledtable" style="font-family:Arial,serif;">
 								<thead>
 									<tr>
 										<th style="width:25px;text-align:center;">&nbsp;</th>
@@ -470,7 +470,7 @@ if($isEditor){
 								<input type="checkbox" name="nomselectall" value="" onclick="selectAll(this);" checked />
 								Select/Deselect all Occurrences
 							</div>
-							<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+							<table class="styledtable" style="font-family:Arial,serif;">
 								<thead>
 									<tr>
 										<th style="width:25px;text-align:center;">&nbsp;</th>
@@ -523,7 +523,7 @@ if($isEditor){
 		}
 		else{
 			?>
-			<div style="font-weight:bold;margin:20px;font-size:150%;">
+			<div style="font-weight:bold;margin:20px;">
 				You do not have permissions to set batch determinations for this collection. 
 				Please contact the site administrator to obtain the necessary permissions.
 			</div>

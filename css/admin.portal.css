@@ -5,7 +5,6 @@ fieldset {
 
 legend {
     font-weight: bold;
-    font-size: 16px;
 }
 
 .field-block {
@@ -21,6 +20,5 @@ legend {
 }
 
 .field-label {
-    font-size: 14px;
     font-weight: bold;
 }

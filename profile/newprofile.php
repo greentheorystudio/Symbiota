@@ -159,7 +159,7 @@ if($action === 'Create Account' && $_POST['requestid'] === session_id()){
 
 	<?php
 	if($displayStr){
-		echo '<div style="margin:10px;font-size:110%;font-weight:bold;color:red;">';
+		echo '<div style="margin:10px;font-weight:bold;color:red;">';
 		if($displayStr === 'login_exists'){
 			echo 'This login ('.$login.') is already being used.<br> '.
 				'Please choose a different login name or visit the <a href="index.php?login='.$login.'">login page</a> if you believe this might be you';

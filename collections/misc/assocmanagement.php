@@ -39,7 +39,7 @@ if($GLOBALS['SYMB_UID']){
 		<title>Occurrence Association Batch Build</title>
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
@@ -73,7 +73,7 @@ if($GLOBALS['SYMB_UID']){
 						<div>
 							<?php 
 							$statArr = $assocHandler->getParsingStats($collid);
-							echo '<div style="margin:10px 0;font-weight:bold;font-size:120%;">';
+							echo '<div style="margin:10px 0;font-weight:bold;">';
 							if($collmeta){
 								$code = '';
                                 $label = $collmeta['collname'];
@@ -106,7 +106,7 @@ if($GLOBALS['SYMB_UID']){
 				<?php
 			}
 			else{
-				echo '<div style="font-weight:bold;font-size:130%;">ERROR: permissions failure</div>';
+				echo '<div style="font-weight:bold;">ERROR: permissions failure</div>';
 			}
 			?>
 		</div>

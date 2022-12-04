@@ -69,7 +69,7 @@ else{
 					names and link the vouchers as a batch action.
 				</div>
 				<form name="batchmissingform" method="post" action="voucheradmin.php" onsubmit="return validateBatchMissingForm();">
-					<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+					<table class="styledtable" style="font-family:Arial,serif;">
 						<tr>
 							<th>
 								<span title="Select All">
@@ -128,7 +128,7 @@ else{
 					type the correct name from the checklist, and then click the Link Voucher button.
 					The correct name must already be added to the checklist before voucher can be linked.
 				</div>
-				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+				<table class="styledtable" style="font-family:Arial,serif;">
 					<tr>
 						<th>Specimen ID</th>
 						<th>Link to</th>

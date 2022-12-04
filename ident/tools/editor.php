@@ -94,7 +94,7 @@ if($isEditor){
 			$minusGif = "<img src='../../images/minus_sm.png'>";
 			$plusGif = "<img src='../../images/plus_sm.png'>";
 			foreach($cList as $heading => $charArray){ 
-				echo "<div style='font-weight:bold; font-size:150%; margin:1em 0em 1em 0em; color:#990000;".($charValue? ' display:none;' : '')."'>";
+				echo "<div style='font-weight:bold;margin:1em 0em 1em 0em; color:#990000;".($charValue? ' display:none;' : '')."'>";
 				echo "<span class='".$heading."' onclick=\"toggle('".$heading."');\" style=\"display:none;\">$minusGif</span>";
 				echo "<span class='".$heading."' onclick=\"toggle('".$heading."');\" style=\"display:;\">$plusGif</span>";
 				echo " $heading</div>\n";
@@ -102,21 +102,21 @@ if($isEditor){
 				foreach($charArray as $cidKey => $charNameStr){
 					if(!$charValue || $charValue === $cidKey){
 						echo "<div id='chardiv".$cidKey."' style='display:".(array_key_exists($cidKey,$depArr)? 'hidden' : 'block').";'>";
-						echo "<div style='margin-top:1em;'><span style='font-weight:bold; font-size:larger;'>$charNameStr</span>\n";
+						echo "<div style='margin-top:1em;'><span style='font-weight:bold;'>$charNameStr</span>\n";
 						if($editorManager->getRankId() > 140){
 							$onClickStr = "openPopup('editor.php?tid=".$editorManager->getParentTid(). '&char=' .$cidKey."');";
-						    echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-size:smaller;'>";
+						    echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>";
 							echo '<a href="#" onclick="'.$onClickStr.'">parent</a>';
 							echo "</span>\n";
 						}
 						echo "</div>\n";
-						echo "<div style='font-size:smaller; text-indent:2.5em;'>Add&nbsp;&nbsp;Remove</div>\n";
+						echo "<div style='text-indent:2.5em;'>Add&nbsp;&nbsp;Remove</div>\n";
 						$cStates = $charStatesList[$cidKey];
 						foreach($cStates as $csKey => $csValue){
 							$testStr = $cidKey. '_' .$csKey;
 							$charPresent = $editorManager->isSelected($testStr);
 							$inh = $editorManager->getInheritedStr($testStr);
-							$displayStr = ($charPresent?"<span style='font-size:larger;font-weight:bold;'>": '').$csValue.$inh.($charPresent? '</span>' : '');
+							$displayStr = ($charPresent?"<span style='font-weight:bold;'>": '').$csValue.$inh.($charPresent? '</span>' : '');
 							echo "<div style='text-indent:2em;'><input type='checkbox' name='add[]' ".($charPresent && !$inh?"disabled='true' ": ' ')." value='".$testStr."' onChange='dataChanged=true;'/>";
 							echo "&nbsp;&nbsp;&nbsp;<input type='checkbox' name='remove[]' ".(!$charPresent || $inh?"disabled='true' ": ' ')."value='".$testStr."'  onChange='dataChanged=true;'/>";
 							echo "&nbsp;&nbsp;&nbsp;$displayStr</div>\n";

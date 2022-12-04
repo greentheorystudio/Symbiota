@@ -76,7 +76,7 @@ $headingAdminUrl = 'headingadmin.php';
     <title>Character Admin</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
@@ -255,7 +255,7 @@ $headingAdminUrl = 'headingadmin.php';
 			$charStateArr = $keyManager->getCharStateArr();
 			$charArr = $keyManager->getCharDetails();
 			?>
-			<div style="font-weight:bold;font-size:150%;margin:15px;"><?php echo $charArr['charname']; ?></div>
+			<div style="font-weight:bold;margin:15px;"><?php echo $charArr['charname']; ?></div>
 			<div id="tabs" style="margin:0;">
 			    <ul>
 					<li><a href="#chardetaildiv"><span>Details</span></a></li>

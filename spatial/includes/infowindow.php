@@ -32,7 +32,7 @@ $instructionText = '';
         }
     }
     ?>
-    <div style="padding:20px;font-size: 14px;">
+    <div style="padding:20px;">
         <?php echo $instructionText; ?>
     </div>
 </div>

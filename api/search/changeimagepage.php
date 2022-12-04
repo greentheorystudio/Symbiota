@@ -158,7 +158,7 @@ if($collManager->validateSearchTermsArr($stArr)){
             $recordListHtml .= '<div style="clear:both;"></div>';
         }
         else{
-            $recordListHtml .= '<div style="font-weight:bold;font-size:120%;">';
+            $recordListHtml .= '<div style="font-weight:bold;">';
             $recordListHtml .= 'There were no images matching your search critera';
             $recordListHtml .= '</div>';
         }
