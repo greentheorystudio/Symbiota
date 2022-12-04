@@ -1,7 +1,4 @@
-</td>
-</tr>
-<tr>
-    <td class="footer">
+    <div class="footer">
         <div style="display:flex;justify-content:space-around;margin-bottom:10px;">
             <div style="">
                 <div style="font-size:16px;font-family:Verdana, sans-serif;margin-bottom:8px;">Brought to you by </div>
@@ -10,6 +7,5 @@
                 </a>
             </div>
         </div>
-    </td>
-</tr>
-</table>
+    </div>
+</div>
