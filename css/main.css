@@ -1,5 +1,4 @@
 html{
-	background-color:#A8A38E;
 	font-size: 100%;
 }
 
@@ -8,6 +7,7 @@ body{
 	min-width:1050px;
 	margin-top:0px;
 	font-family: Verdana, Geneva, sans-serif;
+	background-color:#A8A38E;
 }
 
 .title {
