@@ -70,7 +70,7 @@ if($clValue || $dynClid){
 		<?php
 		if($clValue || $dynClid){
 			?>
-			<div style="float:left;color:#990000;font-size:20px;font-weight:bold;margin:0 10px 10px 0;">
+			<div style="float:left;color:#990000;font-weight:bold;margin:0 10px 10px 0;">
 				<?php echo $clManager->getClName(); ?>
 			</div>
 			<?php
@@ -87,7 +87,7 @@ if($clValue || $dynClid){
 			?>
 			<div>
 				<div>
-					<h1>Species List</h1>
+					<h2>Species List</h2>
 					<div style="margin:3px;">
 						<b>Families:</b> 
 						<?php echo $clManager->getFamilyCount(); ?>
@@ -183,7 +183,7 @@ if($clValue || $dynClid){
 						}
 					}
 					if(!$taxaArray) {
-                        echo "<h1 style='margin:40px;'>No Taxa Found</h1>";
+                        echo "<h2 style='margin:40px;'>No Taxa Found</h2>";
                     }
 					?>
 				</div>

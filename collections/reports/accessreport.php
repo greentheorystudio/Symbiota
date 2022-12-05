@@ -66,7 +66,7 @@ else{
 		<title>View Access Statistics</title>
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
 		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
@@ -118,7 +118,7 @@ else{
 		?>
 		<div id="innertext" style="min-width:1100px">
 			<div>
-				<div style="float:left;font-size:120%"><b><u>User Access Statistics</u></b></div>
+				<div style="float:left;"><b><u>User Access Statistics</u></b></div>
 				<div id="desc_details" style="clear:both;display:none;width:500px;">Displays general user access statistics for all occurrences within collection.
 					Download = any occurrence download excluding data backups and custom downloads made by collection administrators (e.g. via Data Management Menu),
 					Full View = viewing full record via occurrence details page,
@@ -199,7 +199,7 @@ else{
 						</fieldset>
 					</form>
 				</div>
-				<div style="font-weight:bold;font-size:130%;">
+				<div style="font-weight:bold;">
 					<?php echo $collName; ?>
 					<a href="<?php echo $navPageBase.'&action=export'; ?>" title="Download Results"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>
 				</div>
@@ -234,7 +234,7 @@ else{
 							?>
 							<tr>
 								<td colspan="10">
-									<div style="font-weight:bold;font-size:150%;margin:20px;">There are no access statistic matching search criteria.</div>
+									<div style="font-weight:bold;margin:20px;">There are no access statistic matching search criteria.</div>
 								</td>
 							</tr>
 							<?php

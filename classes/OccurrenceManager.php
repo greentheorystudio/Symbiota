@@ -813,7 +813,7 @@ class OccurrenceManager{
                                 <input id="cat-<?php echo $idStr; ?>-Input" data-role="none" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onchange="processCollectionParamChange(this.form);" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" checked />
                             </td>
                             <td>
-			    		<span style='text-decoration:none;color:black;font-size:14px;font-weight:bold;'>
+			    		<span style='text-decoration:none;color:black;font-weight:bold;'>
 				    		<a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?catid=<?php echo $catid; ?>' target="_blank" ><?php echo $name; ?></a>
 				    	</span>
                             </td>
@@ -842,7 +842,7 @@ class OccurrenceManager{
                                                     <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" class="cat-<?php echo $idStr; ?>" onchange="processCollectionParamChange(this.form);" onclick="processCatCheckboxes('<?php echo $idStr; ?>')" checked />
                                                 </td>
                                                 <td style="padding:6px;">
-                                                    <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
+                                                    <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;' target="_blank" >
                                                         <?php echo $collName2['collname'].($collName2['instcode']?' (' .$collName2['instcode']. ')':''); ?>
                                                     </a>
                                                 </td>
@@ -921,7 +921,7 @@ class OccurrenceManager{
                                 <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" onchange="processCollectionParamChange(this.form);" onclick="processCheckAllCheckboxes()" checked />
                             </td>
                             <td style="padding:6px">
-                                <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
+                                <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;' target="_blank" >
                                     <?php echo $cArr['collname'].($cArr['instcode']?' (' .$cArr['instcode']. ')':''); ?>
                                 </a>
                             </td>

@@ -72,7 +72,7 @@ if($GLOBALS['SYMB_UID']){
 				}
 				$headerMap = array_intersect_key($headerMapBase, $headerArr);
 				?>
-				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+				<table class="styledtable" style="font-family:Arial,serif;">
 					<tr>
 						<?php 
 						foreach($headerMap as $k => $v){
@@ -114,7 +114,7 @@ if($GLOBALS['SYMB_UID']){
 			}
 			else{
 				?>
-				<div style="font-weight:bold;font-size:120%;margin:25px;">
+				<div style="font-weight:bold;margin:25px;">
 					No records have been uploaded
 				</div>
 				<?php 

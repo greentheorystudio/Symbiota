@@ -177,7 +177,7 @@ $headingAdminUrl = 'headingadmin.php';
 					<?php 
 					}
 					else{
-						echo '<div style="font-weight:bold;font-size:120%;">There are no existing characters</div>';
+						echo '<div style="font-weight:bold;">There are no existing characters</div>';
 					}
 					?>
 				</div>

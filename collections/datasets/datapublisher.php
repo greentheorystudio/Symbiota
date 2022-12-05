@@ -87,7 +87,7 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 	<title>Darwin Core Archive Publisher</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
-	<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+	<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 	<style>
 		.nowrap { white-space: nowrap; }
 	</style>
@@ -160,10 +160,10 @@ include(__DIR__ . '/../../header.php');
 		<?php
 	}
 	?>
-	<h1>Darwin Core Archive Publishing</h1>
+	<h2>Darwin Core Archive Publishing</h2>
 	<?php
 	if($collId){
-		echo '<div style="font-weight:bold;font-size:120%;">'.$collArr['collname'].'</div>';
+		echo '<div style="font-weight:bold;">'.$collArr['collname'].'</div>';
 		?>
 		<div style="margin:10px;">
 			Use the controls below to publish occurrence data within this collection as a
@@ -431,10 +431,10 @@ include(__DIR__ . '/../../header.php');
 		}
 		if($dwcaArr = $dwcaManager->getDwcaItems()){
 			if($catTitle) {
-                echo '<div style="font-weight:bold;font-size:140%;margin:50px 0 15px 0;">' . $catTitle . ' DwC-Archive Files</div>';
+                echo '<div style="font-weight:bold;margin:50px 0 15px 0;">' . $catTitle . ' DwC-Archive Files</div>';
             }
 			?>
-			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin:10px;">
+			<table class="styledtable" style="font-family:Arial,serif;margin:10px;">
 				<tr><th>Code</th><th>Collection Name</th><th>DwC-Archive</th><th>Metadata</th><th>Pub Date</th></tr>
 				<?php
 				foreach($dwcaArr as $k => $v){
@@ -475,7 +475,7 @@ include(__DIR__ . '/../../header.php');
 			echo '<div style="margin:10px;font-weight:bold;">There are no publishable collections</div>';
 		}
 		if($catID && $addDwca = $dwcaManager->getAdditionalDWCA($catID)) {
-            echo '<div style="font-weight:bold;font-size:140%;margin:50px 0 15px 0;">Additional Data Sources within the Portal Network</div>';
+            echo '<div style="font-weight:bold;margin:50px 0 15px 0;">Additional Data Sources within the Portal Network</div>';
             echo '<ul>';
             foreach($addDwca as $domanName => $domainArr){
                 echo '<li><a href="'.$domainArr['url'].'/collections/datasets/datapublisher.php'.'" target="_blank">http://'.$domanName.'</a> - '.$domainArr['cnt'].' Archives</li>';

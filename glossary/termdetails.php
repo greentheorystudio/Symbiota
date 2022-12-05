@@ -102,11 +102,10 @@ if($glossId){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Management</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 	<style>
 		#tabs a{
 			outline-color: transparent;
-			font-size: 12px;
 			font-weight: normal;
 		}
 	</style>
@@ -578,7 +577,7 @@ if($glossId){
 									<legend><b>Add a New Image</b></legend>
 									<div style='padding:15px;border:1px solid yellow;background-color:#FFFF99;'>
 										<div class="targetdiv" style="display:block;">
-											<div style="font-weight:bold;font-size:110%;margin-bottom:5px;">
+											<div style="font-weight:bold;margin-bottom:5px;">
 												Select an image file located on your computer that you want to upload:
 											</div>
 											<div style="height:10px;float:right;text-decoration:underline;font-weight:bold;">

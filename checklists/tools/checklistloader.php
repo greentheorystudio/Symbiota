@@ -62,11 +62,11 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 		<a href="checklistloader.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><b>Checklists Loader</b></a>
 	</div>
 	<div id="innertext">
-		<h1>
+		<h2>
 			<a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/checklists/checklist.php?cl=' .$clid.'&pid='.$pid; ?>">
 				<?php echo $clMeta['name']; ?>
 			</a>
-		</h1>
+		</h2>
 		<div style="margin:10px;">
 			<b>Authors:</b> <?php echo $clMeta['authors']; ?>
 		</div>
@@ -82,7 +82,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 							$statusStr = $clLoaderManager->getErrorStr();
 							if(!$cnt && $statusStr){
 								echo '<div style="margin:20px;font-weight:bold;">';
-								echo '<div style="font-size:110%;color:red;">'.$statusStr.'</div>';
+								echo '<div style="color:red;">'.$statusStr.'</div>';
 								echo '<div><a href="checklistloader.php?clid='.$clid.'&pid='.$pid.'">Return to Loader</a> and make sure the input file matches requirements within instructions</div>';
 								echo '</div>';
 								exit;

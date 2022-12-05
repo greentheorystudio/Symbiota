@@ -126,7 +126,7 @@ if($tid){
 				    	<legend><b>Add a New Image</b></legend>
 						<div style='padding:10px;width:600px;border:1px solid yellow;background-color:#FFFF99;'>
 							<div class="targetdiv" style="display:block;">
-								<div style="font-weight:bold;font-size:110%;margin-bottom:5px;">
+								<div style="font-weight:bold;margin-bottom:5px;">
 									Select an image file located on your computer that you want to upload:
 								</div>
 						    	<div>
@@ -141,7 +141,7 @@ if($tid){
 								</div>
 							</div>
 							<div class="targetdiv" style="display:none;">
-								<div style="font-weight:bold;font-size:110%;margin-bottom:5px;">
+								<div style="font-weight:bold;margin-bottom:5px;">
 									Enter a URL to an image already located on a web server:
 								</div>
 								<div>
