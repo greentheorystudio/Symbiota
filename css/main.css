@@ -321,7 +321,6 @@ Accent: #E52A4D
 }
 
 html{
-	background-color: #2E4107;
 	font-size: 100%;
 }
 
@@ -332,6 +331,7 @@ body{
 	font-family: 'Source Sans Pro';
 	line-height: 18px;
 	border: 1px solid black;
+	background-color: #2E4107;
 }
 
 .title {
