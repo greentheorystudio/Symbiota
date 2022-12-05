@@ -267,6 +267,10 @@
 	url('fonts/fira-sans-v10-latin-900italic.svg#FiraSans') format('svg'); /* Legacy iOS */
 }
 
+html {
+	font-size: 90%;
+}
+
 body, html {
 	height: 100%;
 	overflow-x: hidden;
@@ -274,7 +278,6 @@ body, html {
 
 body{
 	font-family: 'Fira Sans';
-	font-size: 18px;
 	line-height: 20px;
 	margin: 0;
 }
@@ -285,7 +288,6 @@ body{
 	margin: 0 auto;
 	padding: 10px 15px 15px;
 	font-family: 'Fira Sans';
-	font-size: 18px;
 	line-height: normal;
 	z-index: 1;
 }
@@ -296,7 +298,7 @@ div.navpath {
 	padding-left: 10px;
 	margin-bottom: 0;
 	font-family: 'Fira Sans';
-	font-size: 14px;
+	font-size: .8rem;
 	color: #242038;
 	font-variant: small-caps;
 }
@@ -309,7 +311,7 @@ div.navpath a, div.navpath a:hover {
 	font-family: granville, serif;
 	font-weitht: bold;
 	font-variant: small-caps;
-	font-size: 28pt;
+	font-size: 1.5rem;
 	line-height: 29pt;
 	display: block;
 	margin-top: 0.85em;
@@ -321,46 +323,44 @@ h1{
 	font-family: granville, serif;
 	font-weitht: bold;
 	font-variant: small-caps;
-	font-size: 30pt;
+	font-size: 1.5rem;
 	line-height: 31pt;
 }
 
 h2{
 	font-family: 'Fira Sans';
 	font-weitht: bold;
-	font-size: 20pt;
+	font-size: 1.3rem;
 	line-height: normal;
 }
 
 h3{
 	font-family: 'Fira Sans';
 	font-weitht: bold;
-	font-size: 18pt;
+	font-size: 1.2rem;
 	line-height: 150%;
 }
 
 h4{
 	font-family: 'Fira Sans';
 	font-weight: bold;
-	font-size: 16pt;
+	font-size: 1.1rem;
 	line-height: normal;
 }
 
 h5{
 	font-family: 'Fira Sans';
-	font-size: 16px;
 	line-height: normal;
 }
 
 .statictext, p{
 	font-family: 'Fira Sans';
-	font-size: 18px;
 	line-height: normal;
 }
 
 .intro-text {
 	font-family: 'Fira Sans';
-	font-size: 16px;
+	font-size: .9rem;
 	line-height: 18px;
 }
 
@@ -384,7 +384,7 @@ h5{
 }
 #hor_dropdown{
 	list-style:none;
-	font-size: 11pt;
+	font-size: .8rem;
 	width:auto;
 	color: white;
 	font-family: 'Fira Sans';
@@ -482,7 +482,6 @@ h5{
 
 .as {
 	clear: both;
-	font-size: 17px;
 	text-align: left;
 	position: absolute;
 	top: 10px;
@@ -499,7 +498,7 @@ h5{
 #quicksearchbutton {
 	text-align: center;
 	font-family: 'Fira Sans';
-	font-size: 13pt;
+	font-size: .8rem;
 	margin: 5em auto;
 	padding: 20px;
 	height: 75px;
@@ -546,7 +545,7 @@ input#quicksearchtaxon {
 	height: 50px;
 	margin-bottom: 0px;
 	padding-bottom: 0px;
-	font-size: 24px;
+	font-size: 1.3rem;
 	padding-left: 15px;
 }
 
@@ -558,10 +557,6 @@ input#quicksearchtaxon {
 }
 
 /*Taxon Profile pages*/
-.taxon-desc-tab-text {
-	font-size: 14px;
-}
-
 #desctabs{
 	margin-top: 20px;
 	width: 675px;
@@ -585,19 +580,17 @@ h1.heading{
 table.table-border td p.label, table.table-border td span, table.table-border td p.heading, ol.report-caterories table.table-border td{
 	color: #393939 !important;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size:12px;
 }
 
 p.title{
 	color: #408080;
 	font-weight:bold;
-	font-size:18px;
 	margin:0 0 5px 0 !important;
 }
 p.body, p.body-align-left{
 	color: #393939 !important;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size:14px;
+	font-size:.8rem;
 	text-align:justify !important;
 	line-height: 20px;
 }
@@ -606,7 +599,7 @@ p.body-align-left{
 }
 table.table-border td p.heading{
 	font-weight: bold;
-	font-size:16px;
+	font-size:.9rem;
 	padding:0 !important;
 	margin:0 !important;
 }
@@ -636,7 +629,7 @@ p.footer_note{
 }
 span.caption{
 	font-family: Verdana, Geneva, sans-serif;
-	font-size: 12px;
+	font-size: .8rem;
 	font-weight: normal;
 	color: #393939;
 	line-height: 15px;
@@ -679,7 +672,7 @@ table.alternate{
 table.alternate th{
 	background-color:#f0f0f0;
 	color:#393939;
-	font-size:16px;
+	font-size:.9rem;
 	font-weight:bold;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	padding:5px;
@@ -723,7 +716,7 @@ table.species-table tr:last-child td {
 	border:0px;
 }
 table.species-table tr td{
-	font-size:17px;
+	font-size:.9rem;
 	font-weight:bold;
 }
 table.species-table tr td.label{
@@ -741,12 +734,10 @@ ol.report-caterories {
 	list-style-type: upper-roman;
 	color: #408080;
 	font-weight:bolder;
-	font-size:18px;
 }
 
 ol.report-caterories li p.heading {
 	font-weight:bold;
-	font-size:18px;
 	text-transform: uppercase;
 	margin-bottom:5px;
 }
@@ -824,7 +815,7 @@ ol.report-caterories li p.heading {
 
 .login-link {
 	font-family: 'Fira Sans';
-	font-size: 11pt;
+	font-size: .8rem;
 	color: white;
 	margin: 10px;
 }
@@ -891,7 +882,7 @@ ol.report-caterories li p.heading {
 	padding: 4px;
 	background-color: rgba(226, 232, 236, 0.58);
 	font-family: 'Fira Sans';
-	font-size: 12px;
+	font-size: .8rem;
 	line-height: normal;
 	color: black;
 }
@@ -1038,7 +1029,7 @@ ol.report-caterories li p.heading {
 .imageCaption {
 	margin-top: 3px;
 	padding-left: 5px;
-	font-size: 12px;
+	font-size: .8rem;
 }
 
 ul.further-reading-list li {

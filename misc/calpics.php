@@ -19,7 +19,7 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
 include(__DIR__ . '/../header.php');
 ?>
 <div id="innertext">
-    <p style="font-size:5empx;color:#008080;"><b>2006 Indian River Lagoon Calendar </b></p>
+    <p style="color:#008080;"><b>2006 Indian River Lagoon Calendar </b></p>
     <table cellpadding="0" cellspacing="0"
            style="border-collapse:collapse;border:0;border-color:#111111;width:550px;margin-left:auto;margin-right:auto;">
         <tr>
