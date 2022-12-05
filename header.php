@@ -10,7 +10,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
             </div>
         </div>
         <div style="float:right;">
-            <img style="height:175px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/Banner3.JPG" />
+            <img style="height:175px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/Banner3.JPG" />
         </div>
     </div>
     <div id="topNavigation">
