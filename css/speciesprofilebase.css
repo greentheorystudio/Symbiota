@@ -60,18 +60,15 @@
 
 #scinameheader.species{
 	float: 			left;
-	font-size:		16px;
 	margin-left:	10px;
 	margin-bottom:	0;
 }
 
 #scinameheader.genus{
-	font-size:		16px;
 	margin-left:	10px;
 }
 
 #scinameheader.higher{
-	font-size:		16px;
 	margin-left:	10px;
 }
 

@@ -61,7 +61,7 @@ if($taxId === 'root'){
 		else{
 			$sciName = $row1->sciname;
 		}
-		$sciName = "<span style='font-size:75%;'>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row1->author:'');
+		$sciName = "<span>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row1->author:'');
 		$childArr[$i]['id'] = $row1->tid;
 		$childArr[$i]['label'] = $label;
 		$childArr[$i]['name'] = $sciName;
@@ -118,7 +118,7 @@ else{
 		if((int)$row2->tid === $targetId){
 			$sciName = '<b>'.$sciName.'</b>';
 		}
-		$sciName = "<span style='font-size:75%;'>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row2->author:'');
+		$sciName = "<span>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row2->author:'');
 		if((int)$row2->tid === $taxId){
 			$retArr['id'] = $row2->tid;
 			$retArr['label'] = $label;
@@ -188,7 +188,7 @@ else{
 			$sciName = '<b>'.$sciName.'</b>';
 		}
 		$sciName = '['.$sciName.']';
-		$sciName = "<span style='font-size:75%;'>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row->author:'');
+		$sciName = "<span>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row->author:'');
 		$childArr[$i]['id'] = $row->tid;
 		$childArr[$i]['label'] = $label;
 		$childArr[$i]['name'] = $sciName;

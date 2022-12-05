@@ -312,7 +312,7 @@ if($formSubmit === 'dlexsiccati'){
 					</fieldset>
 				</form>
 			</div>
-			<div style="font-weight:bold;font-size:120%;">Exsiccati</div>
+			<div style="font-weight:bold;">Exsiccati</div>
 			<?php
 			if($isEditor){
 				?>
@@ -370,7 +370,7 @@ if($formSubmit === 'dlexsiccati'){
 					}
 				}
 				else{
-					echo '<div style="margin:20px;font-size:120%;">There are no exsiccati matching your request</div>';
+					echo '<div style="margin:20px;">There are no exsiccati matching your request</div>';
 				}
 				?>
 			</ul>
@@ -379,7 +379,7 @@ if($formSubmit === 'dlexsiccati'){
 		elseif($ometId){
 			$exsArr = $exsManager->getTitleObj($ometId);
 			?>
-			<div style="font-weight:bold;font-size:120%;">
+			<div style="font-weight:bold;">
 				<?php
 				if($isEditor){
 					?>
@@ -505,7 +505,7 @@ if($formSubmit === 'dlexsiccati'){
 						}
 					}
 					else{
-						echo '<div style="font-weight:bold;font-size:110%;">';
+						echo '<div style="font-weight:bold;">';
 						echo 'There are no exsiccati numbers in database ';
 						echo '</div>';
 					}
@@ -529,7 +529,7 @@ if($formSubmit === 'dlexsiccati'){
 				<?php
 			}
 			?>
-			<div style="font-weight:bold;font-size:120%;">
+			<div style="font-weight:bold;">
 				<?php
 				echo '<a href="index.php?ometid='.$mdArr['ometid'].'">'.$mdArr['title'].'</a> #'.$mdArr['exsnumber'];
 				?>

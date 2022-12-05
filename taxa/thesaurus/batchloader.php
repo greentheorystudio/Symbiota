@@ -56,7 +56,7 @@ if($isEditor){
             ?>
             <form name="mapform" action="batchloader.php" method="post">
                 <fieldset style="width:90%;">
-                    <legend style="font-weight:bold;font-size:120%;">Taxa Upload Form</legend>
+                    <legend style="font-weight:bold;">Taxa Upload Form</legend>
                     <div style="margin:10px;">
                     </div>
                     <table style="border:1px solid black">
@@ -137,7 +137,7 @@ if($isEditor){
             ?>
             <form name="transferform" action="batchloader.php" method="post">
                 <fieldset style="width:450px;">
-                    <legend style="font-weight:bold;font-size:120%;">Transfer Taxa To Thesaurus</legend>
+                    <legend style="font-weight:bold;">Transfer Taxa To Thesaurus</legend>
                     <div style="margin:10px;">
                         Review upload statistics below before activating. Use the download option to review and/or adjust for reload if necessary.
                     </div>
@@ -197,7 +197,7 @@ if($isEditor){
             <div>
                 <form name="uploadform" action="batchloader.php" method="post" enctype="multipart/form-data" onsubmit="return verifyUploadForm(this);">
                     <fieldset style="width:90%;">
-                        <legend style="font-weight:bold;font-size:120%;">Taxa Upload Form</legend>
+                        <legend style="font-weight:bold;">Taxa Upload Form</legend>
                         <div style="margin:10px;">
                             Flat structured, CSV (comma delimited) text files can be uploaded here.
                             Scientific name is the only required field below genus rank.

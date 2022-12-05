@@ -375,7 +375,7 @@ else{
 			<?php
 			if($recArr){
 				?>
-				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+				<table class="styledtable" style="font-family:Arial,serif;">
 					<tr>
 						<th>ID</th>
 						<?php
@@ -420,7 +420,7 @@ else{
 			}
 			else{
 				?>
-				<div style="font-weight:bold;font-size:120%;">
+				<div style="font-weight:bold;">
 					No records found matching the query
 				</div>
 				<?php

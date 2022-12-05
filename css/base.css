@@ -3,7 +3,6 @@ body{
 	background-color: #FFFFFF;
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
 }
 
 #innertext{
@@ -86,17 +85,14 @@ table.styledtable tr.alt td {
 
 div.navpath {
 	color: #000000;
-	font-size: 11px;
 }
 
 div.navpath a {
-	font-size: 11px;
 	color: #000000;
 }
 
 div.navpath a:hover {
 	color: #C0C0C0;
-	font-size: 11px;
 }
 
 button:hover{
@@ -176,11 +172,6 @@ div.button:hover {
 
 .categorytitle a{
 	font-weight: bold;
-	font-size:	110%;
-}
-
-.collectiontitle{
-	font-size:12px;
 }
 
 .collectiontitle a{
@@ -302,7 +293,6 @@ div.mf_container ol.mf_list li.mf_item.mf_selected a.mf_remove {
 div.mf_container input.mf_input {
 	border: 0;
 	font: inherit;
-	font-size: 100%;
 	margin: 2px;
 	outline: none;
 	padding: 4px;
@@ -315,7 +305,6 @@ ol.mp_list {
 	overflow: hidden;
 	color:#222;
 	font-family:Verdana,Arial,sans-serif;
-	font-size:15px;
 	position: absolute;
 	width: 498px;
 	z-index: 99999;
@@ -345,7 +334,6 @@ ol.mp_list li.mp_highlighted {
 .quicksearchselectorcontainer {
 	height: 20px;
 	width: 300px;
-	font-size: 16px;
 	display: flex;
 	justify-content: space-evenly;
 }
@@ -434,6 +422,10 @@ body.processing .loadingModal {
 
 body.processing .loadingModal {
 	display: block;
+}
+
+.color {
+	font-size: 0;
 }
 
 .syn-div {

@@ -137,7 +137,7 @@ $headingArr = $charManager->getHeadingArr();
 					<?php 
 				}
 				else{
-					echo '<div style="font-weight:bold;font-size:120%;">There are no existing character headings</div>';
+					echo '<div style="font-weight:bold;">There are no existing character headings</div>';
 				}
 				?>
 			</div>

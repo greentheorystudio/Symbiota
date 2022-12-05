@@ -91,7 +91,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 		<title>Occurrence Attribute Mining Tool</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-		<link href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+		<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 		<script src="../../js/external/jquery.js" type="text/javascript"></script>
 		<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
@@ -198,7 +198,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 				else{
 					$collIdArr = explode(',',$collid);
 					echo '<fieldset>';
-					echo '<legend style="font-weight:bold;font-size:130%"><a href="#" style="" onclick="toggleCollections()">Searching '.count($collIdArr).' Collections</a></legend>';
+					echo '<legend style="font-weight:bold;"><a href="#" style="" onclick="toggleCollections()">Searching '.count($collIdArr).' Collections</a></legend>';
 					echo '<div id="collDiv" style="display:none;padding:10px;">';
 					foreach($collIdArr as $id){
 						echo '<div>'.$collArr[$id].'</div>';

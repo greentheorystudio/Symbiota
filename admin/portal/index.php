@@ -15,7 +15,7 @@ $confManager = new ConfigurationManager();
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Portal Configuration Manager</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link type="text/css" href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+    <link type="text/css" href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <link type="text/css" href="../../css/admin.portal.css?ver=20221103" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/external/jquery.js?ver=20130917"></script>

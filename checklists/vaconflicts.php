@@ -53,7 +53,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 		echo '<div style="font-weight:bold;">Conflict Count: '.count($conflictArr).'</div>';
 		?>
 		<form name="batchConflictForm" method="post" action="voucheradmin.php">
-			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+			<table class="styledtable" style="font-family:Arial,serif;">
 				<tr>
 					<th><input type="checkbox" onclick="selectAll(this)" /></th>
 					<th><b>Checklist ID</b></th>

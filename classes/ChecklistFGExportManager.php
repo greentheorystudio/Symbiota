@@ -47,7 +47,7 @@ class ChecklistFGExportManager {
 					$this->clid = $row->clid;
 				}
 				else{
-					$retStr = '<h1>ERROR: invalid checklist identifier supplied ('.$clValue.')</h1>';
+					$retStr = '<h2>ERROR: invalid checklist identifier supplied ('.$clValue.')</h2>';
 				}
 				$rs->free();
 			}

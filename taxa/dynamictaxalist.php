@@ -56,7 +56,7 @@ if($targetTid){
     <title><?php echo $GLOBALS['DEFAULT_TITLE'] . ($targetTid?' Dynamic Species List: ' . $listManager->getSciName():''); ?></title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+    <link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript">
@@ -324,7 +324,7 @@ include(__DIR__ . '/../header.php');
             }
             echo '</div>';
             echo '<div style="clear:both;height:5px;"></div>';
-            echo '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;"><tr>';
+            echo '<table class="styledtable" style="font-family:Arial,serif;"><tr>';
             echo '<th>Kingdom</th>';
             echo '<th>Phylum</th>';
             echo '<th>Class</th>';
@@ -359,7 +359,7 @@ include(__DIR__ . '/../header.php');
             }
         }
         elseif($targetTid || $targetTaxon){
-            echo '<div style="font-weight:bold;font-size:120%;">There are no taxa matching your criteria.</div>';
+            echo '<div style="font-weight:bold;">There are no taxa matching your criteria.</div>';
         }
         ?>
     </div>
