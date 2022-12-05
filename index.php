@@ -18,16 +18,16 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         });
 
         var imgArray = [
-            "url(images/layout/Image01.JPG)",
-            "url(images/layout/Image02.JPG)",
-            "url(images/layout/Image03.jpg)",
-            "url(images/layout/Image05.JPG)",
-            "url(images/layout/Image07.jpg)",
-            "url(images/layout/Image08.jpg)",
-            "url(images/layout/Image09.jpg)",
-            "url(images/layout/Image10.jpg)",
-            "url(images/layout/Image11.jpg)",
-            "url(images/layout/Image12.jpg)"];
+            "url(/content/imglib/layout/Image01.JPG)",
+            "url(/content/imglib/layout/Image02.JPG)",
+            "url(/content/imglib/layout/Image03.jpg)",
+            "url(/content/imglib/layout/Image05.JPG)",
+            "url(/content/imglib/layout/Image07.jpg)",
+            "url(/content/imglib/layout/Image08.jpg)",
+            "url(/content/imglib/layout/Image09.jpg)",
+            "url(/content/imglib/layout/Image10.jpg)",
+            "url(/content/imglib/layout/Image11.jpg)",
+            "url(/content/imglib/layout/Image12.jpg)"];
         var photographerArray = [
             "Denise Knapp",
             "Denise Knapp",
