@@ -43,7 +43,7 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
 <div class="hero-container">
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/janky_mangrove_logo_med.png" />
+        <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
     </div>
     <div class="title-container">
         <span class="titlefont">Indian River Lagoon<br />

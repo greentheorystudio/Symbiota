@@ -91,7 +91,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 <div class="hero-container" id="hero-container">
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/janky_mangrove_logo_med.png" />
+        <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
     </div>
     <div class="title-container">
         <span class="titlefont">Indian River Lagoon<br />
@@ -141,7 +141,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
             <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;line-height: normal;">Species Reports</h5>
         </div>
         <div class="totals-box">
-            <i style="height:60px;width:60px;background-image: url('images/layout/fat_tree.svg');background-size:cover;filter: drop-shadow(10px 10px 4px lightgrey);"></i>
+            <i style="height:60px;width:60px;background-image: url('/content/imglib/layout/fat_tree.svg');background-size:cover;filter: drop-shadow(10px 10px 4px lightgrey);"></i>
             <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalTaxa; ?></h2>
             <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;line-height: normal;"> Total Taxa</h5>
         </div>
