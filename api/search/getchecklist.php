@@ -58,7 +58,7 @@ if($stArrJson){
     </div>
 	<div style="clear:both;"><hr/></div>
 	<?php
-		echo '<div style="font-weight:bold;font-size:125%;">Taxa Count: '.$taxaCnt.'</div>';
+		echo '<div style="font-weight:bold;">Taxa Count: '.$taxaCnt.'</div>';
 		$undFamilyArray = array();
 		if(array_key_exists('undefined',$checklistArr)){
 			$undFamilyArray = $checklistArr['undefined'];

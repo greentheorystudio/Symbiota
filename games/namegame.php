@@ -24,7 +24,7 @@ if(!$clName){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Name Game</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 	<script src="../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
@@ -42,7 +42,6 @@ if(!$clName){
             width:50px;
             cursor:pointer;
             font-family: times new roman, serif;
-            font-size:25px;
             font-weight:bold;
             color:#000000
         }
@@ -52,10 +51,7 @@ if(!$clName){
             font-weight:normal
         }
 
-        .question{
-            font-size:30px;
-        }
-		#rw{
+        #rw{
             margin-left:auto;
             margin-right:auto
         }
@@ -481,7 +477,7 @@ if(!$clName){
 				played++;
 				document.getElementById("plays").innerHTML = played.toString();
                 myNewString = RealName.replaceAll(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
-                document.getElementById("splash").innerHTML = "<div style='font-size:20px;color:red;text-align:center;'>Too Bad</div><div style='font-size:16px;color:#0000FF;text-align:center;'><a href='#' onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin');\"><b>Click here for more about this species</b></a></div>";
+                document.getElementById("splash").innerHTML = "<div style='color:red;text-align:center;'>Too Bad</div><div style='color:#0000FF;text-align:center;'><a href='#' onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin');\"><b>Click here for more about this species</b></a></div>";
 				document.getElementById("splash").style.display = "";
 				document.getElementById("rate").innerHTML = ((won/played)*100).toFixed(0)+"%";
 				gameEnd();
@@ -496,10 +492,10 @@ if(!$clName){
 				document.getElementById("wins").innerHTML = won.toString();
                 myNewString = RealName.replaceAll(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
                 if (secondWord !== '')
-					document.getElementById("attempt").innerHTML = chosenWord.toUpperCase()+"<br><span style=\"font-size:12px\">"+secondWord+"</span>";
+					document.getElementById("attempt").innerHTML = chosenWord.toUpperCase()+"<br><span>"+secondWord+"</span>";
 				else
 					document.getElementById("attempt").innerHTML = chosenWord.toUpperCase();
-				document.getElementById("splash").innerHTML = "<span style='color:#336699'>You Win!</span><br><a href = '#' onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin')\"> <span style='font-size:4px;color:#0000FF;text-align:center;'><u><b><br>Click here for more about this species</b></u></span></a><br>";
+				document.getElementById("splash").innerHTML = "<span style='color:#336699'>You Win!</span><br><a href = '#' onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin')\"> <span style='color:#0000FF;text-align:center;'><u><b><br>Click here for more about this species</b></u></span></a><br>";
                 document.getElementById("hintdisplay").innerHTML = mainList[currentNum][1];
 				document.getElementById("splash").style.display = "";
 				document.getElementById("rate").innerHTML = ((won/played)*100).toFixed(0)+"%";
@@ -533,7 +529,7 @@ if(!$clName){
 			    return;
 			}
 			if (secondWord !== '') {
-                document.getElementById("attempt").innerHTML = chosenWord.toUpperCase() + "<br><span style=\"font-size:12px\">" + secondWord + "</span>";
+                document.getElementById("attempt").innerHTML = chosenWord.toUpperCase() + "<br><span>" + secondWord + "</span>";
             }
 			else {
                 document.getElementById("attempt").innerHTML = chosenWord.toUpperCase();
@@ -654,10 +650,10 @@ if(!$clName){
 			</div>
 		</div>
 		<div style="clear:both;width:100%;text-align:center;padding-top:20px;">
-			<div id="hintdisplay" style="font-size:20px;"></div>
+			<div id="hintdisplay"></div>
 		</div>
 		<div style="clear:both;width:100%;text-align:center;padding-top:20px;">
-			<div id="attempt" style="letter-spacing:5px;font-weight:bold;font-size:20px"></div>
+			<div id="attempt" style="letter-spacing:5px;font-weight:bold;"></div>
 		</div>
 		<div style="clear:both;width:100%;text-align:center;padding-top:20px;">
 			<div id="splash" style="color:#336699"></div>

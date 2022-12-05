@@ -80,7 +80,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 	<div id='innertext'>
 		<?php
 		if($clid  && $isEditable){ ?>
-			<h1><?php echo $dynSqlManager->getClName(); ?></h1>
+			<h2><?php echo $dynSqlManager->getClName(); ?></h2>
 			<?php if($statusStr){ ?>
 			<div style="margin:20px;font-weight:bold;color:red;">
 				<?php echo $statusStr; ?>

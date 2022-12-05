@@ -23,7 +23,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Sources Management</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" type="text/css" />
+	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
@@ -111,7 +111,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 		else if($sourceArr){
             echo '<h1>Contributors</h1>';
             foreach($sourceArr as $tid => $sArr){
-                echo '<div style="font-size:130%;margin:25px 10px 0 10px;"><i><b><u>'.$sArr['sciname'].'</u></b></i></div>';
+                echo '<div style="margin:25px 10px 0 10px;"><i><b><u>'.$sArr['sciname'].'</u></b></i></div>';
                 if($sArr['contributorTerm']){
                     echo '<div style="margin:8px 10px 0 20px;"><i>Terms and Definitions contributed by:</i></div>';
                     $termArr = explode(';', $sArr['contributorTerm']);

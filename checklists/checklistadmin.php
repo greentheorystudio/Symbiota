@@ -68,7 +68,7 @@ $voucherProjects = $clManager->getVoucherProjects();
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link type="text/css" href="../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+	<link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
@@ -92,7 +92,7 @@ include(__DIR__ . '/../header.php');
 </div>
 
 <div id='innertext'>
-<div style="color:#990000;font-size:20px;font-weight:bold;margin:0 10px 10px 0;">
+<div style="color:#990000;font-weight:bold;margin:0 10px 10px 0;">
 	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
@@ -125,7 +125,7 @@ if($clid && $isEditor){
 	</ul>
 	<div id="admintab">
 		<div style="margin:20px;">
-			<div style="font-weight:bold;font-size:120%;">Current Editors</div>
+			<div style="font-weight:bold;">Current Editors</div>
 			<?php
 			$editorArr = $clManager->getEditors();
 			if($editorArr){
@@ -174,7 +174,7 @@ if($clid && $isEditor){
 		</div>
 		<hr/>
 		<div style="margin:20px;">
-			<div style="font-weight:bold;font-size:120%;">Inventory Project Assignments</div>
+			<div style="font-weight:bold;">Inventory Project Assignments</div>
 			<ul>
 				<?php
 				$projArr = $clManager->getInventoryProjects();
@@ -193,7 +193,7 @@ if($clid && $isEditor){
 		</div>
 		<hr/>
 		<div style="margin:20px;">
-			<div style="font-weight:bold;font-size:120%;">Permanently Remove Checklist</div>
+			<div style="font-weight:bold;">Permanently Remove Checklist</div>
 			<div style="margin:10px;">
                 Before a checklist can be deleted, all editors (except yourself) and inventory project assignments must be removed.
                 Inventory project assignments can only be removed by active managers of the project or a system administrator. <br/>
@@ -241,10 +241,10 @@ if($clid && $isEditor){
 <?php
 }
 elseif($clid) {
-    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span> You do not have administrative permission for this checklist</div>';
+    echo '<div><span style="font-weight:bold;">Error:</span> You do not have administrative permission for this checklist</div>';
 }
 else {
-    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span> Checklist identifier not set</div>';
+    echo '<div><span style="font-weight:bold;">Error:</span> Checklist identifier not set</div>';
 }
 ?>
 </div>

@@ -351,7 +351,7 @@ class TaxonProfileManager {
             $str = array_shift($strArr);
         }
         if($strArr){
-            $str .= "<span class='verns' onclick=\"toggle('verns');\" style='cursor:pointer;display:inline;font-size:70%;' title='Click here to show more common names'>,&nbsp;&nbsp;more...</span>";
+            $str .= "<span class='verns' onclick=\"toggle('verns');\" style='cursor:pointer;display:inline;' title='Click here to show more common names'>,&nbsp;&nbsp;more...</span>";
             $str .= "<span class='verns' onclick=\"toggle('verns');\" style='display:none;'>, ";
             $str .= implode(', ',$strArr);
             $str .= '</span>';
@@ -391,7 +391,7 @@ class TaxonProfileManager {
                         $str = $value;
                         break;
                     case 1:
-                        $str .= "<span class='syns' onclick=\"toggle('syns');\" style=\"cursor:pointer;display:inline;font-size:70%;\" title='Click here to show more synonyms'>,&nbsp;&nbsp;more...</span>";
+                        $str .= "<span class='syns' onclick=\"toggle('syns');\" style=\"cursor:pointer;display:inline;\" title='Click here to show more synonyms'>,&nbsp;&nbsp;more...</span>";
                         $str .= "<span class='syns' onclick=\"toggle('syns');\" style=\"display:none;\">, ".$value;
                         break;
                     default:

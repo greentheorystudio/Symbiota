@@ -5,7 +5,7 @@ $occManager = new OccurrenceManager();
 
 $datasetArr = $occManager->getDatasetArr();
 ?>
-<div id="datasetmanagement" data-role="popup" class="well" style="width:500px;height:175px;font-size:14px;">
+<div id="datasetmanagement" data-role="popup" class="well" style="width:500px;height:175px;">
     <a class="boxclose datasetmanagement_close" id="boxclose"></a>
     <h2>Dataset Management</h2>
     <div style="padding:5px;float:left;">Dataset target: </div>

@@ -36,7 +36,7 @@ if($submitAction){
 	<title><?php echo ($ootdGameTitle ?? 'Organism of the Day'); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
@@ -150,7 +150,7 @@ if($submitAction){
 							<a onclick="chgImg(1);">Next</a>
 						</div>
 					</div>
-					<div style="font-size:18px;text-align:center;margin: 20px auto;" >
+					<div style="text-align:center;margin: 20px auto;" >
 						<b>Name that <?php echo ($ootdGameType ?? 'organism'); ?>!</b>
 						<a id="gameinfo" href="#" onclick="return false" title="How to Play?">
 							<i style="width:15px;height:15px;" class="far fa-question-circle"></i>
@@ -199,7 +199,7 @@ if($submitAction){
 							<div style="width:160px;float:left;display:table-cell;" >
 								<img src = "../../images/games/ootd/balloons-150.png">
 							</div>
-							<div style="width:350px;font-size:25px;float:left;margin-top:50px;display:table-cell;" >
+							<div style="width:350px;float:left;margin-top:50px;display:table-cell;" >
 								<b>Congratulations! That is<br />correct!</b>
 							</div>
 							<div style="width:160px;float:right;display:table-cell;" >
@@ -208,10 +208,10 @@ if($submitAction){
 						</div>
 					</div>
 					<div style="width:670px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
-						<div style="font-size:18px;" ><b><?php echo $gameInfo['family']; ?></b><br />
+						<div><b><?php echo $gameInfo['family']; ?></b><br />
 							<i><?php echo $gameInfo['sciname']; ?></i>
 						</div>
-						<div style="margin-top:30px;font-size:16px;" >
+						<div style="margin-top:30px;" >
 							<a href = "#" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here to learn more about this <?php echo ($ootdGameType ?? 'organism'); ?>-</a>
 						</div>
 					</div>
@@ -223,14 +223,14 @@ if($submitAction){
 				?>
 				<div id="incorrect_both">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
-						<div style="font-size:25px;" >
+						<div>
 							<b>Sorry, that is not correct</b>
 						</div>
-						<div style="margin-top:25px;font-size:18px;" >
+						<div style="margin-top:25px;" >
 							<b>Hint:</b> The family is <u>not</u>
 							<?php echo $_POST['family_answer']; ?>.
 						</div>
-						<div style="margin-top:40px;font-size:16px;" >
+						<div style="margin-top:40px;" >
 							<a href = "index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>');">Click Here to try again!</a>
 							<br /><br />
 							OR
@@ -246,14 +246,14 @@ if($submitAction){
 				?>
 				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
-						<div style="font-size:25px;" >
+						<div>
 							<b>Sorry, that is not correct</b>
 						</div>
-						<div style="margin-top:25px;font-size:18px;" >
+						<div style="margin-top:25px;" >
 							On the bright side, <b>you did get the family right</b>; it's
 							<?php echo $gameInfo['family']; ?>.
 						</div>
-						<div style="margin-top:40px;font-size:16px;" >
+						<div style="margin-top:40px;" >
 							<a href = "index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">Click Here to try again!</a>
 							<br /><br />
 							OR
@@ -269,14 +269,14 @@ if($submitAction){
 				?>
 				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
-						<div style="font-size:25px;" >
+						<div>
 							<b>Sorry, that is not correct</b>
 						</div>
-						<div style="margin-top:25px;font-size:18px;" >
+						<div style="margin-top:25px;" >
 							<b>You did get the scientific name right</b>; it's
 							<?php echo $gameInfo['sciname']; ?>, but the family is not <?php echo $_POST['family_answer']; ?>.
 						</div>
-						<div style="margin-top:40px;font-size:16px;" >
+						<div style="margin-top:40px;" >
 							<a href = "index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">Click Here to try again!</a>
 							<br /><br />
 							OR
@@ -292,14 +292,14 @@ if($submitAction){
 				?>
 				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
-						<div style="font-size:25px;" >
+						<div>
 							<b>Sorry, that is not correct</b>
 						</div>
-						<div style="margin-top:25px;font-size:18px;" >
+						<div style="margin-top:25px;" >
 							On the bright side, <b>you did get the genus right</b>; it's
 							<?php echo $gameInfo['genus']; ?>.
 						</div>
-						<div style="margin-top:40px;font-size:16px;" >
+						<div style="margin-top:40px;" >
 							<a href = "index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">Click Here to try again!</a>
 							<br /><br />
 							OR
@@ -315,14 +315,14 @@ if($submitAction){
 				?>
 				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
-						<div style="font-size:25px;" >
+						<div>
 							<b>Sorry, that is not correct</b>
 						</div>
-						<div style="margin-top:25px;font-size:18px;" >
+						<div style="margin-top:25px;" >
 							On the bright side, <b>you did get the family and genus right</b>; The family
 							is <?php echo $gameInfo['family']; ?>, and the genus is <?php echo $gameInfo['genus']; ?>.
 						</div>
-						<div style="margin-top:40px;font-size:16px;" >
+						<div style="margin-top:40px;" >
 							<a href = "index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">Click Here to try again!</a>
 							<br /><br />
 							OR
@@ -337,15 +337,15 @@ if($submitAction){
 				?>
 				<div id="giveup">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
-						<div style="font-size:25px;" >
+						<div>
 							<b>Too bad!</b>
 						</div>
-						<div style="margin-top:25px;font-size:18px;" >
+						<div style="margin-top:25px;" >
 							It was <br /><br />
 							<b><?php echo $gameInfo['family']; ?></b><br />
 							<i><?php echo $gameInfo['sciname']; ?></i>
 						</div>
-						<div style="margin-top:40px;font-size:16px;" >
+						<div style="margin-top:40px;" >
 							<a href = "#" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here to learn more about this <?php echo ($ootdGameType ?? 'organism'); ?>-</a>
 							<br /><br />
 							Thank you for playing!

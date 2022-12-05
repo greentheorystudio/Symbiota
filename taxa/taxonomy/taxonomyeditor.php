@@ -57,7 +57,7 @@ if($editable){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxon Editor: ' .$tid; ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20220720" rel="stylesheet" />
+	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
@@ -254,7 +254,7 @@ if($editable){
             <div id="taxonstatusdiv" style="min-height:400px;">
                 <fieldset style="width:95%;">
                     <legend><b>Taxonomic Placement</b></legend>
-                    <div style="font-size:120%;font-weight:bold;">Status:
+                    <div style="font-weight:bold;">Status:
                         <span style='color:red;'>
                         <?php
                         $acceptance = $taxonEditorObj->getIsAccepted();
@@ -387,7 +387,7 @@ if($editable){
                         <?php
                         if($taxonEditorObj->getIsAccepted() !== 0){
                             ?>
-                            <div style="font-size:110%;"><u><b>Synonyms</b></u></div>
+                            <div><u><b>Synonyms</b></u></div>
                             <div style="float:right;cursor:pointer;" onclick="toggle('tonotaccepted');">
                                 <i style="height:15px;width:15px;" class="far fa-edit"></i>
                             </div>
@@ -472,7 +472,7 @@ if($editable){
     }
     else if($tid) {
         ?>
-        <div style="margin:30px;font-weight:bold;font-size:120%;">
+        <div style="margin:30px;font-weight:bold;">
             You are not authorized to access this page
         </div>
         <?php
