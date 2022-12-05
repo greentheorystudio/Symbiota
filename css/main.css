@@ -1,5 +1,4 @@
 html {
-	background-color: #598F90;
 	font-size: 90%;
 }
 
@@ -10,6 +9,7 @@ body{
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
 	line-height: 16px;
+	background-color: #598F90;
 }
 
 .title {
