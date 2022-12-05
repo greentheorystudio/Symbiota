@@ -87,7 +87,7 @@ class KeyCharDeficitManager{
 			
 			ksort($headingArray);
 			foreach($headingArray as $h => $charData){
-				$returnArray[] = "<div style='margin-top:1em;font-size:125%;'>$h</div>";
+				$returnArray[] = "<div style='margin-top:1em;'>$h</div>";
 				ksort($charData);
 				foreach($charData as $cidKey => $charValue){
 					$returnArray[] = "<div> <input name='cid' type='radio' value='".$cidKey."' ".($cidKey === $cidVal? 'checked' : '').">$charValue</div>";

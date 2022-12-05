@@ -263,7 +263,7 @@ $specList = $loanManager->getSpecList($loanId);
 				</div>
 			</div>
 			<form name="speceditform" action="index.php?collid=<?php echo $collId; ?>&loanid=<?php echo $loanId; ?>&loantype=<?php echo $loanType; ?>#addspecdiv" method="post" onsubmit="return verifySpecEditForm(this)" >
-				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+				<table class="styledtable" style="font-family:Arial,serif;">
 					<tr>
 						<th style="width:25px;text-align:center;">&nbsp;</th>
 						<th style="width:100px;text-align:center;">Catalog Number</th>
@@ -381,7 +381,7 @@ $specList = $loanManager->getSpecList($loanId);
 				</table>
 			</form>
 		</div>	
-		<div id="nospecdiv" style="font-weight:bold;font-size:120%;<?php echo ($specList?'display:none;':''); ?>">There are no specimens registered for this loan.</div>
+		<div id="nospecdiv" style="font-weight:bold;<?php echo ($specList?'display:none;':''); ?>">There are no specimens registered for this loan.</div>
 	</div>
 	<div id="outloandeldiv">
 		<form name="deloutloanform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this loan?')">

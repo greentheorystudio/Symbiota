@@ -102,7 +102,7 @@ if($isEditor && $formSubmit){
                     }
                     $paginationStr .= '</span>';
                     ?>
-                    <div style="clear:both;font-weight:bold;font-size:140%;">
+                    <div style="clear:both;font-weight:bold;">
                         <?php echo $collMap['collectionname']; ?>
                     </div>
                     <div style="float:right;">
@@ -116,7 +116,7 @@ if($isEditor && $formSubmit){
                         foreach($clusterArr as $dupId => $dupArr){
                             ?>
                             <div style="clear:both;margin:10px 0;">
-                                <div style="font-weight:bold;font-size:120%;">
+                                <div style="font-weight:bold;">
                                     <?php echo $dupArr['title']; ?>
                                     <span onclick="toggle('editdiv-<?php echo $dupId; ?>')" title="Display Editing Controls"><i style="height:15px;width:15px;" class="far fa-edit"></i></span>
                                 </div>

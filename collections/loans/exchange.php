@@ -130,7 +130,7 @@ else{
 		echo '</ul>';
 	}
 	else{
-		echo '<div style="font-weight:bold;font-size:120%;margin-top:10px;">There are no transactions registered for this collection</div>';
+		echo '<div style="font-weight:bold;margin-top:10px;">There are no transactions registered for this collection</div>';
 	}
 	?>
 <ul id="transactionlist"></ul>

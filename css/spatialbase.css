@@ -1,8 +1,4 @@
-body{
-	font-size: 16px;
-}
-
-.ui-panel{width:350px;min-height:100%;max-height:none;border-width:0;position:absolute;top:0;display:block}
+.ui-panel{width:40rem;min-width:350px;min-height:100%;max-height:none;border-width:0;position:absolute;top:0;display:block}
 .ui-panel-position-left{left:-350px}
 .ui-panel-animate.ui-panel-position-left.ui-panel-display-overlay,.ui-panel-animate.ui-panel-position-left.ui-panel-display-push{left:0;-webkit-transform:translate3d(-350px,0,0);-moz-transform:translate3d(-350px,0,0);transform:translate3d(-350px,0,0)}
 .ui-panel-position-right{right:-350px}
@@ -81,7 +77,8 @@ body{
 	padding: 10px;
 	display: block;
 	position: absolute;
-	width: 200px;
+	width: 16.5rem;
+	min-width: 200px;
 	height:80px;
 	z-index: 3;
 	font-family: Arial, serif;
@@ -89,7 +86,6 @@ body{
 	border-width: 1px 1px 0 0;
 	background-color: #3c668d;
 	opacity: 0.85;
-	font-size: 12px;
 }
 
 .ui-rangeSlider-label .ui-rangeSlider-leftLabel {
@@ -101,7 +97,6 @@ body{
 	top: 10px;
 	left: 50%;
 	z-index: 3;
-	font-size: 12px;
 }
 
 #maptoolbox {
@@ -119,32 +114,27 @@ body{
 }
 
 .topToolboxRow {
-	height: 25px;
 	display: flex;
 	justify-content: space-evenly;
 }
 
 .middleToolboxRow {
-	height: 25px;
 	display: flex;
 	justify-content: space-evenly;
 }
 
 .bottomToolboxRow {
-	height: 20px;
 	display: flex;
 	justify-content: space-between;
 }
 
 #drawcontrol {
 	float: left;
-	width: 115px;
 	height:30px;
 	z-index: 3;
 }
 
 #selectcontrol {
-	max-width: 380px;
 	height:30px;
 	z-index: 3;
 }
@@ -157,19 +147,18 @@ body{
 
 #loadlayers {
 	float: right;
-	width: 80px;
 	height:30px;
 	z-index: 3;
 }
 
 #clustercontrol {
-	width: 180px;
 	height:30px;
 	z-index: 3;
 }
 
 #selectlayerselect {
-	width: 250px;
+	min-width: 100px;
+	max-width: 250px;
 }
 
 .maptext, .maptext a{
@@ -186,33 +175,35 @@ body{
 }
 
 .ol-zoom {
-	top: 42px;
+	top: 3rem;
 	left: auto;
-	right: 8px;
+	right: .5em;
+	font-size: 1rem;
 }
 
 .ol-zoom .ol-zoom-out {
-	margin-top: 231px;
+	margin-top: 17.8rem;
 	left: auto;
-	right: 8px;
+	right: .5em;
 }
+
 .ol-zoomslider {
 	background-color: transparent;
-	top: 65px;
+	top: 4.5rem;
 	left: auto;
-	right: 8px;
-	height:235px;
+	right: .5em;
+	height:18rem;
 }
 
 .ol-touch .ol-zoom .ol-zoom-out {
-	margin-top: 231px;
+	margin-top: 17.8rem;
 	left: auto;
-	right: 8px;
+	right: .5em;
 }
 .ol-touch .ol-zoomslider {
-	top: 65px;
+	top: 4.5rem;
 	left: auto;
-	right: 8px;
+	right: .5em;
 }
 .ol-popup {
 	position: absolute;
@@ -254,7 +245,7 @@ body{
 	text-decoration: none;
 	position: absolute;
 	top: 8px;
-	right: 8px;
+	right: .5em;
 }
 .ol-popup-closer:after {
 	content: "✖";
@@ -274,14 +265,14 @@ body{
 }
 #map .ol-zoom-in.ol-has-tooltip:hover [role=tooltip],
 #map .ol-zoom-in.ol-has-tooltip:focus [role=tooltip] {
-	top: 43px;
+	top: 3rem;
 	left: auto;
 	right: .5em;
 }
 
 #map .ol-zoom-out.ol-has-tooltip:hover [role=tooltip],
 #map .ol-zoom-out.ol-has-tooltip:focus [role=tooltip] {
-	top: 272px;
+	top: 18rem;
 	left: auto;
 	right: .5em;
 }
@@ -305,6 +296,7 @@ a.boxclose{
 	padding-top: 3px;
 	padding-bottom: 3px;
 	text-decoration: none;
+	font-size: 120%;
 }
 
 #panelclosebutton{
@@ -318,30 +310,40 @@ a.boxclose{
 	padding-bottom: 3px;
 	padding-left: 20px;
 	z-index: 10;
-	height: 30px;
-}
-
-#panelcontainer{
-	font-size: 12px;
+	height: 2.6rem;
 }
 
 #defaultpanel{
-	width:380px;
+	width:30rem;
+	min-width:380px;
 }
 
 #criteriatab{
-	width: 379px;
+	width:30rem;
+	min-width:380px;
 	padding: 0;
 }
 
 #recordstab{
-	width: 379px;
+	width:30rem;
+	min-width:380px;
+	padding: 0;
+}
+
+#vectortoolstab{
+	width:30rem;
+	min-width:380px;
+	padding: 0;
+}
+
+#rastertoolstab{
+	width:30rem;
+	min-width:380px;
 	padding: 0;
 }
 
 .tabtitle {
 	font-family: Arial, serif;
-	font-size: 14px;
 	font-weight: normal;
 }
 

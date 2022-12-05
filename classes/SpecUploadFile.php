@@ -23,7 +23,7 @@ class SpecUploadFile extends SpecUploadBase{
                         $finalPath = $this->uploadTargetPath.$this->ulFileName;
                     }
                     else{
-                        echo '<div style="margin:15px;font-weight:bold;font-size:120%;">';
+                        echo '<div style="margin:15px;font-weight:bold;">';
                         echo 'ERROR uploading file (code '.$_FILES['uploadfile']['error'].'): ';
                         echo 'Zip file may be too large for the upload limits set within the PHP configurations (upload_max_filesize = '.ini_get('upload_max_filesize').'; post_max_size = '.ini_get('post_max_size').')';
                         echo '</div>';
