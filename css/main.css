@@ -1,6 +1,5 @@
 html {
 	font-size: 90%;
-	background-color:#728099;
 }
 
 body{
@@ -8,6 +7,7 @@ body{
 	min-width:950px;
 	margin-top:0;
 	font-family: arial, helvetica, sans-serif;
+	background-color:#728099;
 }
 
 .title {
