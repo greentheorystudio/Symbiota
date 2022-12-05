@@ -33,7 +33,6 @@ if(strncmp($windowType, 'input', 5) === 0){
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>" style="background-color:white;">
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Spatial Module</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" type="text/css" />
