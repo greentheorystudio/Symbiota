@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/classes/Sanitizer.php');
 ?>
 <div id="mainContainer">
-    <div id="bannerContainer" style="clear:both;border-bottom:1px solid #333333;">
+    <div id="bannerContainer">
         <div style="width:850px;margin-left:auto;margin-right:auto;">
             <img style="" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/wiscflora_banner6.png" />
         </div>

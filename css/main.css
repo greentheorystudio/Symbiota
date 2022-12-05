@@ -1,9 +1,12 @@
+html {
+	font-size: 90%;
+}
+
 body{
 	width: 80%;
 	min-width:950px;
 	margin-top:0;
 	font-family: Verdana, Geneva, sans-serif;
-	font-size: 12px;
 	background-color:#9EBC7B;
 }
 
@@ -19,13 +22,13 @@ body{
 	text-align:left;
 	padding:0;
 	border-bottom:1px solid #333333;
+	clear: both;
 }
 
 #innertext{
 	min-height:400px;
 	margin: 0 auto;
 	padding: 10px 15px 15px;
-	font-size: 12px;
 }
 
 a{
@@ -170,7 +173,6 @@ div.navpath {
 .quicksearchselectorcontainer {
 	height: 20px;
 	width: 300px;
-	font-size: 16px;
 	display: flex;
 	justify-content: space-evenly;
 }
@@ -220,14 +222,6 @@ div.navpath {
 .quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
-}
-
-.taxon-desc-tab-text {
-	font-size: 14px;
-}
-
-.taxon-desc-tab-text {
-	font-size: 14px;
 }
 
 #innertable{
@@ -367,7 +361,6 @@ div.spptab{
 }
 
 #taxscpecrecordbutton{
-	font-size:16px;
 	padding:3px;
 	border-radius: 6px;
 	border:1px solid black;
@@ -381,7 +374,6 @@ div.spptab{
 }
 
 #taxinfrabutton{
-	font-size:16px;
 	margin: 0;
 	padding:3px;
 	border-radius: 6px;
@@ -397,7 +389,6 @@ div.spptab{
 }
 
 #redirectedfrom{
-	font-size:		18px;
 	margin-left: 	25px;
 }
 
@@ -639,14 +630,12 @@ div.sptab{
 	height:		330px;
 	width:		94%;
 	overflow: 	auto;
-	font-size: 14px;
 }
 
 div.spptab{
 	height:		330px;
 	width:		94%;
 	overflow: 	auto;
-	font-size: 14px;
 }
 
 #descsource{
@@ -781,8 +770,8 @@ div.spptext{
 }
 
 .footer{
+	position: relative;
 	clear:both;
-	font-size: 16px;
 	background-color:#7d9462;
 	padding-top:5px;
 	padding-bottom:5px;
