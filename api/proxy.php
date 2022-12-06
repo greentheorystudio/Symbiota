@@ -9,7 +9,7 @@ $params = array_key_exists('params',$_REQUEST)?$_REQUEST['params']:'';
 
 $pArr = array();
 
-if(session_id() === $sessionId){
+if($sessionId && session_id() === $sessionId){
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
