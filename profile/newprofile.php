@@ -23,7 +23,7 @@ if($emailAddr && !$pHandler->validateEmailAddress($emailAddr)) {
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-if($action === 'Create Account' && $_POST['requestid'] === session_id()){
+if($action === 'Create Account' && array_key_exists('requestid',$_POST) && $_POST['requestid'] && $_POST['requestid'] === session_id()){
     if($pHandler->checkLogin($emailAddr)){
         if($pHandler->register($_POST)){
             header('Location: viewprofile.php');

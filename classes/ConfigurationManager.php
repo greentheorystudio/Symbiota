@@ -131,7 +131,11 @@ class ConfigurationManager{
         $rs = $this->conn->query($sql);
         if($rs->num_rows){
             while($r = $rs->fetch_object()){
-                $GLOBALS[$r->configurationname] = $r->configurationvalue;
+                $value = $r->configurationvalue;
+                if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
+                    $value = Encryption::decrypt($value);
+                }
+                $GLOBALS[$r->configurationname] = $value;
             }
         }
         else{
@@ -170,12 +174,16 @@ class ConfigurationManager{
         $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
-            $retArr[$r->configurationname] = $r->configurationvalue;
+            $value = $r->configurationvalue;
+            if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
+                $value = Encryption::decrypt($value);
+            }
+            $retArr[$r->configurationname] = $value;
             if(in_array($r->configurationname, $this->coreConfigurations, true)){
-                $retArr['core'][$r->configurationname] = $r->configurationvalue;
+                $retArr['core'][$r->configurationname] = $value;
             }
             else{
-                $retArr['additional'][$r->configurationname] = $r->configurationvalue;
+                $retArr['additional'][$r->configurationname] = $value;
             }
         }
         $rs->free();
@@ -537,6 +545,9 @@ class ConfigurationManager{
 
     public function updateConfigurationValue($name, $value): bool
     {
+        if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
+            $value = Encryption::encrypt($value);
+        }
         $sql = 'UPDATE configurations '.
             'SET configurationvalue = "'.$value.'" '.
             'WHERE configurationname = "'.$name.'" ';
@@ -552,6 +563,9 @@ class ConfigurationManager{
 
     public function addConfiguration($name, $value): bool
     {
+        if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
+            $value = Encryption::encrypt($value);
+        }
         $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
             'VALUES("'.$name.'","'.$value.'")';
         return $this->conn->query($sql);
