@@ -17,16 +17,15 @@ class Encryption{
                 $iv = openssl_random_pseudo_bytes($ivSize, $secure);
             } while(!$iv || !$secure);
             $ciphertext = openssl_encrypt($plainText, self::METHOD, $key, 1, $iv);
-            if($iv && $ciphertext){
+            if($ciphertext){
                 $returnStr = $iv . $ciphertext;
             }
         }
-		return $returnStr;
+		return bin2hex($returnStr);
 	}
 
 	public static function decrypt($cipherTextIn) {
-		$returnStr = '';
-        $key = self::getKey();
+		$key = self::getKey();
 	    if(!isset($GLOBALS['SECURITY_KEY']) ||
             !$GLOBALS['SECURITY_KEY'] ||
             !function_exists('openssl_decrypt') ||
@@ -37,6 +36,7 @@ class Encryption{
             $returnStr = $cipherTextIn;
 		}
 	    else{
+            $cipherTextIn = hex2bin($cipherTextIn);
             $ivSize = openssl_cipher_iv_length(self::METHOD);
             $iv = mb_substr($cipherTextIn, 0, $ivSize, '8bit');
             $cipherText = mb_substr($cipherTextIn, $ivSize, null, '8bit');
@@ -48,7 +48,8 @@ class Encryption{
 		return $returnStr;
 	}
 
-	public static function getKey(){
+	public static function getKey(): string
+    {
 		$returnStr = '';
 	    if (strlen($GLOBALS['SECURITY_KEY']) > 32) {
             $returnStr = substr($GLOBALS['SECURITY_KEY'],0,32);
