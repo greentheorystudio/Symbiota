@@ -12,6 +12,7 @@ class Encryption{
         }
 		else{
             $secure = false;
+            $plainText = str_replace('+','%2B',$plainText);
             $ivSize = openssl_cipher_iv_length(self::METHOD);
             do {
                 $iv = openssl_random_pseudo_bytes($ivSize, $secure);
@@ -21,7 +22,7 @@ class Encryption{
                 $returnStr = $iv . $ciphertext;
             }
         }
-		return bin2hex($returnStr);
+        return bin2hex($returnStr);
 	}
 
 	public static function decrypt($cipherTextIn) {
@@ -44,6 +45,7 @@ class Encryption{
                 $cipherText = mb_substr($cipherTextIn, $ivSize);
             }
             $returnStr = openssl_decrypt($cipherText, self::METHOD, $key, 1, $iv);
+            $returnStr = str_replace('%2B','+',$returnStr);
         }
 		return $returnStr;
 	}
