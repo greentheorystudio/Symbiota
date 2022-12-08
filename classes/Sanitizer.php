@@ -109,4 +109,21 @@ class Sanitizer {
         }
         return $returnPath;
     }
+
+    public static function validateInternalRequest(): bool
+    {
+        $valid = false;
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        if($referer){
+            if(strpos($referer, "http") !== 0){
+                $referer = 'http:' . $referer;
+            }
+            $arr1 = explode('//', $referer);
+            $arr2 = explode('/', $arr1[1]);
+            if($arr2[0] === $_SERVER['HTTP_HOST']){
+                $valid = true;
+            }
+        }
+        return $valid;
+    }
 }
