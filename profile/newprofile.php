@@ -85,55 +85,44 @@ if($action === 'Create Account' && Sanitizer::validateInternalRequest()){
         }
 
         function validateform(f){
-            const addressVal = document.getElementById("address").value.trim();
-            const urlVal = document.getElementById("url").value.trim();
-            const biographyVal = document.getElementById("biography").value.trim();
-            if((addressVal !== '' && !addressVal.includes(' ')) ||
-                (urlVal !== '' && !urlVal.includes('/') && !urlVal.includes('.')) ||
-                (biographyVal !== '' && !biographyVal.includes('/') && !biographyVal.includes('.') && !biographyVal.includes(' '))
-            ){
-                location.reload();
+            const pwd1 = f.pwd.value;
+            const pwd2 = f.pwd2.value;
+            const enteredValue = document.getElementById("human-entry").value;
+            if(pwd1 === "" || pwd2 === ""){
+                alert("Both password fields must contain a value");
+            }
+            else if(pwd1.charAt(0) === " " || pwd1.slice(-1) === " "){
+                alert("Password cannot start or end with a space, but they can include spaces within the password");
+            }
+            else if(pwd1.length < 7){
+                alert("Password must be greater than 6 characters");
+            }
+            else if(pwd1 !== pwd2){
+                alert("Password do not match, please enter again");
+                f.pwd.value = "";
+                f.pwd2.value = "";
+                f.pwd2.focus();
+            }
+            else if(f.login.value.replaceAll(/\s/g, "") === ""){
+                alert("User Name must contain a value");
+            }
+            else if( /[^0-9A-Za-z_!@#$-+]/.test( f.login.value ) ){
+                alert("Login name should only contain 0-9A-Za-z_!@ (spaces are not allowed)");
+            }
+            else if(f.emailaddr.value.replaceAll(/\s/g, "") === "" ){
+                alert("Email address is required");
+            }
+            else if(f.firstname.value.replaceAll(/\s/g, "") === ""){
+                alert("First Name must contain a value");
+            }
+            else if(f.lastname.value.replaceAll(/\s/g, "") === ""){
+                alert("Last Name must contain a value");
+            }
+            else if(enteredValue.toString() !== randNumber.toString()){
+                alert("Enter the number displayed in the box to prove you're human");
             }
             else{
-                const pwd1 = f.pwd.value;
-                const pwd2 = f.pwd2.value;
-                const enteredValue = document.getElementById("human-entry").value;
-                if(pwd1 === "" || pwd2 === ""){
-                    alert("Both password fields must contain a value");
-                }
-                else if(pwd1.charAt(0) === " " || pwd1.slice(-1) === " "){
-                    alert("Password cannot start or end with a space, but they can include spaces within the password");
-                }
-                else if(pwd1.length < 7){
-                    alert("Password must be greater than 6 characters");
-                }
-                else if(pwd1 !== pwd2){
-                    alert("Password do not match, please enter again");
-                    f.pwd.value = "";
-                    f.pwd2.value = "";
-                    f.pwd2.focus();
-                }
-                else if(f.login.value.replaceAll(/\s/g, "") === ""){
-                    alert("User Name must contain a value");
-                }
-                else if( /[^0-9A-Za-z_!@#$-+]/.test( f.login.value ) ){
-                    alert("Login name should only contain 0-9A-Za-z_!@ (spaces are not allowed)");
-                }
-                else if(f.emailaddr.value.replaceAll(/\s/g, "") === "" ){
-                    alert("Email address is required");
-                }
-                else if(f.firstname.value.replaceAll(/\s/g, "") === ""){
-                    alert("First Name must contain a value");
-                }
-                else if(f.lastname.value.replaceAll(/\s/g, "") === ""){
-                    alert("Last Name must contain a value");
-                }
-                else if(enteredValue.toString() !== randNumber.toString()){
-                    alert("Enter the number displayed in the box to prove you're human");
-                }
-                else{
-                    document.getElementById("newProfileForm").submit();
-                }
+                document.getElementById("newProfileForm").submit();
             }
         }
 
