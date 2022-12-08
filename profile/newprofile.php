@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -23,7 +24,7 @@ if($emailAddr && !$pHandler->validateEmailAddress($emailAddr)) {
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-if($action === 'Create Account' && array_key_exists('requestid',$_POST) && $_POST['requestid'] && $_POST['requestid'] === session_id()){
+if($action === 'Create Account' && Sanitizer::validateInternalRequest()){
     if($pHandler->checkLogin($emailAddr)){
         if($pHandler->register($_POST)){
             header('Location: viewprofile.php');
@@ -346,7 +347,6 @@ if($action === 'Create Account' && array_key_exists('requestid',$_POST) && $_POS
                     <tr>
                         <td colspan="2">
                             <div style="float:right;margin:20px;">
-                                <input name="requestid" type="hidden" value="<?php echo session_id(); ?>" />
                                 <input name="submitaction" type="hidden" value="Create Account" />
                                 <button type="button" id="submitButton" onclick="validateform(this.form);" disabled >Create Account</button>
                             </div>

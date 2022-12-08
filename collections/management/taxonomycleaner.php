@@ -125,7 +125,6 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
         <script src="../../js/collections.taxonomytools.js?ver=20221127" type="text/javascript"></script>
 		<script>
             const collId = <?php echo $collid; ?>;
-            const sessionId = '<?php echo session_id(); ?>';
             const occTaxonomyApi = "../../api/collections/occTaxonomyController.php";
             const taxaApi = "../../api/taxa/taxaController.php";
             const taxaTidLookupApi = "../../api/taxa/gettid.php";
