@@ -38,7 +38,7 @@ if($isEditor && $formSubmit){
 <style>
     table.styledtable td { white-space: nowrap; }
 </style>
-<script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
+<script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
 <script type="text/javascript">
     function verifyEditForm(f){
         if(f.title === ""){

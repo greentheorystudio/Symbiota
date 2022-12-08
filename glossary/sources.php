@@ -26,7 +26,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
 	<script type="text/javascript" src="../js/glossary.index.js?ver=20221115"></script>
 </head>
 <body>

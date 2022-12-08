@@ -1,15 +1,15 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
+include_once(__DIR__ . '/../classes/Sanitizer.php');
 header('Content-Type: application/json;' .$GLOBALS['CHARSET']);
 
 $url = str_replace(' ','%20',$_REQUEST['url']);
 $action = $_REQUEST['action'];
-$sessionId = $_REQUEST['sessionid'];
 $params = array_key_exists('params',$_REQUEST)?$_REQUEST['params']:'';
 
 $pArr = array();
 
-if($sessionId && session_id() === $sessionId){
+if(Sanitizer::validateInternalRequest()){
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

@@ -47,7 +47,7 @@ if($stArrJson){
     <script type="text/javascript" src="../js/external/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221126"></script>
+    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
     <script type="text/javascript" src="../js/collections.search.js?ver=20221025"></script>
     <script type="text/javascript" src="../js/search.term.manager.js?ver=20221110"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
