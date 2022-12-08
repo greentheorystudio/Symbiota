@@ -221,7 +221,7 @@ function getITISNameSearchResultsHierarchy(){
         id = nameSearchResults[0]['accepted_id'];
     }
     const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
-    sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+    sendProxyGetRequest(proxyUrl,url,function(status,res){
         if(status === 200){
             const resObj = JSON.parse(res);
             const resArr = resObj['hierarchyList'];
@@ -266,7 +266,7 @@ function getITISNameSearchResultsHierarchy(){
 function getITISNameSearchResultsRecord(){
     const id = nameSearchResults[0]['id'];
     const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
-    sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+    sendProxyGetRequest(proxyUrl,url,function(status,res){
         if(status === 200){
             const resObj = JSON.parse(res);
             const taxonRankData = resObj['taxRank'];
@@ -305,7 +305,7 @@ function getWoRMSAddTaxonAuthor(){
     if(!processCancelled){
         const id = processingArr[0]['id'];
         const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
-        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+        sendProxyGetRequest(proxyUrl,url,function(status,res){
             const currentTaxon = processingArr[0];
             if(status === 200){
                 const resObj = JSON.parse(res);
@@ -327,7 +327,7 @@ function getWoRMSNameSearchResultsHierarchy(){
         id = nameSearchResults[0]['accepted_id'];
     }
     const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
-    sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+    sendProxyGetRequest(proxyUrl,url,function(status,res){
         if(status === 200){
             const resObj = JSON.parse(res);
             const hierarchyArr = [];
@@ -378,7 +378,7 @@ function getWoRMSNameSearchResultsHierarchy(){
 
 function getWoRMSNameSearchResultsRecord(id){
     const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
-    sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+    sendProxyGetRequest(proxyUrl,url,function(status,res){
         if(status === 200){
             const resObj = JSON.parse(res);
             if(resObj['kingdom'].toLowerCase() === targetKingdomName.toLowerCase()){
@@ -942,7 +942,7 @@ function runScinameDataSourceSearch(){
                 colInitialSearchResults = [];
                 addProgressLine('<li>Searching the Catalogue of Life (COL) for ' + currentSciname + ' ' + processStatus + '</li>');
                 const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + currentSciname;
-                sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+                sendProxyGetRequest(proxyUrl,url,function(status,res){
                     if(status === 200){
                         processGetCOLTaxonByScinameResponse(res);
                     }
@@ -956,7 +956,7 @@ function runScinameDataSourceSearch(){
                 itisInitialSearchResults = [];
                 addProgressLine('<li>Searching the Integrated Taxonomic Information System (ITIS) for ' + currentSciname + ' ' + processStatus + '</li>');
                 const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + currentSciname;
-                sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+                sendProxyGetRequest(proxyUrl,url,function(status,res){
                     if(status === 200){
                         processGetITISTaxonByScinameResponse(res);
                     }
@@ -969,7 +969,7 @@ function runScinameDataSourceSearch(){
             else if(dataSource === 'worms'){
                 addProgressLine('<li>Searching the World Register of Marine Species (WoRMS) for ' + currentSciname + ' ' + processStatus + '</li>');
                 const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + currentSciname + '?marine_only=false';
-                sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+                sendProxyGetRequest(proxyUrl,url,function(status,res){
                     if(status === 200 && res && Number(res) > 0){
                         getWoRMSNameSearchResultsRecord(res);
                     }
@@ -1239,7 +1239,7 @@ function validateCOLInitialNameSearchResults(){
             id = taxon['accepted_id'];
         }
         const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/classification';
-        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+        sendProxyGetRequest(proxyUrl,url,function(status,res){
             if(status === 200){
                 const resArr = JSON.parse(res);
                 const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
@@ -1299,7 +1299,7 @@ function validateITISInitialNameSearchResults(){
         itisInitialSearchResults.splice(0, 1);
         const id = taxon['id'];
         const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
-        sendProxyGetRequest(proxyUrl,url,sessionId,function(status,res){
+        sendProxyGetRequest(proxyUrl,url,function(status,res){
             if(status === 200){
                 const resObj = JSON.parse(res);
                 const coreMetadata = resObj['coreMetadata'];

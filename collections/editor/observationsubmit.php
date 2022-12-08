@@ -70,7 +70,7 @@ if($collMap){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221126"></script>
+    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
 	<script src="../../js/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
 	<script src="../../js/collections.observationsubmit.js?ver=20221115" type="text/javascript"></script>
     <script type="text/javascript">
