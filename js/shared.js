@@ -321,14 +321,13 @@ function parseDate(dateStr){
 	return retArr;
 }
 
-function sendProxyGetRequest(proxyurl,url,sessionid,callback,http = null){
+function sendProxyGetRequest(proxyurl,url,callback,http = null){
 	if(!http){
 		http = new XMLHttpRequest();
 	}
 	const formData = new FormData();
 	formData.append('url', url);
 	formData.append('action', 'get');
-	formData.append('sessionid', sessionid);
 	http.open("POST", proxyurl, true);
 	http.onreadystatechange = function() {
 		if(http.readyState === 4) {
