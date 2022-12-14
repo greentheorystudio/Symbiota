@@ -347,8 +347,8 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 									echo '<li>';
 									echo '<a href="index.php?collid='.$collId.'&loanid='.$k.'&loantype=in">';
 									echo $loanArr['loanidentifierborr'];
-									echo '</a>: '.$loanArr['institutioncode'].' ('.$loanArr['forwhom'].')';
-									echo ' - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
+									echo ': '.$loanArr['institutioncode'].' ('.$loanArr['forwhom'].')';
+									echo ' - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>').'</a>';
 									echo '</li>';
 								}
 							}
