@@ -306,21 +306,12 @@ class TaxonomyUtilities {
 
     public function updateHierarchyTable($tid = null): void
     {
-        $tidStr = '';
-        if($tid){
-            if(is_array($tid)){
-                $tidStr = implode(',', $tid);
-            }
-            elseif(is_numeric($tid)){
-                $tidStr = $tid;
-            }
-            if($tidStr){
-                $this->deleteTidFromHierarchyTable($tidStr);
-                $this->primeHierarchyTable($tidStr);
-                do {
-                    $hierarchyAdded = $this->populateHierarchyTable($tidStr);
-                } while($hierarchyAdded > 0);
-            }
+        if(is_array($tid) || is_numeric($tid)){
+            $this->deleteTidFromHierarchyTable($tid);
+            $this->primeHierarchyTable($tid);
+            do {
+                $hierarchyAdded = $this->populateHierarchyTable($tid);
+            } while($hierarchyAdded > 0);
         }
     }
 
