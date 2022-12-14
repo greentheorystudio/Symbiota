@@ -34,19 +34,20 @@ class TaxonomyDisplayManager{
 		$subGenera = array();
 		$taxaParentIndex = array();
 		if($this->targetStr){
-			$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, t.parenttid, t.tidaccepted '.
+			$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, t.parenttid, t.tidaccepted, '.
+                't1.sciname AS accSciname, t1.author AS accAuthor, t1.rankid AS accRankid, t1.parenttid AS accParentid '.
 				'FROM taxa AS t LEFT JOIN taxa AS t1 ON t.tidaccepted = t1.tid ';
 			if(is_numeric($this->targetStr)){
 				$sql1 .= 'WHERE t.tidaccepted = '.$this->targetStr.' ';
 			}
 			else{
 				if(strpos($this->targetStr, ' ') && !preg_match('/^[A-Z]+[a-z]+\s[A-Z]+/', $this->targetStr)){
-					$sql1 .= 'WHERE ((t.sciname LIKE "'.$this->targetStr.'%") OR (t1.sciname LIKE "'.$this->targetStr.'%") ';
+					$sql1 .= 'WHERE ((t.sciname LIKE "'.$this->targetStr.'%") ';
 				}
 				else{
-					$sql1 .= 'WHERE ((t.sciname = "'.$this->targetStr.'") OR (t1.sciname = "'.$this->targetStr.'") ';
+					$sql1 .= 'WHERE ((t.sciname = "'.$this->targetStr.'") ';
 				}
-				$sql1 .= 'OR (CONCAT(t.sciname," ",t.author) = "'.$this->targetStr.'") OR (CONCAT(t1.sciname," ",t1.author) = "'.$this->targetStr.'")) ';
+				$sql1 .= 'OR (CONCAT(t.sciname," ",t.author) = "'.$this->targetStr.'")) ';
 			}
 			$sql1 .= 'ORDER BY t.rankid DESC ';
 			
@@ -54,24 +55,29 @@ class TaxonomyDisplayManager{
 			$rs1 = $this->conn->query($sql1);
 			while($row1 = $rs1->fetch_object()){
 				$tid = $row1->tid;
-				$parentTid = $row1->parenttid;
 				$this->targetStr = $row1->sciname;
 				if($tid === $row1->tidaccepted || !$row1->tidaccepted){
 					$this->taxaArr[$tid]['sciname'] = $row1->sciname;
 					$this->taxaArr[$tid]['author'] = $row1->author;
-					$this->taxaArr[$tid]['parenttid'] = $parentTid;
+					$this->taxaArr[$tid]['parenttid'] = $row1->parenttid;
 					$this->taxaArr[$tid]['rankid'] = $row1->rankid;
-					if($row1->rankid === 190) {
+					if((int)$row1->rankid === 190) {
 						$subGenera[] = $tid;
 					}
 					$this->taxonRank = $row1->rankid;
-					$taxaParentIndex[$tid] = ($parentTid?:0);
+					$taxaParentIndex[$tid] = ($row1->parenttid?:0);
 				}
 				else{
 					$synName = $row1->sciname;
 					if($this->displayAuthor) {
 						$synName .= ' ' . $row1->author;
 					}
+                    $this->taxaArr[$row1->tidaccepted]['sciname'] = $row1->accSciname;
+                    $this->taxaArr[$row1->tidaccepted]['author'] = $row1->accAuthor;
+                    $this->taxaArr[$row1->tidaccepted]['parenttid'] = $row1->accParentid;
+                    $this->taxaArr[$row1->tidaccepted]['rankid'] = $row1->accRankid;
+                    $this->taxonRank = $row1->accRankid;
+                    $taxaParentIndex[$row1->tidaccepted] = ($row1->accParentid?:0);
 					$this->taxaArr[$row1->tidaccepted]['synonyms'][$tid] = $synName;
 				}
 			}
@@ -96,7 +102,7 @@ class TaxonomyDisplayManager{
 				$this->taxaArr[$tid]['author'] = $row2->author;
 				$this->taxaArr[$tid]['rankid'] = $row2->rankid;
 				$this->taxaArr[$tid]['parenttid'] = $parentTid;
-				if($row2->rankid === 190) {
+				if((int)$row2->rankid === 190) {
 					$subGenera[] = $tid;
 				}
 				if($parentTid) {
@@ -117,7 +123,7 @@ class TaxonomyDisplayManager{
 				$this->taxaArr[$tid]['author'] = $row3->author;
 				$this->taxaArr[$tid]['rankid'] = $row3->rankid;
 				$this->taxaArr[$tid]['parenttid'] = $parentTid;
-				if($row3->rankid === 190) {
+				if((int)$row3->rankid === 190) {
 					$subGenera[] = $tid;
 				}
 				if($parentTid) {
@@ -128,12 +134,12 @@ class TaxonomyDisplayManager{
 			
 			$synTidStr = implode(',',array_keys($this->taxaArr));
 			$sqlSyns = 'SELECT tidaccepted, tid, sciname, author, rankid FROM taxa '.
-				'WHERE tid <> tidaccepted AND tidaccepted IN('.$synTidStr.') ';
+				'WHERE tid <> tidaccepted AND (tidaccepted IN('.$synTidStr.') OR tid IN('.$synTidStr.')) ';
 			//echo $sqlSyns;
 			$rsSyns = $this->conn->query($sqlSyns);
 			while($row = $rsSyns->fetch_object()){
 				$synName = $row->sciname;
-				if($row->rankid > 140){
+				if((int)$row->rankid > 140){
 					$synName = '<i>'.$row->sciname.'</i>';
 				}
 				if($this->displayAuthor) {
@@ -156,7 +162,7 @@ class TaxonomyDisplayManager{
 					$this->taxaArr[$tid]['author'] = $row4->author;
 					$this->taxaArr[$tid]['parenttid'] = $row4->parenttid;
 					$this->taxaArr[$tid]['rankid'] = $row4->rankid;
-					if($row4->rankid === 190) {
+					if((int)$row4->rankid === 190) {
 						$subGenera[] = $tid;
 					}
 				}
@@ -207,7 +213,7 @@ class TaxonomyDisplayManager{
 					$sciName = $this->taxaArr[$key]['sciname'];
 					$sciName = str_replace($this->targetStr, '<b>' .$this->targetStr. '</b>',$sciName);
 					$taxonRankId = $this->taxaArr[$key]['rankid'];
-					if($this->taxaArr[$key]['rankid'] >= 180){
+					if((int)$this->taxaArr[$key]['rankid'] >= 180){
 						$sciName = ' <i>' .$sciName. '</i> ';
 					}
 					if($this->displayAuthor) {
@@ -226,7 +232,7 @@ class TaxonomyDisplayManager{
 				}
 				echo '<div>' .str_repeat('&nbsp;',$indent/5);
                 echo '<a href="taxonomyeditor.php?tid='.$key.'">'.$sciName.'</a>';
-				if($this->taxonRank < 140 && !$this->displayFullTree && $taxonRankId === 140){
+				if($this->taxonRank < 140 && !$this->displayFullTree && (int)$taxonRankId === 140){
 					echo '<a href="index.php?target='.$sciName.'&tabindex=1">';
 					echo '<i style="height:15px;width:15px;" class="fas fa-level-down-alt"></i>';
 					echo '</a>';

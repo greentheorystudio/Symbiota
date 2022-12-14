@@ -270,7 +270,7 @@ class TaxonomyUtilities {
                 $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
                     'SELECT DISTINCT tid, parenttid FROM taxa '.
                     'WHERE tid IN('.$tidStr.') AND tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
-                //echo $sql;
+                //echo $sql . '<br />';;
                 if($this->conn->query($sql)){
                     $retCnt += $this->conn->affected_rows;
                 }
@@ -295,13 +295,98 @@ class TaxonomyUtilities {
                     'SELECT DISTINCT e.tid, t.parenttid '.
                     'FROM taxaenumtree AS e LEFT JOIN taxa AS t ON e.parenttid = t.tid '.
                     'WHERE e.tid IN('.$tidStr.') AND t.parenttid NOT IN(SELECT parenttid FROM taxaenumtree WHERE tid IN('.$tidStr.')) ';
-                //echo $sql;
+                //echo $sql . '<br />';
                 if($this->conn->query($sql)){
                     $retCnt += $this->conn->affected_rows;
                 }
             }
         }
         return $retCnt;
+    }
+
+    public function updateHierarchyTable($tid = null): void
+    {
+        $tidStr = '';
+        if($tid){
+            if(is_array($tid)){
+                $tidStr = implode(',', $tid);
+            }
+            elseif(is_numeric($tid)){
+                $tidStr = $tid;
+            }
+            if($tidStr){
+                $this->deleteTidFromHierarchyTable($tidStr);
+                $this->primeHierarchyTable($tidStr);
+                do {
+                    $hierarchyAdded = $this->populateHierarchyTable($tidStr);
+                } while($hierarchyAdded > 0);
+            }
+        }
+    }
+
+    public function deleteTidFromHierarchyTable($tid): void
+    {
+        $tidStr = '';
+        if($tid){
+            if(is_array($tid)){
+                $tidStr = implode(',', $tid);
+            }
+            elseif(is_numeric($tid)){
+                $tidStr = $tid;
+            }
+            if($tidStr){
+                $sql = 'DELETE FROM taxaenumtree '.
+                    'WHERE tid IN('.$tidStr.') OR parenttid IN('.$tidStr.') ';
+                //echo $sql;
+                $this->conn->query($sql);
+            }
+        }
+    }
+
+    public function getChildTidArr($tid): array
+    {
+        $returnArr = array();
+        $tidStr = '';
+        if($tid){
+            if(is_array($tid)){
+                $tidStr = implode(',', $tid);
+            }
+            elseif(is_numeric($tid)){
+                $tidStr = $tid;
+            }
+            if($tidStr){
+                $sql = 'SELECT tid FROM taxaenumtree '.
+                    'WHERE parenttid IN('.$tidStr.') ';
+                //echo $sql;
+                $rs = $this->conn->query($sql);
+                while($r = $rs->fetch_object()){
+                    $returnArr[] = (int)$r->tid;
+                }
+                $rs->free();
+            }
+        }
+        return $returnArr;
+    }
+
+    public function updateFamily($tid): void
+    {
+        $tidStr = '';
+        if($tid){
+            if(is_array($tid)){
+                $tidStr = implode(',', $tid);
+            }
+            elseif(is_numeric($tid)){
+                $tidStr = $tid;
+            }
+            if($tidStr){
+                $sql = 'UPDATE taxa AS t LEFT JOIN taxaenumtree AS te ON t.TID = te.tid '.
+                    'LEFT JOIN taxa AS t2 ON te.parenttid = t2.TID '.
+                    'SET t.family = t2.SciName '.
+                    'WHERE t.TID IN('.$tidStr.') AND t.RankId > 140 AND t2.RankId = 140 ';
+                //echo $sql;
+                $this->conn->query($sql);
+            }
+        }
     }
 
 	public function getTidAccepted($tid): int
