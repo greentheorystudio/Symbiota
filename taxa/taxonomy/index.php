@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
+include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
@@ -13,6 +14,7 @@ $status = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $loaderObj = new TaxonomyEditorManager();
+$taxUtilities = new TaxonomyUtilities();
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
@@ -22,6 +24,12 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
 if($isEditor && $action === 'Submit New Name') {
     $tid = $loaderObj->loadNewName($_POST);
     if($tid){
+        if($taxUtilities->primeHierarchyTable($tid)){
+            $hierarchyAdded = 1;
+            do {
+                $hierarchyAdded = $taxUtilities->populateHierarchyTable($tid);
+            } while($hierarchyAdded > 0);
+        }
         $loaderObj->updateOccurrencesNewTaxon($_POST);
         header('Location: taxonomyeditor.php?tid=' .$tid);
     }
