@@ -276,20 +276,16 @@ class TaxonomyDisplayManager{
 			//echo '<div>' .$sql1. '</div>';
 			$rs1 = $this->conn->query($sql1);
 			while($row1 = $rs1->fetch_object()){
-				if($rs1->num_rows === 1){
-					$tid = $row1->tid;
-				}
-				elseif($row1->tid !== $row1->tidaccepted){
-					$tid = $row1->tid;
-					$acceptedTid = $row1->tidaccepted;
+                $tid = $row1->tid;
+                if($row1->tid !== $row1->tidaccepted){
+                    $acceptedTid = $row1->tidaccepted;
 				}
 			}
 			$rs1->free();
 			
 			if($tid){
-				$i = 1;
 				$prevTid = '';
-				$retArr[0] = 'root';
+				$retArr[] = 'root';
 				$sql2 = 'SELECT t.RankId, te.parenttid, t2.tidaccepted, t2.parenttid AS par2 '.
 					'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.TID = te.parenttid '.
 					'INNER JOIN taxa t2 ON te.parenttid = t2.tid '.
@@ -299,7 +295,7 @@ class TaxonomyDisplayManager{
 				$rs2 = $this->conn->query($sql2);
 				while($row2 = $rs2->fetch_object()){
 					if(!$prevTid || ($row2->par2 === $prevTid)){
-						$retArr[$i] = $row2->tidaccepted;
+						$retArr[] = $row2->tidaccepted;
 						$prevTid = $row2->tidaccepted;
 					}
 					else{
@@ -308,18 +304,16 @@ class TaxonomyDisplayManager{
 						//echo '<div>' .$sql3. '</div>';
 						$rs3 = $this->conn->query($sql3);
 						while($row3 = $rs3->fetch_object()){
-							$retArr[$i] = $row3->tid;
+							$retArr[] = $row3->tid;
 							$prevTid = $row3->tid;
 						}
 						$rs3->free();
 					}
-					$i++;
-                    if($acceptedTid){
-                        $retArr[$i] = $acceptedTid;
-                        $i++;
-                    }
 				}
-				$retArr[$i] = $tid;
+                if($acceptedTid){
+                    $retArr[] = $acceptedTid;
+                }
+				$retArr[] = $tid;
 				$rs2->free();
 			}
 		}
