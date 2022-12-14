@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
+include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
@@ -13,6 +14,7 @@ $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitacti
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $tid = (int)$_REQUEST['tid'];
 
+$taxUtilities = new TaxonomyUtilities();
 $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
 
@@ -28,6 +30,11 @@ if($editable){
 	}
 	elseif($submitAction === 'updatetaxparent'){
 		$statusStr = $taxonEditorObj->submitTaxParentEdits($_POST['parenttid']);
+        $tidArr = $taxUtilities->getChildTidArr($tid);
+        $taxUtilities->updateHierarchyTable($tid);
+        $taxUtilities->updateHierarchyTable($tidArr);
+        $tidArr[] = $tid;
+        $taxUtilities->updateFamily($tidArr);
 	}
 	elseif($submitAction === 'linktoaccepted'){
 		$statusStr = $taxonEditorObj->submitAddAcceptedLink($_REQUEST['tidaccepted']);
@@ -45,7 +52,8 @@ if($editable){
 		header('Location: index.php?target='.$_REQUEST['genusstr'].'&statusstr='.$statusStr.'&tabindex=1');
 	}
 	elseif($submitAction === 'Delete Taxon'){
-		$statusStr = $taxonEditorObj->deleteTaxon();
+        $taxUtilities->deleteTidFromHierarchyTable($tid);
+        $statusStr = $taxonEditorObj->deleteTaxon();
 		header('Location: index.php?statusstr='.$statusStr.'&tabindex=1');
 	}
 
