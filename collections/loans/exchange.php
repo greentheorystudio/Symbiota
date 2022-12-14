@@ -102,7 +102,7 @@ else{
 			foreach($transList as $t => $transArr){
 				echo '<li>';
 				echo '<a href="index.php?collid='.$collId.'&exchangeid='.$t.'&loantype=exchange">';
-				echo '#'.$transArr['identifier'].'</a>: ';
+				echo '#'.$transArr['identifier'].': ';
 				if($transArr['transactiontype'] === 'Shipment'){
 					if($transArr['in_out'] === 'Out'){
 						echo 'Outgoing exchange; Sent ';
@@ -121,7 +121,7 @@ else{
 				else{
 					echo 'Adjustment of '.$transArr['adjustment'].' specimens';
 				}
-				echo '</li>';
+				echo '</a></li>';
 			}
 			echo '</ul>';
 			echo '</div>';
