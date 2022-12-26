@@ -9,7 +9,11 @@ $interface = array_key_exists('interface',$_REQUEST)&&$_REQUEST['interface']?htm
 
 $dynClManager = new DynamicChecklistManager();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - Dynamic Checklist Generator</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -64,7 +68,7 @@ $dynClManager = new DynamicChecklistManager();
 </head>
 <body>
 <?php
-include($GLOBALS['SERVER_ROOT'].'/header.php');
+include(__DIR__ . '/../header.php');
 ?>
 <div class='navpath'>
     <a href='../index.php'>Home</a> &gt;
@@ -112,7 +116,8 @@ include($GLOBALS['SERVER_ROOT'].'/header.php');
     <div style="clear:both;width:100%;height:40px;"></div>
 </div>
 <?php
-include_once($GLOBALS['SERVER_ROOT'].'/footer.php');
+include_once(__DIR__ . '/../footer.php');
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 <script type="text/javascript">
     const selectInteraction = new ol.interaction.Select({

@@ -42,7 +42,11 @@ if($glossId){
 	$termImgArr = $glosManager->getImgArr();
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Term Information</title>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -319,5 +323,8 @@ if($glossId){
 			<div style="clear:both"></div>
 		</div>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../config/footer-includes.php');
+    ?>
 </body>
 </html>

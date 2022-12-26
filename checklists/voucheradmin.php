@@ -40,7 +40,11 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 }
 $clManager->setCollectionVariables();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -55,7 +59,7 @@ $clManager->setCollectionVariables();
         let tabIndex = <?php echo $tabIndex; ?>;
 
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
@@ -416,6 +420,7 @@ else {
 </div>
 <?php
 include(__DIR__ . '/../footer.php');
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>

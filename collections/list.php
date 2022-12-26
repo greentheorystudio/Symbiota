@@ -23,12 +23,16 @@ if($stArrJson){
     }
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search Results</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <link href="../css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" type="text/css" />
     <link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <style>
         .ui-tabs .ui-tabs-nav li { width:32%; }
@@ -196,6 +200,7 @@ echo '</div>';
 </div>
 <?php
 include(__DIR__ . '/../footer.php');
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>

@@ -473,7 +473,11 @@ else{
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.($occId?'Occurrence Editor':'Create New Record'); ?></title>
     <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
@@ -525,7 +529,7 @@ else{
         ?>
 
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
@@ -1562,5 +1566,8 @@ else{
     }
     ?>
 </div>
+<?php
+include_once(__DIR__ . '/../../config/footer-includes.php');
+?>
 </body>
 </html>

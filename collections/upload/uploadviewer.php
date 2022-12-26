@@ -42,7 +42,11 @@ if($GLOBALS['SYMB_UID']){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title>Record Upload Preview</title>
     <style>
@@ -125,5 +129,8 @@ if($GLOBALS['SYMB_UID']){
 		}
 		?>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>

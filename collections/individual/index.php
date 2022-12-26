@@ -126,7 +126,11 @@ if($displayLocality && ((is_numeric($occArr['decimallatitude']) && is_numeric($o
 $dupClusterArr = $indManager->getDuplicateArr();
 $commentArr = $indManager->getCommentArr($isEditor);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Detailed Collection Record Information</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -1455,6 +1459,7 @@ if($fullWindow){
 if($fullWindow){
     include(__DIR__ . '/../../footer.php');
 }
+include_once(__DIR__ . '/../../config/footer-includes.php');
 ?>
 </body>
 </html>

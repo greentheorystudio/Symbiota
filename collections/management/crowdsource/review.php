@@ -31,7 +31,11 @@ if(array_key_exists('occid',$_POST)){
 
 $projArr = $csManager->getProjectDetails();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Crowdsourcing Reviewer</title>
     <link href="../../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -308,5 +312,8 @@ $projArr = $csManager->getProjectDetails();
 		}
 		?>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../../config/footer-includes.php');
+    ?>
 </body>
 </html>

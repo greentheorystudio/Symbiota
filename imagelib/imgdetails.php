@@ -58,7 +58,11 @@ if($imgArr){
 }
 
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<?php
 	if($imgArr){
@@ -400,6 +404,7 @@ if($imgArr){
 	</div>
 <?php
 include(__DIR__ . '/../footer.php');
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>

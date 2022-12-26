@@ -9,7 +9,11 @@ $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']):'';
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Species Lists</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -84,7 +88,8 @@ $clManager->setProj($pid);
 		</div>
 	</div>
 	<?php
-		include(__DIR__ . '/../footer.php');
+    include(__DIR__ . '/../footer.php');
+    include_once(__DIR__ . '/../config/footer-includes.php');
 	?>
 </body>
 </html>

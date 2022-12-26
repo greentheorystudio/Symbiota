@@ -3,7 +3,11 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title>Associated Species Entry Aid</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -45,6 +49,9 @@ header('X-Frame-Options: SAMEORIGIN');
 			</div>
 		</fieldset>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html> 
 

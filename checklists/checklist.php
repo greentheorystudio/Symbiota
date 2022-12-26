@@ -186,11 +186,15 @@ if($clArray){
     }
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <meta charset="<?php echo $GLOBALS['CHARSET']; ?>">
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Research Checklist: <?php echo $clManager->getClName(); ?></title>
-    <link type="text/css" href="../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" />
+    <link type="text/css" href="../css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" />
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
@@ -913,6 +917,7 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']){
     </div>
     <?php
 }
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>

@@ -71,7 +71,11 @@ if(!$cid) {
 
 $headingAdminUrl = 'headingadmin.php';
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
     <title>Character Admin</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -553,6 +557,7 @@ $headingAdminUrl = 'headingadmin.php';
 	</div>
 	<?php 
 	include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
 	?>
 </body>
 </html>

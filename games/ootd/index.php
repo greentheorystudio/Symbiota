@@ -31,7 +31,11 @@ if($submitAction){
     }
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo ($ootdGameTitle ?? 'Organism of the Day'); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -359,9 +363,9 @@ if($submitAction){
 			?>
 		</div>
 	</div>
-
-	<?php
+    <?php
 	include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
 	?>
 </body>
 </html>

@@ -197,7 +197,11 @@ else{
 	header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Edit Existing Record</title>
     <style>
@@ -431,5 +435,8 @@ else{
         }
 		?>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>
