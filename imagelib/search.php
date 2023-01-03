@@ -50,7 +50,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="../js/search.term.manager.js?ver=20221110" type="text/javascript"></script>
 	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
-        $('html').hide();
         let stArr = {};
         let phArr = new Array();
         let selectedFamily = '';
@@ -180,8 +179,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 				}
                 processPhotographerChange();
 			});
-            $('html').show();
-		});
+        });
 
         function processParamsForm(){
             const f = document.getElementById('imagesearchform');

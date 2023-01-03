@@ -29,8 +29,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-        const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
-
         $(document).ready(function() {
             initializeSearchStorage(<?php echo $queryId; ?>);
             setHarvestParamsForm();

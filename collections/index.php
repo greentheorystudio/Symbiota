@@ -29,14 +29,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="../js/search.term.manager.js?ver=20221110" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
-        const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
-
-        $('html').hide();
         $(document).ready(function() {
             initializeSearchStorage(<?php echo $queryId; ?>);
             setCollectionForms();
             $("#tabs").tabs();
-            $('html').show();
         });
 
         function verifyCollForm(f){

@@ -1,8 +1,3 @@
-$('html').hide();
-$(document).ready(function() {
-	$('html').show();
-});
-
 $(document).ready(function() {
 	$('#tabs').tabs({ 
 		active: tabIndex,

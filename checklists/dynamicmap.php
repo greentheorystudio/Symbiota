@@ -39,7 +39,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221126" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20230103" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $( "#taxa" ).autocomplete({
@@ -127,20 +127,20 @@ include_once(__DIR__ . '/../config/footer-includes.php');
         },
         style: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsFillColor),shapesSelectionsOpacity)
+                color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_FILL_COLOR),SPATIAL_SHAPES_SELECTIONS_OPACITY)
             }),
             stroke: new ol.style.Stroke({
-                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1),
-                width: shapesSelectionsBorderWidth
+                color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
+                width: SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH
             }),
             image: new ol.style.Circle({
-                radius: shapesPointRadius,
+                radius: SPATIAL_SHAPES_POINT_RADIUS,
                 stroke: new ol.style.Stroke({
-                    color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1),
-                    width: (shapesBorderWidth + 2)
+                    color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
+                    width: (SPATIAL_SHAPES_BORDER_WIDTH + 2)
                 }),
                 fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1)
+                    color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1)
                 })
             })
         }),

@@ -69,7 +69,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             });
         }
     </script>
-	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20221115"></script>
+	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20230103"></script>
 	<style>
 		li{margin:5px;}
 	</style>

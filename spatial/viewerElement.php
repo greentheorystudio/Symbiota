@@ -33,4 +33,4 @@ include_once(__DIR__ . '/includes/spatialvars.php');
         <div id="mapcoords"></div>
     </div>
 </div>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.viewer.js?ver=20221115" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.viewer.js?ver=20230103" type="text/javascript"></script>

@@ -18,9 +18,8 @@ if($stArrJson){
     }
 }
 ?>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20221110" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.symb.js?ver=20230103" type="text/javascript"></script>
 <script type="text/javascript">
-    const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     let searchTermsArr = {};
 
     $(function() {
@@ -235,19 +234,19 @@ if($stArrJson){
     layersObj['dragdrop1'] = new ol.layer.Vector({
         zIndex: 1,
         source: blankdragdropsource,
-        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+        style: getVectorLayerStyle(SPATIAL_DRAGDROP_FILL_COLOR, SPATIAL_DRAGDROP_BORDER_COLOR, SPATIAL_DRAGDROP_BORDER_WIDTH, SPATIAL_DRAGDROP_POINT_RADIUS, SPATIAL_DRAGDROP_OPACITY)
     });
     layersArr.push(layersObj['dragdrop1']);
     layersObj['dragdrop2'] = new ol.layer.Vector({
         zIndex: 2,
         source: blankdragdropsource,
-        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+        style: getVectorLayerStyle(SPATIAL_DRAGDROP_FILL_COLOR, SPATIAL_DRAGDROP_BORDER_COLOR, SPATIAL_DRAGDROP_BORDER_WIDTH, SPATIAL_DRAGDROP_POINT_RADIUS, SPATIAL_DRAGDROP_OPACITY)
     });
     layersArr.push(layersObj['dragdrop2']);
     layersObj['dragdrop3'] = new ol.layer.Vector({
         zIndex: 3,
         source: blankdragdropsource,
-        style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+        style: getVectorLayerStyle(SPATIAL_DRAGDROP_FILL_COLOR, SPATIAL_DRAGDROP_BORDER_COLOR, SPATIAL_DRAGDROP_BORDER_WIDTH, SPATIAL_DRAGDROP_POINT_RADIUS, SPATIAL_DRAGDROP_OPACITY)
     });
     layersArr.push(layersObj['dragdrop3']);
     layersObj['dragdrop4'] = new ol.layer.Image({
@@ -294,7 +293,7 @@ if($stArrJson){
     layersObj['select'] = new ol.layer.Vector({
         zIndex: 8,
         source: selectsource,
-        style: getVectorLayerStyle(shapesFillColor, shapesBorderColor, shapesBorderWidth, shapesPointRadius, shapesOpacity)
+        style: getVectorLayerStyle(SPATIAL_SHAPES_FILL_COLOR, SPATIAL_SHAPES_BORDER_COLOR, SPATIAL_SHAPES_BORDER_WIDTH, SPATIAL_SHAPES_POINT_RADIUS, SPATIAL_SHAPES_OPACITY)
     });
     layersArr.push(layersObj['select']);
 
