@@ -16,7 +16,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript">
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			$("#taxonname").autocomplete({ source: "../../api/taxa/getassocspp.php" },
 			{ minLength: 4, autoFocus: true, delay: 200 });
 

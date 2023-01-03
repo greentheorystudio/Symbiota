@@ -62,7 +62,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<script type="text/javascript">
         let randNumber = 0;
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             setRandomNumber();
         });
 

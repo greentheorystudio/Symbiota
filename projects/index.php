@@ -102,7 +102,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $('#tabs').tabs(
                 { active: tabIndex }
             );

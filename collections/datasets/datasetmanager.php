@@ -138,7 +138,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
     <script type="text/javascript">
         let stArr = {};
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             const dialogArr = ["schemanative","schemadwc"];
             let dialogStr = "";
             for(let i =0;i<dialogArr.length;i++){

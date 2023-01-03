@@ -102,7 +102,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         let tid = <?php echo $taxonManager->getTid(); ?>;
     </script>
     <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-    <script src="../js/taxa.index.js?ver=20221115" type="text/javascript"></script>
+    <script src="../js/taxa.index.js?ver=20230103" type="text/javascript"></script>
     <?php
     if(isset($CSSARR)){
         foreach($CSSARR as $cssVal){

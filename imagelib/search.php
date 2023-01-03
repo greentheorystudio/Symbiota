@@ -54,7 +54,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         let phArr = new Array();
         let selectedFamily = '';
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			let qtaxaArr;
             $('#tabs').tabs({
                 beforeLoad: function( event, ui ) {

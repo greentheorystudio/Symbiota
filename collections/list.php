@@ -59,7 +59,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         let stArr = {};
         let listPage = <?php echo $pageNumber; ?>;
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $('#csvoptions').popup({
                 transition: 'all 0.3s',
                 scrolllock: true

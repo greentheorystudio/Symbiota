@@ -236,7 +236,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             http.send(params);
         }
     </script>
-    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20221119"></script>
+    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20230103"></script>
     <?php
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>
@@ -244,7 +244,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/vfs_fonts.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.fieldguideexport.js?ver=20221025" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.fieldguideexport.js?ver=20230103" type="text/javascript"></script>
         <?php
     }
     ?>

@@ -541,9 +541,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     </script>
     <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
     <script type="text/javascript" src="../../js/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221204"></script>
+    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20230103"></script>
     <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221204"></script>
-    <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20220921"></script>
+    <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20230103"></script>
     <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
 </head>
 <body>

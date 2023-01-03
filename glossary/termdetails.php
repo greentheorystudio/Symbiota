@@ -117,9 +117,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript" src="../js/glossary.index.js?ver=20221115"></script>
+	<script type="text/javascript" src="../js/glossary.index.js?ver=20230103"></script>
 	<script type="text/javascript">
-		$(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			<?php 
 			if($closeWindow){
 				echo 'window.opener.searchform.submit();';

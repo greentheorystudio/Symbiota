@@ -33,7 +33,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/shared.js?ver=20221207" type="text/javascript"></script>
 	<script>
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $('#tabs').tabs({
                 active: <?php echo $tabIndex; ?>,
                 beforeLoad: function( event, ui ) {

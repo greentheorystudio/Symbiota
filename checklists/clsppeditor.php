@@ -74,7 +74,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript">
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $("#renamesciname").autocomplete({
                 source: function( request, response ) {
                     $.getJSON( "../api/taxa/speciessuggest.php", { term: request.term, cl: <?php echo $clid;?> }, response );

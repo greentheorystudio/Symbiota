@@ -30,7 +30,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         const maxPostSize = <?php echo $confManager->getServerMaxPostSize(); ?>;
         const maxUploadSize = <?php echo $confManager->getServerMaxUploadFilesize(); ?>;
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $('#tabs').tabs({
                 beforeLoad: function( event, ui ) {
                     $(ui.panel).html("<p>Loading...</p>");

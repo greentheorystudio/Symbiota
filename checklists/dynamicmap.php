@@ -41,7 +41,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20230103" type="text/javascript"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $( "#taxa" ).autocomplete({
                 source: function( request, response ) {
                     $.getJSON( "../api/taxa/speciessuggest.php", { term: request.term, level: 'high' }, response );

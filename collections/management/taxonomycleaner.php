@@ -136,7 +136,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         const processStatus = '<span class="current-status">' + getSmallWorkingSpinnerHtml(11) + '</span>';
         const recognizedRanks = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 
-        $( document ).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $("#processor-accordion").accordion({
                 icons: null,
                 collapsible: true,

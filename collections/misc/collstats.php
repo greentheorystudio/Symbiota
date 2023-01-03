@@ -245,7 +245,7 @@ if($action !== 'Update Statistics'){
         <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
         <script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
         <script type="text/javascript">
-            $(document).ready(function() {
+            document.addEventListener("DOMContentLoaded", function() {
                 $("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
 
                 $( "#taxon" )

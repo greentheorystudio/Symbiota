@@ -1,7 +1,7 @@
 const imageArr = [];
 const imgCnt = 0;
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$('#desctabs').tabs();
 	$("#desctabs").show();
 

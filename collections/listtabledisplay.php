@@ -66,7 +66,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         let sortorder = '';
         let tableIndex = <?php echo $occIndex; ?>;
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $('#csvoptions').popup({
                 transition: 'all 0.3s',
                 scrolllock: true

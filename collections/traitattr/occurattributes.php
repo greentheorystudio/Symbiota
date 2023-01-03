@@ -130,7 +130,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         }
         ?>
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             setImgRes();
             $("#specimg").imagetool({
                 maxWidth: 6000
@@ -236,7 +236,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             f.submit();
         }
     </script>
-    <script src="../../js/collections.traitattr.js?ver=20221025" type="text/javascript"></script>
+    <script src="../../js/collections.traitattr.js?ver=20230103" type="text/javascript"></script>
     <script src="../../js/shared.js?ver=20221207" type="text/javascript"></script>
 </head>
 <body>

@@ -166,7 +166,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         const coordUncertainty = <?php echo $occArr['coordinateuncertaintyinmeters'] ?: 0; ?>;
         const footprintWKT = '<?php echo $occArr['footprintwkt']; ?>';
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $('#tabs').tabs({
                 <?php
                 if($displayMap){

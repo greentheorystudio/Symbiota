@@ -29,7 +29,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="../js/search.term.manager.js?ver=20221110" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             initializeSearchStorage(<?php echo $queryId; ?>);
             setCollectionForms();
             $("#tabs").tabs();

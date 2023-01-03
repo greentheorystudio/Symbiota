@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$( "#targettaxon" ).autocomplete({
 		source: "../api/search/gettaxasuggest.php",
 		minLength: 3,

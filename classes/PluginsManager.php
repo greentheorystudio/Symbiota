@@ -31,7 +31,7 @@ return <<<EOD
             };
         }
         else{
-            $(document).ready(function() {
+            document.addEventListener("DOMContentLoaded", function() {
                 $("#quicksearchtaxon").autocomplete({
                     source: function( request, response ) {
                         var quicksearchcommonselectorchecked = document.quicksearch.quicksearchselector.checked;

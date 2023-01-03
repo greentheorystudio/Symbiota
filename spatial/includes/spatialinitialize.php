@@ -43,11 +43,7 @@ if($stArrJson){
         }
     });
 
-    $(document).on("pageloadfailed", function(event){
-        event.preventDefault();
-    });
-
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function() {
         setLayersController();
         if(document.getElementById("taxa")){
             $( "#taxa" )

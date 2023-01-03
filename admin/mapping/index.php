@@ -42,7 +42,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         let layerArr;
         let layerData = {};
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $( "#addLayerDateAquired" ).datepicker({ dateFormat: 'yy-mm-dd' });
             $( "#editLayerDateAquired" ).datepicker({ dateFormat: 'yy-mm-dd' });
             $('#tabs').tabs({

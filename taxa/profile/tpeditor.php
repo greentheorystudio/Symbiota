@@ -134,7 +134,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             valid_elements: "*[*]"
         });
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			$("#sninput").autocomplete({
 				source: function( request, response ) {
 					$.getJSON( "../../api/taxa/autofillsciname.php", { "term": request.term, "hideauth": 1 }, response );

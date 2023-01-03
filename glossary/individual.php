@@ -57,7 +57,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript" src="../js/glossary.index.js?ver=20221115"></script>
+	<script type="text/javascript" src="../js/glossary.index.js?ver=20230103"></script>
 </head>
 
 <body style="overflow-x:hidden;overflow-y:auto;width:700px;margin-left:auto;margin-right:auto;">
