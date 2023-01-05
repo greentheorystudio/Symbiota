@@ -49,7 +49,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script type="text/javascript">
 
     </script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221207" type="text/javascript"></script>
 </head>
 <body>
     <?php

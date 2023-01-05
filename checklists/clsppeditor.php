@@ -132,7 +132,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
             self.close();
         }
     </script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
 </head>
 <body onload="<?php  echo (!$status?$followUpAction:''); ?>" >
     <div id='innertext'>

@@ -134,7 +134,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script type="text/javascript" src="../../js/external/jquery.js"></script>
     <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/external/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
     <script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
     <script type="text/javascript">
         let stArr = {};

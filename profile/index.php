@@ -111,7 +111,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
 			return true;
 		}
 	</script>
-	<script src="../js/shared.js?ver=20221207" type="text/javascript"></script>
 </head>
 <body>
 

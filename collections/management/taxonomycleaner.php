@@ -125,7 +125,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script src="../../js/shared.js?ver=20221207" type="text/javascript"></script>
     <script src="../../js/collections.taxonomytools.js?ver=20221207" type="text/javascript"></script>
     <script>
         const collId = <?php echo $collid; ?>;

@@ -154,7 +154,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
     <script type="text/javascript" src="../js/profile.viewprofile.js?ver=20230103"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
 </head>
 <body>
 <?php

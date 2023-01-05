@@ -99,8 +99,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=20221025"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript">
+    <script type="text/javascript">
 		function verifyDwcaAdminForm(){
             const dbElements = document.getElementsByName("coll[]");
             for(let i = 0; i < dbElements.length; i++){

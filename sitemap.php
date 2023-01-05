@@ -15,7 +15,6 @@ include_once(__DIR__ . '/config/header-includes.php');
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
 	<link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="js/shared.js?ver=20221207"></script>
 </head>
 <body>
 	<?php

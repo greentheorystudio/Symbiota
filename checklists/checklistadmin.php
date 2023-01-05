@@ -81,7 +81,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
-	<script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
 	<script type="text/javascript" src="../js/checklists.checklistadmin.js?ver=20230103"></script>
 </head>
 
