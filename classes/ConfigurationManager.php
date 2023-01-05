@@ -382,6 +382,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DYN_CHECKLIST_RADIUS']) || !$GLOBALS['DYN_CHECKLIST_RADIUS']){
             $GLOBALS['DYN_CHECKLIST_RADIUS'] = '100';
         }
+        if(!isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
+            $GLOBALS['KEY_MOD_IS_ACTIVE'] = false;
+        }
         $GLOBALS['EMAIL_CONFIGURED'] = (
             isset($GLOBALS['PORTAL_EMAIL_ADDRESS'], $GLOBALS['SMTP_USERNAME'], $GLOBALS['SMTP_PASSWORD'], $GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) &&
             $GLOBALS['PORTAL_EMAIL_ADDRESS'] &&
