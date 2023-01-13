@@ -22,12 +22,6 @@ function addProgressLine(lineHtml,element = null){
     else{
         document.getElementById("progressDisplayList").innerHTML += lineHtml;
     }
-    const processorWindowBounds = document.getElementById('processor-display').getBoundingClientRect();
-    const currentStatus = document.getElementsByClassName('current-status')[0];
-    if(currentStatus.getBoundingClientRect().bottom > processorWindowBounds.bottom){
-        const scroll = (currentStatus.getBoundingClientRect().top - processorWindowBounds.top) - 10;
-        document.getElementById('processor-display').scrollTop += scroll;
-    }
 }
 
 function addRunCleanScinameAuthorUndoButton(oldName,newName){

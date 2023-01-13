@@ -29,6 +29,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <style>
+        .icon-link {
+            cursor: pointer;
+        }
         .processor-container {
             width: 95%;
             margin: 20px auto;
@@ -56,7 +59,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             -moz-border-radius: 10px;
             border-radius: 10px;
         }
-        #processor-display {
+        .processor-display {
             height: 610px;
             margin: auto;
             padding: 15px;
@@ -66,7 +69,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
         }
-        #processor-display ul {
+        .processor-display ul {
             padding-left: 15px;
         }
         .process-button-container {
@@ -75,6 +78,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             gap: 10px;
             clear: both;
             margin-top: 5px;
+        }
+        .accordion-panel {
+            max-height: 520px;
+            overflow: auto;
         }
         .success-status {
             display: block;
@@ -113,8 +120,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             font-weight: bold;
         }
     </style>
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
-    <script src="../../js/collections.taxonomytools.js?ver=20230112" type="text/javascript"></script>
+    <script src="../../js/collections.taxonomytools.js?ver=202301122" type="text/javascript"></script>
     <script>
         const collId = <?php echo $collid; ?>;
         const processStatus = '<span class="current-status">' + getSmallWorkingSpinnerHtml(11) + '</span>';
@@ -145,12 +151,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         $collMap = $cleanManager->getCollMap();
         if($collid && $isEditor){
             ?>
-            <div style="display:flex;justify-content: space-between;margin-bottom:8px;">
+            <div id="module-header" style="display:flex;justify-content: space-between;margin-bottom:8px;">
                 <div style="font-weight: bold;margin-left:30px;">
                     <?php echo $collMap[(int)$collid]['collectionname'].($collMap[(int)$collid]['code']?' ('.$collMap[(int)$collid]['code'].')':''); ?>
                 </div>
                 <div onclick="openTutorialWindow('../../tutorial/collections/management/taxonomy/index.php?collid=<?php echo $collid; ?>');" title="Open Tutorial Window">
-                    <i style="height:20px;width:20px;cursor:pointer;" class="far fa-question-circle"></i>
+                    <q-icon name="far fa-question-circle" size="20px" class="icon-link" />
                 </div>
             </div>
             <div style="display:flex;justify-content: space-between;margin-bottom:8px;">
@@ -177,7 +183,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     <div id="processor-accordion" class="q-pa-md">
                         <q-list bordered class="rounded-borders">
                             <q-expansion-item group="controlgroup" label="Maintenance Utilities" header-class="bg-grey-3 text-bold" default-opened>
-                                <q-card>
+                                <q-card class="accordion-panel">
                                     <q-card-section>
                                         <div class="processor-accordion-panel">
                                             <div class="process-header">
@@ -194,7 +200,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                     <q-btn v-if="currProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
                                                 </div>
                                             </div>
-                                            <hr style="margin: 10px 0;"/>
+                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                                             <div class="process-header">
                                                 Scientific Name Authorship Cleaning
                                             </div>
@@ -208,7 +214,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                     <q-btn v-if="currProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense />
                                                 </div>
                                             </div>
-                                            <hr style="margin: 10px 0;"/>
+                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                                             <div class="process-header">
                                                 Set Taxonomic Thesaurus Linkages
                                             </div>
@@ -224,7 +230,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                     <q-btn v-if="currProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense />
                                                 </div>
                                             </div>
-                                            <hr style="margin: 10px 0;"/>
+                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                                             <div class="process-header">
                                                 Update Locality Security Settings
                                             </div>
@@ -237,14 +243,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                     <q-btn v-if="currProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense />
                                                 </div>
                                             </div>
-                                            <hr style="margin: 10px 0;"/>
+                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                                         </div>
                                     </q-card-section>
                                 </q-card>
                             </q-expansion-item>
                             <q-separator></q-separator>
                             <q-expansion-item group="controlgroup" label="Search Utilities" header-class="bg-grey-3 text-bold">
-                                <q-card>
+                                <q-card class="accordion-panel">
                                     <q-card-section>
                                         <div class="processor-accordion-panel">
                                             <div class="process-header">
@@ -268,7 +274,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                     <q-btn v-if="currProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense />
                                                 </div>
                                             </div>
-                                            <hr style="margin: 10px 0;"/>
+                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                                             <div class="process-header">
                                                 Taxonomic Thesaurus Fuzzy Search
                                             </div>
@@ -285,7 +291,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                     <q-btn v-if="currProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense />
                                                 </div>
                                             </div>
-                                            <hr style="margin: 10px 0;"/>
+                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                                         </div>
                                     </q-card-section>
                                 </q-card>
@@ -294,10 +300,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     </div>
                 </div>
 
-                <div class="processor-display-container">
-                    <div id="processor-display">
+                <div id="processor-display" class="processor-display-container">
+                    <q-scroll-area ref="procDisplayScrollAreaRef" class="processor-display" @scroll="setScroller">
                         <ul class="processor-display-list" id="progressDisplayList"></ul>
-                    </div>
+                    </q-scroll-area>
                 </div>
             </div>
             <?php
@@ -318,6 +324,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         let updatedet = Vue.ref(false);
         let dataSource = Vue.ref('col');
         let levValue = Vue.ref('2');
+
+        const moduleHeader = Vue.createApp();
+        moduleHeader.use(Quasar, { config: {} });
+        moduleHeader.mount('#module-header');
 
         const upperControls = Vue.createApp({
             data() {
@@ -372,6 +382,22 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         });
         controlPanel.use(Quasar, { config: {} });
         controlPanel.mount('#processor-accordion');
+
+        const processorDisplay = Vue.createApp({
+            setup() {
+                let procDisplayScrollAreaRef = Vue.ref(null);
+                return {
+                    procDisplayScrollAreaRef,
+                    setScroller(info) {
+                        if(info.hasOwnProperty('verticalSize') && info.verticalSize > 610){
+                            procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                        }
+                    }
+                }
+            }
+        });
+        processorDisplay.use(Quasar, { config: {} });
+        processorDisplay.mount('#processor-display');
     </script>
 </body>
 </html>
