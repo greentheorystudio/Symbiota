@@ -530,7 +530,7 @@ body.processing .loadingModal {
 	height: 300px;
 	width: 300px;
 }
-.path {
+.vinepath {
 	animation: DrawLine 1.6s both infinite alternate linear;
 	fill: none;
 	stroke: forestgreen;

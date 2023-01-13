@@ -2,6 +2,8 @@
     const CLIENT_ROOT = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>';
     const SOLR_MODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
 
+    const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
+
     const SPATIAL_INITIAL_ZOOM = <?php echo $GLOBALS['SPATIAL_INITIAL_ZOOM']; ?>;
     const SPATIAL_INITIAL_CENTER = <?php echo $GLOBALS['SPATIAL_INITIAL_CENTER']; ?>;
     const SPATIAL_POINT_FILL_COLOR = '<?php echo $GLOBALS['SPATIAL_POINT_FILL_COLOR']; ?>';

@@ -65,7 +65,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             const http = new XMLHttpRequest();
 			const url = "../../api/taxa/gettid.php";
             const params = 'sciname=' + sciname;
-            //console.log(occTaxonomyApi+'?'+params);
+            //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             http.onreadystatechange = function() {
