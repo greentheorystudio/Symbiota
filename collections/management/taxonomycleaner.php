@@ -214,7 +214,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             </div>
                                             Set occurrence record linkages to the Taxonomic Thesaurus.
                                             <div style="clear:both;margin-top:5px;">
-                                                <q-checkbox v-model="updatedet" label="Include associated determination records" :disabled="upperdisabled" />
+                                                <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="upperdisabled" />
                                             </div>
                                             <div class="process-button-container">
                                                 <div>
