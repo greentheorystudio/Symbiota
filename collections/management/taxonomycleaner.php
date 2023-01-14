@@ -386,10 +386,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         const processorDisplay = Vue.createApp({
             setup() {
                 let procDisplayScrollAreaRef = Vue.ref(null);
+                let procDisplayScrollHeight = Vue.ref(0);
                 return {
                     procDisplayScrollAreaRef,
                     setScroller(info) {
-                        if(info.hasOwnProperty('verticalSize') && info.verticalSize > 610){
+                        if(info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
+                            procDisplayScrollHeight.value = info.verticalSize;
                             procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
                         }
                     }
