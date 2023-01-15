@@ -16,6 +16,10 @@ if($isEditor && $action){
         $taxUtilities = new TaxonomyUtilities();
         echo json_encode($taxUtilities->getRankNameArr());
     }
+    elseif($action === 'getKingdomArr'){
+        $taxUtilities = new TaxonomyUtilities();
+        echo json_encode($taxUtilities->getKingdomArr());
+    }
     elseif($action === 'addTaxon'){
         $taxManager = new TaxonomyEditorManager();
         echo $taxManager->loadNewName(json_decode($_POST['taxon'], true));

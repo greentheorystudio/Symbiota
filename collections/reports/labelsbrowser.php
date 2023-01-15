@@ -62,7 +62,8 @@ if($formatArr){
         header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     }
     ?>
-    <html>
+    <!DOCTYPE html>
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Labels</title>
     </head>

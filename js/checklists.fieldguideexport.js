@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
     $('#fieldguideexport').popup({
         transition: 'all 0.3s',
         scrolllock: true

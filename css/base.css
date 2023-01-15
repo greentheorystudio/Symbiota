@@ -5,6 +5,36 @@ body{
 	font-family: Arial, Helvetica, sans-serif;
 }
 
+h1 {
+	font-size: 2em;
+	font-weight: bold;
+	line-height: normal;
+}
+h2 {
+	font-size: 1.5em;
+	font-weight: bold;
+	line-height: normal;
+}
+h3 {
+	font-size: 1.17em;
+	font-weight: bold;
+	line-height: normal;
+}
+h4 {
+	font-weight: bold;
+	line-height: normal;
+}
+h5 {
+	font-size: .83em;
+	font-weight: bold;
+	line-height: normal;
+}
+h6 {
+	font-size: .67em;
+	font-weight: bold;
+	line-height: normal;
+}
+
 #innertext{
 	margin:	10px;
 	background-color: #FFFFFF;
@@ -299,7 +329,7 @@ div.mf_container input.mf_input {
 }
 
 ol.mp_list {
-	background:#fff url(images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x;
+	background-color: #fff;
 	border:1px solid #aaa;
 	border-radius:4px;
 	overflow: hidden;
@@ -325,7 +355,7 @@ ol.mp_list li.mp_selectable {
 
 ol.mp_list li.mp_highlighted {
 	border:1px solid #999;
-	background:#dadada url(images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x;
+	background-color: #dadada;
 	font-weight:normal;
 	color:#212121;
 	border-radius:4px;
@@ -500,7 +530,7 @@ body.processing .loadingModal {
 	height: 300px;
 	width: 300px;
 }
-.path {
+.vinepath {
 	animation: DrawLine 1.6s both infinite alternate linear;
 	fill: none;
 	stroke: forestgreen;

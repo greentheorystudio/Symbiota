@@ -5,7 +5,11 @@ header('X-Frame-Options: SAMEORIGIN');
 
 $clid = (int)$_REQUEST['clid'];
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title>Collections Search Download</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -15,7 +19,7 @@ $clid = (int)$_REQUEST['clid'];
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script>
-		$(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             const dialogArr = ["schemanative", "schemadwc"];
             let dialogStr = "";
             for(let i=0; i<dialogArr.length; i++){
@@ -173,5 +177,8 @@ $clid = (int)$_REQUEST['clid'];
 			</form>
 		</div>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>

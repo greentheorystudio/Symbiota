@@ -28,7 +28,11 @@ if($searchTaxon) {
 }
 $rsArr = $rsManager->getProtectedSpeciesList();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
     <title>Protected Species</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -37,9 +41,8 @@ $rsArr = $rsManager->getProtectedSpeciesList();
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script>
-		$(document).ready(function() {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
 			$("#speciestoadd").autocomplete({ source: "../../api/taxa/speciessuggest.php" },{ minLength: 3, autoFocus: true });
 			$("#searchtaxon").autocomplete({ source: "../../api/taxa/speciessuggest.php" },{ minLength: 3 });
 		});
@@ -199,6 +202,7 @@ include(__DIR__ . '/../../header.php');
 </div>
 <?php
 include(__DIR__ . '/../../footer.php');
+include_once(__DIR__ . '/../../config/footer-includes.php');
 ?>
 </body>
 </html>

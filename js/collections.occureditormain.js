@@ -3,7 +3,7 @@ let imgAssocCleared = false;
 let voucherAssocCleared = false;
 let abortFormVerification = false;
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 
 	$("#occedittabs").tabs({
 		select: function() {

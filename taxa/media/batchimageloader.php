@@ -1,4 +1,4 @@
-<link href="../../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" />
+<link href="../../css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" />
 <link href="../../css/external/jquery.fileupload.css" rel="stylesheet" type="text/css" />
 <link href="../../css/external/jquery.fileupload-ui.css" rel="stylesheet" type="text/css" />
 <style>

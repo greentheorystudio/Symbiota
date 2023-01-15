@@ -1,6 +1,6 @@
 let activeImgIndex = 1;
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	const imgTd = getCookie("symbimgtd");
 	if(imgTd !== "close") {
 		toggleImageTdOn();

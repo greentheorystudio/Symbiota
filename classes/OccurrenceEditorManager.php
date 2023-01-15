@@ -596,7 +596,7 @@ class OccurrenceEditorManager {
                     $sqlWhere .= $cao.($cop?' '.$cop:'').' oas.relationship = "host" '.($ccp?$ccp.' ':'');
                 }
             }
-            else if($x > 1 && !$cf && $ccp){
+            else if($x > 1 && $ccp){
                 $sqlWhere .= ' '.$ccp.' ';
             }
         }

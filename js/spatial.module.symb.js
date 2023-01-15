@@ -226,10 +226,10 @@ function changeTaxaColor(color,tidcode){
 function clearTaxaSymbology(){
     for(let i in taxaSymbology){
         if(taxaSymbology.hasOwnProperty(i)){
-            taxaSymbology[i]['color'] = pointLayerFillColor;
+            taxaSymbology[i]['color'] = SPATIAL_POINT_FILL_COLOR;
             const keyName = 'taxaColor' + i;
             if(document.getElementById(keyName)){
-                document.getElementById(keyName).color.fromString(pointLayerFillColor);
+                document.getElementById(keyName).color.fromString(SPATIAL_POINT_FILL_COLOR);
             }
         }
     }
@@ -392,7 +392,7 @@ function primeSymbologyData(features){
             if(!collSymbology[collName]){
                 collSymbology[collName] = [];
                 collSymbology[collName]['collid'] = collid;
-                collSymbology[collName]['color'] = pointLayerFillColor;
+                collSymbology[collName]['color'] = SPATIAL_POINT_FILL_COLOR;
             }
             if(!taxaSymbology[namestring]){
                 taxaCnt++;
@@ -400,7 +400,7 @@ function primeSymbologyData(features){
                 taxaSymbology[namestring]['sciname'] = sciname;
                 taxaSymbology[namestring]['tid'] = tid;
                 taxaSymbology[namestring]['family'] = family;
-                taxaSymbology[namestring]['color'] = pointLayerFillColor;
+                taxaSymbology[namestring]['color'] = SPATIAL_POINT_FILL_COLOR;
                 taxaSymbology[namestring]['count'] = 1;
             }
             else{
@@ -427,10 +427,10 @@ function refreshLayerOrder(){
 function resetMainSymbology(){
     for(let i in collSymbology){
         if(collSymbology.hasOwnProperty(i)){
-            collSymbology[i]['color'] = pointLayerFillColor;
+            collSymbology[i]['color'] = SPATIAL_POINT_FILL_COLOR;
             const keyName = 'keyColor' + i;
             if(document.getElementById(keyName)){
-                document.getElementById(keyName).color.fromString(pointLayerFillColor);
+                document.getElementById(keyName).color.fromString(SPATIAL_POINT_FILL_COLOR);
             }
         }
     }
@@ -506,26 +506,26 @@ function setClusterSymbol(feature) {
             }
             const colorArr = hexToRgb(hexcolor);
             if(size < 10) {
-                radius = (pointLayerPointRadius + 5);
+                radius = (SPATIAL_POINT_POINT_RADIUS + 5);
             }
             else if(size < 100) {
-                radius = (pointLayerPointRadius + 10);
+                radius = (SPATIAL_POINT_POINT_RADIUS + 10);
             }
             else if(size < 1000) {
-                radius = (pointLayerPointRadius + 15);
+                radius = (SPATIAL_POINT_POINT_RADIUS + 15);
             }
             else if(size < 10000) {
-                radius = (pointLayerPointRadius + 20);
+                radius = (SPATIAL_POINT_POINT_RADIUS + 20);
             }
             else if(size < 100000) {
-                radius = (pointLayerPointRadius + 25);
+                radius = (SPATIAL_POINT_POINT_RADIUS + 25);
             }
             else {
-                radius = (pointLayerPointRadius + 30);
+                radius = (SPATIAL_POINT_POINT_RADIUS + 30);
             }
 
             if(selected) {
-                stroke = new ol.style.Stroke({color: ('#' + pointLayerSelectionsBorderColor), width: pointLayerSelectionsBorderWidth})
+                stroke = new ol.style.Stroke({color: ('#' + SPATIAL_POINT_SELECTIONS_BORDER_COLOR), width: SPATIAL_POINT_SELECTIONS_BORDER_WIDTH})
             }
 
             style = new ol.style.Style({
@@ -656,10 +656,10 @@ function setSymbol(feature){
 
     if(showPoint){
         if(selected) {
-            stroke = new ol.style.Stroke({color: ('#' + pointLayerSelectionsBorderColor), width: pointLayerSelectionsBorderWidth});
+            stroke = new ol.style.Stroke({color: ('#' + SPATIAL_POINT_SELECTIONS_BORDER_COLOR), width: SPATIAL_POINT_SELECTIONS_BORDER_WIDTH});
         }
         else {
-            stroke = new ol.style.Stroke({color: ('#' + pointLayerBorderColor), width: pointLayerBorderWidth});
+            stroke = new ol.style.Stroke({color: ('#' + SPATIAL_POINT_BORDER_COLOR), width: SPATIAL_POINT_BORDER_WIDTH});
         }
         fill = new ol.style.Fill({color: color});
     }
@@ -674,14 +674,14 @@ function setSymbol(feature){
                 fill: fill,
                 stroke: stroke,
                 points: 3,
-                radius: pointLayerPointRadius
+                radius: SPATIAL_POINT_POINT_RADIUS
             })
         });
     }
     else{
         style = new ol.style.Style({
             image: new ol.style.Circle({
-                radius: pointLayerPointRadius,
+                radius: SPATIAL_POINT_POINT_RADIUS,
                 fill: fill,
                 stroke: stroke
             })

@@ -148,7 +148,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20221204';
+        $GLOBALS['CSS_VERSION'] = '20230112';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -381,6 +381,9 @@ class ConfigurationManager{
         }
         if(!isset($GLOBALS['DYN_CHECKLIST_RADIUS']) || !$GLOBALS['DYN_CHECKLIST_RADIUS']){
             $GLOBALS['DYN_CHECKLIST_RADIUS'] = '100';
+        }
+        if(!isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
+            $GLOBALS['KEY_MOD_IS_ACTIVE'] = false;
         }
         $GLOBALS['EMAIL_CONFIGURED'] = (
             isset($GLOBALS['PORTAL_EMAIL_ADDRESS'], $GLOBALS['SMTP_USERNAME'], $GLOBALS['SMTP_PASSWORD'], $GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) &&

@@ -110,14 +110,17 @@ if($editable && $action){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxon Editor: ' .$tEditor->getSciName(); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/external/tiny_mce/tiny_mce.js"></script>
@@ -130,7 +133,7 @@ if($editable && $action){
             valid_elements: "*[*]"
         });
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			$("#sninput").autocomplete({
 				source: function( request, response ) {
 					$.getJSON( "../../api/taxa/autofillsciname.php", { "term": request.term, "hideauth": 1 }, response );
@@ -381,6 +384,7 @@ if($editable && $action){
 	</div>
 	<?php
 	include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
 	?>
 </body>
 </html>

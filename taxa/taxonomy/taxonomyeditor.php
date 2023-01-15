@@ -60,7 +60,11 @@ if($editable){
 	$taxonEditorObj->setTaxon();
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxon Editor: ' .$tid; ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -73,8 +77,7 @@ if($editable){
 		let tid = <?php echo $taxonEditorObj->getTid(); ?>;
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script src="../../js/taxa.taxonomyeditor.js?ver=20221120"></script>
+    <script src="../../js/taxa.taxonomyeditor.js?ver=20230103"></script>
 </head>
 <body>
 <?php
@@ -490,10 +493,9 @@ if($editable){
     }
     ?>
 </div>
-
 <?php
 include(__DIR__ . '/../../footer.php');
+include_once(__DIR__ . '/../../config/footer-includes.php');
 ?>
-
 </body>
 </html>

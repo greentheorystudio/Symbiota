@@ -1,7 +1,6 @@
 const http = new XMLHttpRequest();
 let processCancelled = false;
 let unlinkedNamesArr = [];
-let dataSource = '';
 let currentSciname = '';
 let targetKingdomId = null;
 let targetKingdomName = null;
@@ -15,7 +14,6 @@ let taxaToAddArr = [];
 let newTidArr = [];
 let taxaLoaded = 0;
 let rebuildHierarchyLoop = 0;
-let levValue = 0;
 
 function addProgressLine(lineHtml,element = null){
     if(element){
@@ -23,12 +21,6 @@ function addProgressLine(lineHtml,element = null){
     }
     else{
         document.getElementById("progressDisplayList").innerHTML += lineHtml;
-    }
-    const processorWindowBounds = document.getElementById('processor-display').getBoundingClientRect();
-    const currentStatus = document.getElementsByClassName('current-status')[0];
-    if(currentStatus.getBoundingClientRect().bottom > processorWindowBounds.bottom){
-        const scroll = (currentStatus.getBoundingClientRect().top - processorWindowBounds.top) - 10;
-        document.getElementById('processor-display').scrollTop += scroll;
     }
 }
 
@@ -41,25 +33,7 @@ function addRunCleanScinameAuthorUndoButton(oldName,newName){
 }
 
 function adjustUIEnd(){
-    const cancelButtonDivElements = document.getElementsByClassName('cancel-div');
-    for(let i in cancelButtonDivElements){
-        if(cancelButtonDivElements.hasOwnProperty(i)){
-            cancelButtonDivElements[i].style.display = 'none';
-        }
-    }
-    const startButtonDivElements = document.getElementsByClassName('start-div');
-    for(let i in startButtonDivElements){
-        if(startButtonDivElements.hasOwnProperty(i)){
-            startButtonDivElements[i].style.display = 'block';
-        }
-    }
-    const startButtonElements = document.getElementsByClassName('start-button');
-    for(let i in startButtonElements){
-        if(startButtonElements.hasOwnProperty(i)){
-            startButtonElements[i].disabled = false;
-        }
-    }
-
+    currentProcess.value = null;
     if(document.getElementById("progressDisplayList").innerHTML !== ''){
         const cancelButtonDivElements = document.getElementsByClassName('cancel-div');
         for(let i in cancelButtonDivElements){
@@ -86,39 +60,20 @@ function adjustUIEnd(){
             }
         }
     }
-    document.getElementById('targetkingdomselect').disabled = false;
-    document.getElementById('updatedetimage').disabled = false;
-    document.getElementById('colradio').disabled = false;
-    document.getElementById('itisradio').disabled = false;
-    document.getElementById('wormsradio').disabled = false;
-    document.getElementById('levvalue').disabled = false;
+    uppercontrolsdisabled.value = false;
     unlinkedNamesArr = [];
-    dataSource = '';
     setUnlinkedRecordCounts();
     disableFuzzyMatchButtons();
 }
 
 function adjustUIStart(id){
     clearProgressDisplay();
-    const startDivId = id + 'Start';
-    const cancelDivId = id + 'Cancel';
-    const startButtonElements = document.getElementsByClassName('start-button');
-    for(let i in startButtonElements){
-        if(startButtonElements.hasOwnProperty(i)){
-            startButtonElements[i].disabled = true;
-        }
-    }
-    document.getElementById(startDivId).style.display = 'none';
-    document.getElementById(cancelDivId).style.display = 'block';
-    document.getElementById('targetkingdomselect').disabled = true;
-    document.getElementById('updatedetimage').disabled = true;
-    document.getElementById('colradio').disabled = true;
-    document.getElementById('itisradio').disabled = true;
-    document.getElementById('wormsradio').disabled = true;
-    document.getElementById('levvalue').disabled = true;
+    currentProcess.value = id;
+    uppercontrolsdisabled.value = true;
 }
 
 function callCleaningController(step){
+    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     let params = '';
     if(step === 'question-marks'){
         processCancelled = false;
@@ -147,8 +102,8 @@ function callCleaningController(step){
             addProgressLine('<li>Cleaning leading and trailing spaces in scientific names ' + processStatus + '</li>');
             params = 'collid=' + collId + '&action=cleanTrimNames';
         }
-        //console.log(occTaxonomyApi+'?'+params);
-        sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+        //console.log(url+'?'+params);
+        sendAPIPostRequest(url,params,function(status,res){
             processCleaningControllerResponse(step,status,res);
         },http);
     }
@@ -156,6 +111,7 @@ function callCleaningController(step){
 
 function callTaxThesaurusLinkController(step = ''){
     if(targetKingdomId){
+        const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
         let params = '';
         if(!step){
             processCancelled = false;
@@ -168,8 +124,8 @@ function callTaxThesaurusLinkController(step = ''){
                 addProgressLine('<li>Updating linkages of associated determination records to the Taxonomic Thesaurus ' + processStatus + '</li>');
                 params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateDetThesaurusLinkages';
             }
-            //console.log(occTaxonomyApi+'?'+params);
-            sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+            //console.log(url+'?'+params);
+            sendAPIPostRequest(url,params,function(status,res){
                 processTaxThesaurusLinkControllerResponse(step,status,res);
             },http);
         }
@@ -201,13 +157,13 @@ function disableFuzzyMatchButtons(){
 }
 
 function getDataSourceName(){
-    if(dataSource === 'col'){
+    if(dataSource.value === 'col'){
         return 'Catalogue of Life';
     }
-    else if(dataSource === 'itis'){
+    else if(dataSource.value === 'itis'){
         return 'Integrated Taxonomic Information System';
     }
-    else if(dataSource === 'worms'){
+    else if(dataSource.value === 'worms'){
         return 'World Register of Marine Species';
     }
 }
@@ -220,6 +176,7 @@ function getITISNameSearchResultsHierarchy(){
     else{
         id = nameSearchResults[0]['accepted_id'];
     }
+    const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
     const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
     sendProxyGetRequest(proxyUrl,url,function(status,res){
         if(status === 200){
@@ -237,7 +194,7 @@ function getITISNameSearchResultsHierarchy(){
                     if(taxResult['taxonName'] !== nameSearchResults[0]['sciname']){
                         const rankname = taxResult['rankName'].toLowerCase();
                         const rankid = Number(rankArr[rankname]);
-                        if(rankid <= foundNameRank && recognizedRanks.includes(rankid)){
+                        if(rankid <= foundNameRank && TAXONOMIC_RANKS.includes(rankid)){
                             const resultObj = {};
                             resultObj['id'] = taxResult['tsn'];
                             resultObj['sciname'] = taxResult['taxonName'];
@@ -265,6 +222,7 @@ function getITISNameSearchResultsHierarchy(){
 
 function getITISNameSearchResultsRecord(){
     const id = nameSearchResults[0]['id'];
+    const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
     const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
     sendProxyGetRequest(proxyUrl,url,function(status,res){
         if(status === 200){
@@ -304,6 +262,7 @@ function getITISNameSearchResultsRecord(){
 function getWoRMSAddTaxonAuthor(){
     if(!processCancelled){
         const id = processingArr[0]['id'];
+        const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
         const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
         sendProxyGetRequest(proxyUrl,url,function(status,res){
             const currentTaxon = processingArr[0];
@@ -326,6 +285,7 @@ function getWoRMSNameSearchResultsHierarchy(){
     else{
         id = nameSearchResults[0]['accepted_id'];
     }
+    const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
     const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
     sendProxyGetRequest(proxyUrl,url,function(status,res){
         if(status === 200){
@@ -348,7 +308,7 @@ function getWoRMSNameSearchResultsHierarchy(){
                 if(childObj['scientificname'] !== nameSearchResults[0]['sciname']){
                     const rankname = childObj['rank'].toLowerCase();
                     const rankid = Number(rankArr[rankname]);
-                    if((newTaxonAccepted && rankid < foundNameRank && recognizedRanks.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'] || recognizedRanks.includes(rankid)))){
+                    if((newTaxonAccepted && rankid < foundNameRank && TAXONOMIC_RANKS.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'] || TAXONOMIC_RANKS.includes(rankid)))){
                         const resultObj = {};
                         resultObj['id'] = childObj['AphiaID'];
                         resultObj['sciname'] = childObj['scientificname'];
@@ -377,6 +337,7 @@ function getWoRMSNameSearchResultsHierarchy(){
 }
 
 function getWoRMSNameSearchResultsRecord(id){
+    const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
     const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
     sendProxyGetRequest(proxyUrl,url,function(status,res){
         if(status === 200){
@@ -416,9 +377,10 @@ function initializeCleanScinameAuthor(){
     processCancelled = false;
     adjustUIStart('cleanScinameAuthor');
     addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
-    //console.log(occTaxonomyApi+'?'+params);
-    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+    //console.log(url+'?'+params);
+    sendAPIPostRequest(url,params,function(status,res){
         if(status === 200) {
             processSuccessResponse(15,'Complete');
             unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
@@ -436,12 +398,12 @@ function initializeDataSourceSearch(){
         nameTidIndex = {};
         taxaLoaded = 0;
         newTidArr = [];
-        setDataSource();
         adjustUIStart('resolveFromTaxaDataSource');
         addProgressLine('<li>Setting rank data for processing search returns ' + processStatus + '</li>');
+        const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
         const params = 'action=getRankNameArr';
-        //console.log(occTaxonomyApi+'?'+params);
-        sendAPIPostRequest(taxaApi,params,function(status,res){
+        //console.log(url+'?'+params);
+        sendAPIPostRequest(url,params,function(status,res){
             if(status === 200) {
                 processSuccessResponse(15,'Complete');
                 rankArr = JSON.parse(res);
@@ -458,14 +420,14 @@ function initializeDataSourceSearch(){
 }
 
 function initializeTaxThesaurusFuzzyMatch(){
-    levValue = document.getElementById("levvalue").value;
-    if(targetKingdomId && levValue && Number(levValue) > 0){
+    if(targetKingdomId && levValue.value && Number(levValue.value) > 0){
         processCancelled = false;
         adjustUIStart('taxThesaurusFuzzyMatch');
         addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+        const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
         const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
-        //console.log(occTaxonomyApi+'?'+params);
-        sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+        //console.log(url+'?'+params);
+        sendAPIPostRequest(url,params,function(status,res){
             if(status === 200) {
                 processSuccessResponse(15,'Complete');
                 unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
@@ -490,7 +452,8 @@ function populateTaxonomicHierarchy(){
         formData.append('tidarr', JSON.stringify(newTidArr));
         formData.append('action', 'populateHierarchyTable');
         const http = new XMLHttpRequest();
-        http.open("POST", taxaApi, true);
+        const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
+        http.open("POST", url, true);
         http.onreadystatechange = function() {
             if(http.readyState === 4) {
                 if(http.status === 200) {
@@ -524,7 +487,8 @@ function primeTaxonomicHierarchy(){
     formData.append('tidarr', JSON.stringify(newTidArr));
     formData.append('action', 'primeHierarchyTable');
     const http = new XMLHttpRequest();
-    http.open("POST", taxaApi, true);
+    const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
+    http.open("POST", url, true);
     http.onreadystatechange = function() {
         if(http.readyState === 4) {
             if(http.status === 200) {
@@ -559,13 +523,14 @@ function processAddTaxaArr(){
         newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
         newTaxonObj['family'] = taxonToAdd['family'];
         newTaxonObj['source'] = getDataSourceName();
-        newTaxonObj['source-name'] = dataSource;
+        newTaxonObj['source-name'] = dataSource.value;
         newTaxonObj['source-id'] = taxonToAdd['id'];
+        const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
         const formData = new FormData();
         formData.append('taxon', JSON.stringify(newTaxonObj));
         formData.append('action', 'addTaxon');
         const addHttp = new XMLHttpRequest();
-        addHttp.open("POST", taxaApi, true);
+        addHttp.open("POST", url, true);
         addHttp.onreadystatechange = function() {
             if(addHttp.readyState === 4) {
                 if(addHttp.responseText && Number(addHttp.responseText) > 0){
@@ -607,13 +572,14 @@ function processAddTaxon(){
         newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
         newTaxonObj['family'] = taxonToAdd['family'];
         newTaxonObj['source'] = getDataSourceName();
-        newTaxonObj['source-name'] = dataSource;
+        newTaxonObj['source-name'] = dataSource.value;
         newTaxonObj['source-id'] = taxonToAdd['id'];
+        const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
         const formData = new FormData();
         formData.append('taxon', JSON.stringify(newTaxonObj));
         formData.append('action', 'addTaxon');
         const addHttp = new XMLHttpRequest();
-        addHttp.open("POST", taxaApi, true);
+        addHttp.open("POST", url, true);
         addHttp.onreadystatechange = function() {
             if(addHttp.readyState === 4) {
                 if(addHttp.responseText && Number(addHttp.responseText) > 0){
@@ -842,9 +808,8 @@ function processSuccessResponse(indent,lineHtml = ''){
 }
 
 function processTaxThesaurusLinkControllerResponse(step,status,res){
-    const includeDetsImages = document.getElementById('updatedetimage').checked;
     processUpdateCleanResponse('updated',status,res);
-    if(!step && includeDetsImages){
+    if(!step && updatedet.value){
         callTaxThesaurusLinkController('update-det-linkages');
     }
     else{
@@ -854,13 +819,11 @@ function processTaxThesaurusLinkControllerResponse(step,status,res){
 
 function processUnlinkedNamesArr(inArr){
     if(Array.isArray(inArr) && inArr.length > 0){
-        const startIndex = document.getElementById("startIndex").value;
-        const limitValue = document.getElementById("processingLimit").value;
-        if(startIndex){
+        if(processingStartIndex.value){
             let nameArrLength = inArr.length;
             let startIndexVal = null;
             for(let i = 0 ; i < nameArrLength; i++) {
-                if(inArr.hasOwnProperty(i) && inArr[i].toLowerCase() > startIndex.toLowerCase()){
+                if(inArr.hasOwnProperty(i) && inArr[i].toLowerCase() > processingStartIndex.value.toLowerCase()){
                     startIndexVal = i;
                     break;
                 }
@@ -870,8 +833,8 @@ function processUnlinkedNamesArr(inArr){
             }
             inArr = inArr.splice(startIndexVal, (nameArrLength - startIndexVal));
         }
-        if(limitValue){
-            inArr = inArr.splice(0, limitValue);
+        if(processingLimit.value){
+            inArr = inArr.splice(0, processingLimit.value);
         }
     }
     return inArr;
@@ -896,7 +859,8 @@ function runCleanScinameAuthorProcess(){
             formData.append('sciname', currentSciname);
             formData.append('action', 'parseSciName');
             const http = new XMLHttpRequest();
-            http.open("POST", taxaApi, true);
+            const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
+            http.open("POST", url, true);
             http.onreadystatechange = function() {
                 if(http.readyState === 4 && http.status === 200) {
                     const parsedName = JSON.parse(http.responseText);
@@ -935,10 +899,11 @@ function runCleanScinameAuthorProcess(){
 function runScinameDataSourceSearch(){
     if(!processCancelled){
         if(unlinkedNamesArr.length > 0){
-            nameSearchResults = new Array();
+            nameSearchResults = [];
             currentSciname = unlinkedNamesArr[0];
             unlinkedNamesArr.splice(0, 1);
-            if(dataSource === 'col'){
+            const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
+            if(dataSource.value === 'col'){
                 colInitialSearchResults = [];
                 addProgressLine('<li>Searching the Catalogue of Life (COL) for ' + currentSciname + ' ' + processStatus + '</li>');
                 const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + currentSciname;
@@ -952,7 +917,7 @@ function runScinameDataSourceSearch(){
                     }
                 });
             }
-            else if(dataSource === 'itis'){
+            else if(dataSource.value === 'itis'){
                 itisInitialSearchResults = [];
                 addProgressLine('<li>Searching the Integrated Taxonomic Information System (ITIS) for ' + currentSciname + ' ' + processStatus + '</li>');
                 const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + currentSciname;
@@ -966,7 +931,7 @@ function runScinameDataSourceSearch(){
                     }
                 });
             }
-            else if(dataSource === 'worms'){
+            else if(dataSource.value === 'worms'){
                 addProgressLine('<li>Searching the World Register of Marine Species (WoRMS) for ' + currentSciname + ' ' + processStatus + '</li>');
                 const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + currentSciname + '?marine_only=false';
                 sendProxyGetRequest(proxyUrl,url,function(status,res){
@@ -1009,10 +974,11 @@ function runTaxThesaurusFuzzyMatchProcess(){
             const formData = new FormData();
             formData.append('kingdomid', targetKingdomId);
             formData.append('sciname', currentSciname);
-            formData.append('lev', levValue);
+            formData.append('lev', levValue.value);
             formData.append('action', 'getSciNameFuzzyMatches');
             const http = new XMLHttpRequest();
-            http.open("POST", taxaApi, true);
+            const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
+            http.open("POST", url, true);
             http.onreadystatechange = function() {
                 if(http.readyState === 4 && http.status === 200) {
                     const fuzzyMatches = JSON.parse(http.responseText);
@@ -1053,32 +1019,41 @@ function selectFuzzyMatch(sciName,newName,newtid){
     },newtid);
 }
 
-function setDataSource(){
-    if(document.getElementById('colradio').checked === true){
-        dataSource = 'col';
-    }
-    else if(document.getElementById('itisradio').checked === true){
-        dataSource = 'itis';
-    }
-    else if(document.getElementById('wormsradio').checked === true){
-        dataSource = 'worms';
-    }
-}
-
-function setKingdomId(){
-    const selector = document.getElementById('targetkingdomselect');
-    targetKingdomId = selector.value ? selector.value : null;
-    targetKingdomName = targetKingdomId ? selector.options[selector.selectedIndex].text : null;
+function setKingdomSelector(){
+    const taxHttp = new XMLHttpRequest();
+    const url = CLIENT_ROOT + '/api/taxa/taxaController.php?action=getKingdomArr';
+    //console.log(url);
+    taxHttp.open("GET", url, true);
+    taxHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    taxHttp.onreadystatechange = function() {
+        if(taxHttp.readyState === 4 && taxHttp.status === 200) {
+            const retData = JSON.parse(taxHttp.responseText);
+            for(let i in retData){
+                const kingObj = {};
+                if(retData.hasOwnProperty(i)){
+                    const kingObj = {};
+                    kingObj['value'] = i;
+                    kingObj['label'] = retData[i];
+                    kingdomOptions.value.push(kingObj);
+                }
+            }
+            kingdomOptions.value.sort(function (a, b) {
+                return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
+            });
+        }
+    };
+    taxHttp.send();
 }
 
 function setTaxaToAdd(){
     if(processingArr.length > 0){
         const sciname = processingArr[0]['sciname'];
         if(!nameTidIndex.hasOwnProperty(sciname)){
+            const url = CLIENT_ROOT + '/api/taxa/gettid.php';
             const params = 'sciname=' + sciname + '&kingdomid=' + targetKingdomId;
-            //console.log(taxaTidLookupApi+'?'+params);
-            sendAPIPostRequest(taxaTidLookupApi,params,function(status,res){
-                if(dataSource === 'worms' && !res){
+            //console.log(url+'?'+params);
+            sendAPIPostRequest(url,params,function(status,res){
+                if(dataSource.value === 'worms' && !res){
                     getWoRMSAddTaxonAuthor();
                 }
                 else{
@@ -1110,9 +1085,10 @@ function setUnlinkedRecordCounts(){
     document.getElementById("unlinkedOccCnt").innerHTML = loadingMessage;
     document.getElementById("unlinkedTaxaCnt").innerHTML = loadingMessage;
     const recHttp = new XMLHttpRequest();
+    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const params = 'collid=' + collId + '&action=getUnlinkedScinameCounts';
-    //console.log(occTaxonomyApi+'?'+params);
-    recHttp.open("POST", occTaxonomyApi, true);
+    //console.log(url+'?'+params);
+    recHttp.open("POST", url, true);
     recHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     recHttp.onreadystatechange = function() {
         if(recHttp.readyState === 4) {
@@ -1137,9 +1113,10 @@ function setUnlinkedRecordCounts(){
 function setUnlinkedTaxaList(){
     if(!processCancelled){
         addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+        const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
         const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
-        //console.log(occTaxonomyApi+'?'+params);
-        sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+        //console.log(url+'?'+params);
+        sendAPIPostRequest(url,params,function(status,res){
             if(status === 200) {
                 processSuccessResponse(15,'Complete');
                 unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
@@ -1163,7 +1140,8 @@ function undoChangedSciname(oldName,newName){
     formData.append('newsciname', newName);
     formData.append('action', 'undoOccScinameChange');
     const http = new XMLHttpRequest();
-    http.open("POST", occTaxonomyApi, true);
+    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
+    http.open("POST", url, true);
     http.onreadystatechange = function() {
         if(http.readyState === 4) {
             if(http.status === 200) {
@@ -1180,9 +1158,10 @@ function undoChangedSciname(oldName,newName){
 function updateOccLocalitySecurity(){
     adjustUIStart('updateOccLocalitySecurity');
     addProgressLine('<li>Updating the locality security settings for occurrence records of protected species ' + processStatus + '</li>');
+    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const params = 'collid=' + collId + '&action=updateLocalitySecurity';
-    //console.log(occTaxonomyApi+'?'+params);
-    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+    //console.log(url+'?'+params);
+    sendAPIPostRequest(url,params,function(status,res){
         processUpdateCleanResponse('updated',status,res);
         adjustUIEnd();
     },http);
@@ -1192,9 +1171,10 @@ function updateOccurrenceLinkages(){
     const newSciname = nameSearchResults[0]['sciname'];
     const newScinameTid = nameTidIndex[nameSearchResults[0]['sciname']];
     addProgressLine('<li class="first-indent">Updating linkages of occurrence records to ' + newSciname + ' ' + processStatus + '</li>');
+    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     let params = 'collid=' + collId + '&sciname=' + newSciname + '&tid=' + newScinameTid + '&kingdomid=' + targetKingdomId + '&action=updateOccWithNewSciname';
-    //console.log(occTaxonomyApi+'?'+params);
-    sendAPIPostRequest(occTaxonomyApi,params,function(status,res){
+    //console.log(url+'?'+params);
+    sendAPIPostRequest(url,params,function(status,res){
         if(status === 200) {
             processSuccessResponse(15, res + ' records updated');
         }
@@ -1218,7 +1198,8 @@ function updateOccurrencesWithCleanedSciname(oldName,cleanedName,callback,tid = 
     formData.append('tid', tid);
     formData.append('action', 'updateOccWithCleanedName');
     const http = new XMLHttpRequest();
-    http.open("POST", occTaxonomyApi, true);
+    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
+    http.open("POST", url, true);
     http.onreadystatechange = function() {
         if(http.readyState === 4) {
             callback(http.status,http.responseText,oldName,cleanedName);
@@ -1238,6 +1219,7 @@ function validateCOLInitialNameSearchResults(){
         else{
             id = taxon['accepted_id'];
         }
+        const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
         const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/classification';
         sendProxyGetRequest(proxyUrl,url,function(status,res){
             if(status === 200){
@@ -1254,7 +1236,7 @@ function validateCOLInitialNameSearchResults(){
                             if(taxResult['name'] !== taxon['sciname']){
                                 const rankname = taxResult['rank'].toLowerCase();
                                 const rankid = Number(rankArr[rankname]);
-                                if(recognizedRanks.includes(rankid) || (!taxon['accepted'] && taxon['accepted_sciname'] === taxResult['name'])){
+                                if(TAXONOMIC_RANKS.includes(rankid) || (!taxon['accepted'] && taxon['accepted_sciname'] === taxResult['name'])){
                                     const resultObj = {};
                                     resultObj['id'] = taxResult['id'];
                                     resultObj['sciname'] = taxResult['name'];
@@ -1298,6 +1280,7 @@ function validateITISInitialNameSearchResults(){
         const taxon = itisInitialSearchResults[0];
         itisInitialSearchResults.splice(0, 1);
         const id = taxon['id'];
+        const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
         const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
         sendProxyGetRequest(proxyUrl,url,function(status,res){
             if(status === 200){
@@ -1367,13 +1350,5 @@ function validateNameSearchResults(){
     else{
         processErrorResponse(15,false,'Unable to distinguish taxon by name');
         runScinameDataSourceSearch();
-    }
-}
-
-function verifyBatchLimitChange(){
-    const limitValue = document.getElementById("processingLimit").value;
-    if(limitValue && (isNaN(limitValue) || Number(limitValue) <= 0)){
-        alert('Processing batch limit must be a number greater than zero.');
-        document.getElementById("processingLimit").value = '';
     }
 }

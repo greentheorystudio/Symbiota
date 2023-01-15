@@ -52,7 +52,11 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 	include(__DIR__ . '/../../config/occurVarDefault.php');
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Create New Record From Image</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -60,8 +64,7 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 	<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/collections.imageoccursubmit.js?ver=20221110" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20221207" type="text/javascript"></script>
+	<script src="../../js/collections.imageoccursubmit.js?ver=20230103" type="text/javascript"></script>
 	<script type="text/javascript">
 	function validateImgOccurForm(f){
 		if(f.imgfile.value === "" && f.imgurl.value === ""){
@@ -203,6 +206,7 @@ elseif(file_exists('../../config/occurVarDefault.php')){
 	</div>
 <?php 	
 include(__DIR__ . '/../../footer.php');
+include_once(__DIR__ . '/../../config/footer-includes.php');
 ?>
 </body>
 </html>
