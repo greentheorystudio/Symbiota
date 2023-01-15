@@ -26,7 +26,7 @@ include(__DIR__ . '/../header.php');
                 <p align="left"><font color="#036" size="5" style="text-align:center"><b>Algae vs
                             Seagrass</b></font><br/>
                     <br/>
-                    <span class="medium"><a href="Seagrass_Habitat.php">Back to Seagrass Habitats</a></span>
+                    <span class="medium"><a href="../Seagrass_Habitat.php">Back to Seagrass Habitats</a></span>
                 </p>
             </td>
         </tr>

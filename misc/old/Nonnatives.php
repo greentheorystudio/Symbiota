@@ -77,7 +77,7 @@ Photo courtesy USGS.</span></td>
                     impossible. The most infamous such invasion in recent memory in North America
                     is that of the zebra mussel (<i>Dreissena polymorpha</i>) in the Great Lakes. In
                     Florida, the introduction and spread of the green mussel
-                    (<a href="../taxa/index.php?taxon=Perna viridis"><i>Perna viridis</i></a>) in
+                    (<a href="../../taxa/index.php?taxon=Perna viridis"><i>Perna viridis</i></a>) in
                     Tampa Bay is a prime example of an exotic introduction that has had substantial
                     ecological and economic impacts.</p>
 
@@ -290,19 +290,19 @@ Photo courtesy USGS.</span></td>
 
                 <p class="body">Several examples from the Indian River Lagoon region of Florida are of note as
                     well. The introduction of torpedo grass (<a
-                            href="../taxa/index.php?taxon=Panicum repens"><i>Panicum repens</i></a>) in the late 19th
+                            href="../../taxa/index.php?taxon=Panicum repens"><i>Panicum repens</i></a>) in the late 19th
                     century
                     was as a cattle forage grass. Australian pine (<a
-                            href="../taxa/index.php?taxon=Casuarina equisetifolia"><i>Casuarina equisetifolia</i></a>)
+                            href="../../taxa/index.php?taxon=Casuarina equisetifolia"><i>Casuarina equisetifolia</i></a>)
                     was
                     introduced in the late 19th century partly for use as a windbreak to border
                     agricultural groves. Melaleuca (<a
-                            href="../taxa/index.php?taxon=Melaleuca quinquenervia"><i>Melaleuca quinquenervia</i></a>)
+                            href="../../taxa/index.php?taxon=Melaleuca quinquenervia"><i>Melaleuca quinquenervia</i></a>)
                     was
                     introduced to Florida on several occasions and for multiple purposes, including
                     wood production, soil stabilization, and to form forests intended to dry up the
                     Everglades and other wetland ecosystems. In Florida, as elsewhere, release of
-                    the marine toad (<a href="../taxa/index.php?taxon=Bufo marinus"><i>Bufo marinus</i></a>) was
+                    the marine toad (<a href="../../taxa/index.php?taxon=Bufo marinus"><i>Bufo marinus</i></a>) was
                     intended as a means of controlling populations of crop-damaging insects.</p>
                 <div class="clear"></div>
                 <br/>
@@ -323,27 +323,27 @@ Photo courtesy USGS.</span></td>
                 <p class="body">For example, a number of
                     exotic species now established in the IRL region of Florida were accidentally
                     released by the aquarium trade. This list includes walking catfish (<a
-                            href="../taxa/index.php?taxon=Clarias batrachus"><i>Clarias
+                            href="../../taxa/index.php?taxon=Clarias batrachus"><i>Clarias
                             batrachus</i></a>), blackchin tilapia (<i><a
-                                href="../taxa/index.php?taxon=Sarotherodon melanotheron">Sarotherodon
+                                href="../../taxa/index.php?taxon=Sarotherodon melanotheron">Sarotherodon
                             melanotheron</a></i>), and the aquatic plant hydrilla (<a
-                            href="../taxa/index.php?taxon=Hydrilla verticillata"><i>Hydrilla
+                            href="../../taxa/index.php?taxon=Hydrilla verticillata"><i>Hydrilla
                             verticillata</i></a>). Pet escapes are likewise responsible for the presence
                     of feral house cats (<a
-                            href="../taxa/index.php?taxon=Felis catus"><i>Felis catus</i></a>)
+                            href="../../taxa/index.php?taxon=Felis catus"><i>Felis catus</i></a>)
                     and green iguanas (<a
-                            href="../taxa/index.php?taxon=Iguana iguana"><i>Iguana
+                            href="../../taxa/index.php?taxon=Iguana iguana"><i>Iguana
                             iguana</i></a>) in Florida.</p>
 
                 <p class="body">Brazilian pepper (<a
-                            href="../taxa/index.php?taxon=Schinus terebinthifolius"><i>Schinus terebinthifolius</i></a>)
+                            href="../../taxa/index.php?taxon=Schinus terebinthifolius"><i>Schinus terebinthifolius</i></a>)
                     is
                     possibly the best-known Florida
                     example of an ornamental plant whose escape from controlled cultivation has had
                     devastating ecological and economic effects in the state. Among the most
                     ecologically damaging accidental domesticated animal releases in the southern
                     U.S. is the release and subsequent establishment of feral pigs (<a
-                            href="../taxa/index.php?taxon=Sus scrofa"><i>Sus scrofa</i></a>).
+                            href="../../taxa/index.php?taxon=Sus scrofa"><i>Sus scrofa</i></a>).
                     The species was also released in the U.S. in the form of European wild boars
                     intended for sport hunting, and today's U.S. feral pig populations are a
                     combination of both descendant lines.</p>
@@ -356,15 +356,15 @@ Photo courtesy USGS.</span></td>
                     released to the environment.</p>
 
                 <p class="body">Cuban treefrogs (<a
-                            href="../taxa/index.php?taxon=Osteopilus septentrionalis"><i>Osteopilus septentrionalis</i></a>),
+                            href="../../taxa/index.php?taxon=Osteopilus septentrionalis"><i>Osteopilus septentrionalis</i></a>),
                     for example, were most likely
                     introduced to Florida as undetected stowaways in vegetables imported from Cuba
                     (Behler 1979) while the cactus moth (<a
-                            href="../taxa/index.php?taxon=Cactoblastis cactorum"><i>Cactoblastis cactorum</i></a>) may
+                            href="../../taxa/index.php?taxon=Cactoblastis cactorum"><i>Cactoblastis cactorum</i></a>) may
                     have been
                     brought to Florida unnoticed in infected prickly pear nursery stock. Red
                     imported fire ants (<a
-                            href="../taxa/index.php?taxon=Solenopsis invicta"><i>Solenopsis invicta</i></a>), a species
+                            href="../../taxa/index.php?taxon=Solenopsis invicta"><i>Solenopsis invicta</i></a>), a species
                     that
                     has become a scourge in
                     the southern U.S., may have been accidentally transported here in the 1920s in
@@ -373,8 +373,8 @@ Photo courtesy USGS.</span></td>
                 <p class="body">Analogous introductions in marine environments can be found as well. The
                     non-native ranges of animals like green porcelain crabs, serrated swimming crabs
                     (<a
-                            href="../taxa/index.php?taxon=Petrolisthes armatus"><i>Petrolisthes armatus</i></a>, <a
-                            href="../taxa/index.php?taxon=Scylla serrata"><i>Scylla serrata</i></a>) and other exotic
+                            href="../../taxa/index.php?taxon=Petrolisthes armatus"><i>Petrolisthes armatus</i></a>, <a
+                            href="../../taxa/index.php?taxon=Scylla serrata"><i>Scylla serrata</i></a>) and other exotic
                     marine species have very
                     likely been expanded as these organisms have been accidentally transported in
                     live shipments of oysters, mussels, and other aquacultured or wild-harvested marine products.</p>
@@ -395,12 +395,12 @@ Photo courtesy USGS.</span></td>
 
                 <p class="body">The current circumglobal distributions of the
                     surface-fouling pleated sea squirt (<a
-                            href="../taxa/index.php?taxon=Styela plicata"><i>Styela plicata</i></a>) and wood-boring
+                            href="../../taxa/index.php?taxon=Styela plicata"><i>Styela plicata</i></a>) and wood-boring
                     species
                     like shipworms (e.g., <a
-                            href="../taxa/index.php?taxon=Teredo navalis"><i>Teredo navalis</i></a>) and boring isopods
+                            href="../../taxa/index.php?taxon=Teredo navalis"><i>Teredo navalis</i></a>) and boring isopods
                     (e.g., <a
-                            href="../taxa/index.php?taxon=Sphaeroma terebrans"><i>Sphaeroma
+                            href="../../taxa/index.php?taxon=Sphaeroma terebrans"><i>Sphaeroma
                             terebrans</i></a>) are almost certainly reflective of a long human history of
                     aiding-and-abetting marine exotic introductions that includes several hundred
                     years of wooden sailing fleets moving goods, people, and accidental hitchhikers
@@ -409,7 +409,7 @@ Photo courtesy USGS.</span></td>
                 <p class="body">Historically then, ship surface fouling has been a significant vector for
                     non-native marine species introduction. Today as well, species like barnacles
                     (e.g., <a
-                            href="../taxa/index.php?taxon=Balanus amphitrite"><i>Balanus amphitrite</i></a>) and sea
+                            href="../../taxa/index.php?taxon=Balanus amphitrite"><i>Balanus amphitrite</i></a>) and sea
                     squirts
                     that are capable of attaching to
                     hard surfaces are still transported on ship hulls, and also on buoys, service
@@ -428,7 +428,7 @@ Photo courtesy USGS.</span></td>
 
                 <p class="body">Several centuries of transporting dry ballast across and between oceans spread
                     innumerable species of insects, wharf roaches (<a
-                            href="../taxa/index.php?taxon=Ligia exotica"><i>Ligia exotica</i></a>),
+                            href="../../taxa/index.php?taxon=Ligia exotica"><i>Ligia exotica</i></a>),
                     desiccation-resistant marine invertebrates like barnacles, plants, and other
                     organisms between the world's harbors and surrounding environs (Carlton and
                     Hodder 1995).</p>
@@ -455,7 +455,7 @@ Photo courtesy USGS.</span></td>
                     to come from ballast water (Lavoie et al. 1999, Ray 2005). Of the marine and
                     estuarine bioinvaders now found in the IRL, species such as green mussels
                     (<i>Perna viridis</i>), charru mussels (<a
-                            href="../taxa/index.php?taxon=Mytella charruana"><i>Mytella charruana</i></a>), striped
+                            href="../../taxa/index.php?taxon=Mytella charruana"><i>Mytella charruana</i></a>), striped
                     barnacles,
                     green porcelain crabs (<i>Petrolisthes armatus</i>), serrated swimming crabs
                     (<i>Scylla
@@ -476,7 +476,7 @@ Photo courtesy USGS.</span></td>
                 <p class="body">Occasionally, an exotic species comes to occur in a new area not through any of
                     the human-facilitated introduction pathways described above, but through
                     natural range extension. The initial appearance in Florida of the highly
-                    migratory cattle egret (<a href="../taxa/index.php?taxon=Bubulcus ibis"><i>Bubulcus ibis</i></a>),
+                    migratory cattle egret (<a href="../../taxa/index.php?taxon=Bubulcus ibis"><i>Bubulcus ibis</i></a>),
                     native to Africa, appears to be a
                     largely natural occurrence unassisted by humans (Weber 1972, Kaufman 1996).
                     Similarly, the initial Florida panhandle population of nine-banded armadillos

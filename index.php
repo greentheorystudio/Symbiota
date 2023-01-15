@@ -9,7 +9,11 @@ $totalTaxa = number_format($IRLManager->getTotalTaxa());
 $totalTaxaWithDesc = number_format($IRLManager->getTotalTaxaWithDesc());
 $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords());
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
@@ -154,6 +158,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 </div>
 <?php
 include(__DIR__ . '/footer.php');
+include_once(__DIR__ . '/config/footer-includes.php');
 ?>
 </body>
 </html>

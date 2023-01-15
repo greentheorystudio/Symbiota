@@ -2,7 +2,11 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title>Contact</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css"
@@ -45,6 +49,7 @@ include(__DIR__ . '/../header.php');
 </div>
 <?php
 include(__DIR__ . '/../footer.php');
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>
