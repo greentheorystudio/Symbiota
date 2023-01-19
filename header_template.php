@@ -12,70 +12,68 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
             <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank" label="Spatial Module" stretch flat></q-btn>
             <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php" label="Image Search" stretch flat></q-btn>
             <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php" label="Browse Images" stretch flat></q-btn>
-            <q-btn-dropdown stretch flat label="Inventories" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?" class="horizontalDropDownButton text-capitalize" v-model="inventories" @mouseover="inventories = true" @mouseleave="inventories = false">
-                <q-list @mouseover="inventories = true" @mouseleave="inventories = false">
-                    <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=1" clickable v-close-popup>
-                        <q-item-section>
-                            <q-item-label>Project 1</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=2" clickable v-close-popup>
-                        <q-item-section>
-                            <q-item-label>Project 2</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=3" clickable v-close-popup>
-                        <q-item-section>
-                            <q-item-label>Project 3</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=4" clickable v-close-popup>
-                        <q-item-section>
-                            <q-item-label>Project 4</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                </q-list>
-            </q-btn-dropdown>
-            <q-btn-dropdown stretch flat label="Interactive Tools" class="horizontalDropDownButton text-capitalize" v-model="tools" @mouseover="tools = true" @mouseleave="tools = false">
-                <q-list @mouseover="tools = true" @mouseleave="tools = false">
-                    <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=1" clickable v-close-popup>
-                        <q-item-section>
-                            <q-item-label>Dynamic Checklist 1</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=2" clickable v-close-popup>
-                        <q-item-section>
-                            <q-item-label>Dynamic Checklist 2</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=3" clickable v-close-popup>
-                        <q-item-section>
-                            <q-item-label>Dynamic Checklist 3</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=4" clickable v-close-popup>
-                        <q-item-section>
-                            <q-item-label>Dynamic Checklist 4</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                </q-list>
-            </q-btn-dropdown>
+            <q-btn stretch flat label="Inventories" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?" class="horizontalDropDownButton text-capitalize" v-model="inventories" @mouseover="inventories = true" @mouseleave="inventories = false">
+                <q-menu v-model="inventories" transition-duration="750" square fit>
+                    <q-list @mouseover="inventories = true" @mouseleave="inventories = false">
+                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=1" clickable v-close-popup>
+                            <q-item-section>
+                                <q-item-label>Project 1</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=2" clickable v-close-popup>
+                            <q-item-section>
+                                <q-item-label>Project 2</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=3" clickable v-close-popup>
+                            <q-item-section>
+                                <q-item-label>Project 3</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=4" clickable v-close-popup>
+                            <q-item-section>
+                                <q-item-label>Project 4</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                    </q-list>
+                </q-menu>
+            </q-btn>
+            <q-btn stretch flat label="Interactive Tools" class="horizontalDropDownButton text-capitalize" v-model="tools" @mouseover="tools = true" @mouseleave="tools = false">
+                <q-menu v-model="tools" transition-duration="750" square fit>
+                    <q-list @mouseover="tools = true" @mouseleave="tools = false">
+                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=1" clickable v-close-popup>
+                            <q-item-section>
+                                <q-item-label>Dynamic Checklist 1</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=2" clickable v-close-popup>
+                            <q-item-section>
+                                <q-item-label>Dynamic Checklist 2</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=3" clickable v-close-popup>
+                            <q-item-section>
+                                <q-item-label>Dynamic Checklist 3</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=4" clickable v-close-popup>
+                            <q-item-section>
+                                <q-item-label>Dynamic Checklist 4</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                    </q-list>
+                </q-menu>
+            </q-btn>
             <q-space></q-space>
-            <?php
-            if($GLOBALS['USER_DISPLAY_NAME']){
-                ?>
-                <q-breadcrumbs-el class="header-username-text">Welcome <?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>!</q-breadcrumbs-el>
+            <template v-if="userDisplayName">
+                <q-breadcrumbs-el class="header-username-text">Welcome {{ userDisplayName }}!</q-breadcrumbs-el>
                 <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php" label="My Profile" stretch flat></q-btn>
                 <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/index.php?submit=logout" label="Logout" stretch flat></q-btn>
-                <?php
-            }
-            else{
-                ?>
+            </template>
+            <template v-else>
                 <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>" label="Log In" stretch flat></q-btn>
                 <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php" label="New Account" stretch flat></q-btn>
-                <?php
-            }
-            ?>
+            </template>
             <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" label="Sitemap" stretch flat></q-btn>
         </q-toolbar>
     </div>
@@ -84,6 +82,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
             const dropDownNavBar = Vue.createApp({
                 data() {
                     return {
+                        userDisplayName: USER_DISPLAY_NAME,
                         inventories: false,
                         tools: false
                     }

@@ -1,9 +1,6 @@
-const http = new XMLHttpRequest();
 let processCancelled = false;
 let unlinkedNamesArr = [];
 let currentSciname = '';
-let targetKingdomId = null;
-let targetKingdomName = null;
 let rankArr = null;
 let colInitialSearchResults = [];
 let itisInitialSearchResults = [];
@@ -14,6 +11,8 @@ let taxaToAddArr = [];
 let newTidArr = [];
 let taxaLoaded = 0;
 let rebuildHierarchyLoop = 0;
+let changedCurrentSciname = '';
+let changedParsedSciname = '';
 
 function addProgressLine(lineHtml,element = null){
     if(element){
@@ -73,59 +72,62 @@ function adjustUIStart(id){
 }
 
 function callCleaningController(step){
-    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-    let params = '';
+    let params = {
+        collid: collId
+    };
     if(step === 'question-marks'){
         processCancelled = false;
         adjustUIStart('cleanProcesses');
         addProgressLine('<li>Cleaning question marks from scientific names ' + processStatus + '</li>');
-        params = 'collid=' + collId + '&action=cleanQuestionMarks';
+        params['action'] = 'cleanQuestionMarks';
     }
     if(!processCancelled){
         if(step === 'clean-sp'){
             addProgressLine('<li>Cleaning scientific names ending in sp., sp. nov., spp., or group ' + processStatus + '</li>');
-            params = 'collid=' + collId + '&action=cleanSpNames';
+            params['action'] = 'cleanSpNames';
         }
         else if(step === 'clean-infra'){
             addProgressLine('<li>Normalizing infraspecific rank abbreviations ' + processStatus + '</li>');
-            params = 'collid=' + collId + '&action=cleanInfra';
+            params['action'] = 'cleanInfra';
         }
         else if(step === 'clean-qualifier'){
             addProgressLine('<li>Cleaning scientific names containing cf. or aff. ' + processStatus + '</li>');
-            params = 'collid=' + collId + '&action=cleanQualifierNames';
+            params['action'] = 'cleanQualifierNames';
         }
         else if(step === 'double-spaces'){
             addProgressLine('<li>Cleaning scientific names containing double spaces ' + processStatus + '</li>');
-            params = 'collid=' + collId + '&action=cleanDoubleSpaces';
+            params['action'] = 'cleanDoubleSpaces';
         }
         else if(step === 'leading-trailing-spaces'){
             addProgressLine('<li>Cleaning leading and trailing spaces in scientific names ' + processStatus + '</li>');
-            params = 'collid=' + collId + '&action=cleanTrimNames';
+            params['action'] = 'cleanTrimNames';
         }
         //console.log(url+'?'+params);
-        sendAPIPostRequest(url,params,function(status,res){
+        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
             processCleaningControllerResponse(step,status,res);
         },http);
     }
 }
 
 function callTaxThesaurusLinkController(step = ''){
-    if(targetKingdomId){
-        const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-        let params = '';
+    if(selectedKingdomId){
+        let params = {
+            collid: collId,
+            kingdomid: selectedKingdomId
+        };
         if(!step){
             processCancelled = false;
             adjustUIStart('updateWithTaxThesaurus');
             addProgressLine('<li>Updating linkages of occurrence records to the Taxonomic Thesaurus ' + processStatus + '</li>');
-            params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateOccThesaurusLinkages';
+            params['action'] = 'updateOccThesaurusLinkages';
         }
         if(!processCancelled){
             if(step === 'update-det-linkages'){
                 addProgressLine('<li>Updating linkages of associated determination records to the Taxonomic Thesaurus ' + processStatus + '</li>');
-                params = 'collid=' + collId + '&kingdomid=' + targetKingdomId + '&action=updateDetThesaurusLinkages';
+                params['action'] = 'updateDetThesaurusLinkages';
             }
             //console.log(url+'?'+params);
-            sendAPIPostRequest(url,params,function(status,res){
+            sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
                 processTaxThesaurusLinkControllerResponse(step,status,res);
             },http);
         }
@@ -137,7 +139,7 @@ function callTaxThesaurusLinkController(step = ''){
 
 function cancelProcess(adjustUI = true){
     processCancelled = true;
-    http.abort();
+    cancelAPIRequest();
     if(adjustUI){
         adjustUIEnd();
     }
@@ -176,9 +178,12 @@ function getITISNameSearchResultsHierarchy(){
     else{
         id = nameSearchResults[0]['accepted_id'];
     }
-    const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
     const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
-    sendProxyGetRequest(proxyUrl,url,function(status,res){
+    const params = {
+        url: url,
+        action: 'get'
+    };
+    sendAPIPostRequest(proxyApiUrl,params,function(status,res){
         if(status === 200){
             const resObj = JSON.parse(res);
             const resArr = resObj['hierarchyList'];
@@ -222,9 +227,12 @@ function getITISNameSearchResultsHierarchy(){
 
 function getITISNameSearchResultsRecord(){
     const id = nameSearchResults[0]['id'];
-    const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
     const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
-    sendProxyGetRequest(proxyUrl,url,function(status,res){
+    const params = {
+        url: url,
+        action: 'get'
+    };
+    sendAPIPostRequest(proxyApiUrl,params,function(status,res){
         if(status === 200){
             const resObj = JSON.parse(res);
             const taxonRankData = resObj['taxRank'];
@@ -262,9 +270,12 @@ function getITISNameSearchResultsRecord(){
 function getWoRMSAddTaxonAuthor(){
     if(!processCancelled){
         const id = processingArr[0]['id'];
-        const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
         const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
-        sendProxyGetRequest(proxyUrl,url,function(status,res){
+        const params = {
+            url: url,
+            action: 'get'
+        };
+        sendAPIPostRequest(proxyApiUrl,params,function(status,res){
             const currentTaxon = processingArr[0];
             if(status === 200){
                 const resObj = JSON.parse(res);
@@ -285,9 +296,12 @@ function getWoRMSNameSearchResultsHierarchy(){
     else{
         id = nameSearchResults[0]['accepted_id'];
     }
-    const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
     const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
-    sendProxyGetRequest(proxyUrl,url,function(status,res){
+    const params = {
+        url: url,
+        action: 'get'
+    };
+    sendAPIPostRequest(proxyApiUrl,params,function(status,res){
         if(status === 200){
             const resObj = JSON.parse(res);
             const hierarchyArr = [];
@@ -337,12 +351,15 @@ function getWoRMSNameSearchResultsHierarchy(){
 }
 
 function getWoRMSNameSearchResultsRecord(id){
-    const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
     const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
-    sendProxyGetRequest(proxyUrl,url,function(status,res){
+    const params = {
+        url: url,
+        action: 'get'
+    };
+    sendAPIPostRequest(proxyApiUrl,params,function(status,res){
         if(status === 200){
             const resObj = JSON.parse(res);
-            if(resObj['kingdom'].toLowerCase() === targetKingdomName.toLowerCase()){
+            if(resObj['kingdom'].toLowerCase() === selectedKingdomName.toLowerCase()){
                 const resultObj = {};
                 resultObj['id'] = resObj['AphiaID'];
                 resultObj['sciname'] = resObj['scientificname'];
@@ -377,10 +394,11 @@ function initializeCleanScinameAuthor(){
     processCancelled = false;
     adjustUIStart('cleanScinameAuthor');
     addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
-    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-    const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
-    //console.log(url+'?'+params);
-    sendAPIPostRequest(url,params,function(status,res){
+    const params = {
+        collid: collId,
+        action: 'getUnlinkedOccSciNames'
+    };
+    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
         if(status === 200) {
             processSuccessResponse(15,'Complete');
             unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
@@ -393,17 +411,15 @@ function initializeCleanScinameAuthor(){
 }
 
 function initializeDataSourceSearch(){
-    if(targetKingdomId){
+    if(selectedKingdomId){
         processCancelled = false;
         nameTidIndex = {};
         taxaLoaded = 0;
         newTidArr = [];
         adjustUIStart('resolveFromTaxaDataSource');
         addProgressLine('<li>Setting rank data for processing search returns ' + processStatus + '</li>');
-        const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
-        const params = 'action=getRankNameArr';
-        //console.log(url+'?'+params);
-        sendAPIPostRequest(url,params,function(status,res){
+        const url = taxonomyApiUrl + '?action=getRankNameArr'
+        sendAPIGetRequest(url,function(status,res){
             if(status === 200) {
                 processSuccessResponse(15,'Complete');
                 rankArr = JSON.parse(res);
@@ -420,14 +436,15 @@ function initializeDataSourceSearch(){
 }
 
 function initializeTaxThesaurusFuzzyMatch(){
-    if(targetKingdomId && levValue.value && Number(levValue.value) > 0){
+    if(selectedKingdomId && levValue.value && Number(levValue.value) > 0){
         processCancelled = false;
         adjustUIStart('taxThesaurusFuzzyMatch');
         addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
-        const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-        const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
-        //console.log(url+'?'+params);
-        sendAPIPostRequest(url,params,function(status,res){
+        const params = {
+            collid: collId,
+            action: 'getUnlinkedOccSciNames'
+        };
+        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
             if(status === 200) {
                 processSuccessResponse(15,'Complete');
                 unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
@@ -438,7 +455,7 @@ function initializeTaxThesaurusFuzzyMatch(){
             }
         },http);
     }
-    else if(!targetKingdomId){
+    else if(!selectedKingdomId){
         alert('Please select a Target Kingdom from the dropdown menu above.');
     }
     else{
@@ -448,31 +465,26 @@ function initializeTaxThesaurusFuzzyMatch(){
 
 function populateTaxonomicHierarchy(){
     if(rebuildHierarchyLoop < 40){
-        const formData = new FormData();
-        formData.append('tidarr', JSON.stringify(newTidArr));
-        formData.append('action', 'populateHierarchyTable');
-        const http = new XMLHttpRequest();
-        const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
-        http.open("POST", url, true);
-        http.onreadystatechange = function() {
-            if(http.readyState === 4) {
-                if(http.status === 200) {
-                    if(Number(http.responseText) > 0){
-                        rebuildHierarchyLoop++;
-                        populateTaxonomicHierarchy();
-                    }
-                    else{
-                        processSuccessResponse(15,'Complete');
-                        adjustUIEnd();
-                    }
+        const params = {
+            tidarr: JSON.stringify(newTidArr),
+            action: 'populateHierarchyTable'
+        };
+        sendAPIPostRequest(taxonomyApiUrl,params,function(status,res){
+            if(status === 200) {
+                if(Number(res) > 0){
+                    rebuildHierarchyLoop++;
+                    populateTaxonomicHierarchy();
                 }
                 else{
-                    processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
+                    processSuccessResponse(15,'Complete');
                     adjustUIEnd();
                 }
             }
-        };
-        http.send(formData);
+            else{
+                processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
+                adjustUIEnd();
+            }
+        });
     }
     else{
         processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
@@ -483,30 +495,25 @@ function populateTaxonomicHierarchy(){
 function primeTaxonomicHierarchy(){
     rebuildHierarchyLoop = 0;
     addProgressLine('<li>Populating taxonomic hierarchy with new taxa ' + processStatus + '</li>');
-    const formData = new FormData();
-    formData.append('tidarr', JSON.stringify(newTidArr));
-    formData.append('action', 'primeHierarchyTable');
-    const http = new XMLHttpRequest();
-    const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
-    http.open("POST", url, true);
-    http.onreadystatechange = function() {
-        if(http.readyState === 4) {
-            if(http.status === 200) {
-                if(Number(http.responseText) > 0){
-                    rebuildHierarchyLoop++;
-                    populateTaxonomicHierarchy();
-                }
-                else{
-                    adjustUIEnd();
-                }
+    const params = {
+        tidarr: JSON.stringify(newTidArr),
+        action: 'primeHierarchyTable'
+    };
+    sendAPIPostRequest(taxonomyApiUrl,params,function(status,res){
+        if(status === 200) {
+            if(Number(res) > 0){
+                rebuildHierarchyLoop++;
+                populateTaxonomicHierarchy();
             }
             else{
-                processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
                 adjustUIEnd();
             }
         }
-    };
-    http.send(formData);
+        else{
+            processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
+            adjustUIEnd();
+        }
+    });
 }
 
 function processAddTaxaArr(){
@@ -516,7 +523,7 @@ function processAddTaxaArr(){
         const newTaxonObj = {};
         newTaxonObj['sciname'] = taxonToAdd['sciname'];
         newTaxonObj['author'] = taxonToAdd['author'];
-        newTaxonObj['kingdomid'] = targetKingdomId;
+        newTaxonObj['kingdomid'] = selectedKingdomId;
         newTaxonObj['rankid'] = taxonToAdd['rankid'];
         newTaxonObj['acceptstatus'] = 1;
         newTaxonObj['tidaccepted'] = '';
@@ -525,29 +532,24 @@ function processAddTaxaArr(){
         newTaxonObj['source'] = getDataSourceName();
         newTaxonObj['source-name'] = dataSource.value;
         newTaxonObj['source-id'] = taxonToAdd['id'];
-        const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
-        const formData = new FormData();
-        formData.append('taxon', JSON.stringify(newTaxonObj));
-        formData.append('action', 'addTaxon');
-        const addHttp = new XMLHttpRequest();
-        addHttp.open("POST", url, true);
-        addHttp.onreadystatechange = function() {
-            if(addHttp.readyState === 4) {
-                if(addHttp.responseText && Number(addHttp.responseText) > 0){
-                    const newTid = Number(addHttp.responseText);
-                    nameTidIndex[taxaToAddArr[0]['sciname']] = newTid;
-                    newTidArr.push(newTid);
-                    taxaToAddArr.splice(0, 1);
-                    processSuccessResponse(0);
-                    processAddTaxaArr();
-                }
-                else{
-                    processErrorResponse(15,false,'Error loading taxon');
-                    runScinameDataSourceSearch();
-                }
-            }
+        const params = {
+            taxon: JSON.stringify(newTaxonObj),
+            action: 'addTaxon'
         };
-        addHttp.send(formData);
+        sendAPIPostRequest(taxonomyApiUrl,params,function(status,res){
+            if(res && Number(res) > 0){
+                const newTid = Number(res);
+                nameTidIndex[taxaToAddArr[0]['sciname']] = newTid;
+                newTidArr.push(newTid);
+                taxaToAddArr.splice(0, 1);
+                processSuccessResponse(0);
+                processAddTaxaArr();
+            }
+            else{
+                processErrorResponse(15,false,'Error loading taxon');
+                runScinameDataSourceSearch();
+            }
+        });
     }
     else{
         processAddTaxon();
@@ -565,7 +567,7 @@ function processAddTaxon(){
         const newTaxonObj = {};
         newTaxonObj['sciname'] = taxonToAdd['sciname'];
         newTaxonObj['author'] = taxonToAdd['author'];
-        newTaxonObj['kingdomid'] = targetKingdomId;
+        newTaxonObj['kingdomid'] = selectedKingdomId;
         newTaxonObj['rankid'] = taxonToAdd['rankid'];
         newTaxonObj['acceptstatus'] = taxonToAdd['accepted'] ? 1 : 0;
         newTaxonObj['tidaccepted'] = !taxonToAdd['accepted'] ? nameTidIndex[taxonToAdd['accepted_sciname']] : '';
@@ -574,44 +576,48 @@ function processAddTaxon(){
         newTaxonObj['source'] = getDataSourceName();
         newTaxonObj['source-name'] = dataSource.value;
         newTaxonObj['source-id'] = taxonToAdd['id'];
-        const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
-        const formData = new FormData();
-        formData.append('taxon', JSON.stringify(newTaxonObj));
-        formData.append('action', 'addTaxon');
-        const addHttp = new XMLHttpRequest();
-        addHttp.open("POST", url, true);
-        addHttp.onreadystatechange = function() {
-            if(addHttp.readyState === 4) {
-                if(addHttp.responseText && Number(addHttp.responseText) > 0){
-                    const newTid = Number(addHttp.responseText);
-                    nameTidIndex[nameSearchResults[0]['sciname']] = newTid;
-                    newTidArr.push(newTid);
-                    processSuccessResponse(15,'Successfully added ' + nameSearchResults[0]['sciname']);
-                    if(currentSciname === nameSearchResults[0]['sciname']){
-                        updateOccurrenceLinkages();
-                    }
-                    else{
-                        addProgressLine('<li class="first-indent">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
-                        updateOccurrencesWithCleanedSciname(currentSciname,nameSearchResults[0]['sciname'],function(status,res,current,parsed){
-                            if(status === 200) {
-                                processSuccessResponse(15,(res + ' records updated'));
-                                addRunCleanScinameAuthorUndoButton(current,parsed);
-                                updateOccurrenceLinkages();
-                            }
-                            else{
-                                processErrorResponse(15,true,'Error updating occurrence records');
-                                updateOccurrenceLinkages();
-                            }
-                        },newTid);
-                    }
+        const params = {
+            taxon: JSON.stringify(newTaxonObj),
+            action: 'addTaxon'
+        };
+        sendAPIPostRequest(taxonomyApiUrl,params,function(status,res){
+            if(res && Number(res) > 0){
+                const newTid = Number(res);
+                nameTidIndex[nameSearchResults[0]['sciname']] = newTid;
+                newTidArr.push(newTid);
+                processSuccessResponse(15,'Successfully added ' + nameSearchResults[0]['sciname']);
+                if(currentSciname === nameSearchResults[0]['sciname']){
+                    updateOccurrenceLinkages();
                 }
                 else{
-                    processErrorResponse(15,false,'Error loading taxon');
-                    runScinameDataSourceSearch();
+                    addProgressLine('<li class="first-indent">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
+                    changedCurrentSciname = currentSciname;
+                    changedParsedSciname = nameSearchResults[0]['sciname'];
+                    const params = {
+                        collid: collId,
+                        sciname: currentSciname,
+                        cleanedsciname: nameSearchResults[0]['sciname'],
+                        tid: newTid,
+                        action: 'updateOccWithCleanedName'
+                    };
+                    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
+                        if(status === 200) {
+                            processSuccessResponse(15,(res + ' records updated'));
+                            addRunCleanScinameAuthorUndoButton(changedCurrentSciname,changedParsedSciname);
+                            updateOccurrenceLinkages();
+                        }
+                        else{
+                            processErrorResponse(15,true,'Error updating occurrence records');
+                            updateOccurrenceLinkages();
+                        }
+                    });
                 }
             }
-        };
-        addHttp.send(formData);
+            else{
+                processErrorResponse(15,false,'Error loading taxon');
+                runScinameDataSourceSearch();
+            }
+        });
     }
 }
 
@@ -766,7 +772,7 @@ function processGetITISTaxonByScinameResponse(res){
         for(let i in resultArr){
             if(resultArr.hasOwnProperty(i)){
                 const taxResult = resultArr[i];
-                if(taxResult['combinedName'] === currentSciname && taxResult['kingdom'].toLowerCase() === targetKingdomName.toLowerCase()){
+                if(taxResult['combinedName'] === currentSciname && taxResult['kingdom'].toLowerCase() === selectedKingdomName.toLowerCase()){
                     const resultObj = {};
                     resultObj['id'] = taxResult['tsn'];
                     resultObj['sciname'] = taxResult['combinedName'];
@@ -855,22 +861,29 @@ function runCleanScinameAuthorProcess(){
             currentSciname = unlinkedNamesArr[0];
             unlinkedNamesArr.splice(0, 1);
             addProgressLine('<li>Attempting to parse author name from: ' + currentSciname + ' ' + processStatus + '</li>');
-            const formData = new FormData();
-            formData.append('sciname', currentSciname);
-            formData.append('action', 'parseSciName');
-            const http = new XMLHttpRequest();
-            const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
-            http.open("POST", url, true);
-            http.onreadystatechange = function() {
-                if(http.readyState === 4 && http.status === 200) {
-                    const parsedName = JSON.parse(http.responseText);
+            const params = {
+                sciname: currentSciname,
+                action: 'parseSciName'
+            };
+            sendAPIPostRequest(taxonomyApiUrl,params,function(status,res){
+                if(status === 200) {
+                    const parsedName = JSON.parse(res);
                     if(parsedName.hasOwnProperty('author') && parsedName['author'] !== ''){
                         processSuccessResponse(15,'Parsed author: ' + parsedName['author'] + '<br />Cleaned scientific name: ' + parsedName['sciname']);
                         addProgressLine('<li class="first-indent">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
-                        updateOccurrencesWithCleanedSciname(currentSciname,parsedName['sciname'],function(status,res,current,parsed){
+                        changedCurrentSciname = currentSciname;
+                        changedParsedSciname = parsedName['sciname'];
+                        const params = {
+                            collid: collId,
+                            sciname: currentSciname,
+                            cleanedsciname: parsedName['sciname'],
+                            tid: null,
+                            action: 'updateOccWithCleanedName'
+                        };
+                        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
                             if(status === 200) {
                                 processSuccessResponse(15,(res + ' records updated'));
-                                addRunCleanScinameAuthorUndoButton(current,parsed);
+                                addRunCleanScinameAuthorUndoButton(changedCurrentSciname,changedParsedSciname);
                                 runCleanScinameAuthorProcess();
                             }
                             else{
@@ -884,8 +897,7 @@ function runCleanScinameAuthorProcess(){
                         runCleanScinameAuthorProcess();
                     }
                 }
-            };
-            http.send(formData);
+            });
         }
         else{
             adjustUIEnd();
@@ -902,12 +914,15 @@ function runScinameDataSourceSearch(){
             nameSearchResults = [];
             currentSciname = unlinkedNamesArr[0];
             unlinkedNamesArr.splice(0, 1);
-            const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
             if(dataSource.value === 'col'){
                 colInitialSearchResults = [];
                 addProgressLine('<li>Searching the Catalogue of Life (COL) for ' + currentSciname + ' ' + processStatus + '</li>');
                 const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + currentSciname;
-                sendProxyGetRequest(proxyUrl,url,function(status,res){
+                const params = {
+                    url: url,
+                    action: 'get'
+                };
+                sendAPIPostRequest(proxyApiUrl,params,function(status,res){
                     if(status === 200){
                         processGetCOLTaxonByScinameResponse(res);
                     }
@@ -921,7 +936,11 @@ function runScinameDataSourceSearch(){
                 itisInitialSearchResults = [];
                 addProgressLine('<li>Searching the Integrated Taxonomic Information System (ITIS) for ' + currentSciname + ' ' + processStatus + '</li>');
                 const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + currentSciname;
-                sendProxyGetRequest(proxyUrl,url,function(status,res){
+                const params = {
+                    url: url,
+                    action: 'get'
+                };
+                sendAPIPostRequest(proxyApiUrl,params,function(status,res){
                     if(status === 200){
                         processGetITISTaxonByScinameResponse(res);
                     }
@@ -934,7 +953,11 @@ function runScinameDataSourceSearch(){
             else if(dataSource.value === 'worms'){
                 addProgressLine('<li>Searching the World Register of Marine Species (WoRMS) for ' + currentSciname + ' ' + processStatus + '</li>');
                 const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + currentSciname + '?marine_only=false';
-                sendProxyGetRequest(proxyUrl,url,function(status,res){
+                const params = {
+                    url: url,
+                    action: 'get'
+                };
+                sendAPIPostRequest(proxyApiUrl,params,function(status,res){
                     if(status === 200 && res && Number(res) > 0){
                         getWoRMSNameSearchResultsRecord(res);
                     }
@@ -965,34 +988,33 @@ function runScinameDataSourceSearch(){
 }
 
 function runTaxThesaurusFuzzyMatchProcess(){
+    changedCurrentSciname = '';
+    changedParsedSciname = '';
     disableFuzzyMatchButtons();
     if(!processCancelled){
         if(unlinkedNamesArr.length > 0){
             currentSciname = unlinkedNamesArr[0];
             unlinkedNamesArr.splice(0, 1);
             addProgressLine('<li>Finding fuzzy matches for: ' + currentSciname + ' ' + processStatus + '</li>');
-            const formData = new FormData();
-            formData.append('kingdomid', targetKingdomId);
-            formData.append('sciname', currentSciname);
-            formData.append('lev', levValue.value);
-            formData.append('action', 'getSciNameFuzzyMatches');
-            const http = new XMLHttpRequest();
-            const url = CLIENT_ROOT + '/api/taxa/taxaController.php';
-            http.open("POST", url, true);
-            http.onreadystatechange = function() {
-                if(http.readyState === 4 && http.status === 200) {
-                    const fuzzyMatches = JSON.parse(http.responseText);
+            const params = {
+                kingdomid: selectedKingdomId,
+                sciname: currentSciname,
+                lev: levValue.value,
+                action: 'getSciNameFuzzyMatches'
+            };
+            sendAPIPostRequest(taxonomyApiUrl,params,function(status,res){
+                if(status === 200) {
+                    const fuzzyMatches = JSON.parse(res);
                     if(checkObjectNotEmpty(fuzzyMatches)){
                         processSuccessResponse(0);
                         processFuzzyMatches(fuzzyMatches);
                     }
                     else{
-                        processErrorResponse(15,false,'No fuzzy matched found');
+                        processErrorResponse(15,false,'No fuzzy matches found');
                         runTaxThesaurusFuzzyMatchProcess();
                     }
                 }
-            };
-            http.send(formData);
+            });
         }
         else{
             adjustUIEnd();
@@ -1004,45 +1026,28 @@ function runTaxThesaurusFuzzyMatchProcess(){
 }
 
 function selectFuzzyMatch(sciName,newName,newtid){
+    changedCurrentSciname = sciName;
+    changedParsedSciname = newName;
     disableFuzzyMatchButtons();
     addProgressLine('<li class="first-indent">Updating occurrence records with selected scientific name ' + processStatus + '</li>');
-    updateOccurrencesWithCleanedSciname(sciName,newName,function(status,res,current,parsed){
+    const params = {
+        collid: collId,
+        sciname: sciName,
+        cleanedsciname: newName,
+        tid: newtid,
+        action: 'updateOccWithCleanedName'
+    };
+    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
         if(status === 200) {
             processSuccessResponse(15,(res + ' records updated'));
-            addRunCleanScinameAuthorUndoButton(current,parsed);
+            addRunCleanScinameAuthorUndoButton(changedCurrentSciname,changedParsedSciname);
             runTaxThesaurusFuzzyMatchProcess();
         }
         else{
             processErrorResponse(15,false,'Error updating occurrence records');
             runTaxThesaurusFuzzyMatchProcess();
         }
-    },newtid);
-}
-
-function setKingdomSelector(){
-    const taxHttp = new XMLHttpRequest();
-    const url = CLIENT_ROOT + '/api/taxa/taxaController.php?action=getKingdomArr';
-    //console.log(url);
-    taxHttp.open("GET", url, true);
-    taxHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    taxHttp.onreadystatechange = function() {
-        if(taxHttp.readyState === 4 && taxHttp.status === 200) {
-            const retData = JSON.parse(taxHttp.responseText);
-            for(let i in retData){
-                const kingObj = {};
-                if(retData.hasOwnProperty(i)){
-                    const kingObj = {};
-                    kingObj['value'] = i;
-                    kingObj['label'] = retData[i];
-                    kingdomOptions.value.push(kingObj);
-                }
-            }
-            kingdomOptions.value.sort(function (a, b) {
-                return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
-            });
-        }
-    };
-    taxHttp.send();
+    });
 }
 
 function setTaxaToAdd(){
@@ -1050,8 +1055,10 @@ function setTaxaToAdd(){
         const sciname = processingArr[0]['sciname'];
         if(!nameTidIndex.hasOwnProperty(sciname)){
             const url = CLIENT_ROOT + '/api/taxa/gettid.php';
-            const params = 'sciname=' + sciname + '&kingdomid=' + targetKingdomId;
-            //console.log(url+'?'+params);
+            const params = {
+                sciname: sciname,
+                kingdomid: selectedKingdomId
+            };
             sendAPIPostRequest(url,params,function(status,res){
                 if(dataSource.value === 'worms' && !res){
                     getWoRMSAddTaxonAuthor();
@@ -1084,39 +1091,35 @@ function setUnlinkedRecordCounts(){
     const loadingMessage = getSmallWorkingSpinnerHtml(12);
     document.getElementById("unlinkedOccCnt").innerHTML = loadingMessage;
     document.getElementById("unlinkedTaxaCnt").innerHTML = loadingMessage;
-    const recHttp = new XMLHttpRequest();
-    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-    const params = 'collid=' + collId + '&action=getUnlinkedScinameCounts';
-    //console.log(url+'?'+params);
-    recHttp.open("POST", url, true);
-    recHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    recHttp.onreadystatechange = function() {
-        if(recHttp.readyState === 4) {
-            let retData = {};
-            if(recHttp.status === 200) {
-                retData = JSON.parse(recHttp.responseText);
-            }
-            if(retData.hasOwnProperty('occCnt') && retData.hasOwnProperty('taxaCnt')){
-                document.getElementById("unlinkedOccCnt").innerHTML = retData['occCnt'];
-                document.getElementById("unlinkedTaxaCnt").innerHTML = retData['taxaCnt'];
-            }
-            else{
-                const errorMessage = '<span style="color:red;">Error loading count</span>';
-                document.getElementById("unlinkedOccCnt").innerHTML = errorMessage;
-                document.getElementById("unlinkedTaxaCnt").innerHTML = errorMessage;
-            }
-        }
+    const params = {
+        collid: collId,
+        action: 'getUnlinkedScinameCounts'
     };
-    recHttp.send(params);
+    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
+        let retData = {};
+        if(status === 200) {
+            retData = JSON.parse(res);
+        }
+        if(retData.hasOwnProperty('occCnt') && retData.hasOwnProperty('taxaCnt')){
+            document.getElementById("unlinkedOccCnt").innerHTML = retData['occCnt'];
+            document.getElementById("unlinkedTaxaCnt").innerHTML = retData['taxaCnt'];
+        }
+        else{
+            const errorMessage = '<span style="color:red;">Error loading count</span>';
+            document.getElementById("unlinkedOccCnt").innerHTML = errorMessage;
+            document.getElementById("unlinkedTaxaCnt").innerHTML = errorMessage;
+        }
+    });
 }
 
 function setUnlinkedTaxaList(){
     if(!processCancelled){
         addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
-        const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-        const params = 'collid=' + collId + '&action=getUnlinkedOccSciNames';
-        //console.log(url+'?'+params);
-        sendAPIPostRequest(url,params,function(status,res){
+        const params = {
+            collid: collId,
+            action: 'getUnlinkedOccSciNames'
+        };
+        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
             if(status === 200) {
                 processSuccessResponse(15,'Complete');
                 unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
@@ -1134,34 +1137,30 @@ function undoChangedSciname(oldName,newName){
     const progressLineElement = document.getElementById(progressLineElementId);
     const progressLineElementHtml = 'Reverting scientific name change from ' + oldName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' to ' + newName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' ' + processStatus;
     addProgressLine(progressLineElementHtml,progressLineElement);
-    const formData = new FormData();
-    formData.append('collid', collId);
-    formData.append('oldsciname', oldName);
-    formData.append('newsciname', newName);
-    formData.append('action', 'undoOccScinameChange');
-    const http = new XMLHttpRequest();
-    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-    http.open("POST", url, true);
-    http.onreadystatechange = function() {
-        if(http.readyState === 4) {
-            if(http.status === 200) {
-                processSuccessResponse(15,(http.responseText + ' records reverted'));
-            }
-            else{
-                processErrorResponse(15,false,'Error undoing name change');
-            }
-        }
+    const params = {
+        collid: collId,
+        oldsciname: oldName,
+        newsciname: newName,
+        action: 'undoOccScinameChange'
     };
-    http.send(formData);
+    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
+        if(status === 200) {
+            processSuccessResponse(15,(res + ' records reverted'));
+        }
+        else{
+            processErrorResponse(15,false,'Error undoing name change');
+        }
+    });
 }
 
 function updateOccLocalitySecurity(){
     adjustUIStart('updateOccLocalitySecurity');
     addProgressLine('<li>Updating the locality security settings for occurrence records of protected species ' + processStatus + '</li>');
-    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-    const params = 'collid=' + collId + '&action=updateLocalitySecurity';
-    //console.log(url+'?'+params);
-    sendAPIPostRequest(url,params,function(status,res){
+    const params = {
+        collid: collId,
+        action: 'updateLocalitySecurity'
+    };
+    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
         processUpdateCleanResponse('updated',status,res);
         adjustUIEnd();
     },http);
@@ -1171,10 +1170,14 @@ function updateOccurrenceLinkages(){
     const newSciname = nameSearchResults[0]['sciname'];
     const newScinameTid = nameTidIndex[nameSearchResults[0]['sciname']];
     addProgressLine('<li class="first-indent">Updating linkages of occurrence records to ' + newSciname + ' ' + processStatus + '</li>');
-    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-    let params = 'collid=' + collId + '&sciname=' + newSciname + '&tid=' + newScinameTid + '&kingdomid=' + targetKingdomId + '&action=updateOccWithNewSciname';
-    //console.log(url+'?'+params);
-    sendAPIPostRequest(url,params,function(status,res){
+    const params = {
+        collid: collId,
+        sciname: newSciname,
+        tid: newScinameTid,
+        kingdomid: selectedKingdomId,
+        action: 'updateOccWithNewSciname'
+    };
+    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
         if(status === 200) {
             processSuccessResponse(15, res + ' records updated');
         }
@@ -1190,24 +1193,6 @@ function updateOccurrenceLinkages(){
     });
 }
 
-function updateOccurrencesWithCleanedSciname(oldName,cleanedName,callback,tid = null){
-    const formData = new FormData();
-    formData.append('collid', collId);
-    formData.append('sciname', oldName);
-    formData.append('cleanedsciname', cleanedName);
-    formData.append('tid', tid);
-    formData.append('action', 'updateOccWithCleanedName');
-    const http = new XMLHttpRequest();
-    const url = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-    http.open("POST", url, true);
-    http.onreadystatechange = function() {
-        if(http.readyState === 4) {
-            callback(http.status,http.responseText,oldName,cleanedName);
-        }
-    };
-    http.send(formData);
-}
-
 function validateCOLInitialNameSearchResults(){
     if(colInitialSearchResults.length > 0){
         let id;
@@ -1219,13 +1204,16 @@ function validateCOLInitialNameSearchResults(){
         else{
             id = taxon['accepted_id'];
         }
-        const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
         const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/classification';
-        sendProxyGetRequest(proxyUrl,url,function(status,res){
+        const params = {
+            url: url,
+            action: 'get'
+        };
+        sendAPIPostRequest(proxyApiUrl,params,function(status,res){
             if(status === 200){
                 const resArr = JSON.parse(res);
                 const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
-                if(kingdomObj && kingdomObj['name'].toLowerCase() === targetKingdomName.toLowerCase()){
+                if(kingdomObj && kingdomObj['name'].toLowerCase() === selectedKingdomName.toLowerCase()){
                     let hierarchyArr = [];
                     if(taxon.hasOwnProperty('hierarchy')){
                         hierarchyArr = taxon['hierarchy'];
@@ -1280,9 +1268,12 @@ function validateITISInitialNameSearchResults(){
         const taxon = itisInitialSearchResults[0];
         itisInitialSearchResults.splice(0, 1);
         const id = taxon['id'];
-        const proxyUrl = CLIENT_ROOT + '/api/proxy.php';
         const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
-        sendProxyGetRequest(proxyUrl,url,function(status,res){
+        const params = {
+            url: url,
+            action: 'get'
+        };
+        sendAPIPostRequest(proxyApiUrl,params,function(status,res){
             if(status === 200){
                 const resObj = JSON.parse(res);
                 const coreMetadata = resObj['coreMetadata'];

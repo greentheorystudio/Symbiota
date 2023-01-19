@@ -1,6 +1,7 @@
 <script type="text/javascript">
     const CLIENT_ROOT = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>';
     const SOLR_MODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
+    const USER_DISPLAY_NAME = '<?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>';
 
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 
@@ -27,4 +28,9 @@
     const SPATIAL_DRAGDROP_POINT_RADIUS = <?php echo $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']; ?>;
     const SPATIAL_DRAGDROP_OPACITY = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_OPACITY']; ?>';
     const SPATIAL_DRAGDROP_RASTER_COLOR_SCALE = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']; ?>';
+
+    const http = new XMLHttpRequest();
+    const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';
+    const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
+    const taxonomyApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
 </script>
