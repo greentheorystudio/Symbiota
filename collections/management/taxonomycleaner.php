@@ -30,6 +30,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <style>
+        .header-block {
+            display: flex;
+            justify-content: space-between;
+            margin: 0 30px 8px;
+        }
         .icon-link {
             cursor: pointer;
         }
@@ -64,51 +69,24 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             max-height: 520px;
             overflow: auto;
         }
-        .success-status {
-            display: block;
-            color: green;
-            font-weight: bold;
-        }
-        .error-status {
-            display: block;
-            color: red;
-            font-weight: bold;
-        }
-        .current-status {
-            margin-left: 10px;
-        }
-        .current-status {
-            margin-left: 10px;
-        }
-        ul.processor-display-list li.first-indent {
-            margin-left: 15px;
-            list-style-type: none;
-        }
-        .fuzzy-select-button-li {
-            margin-top: 10px;
-        }
-        .undo-button, .fuzzy-skip-button-li {
-            margin-bottom: 5px;
-        }
-        .fuzzy-match {
-            font-weight: bold;
-        }
-        .fuzzy-select-button {
-            margin-left: 15px;
-        }
         .process-header {
             margin-bottom: 5px;
             font-weight: bold;
         }
+        .fuzzy-match-row {
+            display: flex;
+            justify-content: space-between;
+        }
     </style>
-    <script src="../../js/collections.taxonomytools.js?ver=20230116" type="text/javascript"></script>
+    <script src="../../js/collections.taxonomytools.js?ver=20230117" type="text/javascript"></script>
     <script>
         const collId = <?php echo $collid; ?>;
         const processStatus = '<span class="current-status">' + getSmallWorkingSpinnerHtml(11) + '</span>';
 
-        document.addEventListener("DOMContentLoaded", function() {
-            setUnlinkedRecordCounts();
-        });
+        function clearSubprocesses(id){
+            const parentProcObj = processorDisplayArr.value.find(proc => proc['id'] === id);
+            parentProcObj['subs'] = [];
+        }
     </script>
 </head>
 <body>
@@ -130,29 +108,29 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <?php
         if($collid && $isEditor){
             ?>
-            <div style="display:flex;justify-content: space-between;margin-bottom:8px;">
-                <div style="font-weight: bold;margin-left:30px;">
+            <div class="header-block">
+                <div class="text-weight-bold">
                     <?php echo $collMap[(int)$collid]['collectionname'].($collMap[(int)$collid]['code']?' ('.$collMap[(int)$collid]['code'].')':''); ?>
                 </div>
                 <div onclick="openTutorialWindow('../../tutorial/collections/management/taxonomy/index.php?collid=<?php echo $collid; ?>');" title="Open Tutorial Window">
                     <q-icon name="far fa-question-circle" size="20px" class="icon-link" />
                 </div>
             </div>
-            <div style="display:flex;justify-content: space-between;margin-bottom:8px;">
-                <div style="margin-left:30px;font-weight:bold;">
-                    <div style="margin-top:5px;">
+            <div class="header-block">
+                <div class="text-weight-bold">
+                    <div class="q-mt-xs">
                         <taxa-kingdom-selector :disable="upperdisabled"></taxa-kingdom-selector>
                     </div>
-                    <div style="margin-top:5px;">
+                    <div class="q-mt-xs">
                         <q-input outlined v-model="startIndex" label="Processing Start Index" style="width:250px;" :readonly="upperdisabled" dense />
                     </div>
-                    <div style="margin-top:5px;">
+                    <div class="q-mt-xs">
                         <q-input outlined v-model="batchLimit" label="Processing Batch Limit" style="width:175px;" @update:model-value="processingBatchLimitChange" :readonly="upperdisabled" dense />
                     </div>
                 </div>
-                <div style="margin-right:30px;font-weight:bold;">
-                    <u>Occurrences not linked to taxonomic thesaurus</u>: <span id="unlinkedOccCnt"></span><br/>
-                    <u>Unique scientific names</u>: <span id="unlinkedTaxaCnt"></span><br/>
+                <div class="text-weight-bold">
+                    Occurrences not linked to taxonomic thesaurus: {{ unlinkedOccCnt }}<q-spinner v-if="unlinkedLoading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner><br/>
+                    Unique scientific names: {{ unlinkedTaxaCnt }}<q-spinner v-if="unlinkedLoading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner><br/>
                 </div>
             </div>
             <div class="processor-container">
@@ -195,7 +173,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             Set Taxonomic Thesaurus Linkages
                                         </div>
                                         Set occurrence record linkages to the Taxonomic Thesaurus.
-                                        <div style="clear:both;margin-top:5px;">
+                                        <div class="q-mt-xs">
                                             <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="upperdisabled" />
                                         </div>
                                         <div class="process-button-container">
@@ -230,11 +208,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <div class="process-header">
                                             Search Taxonomic Data Sources
                                         </div>
-                                        <div style="margin-bottom:10px;">
+                                        <div class="q-mb-sm">
                                             Search for occurrence record scientific names that are not currently linked to the Taxonomic Thesaurus
                                             from an external Taxonomic Data Source.
                                         </div>
-                                        <div style="margin-bottom:10px;">
+                                        <div class="q-mb-sm">
                                             <taxonomy-data-source-bullet-selector></taxonomy-data-source-bullet-selector>
                                         </div>
                                         <div class="process-button-container">
@@ -251,7 +229,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </div>
                                         Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
                                         with taxa currently in the Taxonomic Thesaurus.
-                                        <div style="clear:both;margin-top:5px;">
+                                        <div class="q-mt-xs">
                                             <q-input outlined v-model="levVal" style="width:225px;" label="Character difference tolerance" :readonly="upperdisabled" dense />
                                         </div>
                                         <div class="process-button-container">
@@ -273,7 +251,61 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 <div class="processor-display-container">
                     <q-card class="bg-grey-3 q-pa-sm">
                         <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
-                            <ul class="processor-display-list" id="progressDisplayList"></ul>
+                            <q-list dense>
+                                <q-item v-for="proc in procDispArr">
+                                    <q-item-section>
+                                        <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
+                                        <template v-if="!proc.loading && proc.resultText">
+                                            <div v-if="proc.result === 'success'" class="q-ml-sm text-weight-bold text-green-9">
+                                                {{proc.resultText}}
+                                            </div>
+                                            <div v-if="proc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
+                                                {{proc.resultText}}
+                                            </div>
+                                        </template>
+                                        <template v-if="proc.type === 'multi' && proc.subs.length">
+                                            <div class="q-ml-sm">
+                                                <div v-for="subproc in proc.subs">
+                                                    <template v-if="subproc.type === 'text' || subproc.type === 'undo'">
+                                                        <div>{{ subproc.procText }} <q-spinner v-if="subproc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
+                                                        <template v-if="!subproc.loading && subproc.resultText">
+                                                            <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="q-ml-sm text-weight-bold text-green-9">
+                                                                {{subproc.resultText}}
+                                                            </div>
+                                                            <div v-if="subproc.result === 'success' && subproc.type === 'undo'" class="q-ml-sm text-weight-bold text-green-9">
+                                                                {{subproc.resultText}} <q-btn :disabled="undoButtonsDisabled" class="q-ml-md text-grey-9" color="warning" size="sm" @click="undoChangedSciname(proc.id,subproc.undoOrigName,subproc.undoChangedName);" label="Undo" dense />
+                                                            </div>
+                                                            <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
+                                                                {{subproc.resultText}}
+                                                            </div>
+                                                        </template>
+                                                    </template>
+                                                    <template v-if="subproc.type === 'fuzzy'">
+                                                        <template v-if="subproc.procText === 'skip'">
+                                                            <div class="q-mx-xl q-my-sm fuzzy-match-row">
+                                                                <div></div>
+                                                                <div>
+                                                                    <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense />
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                        <template v-else>
+                                                            <div class="q-mx-xl q-my-sm fuzzy-match-row">
+                                                                <div class="text-weight-bold">
+                                                                    {{ subproc.procText }}
+                                                                </div>
+                                                                <div>
+                                                                    <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="selectFuzzyMatch(subproc.undoOrigName,subproc.undoChangedName,subproc.changedTid);" label="Select" dense />
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </q-item-section>
+                                </q-item>
+                            </q-list>
                         </q-scroll-area>
                     </q-card>
                 </div>
@@ -290,11 +322,17 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js" type="text/javascript"></script>
     <script>
         let uppercontrolsdisabled = Vue.ref(false);
+        let unlinkedLoading = Vue.ref(false);
+        let unlinkedOccCnt = Vue.ref(null);
+        let unlinkedTaxaCnt = Vue.ref(null);
         let currentProcess = Vue.ref(null);
+        let currentSciname = Vue.ref(null);
         let processingStartIndex = Vue.ref(null);
         let processingLimit = Vue.ref(null);
         let updatedet = Vue.ref(false);
+        let undoButtonsDisabled = Vue.ref(true);
         let levValue = Vue.ref('2');
+        let processorDisplayArr = Vue.ref([]);
 
         const occurrenceTaxonomyManagementModule = Vue.createApp({
             setup() {
@@ -313,16 +351,25 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             data() {
                 return {
                     upperdisabled: uppercontrolsdisabled,
+                    unlinkedLoading: unlinkedLoading,
+                    unlinkedOccCnt: unlinkedOccCnt,
+                    unlinkedTaxaCnt: unlinkedTaxaCnt,
                     startIndex: processingStartIndex,
                     batchLimit: processingLimit,
                     currProcess: currentProcess,
+                    currentSciname: currentSciname,
                     updatedet: updatedet,
-                    levVal: levValue
+                    levVal: levValue,
+                    undoButtonsDisabled: undoButtonsDisabled,
+                    procDispArr: processorDisplayArr
                 }
             },
             components: {
                 'taxa-kingdom-selector': taxaKingdomSelector,
                 'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector
+            },
+            mounted() {
+                setUnlinkedRecordCounts();
             },
             methods: {
                 processingBatchLimitChange(value) {
@@ -337,7 +384,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 callTaxThesaurusLinkController,
                 updateOccLocalitySecurity,
                 initializeDataSourceSearch,
-                initializeTaxThesaurusFuzzyMatch
+                initializeTaxThesaurusFuzzyMatch,
+                undoChangedSciname,
+                setUnlinkedRecordCounts,
+                runTaxThesaurusFuzzyMatchProcess,
+                selectFuzzyMatch
             }
         });
         occurrenceTaxonomyManagementModule.use(Quasar, { config: {} });

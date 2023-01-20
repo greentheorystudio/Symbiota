@@ -1,6 +1,5 @@
 let processCancelled = false;
 let unlinkedNamesArr = [];
-let currentSciname = '';
 let rankArr = null;
 let colInitialSearchResults = [];
 let itisInitialSearchResults = [];
@@ -13,62 +12,26 @@ let taxaLoaded = 0;
 let rebuildHierarchyLoop = 0;
 let changedCurrentSciname = '';
 let changedParsedSciname = '';
+let undoId = '';
 
-function addProgressLine(lineHtml,element = null){
-    if(element){
-        element.innerHTML = lineHtml;
-    }
-    else{
-        document.getElementById("progressDisplayList").innerHTML += lineHtml;
-    }
-}
-
-function addRunCleanScinameAuthorUndoButton(oldName,newName){
-    const cleanedOldName = oldName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
-    const undoChangedScinameInner = "'" + cleanedOldName + "','" + newName.replaceAll("'",'%squot;').replaceAll('"','%dquot;') + "'";
-    const undoButtonHtml = '<button class="undo-button" onclick="undoChangedSciname(' + undoChangedScinameInner + ');" disabled>Undo</button>';
-    addProgressLine('<li class="first-indent undo-button" id="undo-' + cleanedOldName + '">' + undoButtonHtml + '<span class="current-status"></span></li>');
-    processSuccessResponse(0);
+function addSubprocessToProcessorDisplay(id,type,text){
+    const parentProcObj = processorDisplayArr.value.find(proc => proc['id'] === id);
+    parentProcObj['subs'].push(getNewSubprocessObject(currentSciname.value,type,text));
 }
 
 function adjustUIEnd(){
     currentProcess.value = null;
-    if(document.getElementById("progressDisplayList").innerHTML !== ''){
-        const cancelButtonDivElements = document.getElementsByClassName('cancel-div');
-        for(let i in cancelButtonDivElements){
-            if(cancelButtonDivElements.hasOwnProperty(i)){
-                cancelButtonDivElements[i].style.display = 'none';
-            }
-        }
-        const startButtonDivElements = document.getElementsByClassName('start-div');
-        for(let i in startButtonDivElements){
-            if(startButtonDivElements.hasOwnProperty(i)){
-                startButtonDivElements[i].style.display = 'block';
-            }
-        }
-        const startButtonElements = document.getElementsByClassName('start-button');
-        for(let i in startButtonElements){
-            if(startButtonElements.hasOwnProperty(i)){
-                startButtonElements[i].disabled = false;
-            }
-        }
-        const undoButtonElements = document.getElementsByClassName('undo-button');
-        for(let i in undoButtonElements){
-            if(undoButtonElements.hasOwnProperty(i)){
-                undoButtonElements[i].disabled = false;
-            }
-        }
-    }
+    undoButtonsDisabled.value = false;
     uppercontrolsdisabled.value = false;
     unlinkedNamesArr = [];
     setUnlinkedRecordCounts();
-    disableFuzzyMatchButtons();
 }
 
 function adjustUIStart(id){
-    clearProgressDisplay();
+    processorDisplayArr.value = [];
     currentProcess.value = id;
     uppercontrolsdisabled.value = true;
+    undoButtonsDisabled.value = true;
 }
 
 function callCleaningController(step){
@@ -78,33 +41,38 @@ function callCleaningController(step){
     if(step === 'question-marks'){
         processCancelled = false;
         adjustUIStart('cleanProcesses');
-        addProgressLine('<li>Cleaning question marks from scientific names ' + processStatus + '</li>');
+        const text = 'Cleaning question marks from scientific names';
+        processorDisplayArr.value.push(getNewProcessObject('cleanQuestionMarks','single',text));
         params['action'] = 'cleanQuestionMarks';
     }
     if(!processCancelled){
         if(step === 'clean-sp'){
-            addProgressLine('<li>Cleaning scientific names ending in sp., sp. nov., spp., or group ' + processStatus + '</li>');
+            const text = 'Cleaning scientific names ending in sp., sp. nov., spp., or group';
+            processorDisplayArr.value.push(getNewProcessObject('cleanSpNames','single',text));
             params['action'] = 'cleanSpNames';
         }
         else if(step === 'clean-infra'){
-            addProgressLine('<li>Normalizing infraspecific rank abbreviations ' + processStatus + '</li>');
+            const text = 'Normalizing infraspecific rank abbreviations';
+            processorDisplayArr.value.push(getNewProcessObject('cleanInfra','single',text));
             params['action'] = 'cleanInfra';
         }
         else if(step === 'clean-qualifier'){
-            addProgressLine('<li>Cleaning scientific names containing cf. or aff. ' + processStatus + '</li>');
+            const text = 'Cleaning scientific names containing cf. or aff.';
+            processorDisplayArr.value.push(getNewProcessObject('cleanQualifierNames','single',text));
             params['action'] = 'cleanQualifierNames';
         }
         else if(step === 'double-spaces'){
-            addProgressLine('<li>Cleaning scientific names containing double spaces ' + processStatus + '</li>');
+            const text = 'Cleaning scientific names containing double spaces';
+            processorDisplayArr.value.push(getNewProcessObject('cleanDoubleSpaces','single',text));
             params['action'] = 'cleanDoubleSpaces';
         }
         else if(step === 'leading-trailing-spaces'){
-            addProgressLine('<li>Cleaning leading and trailing spaces in scientific names ' + processStatus + '</li>');
+            const text = 'Cleaning leading and trailing spaces in scientific names';
+            processorDisplayArr.value.push(getNewProcessObject('cleanTrimNames','single',text));
             params['action'] = 'cleanTrimNames';
         }
-        //console.log(url+'?'+params);
-        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
-            processCleaningControllerResponse(step,status,res);
+        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res,statusText){
+            processCleaningControllerResponse(step,status,res,statusText);
         },http);
     }
 }
@@ -118,17 +86,19 @@ function callTaxThesaurusLinkController(step = ''){
         if(!step){
             processCancelled = false;
             adjustUIStart('updateWithTaxThesaurus');
-            addProgressLine('<li>Updating linkages of occurrence records to the Taxonomic Thesaurus ' + processStatus + '</li>');
+            const text = 'Updating linkages of occurrence records to the Taxonomic Thesaurus';
+            processorDisplayArr.value.push(getNewProcessObject('updateOccThesaurusLinkages','single',text));
             params['action'] = 'updateOccThesaurusLinkages';
         }
         if(!processCancelled){
             if(step === 'update-det-linkages'){
-                addProgressLine('<li>Updating linkages of associated determination records to the Taxonomic Thesaurus ' + processStatus + '</li>');
+                const text = 'Updating linkages of associated determination records to the Taxonomic Thesaurus';
+                processorDisplayArr.value.push(getNewProcessObject('updateDetThesaurusLinkages','single',text));
                 params['action'] = 'updateDetThesaurusLinkages';
             }
             //console.log(url+'?'+params);
-            sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
-                processTaxThesaurusLinkControllerResponse(step,status,res);
+            sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res,statusText){
+                processTaxThesaurusLinkControllerResponse(step,status,res,statusText);
             },http);
         }
     }
@@ -145,19 +115,6 @@ function cancelProcess(adjustUI = true){
     }
 }
 
-function clearProgressDisplay(){
-    document.getElementById("progressDisplayList").innerHTML = '';
-}
-
-function disableFuzzyMatchButtons(){
-    const buttonElements = document.getElementsByClassName('fuzzy-button');
-    for(let i in buttonElements){
-        if(buttonElements.hasOwnProperty(i)){
-            buttonElements[i].disabled = true;
-        }
-    }
-}
-
 function getDataSourceName(){
     if(dataSource.value === 'col'){
         return 'Catalogue of Life';
@@ -168,6 +125,17 @@ function getDataSourceName(){
     else if(dataSource.value === 'worms'){
         return 'World Register of Marine Species';
     }
+}
+
+function getErrorResponseText(status,statusText){
+    let text;
+    if(status === 0){
+        text = 'Cancelled';
+    }
+    else{
+        text = 'Error: ' + status + ' ' + statusText;
+    }
+    return text;
 }
 
 function getITISNameSearchResultsHierarchy(){
@@ -215,11 +183,11 @@ function getITISNameSearchResultsHierarchy(){
                 }
             }
             nameSearchResults[0]['hierarchy'] = hierarchyArr;
-            processSuccessResponse(0);
+            processSuccessResponse(false);
             validateNameSearchResults();
         }
         else{
-            processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
+            processErrorResponse(false,'Unable to retrieve taxon hierarchy');
             runScinameDataSourceSearch();
         }
     });
@@ -255,16 +223,46 @@ function getITISNameSearchResultsRecord(){
                     getITISNameSearchResultsHierarchy();
                 }
                 else{
-                    processErrorResponse(15,false,'Unable to distinguish taxon by name');
+                    processErrorResponse(false,'Unable to distinguish taxon by name');
                     runScinameDataSourceSearch();
                 }
             }
         }
         else{
-            processErrorResponse(15,false,'Unable to retrieve taxon record');
+            processErrorResponse(false,'Unable to retrieve taxon record');
             runScinameDataSourceSearch();
         }
     });
+}
+
+function getNewProcessObject(id,type,text){
+    const procObj = {
+        id: id,
+        procText: text,
+        type: type,
+        loading: true,
+        current: true,
+        result: '',
+        resultText: ''
+    };
+    if(type === 'multi'){
+        procObj['subs'] = [];
+    }
+    return procObj;
+}
+
+function getNewSubprocessObject(id,type,text){
+    return {
+        id: id,
+        procText: text,
+        type: type,
+        loading: true,
+        result: '',
+        undoOrigName: '',
+        undoChangedName: '',
+        changedTid: 0,
+        resultText: ''
+    };
 }
 
 function getWoRMSAddTaxonAuthor(){
@@ -340,11 +338,11 @@ function getWoRMSNameSearchResultsHierarchy(){
                 }
             }
             nameSearchResults[0]['hierarchy'] = hierarchyArr;
-            processSuccessResponse(0);
+            processSuccessResponse(false);
             validateNameSearchResults();
         }
         else{
-            processErrorResponse(15,false,'Unable to retrieve taxon hierarchy');
+            processErrorResponse(false,'Unable to retrieve taxon hierarchy');
             runScinameDataSourceSearch();
         }
     });
@@ -379,12 +377,12 @@ function getWoRMSNameSearchResultsRecord(id){
                 getWoRMSNameSearchResultsHierarchy();
             }
             else{
-                processErrorResponse(15,false,'Not found');
+                processErrorResponse(false,'Not found');
                 runScinameDataSourceSearch();
             }
         }
         else{
-            processErrorResponse(15,false,'Unable to retrieve taxon record');
+            processErrorResponse(false,'Unable to retrieve taxon record');
             runScinameDataSourceSearch();
         }
     });
@@ -393,19 +391,21 @@ function getWoRMSNameSearchResultsRecord(id){
 function initializeCleanScinameAuthor(){
     processCancelled = false;
     adjustUIStart('cleanScinameAuthor');
-    addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+    const text = 'Getting unlinked occurrence record scientific names';
+    processorDisplayArr.value.push(getNewProcessObject('cleanScinameAuthor','multi',text));
     const params = {
         collid: collId,
         action: 'getUnlinkedOccSciNames'
     };
-    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
+    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res,statusText){
         if(status === 200) {
-            processSuccessResponse(15,'Complete');
+            processSuccessResponse(true,'Complete');
             unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
             runCleanScinameAuthorProcess();
         }
         else{
-            processErrorResponse(15,true);
+            const text = getErrorResponseText(status,statusText);
+            processErrorResponse(true,text);
         }
     },http);
 }
@@ -417,16 +417,18 @@ function initializeDataSourceSearch(){
         taxaLoaded = 0;
         newTidArr = [];
         adjustUIStart('resolveFromTaxaDataSource');
-        addProgressLine('<li>Setting rank data for processing search returns ' + processStatus + '</li>');
+        const text = 'Setting rank data for processing search returns';
+        processorDisplayArr.value.push(getNewProcessObject('resolveFromTaxaDataSource','multi',text));
         const url = taxonomyApiUrl + '?action=getRankNameArr'
-        sendAPIGetRequest(url,function(status,res){
+        sendAPIGetRequest(url,function(status,res,statusText){
             if(status === 200) {
-                processSuccessResponse(15,'Complete');
+                processSuccessResponse(true, 'Complete');
                 rankArr = JSON.parse(res);
                 setUnlinkedTaxaList();
             }
             else{
-                processErrorResponse(15,true);
+                const text = getErrorResponseText(status,statusText);
+                processErrorResponse(true,text);
             }
         },http);
     }
@@ -439,19 +441,21 @@ function initializeTaxThesaurusFuzzyMatch(){
     if(selectedKingdomId && levValue.value && Number(levValue.value) > 0){
         processCancelled = false;
         adjustUIStart('taxThesaurusFuzzyMatch');
-        addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+        const text = 'Getting unlinked occurrence record scientific names';
+        processorDisplayArr.value.push(getNewProcessObject('taxThesaurusFuzzyMatch','multi',text));
         const params = {
             collid: collId,
             action: 'getUnlinkedOccSciNames'
         };
-        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
+        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res,statusText){
             if(status === 200) {
-                processSuccessResponse(15,'Complete');
+                processSuccessResponse(true,'Complete');
                 unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
                 runTaxThesaurusFuzzyMatchProcess();
             }
             else{
-                processErrorResponse(15,true);
+                const text = getErrorResponseText(status,statusText);
+                processErrorResponse(true,text);
             }
         },http);
     }
@@ -476,25 +480,26 @@ function populateTaxonomicHierarchy(){
                     populateTaxonomicHierarchy();
                 }
                 else{
-                    processSuccessResponse(15,'Complete');
+                    processSuccessResponse(true,'Complete');
                     adjustUIEnd();
                 }
             }
             else{
-                processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
+                processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
                 adjustUIEnd();
             }
         });
     }
     else{
-        processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
+        processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
         adjustUIEnd();
     }
 }
 
 function primeTaxonomicHierarchy(){
     rebuildHierarchyLoop = 0;
-    addProgressLine('<li>Populating taxonomic hierarchy with new taxa ' + processStatus + '</li>');
+    const text = 'Populating taxonomic hierarchy with new taxa';
+    processorDisplayArr.value.push(getNewProcessObject('primeHierarchyTable','multi',text));
     const params = {
         tidarr: JSON.stringify(newTidArr),
         action: 'primeHierarchyTable'
@@ -510,7 +515,7 @@ function primeTaxonomicHierarchy(){
             }
         }
         else{
-            processErrorResponse(15,false,'Error rebuilding the taxonomic hierarchy');
+            processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
             adjustUIEnd();
         }
     });
@@ -519,7 +524,8 @@ function primeTaxonomicHierarchy(){
 function processAddTaxaArr(){
     if(taxaToAddArr.length > 0){
         const taxonToAdd = taxaToAddArr[0];
-        addProgressLine('<li class="first-indent">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
+        const text = 'Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus';
+        addSubprocessToProcessorDisplay(currentSciname.value,'text',text);
         const newTaxonObj = {};
         newTaxonObj['sciname'] = taxonToAdd['sciname'];
         newTaxonObj['author'] = taxonToAdd['author'];
@@ -542,11 +548,11 @@ function processAddTaxaArr(){
                 nameTidIndex[taxaToAddArr[0]['sciname']] = newTid;
                 newTidArr.push(newTid);
                 taxaToAddArr.splice(0, 1);
-                processSuccessResponse(0);
+                processSubprocessSuccessResponse(currentSciname.value,false);
                 processAddTaxaArr();
             }
             else{
-                processErrorResponse(15,false,'Error loading taxon');
+                processSubprocessErrorResponse(currentSciname.value,false,'Error loading taxon');
                 runScinameDataSourceSearch();
             }
         });
@@ -558,9 +564,10 @@ function processAddTaxaArr(){
 
 function processAddTaxon(){
     const taxonToAdd = nameSearchResults[0];
-    addProgressLine('<li class="first-indent">Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus ' + processStatus + '</li>');
+    const text = 'Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus';
+    addSubprocessToProcessorDisplay(currentSciname.value,'text',text);
     if(nameTidIndex.hasOwnProperty(taxonToAdd['sciname'])){
-        processSuccessResponse(15,nameSearchResults[0]['sciname'] + 'already added');
+        processSubprocessSuccessResponse(currentSciname.value,false,nameSearchResults[0]['sciname'] + 'already added');
         updateOccurrenceLinkages();
     }
     else{
@@ -585,44 +592,45 @@ function processAddTaxon(){
                 const newTid = Number(res);
                 nameTidIndex[nameSearchResults[0]['sciname']] = newTid;
                 newTidArr.push(newTid);
-                processSuccessResponse(15,'Successfully added ' + nameSearchResults[0]['sciname']);
-                if(currentSciname === nameSearchResults[0]['sciname']){
+                processSubprocessSuccessResponse(currentSciname.value,false,'Successfully added ' + nameSearchResults[0]['sciname']);
+                if(currentSciname.value === nameSearchResults[0]['sciname']){
                     updateOccurrenceLinkages();
                 }
                 else{
-                    addProgressLine('<li class="first-indent">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
-                    changedCurrentSciname = currentSciname;
+                    const text = 'Updating occurrence records with cleaned scientific name';
+                    addSubprocessToProcessorDisplay(currentSciname.value,'undo',text);
+                    changedCurrentSciname = currentSciname.value;
                     changedParsedSciname = nameSearchResults[0]['sciname'];
                     const params = {
                         collid: collId,
-                        sciname: currentSciname,
+                        sciname: currentSciname.value,
                         cleanedsciname: nameSearchResults[0]['sciname'],
                         tid: newTid,
                         action: 'updateOccWithCleanedName'
                     };
                     sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
                         if(status === 200) {
-                            processSuccessResponse(15,(res + ' records updated'));
-                            addRunCleanScinameAuthorUndoButton(changedCurrentSciname,changedParsedSciname);
+                            setSubprocessUndoNames(currentSciname.value,changedCurrentSciname,changedParsedSciname);
+                            processSubprocessSuccessResponse(currentSciname.value,false,(res + ' records updated'));
                             updateOccurrenceLinkages();
                         }
                         else{
-                            processErrorResponse(15,true,'Error updating occurrence records');
+                            processSubprocessErrorResponse(currentSciname.value,true,'Error updating occurrence records');
                             updateOccurrenceLinkages();
                         }
                     });
                 }
             }
             else{
-                processErrorResponse(15,false,'Error loading taxon');
+                processSubprocessErrorResponse(currentSciname.value,false,'Error loading taxon');
                 runScinameDataSourceSearch();
             }
         });
     }
 }
 
-function processCleaningControllerResponse(step,status,res){
-    processUpdateCleanResponse('cleaned',status,res);
+function processCleaningControllerResponse(step,status,res,statusText){
+    processUpdateCleanResponse('cleaned',status,res,statusText);
     if(step === 'question-marks'){
         callCleaningController('clean-sp');
     }
@@ -643,20 +651,13 @@ function processCleaningControllerResponse(step,status,res){
     }
 }
 
-function processErrorResponse(indent,setCounts,messageText = ''){
-    const currentStatus = document.getElementsByClassName('current-status')[0];
-    currentStatus.className = 'error-status';
-    if(indent > 0){
-        currentStatus.style.marginLeft = indent + 'px';
-    }
-    if(messageText){
-        currentStatus.innerHTML = messageText;
-    }
-    else if(http.status === 0){
-        currentStatus.innerHTML = 'Cancelled';
-    }
-    else{
-        currentStatus.innerHTML = 'Error: ' + http.status + ' ' + http.statusText;
+function processErrorResponse(setCounts,text){
+    const procObj = processorDisplayArr.value.find(proc => proc['current'] === true);
+    procObj['current'] = false;
+    if(procObj['loading'] === true){
+        procObj['loading'] = false;
+        procObj['result'] = 'error';
+        procObj['resultText'] = text;
     }
     if(setCounts){
         setUnlinkedRecordCounts();
@@ -664,20 +665,18 @@ function processErrorResponse(indent,setCounts,messageText = ''){
 }
 
 function processFuzzyMatches(fuzzyMatches){
-    const cleanedCurrentName = currentSciname.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
     for(let i in fuzzyMatches){
         if(fuzzyMatches.hasOwnProperty(i)){
             const fuzzyMatchName = fuzzyMatches[i];
-            const cleanedFuzzyMatchName = fuzzyMatchName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
-            const selectFuzzyMatchInner = "'" + cleanedCurrentName + "','" + cleanedFuzzyMatchName + "'," + i;
-            const selectButtonHtml = '<button class="fuzzy-button fuzzy-select-button" onclick="selectFuzzyMatch(' + selectFuzzyMatchInner + ');">Select</button>';
-            addProgressLine('<li class="first-indent fuzzy-select-button-li"><span class="fuzzy-match">Match: ' + fuzzyMatchName + '</span> ' + selectButtonHtml + '<span class="current-status"></span></li>');
-            processSuccessResponse(0);
+            const text = 'Match: ' + fuzzyMatchName;
+            addSubprocessToProcessorDisplay(currentSciname.value,'fuzzy',text);
+            setSubprocessUndoNames(currentSciname.value,currentSciname.value,fuzzyMatchName,i);
+            processSubprocessSuccessResponse(currentSciname.value,false);
         }
     }
-    const skipButtonHtml = '<button class="fuzzy-button" onclick="runTaxThesaurusFuzzyMatchProcess();">Skip Taxon</button>';
-    addProgressLine('<li class="first-indent fuzzy-select-button-li fuzzy-skip-button-li">' + skipButtonHtml + '<span class="current-status"></span></li>');
-    processSuccessResponse(0);
+    const text = 'skip';
+    addSubprocessToProcessorDisplay(currentSciname.value,'fuzzy',text);
+    processSubprocessSuccessResponse(currentSciname.value,true);
 }
 
 function processGetCOLTaxonByScinameResponse(res){
@@ -754,12 +753,12 @@ function processGetCOLTaxonByScinameResponse(res){
             validateCOLInitialNameSearchResults();
         }
         else{
-            processErrorResponse(15,false,'Not found');
+            processErrorResponse(false,'Not found');
             runScinameDataSourceSearch();
         }
     }
     else{
-        processErrorResponse(15,false,'Not found');
+        processErrorResponse(false,'Not found');
         runScinameDataSourceSearch();
     }
 }
@@ -772,7 +771,7 @@ function processGetITISTaxonByScinameResponse(res){
         for(let i in resultArr){
             if(resultArr.hasOwnProperty(i)){
                 const taxResult = resultArr[i];
-                if(taxResult['combinedName'] === currentSciname && taxResult['kingdom'].toLowerCase() === selectedKingdomName.toLowerCase()){
+                if(taxResult['combinedName'] === currentSciname.value && taxResult['kingdom'].toLowerCase() === selectedKingdomName.toLowerCase()){
                     const resultObj = {};
                     resultObj['id'] = taxResult['tsn'];
                     resultObj['sciname'] = taxResult['combinedName'];
@@ -786,7 +785,7 @@ function processGetITISTaxonByScinameResponse(res){
             getITISNameSearchResultsRecord();
         }
         else if(itisInitialSearchResults.length === 0){
-            processErrorResponse(15,false,'Not found');
+            processErrorResponse(false,'Not found');
             runScinameDataSourceSearch();
         }
         else if(itisInitialSearchResults.length > 1){
@@ -794,27 +793,44 @@ function processGetITISTaxonByScinameResponse(res){
         }
     }
     else{
-        processErrorResponse(15,false,'Not found');
+        processErrorResponse(false,'Not found');
         runScinameDataSourceSearch();
     }
 }
 
-function processSuccessResponse(indent,lineHtml = ''){
-    const currentStatus = document.getElementsByClassName('current-status')[0];
-    currentStatus.className = 'success-status';
-    if(lineHtml){
-        if(indent > 0){
-            currentStatus.style.marginLeft = indent + 'px';
-        }
-        currentStatus.innerHTML = lineHtml;
-    }
-    else{
-        currentStatus.style.display = 'none';
+function processSubprocessErrorResponse(id,setCounts,text){
+    const parentProcObj = processorDisplayArr.value.find(proc => proc['id'] === id);
+    parentProcObj['current'] = false;
+    const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
+    subProcObj['loading'] = false;
+    subProcObj['result'] = 'error';
+    subProcObj['resultText'] = text;
+    if(setCounts){
+        setUnlinkedRecordCounts();
     }
 }
 
-function processTaxThesaurusLinkControllerResponse(step,status,res){
-    processUpdateCleanResponse('updated',status,res);
+function processSubprocessSuccessResponse(id,complete,text = null){
+    const parentProcObj = processorDisplayArr.value.find(proc => proc['id'] === id);
+    parentProcObj['current'] = !complete;
+    const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
+    subProcObj['loading'] = false;
+    subProcObj['result'] = 'success';
+    subProcObj['resultText'] = text;
+}
+
+function processSuccessResponse(complete,text = null){
+    const procObj = processorDisplayArr.value.find(proc => proc['current'] === true);
+    procObj['current'] = !complete;
+    if(procObj['loading'] === true){
+        procObj['loading'] = false;
+        procObj['result'] = 'success';
+        procObj['resultText'] = text;
+    }
+}
+
+function processTaxThesaurusLinkControllerResponse(step,status,res,statusText){
+    processUpdateCleanResponse('updated',status,res,statusText);
     if(!step && updatedet.value){
         callTaxThesaurusLinkController('update-det-linkages');
     }
@@ -846,54 +862,57 @@ function processUnlinkedNamesArr(inArr){
     return inArr;
 }
 
-function processUpdateCleanResponse(term,status,res){
+function processUpdateCleanResponse(term,status,res,statusText){
     if(status === 200) {
-        processSuccessResponse(15,'Complete: ' + res + ' records ' + term);
+        processSuccessResponse(true,'Complete: ' + res + ' records ' + term);
     }
     else{
-        processErrorResponse(15,true);
+        const text = getErrorResponseText(status,statusText);
+        processErrorResponse(true,text);
     }
 }
 
 function runCleanScinameAuthorProcess(){
     if(!processCancelled){
         if(unlinkedNamesArr.length > 0){
-            currentSciname = unlinkedNamesArr[0];
+            currentSciname.value = unlinkedNamesArr[0];
             unlinkedNamesArr.splice(0, 1);
-            addProgressLine('<li>Attempting to parse author name from: ' + currentSciname + ' ' + processStatus + '</li>');
+            const text = 'Attempting to parse author name from: ' + currentSciname.value;
+            processorDisplayArr.value.push(getNewProcessObject(currentSciname.value,'multi',text));
             const params = {
-                sciname: currentSciname,
+                sciname: currentSciname.value,
                 action: 'parseSciName'
             };
             sendAPIPostRequest(taxonomyApiUrl,params,function(status,res){
                 if(status === 200) {
                     const parsedName = JSON.parse(res);
                     if(parsedName.hasOwnProperty('author') && parsedName['author'] !== ''){
-                        processSuccessResponse(15,'Parsed author: ' + parsedName['author'] + '<br />Cleaned scientific name: ' + parsedName['sciname']);
-                        addProgressLine('<li class="first-indent">Updating occurrence records with cleaned scientific name ' + processStatus + '</li>');
-                        changedCurrentSciname = currentSciname;
+                        processSuccessResponse(false,'Parsed author: ' + parsedName['author'] + '; Cleaned scientific name: ' + parsedName['sciname']);
+                        const text = 'Updating occurrence records with cleaned scientific name';
+                        addSubprocessToProcessorDisplay(currentSciname.value,'undo',text);
+                        changedCurrentSciname = currentSciname.value;
                         changedParsedSciname = parsedName['sciname'];
                         const params = {
                             collid: collId,
-                            sciname: currentSciname,
+                            sciname: currentSciname.value,
                             cleanedsciname: parsedName['sciname'],
                             tid: null,
                             action: 'updateOccWithCleanedName'
                         };
                         sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
                             if(status === 200) {
-                                processSuccessResponse(15,(res + ' records updated'));
-                                addRunCleanScinameAuthorUndoButton(changedCurrentSciname,changedParsedSciname);
+                                setSubprocessUndoNames(currentSciname.value,changedCurrentSciname,changedParsedSciname);
+                                processSubprocessSuccessResponse(currentSciname.value,true,(res + ' records updated'));
                                 runCleanScinameAuthorProcess();
                             }
                             else{
-                                processErrorResponse(15,false,'Error updating occurrence records');
+                                processSubprocessErrorResponse(currentSciname.value,false,'Error updating occurrence records');
                                 runCleanScinameAuthorProcess();
                             }
                         });
                     }
                     else{
-                        processErrorResponse(15,false,'No author found in scientific name');
+                        processErrorResponse(false,'No author found in scientific name');
                         runCleanScinameAuthorProcess();
                     }
                 }
@@ -912,61 +931,67 @@ function runScinameDataSourceSearch(){
     if(!processCancelled){
         if(unlinkedNamesArr.length > 0){
             nameSearchResults = [];
-            currentSciname = unlinkedNamesArr[0];
+            currentSciname.value = unlinkedNamesArr[0];
             unlinkedNamesArr.splice(0, 1);
             if(dataSource.value === 'col'){
                 colInitialSearchResults = [];
-                addProgressLine('<li>Searching the Catalogue of Life (COL) for ' + currentSciname + ' ' + processStatus + '</li>');
-                const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + currentSciname;
+                const text = 'Searching the Catalogue of Life (COL) for ' + currentSciname.value;
+                processorDisplayArr.value.push(getNewProcessObject(currentSciname.value,'multi',text));
+                const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + currentSciname.value;
                 const params = {
                     url: url,
                     action: 'get'
                 };
-                sendAPIPostRequest(proxyApiUrl,params,function(status,res){
+                sendAPIPostRequest(proxyApiUrl,params,function(status,res,statusText){
                     if(status === 200){
                         processGetCOLTaxonByScinameResponse(res);
                     }
                     else{
-                        processErrorResponse(15,false);
+                        const text = getErrorResponseText(status,statusText);
+                        processErrorResponse(false,text);
                         runScinameDataSourceSearch();
                     }
                 });
             }
             else if(dataSource.value === 'itis'){
                 itisInitialSearchResults = [];
-                addProgressLine('<li>Searching the Integrated Taxonomic Information System (ITIS) for ' + currentSciname + ' ' + processStatus + '</li>');
-                const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + currentSciname;
+                const text = 'Searching the Integrated Taxonomic Information System (ITIS) for ' + currentSciname.value;
+                processorDisplayArr.value.push(getNewProcessObject(currentSciname.value,'multi',text));
+                const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + currentSciname.value;
                 const params = {
                     url: url,
                     action: 'get'
                 };
-                sendAPIPostRequest(proxyApiUrl,params,function(status,res){
+                sendAPIPostRequest(proxyApiUrl,params,function(status,res,statusText){
                     if(status === 200){
                         processGetITISTaxonByScinameResponse(res);
                     }
                     else{
-                        processErrorResponse(15,false);
+                        const text = getErrorResponseText(status,statusText);
+                        processErrorResponse(false,text);
                         runScinameDataSourceSearch();
                     }
                 });
             }
             else if(dataSource.value === 'worms'){
-                addProgressLine('<li>Searching the World Register of Marine Species (WoRMS) for ' + currentSciname + ' ' + processStatus + '</li>');
-                const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + currentSciname + '?marine_only=false';
+                const text = 'Searching the World Register of Marine Species (WoRMS) for ' + currentSciname.value;
+                processorDisplayArr.value.push(getNewProcessObject(currentSciname.value,'multi',text));
+                const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + currentSciname.value + '?marine_only=false';
                 const params = {
                     url: url,
                     action: 'get'
                 };
-                sendAPIPostRequest(proxyApiUrl,params,function(status,res){
+                sendAPIPostRequest(proxyApiUrl,params,function(status,res,statusText){
                     if(status === 200 && res && Number(res) > 0){
                         getWoRMSNameSearchResultsRecord(res);
                     }
                     else if(status === 204 || !res || Number(res) <= 0){
-                        processErrorResponse(15,false,'Not found');
+                        processErrorResponse(false,'Not found');
                         runScinameDataSourceSearch();
                     }
                     else{
-                        processErrorResponse(15,false);
+                        const text = getErrorResponseText(status,statusText);
+                        processErrorResponse(false,text);
                         runScinameDataSourceSearch();
                     }
                 });
@@ -990,15 +1015,15 @@ function runScinameDataSourceSearch(){
 function runTaxThesaurusFuzzyMatchProcess(){
     changedCurrentSciname = '';
     changedParsedSciname = '';
-    disableFuzzyMatchButtons();
     if(!processCancelled){
         if(unlinkedNamesArr.length > 0){
-            currentSciname = unlinkedNamesArr[0];
+            currentSciname.value = unlinkedNamesArr[0];
             unlinkedNamesArr.splice(0, 1);
-            addProgressLine('<li>Finding fuzzy matches for: ' + currentSciname + ' ' + processStatus + '</li>');
+            const text = 'Finding fuzzy matches for ' + currentSciname.value;
+            processorDisplayArr.value.push(getNewProcessObject(currentSciname.value,'multi',text));
             const params = {
                 kingdomid: selectedKingdomId,
-                sciname: currentSciname,
+                sciname: currentSciname.value,
                 lev: levValue.value,
                 action: 'getSciNameFuzzyMatches'
             };
@@ -1006,11 +1031,11 @@ function runTaxThesaurusFuzzyMatchProcess(){
                 if(status === 200) {
                     const fuzzyMatches = JSON.parse(res);
                     if(checkObjectNotEmpty(fuzzyMatches)){
-                        processSuccessResponse(0);
+                        processSuccessResponse(false);
                         processFuzzyMatches(fuzzyMatches);
                     }
                     else{
-                        processErrorResponse(15,false,'No fuzzy matches found');
+                        processErrorResponse(false,'No fuzzy matches found');
                         runTaxThesaurusFuzzyMatchProcess();
                     }
                 }
@@ -1028,8 +1053,9 @@ function runTaxThesaurusFuzzyMatchProcess(){
 function selectFuzzyMatch(sciName,newName,newtid){
     changedCurrentSciname = sciName;
     changedParsedSciname = newName;
-    disableFuzzyMatchButtons();
-    addProgressLine('<li class="first-indent">Updating occurrence records with selected scientific name ' + processStatus + '</li>');
+    clearSubprocesses(currentSciname.value);
+    const text = 'Updating occurrence records with selected scientific name';
+    addSubprocessToProcessorDisplay(currentSciname.value,'undo',text);
     const params = {
         collid: collId,
         sciname: sciName,
@@ -1039,15 +1065,25 @@ function selectFuzzyMatch(sciName,newName,newtid){
     };
     sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
         if(status === 200) {
-            processSuccessResponse(15,(res + ' records updated'));
-            addRunCleanScinameAuthorUndoButton(changedCurrentSciname,changedParsedSciname);
+            setSubprocessUndoNames(currentSciname.value,changedCurrentSciname,changedParsedSciname);
+            processSubprocessSuccessResponse(currentSciname.value,true,(res + ' records updated'));
             runTaxThesaurusFuzzyMatchProcess();
         }
         else{
-            processErrorResponse(15,false,'Error updating occurrence records');
+            processSubprocessErrorResponse(currentSciname.value,false,'Error updating occurrence records');
             runTaxThesaurusFuzzyMatchProcess();
         }
     });
+}
+
+function setSubprocessUndoNames(id,origName,newName,tid = null){
+    const parentProcObj = processorDisplayArr.value.find(proc => proc['id'] === id);
+    const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
+    subProcObj['undoOrigName'] = origName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
+    subProcObj['undoChangedName'] = newName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
+    if(tid){
+        subProcObj['changedTid'] = tid;
+    }
 }
 
 function setTaxaToAdd(){
@@ -1082,15 +1118,15 @@ function setTaxaToAdd(){
         }
     }
     else{
-        processSuccessResponse(0);
+        processSubprocessSuccessResponse(currentSciname.value,false);
         processAddTaxaArr();
     }
 }
 
 function setUnlinkedRecordCounts(){
-    const loadingMessage = getSmallWorkingSpinnerHtml(12);
-    document.getElementById("unlinkedOccCnt").innerHTML = loadingMessage;
-    document.getElementById("unlinkedTaxaCnt").innerHTML = loadingMessage;
+    unlinkedOccCnt.value = null;
+    unlinkedTaxaCnt.value = null;
+    unlinkedLoading.value = true;
     const params = {
         collid: collId,
         action: 'getUnlinkedScinameCounts'
@@ -1100,43 +1136,45 @@ function setUnlinkedRecordCounts(){
         if(status === 200) {
             retData = JSON.parse(res);
         }
-        if(retData.hasOwnProperty('occCnt') && retData.hasOwnProperty('taxaCnt')){
-            document.getElementById("unlinkedOccCnt").innerHTML = retData['occCnt'];
-            document.getElementById("unlinkedTaxaCnt").innerHTML = retData['taxaCnt'];
+        if(retData.hasOwnProperty('occCnt')){
+            unlinkedOccCnt.value = retData['occCnt'];
         }
-        else{
-            const errorMessage = '<span style="color:red;">Error loading count</span>';
-            document.getElementById("unlinkedOccCnt").innerHTML = errorMessage;
-            document.getElementById("unlinkedTaxaCnt").innerHTML = errorMessage;
+        if(retData.hasOwnProperty('taxaCnt')){
+            unlinkedTaxaCnt.value = retData['taxaCnt'];
         }
+        unlinkedLoading.value = false;
     });
 }
 
 function setUnlinkedTaxaList(){
     if(!processCancelled){
-        addProgressLine('<li>Getting unlinked occurrence record scientific names ' + processStatus + '</li>');
+        const text = 'Getting unlinked occurrence record scientific names';
+        processorDisplayArr.value.push(getNewProcessObject('getUnlinkedOccSciNames','multi',text));
         const params = {
             collid: collId,
             action: 'getUnlinkedOccSciNames'
         };
-        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
+        sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res,statusText){
             if(status === 200) {
-                processSuccessResponse(15,'Complete');
+                processSuccessResponse(true,'Complete');
                 unlinkedNamesArr = processUnlinkedNamesArr(JSON.parse(res));
                 runScinameDataSourceSearch();
             }
             else{
-                processErrorResponse(15,true);
+                const text = getErrorResponseText(status,statusText);
+                processErrorResponse(true,text);
             }
         },http);
     }
 }
 
-function undoChangedSciname(oldName,newName){
-    const progressLineElementId = 'undo-' + oldName;
-    const progressLineElement = document.getElementById(progressLineElementId);
-    const progressLineElementHtml = 'Reverting scientific name change from ' + oldName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' to ' + newName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' ' + processStatus;
-    addProgressLine(progressLineElementHtml,progressLineElement);
+function undoChangedSciname(id,oldName,newName){
+    const parentProcObj = processorDisplayArr.value.find(proc => proc['id'] === id);
+    const subProcObj = parentProcObj['subs'].find(subproc => subproc['undoChangedName'] === newName);
+    subProcObj['type'] = 'text';
+    const text = 'Reverting scientific name change from ' + oldName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' to ' + newName.replaceAll('%squot;',"'").replaceAll('%dquot;','"');
+    addSubprocessToProcessorDisplay(id,'text',text);
+    undoId = id;
     const params = {
         collid: collId,
         oldsciname: oldName,
@@ -1145,23 +1183,24 @@ function undoChangedSciname(oldName,newName){
     };
     sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
         if(status === 200) {
-            processSuccessResponse(15,(res + ' records reverted'));
+            processSubprocessSuccessResponse(undoId,true,(res + ' records reverted'));
         }
         else{
-            processErrorResponse(15,false,'Error undoing name change');
+            processSubprocessErrorResponse(undoId,false,'Error undoing name change');
         }
     });
 }
 
 function updateOccLocalitySecurity(){
     adjustUIStart('updateOccLocalitySecurity');
-    addProgressLine('<li>Updating the locality security settings for occurrence records of protected species ' + processStatus + '</li>');
+    const text = 'Updating the locality security settings for occurrence records of protected species';
+    processorDisplayArr.value.push(getNewProcessObject('updateLocalitySecurity','single',text));
     const params = {
         collid: collId,
         action: 'updateLocalitySecurity'
     };
-    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
-        processUpdateCleanResponse('updated',status,res);
+    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res,statusText){
+        processUpdateCleanResponse('updated',status,res,statusText);
         adjustUIEnd();
     },http);
 }
@@ -1169,7 +1208,8 @@ function updateOccLocalitySecurity(){
 function updateOccurrenceLinkages(){
     const newSciname = nameSearchResults[0]['sciname'];
     const newScinameTid = nameTidIndex[nameSearchResults[0]['sciname']];
-    addProgressLine('<li class="first-indent">Updating linkages of occurrence records to ' + newSciname + ' ' + processStatus + '</li>');
+    const text = 'Updating linkages of occurrence records to ' + newSciname;
+    addSubprocessToProcessorDisplay(currentSciname.value,'text',text);
     const params = {
         collid: collId,
         sciname: newSciname,
@@ -1177,12 +1217,13 @@ function updateOccurrenceLinkages(){
         kingdomid: selectedKingdomId,
         action: 'updateOccWithNewSciname'
     };
-    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res){
+    sendAPIPostRequest(occurrenceTaxonomyApiUrl,params,function(status,res,statusText){
         if(status === 200) {
-            processSuccessResponse(15, res + ' records updated');
+            processSubprocessSuccessResponse(currentSciname.value,true,res + ' records updated');
         }
         else{
-            processErrorResponse(15,true);
+            const text = getErrorResponseText(status,statusText);
+            processSubprocessErrorResponse(currentSciname.value,true,text);
         }
         taxaLoaded++;
         if(taxaLoaded > 30){
@@ -1250,15 +1291,15 @@ function validateCOLInitialNameSearchResults(){
         });
     }
     else if(nameSearchResults.length === 1){
-        processSuccessResponse(0);
+        processSuccessResponse(false);
         validateNameSearchResults();
     }
     else if(nameSearchResults.length === 0){
-        processErrorResponse(15,false,'Not found');
+        processErrorResponse(false,'Not found');
         runScinameDataSourceSearch();
     }
     else if(nameSearchResults.length > 1){
-        processErrorResponse(15,false,'Unable to distinguish taxon by name');
+        processErrorResponse(false,'Unable to distinguish taxon by name');
         runScinameDataSourceSearch();
     }
 }
@@ -1288,7 +1329,7 @@ function validateITISInitialNameSearchResults(){
                 validateITISInitialNameSearchResults();
             }
             else{
-                processErrorResponse(15,false,'Unable to retrieve taxon record');
+                processErrorResponse(false,'Unable to retrieve taxon record');
                 runScinameDataSourceSearch();
             }
         });
@@ -1297,21 +1338,21 @@ function validateITISInitialNameSearchResults(){
         getITISNameSearchResultsHierarchy();
     }
     else if(nameSearchResults.length === 0){
-        processErrorResponse(15,false,'Not found');
+        processErrorResponse(false,'Not found');
         runScinameDataSourceSearch();
     }
     else if(nameSearchResults.length > 1){
-        processErrorResponse(15,false,'Unable to distinguish taxon by name');
+        processErrorResponse(false,'Unable to distinguish taxon by name');
         runScinameDataSourceSearch();
     }
 }
 
 function validateNameSearchResults(){
-    processingArr = new Array();
-    taxaToAddArr = new Array();
+    processingArr = [];
+    taxaToAddArr = [];
     if(nameSearchResults.length === 1){
         if(!nameSearchResults[0]['accepted'] && !nameSearchResults[0]['accepted_sciname']){
-            processErrorResponse(15,false,'Unable to distinguish accepted name');
+            processErrorResponse(false,'Unable to distinguish accepted name');
             runScinameDataSourceSearch();
         }
         else{
@@ -1334,12 +1375,13 @@ function validateNameSearchResults(){
                 nameSearchResults[0]['parentName'] = parentName;
             }
             processingArr = addHierchyTemp;
-            addProgressLine('<li class="first-indent">Matching parent and accepted taxa to the Taxonomic Thesaurus ' + processStatus + '</li>');
+            const text = 'Matching parent and accepted taxa to the Taxonomic Thesaurus';
+            addSubprocessToProcessorDisplay(currentSciname.value,'text',text);
             setTaxaToAdd();
         }
     }
     else{
-        processErrorResponse(15,false,'Unable to distinguish taxon by name');
+        processErrorResponse(false,'Unable to distinguish taxon by name');
         runScinameDataSourceSearch();
     }
 }

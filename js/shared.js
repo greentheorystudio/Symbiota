@@ -341,7 +341,7 @@ function sendAPIGetRequest(url,callback,http = null){
 	http.open("GET", url, true);
 	http.onreadystatechange = function() {
 		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
+			callback(http.status,http.responseText,http.statusText);
 		}
 	};
 	http.send();
@@ -355,7 +355,7 @@ function sendAPIPostRequest(url,params,callback,http = null){
 	http.open("POST", url, true);
 	http.onreadystatechange = function() {
 		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
+			callback(http.status,http.responseText,http.statusText);
 		}
 	};
 	http.send(formData);
