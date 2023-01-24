@@ -7,12 +7,12 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
     </div>
     <div id="topNavigation">
         <q-toolbar class="q-pa-md horizontalDropDown">
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" label="Home" stretch flat></q-btn>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" label="Search Collections" stretch flat></q-btn>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank" label="Spatial Module" stretch flat></q-btn>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php" label="Image Search" stretch flat></q-btn>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php" label="Browse Images" stretch flat></q-btn>
-            <q-btn stretch flat label="Inventories" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?" class="horizontalDropDownButton text-capitalize" v-model="inventories" @mouseover="inventories = true" @mouseleave="inventories = false">
+            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" label="Home" stretch flat no-wrap></q-btn>
+            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" label="Search Collections" stretch flat no-wrap></q-btn>
+            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank" label="Spatial Module" stretch flat no-wrap></q-btn>
+            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php" label="Image Search" stretch flat no-wrap></q-btn>
+            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php" label="Browse Images" stretch flat no-wrap></q-btn>
+            <q-btn stretch flat no-wrap label="Inventories" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?" class="horizontalDropDownButton text-capitalize" v-model="inventories" @mouseover="inventories = true" @mouseleave="inventories = false">
                 <q-menu v-model="inventories" transition-duration="750" square fit>
                     <q-list @mouseover="inventories = true" @mouseleave="inventories = false">
                         <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=1" clickable v-close-popup>
@@ -38,7 +38,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                     </q-list>
                 </q-menu>
             </q-btn>
-            <q-btn stretch flat label="Interactive Tools" class="horizontalDropDownButton text-capitalize" v-model="tools" @mouseover="tools = true" @mouseleave="tools = false">
+            <q-btn stretch flat no-wrap label="Interactive Tools" class="horizontalDropDownButton text-capitalize" v-model="tools" @mouseover="tools = true" @mouseleave="tools = false">
                 <q-menu v-model="tools" transition-duration="750" square fit>
                     <q-list @mouseover="tools = true" @mouseleave="tools = false">
                         <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=1" clickable v-close-popup>
@@ -67,14 +67,14 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
             <q-space></q-space>
             <template v-if="userDisplayName">
                 <q-breadcrumbs-el class="header-username-text">Welcome {{ userDisplayName }}!</q-breadcrumbs-el>
-                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php" label="My Profile" stretch flat></q-btn>
-                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/index.php?submit=logout" label="Logout" stretch flat></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php" label="My Profile" stretch flat no-wrap></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/index.php?submit=logout" label="Logout" stretch flat no-wrap></q-btn>
             </template>
             <template v-else>
-                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>" label="Log In" stretch flat></q-btn>
-                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php" label="New Account" stretch flat></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>" label="Log In" stretch flat no-wrap></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php" label="New Account" stretch flat no-wrap></q-btn>
             </template>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" label="Sitemap" stretch flat></q-btn>
+            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" label="Sitemap" stretch flat no-wrap></q-btn>
         </q-toolbar>
     </div>
     <script>

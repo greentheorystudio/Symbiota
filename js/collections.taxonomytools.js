@@ -13,6 +13,8 @@ let rebuildHierarchyLoop = 0;
 let changedCurrentSciname = '';
 let changedParsedSciname = '';
 let undoId = '';
+let selectedKingdomId = null;
+let selectedKingdomName = null;
 
 function addSubprocessToProcessorDisplay(id,type,text){
     const parentProcObj = processorDisplayArr.value.find(proc => proc['id'] === id);

@@ -402,10 +402,12 @@ class TaxonomyUtilities {
         //echo $sql;
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
-            $retArr[$r->kingdom_id] = $r->sciname;
+            $tArr = array();
+            $tArr['id'] = $r->kingdom_id;
+            $tArr['name'] = $r->sciname;
+            $retArr[] = $tArr;
         }
         $rs->free();
-        asort($retArr);
         return $retArr;
     }
 

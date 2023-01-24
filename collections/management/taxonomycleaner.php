@@ -47,11 +47,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         }
         .processor-control-container {
             width: 40%;
-            height: 650px;
+        }
+        .processor-control-card {
+            height: 630px;
+        }
+        .processor-control-accordion {
+            height: 610px;
         }
         .processor-display-container {
             width: 50%;
-            height: 650px;
         }
         .processor-display {
             height: 610px;
@@ -78,7 +82,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             justify-content: space-between;
         }
     </style>
-    <script src="../../js/collections.taxonomytools.js?ver=20230117" type="text/javascript"></script>
+    <script src="../../js/collections.taxonomytools.js?ver=20230123" type="text/javascript"></script>
     <script>
         const collId = <?php echo $collid; ?>;
         const processStatus = '<span class="current-status">' + getSmallWorkingSpinnerHtml(11) + '</span>';
@@ -119,7 +123,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             <div class="header-block">
                 <div class="text-weight-bold">
                     <div class="q-mt-xs">
-                        <taxa-kingdom-selector :disable="upperdisabled"></taxa-kingdom-selector>
+                        <taxa-kingdom-selector :disable="upperdisabled" :selected-kingdom="selectedKingdom" label="Target Kingdom" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
                     </div>
                     <div class="q-mt-xs">
                         <q-input outlined v-model="startIndex" label="Processing Start Index" style="width:250px;" :readonly="upperdisabled" dense />
@@ -135,8 +139,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             </div>
             <div class="processor-container">
                 <div class="processor-control-container">
-                    <q-card>
-                        <q-list>
+                    <q-card class="processor-control-card">
+                        <q-list class="processor-control-accordion">
                             <q-expansion-item group="controlgroup" label="Maintenance Utilities" header-class="bg-grey-3 text-bold" default-opened>
                                 <q-card class="accordion-panel">
                                     <q-card-section>
@@ -285,7 +289,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     startIndex: processingStartIndex,
                     batchLimit: processingLimit,
                     updatedet: updatedet,
-                    levVal: levValue
+                    levVal: levValue,
+                    selectedKingdom: Vue.ref(null)
                 }
             },
             components: {
@@ -302,6 +307,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         alert('Processing batch limit must be a number greater than zero.');
                         processingLimit.value = null;
                     }
+                },
+                updateSelectedKingdom(kingdomObj) {
+                    this.selectedKingdom = kingdomObj;
+                    selectedKingdomId = kingdomObj.id;
+                    selectedKingdomName = kingdomObj.name;
                 },
                 callCleaningController,
                 cancelProcess,
