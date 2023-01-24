@@ -217,7 +217,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             from an external Taxonomic Data Source.
                                         </div>
                                         <div class="q-mb-sm">
-                                            <taxonomy-data-source-bullet-selector></taxonomy-data-source-bullet-selector>
+                                            <taxonomy-data-source-bullet-selector :disable="upperdisabled" :selected-data-source="taxresource" @update:selected-data-source="updateSelectedDataSource"></taxonomy-data-source-bullet-selector>
                                         </div>
                                         <div class="process-button-container">
                                             <div>
@@ -277,6 +277,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         let updatedet = Vue.ref(false);
         let levValue = Vue.ref('2');
         let currentProcess = Vue.ref(null);
+        let dataSource = Vue.ref('col');
 
         const occurrenceTaxonomyManagementModule = Vue.createApp({
             data() {
@@ -290,7 +291,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     batchLimit: processingLimit,
                     updatedet: updatedet,
                     levVal: levValue,
-                    selectedKingdom: Vue.ref(null)
+                    selectedKingdom: Vue.ref(null),
+                    taxresource: dataSource
                 }
             },
             components: {
@@ -312,6 +314,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     this.selectedKingdom = kingdomObj;
                     selectedKingdomId = kingdomObj.id;
                     selectedKingdomName = kingdomObj.name;
+                },
+                updateSelectedDataSource(dataSourceObj) {
+                    this.taxresource = dataSourceObj;
                 },
                 callCleaningController,
                 cancelProcess,
