@@ -72,7 +72,7 @@ class InstitutionManager {
 		$newIID = 0;
 		$sql = 'INSERT INTO institutions (institutioncode, institutionname, institutionname2, address1, address2, city, '.
 			'stateprovince, postalcode, country, phone, contact, email, url, notes) '.
-			'VALUES ("'.($postData['institutioncode']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutioncode']).'"':'NULL').',"'.
+			'VALUES ('.($postData['institutioncode']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutioncode']).'"':'NULL').',"'.
 			Sanitizer::cleanInStr($this->conn,$postData['institutionname']).'",'.
 			($postData['institutionname2']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutionname2']).'"':'NULL').','.
 			($postData['address1']?'"'.Sanitizer::cleanInStr($this->conn,$postData['address1']).'"':'NULL').','.
