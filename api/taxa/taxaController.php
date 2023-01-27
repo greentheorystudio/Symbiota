@@ -12,32 +12,42 @@ if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array
 }
 
 if($isEditor && $action){
+    $taxUtilities = new TaxonomyUtilities();
+    $taxEditorManager = new TaxonomyEditorManager();
     if($action === 'getRankNameArr'){
-        $taxUtilities = new TaxonomyUtilities();
         echo json_encode($taxUtilities->getRankNameArr());
     }
     elseif($action === 'getKingdomArr'){
-        $taxUtilities = new TaxonomyUtilities();
         echo json_encode($taxUtilities->getKingdomArr());
     }
     elseif($action === 'addTaxon'){
-        $taxManager = new TaxonomyEditorManager();
-        echo $taxManager->loadNewName(json_decode($_POST['taxon'], true));
+        echo $taxEditorManager->loadNewName(json_decode($_POST['taxon'], true));
     }
     elseif($action === 'primeHierarchyTable' && array_key_exists('tidarr',$_POST)){
-        $taxUtilities = new TaxonomyUtilities();
         echo $taxUtilities->primeHierarchyTable(json_decode($_POST['tidarr'],false));
     }
     elseif($action === 'populateHierarchyTable' && array_key_exists('tidarr',$_POST)){
-        $taxUtilities = new TaxonomyUtilities();
         echo $taxUtilities->populateHierarchyTable(json_decode($_POST['tidarr'],false));
     }
     elseif($action === 'parseSciName' && array_key_exists('sciname',$_POST)){
-        $taxUtilities = new TaxonomyUtilities();
         echo json_encode($taxUtilities->parseScientificName($_POST['sciname']));
     }
     elseif($action === 'getSciNameFuzzyMatches' && array_key_exists('sciname',$_POST) && array_key_exists('lev',$_POST)){
-        $taxUtilities = new TaxonomyUtilities();
         echo json_encode($taxUtilities->getCloseTaxaMatches($_POST['sciname'],$_POST['lev'],$kingdomid));
+    }
+    elseif(($action === 'getAutocompleteSciNameList' || $action === 'getAutocompleteVernacularList') && $_POST['term']){
+        $taxUtilities->setHideAuth(array_key_exists('hideauth',$_POST)?$_POST['hideauth']:false);
+        $taxUtilities->setHideProtected(array_key_exists('hideprotected',$_POST)?$_POST['hideprotected']:false);
+        $taxUtilities->setAcceptedOnly(array_key_exists('acceptedonly',$_POST)?$_POST['acceptedonly']:false);
+        $taxUtilities->setRankLimit(array_key_exists('rlimit',$_POST)?(int)$_POST['rlimit']:0);
+        $taxUtilities->setRankLow(array_key_exists('rlow',$_POST)?(int)$_POST['rlow']:0);
+        $taxUtilities->setRankHigh(array_key_exists('rhigh',$_POST)?(int)$_POST['rhigh']:0);
+        $taxUtilities->setLimit(array_key_exists('limit',$_POST)?(int)$_POST['limit']:0);
+        if($action === 'getAutocompleteSciNameList'){
+            echo json_encode($taxUtilities->getAutocompleteSciNameList($_POST['term']));
+        }
+        else{
+            echo json_encode($taxUtilities->getAutocompleteVernacularList($_POST['term']));
+        }
     }
 }

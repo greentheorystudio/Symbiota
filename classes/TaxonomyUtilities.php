@@ -4,6 +4,13 @@ include_once(__DIR__ . '/DbConnection.php');
 class TaxonomyUtilities {
 
 	private $conn;
+    private $rankLimit = 0;
+    private $rankLow = 0;
+    private $rankHigh = 0;
+    private $limit = 0;
+    private $hideAuth = false;
+    private $hideProtected = false;
+    private $acceptedOnly = false;
 
 	public function __construct() {
 		$connection = new DbConnection();
@@ -459,5 +466,111 @@ class TaxonomyUtilities {
         }
         $rs->free();
         return $retArr;
+    }
+
+    public function getAutocompleteSciNameList($queryString): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT SciName, Author, TID FROM taxa ';
+        $sql .= 'WHERE SciName LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        if($this->rankLimit){
+            $sql .= 'AND RankId = '.$this->rankLimit.' ';
+        }
+        else{
+            if($this->rankLow){
+                $sql .= 'AND RankId >= '.$this->rankLow.' ';
+            }
+            if($this->rankHigh){
+                $sql .= 'AND RankId <= '.$this->rankHigh.' ';
+            }
+        }
+        if($this->hideProtected){
+            $sql .= 'AND SecurityStatus <> 1 ';
+        }
+        if($this->acceptedOnly){
+            $sql .= 'AND TID = tidaccepted ';
+        }
+        $sql .= 'ORDER BY SciName ';
+        if($this->limit){
+            $sql .= 'LIMIT '.$this->limit.' ';
+        }
+        $rs = $this->conn->query($sql);
+        while ($r = $rs->fetch_object()){
+            $label = $r->SciName.($this->hideAuth?'':' '.$r->Author);
+            $scinameArr = array();
+            $scinameArr['tid'] = $r->TID;
+            $scinameArr['label'] = $label;
+            $scinameArr['name'] = $r->SciName;
+            $retArr[] = $scinameArr;
+        }
+
+        return $retArr;
+    }
+
+    public function getAutocompleteVernacularList($queryString): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT v.VernacularName '.
+            'FROM taxavernaculars AS v ';
+        $sql .= 'WHERE v.VernacularName LIKE "%'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'ORDER BY v.VernacularName ';
+        if($this->limit){
+            $sql .= 'LIMIT '.$this->limit.' ';
+        }
+        $rs = $this->conn->query($sql);
+        while ($r = $rs->fetch_object()){
+            $scinameArr = array();
+            $scinameArr['tid'] = '';
+            $scinameArr['label'] = $r->VernacularName;
+            $scinameArr['name'] = $r->VernacularName;
+            $retArr[] = $scinameArr;
+        }
+
+        return $retArr;
+    }
+
+    public function setRankLimit($val): void
+    {
+        $this->rankLimit = Sanitizer::cleanInStr($this->conn,$val);
+    }
+
+    public function setRankLow($val): void
+    {
+        $this->rankLow = Sanitizer::cleanInStr($this->conn,$val);
+    }
+
+    public function setRankHigh($val): void
+    {
+        $this->rankHigh = Sanitizer::cleanInStr($this->conn,$val);
+    }
+
+    public function setLimit($val): void
+    {
+        $this->limit = Sanitizer::cleanInStr($this->conn,$val);
+    }
+
+    public function setHideAuth($val): void
+    {
+        if($val === 'true' || (int)$val === 1){
+            $this->hideAuth = true;
+        }
+        else{
+            $this->hideAuth = false;
+        }
+    }
+
+    public function setAcceptedOnly($val): void
+    {
+        if($val === 'true' || (int)$val === 1){
+            $this->acceptedOnly = true;
+        }
+        else{
+            $this->acceptedOnly = false;
+        }
+    }
+
+    public function setHideProtected($val): void
+    {
+        $this->hideProtected = Sanitizer::cleanInStr($this->conn,$val);
     }
 }
