@@ -7,63 +7,57 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
     </div>
     <div id="topNavigation">
         <q-toolbar class="q-pa-md horizontalDropDown">
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" label="Home" stretch flat no-wrap></q-btn>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" label="Search Collections" stretch flat no-wrap></q-btn>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank" label="Spatial Module" stretch flat no-wrap></q-btn>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php" label="Image Search" stretch flat no-wrap></q-btn>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php" label="Browse Images" stretch flat no-wrap></q-btn>
-            <q-btn stretch flat no-wrap label="Inventories" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?" class="horizontalDropDownButton text-capitalize" v-model="inventories" @mouseover="inventories = true" @mouseleave="inventories = false">
-                <q-menu v-model="inventories" transition-duration="750" square fit>
-                    <q-list @mouseover="inventories = true" @mouseleave="inventories = false">
-                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=1" clickable v-close-popup>
-                            <q-item-section>
-                                <q-item-label>Project 1</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=2" clickable v-close-popup>
-                            <q-item-section>
-                                <q-item-label>Project 2</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=3" clickable v-close-popup>
-                            <q-item-section>
-                                <q-item-label>Project 3</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=4" clickable v-close-popup>
-                            <q-item-section>
-                                <q-item-label>Project 4</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                    </q-list>
-                </q-menu>
-            </q-btn>
-            <q-btn stretch flat no-wrap label="Interactive Tools" class="horizontalDropDownButton text-capitalize" v-model="tools" @mouseover="tools = true" @mouseleave="tools = false">
-                <q-menu v-model="tools" transition-duration="750" square fit>
-                    <q-list @mouseover="tools = true" @mouseleave="tools = false">
-                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=1" clickable v-close-popup>
-                            <q-item-section>
-                                <q-item-label>Dynamic Checklist 1</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=2" clickable v-close-popup>
-                            <q-item-section>
-                                <q-item-label>Dynamic Checklist 2</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=3" clickable v-close-popup>
-                            <q-item-section>
-                                <q-item-label>Dynamic Checklist 3</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                        <q-item class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=4" clickable v-close-popup>
-                            <q-item-section>
-                                <q-item-label>Dynamic Checklist 4</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                    </q-list>
-                </q-menu>
-            </q-btn>
+            <template v-if="windowWidth < 1440">
+                <q-btn class="q-ml-md" flat round dense icon="menu">
+                    <q-menu>
+                        <q-list dense>
+                            <template v-for="item in navBarData">
+                                <template v-if="item.subItems && item.subItems.length">
+                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" v-model="navBarToggle[item.id]" @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
+                                        <q-item-section>{{ item.label }}</q-item-section>
+                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="750" anchor="top end" self="top start">
+                                            <q-list dense @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
+                                                <template v-for="subitem in item.subItems">
+                                                    <q-item clickable v-close-popup :href="subitem.url">
+                                                        <q-item-section>{{ subitem.label }}</q-item-section>
+                                                    </q-item>
+                                                </template>
+                                            </q-list>
+                                        </q-menu>
+                                    </q-item>
+                                </template>
+                                <template v-else>
+                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')">
+                                        <q-item-section>{{ item.label }}</q-item-section>
+                                    </q-item>
+                                </template>
+                            </template>
+                        </q-list>
+                    </q-menu>
+                </q-btn>
+            </template>
+            <template v-if="windowWidth >= 1440">
+                <template v-for="item in navBarData">
+                    <template v-if="item.subItems && item.subItems.length">
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false" stretch flat no-wrap>
+                            <q-menu v-model="navBarToggle[item.id]" transition-duration="750" anchor="bottom start" self="top start" square>
+                                <q-list dense @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
+                                    <template v-for="subitem in item.subItems">
+                                        <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" clickable v-close-popup>
+                                            <q-item-section>
+                                                <q-item-label>{{ subitem.label }}</q-item-label>
+                                            </q-item-section>
+                                        </q-item>
+                                    </template>
+                                </q-list>
+                            </q-menu>
+                        </q-btn>
+                    </template>
+                    <template v-else>
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" stretch flat no-wrap></q-btn>
+                    </template>
+                </template>
+            </template>
             <q-space></q-space>
             <template v-if="userDisplayName">
                 <q-breadcrumbs-el class="header-username-text">Welcome {{ userDisplayName }}!</q-breadcrumbs-el>
@@ -78,13 +72,61 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
         </q-toolbar>
     </div>
     <script>
+        const navBarData = [
+            {url: CLIENT_ROOT + '/index.php', label: 'Home'},
+            {url: CLIENT_ROOT + '/collections/index.php', label: 'Search Collections'},
+            {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true},
+            {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
+            {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'},
+            {
+                url: CLIENT_ROOT + '/projects/index.php',
+                label: 'Inventories',
+                subItems: [
+                    {url: CLIENT_ROOT + '/projects/index.php?pid=1', label: 'Project 1'},
+                    {url: CLIENT_ROOT + '/projects/index.php?pid=2', label: 'Project 2'},
+                    {url: CLIENT_ROOT + '/projects/index.php?pid=3', label: 'Project 3'},
+                    {url: CLIENT_ROOT + '/projects/index.php?pid=4', label: 'Project 4'}
+                ]
+            },
+            {
+                label: 'Interactive Tools',
+                subItems: [
+                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=1', label: 'Dynamic Checklist 1'},
+                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=2', label: 'Dynamic Checklist 2'},
+                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=3', label: 'Dynamic Checklist 3'},
+                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=4', label: 'Dynamic Checklist 4'}
+                ]
+            }
+        ];
+
         document.addEventListener("DOMContentLoaded", function() {
             const dropDownNavBar = Vue.createApp({
                 data() {
                     return {
+                        windowWidth: Vue.ref(0),
                         userDisplayName: USER_DISPLAY_NAME,
-                        inventories: false,
-                        tools: false
+                        navBarData: navBarData,
+                        navBarToggle: Vue.ref({})
+                    }
+                },
+                mounted() {
+                    this.setNavBarData();
+                    window.addEventListener('resize', this.handleResize);
+                    this.handleResize();
+                },
+                methods: {
+                    setNavBarData() {
+                        let indexId = 1;
+                        this.navBarData.forEach((dataObj) => {
+                            if(dataObj.hasOwnProperty('subItems')){
+                                dataObj['id'] = indexId;
+                                this.navBarToggle[indexId] = false;
+                                indexId++;
+                            }
+                        });
+                    },
+                    handleResize() {
+                        this.windowWidth = window.innerWidth;
                     }
                 }
             });
