@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
-$kingdomid = array_key_exists('kingdomid',$_REQUEST)?(int)$_REQUEST['kingdomid']:0;
+$kingdomid = array_key_exists('kingdomid',$_REQUEST)?(int)$_REQUEST['kingdomid']:null;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
@@ -19,6 +19,9 @@ if($isEditor && $action){
     }
     elseif($action === 'getKingdomArr'){
         echo json_encode($taxUtilities->getKingdomArr());
+    }
+    elseif($action === 'getRankArr'){
+        echo json_encode($taxUtilities->getRankArr($kingdomid));
     }
     elseif($action === 'addTaxon'){
         echo $taxEditorManager->loadNewName(json_decode($_POST['taxon'], true));

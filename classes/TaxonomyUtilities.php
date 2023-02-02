@@ -468,10 +468,32 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
+    public function getRankArr($kingdomId = null): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits ';
+        if($kingdomId){
+            $sql .= 'WHERE kingdomid = ' . $kingdomId . ' ';
+        }
+        $sql .= 'ORDER BY rankid ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            if(array_key_exists($row->rankid,$retArr)){
+                $retArr[$row->rankid]['rankname'] .= ', ' . $row->rankname;
+            }
+            else{
+                $retArr[$row->rankid]['rankname'] = $row->rankname;
+            }
+            $retArr[$row->rankid]['rankid'] = (int)$row->rankid;
+        }
+        $result->free();
+        return $retArr;
+    }
+
     public function getAutocompleteSciNameList($queryString): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT SciName, Author, TID FROM taxa ';
+        $sql = 'SELECT DISTINCT kingdomId, SciName, Author, TID FROM taxa ';
         $sql .= 'WHERE SciName LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
         if($this->rankLimit){
             $sql .= 'AND RankId = '.$this->rankLimit.' ';
@@ -501,6 +523,7 @@ class TaxonomyUtilities {
             $scinameArr['tid'] = $r->TID;
             $scinameArr['label'] = $label;
             $scinameArr['name'] = $r->SciName;
+            $scinameArr['kingdomid'] = $r->kingdomId;
             $retArr[] = $scinameArr;
         }
 

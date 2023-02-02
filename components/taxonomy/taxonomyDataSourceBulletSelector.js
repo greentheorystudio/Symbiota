@@ -4,10 +4,12 @@ const taxonomyDataSourceBulletSelector = {
         'disable'
     ],
     template: `
-        <fieldset style="padding:5px;">
-            <legend><b>Taxonomic Data Source</b></legend>
-            <q-option-group :options="dataSourceOptions" type="radio" v-model="selectedDataSource" :disable="disable" @update:model-value="processChange" dense />
-        </fieldset>
+        <q-card flat bordered>
+            <q-card-section>
+                <div class="text-subtitle1 text-weight-bold">Select Taxonomic Data Source</div>
+                <q-option-group :options="dataSourceOptions" type="radio" v-model="selectedDataSource" :disable="disable" @update:model-value="processChange" dense />
+            </q-card-section>
+        </q-card>
     `,
     data() {
         return {

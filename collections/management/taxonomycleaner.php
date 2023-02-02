@@ -129,7 +129,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         <q-input outlined v-model="startIndex" label="Processing Start Index" style="width:250px;" :readonly="upperdisabled" dense />
                     </div>
                     <div class="q-mt-xs">
-                        <q-input outlined v-model="batchLimit" label="Processing Batch Limit" style="width:175px;" @update:model-value="processingBatchLimitChange" :readonly="upperdisabled" dense />
+                        <q-input type="number" outlined v-model="batchLimit" label="Processing Batch Limit" style="width:175px;" @update:model-value="processingBatchLimitChange" :readonly="upperdisabled" dense />
                     </div>
                 </div>
                 <div class="text-weight-bold">
@@ -234,7 +234,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
                                         with taxa currently in the Taxonomic Thesaurus.
                                         <div class="q-mt-xs">
-                                            <q-input outlined v-model="levVal" style="width:225px;" label="Character difference tolerance" :readonly="upperdisabled" dense />
+                                            <q-input type="number" outlined v-model="levVal" style="width:225px;" label="Character difference tolerance" :readonly="upperdisabled" dense />
                                         </div>
                                         <div class="process-button-container">
                                             <div>

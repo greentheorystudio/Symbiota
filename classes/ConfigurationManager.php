@@ -794,21 +794,4 @@ class ConfigurationManager{
         }
         return $status;
     }
-
-    public function getTaxonomyRankArr(): array
-    {
-        $retArr = array();
-        $sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits ORDER BY rankid ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            if(array_key_exists($row->rankid,$retArr)){
-                $retArr[$row->rankid] .= ', ' . $row->rankname;
-            }
-            else{
-                $retArr[$row->rankid] = $row->rankname;
-            }
-        }
-        $result->free();
-        return $retArr;
-    }
 }
