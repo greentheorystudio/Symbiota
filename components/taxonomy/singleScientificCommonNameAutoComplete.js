@@ -38,10 +38,14 @@ const singleScientificCommonNameAutoComplete = {
         },
         rankHigh: {
             type: Number
+        },
+        disable: {
+            type: Boolean,
+            default: false
         }
     },
     template: `
-        <q-select v-model="sciname" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="tid" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label"></q-select>
+        <q-select v-model="sciname" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="tid" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
         <q-dialog v-model="warning">
             <q-card style="width: 300px">
                 <q-card-section>

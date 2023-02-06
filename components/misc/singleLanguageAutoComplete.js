@@ -6,10 +6,14 @@ const singleLanguageAutoComplete = {
         label: {
             type: String,
             default: 'Scientific Name'
+        },
+        disable: {
+            type: Boolean,
+            default: false
         }
     },
     template: `
-        <q-select v-model="language" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label"></q-select>
+        <q-select v-model="language" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
         <q-dialog v-model="warning">
             <q-card style="width: 300px">
                 <q-card-section>

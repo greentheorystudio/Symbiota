@@ -38,6 +38,7 @@ function arrayIndexSort(obj){
 
 function cancelAPIRequest(){
 	http.abort();
+	abortController.abort();
 }
 
 function checkObjectNotEmpty(obj){
@@ -101,6 +102,17 @@ function generateRandColor(){
 	const z1 = z.substring(0, y);
 	hexColor = z1 + x;
 	return hexColor;
+}
+
+function getErrorResponseText(status,statusText){
+	let text;
+	if(status === 0){
+		text = 'Cancelled';
+	}
+	else{
+		text = 'Error: ' + status + ' ' + statusText;
+	}
+	return text;
 }
 
 function getISOStrFromDateObj(dObj){

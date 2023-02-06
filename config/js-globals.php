@@ -31,6 +31,7 @@
     const SPATIAL_DRAGDROP_RASTER_COLOR_SCALE = '<?php echo $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']; ?>';
 
     const http = new XMLHttpRequest();
+    let abortController;
     const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
