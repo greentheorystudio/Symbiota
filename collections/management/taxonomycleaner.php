@@ -381,6 +381,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 adjustUIEnd(){
                     this.unlinkedNamesArr = [];
+                    this.currentSciname = null;
                     this.setUnlinkedRecordCounts();
                 },
                 adjustUIStart(id){
@@ -511,11 +512,29 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         alert('Please select a Target Kingdom from the dropdown menu above.');
                     }
                 },
-                cancelProcess(adjustUI = true){
+                cancelProcess(){
                     this.processCancelled = true;
-                    cancelAPIRequest();
-                    this.processErrorResponse(true,'Cancelled');
-                    if(adjustUI){
+                    if(!this.currentSciname){
+                        cancelAPIRequest();
+                        const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
+                        if(procObj){
+                            let subProcObj;
+                            procObj['current'] = false;
+                            procObj['loading'] = false;
+                            if(procObj.hasOwnProperty('subs')){
+                                subProcObj = procObj['subs'].find(subproc => subproc['loading'] === true);
+                            }
+                            if(subProcObj){
+                                subProcObj['loading'] = false;
+                                subProcObj['result'] = 'error';
+                                subProcObj['resultText'] = 'Cancelled';
+                            }
+                            else{
+                                procObj['result'] = 'error';
+                                procObj['resultText'] = 'Cancelled';
+                            }
+                        }
+                        this.setUnlinkedRecordCounts();
                         this.adjustUIEnd();
                     }
                 },
@@ -1292,38 +1311,37 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     return inArr;
                 },
                 runCleanScinameAuthorProcess(){
-                    if(!this.processCancelled){
-                        if(this.unlinkedNamesArr.length > 0){
-                            this.currentSciname = this.unlinkedNamesArr[0];
-                            this.unlinkedNamesArr.splice(0, 1);
-                            const text = 'Attempting to parse author name from: ' + this.currentSciname;
-                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
-                            const formData = new FormData();
-                            formData.append('sciname', this.currentSciname);
-                            formData.append('action', 'parseSciName');
-                            fetch(taxonomyApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                if(response.status === 200){
-                                    response.json().then((parsedName) => {
-                                        if(parsedName.hasOwnProperty('author') && parsedName['author'] !== ''){
-                                            this.processSuccessResponse(false,'Parsed author: ' + parsedName['author'] + '; Cleaned scientific name: ' + parsedName['sciname']);
-                                            const text = 'Updating occurrence records with cleaned scientific name';
-                                            this.addSubprocessToProcessorDisplay(this.currentSciname,'undo',text);
-                                            this.changedCurrentSciname = this.currentSciname;
-                                            this.changedParsedSciname = parsedName['sciname'];
-                                            const formData = new FormData();
-                                            formData.append('collid', collId);
-                                            formData.append('sciname', this.currentSciname);
-                                            formData.append('cleanedsciname', parsedName['sciname']);
-                                            formData.append('tid', null);
-                                            formData.append('action', 'updateOccWithCleanedName');
-                                            fetch(occurrenceTaxonomyApiUrl, {
-                                                method: 'POST',
-                                                body: formData
-                                            })
+                    if(!this.processCancelled && this.unlinkedNamesArr.length > 0){
+                        this.currentSciname = this.unlinkedNamesArr[0];
+                        this.unlinkedNamesArr.splice(0, 1);
+                        const text = 'Attempting to parse author name from: ' + this.currentSciname;
+                        this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                        const formData = new FormData();
+                        formData.append('sciname', this.currentSciname);
+                        formData.append('action', 'parseSciName');
+                        fetch(taxonomyApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            if(response.status === 200){
+                                response.json().then((parsedName) => {
+                                    if(parsedName.hasOwnProperty('author') && parsedName['author'] !== ''){
+                                        this.processSuccessResponse(false,'Parsed author: ' + parsedName['author'] + '; Cleaned scientific name: ' + parsedName['sciname']);
+                                        const text = 'Updating occurrence records with cleaned scientific name';
+                                        this.addSubprocessToProcessorDisplay(this.currentSciname,'undo',text);
+                                        this.changedCurrentSciname = this.currentSciname;
+                                        this.changedParsedSciname = parsedName['sciname'];
+                                        const formData = new FormData();
+                                        formData.append('collid', collId);
+                                        formData.append('sciname', this.currentSciname);
+                                        formData.append('cleanedsciname', parsedName['sciname']);
+                                        formData.append('tid', null);
+                                        formData.append('action', 'updateOccWithCleanedName');
+                                        fetch(occurrenceTaxonomyApiUrl, {
+                                            method: 'POST',
+                                            body: formData
+                                        })
                                             .then((response) => {
                                                 if(response.status === 200){
                                                     response.text().then((res) => {
@@ -1337,119 +1355,107 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                     this.runCleanScinameAuthorProcess();
                                                 }
                                             });
-                                        }
-                                        else{
-                                            this.processErrorResponse(false,'No author found in scientific name');
-                                            this.runCleanScinameAuthorProcess();
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                        else{
-                            this.adjustUIEnd();
-                        }
+                                    }
+                                    else{
+                                        this.processErrorResponse(false,'No author found in scientific name');
+                                        this.runCleanScinameAuthorProcess();
+                                    }
+                                });
+                            }
+                        });
                     }
                     else{
                         this.adjustUIEnd();
                     }
                 },
                 runScinameDataSourceSearch(){
-                    if(!this.processCancelled){
-                        if(this.unlinkedNamesArr.length > 0){
-                            this.nameSearchResults = [];
-                            this.currentSciname = this.unlinkedNamesArr[0];
-                            this.unlinkedNamesArr.splice(0, 1);
-                            if(this.dataSource === 'col'){
-                                this.colInitialSearchResults = [];
-                                const text = 'Searching the Catalogue of Life (COL) for ' + this.currentSciname;
-                                this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
-                                const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + this.currentSciname;
-                                const formData = new FormData();
-                                formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then((response) => {
-                                    if(response.status === 200){
-                                        response.json().then((res) => {
-                                            this.processGetCOLTaxonByScinameResponse(res);
-                                        });
-                                    }
-                                    else{
-                                        const text = getErrorResponseText(response.status,response.statusText);
-                                        this.processErrorResponse(false,text);
-                                        this.runScinameDataSourceSearch();
-                                    }
-                                });
-                            }
-                            else if(this.dataSource === 'itis'){
-                                this.itisInitialSearchResults = [];
-                                const text = 'Searching the Integrated Taxonomic Information System (ITIS) for ' + this.currentSciname;
-                                this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
-                                const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + this.currentSciname;
-                                const formData = new FormData();
-                                formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then((response) => {
-                                    if(response.status === 200){
-                                        response.json().then((res) => {
-                                            this.processGetITISTaxonByScinameResponse(res);
-                                        });
-                                    }
-                                    else{
-                                        const text = getErrorResponseText(response.status,response.statusText);
-                                        this.processErrorResponse(false,text);
-                                        this.runScinameDataSourceSearch();
-                                    }
-                                });
-                            }
-                            else if(this.dataSource === 'worms'){
-                                const text = 'Searching the World Register of Marine Species (WoRMS) for ' + this.currentSciname;
-                                this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
-                                const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + this.currentSciname + '?marine_only=false';
-                                const formData = new FormData();
-                                formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then((response) => {
-                                    if(response.status === 200){
-                                        response.text().then((res) => {
-                                            if(res && Number(res) > 0){
-                                                this.getWoRMSNameSearchResultsRecord(res);
-                                            }
-                                            else{
-                                                this.processErrorResponse(false,'Not found');
-                                                this.runScinameDataSourceSearch();
-                                            }
-                                        });
-                                    }
-                                    else if(response.status === 204){
-                                        this.processErrorResponse(false,'Not found');
-                                        this.runScinameDataSourceSearch();
-                                    }
-                                    else{
-                                        const text = getErrorResponseText(response.status,response.statusText);
-                                        this.processErrorResponse(false,text);
-                                        this.runScinameDataSourceSearch();
-                                    }
-                                });
-                            }
+                    if(!this.processCancelled && this.unlinkedNamesArr.length > 0){
+                        this.nameSearchResults = [];
+                        this.currentSciname = this.unlinkedNamesArr[0];
+                        this.unlinkedNamesArr.splice(0, 1);
+                        if(this.dataSource === 'col'){
+                            this.colInitialSearchResults = [];
+                            const text = 'Searching the Catalogue of Life (COL) for ' + this.currentSciname;
+                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                            const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + this.currentSciname;
+                            const formData = new FormData();
+                            formData.append('url', url);
+                            formData.append('action', 'get');
+                            fetch(proxyApiUrl, {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then((response) => {
+                                if(response.status === 200){
+                                    response.json().then((res) => {
+                                        this.processGetCOLTaxonByScinameResponse(res);
+                                    });
+                                }
+                                else{
+                                    const text = getErrorResponseText(response.status,response.statusText);
+                                    this.processErrorResponse(false,text);
+                                    this.runScinameDataSourceSearch();
+                                }
+                            });
                         }
-                        else if(this.newTidArr.length > 0){
-                            this.primeTaxonomicHierarchy();
+                        else if(this.dataSource === 'itis'){
+                            this.itisInitialSearchResults = [];
+                            const text = 'Searching the Integrated Taxonomic Information System (ITIS) for ' + this.currentSciname;
+                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                            const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + this.currentSciname;
+                            const formData = new FormData();
+                            formData.append('url', url);
+                            formData.append('action', 'get');
+                            fetch(proxyApiUrl, {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then((response) => {
+                                if(response.status === 200){
+                                    response.json().then((res) => {
+                                        this.processGetITISTaxonByScinameResponse(res);
+                                    });
+                                }
+                                else{
+                                    const text = getErrorResponseText(response.status,response.statusText);
+                                    this.processErrorResponse(false,text);
+                                    this.runScinameDataSourceSearch();
+                                }
+                            });
                         }
-                        else{
-                            this.adjustUIEnd();
+                        else if(this.dataSource === 'worms'){
+                            const text = 'Searching the World Register of Marine Species (WoRMS) for ' + this.currentSciname;
+                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                            const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + this.currentSciname + '?marine_only=false';
+                            const formData = new FormData();
+                            formData.append('url', url);
+                            formData.append('action', 'get');
+                            fetch(proxyApiUrl, {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then((response) => {
+                                if(response.status === 200){
+                                    response.text().then((res) => {
+                                        if(res && Number(res) > 0){
+                                            this.getWoRMSNameSearchResultsRecord(res);
+                                        }
+                                        else{
+                                            this.processErrorResponse(false,'Not found');
+                                            this.runScinameDataSourceSearch();
+                                        }
+                                    });
+                                }
+                                else if(response.status === 204){
+                                    this.processErrorResponse(false,'Not found');
+                                    this.runScinameDataSourceSearch();
+                                }
+                                else{
+                                    const text = getErrorResponseText(response.status,response.statusText);
+                                    this.processErrorResponse(false,text);
+                                    this.runScinameDataSourceSearch();
+                                }
+                            });
                         }
                     }
                     else if(this.newTidArr.length > 0){
@@ -1462,39 +1468,34 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 runTaxThesaurusFuzzyMatchProcess(){
                     this.changedCurrentSciname = '';
                     this.changedParsedSciname = '';
-                    if(!this.processCancelled){
-                        if(this.unlinkedNamesArr.length > 0){
-                            this.currentSciname = this.unlinkedNamesArr[0];
-                            this.unlinkedNamesArr.splice(0, 1);
-                            const text = 'Finding fuzzy matches for ' + this.currentSciname;
-                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
-                            const formData = new FormData();
-                            formData.append('kingdomid', this.selectedKingdomId);
-                            formData.append('sciname', this.currentSciname);
-                            formData.append('lev', this.levValue);
-                            formData.append('action', 'getSciNameFuzzyMatches');
-                            fetch(taxonomyApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                if(response.status === 200){
-                                    response.json().then((fuzzyMatches) => {
-                                        if(checkObjectNotEmpty(fuzzyMatches)){
-                                            this.processSuccessResponse(false);
-                                            this.processFuzzyMatches(fuzzyMatches);
-                                        }
-                                        else{
-                                            this.processErrorResponse(false,'No fuzzy matches found');
-                                            this.runTaxThesaurusFuzzyMatchProcess();
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                        else{
-                            this.adjustUIEnd();
-                        }
+                    if(!this.processCancelled && this.unlinkedNamesArr.length > 0){
+                        this.currentSciname = this.unlinkedNamesArr[0];
+                        this.unlinkedNamesArr.splice(0, 1);
+                        const text = 'Finding fuzzy matches for ' + this.currentSciname;
+                        this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                        const formData = new FormData();
+                        formData.append('kingdomid', this.selectedKingdomId);
+                        formData.append('sciname', this.currentSciname);
+                        formData.append('lev', this.levValue);
+                        formData.append('action', 'getSciNameFuzzyMatches');
+                        fetch(taxonomyApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            if(response.status === 200){
+                                response.json().then((fuzzyMatches) => {
+                                    if(checkObjectNotEmpty(fuzzyMatches)){
+                                        this.processSuccessResponse(false);
+                                        this.processFuzzyMatches(fuzzyMatches);
+                                    }
+                                    else{
+                                        this.processErrorResponse(false,'No fuzzy matches found');
+                                        this.runTaxThesaurusFuzzyMatchProcess();
+                                    }
+                                });
+                            }
+                        });
                     }
                     else{
                         this.adjustUIEnd();
@@ -1540,7 +1541,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 setTaxaToAdd(){
-                    if(!this.processCancelled && this.processingArr.length > 0){
+                    if(this.processingArr.length > 0){
                         const sciname = this.processingArr[0]['sciname'];
                         if(!this.nameTidIndex.hasOwnProperty(sciname)){
                             const url = CLIENT_ROOT + '/api/taxa/gettid.php';
@@ -1679,7 +1680,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     .then((response) => {
                         if(response.status === 200){
                             response.text().then((res) => {
-                                this.processSuccessResponse(true,'Complete: ' + res + ' records cleaned');
+                                this.processSuccessResponse(true,'Complete: ' + res + ' records updated');
                                 this.adjustUIEnd();
                             });
                         }
