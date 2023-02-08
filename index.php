@@ -94,6 +94,10 @@ include(__DIR__ . '/header.php');
         island stakeholders with a single portal that allows them to track and analyze occurrences, distributions, and
         changes for plants, animals and other organisms across the entire archipelago. Onward island conservation!
     </div>
+
+    <div style="margin-top:10px; margin-bottom: 10px;">
+        If you have any questions or would like additional permissions for the Cal-IBIS portal, please <a href="mailto:dknapp@sbbotanicgarden.org">contact Denise Knapp (dknapp@sbbotanicgarden.org)</a>.
+    </div>
 </div>
 
 <?php
