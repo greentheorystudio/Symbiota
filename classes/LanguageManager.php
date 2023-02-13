@@ -37,11 +37,12 @@ class LanguageManager {
     public function getLanguageByIso($iso): array
     {
         $retArr = array();
-        $sql = 'SELECT iso639_1, langname '.
+        $sql = 'SELECT langid, iso639_1, langname '.
             'FROM adminlanguages '.
             'WHERE iso639_1 = "'.$iso.'" ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
+            $retArr['id'] = $r->langid;
             $retArr['iso'] = $r->iso639_1;
             $retArr['name'] = $r->langname;
         }
@@ -52,11 +53,12 @@ class LanguageManager {
     public function getLanguageByName($name): array
     {
         $retArr = array();
-        $sql = 'SELECT iso639_1, langname '.
+        $sql = 'SELECT langid, iso639_1, langname '.
             'FROM adminlanguages '.
             'WHERE langname = "'.$name.'" ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
+            $retArr['id'] = $r->langid;
             $retArr['iso'] = $r->iso639_1;
             $retArr['name'] = $r->langname;
         }
@@ -67,12 +69,13 @@ class LanguageManager {
     public function getAutocompleteLanguageList($queryString): array
     {
         $retArr = array();
-        $sql = 'SELECT iso639_1, langname FROM adminlanguages '.
+        $sql = 'SELECT langid, iso639_1, langname FROM adminlanguages '.
             'WHERE langname LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" '.
             'ORDER BY langname LIMIT 10 ';
         $rs = $this->conn->query($sql);
         while ($r = $rs->fetch_object()){
             $langArr = array();
+            $langArr['id'] = $r->langid;
             $langArr['iso'] = $r->iso639_1;
             $langArr['name'] = $r->langname;
             $retArr[] = $langArr;

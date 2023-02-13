@@ -4,6 +4,7 @@ include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$tId = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:null;
 $kingdomid = array_key_exists('kingdomid',$_REQUEST)?(int)$_REQUEST['kingdomid']:null;
 
 $isEditor = false;
@@ -52,5 +53,41 @@ if($isEditor && $action){
         else{
             echo json_encode($taxUtilities->getAutocompleteVernacularList($_POST['term']));
         }
+    }
+    elseif($action === 'getImageCountsForTaxonomicGroup' && array_key_exists('tid',$_POST)){
+        echo json_encode($taxUtilities->getImageCountsForTaxonomicGroup((int)$_POST['tid']));
+    }
+    elseif($action === 'getVideoCountsForTaxonomicGroup' && array_key_exists('tid',$_POST)){
+        echo json_encode($taxUtilities->getVideoCountsForTaxonomicGroup((int)$_POST['tid']));
+    }
+    elseif($action === 'getAudioCountsForTaxonomicGroup' && array_key_exists('tid',$_POST)){
+        echo json_encode($taxUtilities->getAudioCountsForTaxonomicGroup((int)$_POST['tid']));
+    }
+    elseif($action === 'getDescriptionCountsForTaxonomicGroup' && array_key_exists('tid',$_POST)){
+        echo json_encode($taxUtilities->getDescriptionCountsForTaxonomicGroup((int)$_POST['tid']));
+    }
+    elseif($action === 'getIdentifiersForTaxonomicGroup' && array_key_exists('tid',$_POST) && array_key_exists('source',$_POST)){
+        echo json_encode($taxUtilities->getIdentifiersForTaxonomicGroup((int)$_POST['tid'],htmlspecialchars($_POST['source'])));
+    }
+    elseif($action === 'addTaxonIdentifier' && array_key_exists('tid',$_POST) && array_key_exists('idname',$_POST) && array_key_exists('id',$_POST)){
+        echo $taxUtilities->addTaxonIdentifier((int)$_POST['tid'],htmlspecialchars($_POST['idname']),htmlspecialchars($_POST['id']));
+    }
+    elseif($action === 'getTaxonImages' && array_key_exists('tid',$_POST)){
+        echo json_encode($taxUtilities->getTaxonImages((int)$_POST['tid']));
+    }
+    elseif($action === 'getTaxonVideos' && array_key_exists('tid',$_POST)){
+        echo json_encode($taxUtilities->getTaxonVideos((int)$_POST['tid']));
+    }
+    elseif($action === 'getTaxonAudios' && array_key_exists('tid',$_POST)){
+        echo json_encode($taxUtilities->getTaxonAudios((int)$_POST['tid']));
+    }
+    elseif($action === 'getTaxonDescriptions' && array_key_exists('tid',$_POST)){
+        echo json_encode($taxUtilities->getTaxonDescriptions((int)$_POST['tid']));
+    }
+    if($action === 'addTaxonDescriptionTab' && array_key_exists('description',$_POST)){
+        echo json_encode($taxUtilities->addTaxonDescriptionTab(json_decode($_POST['description'], true)));
+    }
+    if($action === 'addTaxonDescriptionStatement' && array_key_exists('statement',$_POST)){
+        echo json_encode($taxUtilities->addTaxonDescriptionStatement(json_decode($_POST['statement'], true)));
     }
 }

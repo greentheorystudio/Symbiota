@@ -309,6 +309,40 @@ class MediaShared{
 		return $status;
 	}
 
+    public function addMediaRecord($media): int
+    {
+        $retVal = 0;
+        if($media){
+            $sql = 'INSERT INTO images (tid, occid, accessuri, title, creator, `type`, format, owner, furtherinformationurl, '.
+                '`language`, usageterms, rights, bibliographiccitation, publisher, contributor, locationcreated, description, '.
+                'sortsequence) '.
+                'VALUES ('.
+                (isset($media['tid']) ? (int)$media['tid'] :'NULL').','.
+                (isset($media['occid']) ? (int)$media['occid'] :'NULL').','.
+                (isset($media['accessuri']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['accessuri']).'"' :'NULL').','.
+                (isset($media['title']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['title']).'"' :'NULL').','.
+                (isset($media['creator']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['creator']).'"' :'NULL').','.
+                (isset($media['type']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['type']).'"' :'NULL').','.
+                (isset($media['format']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['format']).'"' :'NULL').','.
+                (isset($media['owner']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['owner']).'"' :'NULL').','.
+                (isset($media['furtherinformationurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['furtherinformationurl']).'"' :'NULL').','.
+                (isset($media['language']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['language']).'"' :'NULL').','.
+                (isset($media['usageterms']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['usageterms']).'"' :'NULL').','.
+                (isset($media['rights']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['rights']).'"' :'NULL').','.
+                (isset($media['bibliographiccitation']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['bibliographiccitation']).'"' :'NULL').','.
+                (isset($media['publisher']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['publisher']).'"' :'NULL').','.
+                (isset($media['contributor']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['contributor']).'"' :'NULL').','.
+                (isset($media['locationcreated']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['locationcreated']).'"' :'NULL').','.
+                (isset($media['description']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['description']).'"' :'NULL').','.
+                (isset($media['sortsequence']) ? (int)$media['sortsequence'] : '50').')';
+            //echo $sql; exit;
+            if($this->conn->query($sql)){
+                $retVal = $this->conn->insert_id;
+            }
+        }
+        return $retVal;
+    }
+
 	public function deleteMedia($medIdDel, $removeMed): bool
 	{
 		$medUrl = '';

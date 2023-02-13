@@ -36,4 +36,6 @@
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
     const taxonomyApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
+    const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
+    const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
 </script>

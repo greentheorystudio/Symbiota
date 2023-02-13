@@ -552,6 +552,331 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
+    public function getImageCountsForTaxonomicGroup($tid, $includeOcc = false): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(i.imgid) AS cnt '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'LEFT JOIN images AS i ON t.TID = i.tid '.
+            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted ';
+        if(!$includeOcc){
+            $sql .= 'AND ISNULL(i.occid) ';
+        }
+        $sql .= 'GROUP BY t.TID ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $resultArr = array();
+            $resultArr['tid'] = $row->TID;
+            $resultArr['sciname'] = $row->SciName;
+            $resultArr['rankid'] = $row->RankId;
+            $resultArr['cnt'] = $row->cnt;
+            $retArr[] = $resultArr;
+        }
+        $result->free();
+        return $retArr;
+    }
+
+    public function getTaxonImages($tid, $includeOcc = false): array
+    {
+        $retArr = array();
+        $sql = 'SELECT imgid, url, thumbnailurl, originalurl, archiveurl, photographer, imagetype, format, caption, owner, '.
+            'sourceurl, referenceUrl, rights, accessrights, locality, occid, notes, anatomy, mediaMD5, dynamicProperties, sortsequence '.
+            'FROM images '.
+            'WHERE tid = '.$tid.' ';
+        if(!$includeOcc){
+            $sql .= 'AND ISNULL(occid) ';
+        }
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $resultArr = array();
+            $resultArr['imgid'] = $row->imgid;
+            $resultArr['url'] = $row->url;
+            $resultArr['thumbnailurl'] = $row->thumbnailurl;
+            $resultArr['originalurl'] = $row->originalurl;
+            $resultArr['archiveurl'] = $row->archiveurl;
+            $resultArr['photographer'] = $row->photographer;
+            $resultArr['imagetype'] = $row->imagetype;
+            $resultArr['format'] = $row->format;
+            $resultArr['caption'] = $row->caption;
+            $resultArr['owner'] = $row->owner;
+            $resultArr['sourceurl'] = $row->sourceurl;
+            $resultArr['referenceUrl'] = $row->referenceUrl;
+            $resultArr['rights'] = $row->rights;
+            $resultArr['accessrights'] = $row->accessrights;
+            $resultArr['locality'] = $row->locality;
+            $resultArr['occid'] = $row->occid;
+            $resultArr['notes'] = $row->notes;
+            $resultArr['anatomy'] = $row->anatomy;
+            $resultArr['mediaMD5'] = $row->mediaMD5;
+            $resultArr['dynamicProperties'] = $row->dynamicProperties;
+            $resultArr['sortsequence'] = $row->sortsequence;
+            $retArr[] = $resultArr;
+        }
+        $result->free();
+        return $retArr;
+    }
+
+    public function getTaxonVideos($tid, $includeOcc = false): array
+    {
+        $retArr = array();
+        $sql = 'SELECT mediaid, occid, accessuri, title, creator, type, format, owner, furtherinformationurl, language, usageterms, '.
+            'rights, bibliographiccitation, publisher, contributor, locationcreated, description, sortsequence '.
+            'FROM media '.
+            'WHERE tid = '.$tid.' AND format LIKE "video/%" ';
+        if(!$includeOcc){
+            $sql .= 'AND ISNULL(occid) ';
+        }
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $resultArr = array();
+            $resultArr['mediaid'] = $row->mediaid;
+            $resultArr['occid'] = $row->occid;
+            $resultArr['accessuri'] = $row->accessuri;
+            $resultArr['title'] = $row->title;
+            $resultArr['creator'] = $row->creator;
+            $resultArr['type'] = $row->type;
+            $resultArr['format'] = $row->format;
+            $resultArr['owner'] = $row->owner;
+            $resultArr['furtherinformationurl'] = $row->furtherinformationurl;
+            $resultArr['language'] = $row->language;
+            $resultArr['usageterms'] = $row->usageterms;
+            $resultArr['rights'] = $row->rights;
+            $resultArr['bibliographiccitation'] = $row->bibliographiccitation;
+            $resultArr['publisher'] = $row->publisher;
+            $resultArr['contributor'] = $row->contributor;
+            $resultArr['locationcreated'] = $row->locationcreated;
+            $resultArr['description'] = $row->description;
+            $resultArr['sortsequence'] = $row->sortsequence;
+            $retArr[] = $resultArr;
+        }
+        $result->free();
+        return $retArr;
+    }
+
+    public function getVideoCountsForTaxonomicGroup($tid, $includeOcc = false): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(m.mediaid) AS cnt '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'LEFT JOIN media AS m ON t.TID = m.tid '.
+            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted AND m.format LIKE "video/%" ';
+        if(!$includeOcc){
+            $sql .= 'AND ISNULL(m.occid) ';
+        }
+        $sql .= 'GROUP BY t.TID ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $resultArr = array();
+            $resultArr['tid'] = $row->TID;
+            $resultArr['sciname'] = $row->SciName;
+            $resultArr['rankid'] = $row->RankId;
+            $resultArr['cnt'] = $row->cnt;
+            $retArr[] = $resultArr;
+        }
+        $result->free();
+        return $retArr;
+    }
+
+    public function getAudioCountsForTaxonomicGroup($tid, $includeOcc = false): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(m.mediaid) AS cnt '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'LEFT JOIN media AS m ON t.TID = m.tid '.
+            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted AND m.format LIKE "audio/%" ';
+        if(!$includeOcc){
+            $sql .= 'AND ISNULL(m.occid) ';
+        }
+        $sql .= 'GROUP BY t.TID ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $resultArr = array();
+            $resultArr['tid'] = $row->TID;
+            $resultArr['sciname'] = $row->SciName;
+            $resultArr['rankid'] = $row->RankId;
+            $resultArr['cnt'] = $row->cnt;
+            $retArr[] = $resultArr;
+        }
+        $result->free();
+        return $retArr;
+    }
+
+    public function getTaxonAudios($tid, $includeOcc = false): array
+    {
+        $retArr = array();
+        $sql = 'SELECT mediaid, occid, accessuri, title, creator, type, format, owner, furtherinformationurl, language, usageterms, '.
+            'rights, bibliographiccitation, publisher, contributor, locationcreated, description, sortsequence '.
+            'FROM media '.
+            'WHERE tid = '.$tid.' AND format LIKE "audio/%" ';
+        if(!$includeOcc){
+            $sql .= 'AND ISNULL(occid) ';
+        }
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $resultArr = array();
+            $resultArr['mediaid'] = $row->mediaid;
+            $resultArr['occid'] = $row->occid;
+            $resultArr['accessuri'] = $row->accessuri;
+            $resultArr['title'] = $row->title;
+            $resultArr['creator'] = $row->creator;
+            $resultArr['type'] = $row->type;
+            $resultArr['format'] = $row->format;
+            $resultArr['owner'] = $row->owner;
+            $resultArr['furtherinformationurl'] = $row->furtherinformationurl;
+            $resultArr['language'] = $row->language;
+            $resultArr['usageterms'] = $row->usageterms;
+            $resultArr['rights'] = $row->rights;
+            $resultArr['bibliographiccitation'] = $row->bibliographiccitation;
+            $resultArr['publisher'] = $row->publisher;
+            $resultArr['contributor'] = $row->contributor;
+            $resultArr['locationcreated'] = $row->locationcreated;
+            $resultArr['description'] = $row->description;
+            $resultArr['sortsequence'] = $row->sortsequence;
+            $retArr[] = $resultArr;
+        }
+        $result->free();
+        return $retArr;
+    }
+
+    public function getDescriptionCountsForTaxonomicGroup($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(tdb.tdbid) AS cnt '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'LEFT JOIN taxadescrblock AS tdb ON t.TID = tdb.tid '.
+            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted '.
+            'GROUP BY t.TID ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $resultArr = array();
+            $resultArr['tid'] = $row->TID;
+            $resultArr['sciname'] = $row->SciName;
+            $resultArr['rankid'] = $row->RankId;
+            $resultArr['cnt'] = $row->cnt;
+            $retArr[] = $resultArr;
+        }
+        $result->free();
+        return $retArr;
+    }
+
+    public function getTaxonDescriptions($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT tdbid, caption, source, sourceurl, language, displaylevel, notes '.
+            'FROM taxadescrblock WHERE tid = '.$tid.' '.
+            'ORDER BY displaylevel ';
+        //echo $sql;
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $descrArr = array();
+                $descrArr['tdbid'] = $r->tdbid;
+                $descrArr['caption'] = $r->caption;
+                $descrArr['source'] = $r->source;
+                $descrArr['sourceurl'] = $r->sourceurl;
+                $descrArr['language'] = $r->language;
+                $descrArr['displaylevel'] = $r->displaylevel;
+                $descrArr['notes'] = $r->notes;
+                $descrArr['stmts'] = $this->getTaxonDescriptionStatements($r->tdbid);
+                $retArr[] = $descrArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getTaxonDescriptionStatements($tdbid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT tdsid, heading, statement, displayheader, notes, sortsequence '.
+            'FROM taxadescrstmts WHERE tdbid = '.$tdbid.' '.
+            'ORDER BY sortsequence';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $statementArr = array();
+                $statementArr['tdsid'] = $r->tdsid;
+                $statementArr['heading'] = $r->heading;
+                $statementArr['statement'] = $r->statement;
+                $statementArr['displayheader'] = $r->displayheader;
+                $statementArr['notes'] = $r->notes;
+                $statementArr['sortsequence'] = $r->sortsequence;
+                $retArr[] = $statementArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function addTaxonDescriptionTab($description): int
+    {
+        $retVal = 0;
+        if($description){
+            $sql = 'INSERT INTO taxadescrblock (tid, caption, `source`, sourceurl, `language`, langid, displaylevel, uid, notes) '.
+                'VALUES ('.
+                (isset($description['tid']) ? (int)$description['tid'] :'NULL').','.
+                (isset($description['caption']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['caption']).'"' :'NULL').','.
+                (isset($description['source']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['source']).'"' :'NULL').','.
+                (isset($description['sourceurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['sourceurl']).'"' :'NULL').','.
+                (isset($description['language']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['language']).'"' :'NULL').','.
+                (isset($description['langid']) ? (int)$description['langid'] :'NULL').','.
+                (isset($description['displaylevel']) ? (int)$description['displaylevel'] :'1').','.
+                '"'.$GLOBALS['USERNAME'].'",'.
+                (isset($description['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['notes']).'"' :'NULL').')';
+            //echo $sql; exit;
+            if($this->conn->query($sql)){
+                $retVal = $this->conn->insert_id;
+            }
+        }
+        return $retVal;
+    }
+
+    public function addTaxonDescriptionStatement($statement): int
+    {
+        $retVal = 0;
+        if($statement){
+            $sql = 'INSERT INTO taxadescrstmts (tdbid, heading, `statement`, displayheader, notes, sortsequence) '.
+                'VALUES ('.
+                (isset($statement['tdbid']) ? (int)$statement['tdbid'] :'NULL').','.
+                (isset($statement['heading']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['heading']).'"' :'NULL').','.
+                (isset($statement['statement']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['statement']).'"' :'NULL').','.
+                (isset($statement['displayheader']) ? (int)$statement['displayheader'] :'1').','.
+                (isset($statement['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['notes']).'"' :'NULL').','.
+                (isset($statement['sortsequence']) ? (int)$statement['sortsequence'] :'1').')';
+            //echo $sql; exit;
+            if($this->conn->query($sql)){
+                $retVal = $this->conn->insert_id;
+            }
+        }
+        return $retVal;
+    }
+
+    public function addTaxonIdentifier($tid, $idName, $id): bool
+    {
+        if($tid && $idName && $id){
+            $sql = 'INSERT IGNORE INTO taxaidentifiers(tid,`name`,identifier) VALUES('.
+                $tid.',"'.Sanitizer::cleanInStr($this->conn,$idName).'","'.Sanitizer::cleanInStr($this->conn,$id).'")';
+            return $this->conn->query($sql);
+        }
+        return false;
+    }
+
+    public function getIdentifiersForTaxonomicGroup($tid, $source): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.TID, ti.identifier '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'LEFT JOIN taxaidentifiers AS ti ON t.TID = ti.tid '.
+            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND ti.name = "'.$source.'" ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $resultArr = array();
+            $resultArr['tid'] = $row->TID;
+            $resultArr['identifier'] = $row->identifier;
+            $retArr[] = $resultArr;
+        }
+        $result->free();
+        return $retArr;
+    }
+
     public function setRankLimit($val): void
     {
         $this->rankLimit = Sanitizer::cleanInStr($this->conn,$val);

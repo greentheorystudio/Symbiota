@@ -877,7 +877,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 const text = getErrorResponseText(response.status,response.statusText);
                                 this.processErrorResponse(true,text);
                             }
-                        })
+                        });
                     }
                     else{
                         alert('Please select a Target Kingdom from the dropdown menu above.');

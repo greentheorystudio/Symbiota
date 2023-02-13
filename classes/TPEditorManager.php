@@ -93,7 +93,7 @@ class TPEditorManager {
  		$synArr = array();
 		$sql = 'SELECT t2.tid, t2.SciName ' .
 			'FROM taxa AS t1 INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.tid ' .
-			'WHERE t.tid <> t.tidaccepted AND t1.tid = ' .$this->tid. ' ' .
+			'WHERE t1.tid <> t1.tidaccepted AND t1.tid = ' .$this->tid. ' ' .
 			'ORDER BY t2.SciName';
 		//echo $sql."<br>";
 		$result = $this->taxonCon->query($sql);
