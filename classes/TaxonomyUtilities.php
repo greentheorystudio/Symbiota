@@ -552,7 +552,7 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
-    public function getImageCountsForTaxonomicGroup($tid, $includeOcc = false): array
+    public function getImageCountsForTaxonomicGroup($tid, $index, $includeOcc = false): array
     {
         $retArr = array();
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(i.imgid) AS cnt '.
@@ -562,7 +562,8 @@ class TaxonomyUtilities {
         if(!$includeOcc){
             $sql .= 'AND ISNULL(i.occid) ';
         }
-        $sql .= 'GROUP BY t.TID ';
+        $sql .= 'GROUP BY t.TID '.
+            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $resultArr = array();
@@ -653,7 +654,7 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
-    public function getVideoCountsForTaxonomicGroup($tid, $includeOcc = false): array
+    public function getVideoCountsForTaxonomicGroup($tid, $index, $includeOcc = false): array
     {
         $retArr = array();
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(m.mediaid) AS cnt '.
@@ -663,7 +664,8 @@ class TaxonomyUtilities {
         if(!$includeOcc){
             $sql .= 'AND ISNULL(m.occid) ';
         }
-        $sql .= 'GROUP BY t.TID ';
+        $sql .= 'GROUP BY t.TID '.
+            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $resultArr = array();
@@ -677,7 +679,7 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
-    public function getAudioCountsForTaxonomicGroup($tid, $includeOcc = false): array
+    public function getAudioCountsForTaxonomicGroup($tid, $index, $includeOcc = false): array
     {
         $retArr = array();
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(m.mediaid) AS cnt '.
@@ -687,7 +689,8 @@ class TaxonomyUtilities {
         if(!$includeOcc){
             $sql .= 'AND ISNULL(m.occid) ';
         }
-        $sql .= 'GROUP BY t.TID ';
+        $sql .= 'GROUP BY t.TID '.
+            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $resultArr = array();
@@ -738,14 +741,15 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
-    public function getDescriptionCountsForTaxonomicGroup($tid): array
+    public function getDescriptionCountsForTaxonomicGroup($tid, $index): array
     {
         $retArr = array();
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(tdb.tdbid) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN taxadescrblock AS tdb ON t.TID = tdb.tid '.
             'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted '.
-            'GROUP BY t.TID ';
+            'GROUP BY t.TID '.
+            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $resultArr = array();
@@ -859,13 +863,14 @@ class TaxonomyUtilities {
         return false;
     }
 
-    public function getIdentifiersForTaxonomicGroup($tid, $source): array
+    public function getIdentifiersForTaxonomicGroup($tid, $index, $source): array
     {
         $retArr = array();
         $sql = 'SELECT t.TID, ti.identifier '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN taxaidentifiers AS ti ON t.TID = ti.tid '.
-            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND ti.name = "'.$source.'" ';
+            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND ti.name = "'.$source.'" '.
+            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $resultArr = array();

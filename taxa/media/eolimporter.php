@@ -188,36 +188,38 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         const eolMediaImporterModule = Vue.createApp({
             data() {
                 return {
+                    clientRoot: CLIENT_ROOT,
                     currentTaxon: Vue.ref(null),
                     descriptionLanguage: Vue.ref(null),
-                    taxonomicGroup: Vue.ref(null),
-                    taxonomicGroupTid: Vue.ref(null),
-                    selectedMediaType: Vue.ref('image'),
-                    selectedDescSaveMethod: Vue.ref('singletab'),
-                    processorDisplayArr: Vue.ref([]),
+                    descriptionSaveOptions: [
+                        { label: 'Save descriptions under a single Encyclopedia of Life tab', value: 'singletab' },
+                        { label: 'Save descriptions under a separate tab for each topic', value: 'separatetabs' }
+                    ],
                     descriptionSelected: Vue.ref(false),
-                    maximumRecordsPerTaxon: Vue.ref(1),
+                    eolIdentifierArr: Vue.ref([]),
+                    eolMedia: Vue.ref([]),
+                    identifierImportIndex: Vue.ref(1),
                     importMissingOnly: Vue.ref(false),
-                    selectedRanks: Vue.ref([]),
                     kingdomId: Vue.ref(null),
                     loading: Vue.ref(false),
-                    taxaMediaArr: Vue.ref([]),
-                    taxonMediaArr: Vue.ref([]),
-                    taxonUploadCount: Vue.ref(0),
-                    eolMedia: Vue.ref([]),
-                    eolIdentifierArr: Vue.ref([]),
-                    processCancelled: Vue.ref(false),
-                    clientRoot: CLIENT_ROOT,
+                    maximumRecordsPerTaxon: Vue.ref(1),
+                    mediaCountImportIndex: Vue.ref(1),
                     mediaTypeOptions: [
                         { label: 'Image', value: 'image' },
                         { label: 'Video', value: 'video' },
                         { label: 'Audio', value: 'audio' },
                         { label: 'Text Description', value: 'description' }
                     ],
-                    descriptionSaveOptions: [
-                        { label: 'Save descriptions under a single Encyclopedia of Life tab', value: 'singletab' },
-                        { label: 'Save descriptions under a separate tab for each topic', value: 'separatetabs' }
-                    ]
+                    processCancelled: Vue.ref(false),
+                    processorDisplayArr: Vue.ref([]),
+                    selectedDescSaveMethod: Vue.ref('singletab'),
+                    selectedMediaType: Vue.ref('image'),
+                    selectedRanks: Vue.ref([]),
+                    taxaMediaArr: Vue.ref([]),
+                    taxonMediaArr: Vue.ref([]),
+                    taxonomicGroup: Vue.ref(null),
+                    taxonomicGroupTid: Vue.ref(null),
+                    taxonUploadCount: Vue.ref(0)
                 }
             },
             components: {
@@ -292,6 +294,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 adjustUIEnd(){
                     this.eolIdentifierArr = [];
                     this.taxaMediaArr = [];
+                    this.identifierImportIndex = 1;
+                    this.mediaCountImportIndex = 1;
                     this.currentTaxon = null;
                     this.loading = false;
                 },
@@ -350,68 +354,92 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         resultText: ''
                     };
                 },
+                getStoredIdentifiers(){
+                    const formData = new FormData();
+                    formData.append('tid', this.taxonomicGroupTid);
+                    formData.append('source', 'eol');
+                    formData.append('index', this.identifierImportIndex);
+                    formData.append('action', 'getIdentifiersForTaxonomicGroup');
+                    fetch(taxonomyApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        if(response.status === 200){
+                            response.json().then((resObj) => {
+                                if(resObj.length > 0){
+                                    this.eolIdentifierArr = this.eolIdentifierArr.concat(resObj);
+                                }
+                                if(resObj.length < 50000){
+                                    this.processSuccessResponse(true,'Complete');
+                                    const text = 'Getting taxa and ' + this.selectedMediaType + ' counts for taxa within ' + this.taxonomicGroup.name;
+                                    this.processorDisplayArr.push(this.getNewProcessObject('setTaxaMediaArr','single',text));
+                                    this.getTaxaMediaCounts();
+                                }
+                                else{
+                                    this.identifierImportIndex++;
+                                    this.getStoredIdentifiers();
+                                }
+                            });
+                        }
+                        else{
+                            const text = getErrorResponseText(response.status,response.statusText);
+                            this.processErrorResponse(text);
+                        }
+                    });
+                },
+                getTaxaMediaCounts(){
+                    abortController = new AbortController();
+                    const formData = new FormData();
+                    formData.append('tid', this.taxonomicGroupTid);
+                    formData.append('index', this.mediaCountImportIndex);
+                    if(this.selectedMediaType === 'image'){
+                        formData.append('action', 'getImageCountsForTaxonomicGroup');
+                    }
+                    else if(this.selectedMediaType === 'video'){
+                        formData.append('action', 'getVideoCountsForTaxonomicGroup');
+                    }
+                    else if(this.selectedMediaType === 'audio'){
+                        formData.append('action', 'getAudioCountsForTaxonomicGroup');
+                    }
+                    else if(this.selectedMediaType === 'description'){
+                        formData.append('action', 'getDescriptionCountsForTaxonomicGroup');
+                    }
+                    fetch(taxonomyApiUrl, {
+                        method: 'POST',
+                        signal: abortController.signal,
+                        body: formData
+                    })
+                    .then((response) => {
+                        if(response.status === 200){
+                            response.json().then((resObj) => {
+                                if(resObj.length > 0){
+                                    this.taxaMediaArr = this.taxaMediaArr.concat(this.processTaxaMediaArr(resObj));
+                                }
+                                if(resObj.length < 50000){
+                                    this.processSuccessResponse(true,'Complete');
+                                    this.setCurrentTaxon();
+                                }
+                                else{
+                                    this.mediaCountImportIndex++;
+                                    this.getTaxaMediaCounts();
+                                }
+                            });
+                        }
+                        else{
+                            const text = getErrorResponseText(response.status,response.statusText);
+                            this.processErrorResponse(text);
+                        }
+                    })
+                    .catch((err) => {});
+                },
                 initializeEOLImport(){
                     if(this.taxonomicGroupTid){
                         this.processCancelled = false;
                         this.adjustUIStart();
                         const text = 'Getting stored Encyclopedia of Life identifiers for taxa within ' + this.taxonomicGroup.name;
                         this.processorDisplayArr.push(this.getNewProcessObject('setIdentifierArr','single',text));
-                        const formData = new FormData();
-                        formData.append('tid', this.taxonomicGroupTid);
-                        formData.append('source', 'eol');
-                        formData.append('action', 'getIdentifiersForTaxonomicGroup');
-                        fetch(taxonomyApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            if(response.status === 200){
-                                response.json().then((resObj) => {
-                                    this.eolIdentifierArr = resObj;
-                                    this.processSuccessResponse(true,'Complete');
-                                    const text = 'Getting taxa and ' + this.selectedMediaType + ' counts for taxa within ' + this.taxonomicGroup.name;
-                                    this.processorDisplayArr.push(this.getNewProcessObject('setTaxaMediaArr','single',text));
-                                    abortController = new AbortController();
-                                    const formData = new FormData();
-                                    formData.append('tid', this.taxonomicGroupTid);
-                                    if(this.selectedMediaType === 'image'){
-                                        formData.append('action', 'getImageCountsForTaxonomicGroup');
-                                    }
-                                    else if(this.selectedMediaType === 'video'){
-                                        formData.append('action', 'getVideoCountsForTaxonomicGroup');
-                                    }
-                                    else if(this.selectedMediaType === 'audio'){
-                                        formData.append('action', 'getAudioCountsForTaxonomicGroup');
-                                    }
-                                    else if(this.selectedMediaType === 'description'){
-                                        formData.append('action', 'getDescriptionCountsForTaxonomicGroup');
-                                    }
-                                    fetch(taxonomyApiUrl, {
-                                        method: 'POST',
-                                        signal: abortController.signal,
-                                        body: formData
-                                    })
-                                    .then((response) => {
-                                        if(response.status === 200){
-                                            response.json().then((resObj) => {
-                                                this.taxaMediaArr = this.processTaxaMediaArr(resObj);
-                                                this.processSuccessResponse(true,'Complete');
-                                                this.setCurrentTaxon();
-                                            });
-                                        }
-                                        else{
-                                            const text = getErrorResponseText(response.status,response.statusText);
-                                            this.processErrorResponse(text);
-                                        }
-                                    })
-                                    .catch((err) => {});
-                                });
-                            }
-                            else{
-                                const text = getErrorResponseText(response.status,response.statusText);
-                                this.processErrorResponse(text);
-                            }
-                        });
+                        this.getStoredIdentifiers();
                     }
                     else{
                         alert('Please enter a Taxonomic Group to start an import');
@@ -670,7 +698,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 });
                                             }
                                             else{
-                                                this.processErrorResponse(false,'Not found');
+                                                this.processErrorResponse('Not found');
                                                 this.setCurrentTaxon();
                                             }
                                         }

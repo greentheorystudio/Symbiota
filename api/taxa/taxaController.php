@@ -54,20 +54,20 @@ if($isEditor && $action){
             echo json_encode($taxUtilities->getAutocompleteVernacularList($_POST['term']));
         }
     }
-    elseif($action === 'getImageCountsForTaxonomicGroup' && array_key_exists('tid',$_POST)){
-        echo json_encode($taxUtilities->getImageCountsForTaxonomicGroup((int)$_POST['tid']));
+    elseif($action === 'getImageCountsForTaxonomicGroup' && array_key_exists('tid',$_POST) && array_key_exists('index',$_POST)){
+        echo json_encode($taxUtilities->getImageCountsForTaxonomicGroup((int)$_POST['tid'],(int)$_POST['index']));
     }
-    elseif($action === 'getVideoCountsForTaxonomicGroup' && array_key_exists('tid',$_POST)){
-        echo json_encode($taxUtilities->getVideoCountsForTaxonomicGroup((int)$_POST['tid']));
+    elseif($action === 'getVideoCountsForTaxonomicGroup' && array_key_exists('tid',$_POST) && array_key_exists('index',$_POST)){
+        echo json_encode($taxUtilities->getVideoCountsForTaxonomicGroup((int)$_POST['tid'],(int)$_POST['index']));
     }
-    elseif($action === 'getAudioCountsForTaxonomicGroup' && array_key_exists('tid',$_POST)){
-        echo json_encode($taxUtilities->getAudioCountsForTaxonomicGroup((int)$_POST['tid']));
+    elseif($action === 'getAudioCountsForTaxonomicGroup' && array_key_exists('tid',$_POST) && array_key_exists('index',$_POST)){
+        echo json_encode($taxUtilities->getAudioCountsForTaxonomicGroup((int)$_POST['tid'],(int)$_POST['index']));
     }
-    elseif($action === 'getDescriptionCountsForTaxonomicGroup' && array_key_exists('tid',$_POST)){
-        echo json_encode($taxUtilities->getDescriptionCountsForTaxonomicGroup((int)$_POST['tid']));
+    elseif($action === 'getDescriptionCountsForTaxonomicGroup' && array_key_exists('tid',$_POST) && array_key_exists('index',$_POST)){
+        echo json_encode($taxUtilities->getDescriptionCountsForTaxonomicGroup((int)$_POST['tid'],(int)$_POST['index']));
     }
-    elseif($action === 'getIdentifiersForTaxonomicGroup' && array_key_exists('tid',$_POST) && array_key_exists('source',$_POST)){
-        echo json_encode($taxUtilities->getIdentifiersForTaxonomicGroup((int)$_POST['tid'],htmlspecialchars($_POST['source'])));
+    elseif($action === 'getIdentifiersForTaxonomicGroup' && array_key_exists('tid',$_POST) && array_key_exists('index',$_POST) && array_key_exists('source',$_POST)){
+        echo json_encode($taxUtilities->getIdentifiersForTaxonomicGroup((int)$_POST['tid'],(int)$_POST['index'],htmlspecialchars($_POST['source'])));
     }
     elseif($action === 'addTaxonIdentifier' && array_key_exists('tid',$_POST) && array_key_exists('idname',$_POST) && array_key_exists('id',$_POST)){
         echo $taxUtilities->addTaxonIdentifier((int)$_POST['tid'],htmlspecialchars($_POST['idname']),htmlspecialchars($_POST['id']));
