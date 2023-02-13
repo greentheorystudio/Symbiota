@@ -150,7 +150,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                         <div>{{ subproc.procText }} <q-spinner v-if="subproc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
                                                         <template v-if="!subproc.loading && subproc.resultText">
                                                             <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="q-ml-sm text-weight-bold text-green-9">
-                                                                {{subproc.resultText}}
+                                                                <span class="q-ml-sm text-weight-bold text-green-9">{{subproc.resultText}}</span>
+                                                                <span class="q-ml-sm">
+                                                                    <a :href="subproc.taxonPageHref" target="_blank">(Go to Taxon Profile Page)</a>
+                                                                </span>
                                                             </div>
                                                             <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
                                                                 {{subproc.resultText}}
@@ -204,6 +207,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     eolMedia: Vue.ref([]),
                     eolIdentifierArr: Vue.ref([]),
                     processCancelled: Vue.ref(false),
+                    clientRoot: CLIENT_ROOT,
                     mediaTypeOptions: [
                         { label: 'Image', value: 'image' },
                         { label: 'Video', value: 'video' },
@@ -342,9 +346,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         type: type,
                         loading: true,
                         result: '',
-                        undoOrigName: '',
-                        undoChangedName: '',
-                        changedTid: 0,
+                        tid: 0,
                         resultText: ''
                     };
                 },
@@ -416,7 +418,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 processEOLDescriptionRecords(){
-                    if(this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
+                    if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
                         if(mediaRecord['language'] === this.descriptionLanguage['iso']){
@@ -474,12 +476,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     }
                     else{
-                        this.processSubprocessSuccessResponse(this.currentTaxon['sciname'],true,(this.taxonUploadCount + ' records uploaded'));
+                        this.processSubprocessSuccessResponse(true,(this.taxonUploadCount + ' records uploaded'));
                         this.setCurrentTaxon();
                     }
                 },
                 processEOLImageRecords(){
-                    if(this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
+                    if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
                         const existingRecord = this.taxonMediaArr.length > 0 ? this.taxonMediaArr.find(obj => obj['url'] === mediaRecord['eolMediaURL']) : null;
@@ -518,12 +520,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     }
                     else{
-                        this.processSubprocessSuccessResponse(this.currentTaxon['sciname'],true,(this.taxonUploadCount + ' records uploaded'));
+                        this.processSubprocessSuccessResponse(true,(this.taxonUploadCount + ' records uploaded'));
                         this.setCurrentTaxon();
                     }
                 },
                 processEOLMediaRecords(){
-                    if(this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
+                    if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
                         const existingRecord = this.taxonMediaArr.length > 0 ? this.taxonMediaArr.find(obj => obj['accessuri'] === mediaRecord['mediaURL']) : null;
@@ -560,7 +562,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     }
                     else{
-                        this.processSubprocessSuccessResponse(this.currentTaxon['sciname'],true,(this.taxonUploadCount + ' records uploaded'));
+                        this.processSubprocessSuccessResponse(true,(this.taxonUploadCount + ' records uploaded'));
                         this.setCurrentTaxon();
                     }
                 },
@@ -590,8 +592,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     }
                 },
-                processSubprocessSuccessResponse(id,complete,text = null){
-                    const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
+                processSubprocessSuccessResponse(complete,text = null){
+                    const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === this.currentTaxon['sciname']);
                     if(parentProcObj){
                         parentProcObj['current'] = !complete;
                         const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
@@ -599,6 +601,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             subProcObj['loading'] = false;
                             subProcObj['result'] = 'success';
                             subProcObj['resultText'] = text;
+                            subProcObj['taxonPageHref'] = this.clientRoot + '/taxa/index.php?taxon=' + this.currentTaxon['tid'];
                         }
                     }
                 },
@@ -720,7 +723,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             response.json().then((resObj) => {
                                 if(resObj.hasOwnProperty('taxonConcept') && resObj['taxonConcept'].hasOwnProperty('dataObjects')){
                                     this.eolMedia = resObj['taxonConcept']['dataObjects'];
-                                    this.processSubprocessSuccessResponse(this.currentTaxon['sciname'],false);
+                                    this.processSubprocessSuccessResponse(false);
                                     const text = 'Processing ' + this.selectedMediaType + ' records';
                                     this.addSubprocessToProcessorDisplay(this.currentTaxon['sciname'],'text',text);
                                     if(this.selectedMediaType === 'image'){
@@ -772,7 +775,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             if(response.status === 200){
                                 response.json().then((resObj) => {
                                     this.taxonMediaArr = resObj;
-                                    this.processSubprocessSuccessResponse(this.currentTaxon['sciname'],false);
+                                    this.processSubprocessSuccessResponse(false);
                                     this.setEOLMediaArr();
                                 });
                             }

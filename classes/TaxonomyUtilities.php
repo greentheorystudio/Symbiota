@@ -837,7 +837,7 @@ class TaxonomyUtilities {
                 'VALUES ('.
                 (isset($statement['tdbid']) ? (int)$statement['tdbid'] :'NULL').','.
                 (isset($statement['heading']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['heading']).'"' :'NULL').','.
-                (isset($statement['statement']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['statement']).'"' :'NULL').','.
+                (isset($statement['statement']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($statement['statement'], '<p><i><em><div>')).'"' :'NULL').','.
                 (isset($statement['displayheader']) ? (int)$statement['displayheader'] :'1').','.
                 (isset($statement['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['notes']).'"' :'NULL').','.
                 (isset($statement['sortsequence']) ? (int)$statement['sortsequence'] :'1').')';
