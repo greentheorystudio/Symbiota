@@ -359,7 +359,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         const formData = new FormData();
                         formData.append('tid', this.taxonomicGroupTid);
                         formData.append('source', 'eol');
-                        formData.append('action', 'getDescriptionCountsForTaxonomicGroup');
+                        formData.append('action', 'getIdentifiersForTaxonomicGroup');
                         fetch(taxonomyApiUrl, {
                             method: 'POST',
                             body: formData

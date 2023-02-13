@@ -659,7 +659,7 @@ class TaxonomyUtilities {
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(m.mediaid) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN media AS m ON t.TID = m.tid '.
-            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted AND m.format LIKE "video/%" ';
+            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted AND (m.format LIKE "video/%" OR ISNULL(m.format)) ';
         if(!$includeOcc){
             $sql .= 'AND ISNULL(m.occid) ';
         }
@@ -683,7 +683,7 @@ class TaxonomyUtilities {
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(m.mediaid) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN media AS m ON t.TID = m.tid '.
-            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted AND m.format LIKE "audio/%" ';
+            'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted AND (m.format LIKE "audio/%" OR ISNULL(m.format)) ';
         if(!$includeOcc){
             $sql .= 'AND ISNULL(m.occid) ';
         }
