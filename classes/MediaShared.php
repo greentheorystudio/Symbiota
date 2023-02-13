@@ -313,7 +313,7 @@ class MediaShared{
     {
         $retVal = 0;
         if($media){
-            $sql = 'INSERT INTO images (tid, occid, accessuri, title, creator, `type`, format, owner, furtherinformationurl, '.
+            $sql = 'INSERT INTO media (tid, occid, accessuri, title, creator, `type`, format, owner, furtherinformationurl, '.
                 '`language`, usageterms, rights, bibliographiccitation, publisher, contributor, locationcreated, description, '.
                 'sortsequence) '.
                 'VALUES ('.
