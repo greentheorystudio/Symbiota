@@ -168,7 +168,7 @@ include(__DIR__ . '/../../header.php');
 <div id="innertext">
     <div style="padding: 0 20px 10px;display:flex;justify-content: space-between;">
         <div id="statusStr" style="font-weight:bold;color:red;"></div>
-        <div onclick="openTutorialWindow('../../tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">
+        <div onclick="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">
             <i style="height:20px;width:20px;cursor:pointer;" class="far fa-question-circle"></i>
         </div>
     </div>

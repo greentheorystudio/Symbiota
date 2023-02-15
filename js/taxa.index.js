@@ -1,12 +1,3 @@
-const imageArr = [];
-const imgCnt = 0;
-
-document.addEventListener("DOMContentLoaded", function() {
-	$('#desctabs').tabs();
-	$("#desctabs").show();
-
-});
-
 function toggleLinks(target){
 	const ele = document.getElementById(target);
 	if(ele){

@@ -35,9 +35,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             justify-content: space-between;
             margin: 0 30px 8px;
         }
-        .icon-link {
-            cursor: pointer;
-        }
         .processor-container {
             width: 95%;
             margin: 20px auto;
@@ -109,8 +106,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 <div class="text-weight-bold">
                     <?php echo $collMap[(int)$collid]['collectionname'].($collMap[(int)$collid]['code']?' ('.$collMap[(int)$collid]['code'].')':''); ?>
                 </div>
-                <div onclick="openTutorialWindow('../../tutorial/collections/management/taxonomy/index.php?collid=<?php echo $collid; ?>');" title="Open Tutorial Window">
-                    <q-icon name="far fa-question-circle" size="20px" class="icon-link" />
+                <div onclick="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=<?php echo $collid; ?>');" title="Open Tutorial Window">
+                    <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
                 </div>
             </div>
             <div class="header-block">
@@ -1116,15 +1113,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 processFuzzyMatches(fuzzyMatches){
-                    for(let i in fuzzyMatches){
-                        if(fuzzyMatches.hasOwnProperty(i)){
-                            const fuzzyMatchName = fuzzyMatches[i];
-                            const text = 'Match: ' + fuzzyMatchName;
-                            this.addSubprocessToProcessorDisplay(this.currentSciname,'fuzzy',text);
-                            this.setSubprocessUndoNames(this.currentSciname,this.currentSciname,fuzzyMatchName,i);
-                            this.processSubprocessSuccessResponse(this.currentSciname,false);
-                        }
-                    }
+                    fuzzyMatches.forEach((match) => {
+                        const fuzzyMatchName = match['sciname'];
+                        const text = 'Match: ' + fuzzyMatchName;
+                        this.addSubprocessToProcessorDisplay(this.currentSciname,'fuzzy',text);
+                        this.setSubprocessUndoNames(this.currentSciname,this.currentSciname,fuzzyMatchName,match['tid']);
+                        this.processSubprocessSuccessResponse(this.currentSciname,false);
+                    });
                     const text = 'skip';
                     this.addSubprocessToProcessorDisplay(this.currentSciname,'fuzzy',text);
                     this.processSubprocessSuccessResponse(this.currentSciname,true);
@@ -1474,7 +1469,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         const text = 'Finding fuzzy matches for ' + this.currentSciname;
                         this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
                         const formData = new FormData();
-                        formData.append('kingdomid', this.selectedKingdomId);
                         formData.append('sciname', this.currentSciname);
                         formData.append('lev', this.levValue);
                         formData.append('action', 'getSciNameFuzzyMatches');
@@ -1485,7 +1479,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         .then((response) => {
                             if(response.status === 200){
                                 response.json().then((fuzzyMatches) => {
-                                    if(checkObjectNotEmpty(fuzzyMatches)){
+                                    if(fuzzyMatches.length > 0){
                                         this.processSuccessResponse(false);
                                         this.processFuzzyMatches(fuzzyMatches);
                                     }
@@ -1896,8 +1890,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 cancelAPIRequest,
-                checkObjectNotEmpty,
-                getErrorResponseText
+                getErrorResponseText,
+                openTutorialWindow
             }
         });
         occurrenceTaxonomyManagementModule.use(Quasar, { config: {} });

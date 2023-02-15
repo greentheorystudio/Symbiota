@@ -10,8 +10,7 @@ class TPEditorManager {
 	protected $parentTid;
 	protected $family;
 	protected $rankId;
-	protected $language = 'English';
- 	protected $submittedTid;
+	protected $submittedTid;
  	protected $submittedSciName;
 	protected $taxonCon;
 	protected $errorStr = '';
@@ -190,11 +189,6 @@ class TPEditorManager {
  		return $this->parentTid;
  	}
 
- 	public function setLanguage($lang): string
-	{
- 		return $this->language = $this->taxonCon->real_escape_string($lang);
- 	}
- 	
  	public function getErrorStr(): string
 	{
  		return $this->errorStr;

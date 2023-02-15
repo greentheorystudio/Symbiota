@@ -12,7 +12,7 @@ if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array
     $isEditor = true;
 }
 
-if($isEditor && $action){
+if($action){
     $taxUtilities = new TaxonomyUtilities();
     $taxEditorManager = new TaxonomyEditorManager();
     if($action === 'getRankNameArr'){
@@ -24,13 +24,13 @@ if($isEditor && $action){
     elseif($action === 'getRankArr'){
         echo json_encode($taxUtilities->getRankArr($kingdomid));
     }
-    elseif($action === 'addTaxon'){
+    elseif($isEditor && $action === 'addTaxon'){
         echo $taxEditorManager->loadNewName(json_decode($_POST['taxon'], true));
     }
-    elseif($action === 'primeHierarchyTable' && array_key_exists('tidarr',$_POST)){
+    elseif($isEditor && $action === 'primeHierarchyTable' && array_key_exists('tidarr',$_POST)){
         echo $taxUtilities->primeHierarchyTable(json_decode($_POST['tidarr'],false));
     }
-    elseif($action === 'populateHierarchyTable' && array_key_exists('tidarr',$_POST)){
+    elseif($isEditor && $action === 'populateHierarchyTable' && array_key_exists('tidarr',$_POST)){
         echo $taxUtilities->populateHierarchyTable(json_decode($_POST['tidarr'],false));
     }
     elseif($action === 'parseSciName' && array_key_exists('sciname',$_POST)){
@@ -69,7 +69,7 @@ if($isEditor && $action){
     elseif($action === 'getIdentifiersForTaxonomicGroup' && array_key_exists('tid',$_POST) && array_key_exists('index',$_POST) && array_key_exists('source',$_POST)){
         echo json_encode($taxUtilities->getIdentifiersForTaxonomicGroup((int)$_POST['tid'],(int)$_POST['index'],htmlspecialchars($_POST['source'])));
     }
-    elseif($action === 'addTaxonIdentifier' && array_key_exists('tid',$_POST) && array_key_exists('idname',$_POST) && array_key_exists('id',$_POST)){
+    elseif($isEditor && $action === 'addTaxonIdentifier' && array_key_exists('tid',$_POST) && array_key_exists('idname',$_POST) && array_key_exists('id',$_POST)){
         echo $taxUtilities->addTaxonIdentifier((int)$_POST['tid'],htmlspecialchars($_POST['idname']),htmlspecialchars($_POST['id']));
     }
     elseif($action === 'getTaxonImages' && array_key_exists('tid',$_POST)){
@@ -84,10 +84,10 @@ if($isEditor && $action){
     elseif($action === 'getTaxonDescriptions' && array_key_exists('tid',$_POST)){
         echo json_encode($taxUtilities->getTaxonDescriptions((int)$_POST['tid']));
     }
-    if($action === 'addTaxonDescriptionTab' && array_key_exists('description',$_POST)){
+    if($isEditor && $action === 'addTaxonDescriptionTab' && array_key_exists('description',$_POST)){
         echo json_encode($taxUtilities->addTaxonDescriptionTab(json_decode($_POST['description'], true)));
     }
-    if($action === 'addTaxonDescriptionStatement' && array_key_exists('statement',$_POST)){
+    if($isEditor && $action === 'addTaxonDescriptionStatement' && array_key_exists('statement',$_POST)){
         echo json_encode($taxUtilities->addTaxonDescriptionStatement(json_decode($_POST['statement'], true)));
     }
 }

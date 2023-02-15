@@ -442,12 +442,16 @@ class TaxonomyUtilities {
         $retArr = array();
         $sql = 'SELECT tid, sciname FROM taxa ';
         if($kingdomId){
-            $sql .= 'WHERE kingdomId = ' . $kingdomId;
+            $sql .= 'WHERE kingdomId = ' . $kingdomId . ' ';
         }
+        $sql .= 'ORDER BY sciname ';
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
                 if($name !== $r->sciname && levenshtein($name,$r->sciname) <= $levDistance){
-                    $retArr[$r->tid] = $r->sciname;
+                    $valArr = array();
+                    $valArr['tid'] = $r->tid;
+                    $valArr['sciname'] = $r->sciname;
+                    $retArr[] = $valArr;
                 }
             }
         }
@@ -841,7 +845,7 @@ class TaxonomyUtilities {
                 'VALUES ('.
                 (isset($statement['tdbid']) ? (int)$statement['tdbid'] :'NULL').','.
                 (isset($statement['heading']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['heading']).'"' :'NULL').','.
-                (isset($statement['statement']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($statement['statement'], '<p><i><em><div>')).'"' :'NULL').','.
+                (isset($statement['statement']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($statement['statement'], '<i><b><em><div>')).'"' :'NULL').','.
                 (isset($statement['displayheader']) ? (int)$statement['displayheader'] :'1').','.
                 (isset($statement['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['notes']).'"' :'NULL').','.
                 (isset($statement['sortsequence']) ? (int)$statement['sortsequence'] :'1').')';

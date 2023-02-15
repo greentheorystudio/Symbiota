@@ -290,6 +290,7 @@ function openPopup(url){
 }
 
 function openTutorialWindow(url) {
+	url = CLIENT_ROOT + url;
 	window.open(url, '_blank');
 }
 

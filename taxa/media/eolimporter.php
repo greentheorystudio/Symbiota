@@ -495,6 +495,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     const newTaxonStatement = {};
                                     newTaxonStatement['statement'] = mediaRecord['description'];
                                     newTaxonStatement['sortsequence'] = 1;
+                                    newTaxonStatement['displayheader'] = 0;
                                     this.addTaxonDescriptionTab(newTaxonDescTab,newTaxonStatement);
                                 }
                             }
