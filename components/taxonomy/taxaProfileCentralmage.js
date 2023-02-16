@@ -9,7 +9,7 @@ const taxaProfileCentralImage = {
             <template v-if="centralImage">
                 <div id="centralimage">
                     <a :href="centralImage.anchorUrl">
-                        <img :src="centralImage.url" class="central-image" :title="centralImage.caption" :alt="centralImage.sciname" />
+                        <q-img :src="centralImage.url" :fit="contain" :title="centralImage.caption" :alt="centralImage.sciname"></q-img>
                         <template v-if="centralImage.photographer">
                             <div class="photographer">
                                 {{ centralImage.photographer }}
@@ -21,10 +21,10 @@ const taxaProfileCentralImage = {
             <template v-else>
                 <div id="nocentralimage">
                     <template v-if="isEditor">
-                        <a :href="editLink"><span class="text-weight-bold">Add an Image</span></a>
+                        <div><a :href="editLink"><span class="text-weight-bold">Add an Image</span></a></div>
                     </template>
                     <template v-else>
-                        Image<br />not available
+                        <div>Image not available</div>
                     </template>
                 </div>
             </template>

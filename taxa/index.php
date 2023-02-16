@@ -65,15 +65,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
             width: 60%;
         }
         #centralimage{
-            text-align: center;
             margin: 15px;
         }
         #centralimage img{
-            width: 325px;
             border: 2px solid black;
-        }
-        #centralimage a:hover img{
-            border: 2px solid #026B6E;
         }
         #centralimage div.photographer{
             text-align: right;
@@ -81,12 +76,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
             font-size: 75%;
         }
         #nocentralimage{
-            width: 260px;
-            height: 260px;
-            border-style: solid;
-            margin-top: 5px;
-            margin-left: 20px;
-            text-align: center;
+            width: 100%;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
         }
         .desctabs{
             height: 450px;
@@ -101,6 +96,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
         }
         #nodesc{
             margin: 20px;
+            font-weight: bold;
+            text-align:	center;
         }
         .desc-statement-heading{
             font-weight: bold;
