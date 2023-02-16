@@ -5,21 +5,21 @@ const taxaProfileCentralImage = {
         'edit-link'
     ],
     template: `
-        <q-card>
+        <q-card class="overflow-hidden">
             <template v-if="centralImage">
-                <div id="centralimage">
+                <div id="central-image">
                     <a :href="centralImage.anchorUrl">
                         <q-img :src="centralImage.url" :fit="contain" :title="centralImage.caption" :alt="centralImage.sciname"></q-img>
-                        <template v-if="centralImage.photographer">
+                        <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">
-                                {{ centralImage.photographer }}
+                                <span v-if="centralImage.photographer">{{ centralImage.photographer }}: </span><span v-html="centralImage.caption"></span>
                             </div>
                         </template>
                     </a>
                 </div>
             </template>
             <template v-else>
-                <div id="nocentralimage">
+                <div class="no-central-image">
                     <template v-if="isEditor">
                         <div><a :href="editLink"><span class="text-weight-bold">Add an Image</span></a></div>
                     </template>

@@ -1,58 +1,6 @@
 <?php
 ob_start();
 ?>
-<div id="img-div">
-    <?php
-    if($taxonManager->getImageCount() > 100){
-        $taxonManager->echoImages(0, 100);
-    }
-    else{
-        $taxonManager->echoImages(0);
-    }
-    ?>
-</div>
-<?php
-$imgDiv = ob_get_clean();
-
-ob_start();
-?>
-<div id="img-tab-div" style="clear:both;display:<?php echo ($taxonManager->getImageCount() > 0?'block':'none');?>;">
-    <?php
-    if($taxonManager->getImageCount() > 100){
-        if($taxonRank < 140){
-            $taxonType = 4;
-        }
-        else{
-            $taxonType = 2;
-        }
-        ?>
-        <div id="img-tab-expand">
-            <a href="#" onclick="expandExtraImages();return false;">
-                <?php echo 'Click to Display<br/>100 Initial Images'; ?>
-            </a><br/>
-            - - - - -<br/>
-            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"<?php echo $taxonType; ?>","taxa":"<?php echo $taxonManager->getSciName(); ?>"}' target="_blank">
-                <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
-            </a>
-        </div>
-        <?php
-    }
-    else{
-        ?>
-        <div id="img-tab-expand">
-            <a href="#" onclick="expandExtraImages();return false;">
-                <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
-            </a>
-        </div>
-        <?php
-    }
-    ?>
-</div>
-<?php
-$imgTabDiv = ob_get_clean();
-
-ob_start();
-?>
 <div id="imagebox">
     <?php
     if($clValue){

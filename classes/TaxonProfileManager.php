@@ -6,10 +6,8 @@ class TaxonProfileManager {
 
     private $conn;
     private $taxon = array();
-    private $sciName;
     private $displayLocality = false;
     private $teReader = false;
-    private $imageArr;
 
     public function __construct(){
         $connection = new DbConnection();
@@ -275,57 +273,6 @@ class TaxonProfileManager {
             }
             $result->free();
         }
-    }
-
-    public function echoImages($start, $length = 0, $useThumbnail = 1, $caption = 'photographer'): bool
-    {
-        $status = false;
-        if(!isset($this->imageArr)){
-            $this->setTaxaImages();
-        }
-        if(!$this->imageArr || count($this->imageArr) < $start) {
-            return false;
-        }
-        $trueLength = ($length&&count($this->imageArr)>$length+$start?$length:count($this->imageArr)-$start);
-        $spDisplay = $this->getDisplayName();
-        $iArr = array_slice($this->imageArr,$start,$trueLength,true);
-        echo '<div>';
-        foreach($iArr as $imgId => $imgObj){
-            if($start === 0 && $trueLength === 1){
-                echo "<div id='centralimage'>";
-            }
-            else{
-                echo "<div class='imgthumb'>";
-            }
-            $imgUrl = $imgObj['url'];
-            $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
-            $imgThumbnail = $imgObj['thumbnailurl'];
-            if($imgObj['occid']){
-                $imgAnchor = '../collections/individual/index.php?occid='.$imgObj['occid'];
-            }
-            if($useThumbnail && $imgObj['thumbnailurl']) {
-                $imgUrl = $imgThumbnail;
-            }
-            echo '<a href="'.$imgAnchor.'">';
-            $titleStr = $imgObj['caption'];
-            if($imgObj['sciname'] !== $this->sciName) {
-                $titleStr .= ' (linked from ' . $imgObj['sciname'] . ')';
-            }
-            echo '<img src="'.$imgUrl.'" title="'.$titleStr.'" alt="'.$spDisplay.' image" />';
-            echo '</a>';
-            echo '<div class="photographer">';
-            if($caption === 'photographer' && $imgObj['photographer']){
-                echo $imgObj['photographer'].'&nbsp;&nbsp;';
-            }
-            elseif($caption === 'sciname' && $imgObj['sciname']){
-                echo '<i>'.$imgObj['sciname'].'</i>&nbsp;&nbsp;';
-            }
-            echo '</div>';
-            echo '</div>';
-            $status = true;
-        }
-        echo '</div>';
-        return $status;
     }
 
     public function getMapImgUrl($tid,$security): string

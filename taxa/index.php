@@ -81,18 +81,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
             justify-content: flex-end;
             margin-top: 10px;
         }
-        #centralimage{
-            margin: 15px;
-        }
-        #centralimage img{
-            border: 2px solid black;
-        }
-        #centralimage div.photographer{
+        #central-image div.photographer{
             text-align: right;
-            margin: 2px 20px 2px 2px;
+            padding: 5px;
             font-size: 75%;
         }
-        #nocentralimage{
+        .no-central-image{
             width: 100%;
             height: 250px;
             display: flex;
@@ -139,11 +133,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
             font-weight: bold;
         }
         .imgthumb{
-            max-width: 220px;
+            width: 220px;
         }
         .imgthumb div.photographer{
             font-size: 75%;
             text-align: right;
+            padding: 3px;
         }
     </style>
     <script src="../js/external/all.min.js" type="text/javascript"></script>
@@ -185,22 +180,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     </div>
                 </div>
                 <div class="profile-center-row">
-                    <template v-if="taxon.imageCnt > 1">
-                        <div class="expansion-container">
-                            <q-expansion-item class="shadow-1 overflow-hidden expansion-element" :label="imageExpansionLabel" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
-                                <q-intersection v-for="image in taxon.images" :key="image">
-                                    <q-card class="q-ma-sm imgthumb">
-                                        <a :href="image.anchorUrl">
-                                            <q-img :src="image.url" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
-                                            <q-card-section>
-                                                <div class="text-italic photographer">{{ image.sciname }}</div>
-                                            </q-card-section>
-                                        </a>
-                                    </q-card>
-                                </q-intersection>
-                            </q-expansion-item>
-                        </div>
-                    </template>
+                    <taxa-profile-image-panel :taxon="taxon"></taxa-profile-image-panel>
                 </div>
             </template>
             <template v-else>
@@ -223,6 +203,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js" type="text/javascript"></script>
     <script>
         const taxonVal = Vue.ref('<?php echo $taxonValue; ?>');
         const clVal = Vue.ref(<?php echo $clValue; ?>);
@@ -256,7 +237,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 'taxa-profile-central-image': taxaProfileCentralImage,
                 'taxa-profile-description-tabs': taxaProfileDescriptionTabs,
                 'taxa-profile-taxon-map': taxaProfileTaxonMap,
-                'taxa-profile-taxon-image-link': taxaProfileTaxonImageLink
+                'taxa-profile-taxon-image-link': taxaProfileTaxonImageLink,
+                'taxa-profile-image-panel': taxaProfileImagePanel
             },
             mounted() {
                 this.setTaxon();
@@ -298,7 +280,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                             image['caption'] += ' (linked from ' + image['sciname'] + ')';
                         }
                     });
-                    this.centralImage = this.taxon['images'][0];
+                    this.centralImage = this.taxon['images'].shift();
                     if(Number(this.taxon['imageCnt']) > 100){
                         this.imageExpansionLabel = 'View First 100 Images';
                     }
