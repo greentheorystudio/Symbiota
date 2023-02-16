@@ -65,8 +65,7 @@ class TaxonProfileManager {
             $this->taxon['images'] = array();
             $this->taxon['imageCnt'] = array();
             $this->taxon['media'] = array();
-            $mapArr = $this->getMapArr($this->taxon['tid'],$this->taxon['securityStatus']);
-            $this->taxon['map'] = $mapArr ? array_shift($mapArr) : array();
+            $this->taxon['map'] = $this->getMapImgUrl($this->taxon['tid'],$this->taxon['securityStatus']);
             if($clId){
                 $this->setClName($clId);
             }
@@ -156,9 +155,7 @@ class TaxonProfileManager {
 
         if($this->taxon['rankId'] > 140){
             foreach($this->taxon['sppArr'] as $sn => $snArr){
-                if($mapArr = $this->getMapArr((int)$snArr['tid'],(int)$snArr['security'])){
-                    $this->taxon['sppArr'][$sn]['map'] = array_shift($mapArr);
-                }
+                $this->taxon['sppArr'][$sn]['map'] = $this->getMapImgUrl((int)$snArr['tid'],(int)$snArr['security']);
             }
         }
     }
@@ -194,7 +191,10 @@ class TaxonProfileManager {
             //echo $sql;
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
-                $this->taxon['synonyms'][] = '<i>'.$row->SciName.'</i> '.$row->Author;
+                $synArr = array();
+                $synArr['sciname'] = $row->SciName;
+                $synArr['author'] = $row->Author;
+                $this->taxon['synonyms'][] = $synArr;
             }
             $result->close();
         }
@@ -328,9 +328,9 @@ class TaxonProfileManager {
         return $status;
     }
 
-    public function getMapArr($tid,$security): array
+    public function getMapImgUrl($tid,$security): string
     {
-        $maps = array();
+        $map = '';
         if($tid && ($this->teReader || !$security)){
             $sql = 'SELECT tm.url, t.sciname '.
                 'FROM taxamaps AS tm INNER JOIN taxa AS t ON tm.tid = t.tid '.
@@ -342,11 +342,11 @@ class TaxonProfileManager {
                 if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0){
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                 }
-                $maps[] = $imgUrl;
+                $map = $imgUrl;
             }
             $result->close();
         }
-        return $maps;
+        return $map;
     }
 
     public function setClName($clv): void

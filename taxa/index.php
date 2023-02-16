@@ -34,14 +34,25 @@ include_once(__DIR__ . '/../config/header-includes.php');
             width: 90%;
             margin: 15px auto;
         }
-        .profile-row{
+        .profile-split-row{
             display: flex;
             justify-content: space-between;
             margin-top: 10px;
         }
+        .profile-center-row{
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
         .profile-column{
             display: flex;
             flex-direction: column;
+        }
+        .expansion-container{
+            width: 100%;
+        }
+        .expansion-element{
+            border-radius: 5px;
         }
         #sciname{
             font-weight: bold;
@@ -63,6 +74,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
         }
         .rightcolumn{
             width: 60%;
+        }
+        .right-inner-row{
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
         }
         #centralimage{
             margin: 15px;
@@ -102,6 +119,32 @@ include_once(__DIR__ . '/../config/header-includes.php');
         .desc-statement-heading{
             font-weight: bold;
         }
+        .map-thumb-frame{
+            max-width: 175px;
+            text-align: center;
+        }
+        .all-images-link-frame{
+            text-align: center;
+        }
+        .map-thumb-container{
+            display: flex;
+            flex-direction: column;
+            padding: 5px;
+        }
+        .all-images-link{
+            padding: 5px;
+        }
+        .map-thumb-spatial-link, .all-images-link{
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .imgthumb{
+            max-width: 220px;
+        }
+        .imgthumb div.photographer{
+            font-size: 75%;
+            text-align: right;
+        }
     </style>
     <script src="../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.js"></script>
@@ -115,56 +158,50 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div id="innertable">
         <template v-if="!loading">
             <template v-if="taxon">
-                <template v-if="taxon.rankId > 180">
-                    <div class="profile-row">
-                        <div class="leftcolumn profile-column">
-                            <taxa-profile-sciname-header :taxon="taxon" :style-class="styleClass" :parent-link="parentLink"></taxa-profile-sciname-header>
-                            <taxa-profile-taxon-family :taxon="taxon"></taxa-profile-taxon-family>
-                            <taxa-profile-taxon-notes :taxon="taxon"></taxa-profile-taxon-notes>
-                            <taxa-profile-taxon-vernaculars :vernaculars="taxon.vernaculars"></taxa-profile-taxon-vernaculars>
-                            <taxa-profile-taxon-synonyms :synonyms="taxon.synonyms"></taxa-profile-taxon-synonyms>
-                        </div>
-                        <template v-if="isEditor">
-                            <taxa-profile-edit-button :edit-link="editLink"></taxa-profile-edit-button>
-                        </template>
+                <div class="profile-split-row">
+                    <div class="leftcolumn profile-column">
+                        <taxa-profile-sciname-header :taxon="taxon" :style-class="styleClass" :parent-link="parentLink"></taxa-profile-sciname-header>
+                        <taxa-profile-taxon-family :taxon="taxon"></taxa-profile-taxon-family>
+                        <taxa-profile-taxon-notes :taxon="taxon"></taxa-profile-taxon-notes>
+                        <taxa-profile-taxon-vernaculars :vernaculars="taxon.vernaculars"></taxa-profile-taxon-vernaculars>
+                        <taxa-profile-taxon-synonyms :synonyms="taxon.synonyms"></taxa-profile-taxon-synonyms>
                     </div>
-                    <div class="profile-row">
-                        <div class="leftcolumn profile-column">
-                            <taxa-profile-central-image :central-image="centralImage" :is-editor="isEditor" :edit-link="editLink"></taxa-profile-central-image>
-                        </div>
-                        <div class="rightcolumn profile-column">
-                            <taxa-profile-description-tabs :description-arr="descriptionArr"></taxa-profile-description-tabs>
-                        </div>
+                    <template v-if="isEditor">
+                        <taxa-profile-edit-button :edit-link="editLink"></taxa-profile-edit-button>
+                    </template>
+                </div>
+                <div class="profile-split-row">
+                    <div class="leftcolumn profile-column">
+                        <taxa-profile-central-image :central-image="centralImage" :is-editor="isEditor" :edit-link="editLink"></taxa-profile-central-image>
                     </div>
-                    <div class="profile-row">
-
-                    </div>
-                </template>
-                <template v-else>
-                    <div class="profile-row">
-                        <div class="leftcolumn profile-column">
-                            <taxa-profile-sciname-header :taxon="taxon" :style-class="styleClass" :parent-link="parentLink"></taxa-profile-sciname-header>
-                            <taxa-profile-taxon-family :taxon="taxon"></taxa-profile-taxon-family>
-                            <taxa-profile-taxon-notes :taxon="taxon"></taxa-profile-taxon-notes>
-                            <taxa-profile-taxon-vernaculars :vernaculars="taxon.vernaculars"></taxa-profile-taxon-vernaculars>
-                            <taxa-profile-taxon-synonyms :synonyms="taxon.synonyms"></taxa-profile-taxon-synonyms>
+                    <div class="rightcolumn profile-column">
+                        <taxa-profile-description-tabs :description-arr="descriptionArr"></taxa-profile-description-tabs>
+                        <div class="right-inner-row">
+                            <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
                         </div>
-                        <template v-if="isEditor">
-                            <taxa-profile-edit-button :edit-link="editLink"></taxa-profile-edit-button>
-                        </template>
-                    </div>
-                    <div class="profile-row">
-                        <div class="leftcolumn profile-column">
-                            <taxa-profile-central-image :central-image="centralImage" :is-editor="isEditor" :edit-link="editLink"></taxa-profile-central-image>
-                        </div>
-                        <div class="rightcolumn profile-column">
-                            <taxa-profile-description-tabs :description-arr="descriptionArr"></taxa-profile-description-tabs>
+                        <div class="right-inner-row">
+                            <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
                         </div>
                     </div>
-                    <div class="profile-row">
-
-                    </div>
-                </template>
+                </div>
+                <div class="profile-center-row">
+                    <template v-if="taxon.imageCnt > 1">
+                        <div class="expansion-container">
+                            <q-expansion-item class="shadow-1 overflow-hidden expansion-element" :label="imageExpansionLabel" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
+                                <q-intersection v-for="image in taxon.images" :key="image">
+                                    <q-card class="q-ma-sm imgthumb">
+                                        <a :href="image.anchorUrl">
+                                            <q-img :src="image.url" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
+                                            <q-card-section>
+                                                <div class="text-italic photographer">{{ image.sciname }}</div>
+                                            </q-card-section>
+                                        </a>
+                                    </q-card>
+                                </q-intersection>
+                            </q-expansion-item>
+                        </div>
+                    </template>
+                </div>
             </template>
             <template v-else>
                 <taxa-profile-not-found :taxon-value="taxonValue" :fuzzy-matches="fuzzyMatches"></taxa-profile-not-found>
@@ -184,6 +221,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js" type="text/javascript"></script>
     <script>
         const taxonVal = Vue.ref('<?php echo $taxonValue; ?>');
         const clVal = Vue.ref(<?php echo $clValue; ?>);
@@ -196,6 +235,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     clValue: clVal,
                     descriptionArr: Vue.ref([]),
                     editLink: Vue.ref(null),
+                    imageExpansionLabel: Vue.ref(''),
                     isEditor: isEditor,
                     fuzzyMatches: Vue.ref([]),
                     loading: Vue.ref(true),
@@ -214,7 +254,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 'taxa-profile-taxon-vernaculars': taxaProfileTaxonVernaculars,
                 'taxa-profile-taxon-synonyms': taxaProfileTaxonSynonyms,
                 'taxa-profile-central-image': taxaProfileCentralImage,
-                'taxa-profile-description-tabs': taxaProfileDescriptionTabs
+                'taxa-profile-description-tabs': taxaProfileDescriptionTabs,
+                'taxa-profile-taxon-map': taxaProfileTaxonMap,
+                'taxa-profile-taxon-image-link': taxaProfileTaxonImageLink
             },
             mounted() {
                 this.setTaxon();
@@ -257,6 +299,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
                         }
                     });
                     this.centralImage = this.taxon['images'][0];
+                    if(Number(this.taxon['imageCnt']) > 100){
+                        this.imageExpansionLabel = 'View First 100 Images';
+                    }
+                    else{
+                        this.imageExpansionLabel = 'View All ' + this.taxon['imageCnt'] + ' Images';
+                    }
                 },
                 setLinks(){
                     this.editLink = CLIENT_ROOT + '/taxa/profile/tpeditor.php?tid=' + this.taxon['tid'];

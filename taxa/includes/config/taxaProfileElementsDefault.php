@@ -1,25 +1,5 @@
 <?php
 ob_start();
-$url = '';
-$mAnchor = '';
-if($displayLocality){
-    $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',true)";
-    if($mapSrc = $taxonManager->getMapArr()){
-        $url = array_shift($mapSrc);
-    }
-    echo '<div class="mapthumb">';
-    if($url){
-        echo '<a href="#" onclick="'.$mAnchor.';return false">';
-        echo '<a href="'.$url.'">';
-        echo '<img src="'.$url.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
-        echo '</a>';
-    }
-    echo '<br /><a href="#" onclick="' . $mAnchor . ';return false">Open Interactive Map</a>';
-    echo '</div>';
-}
-$mapThumbDiv = ob_get_clean();
-
-ob_start();
 ?>
 <div id="img-div">
     <?php

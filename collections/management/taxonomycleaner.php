@@ -131,7 +131,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 <div class="processor-control-container">
                     <q-card class="processor-control-card">
                         <q-list class="processor-control-accordion">
-                            <q-expansion-item group="controlgroup" label="Maintenance Utilities" header-class="bg-grey-3 text-bold" default-opened>
+                            <q-expansion-item class="overflow-hidden" group="controlgroup" label="Maintenance Utilities" header-class="bg-grey-3 text-bold" default-opened>
                                 <q-card class="accordion-panel">
                                     <q-card-section>
                                         <div class="process-header">
@@ -196,7 +196,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 </q-card>
                             </q-expansion-item>
                             <q-separator></q-separator>
-                            <q-expansion-item group="controlgroup" label="Search Utilities" header-class="bg-grey-3 text-bold">
+                            <q-expansion-item class="overflow-hidden" group="controlgroup" label="Search Utilities" header-class="bg-grey-3 text-bold">
                                 <q-card class="accordion-panel">
                                     <q-card-section>
                                         <div class="process-header">
