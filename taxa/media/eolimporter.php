@@ -36,9 +36,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         .processor-control-container {
             width: 40%;
         }
-        .processor-control-card {
-            height: 630px;
-        }
         .processor-control-accordion {
             height: 610px;
         }
