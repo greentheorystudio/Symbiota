@@ -36,6 +36,11 @@ function arrayIndexSort(obj){
 	return keys;
 }
 
+function cancelAPIRequest(){
+	http.abort();
+	abortController.abort();
+}
+
 function checkObjectNotEmpty(obj){
 	for(const i in obj){
 		if(obj.hasOwnProperty(i) && obj[i]){
@@ -43,6 +48,15 @@ function checkObjectNotEmpty(obj){
 		}
 	}
 	return false;
+}
+
+function convertParamsObjToFormData(params){
+	const paramArr = Object.entries(params);
+	const formData = new FormData();
+	paramArr.forEach((pArr) => {
+		formData.append(pArr[0], (pArr[1] ? pArr[1].toString() : null));
+	});
+	return formData;
 }
 
 function formatCheckDate(dateStr){
@@ -88,6 +102,17 @@ function generateRandColor(){
 	const z1 = z.substring(0, y);
 	hexColor = z1 + x;
 	return hexColor;
+}
+
+function getErrorResponseText(status,statusText){
+	let text;
+	if(status === 0){
+		text = 'Cancelled';
+	}
+	else{
+		text = 'Error: ' + status + ' ' + statusText;
+	}
+	return text;
 }
 
 function getISOStrFromDateObj(dObj){
@@ -265,6 +290,7 @@ function openPopup(url){
 }
 
 function openTutorialWindow(url) {
+	url = CLIENT_ROOT + url;
 	window.open(url, '_blank');
 }
 
@@ -321,31 +347,14 @@ function parseDate(dateStr){
 	return retArr;
 }
 
-function sendProxyGetRequest(proxyurl,url,callback,http = null){
-	if(!http){
-		http = new XMLHttpRequest();
-	}
-	const formData = new FormData();
-	formData.append('url', url);
-	formData.append('action', 'get');
-	http.open("POST", proxyurl, true);
-	http.onreadystatechange = function() {
-		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
-		}
-	};
-	http.send(formData);
-}
-
 function sendAPIGetRequest(url,callback,http = null){
 	if(!http){
 		http = new XMLHttpRequest();
 	}
 	http.open("GET", url, true);
-	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
+			callback(http.status,http.responseText,http.statusText);
 		}
 	};
 	http.send();
@@ -355,14 +364,14 @@ function sendAPIPostRequest(url,params,callback,http = null){
 	if(!http){
 		http = new XMLHttpRequest();
 	}
+	const formData = convertParamsObjToFormData(params);
 	http.open("POST", url, true);
-	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
+			callback(http.status,http.responseText,http.statusText);
 		}
 	};
-	http.send(params);
+	http.send(formData);
 }
 
 function showWorking(){

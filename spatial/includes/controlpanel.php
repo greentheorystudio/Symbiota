@@ -87,7 +87,7 @@
             <?php
             if(!$inputWindowMode){
                 ?>
-                <div onclick="openTutorialWindow('../tutorial/spatial/index.php');" title="Open Tutorial Window">
+                <div onclick="openTutorialWindow('/tutorial/spatial/index.php');" title="Open Tutorial Window">
                     <i style="height:20px;width:20px;cursor:pointer;color:white;" class="far fa-question-circle"></i>
                 </div>
                 <?php

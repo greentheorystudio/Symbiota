@@ -131,7 +131,8 @@ include_once(__DIR__ . '/config/header-includes.php');
                             if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
                                 ?>
                                 <li><a href="taxa/profile/tpeditor.php">Taxon Profile Manager</a></li>
-                                <li><a href="taxa/media/index.php">Taxa Media Batch Uploader</a></li>
+                                <li><a href="taxa/media/batchimageloader.php">Taxa Media Batch Uploader</a></li>
+                                <li><a href="taxa/media/eolimporter.php">Encyclopedia of Life Media Importer</a></li>
                                 <?php
                             }
                             ?>

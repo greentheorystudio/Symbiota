@@ -8,7 +8,6 @@ header('X-Frame-Options: SAMEORIGIN');
 
 $tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
-$lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 
@@ -17,9 +16,6 @@ $tDescEditor = new TPDescEditorManager();
 $tEditor = new TPEditorManager();
 
 $tid = $tEditor->setTid($tid?:$taxon);
-if($lang) {
-    $tEditor->setLanguage($lang);
-}
 
 $statusStr = '';
 $editable = false;
@@ -205,10 +201,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 				<div id="tabs" style="margin:10px;">
 					<ul>
 						<li><a href="#commontab"><span>Synonyms / Vernaculars</span></a></li>
-				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&lang='.$lang; ?>"><span>Images</span></a></li>
-				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&lang='.$lang.'&cat=imagequicksort'; ?>"><span>Image Sort</span></a></li>
-				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&lang='.$lang.'&cat=imageadd'; ?>"><span>Add Image</span></a></li>
-				        <li><a href="tpdesceditor.php?tid=<?php echo $tEditor->getTid().'&lang='.$lang.'&action='.$action; ?>"><span>Descriptions</span></a></li>
+				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid(); ?>"><span>Images</span></a></li>
+				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&cat=imagequicksort'; ?>"><span>Image Sort</span></a></li>
+				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&cat=imageadd'; ?>"><span>Add Image</span></a></li>
+				        <li><a href="tpdesceditor.php?tid=<?php echo $tEditor->getTid().'&action='.$action; ?>"><span>Descriptions</span></a></li>
 				    </ul>
 					<div id="commontab">
 						<?php
@@ -373,7 +369,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 				</div>
 				<form name="gettidform" action="tpeditor.php" method="post" onsubmit="return checkGetTidForm(this);">
 					<input id="sninput" name="taxon" value="<?php echo $taxon; ?>" size="40" />
-					<input type="hidden" name="lang" value="<?php echo $lang; ?>" />
 					<input type="hidden" name="tabindex" value="<?php echo $tabIndex; ?>" />
 					<input type="submit" name="action" value="Edit Taxon" />
 				</form>

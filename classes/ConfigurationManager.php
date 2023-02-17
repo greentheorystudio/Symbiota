@@ -148,7 +148,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20230112';
+        $GLOBALS['CSS_VERSION'] = '20230217';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -793,22 +793,5 @@ class ConfigurationManager{
             $status = true;
         }
         return $status;
-    }
-
-    public function getTaxonomyRankArr(): array
-    {
-        $retArr = array();
-        $sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits ORDER BY rankid ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            if(array_key_exists($row->rankid,$retArr)){
-                $retArr[$row->rankid] .= ', ' . $row->rankname;
-            }
-            else{
-                $retArr[$row->rankid] = $row->rankname;
-            }
-        }
-        $result->free();
-        return $retArr;
     }
 }
