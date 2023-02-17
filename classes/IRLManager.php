@@ -17,7 +17,7 @@ class IRLManager {
 		}
 	}
 
-    public function getNativeStatus($tid): array
+    public function getNativeStatus($tid): string
     {
         $returnArr = array();
         if($tid){
@@ -36,7 +36,7 @@ class IRLManager {
             }
             $result->free();
         }
-        return $returnArr;
+        return implode(',', $returnArr);
     }
 
     public function getChecklistTaxa($clid): array
