@@ -42,7 +42,7 @@ include(__DIR__ . '/../header.php');
     <table style="width:500px;margin-left:auto;margin-right:auto;">
         <tr>
             <td>
-                <center><img src="https://irlspecies.org/content/imglib/Stone Crab.jpg" width="500"/>&nbsp;
+                <img src="https://irlspecies.org/content/imglib/Stone Crab.jpg" width="500"/>&nbsp;
             </td>
         </tr>
     </table>
