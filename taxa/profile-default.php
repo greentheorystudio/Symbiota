@@ -14,6 +14,50 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js" type="text/javascript"></script>
 <script>
     const taxonProfilePage = Vue.createApp({
+        template: `
+            <template v-if="!loading">
+                <template v-if="taxon">
+                    <div class="profile-split-row">
+                        <div class="left-column profile-column">
+                            <taxa-profile-sciname-header :taxon="taxon" :style-class="styleClass" :parent-link="parentLink"></taxa-profile-sciname-header>
+                            <taxa-profile-taxon-family :taxon="taxon"></taxa-profile-taxon-family>
+                            <taxa-profile-taxon-notes :taxon="taxon"></taxa-profile-taxon-notes>
+                            <taxa-profile-taxon-vernaculars :vernaculars="taxon.vernaculars"></taxa-profile-taxon-vernaculars>
+                            <taxa-profile-taxon-synonyms :synonyms="taxon.synonyms"></taxa-profile-taxon-synonyms>
+                        </div>
+                        <template v-if="isEditor">
+                            <taxa-profile-edit-button :edit-link="editLink"></taxa-profile-edit-button>
+                        </template>
+                    </div>
+                    <div class="profile-split-row">
+                        <div class="left-column profile-column">
+                            <taxa-profile-central-image :taxon="taxon" :central-image="centralImage" :is-editor="isEditor" :edit-link="editLink"></taxa-profile-central-image>
+                        </div>
+                        <div class="right-column profile-column">
+                            <taxa-profile-description-tabs :description-arr="descriptionArr" :glossary-arr="glossaryArr"></taxa-profile-description-tabs>
+                            <div class="right-inner-row">
+                                <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
+                            </div>
+                            <div class="right-inner-row">
+                                <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-center-row">
+                        <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel"></taxa-profile-image-panel>
+                    </div>
+                    <div class="profile-center-row">
+                        <taxa-profile-media-panel :taxon="taxon"></taxa-profile-media-panel>
+                    </div>
+                    <div class="profile-center-row">
+                        <taxa-profile-subtaxa-panel :subtaxa-arr="subtaxaArr" :subtaxa-label="subtaxaLabel" :subtaxa-expansion-label="subtaxaExpansionLabel" :is-editor="isEditor"></taxa-profile-subtaxa-panel>
+                    </div>
+                </template>
+                <template v-else>
+                    <taxa-profile-not-found :taxon-value="taxonValue" :fuzzy-matches="fuzzyMatches"></taxa-profile-not-found>
+                </template>
+            </template>
+        `,
         data() {
             return {
                 audioArr: Vue.ref({}),
@@ -127,13 +171,13 @@
                     method: 'POST',
                     body: formData
                 })
-                    .then((response) => {
-                        if(response.status === 200){
-                            response.json().then((resObj) => {
-                                this.glossaryArr = resObj;
-                            });
-                        }
-                    });
+                .then((response) => {
+                    if(response.status === 200){
+                        response.json().then((resObj) => {
+                            this.glossaryArr = resObj;
+                        });
+                    }
+                });
             },
             setLinks(){
                 this.editLink = CLIENT_ROOT + '/taxa/profile/tpeditor.php?tid=' + this.taxon['tid'];
@@ -159,46 +203,46 @@
                     method: 'POST',
                     body: formData
                 })
-                    .then((response) => {
-                        if(response.status === 200){
-                            response.json().then((resObj) => {
-                                this.loading = false;
-                                if(resObj.hasOwnProperty('submittedTid')){
-                                    this.taxon = resObj;
-                                    this.setLinks();
-                                    this.setStyleClass();
-                                    this.processImages();
-                                    this.setTaxonDescriptions();
-                                    this.setGlossary();
-                                    this.processSubtaxa();
-                                    this.processMedia();
-                                }
-                                else if(this.taxonValue !== ''){
-                                    const formData = new FormData();
-                                    formData.append('sciname', this.taxonValue);
-                                    formData.append('lev', '2');
-                                    formData.append('action', 'getSciNameFuzzyMatches');
-                                    fetch(taxonomyApiUrl, {
-                                        method: 'POST',
-                                        body: formData
-                                    })
-                                        .then((response) => {
-                                            if(response.status === 200){
-                                                response.json().then((matches) => {
-                                                    matches.forEach((match) => {
-                                                        match['url'] = CLIENT_ROOT + '/taxa/index.php?taxon=' + match['tid'];
-                                                    });
-                                                    this.fuzzyMatches = matches;
-                                                });
-                                            }
+                .then((response) => {
+                    if(response.status === 200){
+                        response.json().then((resObj) => {
+                            this.loading = false;
+                            if(resObj.hasOwnProperty('submittedTid')){
+                                this.taxon = resObj;
+                                this.setLinks();
+                                this.setStyleClass();
+                                this.processImages();
+                                this.setTaxonDescriptions();
+                                this.setGlossary();
+                                this.processSubtaxa();
+                                this.processMedia();
+                            }
+                            else if(this.taxonValue !== ''){
+                                const formData = new FormData();
+                                formData.append('sciname', this.taxonValue);
+                                formData.append('lev', '2');
+                                formData.append('action', 'getSciNameFuzzyMatches');
+                                fetch(taxonomyApiUrl, {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then((response) => {
+                                    if(response.status === 200){
+                                        response.json().then((matches) => {
+                                            matches.forEach((match) => {
+                                                match['url'] = CLIENT_ROOT + '/taxa/index.php?taxon=' + match['tid'];
+                                            });
+                                            this.fuzzyMatches = matches;
                                         });
-                                }
-                                else{
-                                    window.location.href = CLIENT_ROOT + '/index.php';
-                                }
-                            });
-                        }
-                    });
+                                    }
+                                });
+                            }
+                            else{
+                                window.location.href = CLIENT_ROOT + '/index.php';
+                            }
+                        });
+                    }
+                });
             },
             setTaxonDescriptions(){
                 const formData = new FormData();
@@ -208,13 +252,13 @@
                     method: 'POST',
                     body: formData
                 })
-                    .then((response) => {
-                        if(response.status === 200){
-                            response.json().then((resObj) => {
-                                this.processDescriptions(resObj);
-                            });
-                        }
-                    });
+                .then((response) => {
+                    if(response.status === 200){
+                        response.json().then((resObj) => {
+                            this.processDescriptions(resObj);
+                        });
+                    }
+                });
             }
         }
     });
