@@ -27,7 +27,7 @@ const taxaProfileTaxonNativeStatus = {
             const apiUrl = CLIENT_ROOT + '/api/custom/irlController.php';
             const formData = new FormData();
             formData.append('tid', this.taxon['tid']);
-            formData.append('action', 'getTaxonDescriptions');
+            formData.append('action', 'getNativeStatus');
             fetch(apiUrl, {
                 method: 'POST',
                 body: formData
