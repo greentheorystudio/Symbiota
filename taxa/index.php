@@ -26,11 +26,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxon Profile</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/speciesprofilebase.css?ver=20221204" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <style>
-        #innertable{
+        #inner-table{
             width: 90%;
             margin: 15px auto;
         }
@@ -65,14 +63,14 @@ include_once(__DIR__ . '/../config/header-includes.php');
         #sciname.genus{
             font-style: italic;
         }
-        .redirectedfrom{
+        .redirected-from{
             font-size: 90%;
             margin-left: 25px;
         }
-        .leftcolumn{
+        .left-column{
             width: 35%;
         }
-        .rightcolumn{
+        .right-column{
             width: 60%;
         }
         .right-inner-row{
@@ -94,18 +92,18 @@ include_once(__DIR__ . '/../config/header-includes.php');
             align-items: center;
             font-weight: bold;
         }
-        .desctabs{
+        .desc-tabs{
             height: 450px;
         }
-        .desctabpanels{
+        .desc-tab-panels{
             height: 350px;
         }
-        #descsource{
+        .desc-source{
             text-align:	right;
             width: 400px;
             padding: 10px 20px 10px 10px;
         }
-        #nodesc{
+        .no-desc{
             margin: 20px;
             font-weight: bold;
             text-align:	center;
@@ -132,29 +130,52 @@ include_once(__DIR__ . '/../config/header-includes.php');
             font-size: 1.1rem;
             font-weight: bold;
         }
-        .imgthumb{
+        .img-thumb{
             width: 220px;
         }
-        .imgthumb div.photographer{
+        .img-thumb div.photographer{
             font-size: 75%;
             text-align: right;
             padding: 3px;
         }
+        .spp-taxon{
+            width: 170px;
+        }
+        .spp-taxon-label{
+            text-align: center;
+            padding: 8px;
+            font-style: italic;
+        }
+        .spp-image-container{
+            height: 150px;
+        }
+        .no-spptaxon-image{
+            width: 125px;
+            height: 125px;
+            margin: auto;
+            border: 1px dotted black;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .spp-map-container{
+            margin-top: 10px;
+            height: 160px;
+        }
     </style>
     <script src="../js/external/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/external/jquery.js"></script>
-    <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 </head>
 <body>
     <?php
     include(__DIR__ . '/../header.php');
     ?>
-    <div id="innertable">
+    <div id="inner-table">
         <template v-if="!loading">
             <template v-if="taxon">
                 <div class="profile-split-row">
-                    <div class="leftcolumn profile-column">
+                    <div class="left-column profile-column">
                         <taxa-profile-sciname-header :taxon="taxon" :style-class="styleClass" :parent-link="parentLink"></taxa-profile-sciname-header>
                         <taxa-profile-taxon-family :taxon="taxon"></taxa-profile-taxon-family>
                         <taxa-profile-taxon-notes :taxon="taxon"></taxa-profile-taxon-notes>
@@ -166,10 +187,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     </template>
                 </div>
                 <div class="profile-split-row">
-                    <div class="leftcolumn profile-column">
+                    <div class="left-column profile-column">
                         <taxa-profile-central-image :central-image="centralImage" :is-editor="isEditor" :edit-link="editLink"></taxa-profile-central-image>
                     </div>
-                    <div class="rightcolumn profile-column">
+                    <div class="right-column profile-column">
                         <taxa-profile-description-tabs :description-arr="descriptionArr"></taxa-profile-description-tabs>
                         <div class="right-inner-row">
                             <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
@@ -180,7 +201,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     </div>
                 </div>
                 <div class="profile-center-row">
-                    <taxa-profile-image-panel :taxon="taxon"></taxa-profile-image-panel>
+                    <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel"></taxa-profile-image-panel>
+                </div>
+                <div class="profile-center-row">
+                    <taxa-profile-subtaxa-panel :subtaxa-arr="subtaxaArr" :subtaxa-label="subtaxaLabel" :subtaxa-expansion-label="subtaxaExpansionLabel" :is-editor="isEditor"></taxa-profile-subtaxa-panel>
                 </div>
             </template>
             <template v-else>
@@ -204,6 +228,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js" type="text/javascript"></script>
     <script>
         const taxonVal = Vue.ref('<?php echo $taxonValue; ?>');
         const clVal = Vue.ref(<?php echo $clValue; ?>);
@@ -221,6 +246,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     fuzzyMatches: Vue.ref([]),
                     loading: Vue.ref(true),
                     parentLink: Vue.ref(null),
+                    subtaxaArr: Vue.ref([]),
+                    subtaxaExpansionLabel: Vue.ref(''),
+                    subtaxaLabel: Vue.ref(''),
                     styleClass: Vue.ref(null),
                     taxon: Vue.ref(null),
                     taxonValue: taxonVal
@@ -238,7 +266,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 'taxa-profile-description-tabs': taxaProfileDescriptionTabs,
                 'taxa-profile-taxon-map': taxaProfileTaxonMap,
                 'taxa-profile-taxon-image-link': taxaProfileTaxonImageLink,
-                'taxa-profile-image-panel': taxaProfileImagePanel
+                'taxa-profile-image-panel': taxaProfileImagePanel,
+                'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel
             },
             mounted() {
                 this.setTaxon();
@@ -288,6 +317,23 @@ include_once(__DIR__ . '/../config/header-includes.php');
                         this.imageExpansionLabel = 'View All ' + this.taxon['imageCnt'] + ' Images';
                     }
                 },
+                processSubtaxa(){
+                    if(this.taxon['clName']){
+                        this.subtaxaLabel = 'Subtaxa within ' + this.taxon['clName'];
+                    }
+                    else{
+                        this.subtaxaLabel = 'Subtaxa';
+                    }
+                    this.subtaxaExpansionLabel = 'View All ' + this.subtaxaLabel;
+                    for(let i in this.taxon['sppArr']){
+                        if(this.taxon['sppArr'].hasOwnProperty(i)){
+                            const subTaxon = this.taxon['sppArr'][i];
+                            subTaxon['taxaurl'] = CLIENT_ROOT + '/taxa/index.php?taxon=' + subTaxon['tid'] + '&cl=' + (this.taxon.hasOwnProperty('clid')?this.taxon['clid']:'');
+                            subTaxon['editurl'] = CLIENT_ROOT + '/taxa/profile/tpeditor.php?tid=' + subTaxon['tid'];
+                            this.subtaxaArr.push(subTaxon);
+                        }
+                    }
+                },
                 setLinks(){
                     this.editLink = CLIENT_ROOT + '/taxa/profile/tpeditor.php?tid=' + this.taxon['tid'];
                     this.parentLink = CLIENT_ROOT + '/taxa/index.php?taxon=' + this.taxon['parentTid'] + '&cl=' + (this.taxon.hasOwnProperty('clid')?this.taxon['clid']:'');
@@ -322,6 +368,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                                     this.setStyleClass();
                                     this.processImages();
                                     this.setTaxonDescriptions();
+                                    this.processSubtaxa();
                                 }
                                 else if(this.taxonValue !== ''){
                                     const formData = new FormData();
@@ -369,7 +416,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             }
         });
         taxonProfilePage.use(Quasar, { config: {} });
-        taxonProfilePage.mount('#innertable');
+        taxonProfilePage.mount('#inner-table');
     </script>
 </body>
 </html>

@@ -415,11 +415,6 @@ ol.mp_list li.mp_highlighted {
 	0 1px 1px hsla(0,0%,100%,.8);
 }
 
-.flexwrapbox{
-	display: flex;
-	flex-wrap: wrap;
-}
-
 .pmargin{
 	margin: 10px;
 }

@@ -10,7 +10,7 @@ const taxaProfileDescriptionTabs = {
     template: `
         <q-card>
             <template v-if="descriptionArr.length">
-                <div class="desctabs">
+                <div class="desc-tabs">
                     <q-tabs v-model="selectedDescTab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
                         <template v-for="desc in descriptionArr">
                             <q-tab :name="desc.tdbid" :label="desc.caption" no-caps></q-tab>
@@ -20,9 +20,9 @@ const taxaProfileDescriptionTabs = {
                     <q-tab-panels v-model="selectedDescTab">
                         <template v-for="desc in descriptionArr">
                             <q-tab-panel :name="desc.tdbid">
-                                <div class="desctabpanels">
+                                <div class="desc-tab-panels">
                                     <template v-if="desc.source || desc.sourceurl">
-                                        <div id="descsource">
+                                        <div class="desc-source">
                                             <template v-if="desc.sourceurl">
                                                 <a :href="desc.sourceurl" target="_blank">{{ desc.source }}</a>
                                             </template>
@@ -43,7 +43,7 @@ const taxaProfileDescriptionTabs = {
                 </div>
             </template>
             <template v-else>
-                <div id="nodesc">Description Not Yet Available</div>
+                <div class="no-desc">Description Not Yet Available</div>
             </template>
         </q-card>
     `,

@@ -11,7 +11,7 @@ const taxaProfileScinameHeader = {
                 <q-icon name="fas fa-level-up-alt" size="15px" class="cursor-pointer" />
             </a>
             <template v-if="taxon.submittedTid !== taxon.tid">
-                <span class="redirectedfrom"> (redirected from: <span class="text-italic">{{ taxon.submittedSciName }}</span>)</span>
+                <span class="redirected-from"> (redirected from: <span class="text-italic">{{ taxon.submittedSciName }}</span>)</span>
             </template>
         </div>
     `

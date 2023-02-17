@@ -71,8 +71,6 @@ class TaxonProfileManager {
                 $this->setVernaculars();
                 $this->setSynonyms();
                 $this->setTaxaMedia();
-            }
-            if($this->taxon['rankId'] >= 140 && $this->taxon['rankId'] <= 220) {
                 $this->taxon['sppArr'] = array();
                 $this->setSppData($clId);
             }
@@ -85,15 +83,13 @@ class TaxonProfileManager {
     {
         $tids = array();
         if($clId){
-            $sql = 'SELECT t.tid, t.sciname, t.securitystatus '.
-                'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
-                'INNER JOIN fmchklsttaxalink AS ctl ON ctl.TID = t.tid '.
-                'WHERE ctl.clid = '.$clId.' AND te.parenttid = '.$this->taxon['tid'].' ';
+            $sql = 'SELECT t.tid, t.RankId, t.sciname, t.securitystatus '.
+                'FROM taxa AS t INNER JOIN fmchklsttaxalink AS ctl ON ctl.TID = t.tid '.
+                'WHERE ctl.clid = '.$clId.' AND t.parenttid = '.$this->taxon['tid'].' ';
         }
         else{
-            $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
-                'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
-                'WHERE te.parenttid = '.$this->taxon['tid'].' ';
+            $sql = 'SELECT DISTINCT t.sciname, t.RankId, t.tid, t.securitystatus '.
+                'FROM taxa AS t WHERE t.parenttid = '.$this->taxon['tid'].' ';
         }
         //echo $sql; exit;
         $result = $this->conn->query($sql);
@@ -101,56 +97,39 @@ class TaxonProfileManager {
             $sn = $row->sciname;
             $this->taxon['sppArr'][$sn]['sciName'] = $sn;
             $this->taxon['sppArr'][$sn]['tid'] = $row->tid;
+            $this->taxon['sppArr'][$sn]['rankid'] = $row->RankId;
             $this->taxon['sppArr'][$sn]['security'] = $row->securitystatus;
             $tids[] = $row->tid;
         }
         $result->close();
-        
-        if(!$tids){
-            $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
-                'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tidaccepted = te.tid '.
-                'WHERE te.parenttid = '.$this->taxon['tid'].' ';
-            //echo $sql;
-            $result = $this->conn->query($sql);
-            while($row = $result->fetch_object()){
-                $sn = $row->sciname;
-                $this->taxon['sppArr'][$sn]['sciName'] = $sn;
-                $this->taxon['sppArr'][$sn]['tid'] = $row->tid;
-                $this->taxon['sppArr'][$sn]['security'] = $row->securitystatus;
-                $tids[] = $row->tid;
-            }
-            $result->free();
-        }
-
         if($tids){
-            $sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, '.
-                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
+            $sql = 'SELECT t.sciname, i.url, i.thumbnailurl, i.caption '.
                 'FROM images AS i INNER JOIN '.
                 '(SELECT t.tidaccepted AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
                 'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
                 'WHERE (t.tidaccepted IN('.implode(',',$tids).')) '.
                 'GROUP BY t.tidaccepted) AS i2 ON i.imgid = i2.imgid '.
-                'INNER JOIN taxa AS t ON i2.tid = t.tid '.
-                'LEFT JOIN users AS u ON i.photographeruid = u.uid ';
+                'INNER JOIN taxa AS t ON i2.tid = t.tid ';
             //echo $sql;
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
                 $sciName = $row->sciname;
-                if(!array_key_exists($sciName,$this->taxon['sppArr'])){
-                    $firstPos = strpos($sciName, ' ',2)+2;
-                    $sciName = substr($sciName,0,strpos($sciName, ' ',$firstPos));
-                }
-                if(is_string($sciName) || is_int($sciName)){
-                    $this->taxon['sppArr'][$sciName]['imgid'] = $row->imgid;
-                    $this->taxon['sppArr'][$sciName]['url'] = $row->url;
-                    $this->taxon['sppArr'][$sciName]['thumbnailurl'] = $row->thumbnailurl;
-                    $this->taxon['sppArr'][$sciName]['photographer'] = $row->photographer;
+                if(array_key_exists($sciName,$this->taxon['sppArr'])){
+                    $imgUrl = $row->thumbnailurl ?: $row->url;
+                    if(strncmp($imgUrl, '/', 1) === 0) {
+                        if(isset($GLOBALS['IMAGE_DOMAIN'])){
+                            $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
+                        }
+                        else{
+                            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
+                        }
+                    }
+                    $this->taxon['sppArr'][$sciName]['url'] = $imgUrl;
                     $this->taxon['sppArr'][$sciName]['caption'] = $row->caption;
                 }
             }
             $result->close();
         }
-
         if($this->taxon['rankId'] > 140){
             foreach($this->taxon['sppArr'] as $sn => $snArr){
                 $this->taxon['sppArr'][$sn]['map'] = $this->getMapImgUrl((int)$snArr['tid'],(int)$snArr['security']);
@@ -230,12 +209,20 @@ class TaxonProfileManager {
                 $imageArr = array();
                 $imgUrl = $row->url;
                 $imgThumbnail = $row->thumbnailurl;
-                if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                    if(strncmp($imgUrl, '/', 1) === 0) {
+                if(strncmp($imgUrl, '/', 1) === 0) {
+                    if(isset($GLOBALS['IMAGE_DOMAIN'])){
                         $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                     }
-                    if($imgThumbnail && strncmp($imgThumbnail, '/', 1) === 0) {
+                    else{
+                        $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
+                    }
+                }
+                if(strncmp($imgThumbnail, '/', 1) === 0) {
+                    if(isset($GLOBALS['IMAGE_DOMAIN'])){
                         $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
+                    }
+                    else{
+                        $imgThumbnail = $GLOBALS['CLIENT_ROOT'] . $imgThumbnail;
                     }
                 }
                 $imageArr['id'] = $row->imgid;
@@ -285,11 +272,15 @@ class TaxonProfileManager {
             //echo $sql;
             $result = $this->conn->query($sql);
             if($row = $result->fetch_object()){
-                $imgUrl = $row->url;
-                if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0){
-                    $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
+                $map = $row->url;
+                if(strncmp($map, '/', 1) === 0){
+                    if(isset($GLOBALS['IMAGE_DOMAIN'])){
+                        $map = $GLOBALS['IMAGE_DOMAIN'] . $map;
+                    }
+                    else{
+                        $map = $GLOBALS['CLIENT_ROOT'] . $map;
+                    }
                 }
-                $map = $imgUrl;
             }
             $result->close();
         }
