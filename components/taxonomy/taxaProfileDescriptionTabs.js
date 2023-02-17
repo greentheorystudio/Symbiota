@@ -1,19 +1,26 @@
 const taxaProfileDescriptionTabs = {
     props: [
-        'description-arr'
+        'description-arr',
+        'glossary-arr'
     ],
     watch: {
         descriptionArr: function(){
+            this.processTabs();
+        },
+        glossaryArr: function(){
             this.processTabs();
         }
     },
     template: `
         <q-card>
-            <template v-if="descriptionArr.length">
+            <template v-if="descriptionArr.length || glossaryArr.length">
                 <div class="desc-tabs">
                     <q-tabs v-model="selectedDescTab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
                         <template v-for="desc in descriptionArr">
                             <q-tab :name="desc.tdbid" :label="desc.caption" no-caps></q-tab>
+                        </template>
+                        <template v-if="glossaryArr.length">
+                            <q-tab name="glossaryTab" label="Glossary" no-caps></q-tab>
                         </template>
                     </q-tabs>
                     <q-separator></q-separator>
@@ -36,6 +43,15 @@ const taxaProfileDescriptionTabs = {
                                             <p v-html="text.statement"></p>
                                         </template>
                                     </div>
+                                </div>
+                            </q-tab-panel>
+                        </template>
+                        <template v-if="glossaryArr.length">
+                            <q-tab-panel name="glossaryTab">
+                                <div class="desc-tab-panels">
+                                    <p v-for="term in glossaryArr">
+                                        <span class="text-weight-bold">{{ term.term }}</span>: {{ term.definition }}
+                                    </p>
                                 </div>
                             </q-tab-panel>
                         </template>

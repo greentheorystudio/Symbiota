@@ -814,6 +814,19 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
+    public function getParentTids($tid): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT parenttid FROM taxaenumtree ' .
+            'WHERE tid = ' .$tid. ' ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $returnArr[] = $row->parenttid;
+        }
+        $result->close();
+        return $returnArr;
+    }
+
     public function addTaxonDescriptionTab($description): int
     {
         $retVal = 0;

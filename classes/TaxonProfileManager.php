@@ -85,11 +85,13 @@ class TaxonProfileManager {
         if($clId){
             $sql = 'SELECT t.tid, t.RankId, t.sciname, t.securitystatus '.
                 'FROM taxa AS t INNER JOIN fmchklsttaxalink AS ctl ON ctl.TID = t.tid '.
-                'WHERE ctl.clid = '.$clId.' AND t.parenttid = '.$this->taxon['tid'].' ';
+                'WHERE ctl.clid = '.$clId.' AND t.parenttid = '.$this->taxon['tid'].' '.
+                'ORDER BY t.sciname ';
         }
         else{
             $sql = 'SELECT DISTINCT t.sciname, t.RankId, t.tid, t.securitystatus '.
-                'FROM taxa AS t WHERE t.parenttid = '.$this->taxon['tid'].' ';
+                'FROM taxa AS t WHERE t.parenttid = '.$this->taxon['tid'].' '.
+                'ORDER BY t.sciname ';
         }
         //echo $sql; exit;
         $result = $this->conn->query($sql);

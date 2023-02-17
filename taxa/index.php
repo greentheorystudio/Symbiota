@@ -219,7 +219,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                         <taxa-profile-central-image :taxon="taxon" :central-image="centralImage" :is-editor="isEditor" :edit-link="editLink"></taxa-profile-central-image>
                     </div>
                     <div class="right-column profile-column">
-                        <taxa-profile-description-tabs :description-arr="descriptionArr"></taxa-profile-description-tabs>
+                        <taxa-profile-description-tabs :description-arr="descriptionArr" :glossary-arr="glossaryArr"></taxa-profile-description-tabs>
                         <div class="right-inner-row">
                             <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
                         </div>
@@ -274,6 +274,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     clValue: clVal,
                     descriptionArr: Vue.ref([]),
                     editLink: Vue.ref(null),
+                    glossaryArr: Vue.ref([]),
                     imageExpansionLabel: Vue.ref(''),
                     isEditor: isEditor,
                     fuzzyMatches: Vue.ref([]),
@@ -371,6 +372,22 @@ include_once(__DIR__ . '/../config/header-includes.php');
                         }
                     }
                 },
+                setGlossary(){
+                    const formData = new FormData();
+                    formData.append('tid', this.taxon['tid']);
+                    formData.append('action', 'getTaxonGlossary');
+                    fetch(glossaryApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        if(response.status === 200){
+                            response.json().then((resObj) => {
+                                this.glossaryArr = resObj;
+                            });
+                        }
+                    });
+                },
                 setLinks(){
                     this.editLink = CLIENT_ROOT + '/taxa/profile/tpeditor.php?tid=' + this.taxon['tid'];
                     this.parentLink = CLIENT_ROOT + '/taxa/index.php?taxon=' + this.taxon['parentTid'] + '&cl=' + (this.taxon.hasOwnProperty('clid')?this.taxon['clid']:'');
@@ -405,6 +422,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                                     this.setStyleClass();
                                     this.processImages();
                                     this.setTaxonDescriptions();
+                                    this.setGlossary();
                                     this.processSubtaxa();
                                     this.processMedia();
                                 }
@@ -450,7 +468,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                             });
                         }
                     });
-                },
+                }
             }
         });
         taxonProfilePage.use(Quasar, { config: {} });

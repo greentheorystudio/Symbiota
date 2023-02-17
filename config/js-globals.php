@@ -39,4 +39,5 @@
     const taxaProfileApiUrl = CLIENT_ROOT + '/api/taxa/taxaProfileController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
     const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
+    const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
 </script>
