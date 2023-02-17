@@ -8,17 +8,17 @@
 
 /config/dbconnection.php
 /config/symbini.php
+/content
 /css/main.css
+/data
+/docker-compose.yml
 /footer.php
 /header.php
-/robots.txt
 /index.php
 /misc/usagepolicy.php
-/content
-/data
+/robots.txt
 /temp
 /webservices/dwc/rss.xml
-/docker-compose.yml
 
 /vendor
 /composer.lock
