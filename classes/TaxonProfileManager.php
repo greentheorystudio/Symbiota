@@ -192,7 +192,7 @@ class TaxonProfileManager {
             $rs1->free();
 
             $tidStr = implode(',',$tidArr);
-            $sql = 'SELECT t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
+            $sql = 'SELECT t.tid, t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
                 'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner '.
                 'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
                 'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
@@ -233,12 +233,13 @@ class TaxonProfileManager {
                 $imageArr['occid'] = $row->occid;
                 $imageArr['owner'] = Sanitizer::cleanOutStr($row->owner);
                 $imageArr['sciname'] = $row->sciname;
+                $imageArr['tid'] = $row->tid;
                 $this->taxon['images'][] = $imageArr;
                 $imgCnt++;
             }
             $result->free();
 
-            $sql = 'SELECT t.sciname, m.mediaid, m.accessuri, m.title, m.creator, m.`type`, m.occid, m.format, m.owner, m.description '.
+            $sql = 'SELECT t.tid, t.sciname, m.mediaid, m.accessuri, m.title, m.creator, m.`type`, m.occid, m.format, m.owner, m.description '.
                 'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
                 'WHERE t.tidaccepted IN('.$tidStr.') '.
                 'ORDER BY m.sortsequence ';
@@ -256,6 +257,7 @@ class TaxonProfileManager {
                 $mediaArr['owner'] = $row->owner;
                 $mediaArr['description'] = $row->description;
                 $mediaArr['sciname'] = $row->sciname;
+                $mediaArr['tid'] = $row->tid;
                 $this->taxon['media'][] = $mediaArr;
             }
             $result->free();

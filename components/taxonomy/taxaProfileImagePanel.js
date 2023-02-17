@@ -16,8 +16,12 @@ const taxaProfileImagePanel = {
                                 <q-card class="q-ma-md overflow-hidden">
                                     <a :href="image.anchorUrl">
                                         <q-img :src="image.url" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
-                                        <div class="text-italic photographer">{{ image.sciname }}</div>
                                     </a>
+                                    <div class="photographer">
+                                        <a :href="image.taxonUrl">
+                                            <span class="text-italic">{{ image.sciname }}</span>
+                                        </a>
+                                    </div>
                                 </q-card>
                             </q-intersection>
                         </div>
@@ -30,8 +34,12 @@ const taxaProfileImagePanel = {
                                 <q-card class="q-ma-md overflow-hidden">
                                     <a :href="image.anchorUrl">
                                         <q-img :src="image.url" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
-                                        <div class="text-italic photographer">{{ image.sciname }}</div>
                                     </a>
+                                    <div class="photographer">
+                                        <a :href="image.taxonUrl">
+                                            <span class="text-italic">{{ image.sciname }}</span>
+                                        </a>
+                                    </div>
                                 </q-card>
                             </q-intersection>
                         </div>

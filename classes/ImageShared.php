@@ -533,17 +533,17 @@ class ImageShared{
                 (isset($image['photographeruid']) ? (int)$image['photographeruid'] :'NULL').','.
                 (isset($image['imagetype']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['imagetype']).'"' :'NULL').','.
                 (isset($image['format']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['format']).'"' :'NULL').','.
-                (isset($image['caption']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['caption']).'"' :'NULL').','.
+                (isset($image['caption']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['caption'])).'"' :'NULL').','.
                 (isset($image['owner']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['owner']).'"' :'NULL').','.
                 (isset($image['sourceurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['sourceurl']).'"' :'NULL').','.
                 (isset($image['referenceurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['referenceurl']).'"' :'NULL').','.
                 (isset($image['copyright']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['copyright']).'"' :'NULL').','.
                 (isset($image['rights']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['rights']).'"' :'NULL').','.
                 (isset($image['accessrights']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['accessrights']).'"' :'NULL').','.
-                (isset($image['locality']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['locality']).'"' :'NULL').','.
+                (isset($image['locality']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['locality'])).'"' :'NULL').','.
                 (isset($image['occid']) ? (int)$image['occid'] :'NULL').','.
-                (isset($image['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['notes']).'"' :'NULL').','.
-                (isset($image['anatomy']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['anatomy']).'"' :'NULL').','.
+                (isset($image['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['notes'])).'"' :'NULL').','.
+                (isset($image['anatomy']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['anatomy'])).'"' :'NULL').','.
                 '"'.$GLOBALS['USERNAME'].'",'.
                 (isset($image['sourceidentifier']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['sourceidentifier']).'"' :'NULL').','.
                 (isset($image['mediamd5']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['mediamd5']).'"' :'NULL').','.

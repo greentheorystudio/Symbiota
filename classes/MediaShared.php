@@ -320,7 +320,7 @@ class MediaShared{
                 (isset($media['tid']) ? (int)$media['tid'] :'NULL').','.
                 (isset($media['occid']) ? (int)$media['occid'] :'NULL').','.
                 (isset($media['accessuri']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['accessuri']).'"' :'NULL').','.
-                (isset($media['title']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['title']).'"' :'NULL').','.
+                (isset($media['title']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($media['title'])).'"' :'NULL').','.
                 (isset($media['creator']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['creator']).'"' :'NULL').','.
                 (isset($media['type']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['type']).'"' :'NULL').','.
                 (isset($media['format']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['format']).'"' :'NULL').','.
@@ -333,7 +333,7 @@ class MediaShared{
                 (isset($media['publisher']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['publisher']).'"' :'NULL').','.
                 (isset($media['contributor']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['contributor']).'"' :'NULL').','.
                 (isset($media['locationcreated']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['locationcreated']).'"' :'NULL').','.
-                (isset($media['description']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['description']).'"' :'NULL').','.
+                (isset($media['description']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($media['description'])).'"' :'NULL').','.
                 (isset($media['sortsequence']) ? (int)$media['sortsequence'] : '50').')';
             //echo $sql; exit;
             if($this->conn->query($sql)){

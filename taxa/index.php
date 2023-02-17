@@ -163,6 +163,34 @@ include_once(__DIR__ . '/../config/header-includes.php');
             margin-top: 10px;
             height: 160px;
         }
+        .media-thumb{
+            width: 400px;
+        }
+        .audio-player{
+            width: 350px;
+        }
+        .video-player{
+            width: 370px;
+            height: 300px;
+        }
+        .video-player-container{
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid black;
+        }
+        .audio-player-container{
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid black;
+        }
+        .media-info{
+            padding: 5px;
+            font-size: 75%;
+        }
     </style>
     <script src="../js/external/all.min.js" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
@@ -188,7 +216,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </div>
                 <div class="profile-split-row">
                     <div class="left-column profile-column">
-                        <taxa-profile-central-image :central-image="centralImage" :is-editor="isEditor" :edit-link="editLink"></taxa-profile-central-image>
+                        <taxa-profile-central-image :taxon="taxon" :central-image="centralImage" :is-editor="isEditor" :edit-link="editLink"></taxa-profile-central-image>
                     </div>
                     <div class="right-column profile-column">
                         <taxa-profile-description-tabs :description-arr="descriptionArr"></taxa-profile-description-tabs>
@@ -202,6 +230,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </div>
                 <div class="profile-center-row">
                     <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel"></taxa-profile-image-panel>
+                </div>
+                <div class="profile-center-row">
+                    <taxa-profile-media-panel :taxon="taxon"></taxa-profile-media-panel>
                 </div>
                 <div class="profile-center-row">
                     <taxa-profile-subtaxa-panel :subtaxa-arr="subtaxaArr" :subtaxa-label="subtaxaLabel" :subtaxa-expansion-label="subtaxaExpansionLabel" :is-editor="isEditor"></taxa-profile-subtaxa-panel>
@@ -229,6 +260,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js" type="text/javascript"></script>
     <script>
         const taxonVal = Vue.ref('<?php echo $taxonValue; ?>');
         const clVal = Vue.ref(<?php echo $clValue; ?>);
@@ -237,6 +269,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         const taxonProfilePage = Vue.createApp({
             data() {
                 return {
+                    audioArr: Vue.ref({}),
                     centralImage: Vue.ref(null),
                     clValue: clVal,
                     descriptionArr: Vue.ref([]),
@@ -267,7 +300,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 'taxa-profile-taxon-map': taxaProfileTaxonMap,
                 'taxa-profile-taxon-image-link': taxaProfileTaxonImageLink,
                 'taxa-profile-image-panel': taxaProfileImagePanel,
-                'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel
+                'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel,
+                'taxa-profile-media-panel': taxaProfileMediaPanel
             },
             mounted() {
                 this.setTaxon();
@@ -305,9 +339,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                         else{
                             image['anchorUrl'] = CLIENT_ROOT + '/imagelib/imgdetails.php?imgid=' + image['id'];
                         }
-                        if(image['sciname'] !== this.taxon['sciName']){
-                            image['caption'] += ' (linked from ' + image['sciname'] + ')';
-                        }
+                        image['taxonUrl'] = CLIENT_ROOT + '/taxa/index.php?taxon=' + image['tid'];
                     });
                     this.centralImage = this.taxon['images'].shift();
                     if(Number(this.taxon['imageCnt']) > 100){
@@ -316,6 +348,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     else{
                         this.imageExpansionLabel = 'View All ' + this.taxon['imageCnt'] + ' Images';
                     }
+                },
+                processMedia(){
+                    this.taxon['media'].forEach((media) => {
+                        media['taxonUrl'] = CLIENT_ROOT + '/taxa/index.php?taxon=' + media['tid'];
+                    });
                 },
                 processSubtaxa(){
                     if(this.taxon['clName']){
@@ -369,6 +406,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                                     this.processImages();
                                     this.setTaxonDescriptions();
                                     this.processSubtaxa();
+                                    this.processMedia();
                                 }
                                 else if(this.taxonValue !== ''){
                                     const formData = new FormData();
