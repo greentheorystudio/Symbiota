@@ -3,7 +3,10 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
 ?>
 <div id="mainContainer">
     <div id="bannerContainer">
-        <h1 class="title">Your New Portal</h1>
+        <a href="https://greentheorystudio.com" target="_blank">
+            <img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/gts_logo_light_white_70_sm.png" />
+            <img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/gts_logo_light_white_70_sm.png" />
+        </a>
     </div>
     <div id="topNavigation">
         <q-toolbar class="q-pa-md horizontalDropDown">
