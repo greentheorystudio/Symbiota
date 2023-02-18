@@ -1,6 +1,6 @@
 const parentChild = false;
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$('#tabs').tabs({
 		beforeLoad: function( event, ui ) {
 			$(ui.panel).html("<p>Loading...</p>");
@@ -131,7 +131,6 @@ $(document).ready(function() {
 function getParentInfo(refid){
 	let parentArr;
 	const refType = document.getElementById("ReferenceTypeId").value;
-	const url = "../api/references/parentdetails.php?refid=" + refid + "&reftype=" + refType;
 	const http = new XMLHttpRequest();
 	const url = "../api/references/parentdetails.php";
 	const params = 'refid=' + refid + '&reftype=' + refType;

@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$( "#family_answer" )
 		.bind( "keydown", function( event ) {
 			if ( event.keyCode == $.ui.keyCode.TAB &&

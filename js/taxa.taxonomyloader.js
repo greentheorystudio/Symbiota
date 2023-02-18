@@ -7,7 +7,7 @@ var acceptedNameValid = false;
 var acceptedIdValid = false;
 var taxonExistsValid = false;
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$("#acceptedstr").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term, acceptedonly: 1 }, response );

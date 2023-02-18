@@ -24,6 +24,7 @@ if($target){
     reset($treePath);
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxonomy Explorer' .($target ? ': ' . $taxonDisplayObj->getTargetStr() : ''); ?></title>
@@ -48,7 +49,7 @@ if($target){
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js" data-dojo-config="async: true"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $("#taxontarget").autocomplete({
                     source: function( request, response ) {
                         $.getJSON( "../api/taxa/autofillsciname.php", {
@@ -197,7 +198,6 @@ include(__DIR__ . '/../header.php');
 <?php
 include(__DIR__ . '/../footer.php');
 ?>
-
 </body>
 </html>
 

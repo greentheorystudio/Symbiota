@@ -280,7 +280,7 @@ function buildLayerControllerLayerQueryButtonElement(lArr,active){
 function buildLayerControllerLayerRasterSymbologyElement(lArr){
     const layerSymbologyDivId = 'layerSymbology-' + lArr['id'];
     const layerSymbologyDiv = document.createElement('div');
-    const layerColorScale = (lArr.hasOwnProperty('colorScale') && lArr['colorScale'] !== '') ? lArr['colorScale'] : dragDropRasterColorScale;
+    const layerColorScale = (lArr.hasOwnProperty('colorScale') && lArr['colorScale'] !== '') ? lArr['colorScale'] : SPATIAL_DRAGDROP_RASTER_COLOR_SCALE;
     layerSymbologyDiv.setAttribute("id",layerSymbologyDivId);
     layerSymbologyDiv.setAttribute("style","border:1px solid black;padding:5px;margin-top:5px;display:none;flex-direction:column;width:60%;margin-left:auto;margin-right:auto;");
     const symbologyTopRow = document.createElement('div');
@@ -628,11 +628,11 @@ function changeDraw() {
                 infoArr['fileType'] = 'vector';
                 infoArr['layerName'] = 'Shapes';
                 infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
-                infoArr['fillColor'] = shapesFillColor;
-                infoArr['borderColor'] = shapesBorderColor;
-                infoArr['borderWidth'] = shapesBorderWidth;
-                infoArr['pointRadius'] = shapesPointRadius;
-                infoArr['opacity'] = shapesOpacity;
+                infoArr['fillColor'] = SPATIAL_SHAPES_FILL_COLOR;
+                infoArr['borderColor'] = SPATIAL_SHAPES_BORDER_COLOR;
+                infoArr['borderWidth'] = SPATIAL_SHAPES_BORDER_WIDTH;
+                infoArr['pointRadius'] = SPATIAL_SHAPES_POINT_RADIUS;
+                infoArr['opacity'] = SPATIAL_SHAPES_OPACITY;
                 infoArr['removable'] = true;
                 infoArr['sortable'] = false;
                 infoArr['symbology'] = false;
@@ -744,7 +744,7 @@ function changeRecordPage(page){
     const http = new XMLHttpRequest();
     const url = "../api/search/changemaprecordpage.php";
     const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
-    if(SOLRMODE){
+    if(SOLR_MODE){
         params = 'starr=' + jsonStarr + '&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
     }
     else{
@@ -1210,7 +1210,7 @@ function createPolysFromPolyArr(polyArr, selected){
     for(let i in polyArr){
         if(polyArr.hasOwnProperty(i)){
             let wktStr = '';
-            if(SOLRMODE){
+            if(SOLR_MODE){
                 wktStr = polyArr[i];
             }
             else{
@@ -1620,7 +1620,7 @@ function getGeographyParams(){
                 const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
                 const simplegeometry = polySimple.getGeometry();
                 const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
-                if(SOLRMODE) {
+                if(SOLR_MODE) {
                     const wmswktString = wktFormat.writeGeometry(fixedgeometry);
                     geoPolyArr.push(wmswktString);
                 }
@@ -1693,7 +1693,7 @@ function getQueryRecCnt(callback){
     let http;
     queryRecCnt = 0;
     const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
-    if(SOLRMODE){
+    if(SOLR_MODE){
         let qStr = '';
         http = new XMLHttpRequest();
         url = "../api/search/SOLRConnector.php";
@@ -1897,7 +1897,7 @@ function lazyLoadPoints(index,finalIndex,callback){
     }
     const http = new XMLHttpRequest();
     const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
-    if(SOLRMODE){
+    if(SOLR_MODE){
         url = "../api/search/SOLRConnector.php";
         params = 'starr=' + jsonStarr + '&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
         //console.log(url+'?'+params);
@@ -2573,7 +2573,7 @@ function processInputSelections(){
                     const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
                     const simplegeometry = polySimple.getGeometry();
                     const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
-                    if(SOLRMODE || INPUTTOOLSARR.includes('wkt')) {
+                    if(SOLR_MODE || INPUTTOOLSARR.includes('wkt')) {
                         const wmswktString = wktFormat.writeGeometry(fixedgeometry);
                         geoPolyArr.push(wmswktString);
                     }

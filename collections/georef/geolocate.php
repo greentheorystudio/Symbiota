@@ -54,7 +54,11 @@ if(isset($GLOBALS['PORTAL_GUID']) && $GLOBALS['PORTAL_GUID']){
 }
 
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title>GEOLocate Tool</title>
 	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -100,6 +104,9 @@ if(isset($GLOBALS['PORTAL_GUID']) && $GLOBALS['PORTAL_GUID']){
 			<iframe id="Iframe1" src="//www.geo-locate.org/web/WebGeoreflight.aspx?v=1&georef=run&tab=locality&<?php echo $urlVariables; ?>"></iframe>
 		</div>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>
 <?php

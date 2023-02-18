@@ -1,0 +1,51 @@
+const taxaProfileImagePanel = {
+    props: [
+        'taxon',
+        'imageExpansionLabel'
+    ],
+    template: `
+        <template v-if="taxon.imageCnt > 0">
+            <div class="expansion-container">
+                <template v-if="taxon.imageCnt < 5">
+                    <q-card>
+                        <div class="q-pt-sm q-pl-md text-h6 text-weight-bold">
+                            Images
+                        </div>
+                        <div class="row">
+                            <q-intersection v-for="image in taxon.images" :key="image" class="img-thumb">
+                                <q-card class="q-ma-md overflow-hidden">
+                                    <a :href="image.anchorUrl">
+                                        <q-img :src="image.url" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
+                                    </a>
+                                    <div class="photographer">
+                                        <a :href="image.taxonUrl">
+                                            <span class="text-italic">{{ image.sciname }}</span>
+                                        </a>
+                                    </div>
+                                </q-card>
+                            </q-intersection>
+                        </div>
+                    </q-card>
+                </template>
+                <template v-else>
+                    <q-expansion-item class="shadow-1 overflow-hidden expansion-element" :label="imageExpansionLabel" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
+                        <div class="row">
+                            <q-intersection v-for="image in taxon.images" :key="image" class="img-thumb">
+                                <q-card class="q-ma-md overflow-hidden">
+                                    <a :href="image.anchorUrl">
+                                        <q-img :src="image.url" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
+                                    </a>
+                                    <div class="photographer">
+                                        <a :href="image.taxonUrl">
+                                            <span class="text-italic">{{ image.sciname }}</span>
+                                        </a>
+                                    </div>
+                                </q-card>
+                            </q-intersection>
+                        </div>
+                    </q-expansion-item>
+                </template>
+            </div>
+        </template>
+    `
+};

@@ -18,7 +18,11 @@ $dupeManager = new OccurrenceDuplicate();
 $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $catNum, $queryOccid, $currentOccid);
 
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Duplicate Linker</title>
 	<script>
@@ -115,5 +119,8 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 			?>
 		</fieldset>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>

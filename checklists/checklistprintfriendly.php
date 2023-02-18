@@ -59,6 +59,7 @@ if($clValue || $dynClid){
     $taxaArray = $clManager->getTaxaList(0,99999);
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Research Checklist: <?php echo $clManager->getClName(); ?> print friendly</title>

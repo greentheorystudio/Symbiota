@@ -10,8 +10,7 @@ class TPEditorManager {
 	protected $parentTid;
 	protected $family;
 	protected $rankId;
-	protected $language = 'English';
- 	protected $submittedTid;
+	protected $submittedTid;
  	protected $submittedSciName;
 	protected $taxonCon;
 	protected $errorStr = '';
@@ -93,7 +92,7 @@ class TPEditorManager {
  		$synArr = array();
 		$sql = 'SELECT t2.tid, t2.SciName ' .
 			'FROM taxa AS t1 INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.tid ' .
-			'WHERE t.tid <> t.tidaccepted AND t1.tid = ' .$this->tid. ' ' .
+			'WHERE t1.tid <> t1.tidaccepted AND t1.tid = ' .$this->tid. ' ' .
 			'ORDER BY t2.SciName';
 		//echo $sql."<br>";
 		$result = $this->taxonCon->query($sql);
@@ -190,11 +189,6 @@ class TPEditorManager {
  		return $this->parentTid;
  	}
 
- 	public function setLanguage($lang): string
-	{
- 		return $this->language = $this->taxonCon->real_escape_string($lang);
- 	}
- 	
  	public function getErrorStr(): string
 	{
  		return $this->errorStr;
