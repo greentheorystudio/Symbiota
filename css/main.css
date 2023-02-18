@@ -512,11 +512,11 @@ h5{
 	height: 40px;
 	width: 100%;
 	background-color: #F6F6F6;
+	margin-bottom: 25px;
 }
 
 .footer{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin-bottom: 25px;
 }
