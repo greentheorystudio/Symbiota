@@ -520,3 +520,7 @@ h5{
 	justify-content: center;
 	align-items: center;
 }
+.img-thumb{
+	width: 220px;
+	max-height: 400px;
+}
