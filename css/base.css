@@ -561,6 +561,7 @@ body.processing .loadingModal {
 }
 .img-thumb{
 	width: 220px;
+	height: 260px;
 }
 .img-thumb div.photographer{
 	font-size: 75%;
@@ -569,6 +570,12 @@ body.processing .loadingModal {
 }
 .spp-taxon{
 	width: 170px;
+}
+.spp-taxon.below-family{
+	height: 425px;
+}
+.spp-taxon.family-or-above{
+	height: 240px;
 }
 .spp-taxon-label{
 	text-align: center;
@@ -587,6 +594,7 @@ body.processing .loadingModal {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	text-align: center;
 }
 .spp-map-container{
 	margin-top: 10px;
@@ -594,6 +602,12 @@ body.processing .loadingModal {
 }
 .media-thumb{
 	width: 400px;
+}
+.media-thumb.video-thumb{
+	height: 400px;
+}
+.media-thumb.audio-thumb{
+	height: 200px;
 }
 .audio-player{
 	width: 350px;
