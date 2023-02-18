@@ -14,7 +14,7 @@ const taxaProfileSubtaxaPanel = {
                             {{ subtaxaLabel }}
                         </div>
                         <div class="row">
-                            <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" class="spp-taxon">
+                            <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" :class="{'spp-taxon':true, 'below-family':(spptaxon.rankid > 140), 'family-or-above':(spptaxon.rankid <= 140)}">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <div class="spp-taxon-label">
                                         <a :href="spptaxon.taxaurl">
@@ -58,7 +58,7 @@ const taxaProfileSubtaxaPanel = {
                 <template v-else>
                     <q-expansion-item class="shadow-1 overflow-hidden expansion-element" :label="subtaxaExpansionLabel" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
                         <div class="row">
-                            <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" class="spp-taxon">
+                            <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" :class="{'spp-taxon':true, 'below-family':(spptaxon.rankid > 140), 'family-or-above':(spptaxon.rankid <= 140)}">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <div class="spp-taxon-label">
                                         <a :href="spptaxon.taxaurl">
