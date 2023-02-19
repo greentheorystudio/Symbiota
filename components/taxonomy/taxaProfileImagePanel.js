@@ -4,7 +4,7 @@ const taxaProfileImagePanel = {
         'imageExpansionLabel'
     ],
     template: `
-        <template v-if="taxon.imageCnt > 0">
+        <template v-if="taxon.images.length > 0">
             <div class="expansion-container">
                 <template v-if="taxon.imageCnt < 5">
                     <q-card>
