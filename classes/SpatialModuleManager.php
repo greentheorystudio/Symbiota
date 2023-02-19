@@ -249,7 +249,7 @@ class SpatialModuleManager{
                     $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
                 }
             }
-            echo "<div>Count sql: ".$sql."</div>";
+            //echo "<div>Count sql: ".$sql."</div>";
             $result = $this->conn->query($sql);
             if($row = $result->fetch_object()){
                 $this->recordCount = $row->cnt;
