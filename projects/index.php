@@ -31,6 +31,9 @@ if($projSubmit){
         if(!$pid) {
             $statusStr = $projManager->getErrorStr();
         }
+        if($GLOBALS['IS_ADMIN'] || (array_key_exists('ProjAdmin',$GLOBALS['USER_RIGHTS']) && in_array($pid, $GLOBALS['USER_RIGHTS']['ProjAdmin'], true))){
+            $isEditor = 1;
+        }
     }
     if($isEditor){
         if($projSubmit === 'subedit'){
@@ -68,10 +71,6 @@ $researchList = $projManager->getResearchChecklists();
 $managerArr = $projManager->getManagers();
 if(!$researchList && !$editMode){
     $editMode = 1;
-    $tabIndex = 2;
-    if(!$managerArr) {
-        $tabIndex = 1;
-    }
 }
 ?>
 <!DOCTYPE html>
