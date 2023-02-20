@@ -25,39 +25,41 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ProjAdmin',$GLOBALS['USER_RIGHTS']
     $isEditor = 1;
 }
 
-if($isEditor && $projSubmit){
+if($projSubmit){
     if($projSubmit === 'addnewproj'){
         $pid = $projManager->addNewProject($_POST);
         if(!$pid) {
             $statusStr = $projManager->getErrorStr();
         }
     }
-    elseif($projSubmit === 'subedit'){
-        $projManager->submitProjEdits($_POST);
-    }
-    elseif($projSubmit === 'subdelete'){
-        if($projManager->deleteProject($_POST['pid'])){
-            $pid = 0;
+    if($isEditor){
+        if($projSubmit === 'subedit'){
+            $projManager->submitProjEdits($_POST);
         }
-        else{
-            $statusStr = $projManager->getErrorStr();
+        elseif($projSubmit === 'subdelete'){
+            if($projManager->deleteProject($_POST['pid'])){
+                $pid = 0;
+            }
+            else{
+                $statusStr = $projManager->getErrorStr();
+            }
         }
-    }
-    elseif($projSubmit === 'deluid'){
-        if(!$projManager->deleteManager($_GET['uid'])){
-            $statusStr = $projManager->getErrorStr();
+        elseif($projSubmit === 'deluid'){
+            if(!$projManager->deleteManager($_GET['uid'])){
+                $statusStr = $projManager->getErrorStr();
+            }
         }
-    }
-    elseif($projSubmit === 'Add to Manager List'){
-        if(!$projManager->addManager($_POST['uid'])){
-            $statusStr = $projManager->getErrorStr();
+        elseif($projSubmit === 'Add to Manager List'){
+            if(!$projManager->addManager($_POST['uid'])){
+                $statusStr = $projManager->getErrorStr();
+            }
         }
-    }
-    elseif($projSubmit === 'Add Checklist'){
-        $projManager->addChecklist($_POST['clid']);
-    }
-    elseif($projSubmit === 'Delete Checklist'){
-        $projManager->deleteChecklist($_POST['clid']);
+        elseif($projSubmit === 'Add Checklist'){
+            $projManager->addChecklist($_POST['clid']);
+        }
+        elseif($projSubmit === 'Delete Checklist'){
+            $projManager->deleteChecklist($_POST['clid']);
+        }
     }
 }
 
@@ -241,7 +243,7 @@ echo '</div>';
             </div>
             <?php
         }
-        if($isEditor){
+        if(($pid && $isEditor) || $newProj){
             ?>
             <div id="tabs" style="min-height:550px;margin:10px;display:<?php echo ($newProj||$editMode?'block':'none'); ?>;">
                 <ul>
@@ -292,17 +294,23 @@ echo '</div>';
                                         <input type="text" name="notes" value="<?php echo ($projArr?htmlentities($projArr['notes']):'');?>" style="width:95%;"/>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        Access:
-                                    </td>
-                                    <td>
-                                        <select name="ispublic">
-                                            <option value="0">Private</option>
-                                            <option value="1" <?php echo ($projArr && $projArr['ispublic']?'SELECTED':''); ?>>Public</option>
-                                        </select>
-                                    </td>
-                                </tr>
+                                <?php
+                                if($GLOBALS['PUBLIC_CHECKLIST']){
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            Access:
+                                        </td>
+                                        <td>
+                                            <select name="ispublic">
+                                                <option value="0">Private</option>
+                                                <option value="1" <?php echo ($projArr && $projArr['ispublic']?'SELECTED':''); ?>>Public</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
                                 <tr>
                                     <td colspan="2">
                                         <div style="margin:15px;">

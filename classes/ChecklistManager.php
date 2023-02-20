@@ -448,7 +448,7 @@ class ChecklistManager {
 		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.LatCentroid, c.LongCentroid '.
 			'FROM fmchecklists AS c LEFT JOIN fmchklstprojlink AS cpl ON c.clid = cpl.clid '.
 			'LEFT JOIN fmprojects AS p ON cpl.pid = p.pid '.
-			'WHERE ((c.access LIKE "public%") ';
+			'WHERE ((c.access = "public") ';
 		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && $GLOBALS['USER_RIGHTS']['ClAdmin']) {
 			$sql .= 'OR (c.clid IN(' . implode(',', $GLOBALS['USER_RIGHTS']['ClAdmin']) . '))';
 		}

@@ -246,13 +246,19 @@ if(!$clid){
 					</div>
 				</fieldset>
 			</div>
-			<div style="clear:both;margin-top:15px;">
-				<b>Access</b><br/>
-				<select name="access">
-					<option value="private">Private</option>
-					<option value="public" <?php echo (($clArray && $clArray['access'] === 'public') ? 'selected' : ''); ?>>Public</option>
-				</select>
-			</div>
+			<?php
+            if($GLOBALS['PUBLIC_CHECKLIST']){
+                ?>
+                <div style="clear:both;margin-top:15px;">
+                    <b>Access</b><br/>
+                    <select name="access">
+                        <option value="private">Private</option>
+                        <option value="public" <?php echo (($clArray && $clArray['access'] === 'public') ? 'selected' : ''); ?>>Public</option>
+                    </select>
+                </div>
+                <?php
+            }
+            ?>
 			<div style="clear:both;float:left;margin-top:15px;">
 				<?php
 				if($clid){
