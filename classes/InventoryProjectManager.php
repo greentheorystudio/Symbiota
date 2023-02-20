@@ -100,10 +100,11 @@ class InventoryProjectManager {
 			($projArr['managers']?'"'.Sanitizer::cleanInStr($this->conn,$projArr['managers']).'"':'NULL').','.
 			($projArr['fulldescription']?'"'.Sanitizer::cleanInStr($this->conn,$projArr['fulldescription']).'"':'NULL').','.
 			($projArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$projArr['notes']).'"':'NULL').','.
-			(is_numeric($projArr['ispublic'])?$projArr['ispublic']:'0').')';
+			(($GLOBALS['PUBLIC_CHECKLIST'] && is_numeric($projArr['ispublic']))?$projArr['ispublic']:'0').')';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->pid = $this->conn->insert_id;
+            $this->conn->query('INSERT INTO userroles (uid, role, tablename, tablepk) VALUES('.$GLOBALS['SYMB_UID'].',"ProjAdmin","fmprojects",'.$this->pid.') ');
 		}
 		else{
 			$this->errorStr = 'ERROR creating new project.';
