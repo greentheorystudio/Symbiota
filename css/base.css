@@ -563,6 +563,9 @@ body.processing .loadingModal {
 	width: 220px;
 	height: 260px;
 }
+.img-thumb-image{
+	max-height: 220px;
+}
 .img-thumb div.photographer{
 	font-size: 75%;
 	text-align: right;
