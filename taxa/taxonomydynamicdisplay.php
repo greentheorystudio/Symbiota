@@ -57,10 +57,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <q-card class="target-taxon-card">
             <q-card-section>
                 <div class="q-my-sm">
-                    <single-scientific-common-name-auto-complete :sciname="targetTaxon" label="Find a taxon" limit-to-thesaurus="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
+                    <single-scientific-common-name-auto-complete :sciname="targetTaxon" :disable="loading" label="Find a taxon" limit-to-thesaurus="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
                 </div>
                 <div class="button-div">
-                    <q-btn color="secondary" @click="getTargetTaxonPath();" label="Find Taxon" dense />
+                    <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense />
                 </div>
                 <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                 <div class="q-my-sm">
@@ -70,7 +70,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         </q-card>
         <q-card class="q-my-md">
             <q-card-section>
-                <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath">
+                <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath" @after-hide="processClose">
                     <template v-slot:default-header="prop">
                         <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-if="prop.node.nodetype === 'child'">
                             <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span>
@@ -94,8 +94,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 return {
                     displayAuthors: Vue.ref(false),
                     isEditor: isEditor,
+                    loading: Vue.ref(false),
                     taxaNodes: Vue.ref([]),
                     selectedTid: Vue.ref(null),
+                    targetFound: Vue.ref(false),
                     targetTaxon: Vue.ref(null),
                     targetTaxonPathArr: Vue.ref([])
                 }
@@ -116,22 +118,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             },
             methods: {
                 getTargetTaxonPath(){
-                    if(this.selectedTid){
-                        this.treeRef.collapseAll();
-                        const formData = new FormData();
-                        formData.append('tid', this.selectedTid);
-                        formData.append('action', 'getTaxonomicTreeTaxonPath');
-                        fetch(taxonomyApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            response.json().then((resObj) => {
-                                this.targetTaxonPathArr = resObj;
-                                this.processTargetTaxonPath();
-                            });
+                    const formData = new FormData();
+                    formData.append('tid', this.selectedTid);
+                    formData.append('action', 'getTaxonomicTreeTaxonPath');
+                    fetch(taxonomyApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        response.json().then((resObj) => {
+                            this.targetTaxonPathArr = resObj;
+                            this.processTargetTaxonPath();
                         });
-                    }
+                    });
                 },
                 getTaxonChildren({ key, done }){
                     const formData = new FormData();
@@ -144,8 +143,22 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     .then((response) => {
                         response.json().then((resObj) => {
                             done(resObj);
+                            this.processTargetTaxonPath();
                         });
                     });
+                },
+                initializeGetTargetTaxon(){
+                    if(this.selectedTid){
+                        this.loading = true;
+                        this.targetFound = false;
+                        const openNodes = this.treeRef.getExpandedNodes();
+                        if(openNodes.length > 0){
+                            this.treeRef.collapseAll();
+                        }
+                        else{
+                            this.getTargetTaxonPath();
+                        }
+                    }
                 },
                 processClick(tid){
                     this.selectedTid = this.targetTaxon ? this.targetTaxon.tid : null;
@@ -163,13 +176,23 @@ include_once(__DIR__ . '/../config/header-includes.php');
                         window.open(url, '_blank');
                     }
                 },
+                processClose(){
+                    if(this.loading){
+                        const openNodes = this.treeRef.getExpandedNodes();
+                        if(openNodes.length === 0){
+                            this.getTargetTaxonPath();
+                        }
+                    }
+                },
                 processTargetTaxonPath(){
                     if(this.targetTaxonPathArr.length > 0){
                         this.treeRef.setExpanded(this.targetTaxonPathArr[0]['tid'],true);
                         this.targetTaxonPathArr.splice(0, 1);
                     }
-                    else if(this.selectedTid && this.targetNodeRef){
+                    else if(this.selectedTid && this.targetNodeRef && !this.targetFound){
                         this.targetNodeRef.scrollIntoView();
+                        this.targetFound = true;
+                        this.loading = false;
                     }
                 },
                 setKingdomNodes(){
