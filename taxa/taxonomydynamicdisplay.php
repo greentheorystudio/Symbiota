@@ -72,10 +72,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <q-card-section>
                 <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath">
                     <template v-slot:default-header="prop">
-                        <div v-if="prop.node.nodetype === 'child'">
+                        <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-if="prop.node.nodetype === 'child'">
                             <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span>
                         </div>
-                        <div v-else-if="prop.node.nodetype === 'synonym'">
+                        <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-else-if="prop.node.nodetype === 'synonym'">
                             <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-author">[<span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors">{{ prop.node.author }}</span>]</span>
                         </div>
                     </template>
@@ -104,8 +104,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
             },
             setup() {
+                let targetNodeRef = Vue.ref(null);
                 let treeRef = Vue.ref(null);
                 return {
+                    targetNodeRef,
                     treeRef
                 }
             },
@@ -113,19 +115,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 this.setKingdomNodes();
             },
             methods: {
-                findFirstTargetPathUnexpandedNode(){
-                    const expandedNodes = this.treeRef.getExpandedNodes();
-                    let firstNodeFound = false;
-                    let index = 0;
-                    while(index < this.targetTaxonPathArr.length && !firstNodeFound){
-                        const expanded = expandedNodes.find(obj => Number(obj['tid']) === Number(this.targetTaxonPathArr[index]['tid']));
-                        if(!expanded){
-                            this.treeRef.setExpanded(this.targetTaxonPathArr[index]['tid'],true);
-                            firstNodeFound = true;
-                            this.targetTaxonPathArr.splice(0, (index + 1));
-                        }
-                    }
-                },
                 getTargetTaxonPath(){
                     if(this.selectedTid){
                         this.treeRef.collapseAll();
@@ -178,6 +167,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     if(this.targetTaxonPathArr.length > 0){
                         this.treeRef.setExpanded(this.targetTaxonPathArr[0]['tid'],true);
                         this.targetTaxonPathArr.splice(0, 1);
+                    }
+                    else if(this.selectedTid && this.targetNodeRef){
+                        this.targetNodeRef.scrollIntoView();
                     }
                 },
                 setKingdomNodes(){
