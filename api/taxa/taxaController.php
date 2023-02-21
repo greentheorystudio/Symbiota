@@ -84,10 +84,19 @@ if($action){
     elseif($action === 'getTaxonDescriptions' && $tId){
         echo json_encode($taxUtilities->getTaxonDescriptions($tId));
     }
-    if($isEditor && $action === 'addTaxonDescriptionTab' && array_key_exists('description',$_POST)){
+    elseif($isEditor && $action === 'addTaxonDescriptionTab' && array_key_exists('description',$_POST)){
         echo json_encode($taxUtilities->addTaxonDescriptionTab(json_decode($_POST['description'], true)));
     }
-    if($isEditor && $action === 'addTaxonDescriptionStatement' && array_key_exists('statement',$_POST)){
+    elseif($isEditor && $action === 'addTaxonDescriptionStatement' && array_key_exists('statement',$_POST)){
         echo json_encode($taxUtilities->addTaxonDescriptionStatement(json_decode($_POST['statement'], true)));
+    }
+    elseif($action === 'getTaxonomicTreeKingdomNodes'){
+        echo json_encode($taxUtilities->getTaxonomicTreeKingdomNodes());
+    }
+    elseif($action === 'getTaxonomicTreeChildNodes' && $tId){
+        echo json_encode($taxUtilities->getTaxonomicTreeChildNodes($tId));
+    }
+    elseif($action === 'getTaxonomicTreeTaxonPath' && $tId){
+        echo json_encode($taxUtilities->getTaxonomicTreeTaxonPath($tId));
     }
 }

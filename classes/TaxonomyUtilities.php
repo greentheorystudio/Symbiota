@@ -899,6 +899,124 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
+    public function taxonHasChildren($tid): bool
+    {
+        $retVal = false;
+        $sql = 'SELECT TID FROM taxa WHERE parenttid = '.$tid.' LIMIT 1 ';
+        //echo $sql;
+        $result = $this->conn->query($sql);
+        if($result->num_rows){
+            $retVal = true;
+        }
+        return $retVal;
+    }
+
+    public function getTaxonomicTreeKingdomNodes(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT TID, SciName, Author FROM taxa '.
+            'WHERE RankId = 10 AND TID = tidaccepted '.
+            'ORDER BY SciName ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $nTid = $r->TID;
+                $expandable = $this->taxonHasChildren($nTid);
+                $nodeArr = array();
+                $nodeArr['tid'] = $nTid;
+                $nodeArr['sciname'] = $r->SciName;
+                $nodeArr['author'] = $r->Author;
+                $nodeArr['rankname'] = 'Kingdom';
+                $nodeArr['nodetype'] = 'child';
+                $nodeArr['expandable'] = $expandable;
+                $nodeArr['lazy'] = $expandable;
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getTaxonomicTreeChildNodes($tId): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.TID, t.SciName, t.Author, tu.rankname '.
+            'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid  '.
+            'WHERE t.tidaccepted = '.$tId.' AND TID <> tidaccepted '.
+            'ORDER BY tu.rankid, t.SciName ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $nTid = $r->TID;
+                $nodeArr = array();
+                $nodeArr['tid'] = $nTid;
+                $nodeArr['sciname'] = $r->SciName;
+                $nodeArr['author'] = $r->Author;
+                $nodeArr['rankname'] = $r->rankname;
+                $nodeArr['nodetype'] = 'synonym';
+                $nodeArr['expandable'] = false;
+                $nodeArr['lazy'] = false;
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+
+        $sql = 'SELECT t.TID, t.SciName, t.Author, tu.rankname '.
+            'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid  '.
+            'WHERE t.parenttid = '.$tId.' AND TID = tidaccepted '.
+            'ORDER BY tu.rankid, t.SciName ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $nTid = $r->TID;
+                $expandable = $this->taxonHasChildren($nTid);
+                $nodeArr = array();
+                $nodeArr['tid'] = $nTid;
+                $nodeArr['sciname'] = $r->SciName;
+                $nodeArr['author'] = $r->Author;
+                $nodeArr['rankname'] = $r->rankname;
+                $nodeArr['nodetype'] = 'child';
+                $nodeArr['expandable'] = $expandable;
+                $nodeArr['lazy'] = $expandable;
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getTaxonomicTreeTaxonPath($tId): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t2.TID, t2.SciName '.
+            'FROM taxa AS t LEFT JOIN taxaenumtree AS te ON t.tidaccepted = te.tid  '.
+            'LEFT JOIN taxa AS t2 ON te.parenttid = t2.TID  '.
+            'WHERE t.TID = '.$tId.' AND t2.RankId >= 10 '.
+            'ORDER BY t2.RankId ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                $nodeArr['tid'] = $r->TID;
+                $nodeArr['sciname'] = $r->SciName;
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+
+        $sql = 'SELECT t.TID, t2.TID AS accTID, t2.SciName AS accSciName '.
+            'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID  '.
+            'WHERE t.TID = '.$tId.' ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                if($r->TID !== $r->accTID){
+                    $nodeArr = array();
+                    $nodeArr['tid'] = $r->accTID;
+                    $nodeArr['sciname'] = $r->accSciName;
+                    $retArr[] = $nodeArr;
+                }
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
     public function setRankLimit($val): void
     {
         $this->rankLimit = Sanitizer::cleanInStr($this->conn,$val);
