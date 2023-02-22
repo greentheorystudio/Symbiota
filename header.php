@@ -15,7 +15,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
     <div id="topNavigation">
         <q-toolbar class="q-pa-md horizontalDropDown">
             <template v-if="windowWidth < 1440">
-                <q-btn class="q-ml-md" flat round dense icon="menu">
+                <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu">
                     <q-menu>
                         <q-list dense>
                             <template v-for="item in navBarData">

@@ -72,12 +72,12 @@ div.navpath {
 	color:white;
 	text-decoration: none;
 }
-.horizontalDropDownButton{
+.horizontalDropDownButton, .horizontalDropDownIconButton{
 	background-color: #4472C4!important;
 	color: white;
 	text-decoration: none;
 }
-.horizontalDropDownButton:hover{
+.horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
 	background-color: #B27A00!important;
 	color: white;
 	text-decoration: none;
