@@ -53,11 +53,11 @@ div.navpath {
 	color:#000000;
 	text-decoration: none;
 }
-.horizontalDropDownButton{
+.horizontalDropDownButton, .horizontalDropDownIconButton{
 	background-color: #c2c2c2!important;
 	text-decoration: none;
 }
-.horizontalDropDownButton:hover{
+.horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
 	background-color: #999999!important;
 	text-decoration: none;
 }
