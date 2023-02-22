@@ -2,7 +2,11 @@
 include_once(__DIR__ . '/config/symbbase.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
@@ -67,7 +71,7 @@ include(__DIR__ . '/header.php');
 <div id="innertext">
     <h1>Welcome to the California Islands Biodiversity Information System</h1>
 
-    <div style="">
+    <div>
         The Channel Islands of California are world-renowned for their scenic beauty and rich natural
         resources, including a large proportion of plants and animals found nowhere else on earth.
         The islands off the Pacific coast of the Mexican state of Baja California, immediately to the south,
@@ -99,9 +103,9 @@ include(__DIR__ . '/header.php');
         If you have any questions or would like additional permissions for the Cal-IBIS portal, please <a href="mailto:dknapp@sbbotanicgarden.org">contact Denise Knapp (dknapp@sbbotanicgarden.org)</a>.
     </div>
 </div>
-
 <?php
 include(__DIR__ . '/footer.php');
+include_once(__DIR__ . '/config/footer-includes.php');
 ?>
 </body>
 </html>

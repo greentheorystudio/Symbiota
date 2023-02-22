@@ -3,10 +3,6 @@ html {
 }
 
 body{
-	width: 1100px;
-	min-width:950px;
-	margin-top:0;
-	font-family: arial, helvetica, sans-serif;
 	background-color:#728099;
 }
 
@@ -16,10 +12,13 @@ body{
 
 #mainContainer{
 	display: block;
-	width: 100%;
+	width: 80%;
+	min-width:950px;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid black;
+	font-family: arial, helvetica, sans-serif;
 	background-color:#FFFFFF;
-	border:1px solid #333333;
-	border-spacing: 0;
 }
 
 #bannerContainer{
@@ -35,7 +34,6 @@ body{
 
 #bannerDiv {
 	position: relative;
-	max-width: 1100px;
 	height: 325px;
 	background: url(/content/imglib/layout/Image01.JPG) no-repeat center;
 	-webkit-background-size: cover;
@@ -45,7 +43,6 @@ body{
 }
 
 #innertext{
-	width: 95%;
 	min-height:400px;
 	margin: 0 auto;
 	padding: 10px 15px 15px;
@@ -62,112 +59,35 @@ div.navpath {
 #topNavigation {
 	clear:both;
 	background-color:#4472C4;
-	padding: 0;
-	display: flex;
-	justify-content: space-between;
-	color: white;
 }
-
-#rightNavigationLinks{
-	display: flex;
-	align-items: center;
-}
-
-#rightNavigationLinks a{
-	color: white;
-}
-
-#rightNavigationLinks span{
-	margin-right: 15px;
-}
-#horizontalDropDown{
-	list-style:none;
+.horizontalDropDown{
 	width:auto;
 	background-color:#4472C4;
+	color: white;
 	margin: 0;
 	padding: 0;
-	color: white;
+	clear:both;
 }
-#horizontalDropDown li{
-	float:left;
-	position:relative;
-	padding:0;
-	margin:0;
+.horizontalDropDown a{
+	color:white;
+	text-decoration: none;
 }
-#horizontalDropDown a{
-	display:block;
+.horizontalDropDownButton{
+	background-color: #4472C4!important;
 	color: white;
 	text-decoration: none;
-	padding: 20px 15px;
 }
-#horizontalDropDown a:hover{
-	background-color:#B27A00;
+.horizontalDropDownButton:hover{
+	background-color: #B27A00!important;
+	color: white;
+	text-decoration: none;
 }
-/* Submenu */
-#horizontalDropDown ul {
-	list-style:none;
-	position:absolute;
-	left:0;
-	top: 53px;
-	padding:0;
-	z-index:1000;
-	background-color:#4472C4;
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
+.horizontalDropDownButton i {
+	display: none;
 }
-#horizontalDropDown ul li{
-	float:none;
+.header-username-text {
+	margin-right: 15px;
 }
-#horizontalDropDown ul a{
-	white-space:nowrap;
-	padding: 10px 15px;
-	text-decoration:none;
-	text-indent:8px;
-}
-#horizontalDropDown li:hover ul {
-	visibility: visible;
-	opacity: 1;
-}
-#horizontalDropDown li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 10px 15px;
-	background-color:#4472C4;
-	z-index:1000;
-}
-#horizontalDropDown li:hover ul li a:hover {
-	background-color:#B27A00;
-}
-/* Submenu to right */
-#horizontalDropDown li ul li ul {
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-}
-#horizontalDropDown li ul li:hover ul {
-	left:100%;
-	top: 0;
-	visibility: visible;
-	opacity: 1;
-	padding:0;
-	z-index:1000;
-}
-#horizontalDropDown li ul li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 10px 15px;
-	background-color:#4472C4;
-	z-index:1000;
-}
-#horizontalDropDown li ul li:hover ul li a:hover {
-	background-color:#B27A00;
-}
-
 /* Quick Search Plugin */
 #quicksearchtext{
 	margin-top:0;
@@ -243,10 +163,4 @@ div.navpath {
 .quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
-}
-
-div.spptab{
-	height:		200px;
-	width:		500px;
-	overflow: 	auto;
 }
