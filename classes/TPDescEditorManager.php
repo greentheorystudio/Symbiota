@@ -14,9 +14,6 @@ class TPDescEditorManager extends TPEditorManager{
 		$sql = 'SELECT t.tid, t.sciname, tdb.tdbid, tdb.caption, tdb.source, tdb.sourceurl, tdb.displaylevel, tdb.notes, tdb.language '.
 			'FROM taxa AS t INNER JOIN taxadescrblock AS tdb ON t.tid = tdb.tid '.
 			'WHERE t.tidaccepted = '.$this->tid.' ';
-		if(!$editor){
-			$sql .= 'AND tdb.Language = "'.$this->language.'" ';
-		}
 		$sql .= 'ORDER BY tdb.DisplayLevel ';
 		//echo $sql;
 		if($rs = $this->taxonCon->query($sql)){

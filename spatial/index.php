@@ -31,18 +31,21 @@ if(strncmp($windowType, 'input', 5) === 0){
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>" style="background-color:white;">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Spatial Module</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery.mobile-1.4.0.min.css?ver=20221204" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui_accordian.css?ver=20221204" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20221205" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20221220" rel="stylesheet" type="text/css" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
@@ -59,8 +62,7 @@ if(strncmp($windowType, 'input', 5) === 0){
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221207" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221126" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20230103" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20221110" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/includes/spatialvars.php'); ?>
     <script type="text/javascript">
@@ -196,20 +198,20 @@ if(strncmp($windowType, 'input', 5) === 0){
         },
         style: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsFillColor),shapesSelectionsOpacity)
+                color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_FILL_COLOR),SPATIAL_SHAPES_SELECTIONS_OPACITY)
             }),
             stroke: new ol.style.Stroke({
-                color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1),
-                width: shapesSelectionsBorderWidth
+                color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
+                width: SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH
             }),
             image: new ol.style.Circle({
-                radius: shapesPointRadius,
+                radius: SPATIAL_SHAPES_POINT_RADIUS,
                 stroke: new ol.style.Stroke({
-                    color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1),
-                    width: (shapesBorderWidth + 2)
+                    color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
+                    width: (SPATIAL_SHAPES_BORDER_WIDTH + 2)
                 }),
                 fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + shapesSelectionsBorderColor),1)
+                    color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1)
                 })
             })
         }),
@@ -326,11 +328,11 @@ if(strncmp($windowType, 'input', 5) === 0){
                     infoArr['fileType'] = fileType;
                     infoArr['layerName'] = filename;
                     infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                    infoArr['fillColor'] = dragDropFillColor;
-                    infoArr['borderColor'] = dragDropBorderColor;
-                    infoArr['borderWidth'] = dragDropBorderWidth;
-                    infoArr['pointRadius'] = dragDropPointRadius;
-                    infoArr['opacity'] = dragDropOpacity;
+                    infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
+                    infoArr['borderColor'] = SPATIAL_DRAGDROP_BORDER_COLOR;
+                    infoArr['borderWidth'] = SPATIAL_DRAGDROP_BORDER_WIDTH;
+                    infoArr['pointRadius'] = SPATIAL_DRAGDROP_POINT_RADIUS;
+                    infoArr['opacity'] = SPATIAL_DRAGDROP_OPACITY;
                     infoArr['removable'] = true;
                     infoArr['sortable'] = true;
                     infoArr['symbology'] = true;
@@ -360,11 +362,11 @@ if(strncmp($windowType, 'input', 5) === 0){
                             infoArr['fileType'] = 'zip';
                             infoArr['layerName'] = filename;
                             infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                            infoArr['fillColor'] = dragDropFillColor;
-                            infoArr['borderColor'] = dragDropBorderColor;
-                            infoArr['borderWidth'] = dragDropBorderWidth;
-                            infoArr['pointRadius'] = dragDropPointRadius;
-                            infoArr['opacity'] = dragDropOpacity;
+                            infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
+                            infoArr['borderColor'] = SPATIAL_DRAGDROP_BORDER_COLOR;
+                            infoArr['borderWidth'] = SPATIAL_DRAGDROP_BORDER_WIDTH;
+                            infoArr['pointRadius'] = SPATIAL_DRAGDROP_POINT_RADIUS;
+                            infoArr['opacity'] = SPATIAL_DRAGDROP_OPACITY;
                             infoArr['removable'] = true;
                             infoArr['sortable'] = true;
                             infoArr['symbology'] = true;
@@ -443,7 +445,7 @@ if(strncmp($windowType, 'input', 5) === 0){
                             width: imageWidth,
                             height: imageHeight,
                             domain: [minValue, maxValue],
-                            colorScale: dragDropRasterColorScale
+                            colorScale: SPATIAL_DRAGDROP_RASTER_COLOR_SCALE
                         });
                         plot.render();
                         layersObj[sourceIndex] = new ol.source.ImageStatic({
@@ -481,11 +483,11 @@ if(strncmp($windowType, 'input', 5) === 0){
     });
 
     const mapView = new ol.View({
-        zoom: initialMapZoom,
+        zoom: SPATIAL_INITIAL_ZOOM,
         projection: 'EPSG:3857',
         minZoom: 2.5,
         maxZoom: 19,
-        center: ol.proj.transform(initialMapCenter, 'EPSG:4326', 'EPSG:3857'),
+        center: ol.proj.transform(SPATIAL_INITIAL_CENTER, 'EPSG:4326', 'EPSG:3857'),
     });
 
     const map = new ol.Map({
@@ -665,11 +667,11 @@ if(strncmp($windowType, 'input', 5) === 0){
                     infoArr['fileType'] = 'vector';
                     infoArr['layerName'] = 'Shapes';
                     infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
-                    infoArr['fillColor'] = shapesFillColor;
-                    infoArr['borderColor'] = shapesBorderColor;
-                    infoArr['borderWidth'] = shapesBorderWidth;
-                    infoArr['pointRadius'] = shapesPointRadius;
-                    infoArr['opacity'] = shapesOpacity;
+                    infoArr['fillColor'] = SPATIAL_SHAPES_FILL_COLOR;
+                    infoArr['borderColor'] = SPATIAL_SHAPES_BORDER_COLOR;
+                    infoArr['borderWidth'] = SPATIAL_SHAPES_BORDER_WIDTH;
+                    infoArr['pointRadius'] = SPATIAL_SHAPES_POINT_RADIUS;
+                    infoArr['opacity'] = SPATIAL_SHAPES_OPACITY;
                     infoArr['removable'] = true;
                     infoArr['sortable'] = false;
                     infoArr['symbology'] = false;
@@ -846,5 +848,8 @@ if(strncmp($windowType, 'input', 5) === 0){
 <div class="loadingModal">
     <div class="vine-native-spinner" style="width:200px;height:200px;"></div>
 </div>
+<?php
+include_once(__DIR__ . '/../config/footer-includes.php');
+?>
 </body>
 </html>

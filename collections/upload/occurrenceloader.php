@@ -197,7 +197,7 @@ if($uploadType){
 $specUploadManager->readUploadParameters();
 ?>
 <script>
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function() {
         <?php echo (($uspid && ($action === 'addprofile' || $action === 'editprofile'))?'adjustParameterForm();':''); ?>
     });
 

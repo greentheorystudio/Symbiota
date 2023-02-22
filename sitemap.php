@@ -6,12 +6,15 @@ $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitacti
 
 $smManager = new SiteMapManager();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
 	<link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="js/shared.js?ver=20221207"></script>
 </head>
 <body>
 	<?php
@@ -128,7 +131,8 @@ $smManager = new SiteMapManager();
                             if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
                                 ?>
                                 <li><a href="taxa/profile/tpeditor.php">Taxon Profile Manager</a></li>
-                                <li><a href="taxa/media/index.php">Taxa Media Batch Uploader</a></li>
+                                <li><a href="taxa/media/batchimageloader.php">Taxa Media Batch Uploader</a></li>
+                                <li><a href="taxa/media/eolimporter.php">Encyclopedia of Life Media Importer</a></li>
                                 <?php
                             }
                             ?>
@@ -180,7 +184,8 @@ $smManager = new SiteMapManager();
         </div>
 	</div>
 	<?php
-		include(__DIR__ . '/footer.php');
+    include(__DIR__ . '/footer.php');
+    include_once(__DIR__ . '/config/footer-includes.php');
 	?>
 </body>
 </html>

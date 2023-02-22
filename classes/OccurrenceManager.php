@@ -97,7 +97,7 @@ class OccurrenceManager{
                         $this->taxaArr[$trimmedName] = 0;
                     }
                     else{
-                        $this->vernacularArr[$trimmedName] = 0;
+                        $this->vernacularArr[] = $trimmedName;
                     }
                 }
             }
@@ -145,7 +145,9 @@ class OccurrenceManager{
                     $sqlWhereTaxa .= 'OR (o.tid IN('.implode(',',$this->searchTidArr).')) ';
                 }
             }
-            $sqlWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
+            if($sqlWhereTaxa){
+                $sqlWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
+            }
         }
         if(array_key_exists('country',$this->searchTermsArr) && $this->searchTermsArr['country']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['country']);

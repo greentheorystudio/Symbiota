@@ -160,7 +160,7 @@ $obsArr = ($collList['obs'] ?? null);
 </div>
 
 <h3 id="recordsHeader" class="tabtitle" style="display:none;">Records and Taxa</h3>
-<div id="recordstab" style="display:none;width:379px;padding:0;">
+<div id="recordstab" style="display:none;padding:0;">
     <ul>
         <li><a href='#queryrecordsdiv' onclick='changeRecordPage(1);'>Records</a></li>
         <li style="display:none;" id="selectionstab" ><a href='#selectionslist'>Selections</a></li>

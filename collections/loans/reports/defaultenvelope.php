@@ -97,7 +97,8 @@ if($export){
 }
 else{
 	?>
-	<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+	<!DOCTYPE html>
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
 			<title>Addressed Envelope</title>
 			<style>

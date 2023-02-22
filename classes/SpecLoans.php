@@ -374,10 +374,10 @@ class SpecLoans{
 			if($pArr['transactiontype'] === 'Shipment'){
 			
 				if($pArr['in_out'] === 'In'){
-					$currentBalance = ($prevBalance - ((($pArr['totalexmounted'])*2) + ($pArr['totalexunmounted'])));
+					$currentBalance = ($prevBalance - (((int)$pArr['totalexmounted'] * 2) + ($pArr['totalexunmounted'])));
 				}
 				elseif($pArr['in_out'] === 'Out'){
-					$currentBalance = ($prevBalance + ((($pArr['totalexmounted'])*2) + ($pArr['totalexunmounted'])));
+					$currentBalance = ($prevBalance + (((int)$pArr['totalexmounted'] * 2) + ($pArr['totalexunmounted'])));
 				}
 			
 			}

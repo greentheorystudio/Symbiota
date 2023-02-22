@@ -13,7 +13,7 @@ $taxonDisplayObj->setDisplayFullTree($displayFullTree);
 $taxonDisplayObj->setDisplaySubGenera($displaySubGenera);
 ?>
 <script type="text/javascript">
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function() {
         $("#taxontarget").autocomplete({
                 source: function( request, response ) {
                     $.getJSON( "../../api/taxa/autofillsciname.php", { term: request.term }, response );

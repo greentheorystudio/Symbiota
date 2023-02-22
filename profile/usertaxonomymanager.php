@@ -36,7 +36,11 @@ if($isEditor){
 }
 $editorArr = $utManager->getTaxonomyEditors();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title>Taxonomic Interest Permissions</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -46,7 +50,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
 	<script>
-		$(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			$( "#taxoninput" ).autocomplete({
 				source: "../api/taxa/getspeciessuggest.php",
 				minLength: 2,
@@ -70,7 +74,6 @@ $editorArr = $utManager->getTaxonomyEditors();
 			return true;
 		}
 	</script>
-	<script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
 </head>
 <body>
 	<?php
@@ -214,5 +217,6 @@ $editorArr = $utManager->getTaxonomyEditors();
 		echo '<div style="color:red;">You are not authorized to access this page</div>';
 	}
 	include(__DIR__ . '/../footer.php');
+    include_once(__DIR__ . '/../config/footer-includes.php');
 	?>
 </body>

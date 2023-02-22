@@ -41,7 +41,6 @@ $dwcaHandler->setCustomWhereSql('v.clid='.$clid);
 
 $outputFile = null;
 if($zip){
-	//Ouput file is a zip file
 	$includeIdent = (array_key_exists('identifications',$_POST)?1:0);
 	$dwcaHandler->setIncludeDets($includeIdent);
 	$includeImages = (array_key_exists('images',$_POST)?1:0);
@@ -53,7 +52,6 @@ if($zip){
 
 }
 else{
-	//Output file is a flat occurrence file (not a zip file)
 	$outputFile = $dwcaHandler->getOccurrenceFile();
 }
 if($outputFile){
