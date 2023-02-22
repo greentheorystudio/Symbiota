@@ -3,7 +3,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
 ?>
 <div id="mainContainer">
     <div style="background-image:url(<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/background.jpg);background-repeat:repeat-x;background-position:top;width:100%;clear:both;height:150px;border-bottom:1px solid #333333;">
-        <div style="float:left;">
+        <div>
             <img style="" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/BioMNA.jpg"  alt=""/>
         </div>
     </div>

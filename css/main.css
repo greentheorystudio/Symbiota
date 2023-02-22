@@ -24,14 +24,18 @@ body{
 }
 
 #bannerContainer{
-	clear: both;
-	padding: 40px;
-	height: 100px;
 	display: flex;
 	justify-content: flex-start;
-	align-items: center;
-	background-color:#026B6E;
 	color: white;
+	background: #026B6E url(/content/imglib/layout/background.jpg) no-repeat center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	width:100%;
+	clear:both;
+	height:150px;
+	border-bottom:1px solid #333333;
 }
 
 #innertext{
