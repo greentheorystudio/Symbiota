@@ -414,12 +414,12 @@ h5{
 	color: white;
 	text-decoration: none;
 }
-.horizontalDropDownButton{
+.horizontalDropDownButton, .horizontalDropDownIconButton{
 	background-color: #798C1F!important;
 	text-decoration: none;
 	color: white;
 }
-.horizontalDropDownButton:hover{
+.horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
 	background-color: #E5CFB4!important;
 	color: black;
 	text-decoration: none;
