@@ -14,15 +14,22 @@ const taxaProfileTaxonMap = {
                         </div>
                     </template>
                     <div class="map-thumb-spatial-link">
-                        <span class="cursor-pointer" @click="openMapPopup(taxon.sciName,true);">Open Interactive Map</span>
+                        <span class="cursor-pointer" @click="openMapPopup(true);">Open Interactive Map</span>
                     </div>
                 </div>
             </q-card>
         </div>
     `,
     methods: {
-        openMapPopup(taxonVar,clustering){
-            const url = CLIENT_ROOT + '/spatial/index.php?starr={"usethes":true,"taxontype":"1","taxa":"' + taxonVar.replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
+        openMapPopup(clustering){
+            let taxonType;
+            if(Number(this.taxon['rankId']) < 140){
+                taxonType = 4;
+            }
+            else{
+                taxonType = 2;
+            }
+            const url = CLIENT_ROOT + '/spatial/index.php?starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
             window.open(url, '_blank');
         }
     }

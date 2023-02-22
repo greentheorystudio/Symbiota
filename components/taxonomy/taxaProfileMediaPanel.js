@@ -11,7 +11,7 @@ const taxaProfileMediaPanel = {
                             Audio & Video
                         </div>
                         <div class="row">
-                            <q-intersection v-for="media in taxon.media" :key="media" class="media-thumb">
+                            <q-intersection v-for="media in taxon.media" :key="media" :class="{'media-thumb':true, 'video-thumb':(media.type === 'video'), 'audio-thumb':(media.type === 'sound')}">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <template v-if="media.type === 'video'">
                                         <div class="video-player-container">
@@ -44,7 +44,7 @@ const taxaProfileMediaPanel = {
                 <template v-else>
                     <q-expansion-item class="shadow-1 overflow-hidden expansion-element" label="View All Audio & Video" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
                         <div class="row">
-                            <q-intersection v-for="media in taxon.media" :key="media" class="media-thumb">
+                            <q-intersection v-for="media in taxon.media" :key="media" :class="{'media-thumb':true, 'video-thumb':(media.type === 'video'), 'audio-thumb':(media.type === 'sound')}">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <template v-if="media.type === 'video'">
                                         <div class="video-player-container">

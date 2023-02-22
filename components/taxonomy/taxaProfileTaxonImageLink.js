@@ -22,7 +22,7 @@ const taxaProfileTaxonImageLink = {
             else{
                 taxonType = 2;
             }
-            const url = CLIENT_ROOT + '/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'] + '"}';
+            const url = CLIENT_ROOT + '/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'].replaceAll("'",'%squot;') + '"}';
             window.open(url, '_blank');
         }
     }

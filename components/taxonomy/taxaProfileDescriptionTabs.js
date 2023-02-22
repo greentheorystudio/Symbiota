@@ -76,6 +76,9 @@ const taxaProfileDescriptionTabs = {
             if(this.descriptionArr.length > 0){
                 this.selectedDescTab = this.descriptionArr[0]['tdbid'];
             }
+            else if(this.glossaryArr.length > 0){
+                this.selectedDescTab = 'glossaryTab';
+            }
         }
     }
 };

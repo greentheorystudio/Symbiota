@@ -83,7 +83,7 @@ class ProfileManager extends Manager{
 
                     $authStatus = true;
                     $this->reset();
-                    $this->setUserRights();
+                    $this->setUserRights($this->uid);
                     $this->setUserParams();
                     if($this->rememberMe){
                         $this->setTokenCookie();
@@ -829,11 +829,11 @@ class ProfileManager extends Manager{
         }
     }
 
-    private function setUserRights(): void
+    public function setUserRights($uId): void
     {
-        if($this->uid){
+        if($uId){
             $userrights = array();
-            $sql = 'SELECT role, tablepk FROM userroles WHERE (uid = '.$this->uid.') ';
+            $sql = 'SELECT role, tablepk FROM userroles WHERE (uid = '.$uId.') ';
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
