@@ -1,13 +1,17 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Data Usage Guidelines</title>
-    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <?php
@@ -76,12 +80,12 @@ include(__DIR__ . '/../header.php');
         it may be re-distributed only under the same or similar license by which it was acquired.
     </div>
 
-    <h2>Notes on Specimen Records and Images</h2>
+    <h2>Notes on Occurrence Records and Images</h2>
     <div class="pmargin">
-        Specimens are used for scientific research and because of skilled preparation and
+        Occurrences are used for scientific research and because of skilled preparation and
         careful use they may last for hundreds of years. Some collections have specimens
         that were collected over 100 years ago that are no longer occur within the area.
-        By making these specimens available on the web as images, their availability and
+        By making these records available on the web as images, their availability and
         value improves without an increase in inadvertent damage caused by use. Note that
         if you are considering making specimens, remember collecting normally requires
         permission of the landowner and, in the case of rare and endangered plants,
@@ -91,6 +95,7 @@ include(__DIR__ . '/../header.php');
 </div>
 <?php
 include(__DIR__ . '/../footer.php');
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>
