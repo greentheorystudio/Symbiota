@@ -10,7 +10,11 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
     include(__DIR__ . '/../config/includes/searchVarCustom.php');
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.$GLOBALS['SEARCHTEXT']['PAGE_TITLE']; ?></title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -19,15 +23,12 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
     <script src="../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-    <script type="text/javascript" src="../js/collections.harvestparams.js?ver=20221115"></script>
+    <script type="text/javascript" src="../js/collections.harvestparams.js?ver=20230103"></script>
     <script type="text/javascript" src="../js/search.term.manager.js?ver=20221110"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-        const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
-
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             initializeSearchStorage(<?php echo $queryId; ?>);
             setHarvestParamsForm();
         });
@@ -149,7 +150,7 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
         }
 
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
@@ -350,6 +351,7 @@ include(__DIR__ . '/../header.php');
 </div>
 <?php
 include(__DIR__ . '/../footer.php');
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>

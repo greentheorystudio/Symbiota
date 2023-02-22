@@ -2,7 +2,7 @@ let rankLimit;
 let rankLow;
 let rankHigh;
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 
 	$('#tabs').tabs({active: tabIndex});
 

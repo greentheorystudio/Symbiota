@@ -36,6 +36,11 @@ function arrayIndexSort(obj){
 	return keys;
 }
 
+function cancelAPIRequest(){
+	http.abort();
+	abortController.abort();
+}
+
 function checkObjectNotEmpty(obj){
 	for(const i in obj){
 		if(obj.hasOwnProperty(i) && obj[i]){
@@ -43,6 +48,15 @@ function checkObjectNotEmpty(obj){
 		}
 	}
 	return false;
+}
+
+function convertParamsObjToFormData(params){
+	const paramArr = Object.entries(params);
+	const formData = new FormData();
+	paramArr.forEach((pArr) => {
+		formData.append(pArr[0], (pArr[1] ? pArr[1].toString() : null));
+	});
+	return formData;
 }
 
 function formatCheckDate(dateStr){
@@ -88,6 +102,17 @@ function generateRandColor(){
 	const z1 = z.substring(0, y);
 	hexColor = z1 + x;
 	return hexColor;
+}
+
+function getErrorResponseText(status,statusText){
+	let text;
+	if(status === 0){
+		text = 'Cancelled';
+	}
+	else{
+		text = 'Error: ' + status + ' ' + statusText;
+	}
+	return text;
 }
 
 function getISOStrFromDateObj(dObj){
@@ -171,7 +196,7 @@ function getVineWorkingSpinnerHtml(size = null){
 		'        <path d="M 79.151652,43.368082 78.230962,43.385117 76.979402,43.834018 75.712871,44.882717 74.864704,46.001877 74.602829,46.875596 74.732303,47.298947 75.345611,47.574328 76.531702,47.343858 77.830234,46.616047 78.57095,45.794291 78.967289,45.143993 79.219184,44.670142 79.215657,44.009863 Z" />' +
 		'        <path d="M 79.796198,49.682159 78.910949,49.428595 77.582783,49.490962 76.064507,50.122396 74.925571,50.943815 74.419117,51.702408 74.418822,52.145117 74.924483,52.588161 76.126034,52.715443 77.580858,52.400185 78.529894,51.831619 79.099426,51.326045 79.47914,50.94683 79.669292,50.314513 Z" />' +
 		'    </clipPath>' +
-		'    <path class="path" clip-path="url(#vinePath)" d="M 66.249976,61.659254 C 59.810751,70.633869 47.315358,72.689205 38.340746,66.249976 29.366131,59.810751 27.310795,47.315358 33.750024,38.340746 40.189249,29.366131 52.684642,27.310795 61.659254,33.750024 70.633869,40.189249 72.689205,52.684642 66.249976,61.659254" />' +
+		'    <path class="vinepath" clip-path="url(#vinePath)" d="M 66.249976,61.659254 C 59.810751,70.633869 47.315358,72.689205 38.340746,66.249976 29.366131,59.810751 27.310795,47.315358 33.750024,38.340746 40.189249,29.366131 52.684642,27.310795 61.659254,33.750024 70.633869,40.189249 72.689205,52.684642 66.249976,61.659254" />' +
 		'</svg>';
 }
 
@@ -265,6 +290,7 @@ function openPopup(url){
 }
 
 function openTutorialWindow(url) {
+	url = CLIENT_ROOT + url;
 	window.open(url, '_blank');
 }
 
@@ -321,31 +347,14 @@ function parseDate(dateStr){
 	return retArr;
 }
 
-function sendProxyGetRequest(proxyurl,url,callback,http = null){
-	if(!http){
-		http = new XMLHttpRequest();
-	}
-	const formData = new FormData();
-	formData.append('url', url);
-	formData.append('action', 'get');
-	http.open("POST", proxyurl, true);
-	http.onreadystatechange = function() {
-		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
-		}
-	};
-	http.send(formData);
-}
-
 function sendAPIGetRequest(url,callback,http = null){
 	if(!http){
 		http = new XMLHttpRequest();
 	}
 	http.open("GET", url, true);
-	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
+			callback(http.status,http.responseText,http.statusText);
 		}
 	};
 	http.send();
@@ -355,14 +364,14 @@ function sendAPIPostRequest(url,params,callback,http = null){
 	if(!http){
 		http = new XMLHttpRequest();
 	}
+	const formData = convertParamsObjToFormData(params);
 	http.open("POST", url, true);
-	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
+			callback(http.status,http.responseText,http.statusText);
 		}
 	};
-	http.send(params);
+	http.send(formData);
 }
 
 function showWorking(){

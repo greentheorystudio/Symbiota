@@ -74,7 +74,7 @@ class ChecklistAdmin{
             'VALUES('.
             ($postArr['name']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['name']).'"':'NULL').','.
             ($postArr['authors']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['authors']).'"':'NULL').','.
-            ($postArr['type']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['type']).'"':'NULL').','.
+            ((array_key_exists('type',$postArr) && $postArr['type'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['type']).'"':'NULL').','.
             ($postArr['locality']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['locality']).'"':'NULL').','.
             ($postArr['publication']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['publication']).'"':'NULL').','.
             ($postArr['abstract']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['abstract']).'"':'NULL').','.
@@ -84,7 +84,7 @@ class ChecklistAdmin{
             ($postArr['pointradiusmeters']?Sanitizer::cleanInStr($this->conn,$postArr['pointradiusmeters']):'NULL').','.
             ($postArr['footprintwkt']?"'".Sanitizer::cleanInStr($this->conn,$postArr['footprintwkt'])."'":'NULL').','.
             ($postArr['parentclid']?Sanitizer::cleanInStr($this->conn,$postArr['parentclid']):'NULL').','.
-            ($postArr['access']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['access']).'"':'NULL').','.
+            (($GLOBALS['PUBLIC_CHECKLIST'] && $postArr['access'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['access']).'"':'NULL').','.
             $GLOBALS['SYMB_UID'].','.
             ($postArr['defaultsettings']?"'".$postArr['defaultsettings']."'":'NULL').
             ')';

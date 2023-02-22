@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$("#taxonfilter").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "../api/checklists/clsearchsuggest.php", { term: request.term, cl: clid }, response );

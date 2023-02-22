@@ -6,14 +6,12 @@ header('X-Frame-Options: SAMEORIGIN');
 
 $tid = (int)$_REQUEST['tid'];
 $category = array_key_exists('cat',$_REQUEST)?$_REQUEST['cat']: '';
-$lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
 
 $imageEditor = new TPImageEditorManager();
 $editable = false;
 
 if($tid){
 	$imageEditor->setTid($tid);
-	$imageEditor->setLanguage($lang);
 
 	if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 		$editable = true;

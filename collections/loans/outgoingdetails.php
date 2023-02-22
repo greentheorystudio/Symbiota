@@ -6,7 +6,6 @@
 /** @var string $eMode */
 $specList = $loanManager->getSpecList($loanId);
 ?>
-<script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
 <div id="tabs" style="margin:0;">
     <ul>
 		<li><a href="#outloandetaildiv"><span>Loan Details</span></a></li>

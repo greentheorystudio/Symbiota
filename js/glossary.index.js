@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$('#tabs').tabs({
 		beforeLoad: function( event, ui ) {
 			$(ui.panel).html("<p>Loading...</p>");

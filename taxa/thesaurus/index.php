@@ -18,7 +18,11 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
     $isEditor = true;
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomic Thesaurus Manager</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -27,50 +31,62 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/shared.js?ver=20221207" type="text/javascript"></script>
-	<script>
-        $(document).ready(function() {
-            $('#tabs').tabs({
-                active: <?php echo $tabIndex; ?>,
-                beforeLoad: function( event, ui ) {
-                    $(ui.panel).html("<p>Loading...</p>");
-                }
-            });
-
-        });
-    </script>
 </head>
 <body>
-<?php
-	include(__DIR__ . '/../../header.php');
-?>
-<div class="navpath">
-    <a href="../../index.php">Home</a> &gt;&gt;
-    <b>Taxonomic Thesaurus Manager</b>
-</div>
-<div id="innertext">
-	<h1>Taxonomic Thesaurus Manager</h1>
-	<?php
-	if($isEditor){
-		?>
-        <div id="tabs">
-            <ul>
-                <li><a href="#fileupload">Load Data File</a></li>
-            </ul>
-
-            <div id="fileupload">
-                <?php include_once(__DIR__ . '/batchloader.php'); ?>
-            </div>
-        </div>
+    <?php
+        include(__DIR__ . '/../../header.php');
+    ?>
+    <div class="navpath">
+        <a href="../../index.php">Home</a> &gt;&gt;
+        <b>Taxonomic Thesaurus Manager</b>
+    </div>
+    <div id="innertext">
+        <h1>Taxonomic Thesaurus Manager</h1>
         <?php
-	}
-	else{
-        echo '<div style="font-weight:bold;">You do not have permissions to access this tool</div>';
-    }
-	?>
-</div>
-<?php
-include(__DIR__ . '/../../footer.php');
-?>
+        if($isEditor){
+            ?>
+            <div id="tabs">
+                <q-card>
+                    <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
+                        <q-tab name="importer" label="Data Importer" no-caps></q-tab>
+                        <q-tab name="fileupload" label="Load Data File" no-caps></q-tab>
+                        <q-tab name="maintenance" label="Maintenance Tools" no-caps></q-tab>
+                    </q-tabs>
+                    <q-separator></q-separator>
+                    <q-tab-panels v-model="tab">
+                        <q-tab-panel name="importer">
+                            <?php include_once(__DIR__ . '/dataimporter.php'); ?>
+                        </q-tab-panel>
+                        <q-tab-panel name="fileupload">
+                            <?php include_once(__DIR__ . '/batchloader.php'); ?>
+                        </q-tab-panel>
+                        <q-tab-panel name="maintenance">
+                            <?php include_once(__DIR__ . '/maintenancetools.php'); ?>
+                        </q-tab-panel>
+                    </q-tab-panels>
+                </q-card>
+            </div>
+            <?php
+        }
+        else{
+            echo '<div style="font-weight:bold;">You do not have permissions to access this tool</div>';
+        }
+        ?>
+    </div>
+    <?php
+    include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
+    <script>
+        const tabsBlock = Vue.createApp({
+            setup () {
+                return {
+                    tab: Vue.ref('importer')
+                }
+            }
+        });
+        tabsBlock.use(Quasar, { config: {} });
+        tabsBlock.mount('#tabs');
+    </script>
 </body>
 </html>
