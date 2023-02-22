@@ -18,7 +18,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                                         <q-menu v-model="navBarToggle[item.id]" transition-duration="750" anchor="top end" self="top start">
                                             <q-list dense @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
                                                 <template v-for="subitem in item.subItems">
-                                                    <q-item clickable v-close-popup :href="subitem.url">
+                                                    <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')">
                                                         <q-item-section>{{ subitem.label }}</q-item-section>
                                                     </q-item>
                                                 </template>
@@ -43,7 +43,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                             <q-menu v-model="navBarToggle[item.id]" transition-duration="750" anchor="bottom start" self="top start" square>
                                 <q-list dense @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
                                     <template v-for="subitem in item.subItems">
-                                        <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" clickable v-close-popup>
+                                        <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" clickable v-close-popup>
                                             <q-item-section>
                                                 <q-item-label>{{ subitem.label }}</q-item-label>
                                             </q-item-section>
