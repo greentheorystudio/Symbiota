@@ -258,68 +258,6 @@ class TaxonomyDisplayManager{
 		}
 	}
 	
-	public function getDynamicTreePath(): array
-	{
-		$retArr = array();
-		if($this->targetStr){
-			$tid = '';
-			$acceptedTid = '';
-			$sql1 = 'SELECT DISTINCT t.tid, t.tidaccepted '.
-				'FROM taxa AS t LEFT JOIN taxa AS t1 ON t.tidaccepted = t1.tid ';
-			if(is_numeric($this->targetStr)){
-				$sql1 .= 'WHERE (t.tid IN('.implode((array)',',$this->targetStr).') OR t.tidaccepted = '.$this->targetStr.')';
-			}
-			else{
-				$sql1 .= 'WHERE ((t.sciname = "'.$this->targetStr.'") OR (t1.sciname = "'.$this->targetStr.'") '.
-					'OR (CONCAT(t.sciname," ",t.author) = "'.$this->targetStr.'") OR (CONCAT(t1.sciname," ",t1.author) = "'.$this->targetStr.'")) ';
-			}
-			//echo '<div>' .$sql1. '</div>';
-			$rs1 = $this->conn->query($sql1);
-			while($row1 = $rs1->fetch_object()){
-                $tid = $row1->tid;
-                if($row1->tid !== $row1->tidaccepted){
-                    $acceptedTid = $row1->tidaccepted;
-				}
-			}
-			$rs1->free();
-			
-			if($tid){
-				$prevTid = '';
-				$retArr[] = 'root';
-				$sql2 = 'SELECT t.RankId, te.parenttid, t2.tidaccepted, t2.parenttid AS par2 '.
-					'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.TID = te.parenttid '.
-					'INNER JOIN taxa t2 ON te.parenttid = t2.tid '.
-					'WHERE te.TID = '.($acceptedTid?:$tid).' '.
-					'ORDER BY t.RankId ';
-				//echo '<div>' .$sql2. '</div>';
-				$rs2 = $this->conn->query($sql2);
-				while($row2 = $rs2->fetch_object()){
-					if(!$prevTid || ($row2->par2 === $prevTid)){
-						$retArr[] = $row2->tidaccepted;
-						$prevTid = $row2->tidaccepted;
-					}
-					else{
-						$sql3 = 'SELECT tid FROM taxa WHERE parenttid = '.$prevTid.' '.
-							'AND tid IN(SELECT parenttid FROM taxaenumtree WHERE tid = '.$tid.') ';
-						//echo '<div>' .$sql3. '</div>';
-						$rs3 = $this->conn->query($sql3);
-						while($row3 = $rs3->fetch_object()){
-							$retArr[] = $row3->tid;
-							$prevTid = $row3->tid;
-						}
-						$rs3->free();
-					}
-				}
-                if($acceptedTid){
-                    $retArr[] = $acceptedTid;
-                }
-				$retArr[] = $tid;
-				$rs2->free();
-			}
-		}
-		return $retArr;
-	}
-
 	public function setTargetStr($target): void
 	{
 		$this->targetStr = $this->conn->real_escape_string(ucfirst(trim($target)));
