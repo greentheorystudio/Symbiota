@@ -74,23 +74,51 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
         </q-toolbar>
     </div>
     <script>
-        const navBarData = [
-            {url: CLIENT_ROOT + '/index.php', label: 'Home'},
-            {
-                label: 'Search',
-                subItems: [
-                    {url: CLIENT_ROOT + '/collections/index.php', label: 'Search Collections'},
-                    {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true}
-                ]
-            },
-            {
-                label: 'Images',
-                subItems: [
-                    {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
-                    {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'}
-                ]
-            }
-        ];
+        <?php
+        if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array(8, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array(8, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
+            ?>
+            const navBarData = [
+                {url: CLIENT_ROOT + '/index.php', label: 'Home'},
+                {
+                    label: 'Search',
+                    subItems: [
+                        {url: CLIENT_ROOT + '/collections/index.php', label: 'Search Collections'},
+                        {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true}
+                    ]
+                },
+                {
+                    label: 'Images',
+                    subItems: [
+                        {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
+                        {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'}
+                    ]
+                },
+                {url: CLIENT_ROOT + '/collections/misc/collprofiles.php?collid=8&emode=1', label: 'Collection Management'},
+            ];
+            <?php
+        }
+        else{
+            ?>
+            const navBarData = [
+                {url: CLIENT_ROOT + '/index.php', label: 'Home'},
+                {
+                    label: 'Search',
+                    subItems: [
+                        {url: CLIENT_ROOT + '/collections/index.php', label: 'Search Collections'},
+                        {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true}
+                    ]
+                },
+                {
+                    label: 'Images',
+                    subItems: [
+                        {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
+                        {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'}
+                    ]
+                }
+            ];
+            <?php
+        }
+        ?>
 
         document.addEventListener("DOMContentLoaded", function() {
             const dropDownNavBar = Vue.createApp({
