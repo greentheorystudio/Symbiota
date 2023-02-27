@@ -238,7 +238,7 @@ class TaxonProfileManager {
         else{
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
-                'WHERE te.parenttid = '.$this->tid.' ';
+                'WHERE te.parenttid = '.$this->tid.' AND t.tid = t.tidaccepted ';
         }
         //echo $sql; exit;
 
@@ -256,7 +256,7 @@ class TaxonProfileManager {
         if(!$tids){
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tidaccepted = te.tid '.
-                'WHERE te.parenttid = '.$this->tid.' ';
+                'WHERE te.parenttid = '.$this->tid.' AND t.tid = t.tidaccepted ';
             //echo $sql;
 
             $result = $this->con->query($sql);
