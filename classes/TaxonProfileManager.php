@@ -271,23 +271,37 @@ class TaxonProfileManager {
 
         if($tids){
             $sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, '.
-                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
-                'FROM images AS i INNER JOIN '.
-                '(SELECT t.tidaccepted AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
-                'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
-                'WHERE (t.tidaccepted IN('.implode(',',$tids).')) '.
-                'GROUP BY t.tidaccepted) AS i2 ON i.imgid = i2.imgid '.
-                'INNER JOIN taxa AS t ON i2.tid = t.tid '.
-                'LEFT JOIN users AS u ON i.photographeruid = u.uid ';
+                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, MIN(i.sortsequence) '.
+                'FROM taxa AS t LEFT JOIN images AS i ON t.tid = i.tid '.
+                'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
+                'WHERE t.tidaccepted IN('.implode(',',$tids).') '.
+                'GROUP BY t.TID ';
             //echo $sql;
             $result = $this->con->query($sql);
             while($row = $result->fetch_object()){
                 $sciName = ucfirst(strtolower($row->sciname));
-                if(!array_key_exists($sciName,$this->sppArray)){
-                    $firstPos = strpos($sciName, ' ',2)+2;
-                    $sciName = substr($sciName,0,strpos($sciName, ' ',$firstPos));
+                if(array_key_exists($sciName,$this->sppArray)){
+                    $this->sppArray[$sciName]['imgid'] = $row->imgid;
+                    $this->sppArray[$sciName]['url'] = $row->url;
+                    $this->sppArray[$sciName]['thumbnailurl'] = $row->thumbnailurl;
+                    $this->sppArray[$sciName]['photographer'] = $row->photographer;
+                    $this->sppArray[$sciName]['caption'] = $row->caption;
                 }
-                if(is_string($sciName) || is_int($sciName)){
+            }
+            $result->close();
+
+            $sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, '.
+                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, MIN(i.sortsequence) '.
+                'FROM taxaenumtree AS te LEFT JOIN images AS i ON te.tid = i.tid '.
+                'LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
+                'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
+                'WHERE te.parenttid IN('.implode(',',$tids).') AND t.TID = t.tidaccepted '.
+                'GROUP BY t.TID ';
+            //echo $sql;
+            $result = $this->con->query($sql);
+            while($row = $result->fetch_object()){
+                $sciName = ucfirst(strtolower($row->sciname));
+                if(array_key_exists($sciName,$this->sppArray)){
                     $this->sppArray[$sciName]['imgid'] = $row->imgid;
                     $this->sppArray[$sciName]['url'] = $row->url;
                     $this->sppArray[$sciName]['thumbnailurl'] = $row->thumbnailurl;
