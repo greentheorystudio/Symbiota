@@ -237,7 +237,7 @@ class TaxonProfileManager {
         }
         else{
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
-                'FROM taxa AS t INNER JOIN taxaenumtree AS te ON t.tid = te.tid '.
+                'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.tid '.
                 'WHERE te.parenttid = '.$this->tid.' AND t.tid = t.tidaccepted ';
         }
         //echo $sql; exit;
@@ -274,7 +274,7 @@ class TaxonProfileManager {
                 'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, MIN(i.sortsequence) '.
                 'FROM taxa AS t LEFT JOIN images AS i ON t.tid = i.tid '.
                 'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
-                'WHERE t.tidaccepted IN('.implode(',',$tids).') '.
+                'WHERE t.tid IN('.implode(',',$tids).') '.
                 'GROUP BY t.TID ';
             //echo $sql;
             $result = $this->con->query($sql);
@@ -292,7 +292,7 @@ class TaxonProfileManager {
 
             $sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, '.
                 'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, MIN(i.sortsequence) '.
-                'FROM taxaenumtree AS te LEFT JOIN images AS i ON te.tid = i.tid '.
+                'FROM images AS i LEFT JOIN taxaenumtree AS te ON i.tid = te.tid '.
                 'LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
                 'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
                 'WHERE te.parenttid IN('.implode(',',$tids).') AND t.TID = t.tidaccepted '.
@@ -301,7 +301,7 @@ class TaxonProfileManager {
             $result = $this->con->query($sql);
             while($row = $result->fetch_object()){
                 $sciName = ucfirst(strtolower($row->sciname));
-                if($row->url && array_key_exists($sciName,$this->sppArray)){
+                if($row->url && array_key_exists($sciName,$this->sppArray) && !array_key_exists('url',$this->sppArray[$sciName])){
                     $this->sppArray[$sciName]['imgid'] = $row->imgid;
                     $this->sppArray[$sciName]['url'] = $row->url;
                     $this->sppArray[$sciName]['thumbnailurl'] = $row->thumbnailurl;
