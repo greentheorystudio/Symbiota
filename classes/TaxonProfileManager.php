@@ -280,7 +280,7 @@ class TaxonProfileManager {
             $result = $this->con->query($sql);
             while($row = $result->fetch_object()){
                 $sciName = ucfirst(strtolower($row->sciname));
-                if(array_key_exists($sciName,$this->sppArray)){
+                if($row->url && array_key_exists($sciName,$this->sppArray)){
                     $this->sppArray[$sciName]['imgid'] = $row->imgid;
                     $this->sppArray[$sciName]['url'] = $row->url;
                     $this->sppArray[$sciName]['thumbnailurl'] = $row->thumbnailurl;
@@ -301,7 +301,7 @@ class TaxonProfileManager {
             $result = $this->con->query($sql);
             while($row = $result->fetch_object()){
                 $sciName = ucfirst(strtolower($row->sciname));
-                if(array_key_exists($sciName,$this->sppArray)){
+                if($row->url && array_key_exists($sciName,$this->sppArray)){
                     $this->sppArray[$sciName]['imgid'] = $row->imgid;
                     $this->sppArray[$sciName]['url'] = $row->url;
                     $this->sppArray[$sciName]['thumbnailurl'] = $row->thumbnailurl;
