@@ -138,7 +138,7 @@
                     this.imageExpansionLabel = 'View First 100 Images';
                 }
                 else{
-                    this.imageExpansionLabel = 'View All ' + this.taxon['imageCnt'] + ' Images';
+                    this.imageExpansionLabel = 'View All ' + this.taxon['images'].length + ' Images';
                 }
             },
             processMedia(){
