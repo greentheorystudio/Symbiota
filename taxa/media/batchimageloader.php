@@ -37,7 +37,7 @@
 <script src="../../js/external/jquery.fileupload-video.js"></script>
 <script src="../../js/external/jquery.fileupload-validate.js"></script>
 <script src="../../js/external/jquery.fileupload-ui.js"></script>
-<script src="../../js/taxa.batchmedialoader.js?ver=20221025"></script>
+<script src="../../js/taxa.batchmedialoader.js?ver=20221025222333"></script>
 <script id="template-upload" type="text/x-tmpl">
         {% for (var i=0, file; file=o.files[i]; i++) { %}
             <tr class="template-upload fade{%=o.options.loadImageFileTypes.test(file.type)?' image':''%}">
@@ -183,8 +183,8 @@
                         .fail(function () {
                             if (data.files.error) {
                                 data.context.each(function (index) {
-                                    var error = data.files[index].error;
-                                    if (error) {
+                                    const error = data.files[index].error;
+                                    if(error){
                                         $(this).find('.error').text(error);
                                     }
                                 });

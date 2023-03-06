@@ -9,12 +9,12 @@ function parseScinameFromFilename(fileName){
 	let adjustedFileName = fileName.replace(/_/g, ' ');
 	adjustedFileName = adjustedFileName.replace(/\s+/g, ' ').trim();
 	const lastDotIndex = adjustedFileName.lastIndexOf('.');
-	adjustedFileName = adjustedFileName.substr(0, lastDotIndex);
+	adjustedFileName = adjustedFileName.substring(0, lastDotIndex);
 	const lastSpaceIndex = adjustedFileName.lastIndexOf(' ');
 	if(lastSpaceIndex){
-		const lastPartAfterSpace = adjustedFileName.substr(lastSpaceIndex);
-		if(!isNaN(lastPartAfterSpace)){
-			adjustedFileName = adjustedFileName.substr(0, lastSpaceIndex);
+		const lastPartAfterSpace = adjustedFileName.substring(lastSpaceIndex);
+		if(Number(lastPartAfterSpace) > 0){
+			adjustedFileName = adjustedFileName.substring(0, lastSpaceIndex);
 		}
 	}
 	taxaNameArr.push(adjustedFileName);
