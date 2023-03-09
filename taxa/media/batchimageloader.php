@@ -384,72 +384,69 @@ $taxaUtilities = new TaxonomyUtilities();
 
         function updateDisplay(){
             const fileNodeArr = document.getElementById('uploadList').childNodes;
-            for(let n in fileNodeArr){
-                if(fileNodeArr.hasOwnProperty(n)){
-                    const dataObj = {};
-                    const fileNode = fileNodeArr[n];
-                    const fileName = fileNode.getElementsByClassName('name')[0].innerHTML;
-                    let imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.toLowerCase());
-                    if(!imageFileData){
-                        imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase());
+            fileNodeArr.forEach((fileNode) => {
+                const fileName = fileNode.getElementsByClassName('name')[0].innerHTML;
+                let imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.toLowerCase());
+                if(!imageFileData){
+                    imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase());
+                }
+                if(imageFileData){
+                    let dataObj = {};
+                    if(imageFileData.hasOwnProperty('scientificname') && imageFileData.scientificname && !fileNode.querySelectorAll('input[name="scientificname"]')[0].value){
+                        fileNode.querySelectorAll('input[name="scientificname"]')[0].value = imageFileData.scientificname;
                     }
-                    if(imageFileData){
-                        if(imageFileData.hasOwnProperty('scientificname') && imageFileData.scientificname && !fileNode.querySelectorAll('input[name="scientificname"]')[0].value){
-                            fileNode.querySelectorAll('input[name="scientificname"]')[0].value = imageFileData.scientificname;
-                        }
-                        if(imageFileData.hasOwnProperty('tid') && imageFileData.tid && !fileNode.querySelectorAll('input[name="tid"]')[0].value){
-                            fileNode.querySelectorAll('input[name="tid"]')[0].value = imageFileData.tid;
-                        }
-                        if(imageFileData.hasOwnProperty('photographer') && imageFileData.photographer && !fileNode.querySelectorAll('input[name="photographer"]')[0].value){
-                            fileNode.querySelectorAll('input[name="photographer"]')[0].value = imageFileData.photographer;
-                            dataObj['photographer'] = imageFileData.photographer;
-                        }
-                        if(imageFileData.hasOwnProperty('caption') && imageFileData.caption && !fileNode.querySelectorAll('input[name="caption"]')[0].value){
-                            fileNode.querySelectorAll('input[name="caption"]')[0].value = imageFileData.caption;
-                            dataObj['caption'] = imageFileData.caption;
-                        }
-                        if(imageFileData.hasOwnProperty('owner') && imageFileData.owner && !fileNode.querySelectorAll('input[name="owner"]')[0].value){
-                            fileNode.querySelectorAll('input[name="owner"]')[0].value = imageFileData.owner;
-                            dataObj['owner'] = imageFileData.owner;
-                        }
-                        if(imageFileData.hasOwnProperty('sourceurl') && imageFileData.sourceurl && !fileNode.querySelectorAll('input[name="sourceurl"]')[0].value){
-                            fileNode.querySelectorAll('input[name="sourceurl"]')[0].value = imageFileData.sourceurl;
-                            dataObj['sourceurl'] = imageFileData.sourceurl;
-                        }
-                        if(imageFileData.hasOwnProperty('copyright') && imageFileData.copyright && !fileNode.querySelectorAll('input[name="copyright"]')[0].value){
-                            fileNode.querySelectorAll('input[name="copyright"]')[0].value = imageFileData.copyright;
-                            dataObj['copyright'] = imageFileData.copyright;
-                        }
-                        if(imageFileData.hasOwnProperty('locality') && imageFileData.locality && !fileNode.querySelectorAll('input[name="locality"]')[0].value){
-                            fileNode.querySelectorAll('input[name="locality"]')[0].value = imageFileData.locality;
-                            dataObj['locality'] = imageFileData.locality;
-                        }
-                        if(imageFileData.hasOwnProperty('notes') && imageFileData.notes && !fileNode.querySelectorAll('input[name="notes"]')[0].value){
-                            fileNode.querySelectorAll('input[name="notes"]')[0].value = imageFileData.notes;
-                            dataObj['notes'] = imageFileData.notes;
-                        }
-                        if(imageFileData.hasOwnProperty('errorMessage') && imageFileData.errorMessage){
-                            fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = imageFileData.errorMessage;
-                            fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'block';
-                            fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'none';
-                            fileNode.querySelectorAll('button[name="startButton"]')[0].classList.add('disabled');
-                        }
-                        else{
-                            fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = '';
-                            fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'none';
-                            fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'block';
-                            fileNode.querySelectorAll('button[name="startButton"]')[0].classList.remove('disabled');
-                        }
-                        if(dataObj !== {}){
-                            fileNode.getElementsByClassName('linkedDataDisplay')[0].innerHTML = JSON.stringify(dataObj);
-                            fileNode.getElementsByClassName('linkedDataMessage')[0].style.display = 'block';
-                        }
-                        else{
-                            fileNode.getElementsByClassName('linkedDataMessage')[0].style.display = 'none';
-                        }
+                    if(imageFileData.hasOwnProperty('tid') && imageFileData.tid && !fileNode.querySelectorAll('input[name="tid"]')[0].value){
+                        fileNode.querySelectorAll('input[name="tid"]')[0].value = imageFileData.tid;
+                    }
+                    if(imageFileData.hasOwnProperty('photographer') && imageFileData.photographer && !fileNode.querySelectorAll('input[name="photographer"]')[0].value){
+                        fileNode.querySelectorAll('input[name="photographer"]')[0].value = imageFileData.photographer;
+                        dataObj['photographer'] = imageFileData.photographer;
+                    }
+                    if(imageFileData.hasOwnProperty('caption') && imageFileData.caption && !fileNode.querySelectorAll('input[name="caption"]')[0].value){
+                        fileNode.querySelectorAll('input[name="caption"]')[0].value = imageFileData.caption;
+                        dataObj['caption'] = imageFileData.caption;
+                    }
+                    if(imageFileData.hasOwnProperty('owner') && imageFileData.owner && !fileNode.querySelectorAll('input[name="owner"]')[0].value){
+                        fileNode.querySelectorAll('input[name="owner"]')[0].value = imageFileData.owner;
+                        dataObj['owner'] = imageFileData.owner;
+                    }
+                    if(imageFileData.hasOwnProperty('sourceurl') && imageFileData.sourceurl && !fileNode.querySelectorAll('input[name="sourceurl"]')[0].value){
+                        fileNode.querySelectorAll('input[name="sourceurl"]')[0].value = imageFileData.sourceurl;
+                        dataObj['sourceurl'] = imageFileData.sourceurl;
+                    }
+                    if(imageFileData.hasOwnProperty('copyright') && imageFileData.copyright && !fileNode.querySelectorAll('input[name="copyright"]')[0].value){
+                        fileNode.querySelectorAll('input[name="copyright"]')[0].value = imageFileData.copyright;
+                        dataObj['copyright'] = imageFileData.copyright;
+                    }
+                    if(imageFileData.hasOwnProperty('locality') && imageFileData.locality && !fileNode.querySelectorAll('input[name="locality"]')[0].value){
+                        fileNode.querySelectorAll('input[name="locality"]')[0].value = imageFileData.locality;
+                        dataObj['locality'] = imageFileData.locality;
+                    }
+                    if(imageFileData.hasOwnProperty('notes') && imageFileData.notes && !fileNode.querySelectorAll('input[name="notes"]')[0].value){
+                        fileNode.querySelectorAll('input[name="notes"]')[0].value = imageFileData.notes;
+                        dataObj['notes'] = imageFileData.notes;
+                    }
+                    if(imageFileData.hasOwnProperty('errorMessage') && imageFileData.errorMessage){
+                        fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = imageFileData.errorMessage;
+                        fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'block';
+                        fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'none';
+                        fileNode.querySelectorAll('button[name="startButton"]')[0].classList.add('disabled');
+                    }
+                    else{
+                        fileNode.getElementsByClassName('errorUploadMessage')[0].innerHTML = '';
+                        fileNode.getElementsByClassName('errorUploadMessage')[0].style.display = 'none';
+                        fileNode.getElementsByClassName('goodUploadMessage')[0].style.display = 'block';
+                        fileNode.querySelectorAll('button[name="startButton"]')[0].classList.remove('disabled');
+                    }
+                    if(dataObj){
+                        fileNode.getElementsByClassName('linkedDataDisplay')[0].innerText = JSON.stringify(dataObj).toString();
+                        fileNode.getElementsByClassName('linkedDataMessage')[0].style.display = 'block';
+                    }
+                    else{
+                        fileNode.getElementsByClassName('linkedDataMessage')[0].style.display = 'none';
                     }
                 }
-            }
+            });
         }
 
         function processCsvFile(e, file){
@@ -460,7 +457,6 @@ $taxaUtilities = new TaxonomyUtilities();
                 if(taxaNameArr.length > 0){
                     setTaxaDataObjFromTaxaArr();
                 }
-                updateDisplay();
             };
             reader.readAsText(file);
         }
