@@ -97,19 +97,19 @@ class TPImageEditorManager extends TPEditorManager{
         $status = true;
         $imgManager = new ImageShared();
 
-        $imgPath = $postArr['filepath'];
+        $imgPath = $postArr['filepath'] ?? null;
 
         $imgManager->setTid($tid);
-        $imgManager->setCaption($postArr['caption']);
-        $imgManager->setPhotographer($postArr['photographer']);
-        $imgManager->setPhotographerUid($postArr['photographeruid']);
-        $imgManager->setSourceUrl($postArr['sourceurl']);
-        $imgManager->setCopyright($postArr['copyright']);
-        $imgManager->setOwner($postArr['owner']);
-        $imgManager->setLocality($postArr['locality']);
-        $imgManager->setOccid($postArr['occid']);
-        $imgManager->setNotes($postArr['notes']);
-        $sort = $postArr['sortsequence'];
+        $imgManager->setCaption($postArr['caption'] ?? null);
+        $imgManager->setPhotographer($postArr['photographer'] ?? null);
+        $imgManager->setPhotographerUid($postArr['photographeruid'] ?? null);
+        $imgManager->setSourceUrl($postArr['sourceurl'] ?? null);
+        $imgManager->setCopyright($postArr['copyright'] ?? null);
+        $imgManager->setOwner($postArr['owner'] ?? null);
+        $imgManager->setLocality($postArr['locality'] ?? null);
+        $imgManager->setOccid($postArr['occid'] ?? null);
+        $imgManager->setNotes($postArr['notes'] ?? null);
+        $sort = $postArr['sortsequence'] ?? null;
         if(!$sort) {
             $sort = 40;
         }
