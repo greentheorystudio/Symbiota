@@ -80,7 +80,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 <div class="button-csv-container">
                     <div class="button-container">
                         <q-btn color="positive" class="text-bold" label="Add Files" icon="fas fa-plus" @click="uploaderRef.pickFiles();" glossy></q-btn>
-                        <q-btn color="primary" class="text-bold" label="Start Upload" icon="fas fa-upload" @click="uploaderRef.upload();" glossy></q-btn>
+                        <q-btn color="primary" class="text-bold" label="Start Upload" icon="fas fa-upload" @click="initializeUpload();" glossy></q-btn>
                         <q-btn color="warning" class="text-bold" label="Cancel Upload" icon="fas fa-ban" @click="cancelUpload();" glossy></q-btn>
                     </div>
                     <div v-if="csvFileData.length > 0" class="text-bold text-red">
@@ -88,13 +88,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     </div>
                 </div>
                 <div class="q-mt-md">
-                    <q-uploader ref="uploaderRef" class="uploader q-mx-auto" color="grey-8" :factory="uploadFiles" :filter="validateFiles" multiple>
+                    <q-uploader ref="uploaderRef" class="uploader q-mx-auto" color="grey-8" :factory="uploadFiles" :filter="validateFiles" @uploaded="processUploaded" multiple>
                         <template v-slot:header="scope">
                             <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
                                 <q-spinner v-if="scope.isUploading" class="q-uploader__spinner"></q-spinner>
                                 <div class="col">
                                     <div class="q-uploader__title">To add files click the Add Files button above or drag and drop files into this box</div>
-                                    <div v-if="scope.files.length > 0" class="q-uploader__subtitle">{{ scope.uploadSizeLabel }}</div>
+                                    <div v-if="queueSize > 0" class="q-uploader__subtitle">{{ queueSizeLabel }}</div>
                                 </div>
                                 <q-uploader-add-trigger></q-uploader-add-trigger>
                             </div>
@@ -126,7 +126,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             </q-item-label>
                                         </q-item-label>
                                         <q-item-label caption>
-                                            {{ file.__sizeLabel }}
+                                            {{ file.correctedSizeLabel }}
                                         </q-item-label>
                                     </q-item-section>
                                     <q-item-section top class="col-2 gt-sm"></q-item-section>
@@ -135,7 +135,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     </q-item-section>
                                     <q-item-section>
                                         <div class="list-item-delete">
-                                            <q-btn color="negative" class="text-bold" label="Remove" icon="fas fa-times" @click="scope.removeFile(file)" glossy dense></q-btn>
+                                            <q-btn color="negative" class="text-bold" label="Remove" icon="fas fa-times" @click="removePickedFile(file);" glossy dense></q-btn>
                                         </div>
                                     </q-item-section>
                                 </q-item>
@@ -200,6 +200,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 return {
                     csvFileData: Vue.ref([]),
                     fileArr: Vue.ref([]),
+                    queueSize: Vue.ref(0),
+                    queueSizeLabel: Vue.ref(''),
                     systemProperties: Vue.ref(['format','type']),
                     taxaDataArr: Vue.ref([])
                 }
@@ -215,7 +217,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             },
             methods: {
                 cancelUpload(){
-                    this.uploaderRef.pickFiles();
                     this.csvFileData = [];
                     this.fileArr = [];
                     this.taxaDataArr = [];
@@ -241,6 +242,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             }, {});
                         }
                     });
+                },
+                initializeUpload(){
+                    this.fileArr.forEach((file) => {
+                        if(file.hasOwnProperty('tid') && file.tid && Number(file.tid) > 0){
+                            file['metadata'].push({name: 'tid', value: file.tid, system: true});
+                            this.uploaderRef.updateFileStatus(file,'idle');
+                        }
+                    });
+                    this.uploaderRef.upload();
                 },
                 parseScinameFromFilename(fileName){
                     let adjustedFileName = fileName.replace(/_/g, ' ');
@@ -297,13 +307,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 processImageFileData(file, csvData){
                     file['metadata'].push({name: 'type', value: 'StillImage', system: true});
-                    file['metadata'].push({name: 'photographer', value: ((csvData && csvData.hasOwnProperty('photographer') && csvData['photographer'] !== '') ? csvData['photographer'] : null), system: false});
-                    file['metadata'].push({name: 'caption', value: ((csvData && csvData.hasOwnProperty('caption') && csvData['caption'] !== '') ? csvData['caption'] : null), system: false});
-                    file['metadata'].push({name: 'owner', value: ((csvData && csvData.hasOwnProperty('owner') && csvData['owner'] !== '') ? csvData['owner'] : null), system: false});
-                    file['metadata'].push({name: 'sourceurl', value: ((csvData && csvData.hasOwnProperty('sourceurl') && csvData['sourceurl'] !== '') ? csvData['sourceurl'] : null), system: false});
-                    file['metadata'].push({name: 'copyright', value: ((csvData && csvData.hasOwnProperty('copyright') && csvData['copyright'] !== '') ? csvData['copyright'] : null), system: false});
-                    file['metadata'].push({name: 'locality', value: ((csvData && csvData.hasOwnProperty('locality') && csvData['locality'] !== '') ? csvData['locality'] : null), system: false});
-                    file['metadata'].push({name: 'notes', value: ((csvData && csvData.hasOwnProperty('notes') && csvData['notes'] !== '') ? csvData['notes'] : null), system: false});
+                    file['metadata'].push({name: 'action', value: 'uploadTaxonImage', system: true});
+                    file['metadata'].push({name: 'photographer', value: ((csvData && csvData.hasOwnProperty('photographer') && csvData['photographer'] !== '') ? csvData['photographer'] : ''), system: false});
+                    file['metadata'].push({name: 'caption', value: ((csvData && csvData.hasOwnProperty('caption') && csvData['caption'] !== '') ? csvData['caption'] : ''), system: false});
+                    file['metadata'].push({name: 'owner', value: ((csvData && csvData.hasOwnProperty('owner') && csvData['owner'] !== '') ? csvData['owner'] : ''), system: false});
+                    file['metadata'].push({name: 'sourceurl', value: ((csvData && csvData.hasOwnProperty('sourceurl') && csvData['sourceurl'] !== '') ? csvData['sourceurl'] : ''), system: false});
+                    file['metadata'].push({name: 'copyright', value: ((csvData && csvData.hasOwnProperty('copyright') && csvData['copyright'] !== '') ? csvData['copyright'] : ''), system: false});
+                    file['metadata'].push({name: 'locality', value: ((csvData && csvData.hasOwnProperty('locality') && csvData['locality'] !== '') ? csvData['locality'] : ''), system: false});
+                    file['metadata'].push({name: 'notes', value: ((csvData && csvData.hasOwnProperty('notes') && csvData['notes'] !== '') ? csvData['notes'] : ''), system: false});
                 },
                 processMediaFileData(file, csvData){
                     if(file.name.endsWith(".mp4")){
@@ -328,27 +339,38 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     else if(file.name.endsWith(".zc")){
                         file['metadata'].push({name: 'type', value: 'Sound', system: true});
-                        file['metadata'].push({name: 'format', value: null, system: true});
+                        file['metadata'].push({name: 'format', value: '', system: true});
                     }
                     else{
-                        file['metadata'].push({name: 'type', value: null, system: true});
-                        file['metadata'].push({name: 'format', value: null, system: true});
+                        file['metadata'].push({name: 'type', value: '', system: true});
+                        file['metadata'].push({name: 'format', value: '', system: true});
                     }
-                    file['metadata'].push({name: 'title', value: ((csvData && csvData.hasOwnProperty('title') && csvData['title'] !== '') ? csvData['title'] : null), system: false});
-                    file['metadata'].push({name: 'creator', value: ((csvData && csvData.hasOwnProperty('creator') && csvData['creator'] !== '') ? csvData['creator'] : null), system: false});
-                    file['metadata'].push({name: 'description', value: ((csvData && csvData.hasOwnProperty('description') && csvData['description'] !== '') ? csvData['description'] : null), system: false});
-                    file['metadata'].push({name: 'locationcreated', value: ((csvData && csvData.hasOwnProperty('locationcreated') && csvData['locationcreated'] !== '') ? csvData['locationcreated'] : null), system: false});
-                    file['metadata'].push({name: 'language', value: ((csvData && csvData.hasOwnProperty('language') && csvData['language'] !== '') ? csvData['language'] : null), system: false});
-                    file['metadata'].push({name: 'usageterms', value: ((csvData && csvData.hasOwnProperty('usageterms') && csvData['usageterms'] !== '') ? csvData['usageterms'] : null), system: false});
-                    file['metadata'].push({name: 'rights', value: ((csvData && csvData.hasOwnProperty('rights') && csvData['rights'] !== '') ? csvData['rights'] : null), system: false});
-                    file['metadata'].push({name: 'owner', value: ((csvData && csvData.hasOwnProperty('owner') && csvData['owner'] !== '') ? csvData['owner'] : null), system: false});
-                    file['metadata'].push({name: 'publisher', value: ((csvData && csvData.hasOwnProperty('publisher') && csvData['publisher'] !== '') ? csvData['publisher'] : null), system: false});
-                    file['metadata'].push({name: 'contributor', value: ((csvData && csvData.hasOwnProperty('contributor') && csvData['contributor'] !== '') ? csvData['contributor'] : null), system: false});
-                    file['metadata'].push({name: 'bibliographiccitation', value: ((csvData && csvData.hasOwnProperty('bibliographiccitation') && csvData['bibliographiccitation'] !== '') ? csvData['bibliographiccitation'] : null), system: false});
-                    file['metadata'].push({name: 'furtherinformationurl', value: ((csvData && csvData.hasOwnProperty('furtherinformationurl') && csvData['furtherinformationurl'] !== '') ? csvData['furtherinformationurl'] : null), system: false});
+                    file['metadata'].push({name: 'action', value: 'uploadTaxonMedia', system: true});
+                    file['metadata'].push({name: 'title', value: ((csvData && csvData.hasOwnProperty('title') && csvData['title'] !== '') ? csvData['title'] : ''), system: false});
+                    file['metadata'].push({name: 'creator', value: ((csvData && csvData.hasOwnProperty('creator') && csvData['creator'] !== '') ? csvData['creator'] : ''), system: false});
+                    file['metadata'].push({name: 'description', value: ((csvData && csvData.hasOwnProperty('description') && csvData['description'] !== '') ? csvData['description'] : ''), system: false});
+                    file['metadata'].push({name: 'locationcreated', value: ((csvData && csvData.hasOwnProperty('locationcreated') && csvData['locationcreated'] !== '') ? csvData['locationcreated'] : ''), system: false});
+                    file['metadata'].push({name: 'language', value: ((csvData && csvData.hasOwnProperty('language') && csvData['language'] !== '') ? csvData['language'] : ''), system: false});
+                    file['metadata'].push({name: 'usageterms', value: ((csvData && csvData.hasOwnProperty('usageterms') && csvData['usageterms'] !== '') ? csvData['usageterms'] : ''), system: false});
+                    file['metadata'].push({name: 'rights', value: ((csvData && csvData.hasOwnProperty('rights') && csvData['rights'] !== '') ? csvData['rights'] : ''), system: false});
+                    file['metadata'].push({name: 'owner', value: ((csvData && csvData.hasOwnProperty('owner') && csvData['owner'] !== '') ? csvData['owner'] : ''), system: false});
+                    file['metadata'].push({name: 'publisher', value: ((csvData && csvData.hasOwnProperty('publisher') && csvData['publisher'] !== '') ? csvData['publisher'] : ''), system: false});
+                    file['metadata'].push({name: 'contributor', value: ((csvData && csvData.hasOwnProperty('contributor') && csvData['contributor'] !== '') ? csvData['contributor'] : ''), system: false});
+                    file['metadata'].push({name: 'bibliographiccitation', value: ((csvData && csvData.hasOwnProperty('bibliographiccitation') && csvData['bibliographiccitation'] !== '') ? csvData['bibliographiccitation'] : ''), system: false});
+                    file['metadata'].push({name: 'furtherinformationurl', value: ((csvData && csvData.hasOwnProperty('furtherinformationurl') && csvData['furtherinformationurl'] !== '') ? csvData['furtherinformationurl'] : ''), system: false});
+                },
+                processUploaded(info){
+                    info.files.forEach((file) => {
+                        this.removePickedFile(file);
+                    });
+                },
+                removePickedFile(file){
+                    const fileIndex = this.fileArr.indexOf(file);
+                    this.fileArr.splice(fileIndex,1);
+                    this.uploaderRef.removeFile(file);
+                    this.updateQueueSize();
                 },
                 setAdditionalData(file){
-                    console.log(file);
                     let additionalData = false;
                     file['metadata'].forEach((data) => {
                         if(data.value && data.value !== '' && !data.system){
@@ -412,10 +434,32 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     this.uploaderRef.updateFileStatus(file,new Date().toTimeString());
                 },
-                uploadFiles(file){
-                    console.log('upload');
-                    console.log(file);
-                    return false;
+                updateQueueSize(){
+                    let size = 0;
+                    this.fileArr.forEach((file) => {
+                        size += file.size;
+                    });
+                    const sizeMb = (Math.round((size / 1000000) * 10 ) / 10);
+                    this.queueSize = size;
+                    this.queueSizeLabel = sizeMb.toString() + 'MB';
+                },
+                uploadFiles(files){
+                    if(files[0].hasOwnProperty('tid') && files[0].tid && Number(files[0].tid) > 0){
+                        const typeData = files[0]['metadata'].find((obj) => obj.name === 'type');
+                        if(typeData.value === 'StillImage' || typeData.value === 'MovingImage' || typeData.value === 'Sound'){
+                            return {
+                                url: taxaProfileApiUrl,
+                                formFields: files[0]['metadata'],
+                                fieldName: (typeData.value === 'StillImage' ? 'imgfile' : 'medfile')
+                            }
+                        }
+                        else{
+                            return false;
+                        }
+                    }
+                    else{
+                        return false;
+                    }
                 },
                 validateFiles(files){
                     const maxFileSizeBytes = MAX_UPLOAD_FILESIZE * 1000 * 1000;
@@ -459,6 +503,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 file['errorMessage'] = 'Scientific name required';
                             }
                             file['metadata'] = [];
+                            file['correctedSizeLabel'] =   (Math.round((file.size / 1000000) * 10 ) / 10).toString() + 'MB';
                             if(videoTypes.includes(fileType) || audioTypes.includes(fileType) || fileName.endsWith(".zc")){
                                 this.processMediaFileData(file, csvData);
                             }
@@ -467,6 +512,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             }
                             this.setAdditionalData(file);
                             this.fileArr.push(file);
+                            this.updateQueueSize();
                             returnArr.push(file);
                         }
                     });
