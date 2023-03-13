@@ -51,8 +51,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             width: 100%;
             min-height: 150px;
         }
-        .uploader i {
-            display: none;
+        .q-uploader {
+            max-height: none;
         }
     </style>
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
@@ -88,7 +88,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     </div>
                 </div>
                 <div class="q-mt-md">
-                    <q-uploader ref="uploaderRef" class="uploader q-mx-auto" color="grey-8" :factory="uploadFiles" :filter="validateFiles" label="To add files click the Add Files button above or drag and drop files into this box" multiple>
+                    <q-uploader ref="uploaderRef" class="uploader q-mx-auto" color="grey-8" :factory="uploadFiles" :filter="validateFiles" multiple>
+                        <template v-slot:header="scope">
+                            <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
+                                <q-spinner v-if="scope.isUploading" class="q-uploader__spinner"></q-spinner>
+                                <div class="col">
+                                    <div class="q-uploader__title">To add files click the Add Files button above or drag and drop files into this box</div>
+                                    <div v-if="scope.files.length > 0" class="q-uploader__subtitle">{{ scope.uploadSizeLabel }}</div>
+                                </div>
+                            </div>
+                        </template>
                         <template v-slot:list="scope">
                             <q-list separator>
                                 <q-item v-for="file in scope.files" :key="file.__key" class="list-item-container">
@@ -96,13 +105,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <q-item-label class="full-width ellipsis">
                                             {{ file.name }}
                                         </q-item-label>
-                                        <q-item-label class="full-width ellipsis">
-                                            <media-scientific-name-auto-complete :sciname="{tid: file.tid, label: file.scientificname, name: file.scientificname}" label="Scientific Name" :filename="file.name" limit-to-thesaurus="true" accepted-taxa-only="true" @update:mediataxon="updateMediaScientificName"></media-scientific-name-auto-complete>
+                                        <q-item-label class="full-width">
+                                            <media-scientific-name-auto-complete :sciname="file.scientificname ? {tid: file.tid, label: file.scientificname, name: file.scientificname} : null" label="Scientific Name" :filename="file.name" limit-to-thesaurus="true" accepted-taxa-only="true" @update:mediataxon="updateMediaScientificName"></media-scientific-name-auto-complete>
                                         </q-item-label>
-                                        <q-item-label v-if="file.errorMessage" class="full-width ellipsis text-bold text-red">
+                                        <q-item-label v-if="file.errorMessage" class="full-width text-bold text-red">
                                             {{ file.errorMessage }}
                                         </q-item-label>
-                                        <q-item-label v-else class="full-width ellipsis text-bold text-green">
+                                        <q-item-label v-else class="full-width text-bold text-green">
                                             Ready to upload
                                         </q-item-label>
 
@@ -110,7 +119,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             {{ file.__sizeLabel }}
                                         </q-item-label>
                                     </q-item-section>
-                                    <q-item-section v-if="file.__img" style="max-height: 100px; max-width: 100px">
+                                    <q-item-section top class="col-2 gt-sm"></q-item-section>
+                                    <q-item-section v-if="file.__img" style="max-height: 100px; max-width: 100px" >
                                         <q-img :src="file.__img.src" spinner-color="white"></q-img>
                                     </q-item-section>
                                     <q-item-section>
@@ -195,6 +205,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             },
             methods: {
                 cancelUpload(){
+                    this.uploaderRef.pickFiles();
                     this.csvFileData = [];
                     this.fileArr = [];
                     this.taxaDataArr = [];
