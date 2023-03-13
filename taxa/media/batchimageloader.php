@@ -96,6 +96,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     <div class="q-uploader__title">To add files click the Add Files button above or drag and drop files into this box</div>
                                     <div v-if="scope.files.length > 0" class="q-uploader__subtitle">{{ scope.uploadSizeLabel }}</div>
                                 </div>
+                                <q-uploader-add-trigger></q-uploader-add-trigger>
                             </div>
                         </template>
                         <template v-slot:list="scope">
@@ -114,7 +115,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <q-item-label v-else class="full-width text-bold text-green">
                                             Ready to upload
                                         </q-item-label>
-
+                                        <q-item-label v-if="file.additionalData" class="full-width">
+                                            Additional Data:
+                                            <q-item-label caption>
+                                                <template v-for="data in file.metadata">
+                                                    <template v-if="!data.system && data.value && data.value !== ''">
+                                                        <span class="text-bold q-ml-xs">{{ data.name }}:</span> {{ data.value }}
+                                                    </template>
+                                                </template>
+                                            </q-item-label>
+                                        </q-item-label>
                                         <q-item-label caption>
                                             {{ file.__sizeLabel }}
                                         </q-item-label>
@@ -266,9 +276,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                     file['scientificname'] = dataObj[key];
                                                 }
                                                 else{
-                                                    const dataObj = file['metadata'].find((obj) => obj.name === key);
-                                                    if(dataObj){
-                                                        dataObj['value'] = dataObj[key];
+                                                    const existingData = file['metadata'].find((obj) => obj.name === key);
+                                                    if(existingData){
+                                                        existingData['value'] = dataObj[key];
                                                     }
                                                     else{
                                                         file['metadata'].push({name: key, value: dataObj[key], system: this.systemProperties.includes(key)});
@@ -276,7 +286,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 }
                                             }
                                         });
-                                        this.uploaderRef.updateFileStatus(file,'csv-data');
+                                        this.setAdditionalData(file);
                                     }
                                 }
                             });
@@ -337,6 +347,17 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     file['metadata'].push({name: 'bibliographiccitation', value: ((csvData && csvData.hasOwnProperty('bibliographiccitation') && csvData['bibliographiccitation'] !== '') ? csvData['bibliographiccitation'] : null), system: false});
                     file['metadata'].push({name: 'furtherinformationurl', value: ((csvData && csvData.hasOwnProperty('furtherinformationurl') && csvData['furtherinformationurl'] !== '') ? csvData['furtherinformationurl'] : null), system: false});
                 },
+                setAdditionalData(file){
+                    console.log(file);
+                    let additionalData = false;
+                    file['metadata'].forEach((data) => {
+                        if(data.value && data.value !== '' && !data.system){
+                            additionalData = true;
+                        }
+                    });
+                    file['additionalData'] = additionalData;
+                    this.uploaderRef.updateFileStatus(file,new Date().toTimeString());
+                },
                 setTaxaData(nameArr,fileName = null){
                     const formData = new FormData();
                     formData.append('taxa', JSON.stringify(nameArr));
@@ -352,7 +373,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 const file = this.fileArr.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
                                 file['scientificname'] = resObj[0]['sciname'];
                                 file['tid'] = resObj[0]['tid'];
-                                this.uploaderRef.updateFileStatus(file,'taxa-data');
+                                this.uploaderRef.updateFileStatus(file,new Date().toTimeString());
                             }
                             this.updateMediaDataTids();
                         });
@@ -371,7 +392,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 else{
                                     file.errorMessage = 'Scientific name not found in taxonomic thesaurus';
                                 }
-                                this.uploaderRef.updateFileStatus(file,'tid-data');
+                                this.uploaderRef.updateFileStatus(file,new Date().toTimeString());
                             }
                         }
                     });
@@ -389,12 +410,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     else{
                         file['errorMessage'] = 'Scientific name required';
                     }
-                    this.uploaderRef.updateFileStatus(file,taxonObj['sciname']);
+                    this.uploaderRef.updateFileStatus(file,new Date().toTimeString());
                 },
                 uploadFiles(file){
                     console.log('upload');
                     console.log(file);
-                    this.uploaderRef.updateFileStatus(file,'failed');
                     return false;
                 },
                 validateFiles(files){
@@ -445,6 +465,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             else{
                                 this.processImageFileData(file, csvData);
                             }
+                            this.setAdditionalData(file);
                             this.fileArr.push(file);
                             returnArr.push(file);
                         }
