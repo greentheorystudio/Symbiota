@@ -99,4 +99,7 @@ if($action){
     elseif($action === 'getTaxonomicTreeTaxonPath' && $tId){
         echo json_encode($taxUtilities->getTaxonomicTreeTaxonPath($tId));
     }
+    elseif($action === 'getTaxaArrFromNameArr' && array_key_exists('taxa',$_POST)){
+        echo json_encode($taxUtilities->getTaxaArrFromNameArr(json_decode($_POST['taxa'], true)));
+    }
 }

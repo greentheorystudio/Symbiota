@@ -35,6 +35,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             justify-content: flex-start;
             gap: 20px;
         }
+        .thumbnail-section {
+            display: flex;
+            justify-content: space-around;
+        }
+        .thumbnail-container {
+            max-height: 100px;
+            max-width: 100px;
+        }
         .list-item-delete {
             display: flex;
             justify-content: flex-end;
@@ -89,14 +97,17 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             {{ file.name }}
                                         </q-item-label>
                                         <q-item-label class="full-width ellipsis">
-                                            <media-scientific-name-auto-complete :sciname="{tid: mediaData[file.name]['tid'], label: mediaData[file.name]['scientificname'], name: mediaData[file.name]['scientificname']}" label="Scientific Name" :filename="file.name" limit-to-thesaurus="true" accepted-taxa-only="true" @update:mediataxon="updateMediaScientificName"></media-scientific-name-auto-complete>
+                                            <media-scientific-name-auto-complete :sciname="{tid: file.tid, label: file.scientificname, name: file.scientificname}" label="Scientific Name" :filename="file.name" limit-to-thesaurus="true" accepted-taxa-only="true" @update:mediataxon="updateMediaScientificName"></media-scientific-name-auto-complete>
                                         </q-item-label>
-                                        <q-item-label caption>
-                                            {{ mediaData[file.name]['errorMessage'] }}
+                                        <q-item-label v-if="file.errorMessage" class="full-width ellipsis text-bold text-red">
+                                            {{ file.errorMessage }}
+                                        </q-item-label>
+                                        <q-item-label v-else class="full-width ellipsis text-bold text-green">
+                                            Ready to upload
                                         </q-item-label>
 
                                         <q-item-label caption>
-                                            {{ file.__sizeLabel }} / {{ file.__progressLabel }}
+                                            {{ file.__sizeLabel }}
                                         </q-item-label>
                                     </q-item-section>
                                     <q-item-section v-if="file.__img" style="max-height: 100px; max-width: 100px">
@@ -168,7 +179,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             data() {
                 return {
                     csvFileData: Vue.ref([]),
-                    mediaData: Vue.ref({}),
+                    fileArr: Vue.ref([]),
+                    systemProperties: Vue.ref(['format','type']),
                     taxaDataArr: Vue.ref([])
                 }
             },
@@ -184,7 +196,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             methods: {
                 cancelUpload(){
                     this.csvFileData = [];
-                    this.mediaData = {};
+                    this.fileArr = [];
                     this.taxaDataArr = [];
                     this.uploaderRef.reset();
                 },
@@ -233,6 +245,29 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.includes(dataObj['scientificname'])){
                                     taxaArr.push(dataObj['scientificname']);
                                 }
+                                if(dataObj.hasOwnProperty('filename') && dataObj['filename']){
+                                    const file = this.fileArr.find((obj) => obj.name.toLowerCase() === dataObj['filename'].toLowerCase());
+                                    if(file){
+                                        const keys = Object.keys(dataObj);
+                                        keys.forEach((key) => {
+                                            if(key !== 'filename' && dataObj[key] !== ''){
+                                                if(key === 'scientificname'){
+                                                    file['scientificname'] = dataObj[key];
+                                                }
+                                                else{
+                                                    const dataObj = file['metadata'].find((obj) => obj.name === key);
+                                                    if(dataObj){
+                                                        dataObj['value'] = dataObj[key];
+                                                    }
+                                                    else{
+                                                        file['metadata'].push({name: key, value: dataObj[key], system: this.systemProperties.includes(key)});
+                                                    }
+                                                }
+                                            }
+                                        });
+                                        this.uploaderRef.updateFileStatus(file,'csv-data');
+                                    }
+                                }
                             });
                             this.setTaxaData(taxaArr);
                         }
@@ -240,56 +275,56 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     fileReader.readAsText(file);
                 },
                 processImageFileData(file, csvData){
-                    this.mediaData[file.name]['type'] = 'StillImage';
-                    this.mediaData[file.name]['photographer'] = (csvData && csvData.hasOwnProperty('photographer') && csvData['photographer'] !== '') ? csvData['photographer'] : null;
-                    this.mediaData[file.name]['caption'] = (csvData && csvData.hasOwnProperty('caption') && csvData['caption'] !== '') ? csvData['caption'] : null;
-                    this.mediaData[file.name]['owner'] = (csvData && csvData.hasOwnProperty('owner') && csvData['owner'] !== '') ? csvData['owner'] : null;
-                    this.mediaData[file.name]['sourceurl'] = (csvData && csvData.hasOwnProperty('sourceurl') && csvData['sourceurl'] !== '') ? csvData['sourceurl'] : null;
-                    this.mediaData[file.name]['copyright'] = (csvData && csvData.hasOwnProperty('copyright') && csvData['copyright'] !== '') ? csvData['copyright'] : null;
-                    this.mediaData[file.name]['locality'] = (csvData && csvData.hasOwnProperty('locality') && csvData['locality'] !== '') ? csvData['locality'] : null;
-                    this.mediaData[file.name]['notes'] = (csvData && csvData.hasOwnProperty('notes') && csvData['notes'] !== '') ? csvData['notes'] : null;
+                    file['metadata'].push({name: 'type', value: 'StillImage', system: true});
+                    file['metadata'].push({name: 'photographer', value: ((csvData && csvData.hasOwnProperty('photographer') && csvData['photographer'] !== '') ? csvData['photographer'] : null), system: false});
+                    file['metadata'].push({name: 'caption', value: ((csvData && csvData.hasOwnProperty('caption') && csvData['caption'] !== '') ? csvData['caption'] : null), system: false});
+                    file['metadata'].push({name: 'owner', value: ((csvData && csvData.hasOwnProperty('owner') && csvData['owner'] !== '') ? csvData['owner'] : null), system: false});
+                    file['metadata'].push({name: 'sourceurl', value: ((csvData && csvData.hasOwnProperty('sourceurl') && csvData['sourceurl'] !== '') ? csvData['sourceurl'] : null), system: false});
+                    file['metadata'].push({name: 'copyright', value: ((csvData && csvData.hasOwnProperty('copyright') && csvData['copyright'] !== '') ? csvData['copyright'] : null), system: false});
+                    file['metadata'].push({name: 'locality', value: ((csvData && csvData.hasOwnProperty('locality') && csvData['locality'] !== '') ? csvData['locality'] : null), system: false});
+                    file['metadata'].push({name: 'notes', value: ((csvData && csvData.hasOwnProperty('notes') && csvData['notes'] !== '') ? csvData['notes'] : null), system: false});
                 },
                 processMediaFileData(file, csvData){
                     if(file.name.endsWith(".mp4")){
-                        this.mediaData[file.name]['type'] = 'MovingImage';
-                        this.mediaData[file.name]['format'] = 'video/mp4';
+                        file['metadata'].push({name: 'type', value: 'MovingImage', system: true});
+                        file['metadata'].push({name: 'format', value: 'video/mp4', system: true});
                     }
                     else if(file.name.endsWith(".webm")){
-                        this.mediaData[file.name]['type'] = 'MovingImage';
-                        this.mediaData[file.name]['format'] = 'video/webm';
+                        file['metadata'].push({name: 'type', value: 'MovingImage', system: true});
+                        file['metadata'].push({name: 'format', value: 'video/webm', system: true});
                     }
                     else if(file.name.endsWith(".ogg")){
-                        this.mediaData[file.name]['type'] = 'MovingImage';
-                        this.mediaData[file.name]['format'] = 'video/ogg';
+                        file['metadata'].push({name: 'type', value: 'MovingImage', system: true});
+                        file['metadata'].push({name: 'format', value: 'video/ogg', system: true});
                     }
                     else if(file.name.endsWith(".mp3")){
-                        this.mediaData[file.name]['type'] = 'Sound';
-                        this.mediaData[file.name]['format'] = 'audio/mpeg';
+                        file['metadata'].push({name: 'type', value: 'Sound', system: true});
+                        file['metadata'].push({name: 'format', value: 'audio/mpeg', system: true});
                     }
                     else if(file.name.endsWith(".wav")){
-                        this.mediaData[file.name]['type'] = 'Sound';
-                        this.mediaData[file.name]['format'] = 'audio/wav';
+                        file['metadata'].push({name: 'type', value: 'Sound', system: true});
+                        file['metadata'].push({name: 'format', value: 'audio/wav', system: true});
                     }
                     else if(file.name.endsWith(".zc")){
-                        this.mediaData[file.name]['type'] = 'Sound';
-                        this.mediaData[file.name]['format'] = null;
+                        file['metadata'].push({name: 'type', value: 'Sound', system: true});
+                        file['metadata'].push({name: 'format', value: null, system: true});
                     }
                     else{
-                        this.mediaData[file.name]['type'] = null;
-                        this.mediaData[file.name]['format'] = null;
+                        file['metadata'].push({name: 'type', value: null, system: true});
+                        file['metadata'].push({name: 'format', value: null, system: true});
                     }
-                    this.mediaData[file.name]['title'] = (csvData && csvData.hasOwnProperty('title') && csvData['title'] !== '') ? csvData['title'] : null;
-                    this.mediaData[file.name]['creator'] = (csvData && csvData.hasOwnProperty('creator') && csvData['creator'] !== '') ? csvData['creator'] : null;
-                    this.mediaData[file.name]['description'] = (csvData && csvData.hasOwnProperty('description') && csvData['description'] !== '') ? csvData['description'] : null;
-                    this.mediaData[file.name]['locationcreated'] = (csvData && csvData.hasOwnProperty('locationcreated') && csvData['locationcreated'] !== '') ? csvData['locationcreated'] : null;
-                    this.mediaData[file.name]['language'] = (csvData && csvData.hasOwnProperty('language') && csvData['language'] !== '') ? csvData['language'] : null;
-                    this.mediaData[file.name]['usageterms'] = (csvData && csvData.hasOwnProperty('usageterms') && csvData['usageterms'] !== '') ? csvData['usageterms'] : null;
-                    this.mediaData[file.name]['rights'] = (csvData && csvData.hasOwnProperty('rights') && csvData['rights'] !== '') ? csvData['rights'] : null;
-                    this.mediaData[file.name]['owner'] = (csvData && csvData.hasOwnProperty('owner') && csvData['owner'] !== '') ? csvData['owner'] : null;
-                    this.mediaData[file.name]['publisher'] = (csvData && csvData.hasOwnProperty('publisher') && csvData['publisher'] !== '') ? csvData['publisher'] : null;
-                    this.mediaData[file.name]['contributor'] = (csvData && csvData.hasOwnProperty('contributor') && csvData['contributor'] !== '') ? csvData['contributor'] : null;
-                    this.mediaData[file.name]['bibliographiccitation'] = (csvData && csvData.hasOwnProperty('bibliographiccitation') && csvData['bibliographiccitation'] !== '') ? csvData['bibliographiccitation'] : null;
-                    this.mediaData[file.name]['furtherinformationurl'] = (csvData && csvData.hasOwnProperty('furtherinformationurl') && csvData['furtherinformationurl'] !== '') ? csvData['furtherinformationurl'] : null;
+                    file['metadata'].push({name: 'title', value: ((csvData && csvData.hasOwnProperty('title') && csvData['title'] !== '') ? csvData['title'] : null), system: false});
+                    file['metadata'].push({name: 'creator', value: ((csvData && csvData.hasOwnProperty('creator') && csvData['creator'] !== '') ? csvData['creator'] : null), system: false});
+                    file['metadata'].push({name: 'description', value: ((csvData && csvData.hasOwnProperty('description') && csvData['description'] !== '') ? csvData['description'] : null), system: false});
+                    file['metadata'].push({name: 'locationcreated', value: ((csvData && csvData.hasOwnProperty('locationcreated') && csvData['locationcreated'] !== '') ? csvData['locationcreated'] : null), system: false});
+                    file['metadata'].push({name: 'language', value: ((csvData && csvData.hasOwnProperty('language') && csvData['language'] !== '') ? csvData['language'] : null), system: false});
+                    file['metadata'].push({name: 'usageterms', value: ((csvData && csvData.hasOwnProperty('usageterms') && csvData['usageterms'] !== '') ? csvData['usageterms'] : null), system: false});
+                    file['metadata'].push({name: 'rights', value: ((csvData && csvData.hasOwnProperty('rights') && csvData['rights'] !== '') ? csvData['rights'] : null), system: false});
+                    file['metadata'].push({name: 'owner', value: ((csvData && csvData.hasOwnProperty('owner') && csvData['owner'] !== '') ? csvData['owner'] : null), system: false});
+                    file['metadata'].push({name: 'publisher', value: ((csvData && csvData.hasOwnProperty('publisher') && csvData['publisher'] !== '') ? csvData['publisher'] : null), system: false});
+                    file['metadata'].push({name: 'contributor', value: ((csvData && csvData.hasOwnProperty('contributor') && csvData['contributor'] !== '') ? csvData['contributor'] : null), system: false});
+                    file['metadata'].push({name: 'bibliographiccitation', value: ((csvData && csvData.hasOwnProperty('bibliographiccitation') && csvData['bibliographiccitation'] !== '') ? csvData['bibliographiccitation'] : null), system: false});
+                    file['metadata'].push({name: 'furtherinformationurl', value: ((csvData && csvData.hasOwnProperty('furtherinformationurl') && csvData['furtherinformationurl'] !== '') ? csvData['furtherinformationurl'] : null), system: false});
                 },
                 setTaxaData(nameArr,fileName = null){
                     const formData = new FormData();
@@ -303,44 +338,47 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         response.json().then((resObj) => {
                             this.taxaDataArr = this.taxaDataArr.concat(resObj);
                             if(fileName && resObj.length === 1){
-                                this.mediaData[fileName]['scientificname'] = resObj[0]['sciname'];
-                                this.mediaData[fileName]['tid'] = resObj[0]['tid'];
+                                const file = this.fileArr.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
+                                file['scientificname'] = resObj[0]['sciname'];
+                                file['tid'] = resObj[0]['tid'];
+                                this.uploaderRef.updateFileStatus(file,'taxa-data');
                             }
                             this.updateMediaDataTids();
                         });
                     });
                 },
                 updateMediaDataTids(){
-                    for(let i in this.mediaData){
-                        if(this.mediaData.hasOwnProperty(i)){
-                            if(!this.mediaData[i].hasOwnProperty('tid') || this.mediaData[i].tid === ''){
-                                const sciname = this.mediaData[i].scientificname;
-                                if(sciname){
-                                    const taxonData = this.taxaDataArr.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
-                                    if(taxonData){
-                                        this.mediaData[i].tid = taxonData['tid'];
-                                        this.mediaData[i].errorMessage = '';
-                                    }
-                                    else{
-                                        this.mediaData[i].errorMessage = 'Scientific name not found in taxonomic thesaurus';
-                                    }
+                    this.fileArr.forEach((file) => {
+                        if(!file.hasOwnProperty('tid') || !file.tid || file.tid === ''){
+                            const sciname = file.scientificname;
+                            if(sciname){
+                                const taxonData = this.taxaDataArr.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
+                                if(taxonData){
+                                    file.tid = taxonData['tid'];
+                                    file.errorMessage = '';
                                 }
+                                else{
+                                    file.errorMessage = 'Scientific name not found in taxonomic thesaurus';
+                                }
+                                this.uploaderRef.updateFileStatus(file,'tid-data');
                             }
                         }
-                    }
+                    });
                 },
                 updateMediaScientificName(taxonObj) {
-                    this.mediaData[taxonObj['filename']]['scientificname'] = taxonObj['sciname'];
-                    this.mediaData[taxonObj['filename']]['tid'] = taxonObj['tid'];
+                    const file = this.fileArr.find((obj) => obj.name.toLowerCase() === taxonObj['filename'].toLowerCase());
+                    file['scientificname'] = taxonObj['sciname'];
+                    file['tid'] = taxonObj['tid'];
                     if(taxonObj['sciname'] && taxonObj['tid']){
-                        this.mediaData[taxonObj['filename']]['errorMessage'] = null;
+                        file['errorMessage'] = null;
                     }
                     else if(taxonObj['sciname']){
-                        this.mediaData[taxonObj['filename']]['errorMessage'] = 'Scientific name not found in taxonomic thesaurus';
+                        file['errorMessage'] = 'Scientific name not found in taxonomic thesaurus';
                     }
                     else{
-                        this.mediaData[taxonObj['filename']]['errorMessage'] = 'Scientific name required';
+                        file['errorMessage'] = 'Scientific name required';
                     }
+                    this.uploaderRef.updateFileStatus(file,taxonObj['sciname']);
                 },
                 uploadFiles(file){
                     console.log('upload');
@@ -349,7 +387,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     return false;
                 },
                 validateFiles(files){
-                    console.log(files);
                     const maxFileSizeBytes = MAX_UPLOAD_FILESIZE * 1000 * 1000;
                     const videoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
                     const audioTypes = ['audio/mpeg', 'audio/ogg', 'audio/wav'];
@@ -359,10 +396,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         const fileType = file.type;
                         const fileName = file.name;
                         const fileExtension = fileName.split('.').pop().toLowerCase();
+                        const existingData = this.fileArr.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
                         if(fileName.endsWith(".csv")){
                             this.processCsvFile(file);
                         }
-                        else if(!this.mediaData.hasOwnProperty(fileName) && (file.size <= maxFileSizeBytes && (videoTypes.includes(fileType) || audioTypes.includes(fileType) || fileExtensionTypes.includes(fileExtension)))){
+                        else if(!existingData && (file.size <= maxFileSizeBytes && (videoTypes.includes(fileType) || audioTypes.includes(fileType) || fileExtensionTypes.includes(fileExtension)))){
                             let tid = null;
                             let csvData = this.csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
                             if(!csvData){
@@ -378,24 +416,25 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     tid = taxonData['tid'];
                                 }
                             }
-                            this.mediaData[fileName] = {};
-                            this.mediaData[fileName]['scientificname'] = sciname;
-                            this.mediaData[fileName]['tid'] = tid;
+                            file['scientificname'] = sciname;
+                            file['tid'] = tid;
                             if(sciname && tid){
-                                this.mediaData[fileName]['errorMessage'] = null;
+                                file['errorMessage'] = null;
                             }
                             else if(sciname){
-                                this.mediaData[fileName]['errorMessage'] = 'Scientific name not found in taxonomic thesaurus';
+                                file['errorMessage'] = 'Scientific name not found in taxonomic thesaurus';
                             }
                             else{
-                                this.mediaData[fileName]['errorMessage'] = 'Scientific name required';
+                                file['errorMessage'] = 'Scientific name required';
                             }
+                            file['metadata'] = [];
                             if(videoTypes.includes(fileType) || audioTypes.includes(fileType) || fileName.endsWith(".zc")){
                                 this.processMediaFileData(file, csvData);
                             }
                             else{
                                 this.processImageFileData(file, csvData);
                             }
+                            this.fileArr.push(file);
                             returnArr.push(file);
                         }
                     });
