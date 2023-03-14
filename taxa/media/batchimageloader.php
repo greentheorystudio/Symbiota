@@ -68,9 +68,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             ?>
             <div>
                 <div class="instruction-container">
-                    To batch upload taxa images, either click the Add files button to select the files to be uploaded or drag and
+                    To batch upload taxa image, audio, and video files either click the Add files button to select the files to be uploaded or drag and
                     drop the files onto the box below. A csv spreadheet can also be uploaded to provide further metadata for the files.
-                    <a href="../../templates/batchTaxaImageData.csv"><b>Use this template for the csv spreadsheet.</b></a> For each
+                    <a href="../../templates/batchTaxaImageData.csv"><b>Use this template for the csv spreadsheet for image files. </b></a>
+                    <a href="../../templates/batchTaxaMediaData.csv"><b>Use this template for the csv spreadsheet for audio and video files.</b></a>
+                    Data for image files can be combined with data for audio and video files in the same csv spreadsheet. For each
                     row in the spreadsheet, the value in the filename column must match the filename of the associated file being uploaded.
                 </div>
                 <div class="button-csv-container">
@@ -355,6 +357,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     file['metadata'].push({name: 'contributor', value: ((csvData && csvData.hasOwnProperty('contributor') && csvData['contributor'] !== '') ? csvData['contributor'] : ''), system: false});
                     file['metadata'].push({name: 'bibliographiccitation', value: ((csvData && csvData.hasOwnProperty('bibliographiccitation') && csvData['bibliographiccitation'] !== '') ? csvData['bibliographiccitation'] : ''), system: false});
                     file['metadata'].push({name: 'furtherinformationurl', value: ((csvData && csvData.hasOwnProperty('furtherinformationurl') && csvData['furtherinformationurl'] !== '') ? csvData['furtherinformationurl'] : ''), system: false});
+                    file['metadata'].push({name: 'accessuri', value: ((csvData && csvData.hasOwnProperty('accessuri') && csvData['accessuri'] !== '') ? csvData['accessuri'] : ''), system: false});
                 },
                 processUploaded(info){
                     info.files.forEach((file) => {
