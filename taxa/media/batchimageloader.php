@@ -220,6 +220,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     this.csvFileData = [];
                     this.fileArr = [];
                     this.taxaDataArr = [];
+                    this.updateQueueSize();
                     this.uploaderRef.reset();
                 },
                 csvToArray(str){
