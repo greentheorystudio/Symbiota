@@ -26,14 +26,8 @@ class OccurrenceGeorefTools {
 	{
         $retArr = array();
 		if($this->collStr){
-		    if($GLOBALS['BROADGEOREFERENCE']){
-                $sql = 'SELECT occid, country, stateprovince, county, municipality, IFNULL(locality,CONCAT_WS(", ",country,stateProvince,county,municipality,verbatimcoordinates)) AS locality, verbatimcoordinates ,decimallatitude, decimallongitude '.
-                    'FROM omoccurrences WHERE (collid IN('.$this->collStr.')) ';
-            }
-            else{
-                $sql = 'SELECT occid, country, stateprovince, county, municipality, locality, verbatimcoordinates ,decimallatitude, decimallongitude '.
-                  'FROM omoccurrences WHERE (collid IN('.$this->collStr.')) AND (locality IS NOT NULL OR verbatimcoordinates IS NOT NULL) ';
-            }
+            $sql = 'SELECT occid, country, stateprovince, county, municipality, IFNULL(locality,CONCAT_WS(", ",country,stateProvince,county,municipality,verbatimcoordinates)) AS locality, verbatimcoordinates ,decimallatitude, decimallongitude '.
+                'FROM omoccurrences WHERE (collid IN('.$this->collStr.')) ';
 			if(!$this->qryVars || !array_key_exists('qdisplayall',$this->qryVars) || !$this->qryVars['qdisplayall']){
 				$sql .= 'AND (decimalLatitude IS NULL) ';
 			}

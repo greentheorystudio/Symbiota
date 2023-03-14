@@ -3,6 +3,9 @@ class Sanitizer {
 
     public static function cleanInStr($conn,$str): string
     {
+        if($str === 'null'){
+            $str = '';
+        }
         $newStr = trim($str);
         $newStr = preg_replace('/\s\s+/', ' ',$newStr);
         $newStr = $conn->real_escape_string($newStr);
