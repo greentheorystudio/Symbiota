@@ -36,12 +36,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             gap: 20px;
         }
         .thumbnail-section {
-            display: flex;
-            justify-content: space-around;
-        }
-        .thumbnail-container {
-            max-height: 100px;
-            max-width: 100px;
+            max-height: 120px;
+            max-width: 120px;
         }
         .list-item-delete {
             display: flex;
@@ -130,7 +126,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </q-item-label>
                                     </q-item-section>
                                     <q-item-section top class="col-2 gt-sm"></q-item-section>
-                                    <q-item-section v-if="file.__img" style="max-height: 100px; max-width: 100px" >
+                                    <q-item-section v-if="file.__img" class="thumbnail-section" >
                                         <q-img :src="file.__img.src" spinner-color="white"></q-img>
                                     </q-item-section>
                                     <q-item-section>
