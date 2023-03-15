@@ -8,7 +8,7 @@ $tId = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:null;
 $kingdomid = array_key_exists('kingdomid',$_REQUEST)?(int)$_REQUEST['kingdomid']:null;
 
 $isEditor = false;
-if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
+if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS']) || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
     $isEditor = true;
 }
 
@@ -98,5 +98,8 @@ if($action){
     }
     elseif($action === 'getTaxonomicTreeTaxonPath' && $tId){
         echo json_encode($taxUtilities->getTaxonomicTreeTaxonPath($tId));
+    }
+    elseif($action === 'getTaxaArrFromNameArr' && array_key_exists('taxa',$_POST)){
+        echo json_encode($taxUtilities->getTaxaArrFromNameArr(json_decode($_POST['taxa'], true)));
     }
 }

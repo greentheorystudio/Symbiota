@@ -1017,6 +1017,23 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
+    public function getTaxaArrFromNameArr($nameArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT sciname, tidaccepted FROM taxa  '.
+            'WHERE sciname IN("'.implode('","', $nameArr).'") ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                $nodeArr['tid'] = $r->tidaccepted;
+                $nodeArr['sciname'] = $r->sciname;
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
     public function setRankLimit($val): void
     {
         $this->rankLimit = Sanitizer::cleanInStr($this->conn,$val);
