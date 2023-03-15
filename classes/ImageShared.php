@@ -1014,23 +1014,17 @@ class ImageShared{
 		return $retArr;
 	}
 
-	private static function getImgDim2($imgUrl) {
-		$curl = curl_init($imgUrl);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Range: bytes=0-65536'));
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36');
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-		$data = curl_exec($curl);
-		curl_close($curl);
-		$im = @imagecreatefromstring($data);
-		$width = @imagesx($im);
-		$height = @imagesy($im);
-		if($im) {
-			imagedestroy($im);
-		}
-		if(!$width || !$height) {
-			return false;
-		}
-		return array($width,$height);
-	}
+    private static function getImgDim2($imgUrl) {
+        $data = file_get_contents($imgUrl);
+        $im = @imagecreatefromstring($data);
+        $width = @imagesx($im);
+        $height = @imagesy($im);
+        if($im) {
+            imagedestroy($im);
+        }
+        if(!$width || !$height) {
+            return false;
+        }
+        return array($width,$height);
+    }
 }
