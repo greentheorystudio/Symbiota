@@ -304,7 +304,7 @@ function processUploadFilesizeConfigurationChange(configname,oldValue){
 }
 
 function sendAPIRequest(action,configname,configvalue,reload = true){
-    configvalue = configvalue.replaceAll('+','%2B');
+    configvalue = configvalue.toString().replaceAll('+','%2B');
     const data = {};
     const http = new XMLHttpRequest();
     const url = "../../api/configurations/configurationModelController.php";
