@@ -269,6 +269,9 @@ class ConfigurationManager{
             $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
             $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
         }
+        if(!isset($GLOBALS['IMAGE_ROOT_URL'])){
+            $GLOBALS['IMAGE_ROOT_URL'] = '';
+        }
         if(!isset($GLOBALS['PORTAL_GUID']) || $GLOBALS['PORTAL_GUID'] === ''){
             $GLOBALS['PORTAL_GUID'] = $this->getGUID();
         }
