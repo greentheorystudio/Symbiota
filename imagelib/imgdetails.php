@@ -80,7 +80,7 @@ if($imgArr){
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../js/imagelib.imgdetails.js?ver=20221119" type="text/javascript"></script>
+	<script src="../js/imagelib.imgdetails.js?ver=20230316" type="text/javascript"></script>
 	<script src="../js/shared.js?ver=20221207" type="text/javascript"></script>
 </head>
 <body>
@@ -251,11 +251,9 @@ if($imgArr){
 										Transfer to Taxon:
 										<input type="text" id="targettaxon" name="targettaxon" size="40" />
 										<input type="hidden" id="targettid" name="targettid" value="" />
-
-										<input type="hidden" name="sourcetid" value="<?php echo $imgArr['tid'];?>" />
+                                        <input type="hidden" name="sourcetid" value="<?php echo $imgArr['tid'];?>" />
 										<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
-										<input type="hidden" name="submitaction" value="Transfer Image" />
-										<input type="submit" name="submitbutton" value="Transfer Image" />
+										<input type="submit" name="submitaction" value="Transfer Image" />
 									</div>
 							    </fieldset>
 							</form>
