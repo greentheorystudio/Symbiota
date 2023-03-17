@@ -169,10 +169,6 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                 alert("Image source path must have a value");
                 return false;
             }
-            else if(f.imgurl.value === ""){
-                alert("Image URL base must have a value");
-                return false;
-            }
         }
         if(f.patternreplace.value === "-- Optional --") {
             f.patternreplace.value = "";
@@ -696,7 +692,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                                 </div>
                                 <div style="clear:both;">
                                     <div>
-                                        <b>Look for and process skeletal files (allowed extensions: csv, txt, tab, dat):</b>
+                                        <b>Look for and process skeletal files (must be csv or txt):</b>
                                         <div style="margin:5px 15px">
                                             <input type="radio" name="skeletalFileProcessing" value="0" CHECKED />
                                             Skip skeletal files<br/>
