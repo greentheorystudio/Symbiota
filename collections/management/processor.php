@@ -95,7 +95,6 @@ $statusStr = '';
                     if($specManager->getJpgQuality()) {
                         $imageProcessor->setJpgQuality($specManager->getJpgQuality());
                     }
-                    $imageProcessor->setUseImageMagick($specManager->getUseImageMagick());
                     $imageProcessor->setWebImg($_POST['webimg']);
                     $imageProcessor->setTnImg($_POST['createtnimg']);
                     $imageProcessor->setLgImg($_POST['createlgimg']);
@@ -103,7 +102,6 @@ $statusStr = '';
                     $imageProcessor->setImgExists($_POST['imgexists']);
                     $imageProcessor->setKeepOrig(0);
                     $imageProcessor->setSkeletalFileProcessing($_POST['skeletalFileProcessing']);
-
                     $imageProcessor->batchLoadImages();
                     echo '</div>'."\n";
 				}
@@ -128,7 +126,7 @@ $statusStr = '';
 				}
 			}
 			?>
-			<div style="font-weight:bold;"><a href="index.php?collid=<?php echo $collid.'&tabindex='.$tabIndex; ?>"><b>Return to Occurrence Processor</b></a></div>
+			<div style="font-weight:bold;"><a href="../upload/index.php?collid=<?php echo $collid.'&tabindex='.$tabIndex; ?>"><b>Return to Occurrence Data Upload Module</b></a></div>
 		</div>
 		<?php
 			include(__DIR__ . '/../../footer.php');

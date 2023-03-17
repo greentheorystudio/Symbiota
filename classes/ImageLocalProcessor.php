@@ -125,15 +125,15 @@ class ImageLocalProcessor {
 				exit();
 			} 
 			preg_match('/http.+\s(\d{3})\s/i',$headerArr[0],$codeArr);
-			if($codeArr[1] === 403){
+			if((int)$codeArr[1] === 403){
 				$this->logOrEcho('ABORT: sourcePathBase returned Forbidden ('.$this->sourcePathBase.')');
 				exit();
 			}
-			if($codeArr[1] === 404){
+			elseif((int)$codeArr[1] === 404){
 				$this->logOrEcho('ABORT: sourcePathBase returned a page Not Found error ('.$this->sourcePathBase.')');
 				exit();
 			}
-			if($codeArr[1] !== 200){
+			elseif((int)$codeArr[1] !== 200){
 				$this->logOrEcho('ABORT: sourcePathBase returned error code '.$codeArr[1].' ('.$this->sourcePathBase.')');
 				exit();
 			}
@@ -141,9 +141,6 @@ class ImageLocalProcessor {
 		elseif(!file_exists($this->sourcePathBase)){
 			$this->logOrEcho('ABORT: sourcePathBase does not exist ('.$this->sourcePathBase.')');
 			exit();
-		}
-		if(!$this->targetPathBase){
-			$this->targetPathBase = $GLOBALS['IMAGE_ROOT_PATH'];
 		}
 		if(!$this->targetPathBase){
 			$this->targetPathBase = $GLOBALS['IMAGE_ROOT_PATH'];
@@ -228,10 +225,10 @@ class ImageLocalProcessor {
 			}
 
 			$this->logOrEcho('Starting image processing: '.$sourcePathFrag);
-			if(strncmp($this->sourcePathBase, 'http', 4) === 0){
+            if(strncmp($this->sourcePathBase, 'http', 4) === 0){
 				$this->processHtml($sourcePathFrag);
 			}
-			else if($this->errorMessage === 'abort' && !$this->processFolder($sourcePathFrag)) {
+			else if($this->errorMessage === 'abort' || !$this->processFolder($sourcePathFrag)) {
 				$this->errorMessage = '';
 				continue;
 			}
@@ -537,7 +534,7 @@ class ImageLocalProcessor {
 						if($this->lgImg === 1){
 							if($width > ($this->webPixWidth*1.3)){
 								if($width > $this->lgPixWidth || ($fileSize && $fileSize > $this->lgFileSizeLimit)){
-									if($this->createNewImage($sourcePath.$fileName,$targetPath.$lgTargetFileName,$this->lgPixWidth,round($this->lgPixWidth*$height/$width),$width,$height)){
+									if($this->createNewImage($sourcePath.$fileName,$targetPath.$lgTargetFileName,$this->lgPixWidth,round($this->lgPixWidth*($height/$width)),$width,$height)){
 										$lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
 										$this->logOrEcho('Resized source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
 									}
@@ -585,7 +582,7 @@ class ImageLocalProcessor {
 					if($this->tnImg){
 						$tnTargetFileName = substr($targetFileName,0,-4). '_tn.jpg';
 						if($this->tnImg === 1){
-							if($this->createNewImage($sourcePath.$fileName,$targetPath.$tnTargetFileName,$this->tnPixWidth,round($this->tnPixWidth*$height/$width),$width,$height)){
+							if($this->createNewImage($sourcePath.$fileName,$targetPath.$tnTargetFileName,$this->tnPixWidth,round($this->tnPixWidth*($height/$width)),$width,$height)){
 								$tnUrlFrag = $this->imgUrlBase.$targetFrag.$tnTargetFileName;
 								$this->logOrEcho('Created thumbnail from source (' .date('Y-m-d h:i:s A'). ') ',1);
 							}
@@ -1367,7 +1364,7 @@ class ImageLocalProcessor {
 			$p .= '/';
 		}
 		$this->sourcePathBase = $p;
-	}
+    }
 
 	public function setTargetPathBase($p): void
 	{
@@ -1413,62 +1410,47 @@ class ImageLocalProcessor {
 
 	public function setWebPixWidth($w): void
 	{
-		$this->webPixWidth = $w;
+		$this->webPixWidth = (int)$w;
 	}
 
 	public function setTnPixWidth($tn): void
 	{
-		$this->tnPixWidth = $tn;
+		$this->tnPixWidth = (int)$tn;
 	}
 
 	public function setLgPixWidth($lg): void
 	{
-		$this->lgPixWidth = $lg;
+		$this->lgPixWidth = (int)$lg;
 	}
 
 	public function setWebFileSizeLimit($size): void
 	{
-		$this->webFileSizeLimit = $size;
+		$this->webFileSizeLimit = (int)$size;
 	}
 
 	public function setLgFileSizeLimit($size): void
 	{
-		$this->lgFileSizeLimit = $size;
+		$this->lgFileSizeLimit = (int)$size;
 	}
 
 	public function setJpgQuality($q): void
 	{
-		$this->jpgQuality = $q;
+		$this->jpgQuality = (int)$q;
 	}
 
 	public function setWebImg($c): void
 	{
-		$this->webImg = $c;
+		$this->webImg = (int)$c;
 	}
 
 	public function setTnImg($c): void
 	{
-		$this->tnImg = $c;
+		$this->tnImg = (int)$c;
 	}
 
 	public function setLgImg($c): void
 	{
-		$this->lgImg = $c;
-	}
-
-	public function setCreateWebImg($c): void
-	{
-		$this->webImg = $c;
-	}
-
-	public function setCreateTnImg($c): void
-	{
-		$this->tnImg = $c;
-	}
-
-	public function setCreateLgImg($c): void
-	{
-		$this->lgImg = $c;
+		$this->lgImg = (int)$c;
 	}
 
 	public function setKeepOrig($c): void
@@ -1486,19 +1468,9 @@ class ImageLocalProcessor {
 		$this->createNewRec = $c;
 	}
 
-	public function setCopyOverImg($c): void
-	{
-		if($c === 1){
-			$this->imgExists = 2;
-		}
-		else{
-			$this->imgExists = 1;
-		}
-	}
-
 	public function setImgExists($c): void
 	{
-		$this->imgExists = $c;
+		$this->imgExists = (int)$c;
 	}
 
 	public function setDbMetadata($v): void
@@ -1506,14 +1478,9 @@ class ImageLocalProcessor {
 		$this->dbMetadata = $v;
 	}
 
-	public function setUseImageMagick($useIM): void
-	{
-		$this->processUsingImageMagick = $useIM;
-	}
-
 	public function setLogMode($c): void
 	{
-		$this->logMode = $c;
+		$this->logMode = (int)$c;
 	}
 
 	public function setLogPath($path): void

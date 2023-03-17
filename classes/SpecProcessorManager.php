@@ -30,7 +30,6 @@ class SpecProcessorManager {
 	protected $createTnImg = 1;
 	protected $createLgImg = 2;
 	protected $lastRunDate = '';
-	protected $processUsingImageMagick = 0;
 
 	public function __construct() {
 		$connection = new DbConnection();
@@ -636,12 +635,7 @@ class SpecProcessorManager {
 		return $this->lastRunDate;
 	}
 
-	public function getUseImageMagick(): int
-	{
- 		return $this->processUsingImageMagick;
- 	}
-
- 	public function getConn(): mysqli
+	public function getConn(): mysqli
 	{
  		return $this->conn;
  	}
