@@ -1034,6 +1034,66 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
+    public function getTaxonFromTid($tid, $includeCommonNames = false): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.SciName, t.Author, k.kingdom_name, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
+            'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
+            'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
+            'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
+            'WHERE t.TID = '.$tid.' ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $retArr['sciname'] = $r->SciName;
+                $retArr['author'] = $r->Author;
+                $retArr['kingdom'] = $r->kingdom_name;
+                $retArr['rankid'] = (int)$r->RankId;
+                $retArr['tidaccepted'] = $r->tidaccepted;
+                $retArr['acceptedsciname'] = $r->acceptedSciName;
+                $retArr['parenttid'] = $r->parenttid;
+                $retArr['parentsciname'] = $r->parentSciName;
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($tid);
+                if($includeCommonNames){
+                    $retArr['commonnames'] = $this->getCommonNamesFromTid($tid);
+                }
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getTaxonIdentifiersFromTid($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT `name`, identifier FROM taxaidentifiers WHERE tid = '.$tid.' ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                $nodeArr['name'] = $r->name;
+                $nodeArr['identifier'] = $r->identifier;
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getCommonNamesFromTid($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT VernacularName, langid FROM taxavernaculars WHERE TID = '.$tid.' ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                $nodeArr['commonname'] = $r->VernacularName;
+                $nodeArr['langid'] = $r->langid;
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
     public function setRankLimit($val): void
     {
         $this->rankLimit = Sanitizer::cleanInStr($this->conn,$val);

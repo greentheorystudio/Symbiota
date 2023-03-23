@@ -20,12 +20,13 @@ class LanguageManager {
     public function getLanguageArr(): array
     {
         $retArr = array();
-        $sql = 'SELECT iso639_1, langname '.
+        $sql = 'SELECT langid, iso639_1, langname '.
             'FROM adminlanguages '.
             'ORDER BY langname ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $langArr = array();
+            $langArr['langid'] = (int)$r->langid;
             $langArr['iso'] = $r->iso639_1;
             $langArr['name'] = $r->langname;
             $retArr[] = $langArr;
