@@ -1044,3 +1044,8 @@ ol.report-caterories li p.heading {
 ul.further-reading-list li {
 	padding: 5px;
 }
+
+a.header-home-link, a.header-home-link:hover, a.header-home-link:visited {
+	text-decoration: none;
+	color: white;
+}
