@@ -6,16 +6,15 @@ $con = $connection->getConnection();
 $retArr = array();
 $q = $con->real_escape_string($_REQUEST['term']);
 
-$sql = 'SELECT COUNT(t.tid) AS ct, t.tid, t.sciname FROM taxa AS t '.
-    'LEFT JOIN images AS i ON t.tid = i.tid ' .
-	'WHERE i.tid IS NOT NULL AND (i.sortsequence < 500 OR t.rankid < 220) AND t.sciname LIKE "'.$q.'%" GROUP BY t.tid, t.sciname ';
+$sql = 'SELECT t.tid, t.sciname FROM taxa AS t '.
+    'WHERE t.sciname LIKE "'.$q.'%" ORDER BY t.sciname ';
 //echo $sql;
 $result = $con->query($sql);
 while ($r = $result->fetch_object()) {
-    $retArr[] = (object)array(
+    $retArr[] = array(
         'id' => $r->sciname,
-		'value' => $r->tid,
-        'label' => $r->sciname . ' ('. $r->ct . ')');
+        'value' => $r->tid,
+        'label' => $r->sciname);
 }
 $con->close();
 echo json_encode($retArr);

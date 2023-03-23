@@ -22,10 +22,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Encyclopedia of Life Media Importer</title>
-	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <style>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<style>
         .processor-container {
             width: 95%;
             margin: 20px auto;
@@ -62,16 +61,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             text-decoration: none;
         }
     </style>
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script src="../../js/external/jquery.js" type="text/javascript"></script>
-	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
 </head>
 <body>
     <?php
         include(__DIR__ . '/../../header.php');
     ?>
     <div class="navpath">
-        <a href="../../index.php">Home</a> &gt;&gt;
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
         <b>Encyclopedia of Life Media Importer</b>
     </div>
     <div id="innertext">
@@ -806,7 +803,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 });
                             }
                             else{
-                                const text = getErrorResponseText(response.status,response.statusText);
                                 this.processSubprocessErrorResponse(this.currentTaxon['sciname'],'Error getting records');
                                 this.setCurrentTaxon();
                             }
