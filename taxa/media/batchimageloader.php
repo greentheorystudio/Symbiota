@@ -82,7 +82,12 @@ $taxaUtilities = new TaxonomyUtilities();
                         <strong class="errorUploadMessage" style="color:red;{%=file.errorMessage?'display:block;':'display:none;'%}width:350px;">Not linked to the thesaurus</strong>
                     </div>
                     <div>
-                        <strong class="linkedDataMessage" style="display:none;">Additional data: </strong><span class="linkedDataDisplay"></span>
+                        {% if (file.additionalDataStr) { %}
+                            <strong class="linkedDataMessage">Additional data: </strong><span class="linkedDataDisplay">{%=file.additionalDataStr%}</span>
+                        {% } %}
+                        {% if (!file.additionalDataStr) { %}
+                            <strong class="linkedDataMessage" style="display:none;">Additional data: </strong><span class="linkedDataDisplay"></span>
+                        {% } %}
                     </div>
                     <input type="hidden" name="tid" value="{%=file.tid?file.tid:''%}">
                     <input type="hidden" name="photographer" value="{%=file.photographer?file.photographer:''%}">
@@ -141,23 +146,49 @@ $taxaUtilities = new TaxonomyUtilities();
                         data.files.splice(data, 1);
                     }
                     else if(fileType === 'jpeg' || fileType === 'jpg' || fileType === 'png'){
+                        let dataObj = null;
                         let imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.toLowerCase());
                         if(!imageFileData){
                             imageFileData = fileData.find((obj) => obj.filename.toLowerCase() === fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase());
                         }
                         if(imageFileData){
-                            data.files[0].scientificname = imageFileData.scientificname;
+                            dataObj = {};
+                            if(imageFileData.hasOwnProperty('scientificname') && imageFileData.scientificname){
+                                data.files[0].scientificname = imageFileData.scientificname;
+                            }
                             if(imageFileData.hasOwnProperty('tid') && imageFileData.tid){
                                 data.files[0].tid = imageFileData.tid;
                             }
-                            data.files[0].photographer = imageFileData.photographer;
-                            data.files[0].caption = imageFileData.caption;
-                            data.files[0].owner = imageFileData.owner;
-                            data.files[0].sourceurl = imageFileData.sourceurl;
-                            data.files[0].copyright = imageFileData.copyright;
-                            data.files[0].locality = imageFileData.locality;
-                            data.files[0].notes = imageFileData.notes;
+                            if(imageFileData.hasOwnProperty('photographer') && imageFileData.photographer){
+                                data.files[0].photographer = imageFileData.photographer;
+                                dataObj['photographer'] = imageFileData.photographer;
+                            }
+                            if(imageFileData.hasOwnProperty('caption') && imageFileData.caption){
+                                data.files[0].caption = imageFileData.caption;
+                                dataObj['caption'] = imageFileData.caption;
+                            }
+                            if(imageFileData.hasOwnProperty('owner') && imageFileData.owner){
+                                data.files[0].owner = imageFileData.owner;
+                                dataObj['owner'] = imageFileData.owner;
+                            }
+                            if(imageFileData.hasOwnProperty('sourceurl') && imageFileData.sourceurl){
+                                data.files[0].sourceurl = imageFileData.sourceurl;
+                                dataObj['sourceurl'] = imageFileData.sourceurl;
+                            }
+                            if(imageFileData.hasOwnProperty('copyright') && imageFileData.copyright){
+                                data.files[0].copyright = imageFileData.copyright;
+                                dataObj['copyright'] = imageFileData.copyright;
+                            }
+                            if(imageFileData.hasOwnProperty('locality') && imageFileData.locality){
+                                data.files[0].locality = imageFileData.locality;
+                                dataObj['locality'] = imageFileData.locality;
+                            }
+                            if(imageFileData.hasOwnProperty('notes') && imageFileData.notes){
+                                data.files[0].notes = imageFileData.notes;
+                                dataObj['notes'] = imageFileData.notes;
+                            }
                         }
+                        data.files[0].additionalDataStr = dataObj ? JSON.stringify(dataObj).toString() : '';
                         if(!data.files[0].hasOwnProperty('scientificname') || !data.files[0].scientificname){
                             parseScinameFromFilename(fileName);
                             data.files[0].errorMessage = 'Scientific name required';
@@ -491,7 +522,7 @@ $taxaUtilities = new TaxonomyUtilities();
                     const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     return headers.reduce(function (object, header, index) {
                         const fieldName = header.trim();
-                        let fieldValue = values[index].replace('\r', '');
+                        let fieldValue = values[index] ? values[index].replace('\r', '') : '';
                         if(fieldValue.startsWith('"')){
                             fieldValue = fieldValue.replaceAll('"','');
                         }
