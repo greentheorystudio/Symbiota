@@ -238,7 +238,7 @@ class TaxonomyEditorManager{
 		return $statusStr;
 	}
 	
-	public function submitChangeToNotAccepted($tid,$tidAccepted): string
+	public function submitChangeToNotAccepted($tid,$tidAccepted,$kingdom = false): string
 	{
 		$status = '';
 		if(is_numeric($tid)){
@@ -249,7 +249,17 @@ class TaxonomyEditorManager{
 				if(!$this->conn->query($sqlSyns)){
 					$status = 'ERROR: unable to transfer linked synonyms to accepted taxon.';
 				}
-				
+                $sqlParent = 'UPDATE taxa SET parenttid = '.$tidAccepted.' WHERE parenttid = '.$tid.' ';
+                if(!$this->conn->query($sqlParent)){
+                    $status = 'ERROR: unable to transfer children taxa to accepted taxon.';
+                }
+                $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = '.$tidAccepted.' WHERE parenttid = '.$tid.' ';
+                if(!$this->conn->query($sqlHierarchy)){
+                    $status = 'ERROR: unable to update taxonomic hierarchy with accepted taxon.';
+                }
+				if($kingdom){
+                    $this->updateKingdomAcceptance($tid,$tidAccepted);
+                }
 				$this->updateDependentData($tid,$tidAccepted);
 			}
 			else {
@@ -258,6 +268,30 @@ class TaxonomyEditorManager{
 		}
 		return $status;
 	}
+
+    private function updateKingdomAcceptance($tid, $tidNew): void
+    {
+        if(is_numeric($tid) && is_numeric($tidNew)){
+            $oldKingdomId = 0;
+            $newKingdomId = 0;
+            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.SciName = k.kingdom_name WHERE t.TID = '.$tid.' ';
+            $rs = $this->conn->query($sql);
+            if($r = $rs->fetch_object()){
+                $oldKingdomId = $r->kingdom_id;
+            }
+            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.SciName = k.kingdom_name WHERE t.TID = '.$tidNew.' ';
+            $rs = $this->conn->query($sql);
+            if($r = $rs->fetch_object()){
+                $newKingdomId = $r->kingdom_id;
+            }
+            if($oldKingdomId && $newKingdomId){
+                $sql = 'UPDATE taxa SET kingdomId = '.$newKingdomId.' WHERE kingdomId = '.$oldKingdomId.' ';
+                $this->conn->query($sql);
+                $sql = 'DELETE FROM taxonkingdoms WHERE kingdom_id = '.$oldKingdomId.' ';
+                $this->conn->query($sql);
+            }
+        }
+    }
 	
 	private function updateDependentData($tid, $tidNew): void
 	{
@@ -266,6 +300,11 @@ class TaxonomyEditorManager{
 			$this->conn->query('UPDATE IGNORE kmdescr SET tid = '.$tidNew.' WHERE tid = '.$tid.' ');
 			$this->conn->query('DELETE FROM kmdescr WHERE tid = '.$tid.' ');
 			$this->resetCharStateInheritance($tidNew);
+
+            $sqlVerns = 'DELETE v2.* '.
+                'FROM taxavernaculars AS v1 LEFT JOIN taxavernaculars AS v2 ON v1.VernacularName = v2.VernacularName AND v1.langid = v2.langid '.
+                'WHERE v1.TID = '.$tidNew.' AND v2.TID = '.$tid.' AND v2.VID IS NOT NULL ';
+            $this->conn->query($sqlVerns);
 			
 			$sqlVerns = 'UPDATE taxavernaculars SET tid = '.$tidNew.' WHERE tid = '.$tid.' ';
 			$this->conn->query($sqlVerns);
@@ -362,6 +401,9 @@ class TaxonomyEditorManager{
 
     public function validateNewTaxonArr($dataArr): array
     {
+        if(array_key_exists('rankid',$dataArr) && (int)$dataArr['rankid'] === 10 && Sanitizer::cleanInStr($this->conn,$dataArr['sciname'])){
+            $dataArr['kingdomid'] = $this->addNewTaxonomicKingdom($dataArr['sciname']);
+        }
         if((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family'])){
             $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE tid = '.(int)$dataArr['parenttid'].' ';
             //echo $sqlKg; exit;
@@ -394,6 +436,16 @@ class TaxonomyEditorManager{
             $dataArr['securitystatus'] = 0;
         }
         return $dataArr;
+    }
+
+    public function addNewTaxonomicKingdom($name): int
+    {
+        $retVal = 0;
+        $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("'.Sanitizer::cleanInStr($this->conn,$name).'")';
+        if($this->conn->query($sql)){
+            $retVal = $this->conn->insert_id;
+        }
+        return $retVal;
     }
 
     public function updateOccurrencesNewTaxon($dataArr): void

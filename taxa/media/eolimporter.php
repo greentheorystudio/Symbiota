@@ -443,7 +443,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
-                        if(mediaRecord['language'] === this.descriptionLanguage['iso']){
+                        if(mediaRecord['language'] === this.descriptionLanguage['iso-1']){
                             if(this.selectedDescSaveMethod === 'singletab'){
                                 const existingEOLTab = this.taxonMediaArr.length > 0 ? this.taxonMediaArr.find(obj => obj['caption'] === 'Encyclopedia of Life') : null;
                                 const newTaxonStatement = {};

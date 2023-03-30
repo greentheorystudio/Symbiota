@@ -106,4 +106,8 @@ if($action){
         $includeCommonNames = array_key_exists('includeCommonNames',$_POST) && $_POST['includeCommonNames'];
         echo json_encode($taxUtilities->getTaxonFromTid($_POST['tid'], $includeCommonNames));
     }
+    elseif($isEditor && $action === 'updateTaxonTidAccepted' && $tId && array_key_exists('tidaccepted',$_POST) && (int)$_POST['tidaccepted']){
+        $kingdom = array_key_exists('kingdom',$_POST)?$_POST['kingdom']:false;
+        echo $taxEditorManager->submitChangeToNotAccepted($tId,$_POST['tidaccepted'],$kingdom);
+    }
 }

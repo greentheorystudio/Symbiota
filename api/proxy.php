@@ -29,6 +29,10 @@ if(Sanitizer::validateInternalRequest()){
     }
     $result = curl_exec($curl);
     curl_close($curl);
-
-    echo mb_convert_encoding($result, $GLOBALS['CHARSET'], 'UTF-8,ISO-8859-1');
+    if($result){
+        echo mb_convert_encoding($result, $GLOBALS['CHARSET'], 'UTF-8,ISO-8859-1');
+    }
+    else{
+        echo '{}';
+    }
 }

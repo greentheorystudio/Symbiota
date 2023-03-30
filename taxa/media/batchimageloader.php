@@ -232,7 +232,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                             return headers.reduce(function (object, header, index) {
                                 const fieldName = header.trim();
-                                let fieldValue = values[index].replace('\r', '');
+                                let fieldValue = values[index] ? values[index].replace('\r', '') : '';
                                 if(fieldValue.startsWith('"')){
                                     fieldValue = fieldValue.replaceAll('"','');
                                 }

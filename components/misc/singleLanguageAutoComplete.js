@@ -5,7 +5,7 @@ const singleLanguageAutoComplete = {
         },
         label: {
             type: String,
-            default: 'Scientific Name'
+            default: 'Language'
         },
         disable: {
             type: Boolean,
@@ -42,7 +42,7 @@ const singleLanguageAutoComplete = {
         },
         getOptions(val, update) {
             update(() => {
-                if(val.length > 0) {
+                if(val.length > 1) {
                     const formData = new FormData();
                     formData.append('action', 'getAutocompleteLanguageList');
                     formData.append('term', val);

@@ -1037,13 +1037,14 @@ class TaxonomyUtilities {
     public function getTaxonFromTid($tid, $includeCommonNames = false): array
     {
         $retArr = array();
-        $sql = 'SELECT t.SciName, t.Author, k.kingdom_name, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
+        $sql = 'SELECT t.TID, t.SciName, t.Author, k.kingdom_name, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
             'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
             'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
             'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
             'WHERE t.TID = '.$tid.' ';
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
+                $retArr['tid'] = $r->TID;
                 $retArr['sciname'] = $r->SciName;
                 $retArr['author'] = $r->Author;
                 $retArr['kingdom'] = $r->kingdom_name;
