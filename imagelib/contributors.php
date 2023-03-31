@@ -32,8 +32,8 @@ $pManager = new ImageLibraryManager();
 			echo '<div style="margin-left:15px">';
 			foreach($pList as $uid => $pArr){
 				echo '<div>';
-				$phLink = 'search.php?imagedisplay=thumbnail&imagetype=all&phuidstr='.$uid.'&phjson=[{'.urlencode('"name":"'.$pArr['fullname'].'","id":"'.$uid.'"').'}]&submitaction=Load Images';
-				echo '<a href="'.$phLink.'">'.$pArr['name'].'</a> ('.$pArr['imgcnt'].')</div>';
+				$phLink = 'search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"phuid":"'.$uid.'"}';
+				echo "<a href='".$phLink."'>".$pArr['name'].'</a> ('.$pArr['imgcnt'].')</div>';
 			}
 			echo '</div>';
 			echo '</div>';
@@ -50,8 +50,8 @@ $pManager = new ImageLibraryManager();
                     echo '<div style="margin-left:15px;margin-bottom:20px">';
                     foreach($specList as $k => $cArr){
                         echo '<div>';
-                        $phLink = 'search.php?nametype=2&taxtp=2&imagecount=all&imagedisplay=thumbnail&imagetype=all&submitaction=Load%20Images&db[]='.$k;
-                        echo '<a href="'.$phLink.'">'.$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
+                        $phLink = 'search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"db":"'.$k.'"}';
+                        echo "<a href='".$phLink."'>".$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
                     }
                     echo '</div>';
                 }
@@ -62,8 +62,8 @@ $pManager = new ImageLibraryManager();
                     echo '<div style="margin-left:15px">';
                     foreach($obsList as $k => $cArr){
                         echo '<div>';
-                        $phLink = 'search.php?nametype=2&taxtp=2&imagecount=all&imagedisplay=thumbnail&imagetype=all&submitaction=Load%20Images&db[]='.$k;
-                        echo '<a href="'.$phLink.'">'.$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
+                        $phLink = 'search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"db":"'.$k.'"}';
+                        echo "<a href='".$phLink."'>".$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
                     }
                     echo '</div>';
                 }

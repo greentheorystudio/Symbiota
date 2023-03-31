@@ -48,7 +48,7 @@ if($stArrJson){
 	<script type="text/javascript">
         $('html').hide();
         let stArr = {};
-        let phArr = new Array();
+        let phArr = [];
         let selectedFamily = '';
 
         $(document).ready(function() {
