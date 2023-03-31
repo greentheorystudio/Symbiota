@@ -524,7 +524,7 @@ class SpecProcessorManager {
     {
         $retArr = array();
         if($this->collid){
-            $GLOBALS['LOG_PATHFrag'] = 'imgProccessing/';
+            $GLOBALS['LOG_PATHFrag'] = '/imgProccessing';
             if(file_exists($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag']) && $fh = opendir($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag'])) {
                 while($fileName = readdir($fh)){
                     if(strpos($fileName,$this->collid.'_') === 0){
