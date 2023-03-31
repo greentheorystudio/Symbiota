@@ -1,4 +1,4 @@
-<?php 
+<?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
@@ -32,45 +32,45 @@ if($stArrJson){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Search</title>
-	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Search</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
-	<script src="../js/external/jquery.js" type="text/javascript"></script>
-	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
-	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
+    <script src="../js/external/jquery.js" type="text/javascript"></script>
+    <script src="../js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
+    <script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-	<script src="../js/images.index.js?ver=20221115" type="text/javascript"></script>
+    <script src="../js/images.index.js?ver=20221115" type="text/javascript"></script>
     <script src="../js/search.term.manager.js?ver=20221110" type="text/javascript"></script>
-	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	<script type="text/javascript">
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script type="text/javascript">
         $('html').hide();
         let stArr = {};
-        let phArr = new Array();
+        let phArr = [];
         let selectedFamily = '';
 
         $(document).ready(function() {
-			let qtaxaArr;
+            let qtaxaArr;
             $('#tabs').tabs({
                 beforeLoad: function( event, ui ) {
-					$(ui.panel).html("<p>Loading...</p>");
-				}
-			});
-			
-			$('#photographer').manifest({
-				required: true,
-				marcoPolo: {
-					url: '../api/search/imagesearchautofill.php',
-					data: {
-						t: 'photographer'
-					},
-					formatItem: function (data){
-						return data.name;
-					}
-				}
-			});
+                    $(ui.panel).html("<p>Loading...</p>");
+                }
+            });
+
+            $('#photographer').manifest({
+                required: true,
+                marcoPolo: {
+                    url: '../api/search/imagesearchautofill.php',
+                    data: {
+                        t: 'photographer'
+                    },
+                    formatItem: function (data){
+                        return data.name;
+                    }
+                }
+            });
 
             $('#taxainput').manifest({
                 marcoPolo: {
@@ -111,26 +111,26 @@ if($stArrJson){
             initializeSearchStorage(<?php echo $queryId; ?>);
             <?php
             if($queryId || $validStArr){
-                if($validStArr){
-                    ?>
-                    initializeSearchStorage(<?php echo $queryId; ?>);
-                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-                    <?php
-                }
-                ?>
-                stArr = getSearchTermsArr();
-                if(validateSearchTermsArr(stArr)){
-                    setParamsForm();
-                    setCollectionForms();
-                    document.getElementById('imagetab').style.display = "block";
-                    $('#tabs').tabs({ active: 2 });
-                    changeImagePage("",stArr['imagedisplay'],1);
-                }
-                <?php
+            if($validStArr){
+            ?>
+            initializeSearchStorage(<?php echo $queryId; ?>);
+            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+            <?php
+            }
+            ?>
+            stArr = getSearchTermsArr();
+            if(validateSearchTermsArr(stArr)){
+                setParamsForm();
+                setCollectionForms();
+                document.getElementById('imagetab').style.display = "block";
+                $('#tabs').tabs({ active: 2 });
+                changeImagePage("",stArr['imagedisplay'],1);
+            }
+            <?php
             }
             ?>
 
-			$('#taxainput').on('manifestchange', function (event, data) {
+            $('#taxainput').on('manifestchange', function (event, data) {
                 const taxavals = $('#taxainput').manifest('values');
                 if(taxavals.length > 0){
                     document.getElementById('taxa').value = taxavals.join();
@@ -162,22 +162,22 @@ if($stArrJson){
                 }
                 processTextParamChange();
             });
-			
-			$('#photographer').on('marcopoloselect', function (event, data) {
-				phArr.push({name:data.name,id:data.id});
+
+            $('#photographer').on('marcopoloselect', function (event, data) {
+                phArr.push({name:data.name,id:data.id});
                 processPhotographerChange();
-			});
-			
-			$('#photographer').on('manifestremove',function (event, data){
-				for (let i = 0; i < phArr.length; i++) {
-					if(phArr[i].name === data){
-						phArr.splice(i,1);
-					}
-				}
+            });
+
+            $('#photographer').on('manifestremove',function (event, data){
+                for (let i = 0; i < phArr.length; i++) {
+                    if(phArr[i].name === data){
+                        phArr.splice(i,1);
+                    }
+                }
                 processPhotographerChange();
-			});
+            });
             $('html').show();
-		});
+        });
 
         function processParamsForm(){
             const f = document.getElementById('imagesearchform');
@@ -223,8 +223,8 @@ if($stArrJson){
                 changeImagePage("",stArr['imagedisplay'],1);
             }
         }
-		
-		function changeImagePage(taxon,view,page){
+
+        function changeImagePage(taxon,view,page){
             if(!view){
                 view = document.getElementById('imagedisplay').value;
             }
@@ -347,10 +347,10 @@ if($stArrJson){
 
         function processImageDisplayChange(){
             const displayValue = document.getElementById('imagedisplay').value;
-		    if(displayValue === "thumbnail"){
+            if(displayValue === "thumbnail"){
                 document.getElementById('imagetabtext').innerHTML = "Images";
             }
-		    if(displayValue === "taxalist"){
+            if(displayValue === "taxalist"){
                 clearSciNameVals();
                 clearCommonNameVals();
                 document.getElementById('imagetabtext').innerHTML = "Taxa List";
@@ -391,173 +391,173 @@ if($stArrJson){
     </script>
 </head>
 <body>
-	<?php
-	include(__DIR__ . '/../header.php');
-    echo '<div class="navpath">';
-    echo '<a href="../index.php">Home</a> &gt;&gt; ';
-    echo '<a href="contributors.php">Image Contributors</a> &gt;&gt; ';
-    echo '<b>Image Search</b>';
-    echo '</div>';
-	?> 
-	<div id="innertext">
-		<div id="tabs" style="margin:0;">
-			<ul>
-				<li><a href="#criteriadiv">Search Criteria</a></li>
-				<li><a href="#collectiondiv">Collections</a></li>
-                <li id="imagetab" style="display:none;"><a href="#imagesdiv"><span id="imagetabtext">Images</span></a></li>
-			</ul>
-			
-			<form id="imagesearchform" action="search.php" method="post">
-				<div id="criteriadiv">
-					<div id="thesdiv" style="margin-left:160px;display:block;" >
-						<input type='checkbox' id='thes' onchange="processTaxaParamChange();" value='1' checked /> Include Synonyms
-					</div>
-					<div style="clear:both;">
-						<div style="float:left;">
-							<select id="taxontype" onchange="processTaxonTypeChange();processTaxaParamChange();" style="padding:5px;margin:5px 10px;">
-								<option id='sciname' value='1'>Family or Scientific Name</option>
-								<option id='commonname' value='5'>Common Name</option>
-							</select>
-						</div>
-						<div id="taxabox" style="float:left;margin-bottom:10px;display:block;">
-							<input id="taxainput" type="text" style="width:450px;" title="Separate multiple names w/ commas" autocomplete="off" />
-						</div>
-						<div id="commonbox" style="margin-bottom:10px;display:none;">
-							<input id="commoninput" type="text" style="width:450px;" title="Separate multiple names w/ commas" autocomplete="off" />
-						</div>
-					</div>
-					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
-					<div>
-						<div style="float:left;margin-right:8px;padding-top:8px;">
-							Photographers: 
-						</div>
-						<div style="float:left;margin-bottom:10px;">
-							<input type="text" id="photographer" style="width:450px;" title="Separate multiple photographers w/ commas" />
-						</div>
-					</div>
-					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
-					<?php
-					$tagArr = $imgLibManager->getTagArr();
-					if($tagArr){
-						?>
-						<div>
-							Image Tags: 
-							<select id="imagetag" style="width:350px;" onchange="processTextParamChange();">
-								<option value="">Select Tag</option>
-								<option value="">--------------</option>
-								<?php 
-								foreach($tagArr as $k){
-									echo '<option value="'.$k.'" >'.$k.'</option>';
-								}
-								?>
-							</select>
-						</div>
-						<?php
-					}
-					?>
-					<!-- <div style="margin-top:5px;">
-						<div style="float:left;margin-right:8px;padding-top:8px;">
-							Image Keywords: 
-						</div>
-						<div style="float:left;margin-bottom:10px;">
-							<input type="text" id="keywordsinput" style="width:350px;" onchange="processTextParamChange();" title="Separate multiple keywords w/ commas" />
-						</div>
-					</div> -->
-                    <div style="clear:both;margin-top:5px;">
-                        <div style="float:left;margin-right:8px;padding-top:8px;">
-                            Date Uploaded:
-                        </div>
-                        <div style="float:left;margin-bottom:10px;">
-                            <input type="text" id="uploaddate1" size="32" style="width:100px;" onchange="processTextParamChange();" title="Single date or start date of range" /> -
-                            <input type="text" id="uploaddate2" size="32" style="width:100px;" onchange="processTextParamChange();" title="End date of range; leave blank if searching for single date" />
-                        </div>
-                    </div>
-					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
-					<div style="margin-top:5px;">
-						Limit Image Counts: 
-						<select id="imagecount" onchange="processTextParamChange();">
-							<option value="all">All images</option>
-							<option value="taxon">One per taxon</option>
-							<option value="specimen">One per occurrence</option>
-						</select>
-					</div>
-					<div style="margin-top:5px;">
-						Image Display: 
-						<select id="imagedisplay" onchange="processImageDisplayChange();processTextParamChange();">
-							<option value="thumbnail">Thumbnails</option>
-							<option value="famlist">Taxa List</option>
-						</select>
-					</div>
-					<table>
-						<tr>
-							<td>
-								<div style="margin-top:5px;">
-									<p><b>Limit Image Type:</b></p>
-								</div>
-								<div style="margin-top:5px;">
-									<input type='radio' id='imagetypeall' value='all' onchange="processTextParamChange();" checked> All Images
-								</div>
-								<div style="margin-top:5px;">
-									<input type='radio' id='imagetypespecimenonly' value='specimenonly' onchange="processTextParamChange();"> Occurrence Images
-								</div>
-								<div style="margin-top:5px;">
-									<input type='radio' id='imagetypeobservationonly' value='observationonly' onchange="processTextParamChange();"> Image Vouchered Observations
-								</div>
-								<div style="margin-top:5px;">
-									<input type='radio' id='imagetypefieldonly' value='fieldonly' onchange="processTextParamChange();"> Field Images (lacking specific locality details)
-								</div>
-							</td>
-						</tr>
-					</table>
-					<div><hr></div>
-					<input id="taxa" type="hidden" value="" />
-					<input id="imagekeyword" type="hidden" value="" />
-					<input id="phuid" type="hidden" value="" />
-					<input id="phjson" type="hidden" value='' />
-                    <input type="hidden" id="queryId" value='<?php echo $queryId; ?>' />
-					<button style='margin: 20px' type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>
-					<div style="clear:both;"></div>
-				</div>
-				
-				<div id="collectiondiv">
-					<?php 
-					if($specArr || $obsArr){
-						?>
-						<div id="specobsdiv">
-                            <div style="margin:0 0 10px 20px;">
-                                <input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
-                                Select/Deselect All
-                            </div>
-							<?php 
-							if($specArr){
-								echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
-                                $collManager->outputFullCollArr($specArr,false);
-							}
-							if($specArr && $obsArr) {
-                                echo '<hr style="clear:both;margin:20px 0;"/>';
-                            }
-							if($obsArr){
-								echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
-                                $collManager->outputFullCollArr($obsArr,false);
-							}
-							?>
-							<div style="clear:both;"></div>
-						</div>
-						<?php 
-					}
-					?>
-					<div style="clear:both;"></div>
-				</div>
-			</form>
+<?php
+include(__DIR__ . '/../header.php');
+echo '<div class="navpath">';
+echo '<a href="../index.php">Home</a> &gt;&gt; ';
+echo '<a href="contributors.php">Image Contributors</a> &gt;&gt; ';
+echo '<b>Image Search</b>';
+echo '</div>';
+?>
+<div id="innertext">
+    <div id="tabs" style="margin:0;">
+        <ul>
+            <li><a href="#criteriadiv">Search Criteria</a></li>
+            <li><a href="#collectiondiv">Collections</a></li>
+            <li id="imagetab" style="display:none;"><a href="#imagesdiv"><span id="imagetabtext">Images</span></a></li>
+        </ul>
 
-            <div id="imagesdiv">
-                <div id="imagebox"></div>
+        <form id="imagesearchform" action="search.php" method="post">
+            <div id="criteriadiv">
+                <div id="thesdiv" style="margin-left:160px;display:block;" >
+                    <input type='checkbox' id='thes' onchange="processTaxaParamChange();" value='1' checked /> Include Synonyms
+                </div>
+                <div style="clear:both;">
+                    <div style="float:left;">
+                        <select id="taxontype" onchange="processTaxonTypeChange();processTaxaParamChange();" style="padding:5px;margin:5px 10px;">
+                            <option id='sciname' value='1'>Family or Scientific Name</option>
+                            <option id='commonname' value='5'>Common Name</option>
+                        </select>
+                    </div>
+                    <div id="taxabox" style="float:left;margin-bottom:10px;display:block;">
+                        <input id="taxainput" type="text" style="width:450px;" title="Separate multiple names w/ commas" autocomplete="off" />
+                    </div>
+                    <div id="commonbox" style="margin-bottom:10px;display:none;">
+                        <input id="commoninput" type="text" style="width:450px;" title="Separate multiple names w/ commas" autocomplete="off" />
+                    </div>
+                </div>
+                <div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
+                <div>
+                    <div style="float:left;margin-right:8px;padding-top:8px;">
+                        Photographers:
+                    </div>
+                    <div style="float:left;margin-bottom:10px;">
+                        <input type="text" id="photographer" style="width:450px;" title="Separate multiple photographers w/ commas" />
+                    </div>
+                </div>
+                <div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
+                <?php
+                $tagArr = $imgLibManager->getTagArr();
+                if($tagArr){
+                    ?>
+                    <div>
+                        Image Tags:
+                        <select id="imagetag" style="width:350px;" onchange="processTextParamChange();">
+                            <option value="">Select Tag</option>
+                            <option value="">--------------</option>
+                            <?php
+                            foreach($tagArr as $k){
+                                echo '<option value="'.$k.'" >'.$k.'</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <?php
+                }
+                ?>
+                <!-- <div style="margin-top:5px;">
+                    <div style="float:left;margin-right:8px;padding-top:8px;">
+                        Image Keywords:
+                    </div>
+                    <div style="float:left;margin-bottom:10px;">
+                        <input type="text" id="keywordsinput" style="width:350px;" onchange="processTextParamChange();" title="Separate multiple keywords w/ commas" />
+                    </div>
+                </div> -->
+                <div style="clear:both;margin-top:5px;">
+                    <div style="float:left;margin-right:8px;padding-top:8px;">
+                        Date Uploaded:
+                    </div>
+                    <div style="float:left;margin-bottom:10px;">
+                        <input type="text" id="uploaddate1" size="32" style="width:100px;" onchange="processTextParamChange();" title="Single date or start date of range" /> -
+                        <input type="text" id="uploaddate2" size="32" style="width:100px;" onchange="processTextParamChange();" title="End date of range; leave blank if searching for single date" />
+                    </div>
+                </div>
+                <div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
+                <div style="margin-top:5px;">
+                    Limit Image Counts:
+                    <select id="imagecount" onchange="processTextParamChange();">
+                        <option value="all">All images</option>
+                        <option value="taxon">One per taxon</option>
+                        <option value="specimen">One per occurrence</option>
+                    </select>
+                </div>
+                <div style="margin-top:5px;">
+                    Image Display:
+                    <select id="imagedisplay" onchange="processImageDisplayChange();processTextParamChange();">
+                        <option value="thumbnail">Thumbnails</option>
+                        <option value="famlist">Taxa List</option>
+                    </select>
+                </div>
+                <table>
+                    <tr>
+                        <td>
+                            <div style="margin-top:5px;">
+                                <p><b>Limit Image Type:</b></p>
+                            </div>
+                            <div style="margin-top:5px;">
+                                <input type='radio' id='imagetypeall' value='all' onchange="processTextParamChange();" checked> All Images
+                            </div>
+                            <div style="margin-top:5px;">
+                                <input type='radio' id='imagetypespecimenonly' value='specimenonly' onchange="processTextParamChange();"> Occurrence Images
+                            </div>
+                            <div style="margin-top:5px;">
+                                <input type='radio' id='imagetypeobservationonly' value='observationonly' onchange="processTextParamChange();"> Image Vouchered Observations
+                            </div>
+                            <div style="margin-top:5px;">
+                                <input type='radio' id='imagetypefieldonly' value='fieldonly' onchange="processTextParamChange();"> Field Images (lacking specific locality details)
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div><hr></div>
+                <input id="taxa" type="hidden" value="" />
+                <input id="imagekeyword" type="hidden" value="" />
+                <input id="phuid" type="hidden" value="" />
+                <input id="phjson" type="hidden" value='' />
+                <input type="hidden" id="queryId" value='<?php echo $queryId; ?>' />
+                <button style='margin: 20px' type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>
+                <div style="clear:both;"></div>
             </div>
-		
-		</div>
-	</div>
-	<?php 
-	include(__DIR__ . '/../footer.php');
-	?>
+
+            <div id="collectiondiv">
+                <?php
+                if($specArr || $obsArr){
+                    ?>
+                    <div id="specobsdiv">
+                        <div style="margin:0 0 10px 20px;">
+                            <input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
+                            Select/Deselect All
+                        </div>
+                        <?php
+                        if($specArr){
+                            echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
+                            $collManager->outputFullCollArr($specArr,false);
+                        }
+                        if($specArr && $obsArr) {
+                            echo '<hr style="clear:both;margin:20px 0;"/>';
+                        }
+                        if($obsArr){
+                            echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
+                            $collManager->outputFullCollArr($obsArr,false);
+                        }
+                        ?>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <?php
+                }
+                ?>
+                <div style="clear:both;"></div>
+            </div>
+        </form>
+
+        <div id="imagesdiv">
+            <div id="imagebox"></div>
+        </div>
+
+    </div>
+</div>
+<?php
+include(__DIR__ . '/../footer.php');
+?>
 </body>
 </html>
