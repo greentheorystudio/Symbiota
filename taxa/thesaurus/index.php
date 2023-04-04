@@ -223,6 +223,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     importCommonNames: Vue.ref(false),
                     itisInitialSearchResults: Vue.ref([]),
                     kingdomId: Vue.ref(null),
+                    kingdomName: Vue.ref(null),
                     languageArr: Vue.ref([]),
                     loading: Vue.ref(false),
                     nameTidIndex: Vue.ref({}),
@@ -420,7 +421,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     if(this.dataSource === 'col'){
                         this.findCOLTaxonBySciname(this.taxonomicGroup.name,(errorText = null) => {
                             if(errorText){
-                                this.processSubprocessErrorResponse(errorText);
+                                this.processErrorResponse(errorText);
                                 this.adjustUIEnd();
                             }
                             else{
@@ -431,7 +432,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     else if(this.dataSource === 'itis'){
                         this.findITISTaxonBySciname(this.taxonomicGroup.name,(errorText = null) => {
                             if(errorText){
-                                this.processSubprocessErrorResponse(errorText);
+                                this.processErrorResponse(errorText);
                                 this.adjustUIEnd();
                             }
                             else{
@@ -442,7 +443,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     else if(this.dataSource === 'worms'){
                         this.findWoRMSTaxonBySciname(this.taxonomicGroup.name,(errorText = null) => {
                             if(errorText){
-                                this.processSubprocessErrorResponse(errorText);
+                                this.processErrorResponse(errorText);
                                 this.adjustUIEnd();
                             }
                             else{
@@ -552,6 +553,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             if(rankname === 'family'){
                                                 this.taxonSearchResults[0]['family'] = resultObj['sciname'];
                                             }
+                                            if(!this.taxonSearchResults[0]['accepted'] && resultObj['sciname'] === this.taxonSearchResults[0]['accepted_sciname']){
+                                                this.taxonSearchResults[0]['accepted_author'] = resultObj['author'];
+                                                this.taxonSearchResults[0]['accepted_rankid'] = resultObj['rankid'];
+                                            }
                                             hierarchyArr.push(resultObj);
                                         }
                                     }
@@ -581,6 +586,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 const taxonRankData = resObj['taxRank'];
                                 this.taxonSearchResults[0]['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
                                 this.taxonSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
+                                const scientificNameMetadata = resObj['scientificName'];
+                                this.taxonSearchResults[0]['author'] = scientificNameMetadata['author'] ? scientificNameMetadata['author'] : '';
                                 const coreMetadata = resObj['coreMetadata'];
                                 const namestatus = coreMetadata['taxonUsageRating'];
                                 if(namestatus === 'accepted' || namestatus === 'valid'){
@@ -629,11 +636,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         type: type,
                         loading: true,
                         result: '',
-                        tid: 0,
                         resultText: ''
                     };
                 },
-                getWoRMSAddTaxonAuthor(){
+                getWoRMSAddTaxonAuthor(res){
                     if(!this.processCancelled){
                         const id = this.processingArr[0]['id'];
                         const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
@@ -649,15 +655,22 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 response.json().then((resObj) => {
                                     const currentTaxon = this.processingArr[0];
                                     currentTaxon['author'] = resObj['authority'] ? resObj['authority'] : '';
-                                    this.taxaToAddArr.push(currentTaxon);
-                                    this.processingArr.splice(0, 1);
+                                    if(this.processingArr[0]['sciname'] === this.taxonSearchResults[0]['accepted_sciname']){
+                                        this.taxonSearchResults[0]['accepted_author'] = currentTaxon['author'];
+                                    }
+                                    if(!res){
+                                        this.taxaToAddArr.push(currentTaxon);
+                                        this.processingArr.splice(0, 1);
+                                    }
                                     this.setTaxaToAdd();
                                 });
                             }
                             else{
-                                const currentTaxon = this.processingArr[0];
-                                this.taxaToAddArr.push(currentTaxon);
-                                this.processingArr.splice(0, 1);
+                                if(!res){
+                                    const currentTaxon = this.processingArr[0];
+                                    this.taxaToAddArr.push(currentTaxon);
+                                    this.processingArr.splice(0, 1);
+                                }
                                 this.setTaxaToAdd();
                             }
                         });
@@ -694,6 +707,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 firstObj['author'] = '';
                                 firstObj['rankname'] = firstrankname;
                                 firstObj['rankid'] = firstrankid;
+                                if(firstObj['sciname'] === this.taxonSearchResults[0]['accepted_sciname']){
+                                    this.taxonSearchResults[0]['accepted_rankid'] = firstObj['rankid'];
+                                }
                                 hierarchyArr.push(firstObj);
                                 let stopLoop = false;
                                 while((childObj = childObj['child']) && !stopLoop){
@@ -707,6 +723,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             resultObj['author'] = '';
                                             resultObj['rankname'] = rankname;
                                             resultObj['rankid'] = rankid;
+                                            if(resultObj['sciname'] === this.taxonSearchResults[0]['accepted_sciname']){
+                                                this.taxonSearchResults[0]['accepted_rankid'] = resultObj['rankid'];
+                                            }
                                             if(rankname === 'family'){
                                                 this.taxonSearchResults[0]['family'] = resultObj['sciname'];
                                             }
@@ -738,7 +757,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     .then((response) => {
                         if(response.status === 200){
                             response.json().then((resObj) => {
-                                if(resObj['kingdom'].toLowerCase() === this.targetTaxonLocal['kingdom'].toLowerCase() || resObj['scientificname'].toLowerCase() === this.targetTaxonLocal['kingdom'].toLowerCase()){
+                                if(resObj['kingdom'].toLowerCase() === this.kingdomName.toLowerCase() || resObj['scientificname'].toLowerCase() === this.kingdomName.toLowerCase()){
                                     const resultObj = {};
                                     resultObj['id'] = resObj['AphiaID'];
                                     resultObj['sciname'] = resObj['scientificname'];
@@ -834,7 +853,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     else{
                         this.processSubprocessSuccessResponse(true);
-                        this.validateTargetSynonymy();
+                        this.setTargetSynonymy();
                     }
                 },
                 processErrorResponse(text){
@@ -859,7 +878,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     resultObj['rankid'] = this.rankArr.hasOwnProperty(resultObj['rankname']) ? this.rankArr[resultObj['rankname']] : null;
                     resultObj['accepted'] = (taxResult['status'] === 'accepted');
                     this.colInitialSearchResults.push(resultObj);
-                    this.validateCOLInitialNameSearchResults(callback);
+                    this.validateCOLNameSearchResults(callback);
                 },
                 processGetCOLTaxonByScinameResponse(resObj,callback){
                     if(resObj['total_number_of_results'] > 0){
@@ -895,10 +914,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     const hierarchyArr = [];
                                     const resultHObj = {};
                                     const acceptedObj = taxResult['accepted_name'];
+                                    const acceptedAuthor = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
                                     resultObj['accepted'] = false;
                                     resultObj['accepted_id'] = acceptedObj['id'];
+                                    resultObj['accepted_author'] = acceptedAuthor;
                                     resultHObj['id'] = acceptedObj['id'];
-                                    resultHObj['author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
+                                    resultHObj['author'] = acceptedAuthor;
                                     let rankName = acceptedObj['rank'].toLowerCase();
                                     if(rankName === 'infraspecies'){
                                         resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + acceptedObj['infraspeciesMarker'] + ' ' + acceptedObj['infraspecies'];
@@ -918,6 +939,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     resultObj['accepted_sciname'] = resultHObj['sciname'];
                                     resultHObj['rankname'] = rankName;
                                     resultHObj['rankid'] = this.rankArr.hasOwnProperty(resultHObj['rankname']) ? this.rankArr[resultHObj['rankname']] : null;
+                                    resultObj['accepted_rankid'] = resultHObj['rankid'];
                                     hierarchyArr.push(resultHObj);
                                     resultObj['hierarchy'] = hierarchyArr;
                                 }
@@ -928,7 +950,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             }
                         });
                         if(this.colInitialSearchResults.length > 0){
-                            this.validateCOLInitialNameSearchResults(callback);
+                            this.validateCOLNameSearchResults(callback);
                         }
                         else{
                             callback('Not found');
@@ -943,11 +965,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     const resultArr = resObj['scientificNames'];
                     if(resultArr && resultArr.length > 0 && resultArr[0]){
                         resultArr.forEach((taxResult) => {
-                            if(taxResult['combinedName'] === this.taxonomicGroup.name && (taxResult['kingdom'].toLowerCase() === this.targetTaxonLocal['kingdom'].toLowerCase() || taxResult['combinedName'].toLowerCase() === this.targetTaxonLocal['kingdom'].toLowerCase())){
+                            if(taxResult['combinedName'] === this.taxonomicGroup.name && (taxResult['kingdom'].toLowerCase() === this.kingdomName.toLowerCase() || taxResult['combinedName'].toLowerCase() === this.kingdomName.toLowerCase())){
                                 const resultObj = {};
                                 resultObj['id'] = taxResult['tsn'];
                                 resultObj['sciname'] = taxResult['combinedName'];
-                                resultObj['author'] = taxResult['author'];
                                 this.itisInitialSearchResults.push(resultObj);
                             }
                         });
@@ -959,7 +980,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             callback('Not found');
                         }
                         else if(this.itisInitialSearchResults.length > 1){
-                            this.validateITISInitialNameSearchResults(callback);
+                            this.validateITISNameSearchResults(callback);
                         }
                     }
                     else{
@@ -1002,8 +1023,37 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 setInitialTaxa(){
-                    this.currentTaxonExternal = {};
-                    this.currentTaxonLocal['sciname'] = {};
+                    this.currentTaxonExternal['id'] = this.taxonSearchResults[0]['accepted'] ? this.taxonSearchResults[0]['id'] : this.taxonSearchResults[0]['accepted_id'];
+                    this.currentTaxonExternal['sciname'] = this.taxonSearchResults[0]['accepted'] ? this.taxonSearchResults[0]['sciname'] : this.taxonSearchResults[0]['accepted_sciname'];
+                    this.currentTaxonExternal['author'] = this.taxonSearchResults[0]['accepted'] ? this.taxonSearchResults[0]['author'] : this.taxonSearchResults[0]['accepted_author'];
+                    this.currentTaxonExternal['rankid'] = this.taxonSearchResults[0]['accepted'] ? this.taxonSearchResults[0]['rankid'] : this.taxonSearchResults[0]['accepted_rankid'];
+                    if(this.importCommonNames){
+                        this.currentTaxonExternal['commonnames'] = this.taxonSearchResults[0].hasOwnProperty('commonnames') ? this.taxonSearchResults[0]['commonnames'] : [];
+                    }
+                    if(this.targetTaxonLocal['sciname'] === this.currentTaxonExternal['sciname']){
+                        this.currentTaxonLocal['tid'] = this.targetTaxonLocal['tid'];
+                        this.currentTaxonLocal['sciname'] = this.targetTaxonLocal['sciname'];
+                        this.currentTaxonLocal['author'] = this.targetTaxonLocal['author'];
+                        this.currentTaxonLocal['rankid'] = this.targetTaxonLocal['rankid'];
+                        this.currentTaxonLocal['tidaccepted'] = this.targetTaxonLocal['tidaccepted'];
+                        this.currentTaxonLocal['parenttid'] = this.targetTaxonLocal['parenttid'];
+                        if(this.importCommonNames){
+                            this.currentTaxonLocal['commonnames'] = this.targetTaxonLocal['commonnames'];
+                        }
+                    }
+                    else{
+                        this.findTaxonByTid(this.targetTaxonLocal['tidaccepted'],(resObj,errorText = null) => {
+                            if(errorText){
+                                this.processErrorResponse(errorText);
+                                this.adjustUIEnd();
+                            }
+                            else{
+                                this.currentTaxonLocal = resObj;
+                                this.kingdomId = this.currentTaxonLocal['kingdomid'];
+                                this.kingdomName = this.currentTaxonLocal['kingdom'];
+                            }
+                        });
+                    }
                 },
                 setLanguageArr(){
                     const text = 'Setting language data';
@@ -1055,24 +1105,25 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                         else{
                             this.targetTaxonLocal = resObj;
+                            this.kingdomName = this.targetTaxonLocal['kingdom'];
                             this.processSuccessResponse('Complete');
                             const text = 'Finding the parent taxon for the taxonomic group from the selected Data Source';
                             this.currentProcess = 'setTargetTaxonExternal';
-                            this.processorDisplayArr.push(this.getNewProcessObject('multi',text));
+                            this.processorDisplayArr.push(this.getNewProcessObject('single',text));
                             const dataSourceIdObj = this.targetTaxonLocal['identifiers'].find(obj => obj['name'] === this.dataSource);
                             if(dataSourceIdObj){
                                 this.targetTaxonIdentifier = dataSourceIdObj['identifier'];
                                 if(this.dataSource === 'col'){
                                     this.findCOLTaxonById(this.targetTaxonIdentifier,(res,errorText = null) => {
                                         if(errorText){
-                                            this.processSubprocessErrorResponse(errorText);
+                                            this.processErrorResponse(errorText);
                                             this.adjustUIEnd();
                                         }
                                         else{
                                             if(res.hasOwnProperty('taxon')){
                                                 this.processGetCOLTaxonByIdResponse(res,(errorText = null) => {
                                                     if(errorText){
-                                                        this.processSubprocessErrorResponse(errorText);
+                                                        this.processErrorResponse(errorText);
                                                         this.adjustUIEnd();
                                                     }
                                                     else{
@@ -1090,10 +1141,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     const resultObj = {};
                                     resultObj['id'] = this.targetTaxonIdentifier;
                                     resultObj['sciname'] = this.taxonomicGroup.name;
-                                    this.itisInitialSearchResults.push(resultObj);
-                                    this.validateITISInitialNameSearchResults((errorText = null) => {
+                                    this.taxonSearchResults.push(resultObj);
+                                    this.getITISNameSearchResultsRecord((errorText = null) => {
                                         if(errorText){
-                                            this.processSubprocessErrorResponse(errorText);
+                                            this.processErrorResponse(errorText);
                                             this.adjustUIEnd();
                                         }
                                         else{
@@ -1104,7 +1155,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 else if(this.dataSource === 'worms'){
                                     this.getWoRMSNameSearchResultsRecord(this.targetTaxonIdentifier,(errorText = null) => {
                                         if(errorText){
-                                            this.processSubprocessErrorResponse(errorText);
+                                            this.processErrorResponse(errorText);
                                             this.adjustUIEnd();
                                         }
                                         else{
@@ -1133,8 +1184,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         .then((response) => {
                             if(response.status === 200){
                                 response.text().then((res) => {
-                                    if(this.dataSource === 'worms' && !res){
-                                        this.getWoRMSAddTaxonAuthor();
+                                    if(this.dataSource === 'worms' && (!res || this.processingArr[0]['sciname'] === this.taxonSearchResults[0]['accepted_sciname'])){
+                                        this.getWoRMSAddTaxonAuthor(res);
                                     }
                                     else{
                                         const currentTaxon = this.processingArr[0];
@@ -1176,7 +1227,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     formData.append('action', 'updateTaxonTidAccepted');
                     formData.append('tid', taxon['tid']);
                     formData.append('tidaccepted', taxon['tidaccepted']);
-                    formData.append('kingdom', kingdom);
+                    formData.append('kingdom', (kingdom ? '1' : '0'));
                     fetch(taxonomyApiUrl, {
                         method: 'POST',
                         body: formData
@@ -1193,7 +1244,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     });
                 },
-                validateCOLInitialNameSearchResults(callback){
+                validateCOLNameSearchResults(callback){
                     if(this.colInitialSearchResults.length > 0){
                         let id;
                         const taxon = this.colInitialSearchResults[0];
@@ -1225,7 +1276,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             kingdomName = kingdomObj['name'];
                                         }
                                     }
-                                    if(kingdomName.toLowerCase() === this.targetTaxonLocal['kingdom'].toLowerCase()){
+                                    if(kingdomName.toLowerCase() === this.kingdomName.toLowerCase()){
                                         let hierarchyArr = [];
                                         if(taxon.hasOwnProperty('hierarchy')){
                                             hierarchyArr = taxon['hierarchy'];
@@ -1251,11 +1302,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         taxon['hierarchy'] = hierarchyArr;
                                         this.taxonSearchResults.push(taxon);
                                     }
-                                    this.validateCOLInitialNameSearchResults(callback);
+                                    this.validateCOLNameSearchResults(callback);
                                 });
                             }
                             else{
-                                this.validateCOLInitialNameSearchResults(callback);
+                                this.validateCOLNameSearchResults(callback);
                             }
                         });
                     }
@@ -1269,7 +1320,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         callback('Unable to distinguish the parent taxon by name');
                     }
                 },
-                validateITISInitialNameSearchResults(callback){
+                validateITISNameSearchResults(callback){
                     if(this.itisInitialSearchResults.length > 0){
                         const taxon = this.itisInitialSearchResults[0];
                         this.itisInitialSearchResults.splice(0, 1);
@@ -1287,21 +1338,20 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 response.json().then((resObj) => {
                                     const coreMetadata = resObj['coreMetadata'];
                                     const namestatus = coreMetadata['taxonUsageRating'];
-                                    if(!taxon.hasOwnProperty('author')){
-                                        taxon['author'] = '';
-                                        if(resObj.hasOwnProperty('taxonAuthor')){
-                                            const authorMetadata = resObj['taxonAuthor'];
-                                            taxon['author'] = authorMetadata.hasOwnProperty('authorship') ? authorMetadata['authorship'] : '';
-                                        }
+                                    taxon['author'] = '';
+                                    if(resObj.hasOwnProperty('taxonAuthor')){
+                                        const authorMetadata = resObj['taxonAuthor'];
+                                        taxon['author'] = authorMetadata.hasOwnProperty('authorship') ? authorMetadata['authorship'] : '';
                                     }
                                     if(this.importCommonNames && resObj.hasOwnProperty('commonNameList')){
-                                        taxon['commonNames'] = [];
+                                        taxon['commonnames'] = [];
                                         if(resObj.hasOwnProperty('commonNameList')){
                                             const commonNames = resObj['commonNameList']['commonNames'];
                                             commonNames.forEach((cName) => {
                                                 const cNameObj = {};
                                                 cNameObj['name'] = cName['commonName'];
                                                 cNameObj['language'] = cName['language'];
+                                                taxon['commonnames'].push(cNameObj);
                                             });
                                         }
                                     }
@@ -1312,7 +1362,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         taxon['accepted'] = true;
                                         this.taxonSearchResults.push(taxon);
                                     }
-                                    this.validateITISInitialNameSearchResults(callback);
+                                    this.validateITISNameSearchResults(callback);
                                 });
                             }
                             else{
@@ -1340,13 +1390,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     this.taxaToAddArr = [];
                     if(this.taxonSearchResults.length === 1){
                         if(!this.taxonSearchResults[0]['accepted'] && !this.taxonSearchResults[0]['accepted_sciname']){
-                            this.processSubprocessErrorResponse('Unable to distinguish the parent taxon accepted name');
+                            this.processErrorResponse('Unable to distinguish the parent taxon accepted name');
                             this.adjustUIEnd();
                         }
                         else{
                             console.log(this.targetTaxonLocal);
                             console.log(this.taxonSearchResults[0]);
-                            this.processSubprocessSuccessResponse(true,'Complete');
+                            this.processSuccessResponse('Complete');
                             if(!this.targetTaxonIdentifier){
                                 this.addTaxonIdentifier(this.taxonomicGroupTid,this.taxonSearchResults[0]['id']);
                             }

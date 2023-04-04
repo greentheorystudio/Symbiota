@@ -50,7 +50,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
         let stArr = {};
-        let phArr = new Array();
+        let phArr = [];
         let selectedFamily = '';
 
         document.addEventListener("DOMContentLoaded", function() {
