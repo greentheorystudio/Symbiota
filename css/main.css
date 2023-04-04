@@ -824,3 +824,8 @@ div.spptext{
 	display: block;
 	margin-bottom: 1em;
 }
+
+ul.key span.link a {
+	color: blue;
+	text-decoration: underline;
+}
