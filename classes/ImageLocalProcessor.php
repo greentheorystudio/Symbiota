@@ -394,6 +394,7 @@ class ImageLocalProcessor {
 		flush();
         $fileSize = 0;
         $retVal = true;
+        $fileExists = false;
 		if($specPk = $this->getPrimaryKey($fileName)){
 			$occId = 0;
 			if($this->dbMetadata){
@@ -432,56 +433,55 @@ class ImageLocalProcessor {
 				if(!file_exists($targetPath) && !mkdir($targetPath) && !is_dir($targetPath)) {
 					$this->logOrEcho('ERROR: unable to create new folder (' .$targetPath. ') ');
 				}
-				if($this->webImg === 1 || $this->webImg === 2){
-					if(file_exists($targetPath.$targetFileName)){
-						if($this->imgExists === 2){
-							unlink($targetPath.$targetFileName);
-							if(file_exists($targetPath.substr($targetFileName,0, -4). 'tn.jpg')){
-								unlink($targetPath.substr($targetFileName,0, -4). 'tn.jpg');
-							}
-							if(file_exists($targetPath.substr($targetFileName,0, -4). '_tn.jpg')){
-								unlink($targetPath.substr($targetFileName,0, -4). '_tn.jpg');
-							}
-							if(file_exists($targetPath.substr($targetFileName,0, -4). 'lg.jpg')){
-								unlink($targetPath.substr($targetFileName,0, -4). 'lg.jpg');
-							}
-							if(file_exists($targetPath.substr($targetFileName,0, -4). '_lg.jpg')){
-								unlink($targetPath.substr($targetFileName,0, -4). '_lg.jpg');
-							}
-						}
-						elseif($this->imgExists === 1){
-							$cnt = 1;
-							$tempFileName = $targetFileName;
-							while(file_exists($targetPath.$targetFileName)){
-								$targetFileName = str_ireplace('.jpg', '_' .$cnt. '.jpg',$tempFileName);
-								$cnt++;
-							}
-						}
-						else{
-							$this->logOrEcho('NOTICE: image import skipped because image file already exists ',1);
-                            $retVal = false;
-						}
-					}
+                if(file_exists($targetPath.$targetFileName)){
+                    $fileExists = true;
+                }
+				if($fileExists && ($this->webImg === 1 || $this->webImg === 2)){
+                    if($this->imgExists === 2){
+                        unlink($targetPath.$targetFileName);
+                        if(file_exists($targetPath.substr($targetFileName,0, -4). 'tn.jpg')){
+                            unlink($targetPath.substr($targetFileName,0, -4). 'tn.jpg');
+                        }
+                        if(file_exists($targetPath.substr($targetFileName,0, -4). '_tn.jpg')){
+                            unlink($targetPath.substr($targetFileName,0, -4). '_tn.jpg');
+                        }
+                        if(file_exists($targetPath.substr($targetFileName,0, -4). 'lg.jpg')){
+                            unlink($targetPath.substr($targetFileName,0, -4). 'lg.jpg');
+                        }
+                        if(file_exists($targetPath.substr($targetFileName,0, -4). '_lg.jpg')){
+                            unlink($targetPath.substr($targetFileName,0, -4). '_lg.jpg');
+                        }
+                    }
+                    elseif($this->imgExists === 1){
+                        $cnt = 1;
+                        $tempFileName = $targetFileName;
+                        while(file_exists($targetPath.$targetFileName)){
+                            $targetFileName = str_ireplace('.jpg', '_' .$cnt. '.jpg',$tempFileName);
+                            $cnt++;
+                        }
+                    }
+                    else{
+                        $this->logOrEcho('NOTICE: image import skipped because image file already exists ',1);
+                        $retVal = false;
+                    }
 				}
-				elseif($this->webImg === 3){
-					if(!$this->imgExists){
-						$recExists = 0;
-						$sql = 'SELECT url '.
-							'FROM images WHERE (occid = '.$occId.') ';
-						$rs = $this->conn->query($sql);
-						while($r = $rs->fetch_object()){
-							if(stripos($r->url,$fileName) || stripos($r->url,str_replace('%20', '_', $fileName)) || stripos($r->url,str_replace('%20', ' ', $fileName))){
-								$recExists = 1;
-							}
-						}
-						$rs->free();
-						if($recExists){
-							$this->logOrEcho('NOTICE: image import skipped because occurrence record already exists ',1);
-                            $retVal = false;
-						}
-					}
+				elseif(!$this->imgExists && $this->webImg === 3){
+                    $recExists = 0;
+                    $sql = 'SELECT url '.
+                        'FROM images WHERE (occid = '.$occId.') ';
+                    $rs = $this->conn->query($sql);
+                    while($r = $rs->fetch_object()){
+                        if(stripos($r->url,$fileName) || stripos($r->url,str_replace('%20', '_', $fileName)) || stripos($r->url,str_replace('%20', ' ', $fileName))){
+                            $recExists = 1;
+                        }
+                    }
+                    $rs->free();
+                    if($recExists){
+                        $this->logOrEcho('NOTICE: image import skipped because occurrence record already exists ',1);
+                        $retVal = false;
+                    }
 				}
-                if($retVal){
+                if(!$fileExists || $this->imgExists !== 0){
                     [$width, $height] = getimagesize($sourcePath . $fileName);
                     if($width && $height){
                         if(strncmp($sourcePath, 'http://', 7) === 0 || strncmp($sourcePath, 'https://', 8) === 0) {
