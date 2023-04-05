@@ -481,152 +481,154 @@ class ImageLocalProcessor {
                         }
                     }
                 }
-                [$width, $height] = getimagesize($sourcePath . $fileName);
-                if($width && $height){
-                    if(strncmp($sourcePath, 'http://', 7) === 0 || strncmp($sourcePath, 'https://', 8) === 0) {
-                        $x = array_change_key_case(get_headers($sourcePath.$fileName, 1),CASE_LOWER);
-                        if($x){
-                            if( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
-                                $fileSize = $x['content-length'][1];
-                            }
-                            else {
-                                $fileSize = $x['content-length'];
+                if($retVal){
+                    [$width, $height] = getimagesize($sourcePath . $fileName);
+                    if($width && $height){
+                        if(strncmp($sourcePath, 'http://', 7) === 0 || strncmp($sourcePath, 'https://', 8) === 0) {
+                            $x = array_change_key_case(get_headers($sourcePath.$fileName, 1),CASE_LOWER);
+                            if($x){
+                                if( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
+                                    $fileSize = $x['content-length'][1];
+                                }
+                                else {
+                                    $fileSize = $x['content-length'];
+                                }
                             }
                         }
-                    }
-                    else {
-                        $fileSize = @filesize($sourcePath.$fileName);
-                    }
+                        else {
+                            $fileSize = @filesize($sourcePath.$fileName);
+                        }
 
-                    $webUrlFrag = '';
-                    if($this->webImg){
-                        if($this->webImg === 1){
-                            if($fileSize < $this->webFileSizeLimit && $width < ($this->webPixWidth*2)){
-                                if(copy($sourcePath.$fileName,$targetPath.$targetFileName)){
+                        $webUrlFrag = '';
+                        if($this->webImg){
+                            if($this->webImg === 1){
+                                if($fileSize < $this->webFileSizeLimit && $width < ($this->webPixWidth*2)){
+                                    if(copy($sourcePath.$fileName,$targetPath.$targetFileName)){
+                                        $webUrlFrag = $this->imgUrlBase.$targetFrag.$targetFileName;
+                                        $this->logOrEcho('Source image imported as web image (' .date('Y-m-d h:i:s A'). ') ',1);
+                                    }
+                                }
+                                else if($this->createNewImage($sourcePath.$fileName,$targetPath.$targetFileName,$this->webPixWidth,round($this->webPixWidth*$height/$width),$width,$height)){
+                                    $webUrlFrag = $this->imgUrlBase.$targetFrag.$targetFileName;
+                                    $this->logOrEcho('Web image created from source image (' .date('Y-m-d h:i:s A'). ') ',1);
+                                }
+                            }
+                            elseif($this->webImg === 2){
+                                $webFileName = $fileNameBase.$this->webSourceSuffix.$fileNameExt;
+                                if(copy($sourcePath.$webFileName,$targetPath.$targetFileName)){
                                     $webUrlFrag = $this->imgUrlBase.$targetFrag.$targetFileName;
                                     $this->logOrEcho('Source image imported as web image (' .date('Y-m-d h:i:s A'). ') ',1);
                                 }
                             }
-                            else if($this->createNewImage($sourcePath.$fileName,$targetPath.$targetFileName,$this->webPixWidth,round($this->webPixWidth*$height/$width),$width,$height)){
-                                $webUrlFrag = $this->imgUrlBase.$targetFrag.$targetFileName;
-                                $this->logOrEcho('Web image created from source image (' .date('Y-m-d h:i:s A'). ') ',1);
+                            elseif($this->webImg === 3){
+                                $webFileName = $fileNameBase.$this->webSourceSuffix.$fileNameExt;
+                                $webUrlFrag = $sourcePath.$webFileName;
+                                $this->logOrEcho('Source used as web image (' .date('Y-m-d h:i:s A'). ') ',1);
                             }
                         }
-                        elseif($this->webImg === 2){
-                            $webFileName = $fileNameBase.$this->webSourceSuffix.$fileNameExt;
-                            if(copy($sourcePath.$webFileName,$targetPath.$targetFileName)){
-                                $webUrlFrag = $this->imgUrlBase.$targetFrag.$targetFileName;
-                                $this->logOrEcho('Source image imported as web image (' .date('Y-m-d h:i:s A'). ') ',1);
-                            }
+                        if(!$webUrlFrag){
+                            $this->logOrEcho('Failed to create web image ',1);
                         }
-                        elseif($this->webImg === 3){
-                            $webFileName = $fileNameBase.$this->webSourceSuffix.$fileNameExt;
-                            $webUrlFrag = $sourcePath.$webFileName;
-                            $this->logOrEcho('Source used as web image (' .date('Y-m-d h:i:s A'). ') ',1);
-                        }
-                    }
-                    if(!$webUrlFrag){
-                        $this->logOrEcho('Failed to create web image ',1);
-                    }
-                    $lgUrlFrag = '';
-                    if($this->lgImg){
-                        $lgTargetFileName = substr($targetFileName,0,-4). '_lg.jpg';
-                        if($this->lgImg === 1){
-                            if($width > ($this->webPixWidth*1.3)){
-                                if($width > $this->lgPixWidth || ($fileSize && $fileSize > $this->lgFileSizeLimit)){
-                                    if($this->createNewImage($sourcePath.$fileName,$targetPath.$lgTargetFileName,$this->lgPixWidth,round($this->lgPixWidth*($height/$width)),$width,$height)){
+                        $lgUrlFrag = '';
+                        if($this->lgImg){
+                            $lgTargetFileName = substr($targetFileName,0,-4). '_lg.jpg';
+                            if($this->lgImg === 1){
+                                if($width > ($this->webPixWidth*1.3)){
+                                    if($width > $this->lgPixWidth || ($fileSize && $fileSize > $this->lgFileSizeLimit)){
+                                        if($this->createNewImage($sourcePath.$fileName,$targetPath.$lgTargetFileName,$this->lgPixWidth,round($this->lgPixWidth*($height/$width)),$width,$height)){
+                                            $lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
+                                            $this->logOrEcho('Resized source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
+                                        }
+                                    }
+                                    else if(copy($sourcePath.$fileName,$targetPath.$lgTargetFileName)){
                                         $lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
-                                        $this->logOrEcho('Resized source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
+                                        $this->logOrEcho('Imported source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
+                                    }
+                                    else{
+                                        $this->logOrEcho('WARNING: unable to import large derivative (' .$sourcePath.$fileName. ') ',1);
                                     }
                                 }
-                                else if(copy($sourcePath.$fileName,$targetPath.$lgTargetFileName)){
-                                    $lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
-                                    $this->logOrEcho('Imported source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
+                            }
+                            elseif($this->lgImg === 2){
+                                $lgUrlFrag = $sourcePath.$fileName;
+                                $this->logOrEcho('Used source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
+                            }
+                            elseif($this->lgImg === 3){
+                                $lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
+                                if($this->uriExists($sourcePath.$lgSourceFileName)){
+                                    if(copy($sourcePath.$lgSourceFileName,$targetPath.$lgTargetFileName)){
+                                        if(strncmp($sourcePath, 'http', 4) !== 0) {
+                                            unlink($sourcePath . $lgSourceFileName);
+                                        }
+                                        $lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
+                                        $this->logOrEcho('Imported large derivative of source for large version(' .date('Y-m-d h:i:s A'). ') ',1);
+                                    }
                                 }
                                 else{
-                                    $this->logOrEcho('WARNING: unable to import large derivative (' .$sourcePath.$fileName. ') ',1);
+                                    $this->logOrEcho('WARNING: unable to import large derivative (' .$sourcePath.$lgSourceFileName. ') ',1);
+                                }
+                            }
+                            elseif($this->lgImg === 4){
+                                $lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
+                                if($this->uriExists($sourcePath.$lgSourceFileName)){
+                                    $lgUrlFrag = $sourcePath.$lgSourceFileName;
+                                    $this->logOrEcho('Large version mapped to large derivative of source (' .date('Y-m-d h:i:s A'). ') ',1);
+                                }
+                                else{
+                                    $this->logOrEcho('WARNING: unable to map to large derivative (' .$sourcePath.$lgSourceFileName. ') ',1);
                                 }
                             }
                         }
-                        elseif($this->lgImg === 2){
-                            $lgUrlFrag = $sourcePath.$fileName;
-                            $this->logOrEcho('Used source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
-                        }
-                        elseif($this->lgImg === 3){
-                            $lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
-                            if($this->uriExists($sourcePath.$lgSourceFileName)){
-                                if(copy($sourcePath.$lgSourceFileName,$targetPath.$lgTargetFileName)){
-                                    if(strncmp($sourcePath, 'http', 4) !== 0) {
-                                        unlink($sourcePath . $lgSourceFileName);
-                                    }
-                                    $lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
-                                    $this->logOrEcho('Imported large derivative of source for large version(' .date('Y-m-d h:i:s A'). ') ',1);
+                        $tnUrlFrag = '';
+                        if($this->tnImg){
+                            $tnTargetFileName = substr($targetFileName,0,-4). '_tn.jpg';
+                            if($this->tnImg === 1){
+                                if($this->createNewImage($sourcePath.$fileName,$targetPath.$tnTargetFileName,$this->tnPixWidth,round($this->tnPixWidth*($height/$width)),$width,$height)){
+                                    $tnUrlFrag = $this->imgUrlBase.$targetFrag.$tnTargetFileName;
+                                    $this->logOrEcho('Created thumbnail from source (' .date('Y-m-d h:i:s A'). ') ',1);
                                 }
                             }
-                            else{
-                                $this->logOrEcho('WARNING: unable to import large derivative (' .$sourcePath.$lgSourceFileName. ') ',1);
-                            }
-                        }
-                        elseif($this->lgImg === 4){
-                            $lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
-                            if($this->uriExists($sourcePath.$lgSourceFileName)){
-                                $lgUrlFrag = $sourcePath.$lgSourceFileName;
-                                $this->logOrEcho('Large version mapped to large derivative of source (' .date('Y-m-d h:i:s A'). ') ',1);
-                            }
-                            else{
-                                $this->logOrEcho('WARNING: unable to map to large derivative (' .$sourcePath.$lgSourceFileName. ') ',1);
-                            }
-                        }
-                    }
-                    $tnUrlFrag = '';
-                    if($this->tnImg){
-                        $tnTargetFileName = substr($targetFileName,0,-4). '_tn.jpg';
-                        if($this->tnImg === 1){
-                            if($this->createNewImage($sourcePath.$fileName,$targetPath.$tnTargetFileName,$this->tnPixWidth,round($this->tnPixWidth*($height/$width)),$width,$height)){
+                            elseif($this->tnImg === 2){
+                                $tnFileName = $fileNameBase.$this->tnSourceSuffix.$fileNameExt;
+                                if($this->uriExists($sourcePath.$tnFileName)){
+                                    rename($sourcePath.$tnFileName,$targetPath.$tnTargetFileName);
+                                }
                                 $tnUrlFrag = $this->imgUrlBase.$targetFrag.$tnTargetFileName;
-                                $this->logOrEcho('Created thumbnail from source (' .date('Y-m-d h:i:s A'). ') ',1);
+                                $this->logOrEcho('Imported source as thumbnail (' .date('Y-m-d h:i:s A'). ') ',1);
+                            }
+                            elseif($this->tnImg === 3){
+                                $tnFileName = $fileNameBase.$this->tnSourceSuffix.$fileNameExt;
+                                if($this->uriExists($sourcePath.$tnFileName)){
+                                    $tnUrlFrag = $sourcePath.$tnFileName;
+                                    $this->logOrEcho('Thumbnail is map of source thumbnail (' .date('Y-m-d h:i:s A'). ') ',1);
+                                }
                             }
                         }
-                        elseif($this->tnImg === 2){
-                            $tnFileName = $fileNameBase.$this->tnSourceSuffix.$fileNameExt;
-                            if($this->uriExists($sourcePath.$tnFileName)){
-                                rename($sourcePath.$tnFileName,$targetPath.$tnTargetFileName);
-                            }
-                            $tnUrlFrag = $this->imgUrlBase.$targetFrag.$tnTargetFileName;
-                            $this->logOrEcho('Imported source as thumbnail (' .date('Y-m-d h:i:s A'). ') ',1);
-                        }
-                        elseif($this->tnImg === 3){
-                            $tnFileName = $fileNameBase.$this->tnSourceSuffix.$fileNameExt;
-                            if($this->uriExists($sourcePath.$tnFileName)){
-                                $tnUrlFrag = $sourcePath.$tnFileName;
-                                $this->logOrEcho('Thumbnail is map of source thumbnail (' .date('Y-m-d h:i:s A'). ') ',1);
-                            }
-                        }
-                    }
 
-                    if($this->sourceGdImg){
-                        imagedestroy($this->sourceGdImg);
-                        $this->sourceGdImg = null;
-                    }
-                    if($this->sourceImagickImg){
-                        $this->sourceImagickImg->clear();
-                        $this->sourceImagickImg = null;
-                    }
-                    $this->recordImageMetadata(($this->dbMetadata?$occId:$specPk),$webUrlFrag,$tnUrlFrag,$lgUrlFrag);
-                    if(file_exists($sourcePath.$fileName)){
-                        if($this->keepOrig){
-                            if(file_exists($this->targetPathBase.$this->targetPathFrag.$this->origPathFrag)){
-                                rename($sourcePath.$fileName,$this->targetPathBase.$this->targetPathFrag.$this->origPathFrag.$fileName. '.orig');
-                            }
-                        } else {
-                            unlink($sourcePath.$fileName);
+                        if($this->sourceGdImg){
+                            imagedestroy($this->sourceGdImg);
+                            $this->sourceGdImg = null;
                         }
+                        if($this->sourceImagickImg){
+                            $this->sourceImagickImg->clear();
+                            $this->sourceImagickImg = null;
+                        }
+                        $this->recordImageMetadata(($this->dbMetadata?$occId:$specPk),$webUrlFrag,$tnUrlFrag,$lgUrlFrag);
+                        if(file_exists($sourcePath.$fileName)){
+                            if($this->keepOrig){
+                                if(file_exists($this->targetPathBase.$this->targetPathFrag.$this->origPathFrag)){
+                                    rename($sourcePath.$fileName,$this->targetPathBase.$this->targetPathFrag.$this->origPathFrag.$fileName. '.orig');
+                                }
+                            } else {
+                                unlink($sourcePath.$fileName);
+                            }
+                        }
+                        $this->logOrEcho('Image processed successfully (' .date('Y-m-d h:i:s A'). ')!',1);
                     }
-                    $this->logOrEcho('Image processed successfully (' .date('Y-m-d h:i:s A'). ')!',1);
-                }
-                else{
-                    $this->logOrEcho('File skipped (' .$sourcePath.$fileName. '), unable to obtain dimensions of original image',1);
-                    $retVal = false;
+                    else{
+                        $this->logOrEcho('File skipped (' .$sourcePath.$fileName. '), unable to obtain dimensions of original image',1);
+                        $retVal = false;
+                    }
                 }
             }
         }
