@@ -1034,7 +1034,7 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
-    public function getTaxonFromTid($tid, $includeCommonNames = false): array
+    public function getTaxonFromTid($tid, $includeCommonNames = false, $includeChildren = false): array
     {
         $retArr = array();
         $sql = 'SELECT t.TID, t.SciName, t.Author, k.kingdom_name, t.kingdomId, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
@@ -1057,6 +1057,9 @@ class TaxonomyUtilities {
                 $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($tid);
                 if($includeCommonNames){
                     $retArr['commonnames'] = $this->getCommonNamesFromTid($tid);
+                }
+                if($includeChildren){
+                    $retArr['children'] = $this->getChildTaxaFromTid($tid);
                 }
             }
             $rs->free();
@@ -1089,6 +1092,25 @@ class TaxonomyUtilities {
                 $nodeArr = array();
                 $nodeArr['commonname'] = $r->VernacularName;
                 $nodeArr['langid'] = $r->langid;
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getChildTaxaFromTid($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT TID, SciName, Author, RankId '.
+            'FROM taxa WHERE parenttid = '.$tid.' AND TID = tidaccepted ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                $nodeArr['tid'] = $r->TID;
+                $nodeArr['sciname'] = $r->SciName;
+                $nodeArr['author'] = $r->Author;
+                $nodeArr['rankid'] = $r->RankId;
                 $retArr[] = $nodeArr;
             }
             $rs->free();
