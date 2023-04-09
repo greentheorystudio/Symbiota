@@ -105,7 +105,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <q-card class="q-my-sm" flat bordered>
                                             <q-card-section>
                                                 <div>
-                                                    <q-checkbox v-model="updateAcceptance" label="Update accepted taxa for synonymized names" :disable="loading" />
+                                                    <q-checkbox v-model="updateAcceptance" label="Update acceptance for synonymized names" :disable="loading" />
                                                 </div>
                                                 <div>
                                                     <q-checkbox v-model="importCommonNames" label="Import common names" :disable="loading" />
@@ -200,6 +200,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         const taxonomicThesaurusManagerModule = Vue.createApp({
             data() {
                 return {
+                    childrenSearchPrimingArr: Vue.ref([]),
                     clientRoot: CLIENT_ROOT,
                     colInitialSearchResults: Vue.ref([]),
                     commonNameFormattingOptions: [
@@ -342,6 +343,54 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     this.adjustUIEnd();
                 },
+                findCOLExternalTaxonChildren(callback){
+                    if(this.childrenSearchPrimingArr.length > 0){
+                        const currentId = this.childrenSearchPrimingArr[0];
+                        this.childrenSearchPrimingArr.splice(0, 1);
+                        const url = 'https://api.catalogueoflife.org/dataset/9840/tree/' + currentId + '/children?limit=100000';
+                        const formData = new FormData();
+                        formData.append('url', url);
+                        formData.append('action', 'get');
+                        fetch(proxyApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            if(response.status === 200){
+                                response.json().then((res) => {
+                                    if(res.hasOwnProperty('total') && Number(res['total']) > 0){
+                                        const resultArr = res['result'];
+                                        resultArr.forEach((child) => {
+                                            const rankname = child['rank'].toLowerCase();
+                                            const rankid = this.rankArr.hasOwnProperty(rankname) ? Number(this.rankArr[rankname]) : null;
+                                            if(rankid && this.selectedRanks.includes(rankid)){
+                                                const newChildObj = {};
+                                                newChildObj['id'] = child['id'];
+                                                newChildObj['sciname'] = child['name'];
+                                                newChildObj['author'] = child['authorship'];
+                                                newChildObj['rankid'] = rankid;
+                                                this.currentTaxonExternal['children'].push(newChildObj);
+                                            }
+                                            else if(!rankid || rankid <= this.selectedRanksHigh){
+                                                this.childrenSearchPrimingArr.push(child['id']);
+                                            }
+                                            this.findCOLExternalTaxonChildren(callback);
+                                        });
+                                    }
+                                    else{
+                                        this.findCOLExternalTaxonChildren(callback);
+                                    }
+                                });
+                            }
+                            else{
+                                this.findCOLExternalTaxonChildren(callback);
+                            }
+                        });
+                    }
+                    else{
+                        callback();
+                    }
+                },
                 findCOLTaxonById(id,callback){
                     this.colInitialSearchResults = [];
                     const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/info';
@@ -385,6 +434,54 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             callback(text);
                         }
                     });
+                },
+                findITISExternalTaxonChildren(callback){
+                    if(this.childrenSearchPrimingArr.length > 0){
+                        const currentId = this.childrenSearchPrimingArr[0];
+                        this.childrenSearchPrimingArr.splice(0, 1);
+                        const url = 'https://www.itis.gov/ITISWebService/jsonservice/getHierarchyDownFromTSN?tsn=' + currentId;
+                        const formData = new FormData();
+                        formData.append('url', url);
+                        formData.append('action', 'get');
+                        fetch(proxyApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            if(response.status === 200){
+                                response.json().then((res) => {
+                                    if(res['hierarchyList'].length > 0){
+                                        const resultArr = res['hierarchyList'];
+                                        resultArr.forEach((child) => {
+                                            const rankname = child['rankName'].toLowerCase();
+                                            const rankid = this.rankArr.hasOwnProperty(rankname) ? Number(this.rankArr[rankname]) : null;
+                                            if(rankid && this.selectedRanks.includes(rankid)){
+                                                const newChildObj = {};
+                                                newChildObj['id'] = child['tsn'];
+                                                newChildObj['sciname'] = child['taxonName'];
+                                                newChildObj['author'] = child['author'];
+                                                newChildObj['rankid'] = rankid;
+                                                this.currentTaxonExternal['children'].push(newChildObj);
+                                            }
+                                            else if(!rankid || rankid <= this.selectedRanksHigh){
+                                                this.childrenSearchPrimingArr.push(child['tsn']);
+                                            }
+                                            this.findITISExternalTaxonChildren(callback);
+                                        });
+                                    }
+                                    else{
+                                        this.findITISExternalTaxonChildren(callback);
+                                    }
+                                });
+                            }
+                            else{
+                                this.findITISExternalTaxonChildren(callback);
+                            }
+                        });
+                    }
+                    else{
+                        callback();
+                    }
                 },
                 findITISTaxonBySciname(sciname,callback){
                     this.itisInitialSearchResults = [];
@@ -470,6 +567,52 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     });
                 },
+                findWoRMSExternalTaxonChildren(callback){
+                    if(this.childrenSearchPrimingArr.length > 0){
+                        const currentId = this.childrenSearchPrimingArr[0];
+                        this.childrenSearchPrimingArr.splice(0, 1);
+                        const url = 'https://www.marinespecies.org/rest/AphiaChildrenByAphiaID/' + currentId + '?marine_only=false';
+                        const formData = new FormData();
+                        formData.append('url', url);
+                        formData.append('action', 'get');
+                        fetch(proxyApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            if(response.status === 200){
+                                response.json().then((res) => {
+                                    if(res.length > 0){
+                                        res.forEach((child) => {
+                                            const rankid = res.hasOwnProperty('taxonRankID') ? Number(res['taxonRankID']) : null;
+                                            if(rankid && this.selectedRanks.includes(rankid)){
+                                                const newChildObj = {};
+                                                newChildObj['id'] = child['AphiaID'];
+                                                newChildObj['sciname'] = child['scientificname'];
+                                                newChildObj['author'] = child['authority'];
+                                                newChildObj['rankid'] = rankid;
+                                                this.currentTaxonExternal['children'].push(newChildObj);
+                                            }
+                                            else if(!rankid || rankid <= this.selectedRanksHigh){
+                                                this.childrenSearchPrimingArr.push(child['AphiaID']);
+                                            }
+                                            this.findWoRMSExternalTaxonChildren(callback);
+                                        });
+                                    }
+                                    else{
+                                        this.findWoRMSExternalTaxonChildren(callback);
+                                    }
+                                });
+                            }
+                            else{
+                                this.findWoRMSExternalTaxonChildren(callback);
+                            }
+                        });
+                    }
+                    else{
+                        callback();
+                    }
+                },
                 findWoRMSTaxonBySciname(sciname,callback){
                     const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + sciname + '?marine_only=false';
                     const formData = new FormData();
@@ -499,6 +642,38 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     });
                 },
+                getCOLExternalTaxonCommonNames(callback){
+                    const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + this.currentTaxonExternal['id'] + '/vernacular';
+                    const formData = new FormData();
+                    formData.append('url', url);
+                    formData.append('action', 'get');
+                    fetch(proxyApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        if(response.status === 200){
+                            response.json().then((res) => {
+                                if(res.length > 0){
+                                    res.forEach((cName) => {
+                                        const langIso2Code = cName.hasOwnProperty('language') ? cName['language'] : null;
+                                        const langObj = langIso2Code ? this.languageArr.find(lang => lang['iso-2'] === langIso2Code) : null;
+                                        if(this.commonNameLanguageIdArr.length === 0 || (langObj && this.commonNameLanguageIdArr.includes(Number(langObj['langid'])))){
+                                            const cNameObj = {};
+                                            cNameObj['name'] = this.processCommonName(cName['name']);
+                                            cNameObj['langid'] = langObj ? Number(langObj['langid']) : '';
+                                            this.currentTaxonExternal['commonnames'].push(cNameObj);
+                                        }
+                                    });
+                                }
+                                this.getExternalChildren(callback);
+                            });
+                        }
+                        else{
+                            this.getExternalChildren(callback);
+                        }
+                    });
+                },
                 getDataSourceName(){
                     if(this.dataSource === 'col'){
                         return 'Catalogue of Life';
@@ -508,6 +683,32 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     else if(this.dataSource === 'worms'){
                         return 'World Register of Marine Species';
+                    }
+                },
+                getExternalChildren(callback){
+                    this.childrenSearchPrimingArr = [];
+                    this.childrenSearchPrimingArr.push(this.currentTaxonExternal['id']);
+                    if(this.dataSource === 'col'){
+                        this.findCOLExternalTaxonChildren(callback);
+                    }
+                    else if(this.dataSource === 'itis'){
+                        this.findITISExternalTaxonChildren(callback);
+                    }
+                    else if(this.dataSource === 'worms'){
+                        this.findWoRMSExternalTaxonChildren(callback);
+                    }
+                },
+                getExternalCommonNames(callback){
+                    if(this.importCommonNames && this.dataSource !== 'itis'){
+                        if(this.dataSource === 'col'){
+                            this.getCOLExternalTaxonCommonNames(callback);
+                        }
+                        else if(this.dataSource === 'worms'){
+                            this.getWoRMSExternalTaxonCommonNames(callback);
+                        }
+                    }
+                    else{
+                        this.getExternalChildren(callback);
                     }
                 },
                 getITISNameSearchResultsHierarchy(callback){
@@ -595,8 +796,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         const langObj = this.languageArr.find(lang => lang['name'] === cName['language']);
                                         if(this.commonNameLanguageIdArr.length === 0 || (langObj && this.commonNameLanguageIdArr.includes(Number(langObj['langid'])))){
                                             const cNameObj = {};
-                                            cNameObj['name'] = cName['commonName'];
-                                            cNameObj['langid'] = langObj ? Number(langObj['langid']) : null;
+                                            cNameObj['name'] = this.processCommonName(cName['commonName']);
+                                            cNameObj['langid'] = langObj ? Number(langObj['langid']) : '';
                                             this.taxonSearchResults[0]['commonnames'].push(cNameObj);
                                         }
                                     });
@@ -802,6 +1003,38 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     });
                 },
+                getWoRMSExternalTaxonCommonNames(callback){
+                    const url = 'https://www.marinespecies.org/rest/AphiaVernacularsByAphiaID/' + this.currentTaxonExternal['id'];
+                    const formData = new FormData();
+                    formData.append('url', url);
+                    formData.append('action', 'get');
+                    fetch(proxyApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        if(response.status === 200){
+                            response.json().then((res) => {
+                                if(res.length > 0){
+                                    res.forEach((cName) => {
+                                        const langIso2Code = cName.hasOwnProperty('language_code') ? cName['language_code'] : null;
+                                        const langObj = langIso2Code ? this.languageArr.find(lang => lang['iso-2'] === langIso2Code) : null;
+                                        if(this.commonNameLanguageIdArr.length === 0 || (langObj && this.commonNameLanguageIdArr.includes(Number(langObj['langid'])))){
+                                            const cNameObj = {};
+                                            cNameObj['name'] = this.processCommonName(cName['vernacular']);
+                                            cNameObj['langid'] = langObj ? Number(langObj['langid']) : '';
+                                            this.currentTaxonExternal['commonnames'].push(cNameObj);
+                                        }
+                                    });
+                                }
+                                this.getExternalChildren(callback);
+                            });
+                        }
+                        else{
+                            this.getExternalChildren(callback);
+                        }
+                    });
+                },
                 initializeImportUpdate(){
                     if(this.taxonomicGroupTid && this.selectedRanks.length > 0){
                         this.processCancelled = false;
@@ -866,6 +1099,25 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         this.processSubprocessSuccessResponse(true);
                         this.setTargetSynonymy();
                     }
+                },
+                processCommonName(name){
+                    if(this.selectedCommonNameFormatting === 'upper-each'){
+                        const words = name.split(" ");
+                        for(let i = 0; i < words.length; i++){
+                            words[i] = words[i][0].toUpperCase() + words[i].substring(1).toLowerCase();
+                        }
+                        name = words.join(" ");
+                    }
+                    else if(this.selectedCommonNameFormatting === 'upper-first'){
+                        name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+                    }
+                    else if(this.selectedCommonNameFormatting === 'upper-all'){
+                        name = name.toUpperCase();
+                    }
+                    else if(this.selectedCommonNameFormatting === 'lower-all'){
+                        name = name.toLowerCase();
+                    }
+                    return name;
                 },
                 processErrorResponse(text){
                     const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
@@ -1041,6 +1293,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     if(this.importCommonNames){
                         this.currentTaxonExternal['commonnames'] = this.taxonSearchResults[0].hasOwnProperty('commonnames') ? this.taxonSearchResults[0]['commonnames'] : [];
                     }
+                    this.currentTaxonExternal['children'] = [];
                     if(this.targetTaxonLocal['sciname'] === this.currentTaxonExternal['sciname']){
                         this.currentTaxonLocal['tid'] = this.targetTaxonLocal['tid'];
                         this.currentTaxonLocal['sciname'] = this.targetTaxonLocal['sciname'];
@@ -1051,6 +1304,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         if(this.importCommonNames){
                             this.currentTaxonLocal['commonnames'] = this.targetTaxonLocal['commonnames'];
                         }
+                        this.currentTaxonLocal['children'] = this.targetTaxonLocal['children'];
+                        this.getExternalCommonNames((errorText = null) => {
+                            if(errorText){
+                                this.processErrorResponse(errorText);
+                                this.adjustUIEnd();
+                            }
+                            else{
+                                //this.validateExternalLocalTaxa();
+                            }
+                        });
                     }
                     else{
                         this.findTaxonByTid(this.targetTaxonLocal['tidaccepted'],(resObj,errorText = null) => {
@@ -1062,6 +1325,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 this.currentTaxonLocal = resObj;
                                 this.kingdomId = this.currentTaxonLocal['kingdomid'];
                                 this.kingdomName = this.currentTaxonLocal['kingdom'];
+                                this.getExternalCommonNames((errorText = null) => {
+                                    if(errorText){
+                                        this.processErrorResponse(errorText);
+                                        this.adjustUIEnd();
+                                    }
+                                    else{
+                                        //this.validateExternalLocalTaxa();
+                                    }
+                                });
                             }
                         });
                     }
@@ -1222,7 +1494,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     else{
                         this.processSubprocessSuccessResponse(false);
-                        //this.processAddTaxaArr();
+                        this.processAddTaxaArr();
                     }
                 },
                 updateCommonNameLanguageArr(langObj) {
@@ -1374,8 +1646,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             const langObj = this.languageArr.find(lang => lang['name'] === cName['language']);
                                             if(this.commonNameLanguageIdArr.length === 0 || (langObj && this.commonNameLanguageIdArr.includes(Number(langObj['langid'])))){
                                                 const cNameObj = {};
-                                                cNameObj['name'] = cName['commonName'];
-                                                cNameObj['langid'] = langObj ? Number(langObj['langid']) : null;
+                                                cNameObj['name'] = this.processCommonName(cName['commonName']);
+                                                cNameObj['langid'] = langObj ? Number(langObj['langid']) : '';
                                                 taxon['commonnames'].push(cNameObj);
                                             }
                                         });

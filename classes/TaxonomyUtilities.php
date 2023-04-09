@@ -1102,7 +1102,7 @@ class TaxonomyUtilities {
     public function getChildTaxaFromTid($tid): array
     {
         $retArr = array();
-        $sql = 'SELECT TID, SciName, Author, RankId '.
+        $sql = 'SELECT TID, SciName, Author, RankId, family '.
             'FROM taxa WHERE parenttid = '.$tid.' AND TID = tidaccepted ';
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
@@ -1111,6 +1111,7 @@ class TaxonomyUtilities {
                 $nodeArr['sciname'] = $r->SciName;
                 $nodeArr['author'] = $r->Author;
                 $nodeArr['rankid'] = $r->RankId;
+                $nodeArr['family'] = $r->family;
                 $retArr[] = $nodeArr;
             }
             $rs->free();
