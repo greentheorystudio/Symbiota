@@ -161,49 +161,86 @@ class TaxonomyEditorManager{
 		$rs->free();
 	}
 
-	public function submitTaxonEdits($postArr): string
+	public function editTaxon($postArr,$tId = null): string
 	{
-		$statusStr = '';
-		$sql = 'UPDATE taxa SET '.
-			'unitind1 = '.($postArr['unitind1']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind1']).'"':'NULL').', '.
-			'unitname1 = "'.Sanitizer::cleanInStr($this->conn,$postArr['unitname1']).'",'.
-			'unitind2 = '.($postArr['unitind2']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind2']).'"':'NULL').', '.
-			'unitname2 = '.($postArr['unitname2']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname2']).'"':'NULL').', '.
-			'unitind3 = '.($postArr['unitind3']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind3']).'"':'NULL').', '.
-			'unitname3 = '.($postArr['unitname3']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname3']).'"':'NULL').', '.
-			'author = '.($postArr['author']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['author']).'"':'NULL').', '.
-			'rankid = '.(is_numeric($postArr['rankid'])?$postArr['rankid']:'NULL').', '.
-			'`source` = '.($postArr['source']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', '.
-			'notes = '.($postArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', '.
-			'securitystatus = '.(is_numeric($postArr['securitystatus'])?$postArr['securitystatus']:'0').', '.
-			'modifiedUid = '.$GLOBALS['SYMB_UID'].', '.
-			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'",'.
-			'sciname = "'.Sanitizer::cleanInStr($this->conn,($postArr['unitind1']?$postArr['unitind1']. ' ' : '').
-			$postArr['unitname1'].($postArr['unitind2']? ' ' .$postArr['unitind2']: '').
-			($postArr['unitname2']? ' ' .$postArr['unitname2']: '').
-			($postArr['unitind3']? ' ' .$postArr['unitind3']: '').
-			($postArr['unitname3']? ' ' .$postArr['unitname3']: '')).'" '.
-			'WHERE (tid = '.$this->tid.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$statusStr = 'ERROR editing taxon.';
-		}
-		
-		if($postArr['securitystatus'] !== $_REQUEST['securitystatusstart'] && is_numeric($postArr['securitystatus'])) {
-			$sql2 = 'UPDATE omoccurrences SET localitysecurity = '.$postArr['securitystatus'].' WHERE tid = '.$this->tid.' AND ISNULL(localitySecurityReason) ';
-			$this->conn->query($sql2);
-		}
+		if(!$tId){
+            $tId = $this->tid;
+        }
+        $statusStr = '';
+		if($tId){
+            $sql = 'UPDATE taxa SET ';
+            if(array_key_exists('unitind1',$postArr) && $postArr['unitind1']){
+                $sql .= 'unitind1 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind1'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind1']).'"':'NULL').', ';
+            }
+            if(array_key_exists('unitname1',$postArr) && $postArr['unitname1']){
+                $sql .= 'unitname1 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitname1'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname1']).'"':'NULL').', ';
+            }
+            if(array_key_exists('unitind2',$postArr) && $postArr['unitind2']){
+                $sql .= 'unitind2 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind2'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind2']).'"':'NULL').', ';
+            }
+            if(array_key_exists('unitname2',$postArr) && $postArr['unitname2']){
+                $sql .= 'unitname2 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitname2'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname2']).'"':'NULL').', ';
+            }
+            if(array_key_exists('unitind3',$postArr) && $postArr['unitind3']){
+                $sql .= 'unitind3 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind3'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind3']).'"':'NULL').', ';
+            }
+            if(array_key_exists('unitname3',$postArr) && $postArr['unitname3']){
+                $sql .= 'unitname3 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitname3'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname3']).'"':'NULL').', ';
+            }
+            if(array_key_exists('author',$postArr) && $postArr['author']){
+                $sql .= 'author = '.(Sanitizer::cleanInStr($this->conn,$postArr['author'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['author']).'"':'NULL').', ';
+            }
+            if(array_key_exists('family',$postArr) && $postArr['family']){
+                $sql .= 'family = '.(Sanitizer::cleanInStr($this->conn,$postArr['family'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['family']).'"':'NULL').', ';
+            }
+            if(array_key_exists('rankid',$postArr) && is_numeric($postArr['rankid']) && $postArr['rankid']){
+                $sql .= 'rankid = '.(int)$postArr['rankid'].', ';
+            }
+            if(array_key_exists('source',$postArr) && $postArr['source']){
+                $sql .= '`source` = '.(Sanitizer::cleanInStr($this->conn,$postArr['source'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', ';
+            }
+            if(array_key_exists('notes',$postArr) && $postArr['notes']){
+                $sql .= 'notes = '.(Sanitizer::cleanInStr($this->conn,$postArr['notes'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', ';
+            }
+            if(array_key_exists('securitystatus',$postArr) && is_numeric($postArr['securitystatus'])){
+                $sql .= 'securitystatus = '.(int)$postArr['securitystatus'].', ';
+            }
+            if(array_key_exists('sciname',$postArr) && $postArr['sciname']){
+                $sql .= 'sciname = "'.Sanitizer::cleanInStr($this->conn,$postArr['sciname']).'", ';
+            }
+            elseif(array_key_exists('unitname1',$postArr) && $postArr['unitname1']){
+                $sql .= 'sciname = "'.Sanitizer::cleanInStr($this->conn,($postArr['unitind1']?$postArr['unitind1']. ' ' : '').
+                    $postArr['unitname1'].($postArr['unitind2']? ' ' .$postArr['unitind2']: '').
+                    ($postArr['unitname2']? ' ' .$postArr['unitname2']: '').
+                    ($postArr['unitind3']? ' ' .$postArr['unitind3']: '').
+                    ($postArr['unitname3']? ' ' .$postArr['unitname3']: '')).'" ';
+            }
+            $sql .= 'modifiedUid = '.$GLOBALS['SYMB_UID'].', ';
+            $sql .= 'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'" ';
+            $sql .= 'WHERE TID = '.$tId.' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $statusStr = 'ERROR editing taxon.';
+            }
+            if(array_key_exists('securitystatus',$postArr) && array_key_exists('securitystatusstart',$postArr) && $postArr['securitystatus'] !== $_REQUEST['securitystatusstart'] && is_numeric($postArr['securitystatus'])) {
+                $sql2 = 'UPDATE omoccurrences SET localitysecurity = '.$postArr['securitystatus'].' WHERE tid = '.$this->tid.' AND ISNULL(localitySecurityReason) ';
+                $this->conn->query($sql2);
+            }
+        }
 		return $statusStr;
 	}
 	
-	public function submitTaxParentEdits($parentTid): string
+	public function editTaxonParent($parentTid,$tId = null): string
 	{
-		$status = '';
-		if(is_numeric($parentTid)){
+		if(!$tId){
+            $tId = $this->tid;
+        }
+        $status = '';
+		if(is_numeric($parentTid) && $parentTid){
 			$this->setTaxon();
 			$sql = 'UPDATE taxa '.
 				'SET parenttid = '.$parentTid.' '.
-				'WHERE tid = '.$this->tid.' ';
+				'WHERE tid = '.$tId.' ';
 			if(!$this->conn->query($sql)){
                 $status = 'Unable to edit taxonomic placement.';
 			}
@@ -256,6 +293,12 @@ class TaxonomyEditorManager{
                 $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = '.$tidAccepted.' WHERE parenttid = '.$tid.' ';
                 if(!$this->conn->query($sqlHierarchy)){
                     $status = 'ERROR: unable to update taxonomic hierarchy with accepted taxon.';
+                }
+                if((int)$tid !== (int)$tidAccepted){
+                    $sqlHierarchy = 'DELETE FROM taxaenumtree WHERE tid = '.$tid.' ';
+                    if(!$this->conn->query($sqlHierarchy)){
+                        $status = 'ERROR: unable to remove taxonomic hierarchy for unaccepted taxon.';
+                    }
                 }
 				if($kingdom){
                     $this->updateKingdomAcceptance($tid,$tidAccepted);
