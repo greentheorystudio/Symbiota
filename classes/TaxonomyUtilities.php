@@ -1051,7 +1051,7 @@ class TaxonomyUtilities {
     public function getTaxonFromTid($tid, $includeCommonNames = false, $includeChildren = false): array
     {
         $retArr = array();
-        $sql = 'SELECT t.TID, t.SciName, t.Author, k.kingdom_name, t.kingdomId, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
+        $sql = 'SELECT t.TID, t.SciName, t.Author, t.family, k.kingdom_name, t.kingdomId, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
             'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
             'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
             'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
@@ -1061,6 +1061,7 @@ class TaxonomyUtilities {
                 $retArr['tid'] = (int)$r->TID;
                 $retArr['sciname'] = $r->SciName;
                 $retArr['author'] = $r->Author;
+                $retArr['family'] = $r->family;
                 $retArr['kingdom'] = $r->kingdom_name;
                 $retArr['kingdomid'] = (int)$r->kingdomId;
                 $retArr['rankid'] = (int)$r->RankId;
@@ -1084,7 +1085,7 @@ class TaxonomyUtilities {
     public function getTaxonFromSciname($sciname, $kingdomId, $includeCommonNames = false, $includeChildren = false): array
     {
         $retArr = array();
-        $sql = 'SELECT t.TID, t.SciName, t.Author, k.kingdom_name, t.kingdomId, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
+        $sql = 'SELECT t.TID, t.SciName, t.Author, t.family, k.kingdom_name, t.kingdomId, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
             'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
             'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
             'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
@@ -1094,6 +1095,7 @@ class TaxonomyUtilities {
                 $retArr['tid'] = (int)$r->TID;
                 $retArr['sciname'] = $r->SciName;
                 $retArr['author'] = $r->Author;
+                $retArr['family'] = $r->family;
                 $retArr['kingdom'] = $r->kingdom_name;
                 $retArr['kingdomid'] = (int)$r->kingdomId;
                 $retArr['rankid'] = (int)$r->RankId;

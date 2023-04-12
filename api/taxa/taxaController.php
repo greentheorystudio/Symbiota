@@ -126,6 +126,6 @@ if($action){
     elseif($action === 'getTaxonFromSciname' && array_key_exists('sciname',$_POST) && array_key_exists('kingdomid',$_POST)){
         $includeCommonNames = array_key_exists('includeCommonNames',$_POST) && $_POST['includeCommonNames'];
         $includeChildren = array_key_exists('includeChildren',$_POST) && $_POST['includeChildren'];
-        echo json_encode($taxUtilities->getTaxonFromSciname($_POST['tid'], (int)$_POST['kingdomid'], $includeCommonNames, $includeChildren));
+        echo json_encode($taxUtilities->getTaxonFromSciname($_POST['sciname'], (int)$_POST['kingdomid'], $includeCommonNames, $includeChildren));
     }
 }
