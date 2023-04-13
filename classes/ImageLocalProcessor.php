@@ -808,7 +808,7 @@ class ImageLocalProcessor {
 				$sql1 .= ',thumbnailurl';
 				$sql2 .= ',"'.$tnUrl.'"';
 			}
-			if($oUrl){
+			if($oUrl && strpos($oUrl, 'http') === 0){
 				$sql1 .= ',originalurl';
 				$sql2 .= ',"'.$oUrl.'"';
 			}
