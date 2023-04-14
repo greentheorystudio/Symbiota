@@ -332,6 +332,8 @@ class TaxonomyEditorManager{
                 $this->conn->query($sql);
                 $sql = 'DELETE FROM taxonkingdoms WHERE kingdom_id = '.$oldKingdomId.' ';
                 $this->conn->query($sql);
+                $sql = 'DELETE FROM taxonunits WHERE kingdomid = '.$oldKingdomId.' ';
+                $this->conn->query($sql);
             }
         }
     }
@@ -419,7 +421,7 @@ class TaxonomyEditorManager{
 			($dataArr['unitname3']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitname3']).'"':'NULL').','.
 			($dataArr['tidaccepted']?(int)$dataArr['tidaccepted']:'NULL').','.
             ($dataArr['parenttid']?(int)$dataArr['parenttid']:'NULL').','.
-            ($dataArr['family']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['family']).'"':'NULL').','.
+            ((array_key_exists('family',$dataArr) && $dataArr['family'])?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['family']).'"':'NULL').','.
             ($dataArr['source']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['source']).'"':'NULL').','.
 			($dataArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['notes']).'"':'NULL').','.
             (int)$dataArr['securitystatus'].','.
@@ -447,7 +449,7 @@ class TaxonomyEditorManager{
         if(array_key_exists('rankid',$dataArr) && (int)$dataArr['rankid'] === 10 && Sanitizer::cleanInStr($this->conn,$dataArr['sciname'])){
             $dataArr['kingdomid'] = $this->addNewTaxonomicKingdom($dataArr['sciname']);
         }
-        if((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family'])){
+        elseif((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family'])){
             $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE tid = '.(int)$dataArr['parenttid'].' ';
             //echo $sqlKg; exit;
             $rsKg = $this->conn->query($sqlKg);
@@ -487,6 +489,10 @@ class TaxonomyEditorManager{
         $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("'.Sanitizer::cleanInStr($this->conn,$name).'")';
         if($this->conn->query($sql)){
             $retVal = $this->conn->insert_id;
+            $sql = 'INSERT INTO taxonunits(kingdomid,rankid,rankname,dirparentrankid,reqparentrankid) '.
+                'SELECT '.$retVal.',rankid,rankname,dirparentrankid,reqparentrankid '.
+                'FROM taxonunits WHERE kingdomid = 100 ';
+            $this->conn->query($sql);
         }
         return $retVal;
     }

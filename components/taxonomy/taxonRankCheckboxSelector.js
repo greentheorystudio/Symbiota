@@ -94,6 +94,14 @@ const taxonRankCheckboxSelector = {
             stringKeys.forEach((key) => {
                 this.rankArr.push(Number(key));
             });
+            const selectedArr = this.selectedRanks.slice();
+            selectedArr.forEach((rank) => {
+                if(!this.rankArr.includes(Number(rank))){
+                    const index = selectedArr.indexOf(rank);
+                    selectedArr.splice(index,1);
+                }
+            });
+            this.$emit('update:selected-ranks', selectedArr);
             this.setSelectAll();
         },
         setSelectAll() {

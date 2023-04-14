@@ -53,6 +53,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             clear: both;
             margin-top: 5px;
         }
+        .anchor-link {
+            font-weight: bold;
+            cursor: pointer;
+        }
+        a.anchor-link:link, a.anchor-link:visited, a.anchor-link:hover, a.anchor-link:active {
+            text-decoration: none;
+        }
     </style>
 	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
 </head>
@@ -183,7 +190,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     ?>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/multipleLanguageAutoComplete.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230413" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230414" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js" type="text/javascript"></script>
     <script>
         const taxonomicThesaurusManagerModule = Vue.createApp({
@@ -422,7 +429,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             }
                         });
                     }
-                    if(this.updateAcceptance && this.currentTaxonLocal['children'].length > 0){
+                    if(this.updateAcceptance && this.currentTaxonLocal['children'].length > 0 && this.currentTaxonLocal['rankid'] < this.selectedRanksHigh){
                         this.processSubprocessSuccessResponse(false);
                         const subtext = 'Updating acceptance for previously existing child taxa';
                         this.addSubprocessToProcessorDisplay('text',subtext);
@@ -593,7 +600,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             if(child['status'] === 'accepted'){
                                                 const rankname = child['rank'].toLowerCase();
                                                 const rankid = this.rankArr.hasOwnProperty(rankname) ? Number(this.rankArr[rankname]) : null;
-                                                if(rankid && this.selectedRanks.includes(rankid)){
+                                                if(rankid && this.selectedRanks.includes(rankid) && child['name'] !== this.currentTaxonExternal['sciname']){
                                                     const newChildObj = {};
                                                     newChildObj['id'] = child['id'];
                                                     newChildObj['sciname'] = child['name'];
@@ -699,7 +706,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             if(child){
                                                 const rankname = child['rankName'].toLowerCase();
                                                 const rankid = this.rankArr.hasOwnProperty(rankname) ? Number(this.rankArr[rankname]) : null;
-                                                if(rankid && this.selectedRanks.includes(rankid)){
+                                                if(rankid && this.selectedRanks.includes(rankid) && child['taxonName'] !== this.currentTaxonExternal['sciname']){
                                                     const newChildObj = {};
                                                     newChildObj['id'] = child['tsn'];
                                                     newChildObj['sciname'] = child['taxonName'];
@@ -820,7 +827,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         res.forEach((child) => {
                                             if(child['status'] === 'accepted'){
                                                 const rankid = child.hasOwnProperty('taxonRankID') ? Number(child['taxonRankID']) : null;
-                                                if(rankid && this.selectedRanks.includes(rankid)){
+                                                if(rankid && this.selectedRanks.includes(rankid) && child['scientificname'] !== this.currentTaxonExternal['sciname']){
                                                     const newChildObj = {};
                                                     newChildObj['id'] = child['AphiaID'];
                                                     newChildObj['sciname'] = child['scientificname'];
@@ -904,12 +911,22 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     });
                                 }
                                 this.processSubprocessSuccessResponse(false);
-                                this.getExternalChildren(callback);
+                                if(this.currentTaxonExternal['rankid'] < this.selectedRanksHigh){
+                                    this.getExternalChildren(callback);
+                                }
+                                else{
+                                    callback();
+                                }
                             });
                         }
                         else{
                             this.processSubprocessSuccessResponse(false);
-                            this.getExternalChildren(callback);
+                            if(this.currentTaxonExternal['rankid'] < this.selectedRanksHigh){
+                                this.getExternalChildren(callback);
+                            }
+                            else{
+                                callback();
+                            }
                         }
                     });
                 },
@@ -954,7 +971,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     }
                     else{
-                        this.getExternalChildren(callback);
+                        if(this.currentTaxonExternal['rankid'] < this.selectedRanksHigh){
+                            this.getExternalChildren(callback);
+                        }
+                        else{
+                            callback();
+                        }
                     }
                 },
                 getITISExternalTaxonCommonNames(callback){
@@ -983,12 +1005,22 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     });
                                 }
                                 this.processSubprocessSuccessResponse(false);
-                                this.getExternalChildren(callback);
+                                if(this.currentTaxonExternal['rankid'] < this.selectedRanksHigh){
+                                    this.getExternalChildren(callback);
+                                }
+                                else{
+                                    callback();
+                                }
                             });
                         }
                         else{
                             this.processSubprocessSuccessResponse(false);
-                            this.getExternalChildren(callback);
+                            if(this.currentTaxonExternal['rankid'] < this.selectedRanksHigh){
+                                this.getExternalChildren(callback);
+                            }
+                            else{
+                                callback();
+                            }
                         }
                     });
                 },
@@ -1040,7 +1072,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         }
                                     }
                                 });
-                                this.taxonSearchResults[0]['hierarchy'] = hierarchyArr;
+                                this.taxonSearchResults[0]['hierarchy'] = hierarchyArr.slice();
                                 callback();
                             });
                         }
@@ -1069,7 +1101,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 this.taxonSearchResults[0]['author'] = scientificNameMetadata['author'] ? scientificNameMetadata['author'] : '';
                                 const coreMetadata = resObj['coreMetadata'];
                                 const namestatus = coreMetadata['taxonUsageRating'];
-                                this.taxonSearchResults[0]['accepted'] = namestatus === 'accepted' || namestatus === 'valid';
+                                this.taxonSearchResults[0]['accepted'] = (namestatus === 'accepted' || namestatus === 'valid');
                                 if(this.importCommonNames && resObj.hasOwnProperty('commonNameList')){
                                     this.taxonSearchResults[0]['commonnames'] = [];
                                     const commonNames = resObj['commonNameList']['commonNames'];
@@ -1196,12 +1228,22 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         });
                                     }
                                     this.processSubprocessSuccessResponse(false);
-                                    this.getExternalChildren(callback);
+                                    if(this.currentTaxonExternal['rankid'] < this.selectedRanksHigh){
+                                        this.getExternalChildren(callback);
+                                    }
+                                    else{
+                                        callback();
+                                    }
                                 });
                             }
                             else{
                                 this.processSubprocessSuccessResponse(false);
-                                this.getExternalChildren(callback);
+                                if(this.currentTaxonExternal['rankid'] < this.selectedRanksHigh){
+                                    this.getExternalChildren(callback);
+                                }
+                                else{
+                                    callback();
+                                }
                             }
                         });
                 },
@@ -1352,8 +1394,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         else{
                             if(resObj){
                                 this.currentTaxonLocal = Object.assign({}, resObj);
-                                this.kingdomId = this.currentTaxonLocal['kingdomid'];
-                                this.kingdomName = this.currentTaxonLocal['kingdom'];
                                 this.currentTaxonExternal['tid'] = resObj['tid'];
                                 this.currentTaxonExternal['tidaccepted'] = resObj['tidaccepted'];
                             }
@@ -1470,7 +1510,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 processAddTaxaArr(callback){
                     if(this.taxaToAddArr.length > 0){
-                        const taxonToAdd = this.taxaToAddArr[0];
+                        const taxonToAdd = Object.assign({}, this.taxaToAddArr[0]);
                         const rankId = Number(taxonToAdd['rankid']);
                         taxonToAdd['parenttid'] = rankId > 10 ? this.nameTidIndex[taxonToAdd['parentName']] : 1;
                         this.addTaxonToThesaurus(taxonToAdd,(newTaxon,errorText = null) => {
@@ -1837,6 +1877,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     });
                 },
                 setRankHigh() {
+                    this.selectedRanksHigh = 0;
                     this.selectedRanks.forEach((rank) => {
                         if(rank > this.selectedRanksHigh){
                             this.selectedRanksHigh = rank;
@@ -1847,7 +1888,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     const text = 'Updating target taxonomic group accepted parent taxon';
                     this.currentProcess = 'updateTargetAcceptedParent';
                     this.processorDisplayArr.push(this.getNewProcessObject('single',text));
-                    if(!this.targetTaxonLocal['tidaccepted'] || this.targetTaxonLocal['tidaccepted'] === ''){
+                    if(this.targetTaxonLocal['sciname'] !== this.taxonSearchResults[0]['accepted_sciname']){
                         this.targetTaxonLocal['tidaccepted'] = this.nameTidIndex[this.taxonSearchResults[0]['accepted_sciname']];
                     }
                     this.updateTaxonTidAccepted(Object.assign({}, this.targetTaxonLocal),(errorText = null) => {
@@ -2194,11 +2235,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 if(target){
                                     callbackFunction = (errorText = null) => {
                                         if(errorText){
-                                            this.processSubprocessErrorResponse(errorText);
+                                            this.processErrorResponse(errorText);
                                             this.adjustUIEnd();
                                         }
                                         else{
-                                            this.processSubprocessSuccessResponse(true);
+                                            this.processSuccessResponse('Complete');
                                             this.setTargetSynonymy();
                                         }
                                     };
