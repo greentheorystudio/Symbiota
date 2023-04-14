@@ -1326,7 +1326,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     this.currentTaxonExternal['author'] = (data.hasOwnProperty('author') && data['author']) ? data['author'] : '';
                     this.currentTaxonExternal['rankid'] = Number(data['rankid']);
                     this.currentTaxonExternal['family'] = data['family'];
-                    if(this.currentTaxonExternal['family'] === '' && this.currentTaxonExternal['rankid'] === 140){
+                    if((!this.currentTaxonExternal['family'] || this.currentTaxonExternal['family'] === '') && this.currentTaxonExternal['rankid'] === 140){
                         this.currentTaxonExternal['family'] = this.currentTaxonExternal['sciname'];
                     }
                     if(this.importCommonNames){
@@ -1334,6 +1334,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     this.currentTaxonExternal['children'] = [];
                     this.currentTaxonExternal['tid'] = data['tid'];
+                    if((!this.currentTaxonExternal['tid'] || !Number(this.currentTaxonExternal['tid'])) && this.nameTidIndex.hasOwnProperty(this.currentTaxonExternal['sciname'])){
+                        this.currentTaxonExternal['tid'] = this.nameTidIndex[this.currentTaxonExternal['sciname']];
+                    }
                     this.currentTaxonExternal['parenttid'] = (data.hasOwnProperty('parenttid') && data['parenttid']) ? data['parenttid'] : null;
                     this.currentTaxonExternal['tidaccepted'] = (data.hasOwnProperty('tidaccepted') && data['tidaccepted']) ? data['tidaccepted'] : null;
                     const text = 'Processing ' + this.currentTaxonExternal['sciname'];
@@ -1472,7 +1475,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         taxonToAdd['parenttid'] = rankId > 10 ? this.nameTidIndex[taxonToAdd['parentName']] : 1;
                         this.addTaxonToThesaurus(taxonToAdd,(newTaxon,errorText = null) => {
                             if(errorText){
-                                this.adjustUIEnd();
                                 callback(errorText);
                             }
                             else{
@@ -1965,11 +1967,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         .then((response) => {
                             if(response.status === 200){
                                 response.text().then((res) => {
-                                    if(this.dataSource === 'worms' && (!res || this.setAddTaxaArr[0]['sciname'] === this.taxonSearchResults[0]['accepted_sciname'])){
+                                    if(this.dataSource === 'worms' && !res){
                                         this.getWoRMSAddTaxonAuthor(res,callback);
                                     }
                                     else{
-                                        const currentTaxon = this.setAddTaxaArr[0];
+                                        const currentTaxon = Object.assign({}, this.setAddTaxaArr[0]);
                                         if(res){
                                             this.nameTidIndex[currentTaxon['sciname']] = Number(res);
                                         }
