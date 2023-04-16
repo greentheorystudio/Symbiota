@@ -27,41 +27,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomic Thesaurus Manager</title>
 	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <style>
-        .processor-container {
-            width: 95%;
-            margin: 20px auto;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .processor-control-container {
-            width: 40%;
-        }
-        .processor-display-container {
-            width: 50%;
-        }
-        .processor-display {
-            height: 610px;
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-        .process-button-container {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            clear: both;
-            margin-top: 5px;
-        }
-        .anchor-link {
-            font-weight: bold;
-            cursor: pointer;
-        }
-        a.anchor-link:link, a.anchor-link:visited, a.anchor-link:hover, a.anchor-link:active {
-            text-decoration: none;
-        }
-    </style>
-	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
 </head>
 <body>
     <?php
@@ -85,89 +51,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 <q-separator></q-separator>
                 <q-tab-panels v-model="tab">
                     <q-tab-panel name="importer">
-                        <div class="processor-container">
-                            <div class="processor-control-container">
-                                <q-card class="processor-control-card">
-                                    <q-card-section>
-                                        <div class="q-my-sm">
-                                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disable="loading" label="Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
-                                        </div>
-                                        <div class="q-my-sm">
-                                            <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :required-ranks="requiredRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import or update" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
-                                        </div>
-                                        <div class="q-my-sm">
-                                            <taxonomy-data-source-bullet-selector :disable="loading" :selected-data-source="dataSource" @update:selected-data-source="updateSelectedDataSource"></taxonomy-data-source-bullet-selector>
-                                        </div>
-                                        <q-card class="q-my-sm" flat bordered>
-                                            <q-card-section>
-                                                <div>
-                                                    <q-checkbox v-model="updateAcceptance" label="Update acceptance for synonymized taxa" :disable="loading" />
-                                                </div>
-                                                <div>
-                                                    <q-checkbox v-model="importCommonNames" label="Import common names" :disable="loading" />
-                                                </div>
-                                                <template v-if="importCommonNames">
-                                                    <div class="q-my-sm">
-                                                        <multiple-language-auto-complete :language-arr="commonNameLanguageArr" :disable="loading" label="Common Name Languages" @update:language="updateCommonNameLanguageArr"></multiple-language-auto-complete>
-                                                    </div>
-                                                    <div class="q-my-sm">
-                                                        <div class="text-subtitle1 text-weight-bold">Format Common Names</div>
-                                                        <q-option-group :options="commonNameFormattingOptions" type="radio" v-model="selectedCommonNameFormatting" :disable="loading" dense />
-                                                    </div>
-                                                </template>
-                                            </q-card-section>
-                                        </q-card>
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="loading" color="secondary" @click="initializeImportUpdate();" label="Start Import/Update" dense />
-                                            </div>
-                                            <div>
-                                                <q-btn v-if="loading" color="red" @click="cancelProcess();" label="Cancel" dense />
-                                            </div>
-                                        </div>
-                                    </q-card-section>
-                                </q-card>
-                            </div>
-
-                            <div class="processor-display-container">
-                                <q-card class="bg-grey-3 q-pa-sm">
-                                    <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
-                                        <q-list dense>
-                                            <q-item v-for="proc in processorDisplayArr">
-                                                <q-item-section>
-                                                    <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
-                                                    <template v-if="!proc.loading && proc.resultText">
-                                                        <div v-if="proc.result === 'success'" class="q-ml-sm text-weight-bold text-green-9">
-                                                            {{proc.resultText}}
-                                                        </div>
-                                                        <div v-if="proc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
-                                                            {{proc.resultText}}
-                                                        </div>
-                                                    </template>
-                                                    <template v-if="proc.type === 'multi' && proc.subs.length">
-                                                        <div class="q-ml-sm">
-                                                            <div v-for="subproc in proc.subs">
-                                                                <template v-if="subproc.type === 'text' || subproc.type === 'undo'">
-                                                                    <div>{{ subproc.procText }} <q-spinner v-if="subproc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
-                                                                    <template v-if="!subproc.loading && subproc.resultText">
-                                                                        <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="text-weight-bold text-green-9">
-                                                                            <span class="text-weight-bold text-green-9">{{subproc.resultText}}</span>
-                                                                        </div>
-                                                                        <div v-if="subproc.result === 'error'" class="text-weight-bold text-negative">
-                                                                            {{subproc.resultText}}
-                                                                        </div>
-                                                                    </template>
-                                                                </template>
-                                                            </div>
-                                                        </div>
-                                                    </template>
-                                                </q-item-section>
-                                            </q-item>
-                                        </q-list>
-                                    </q-scroll-area>
-                                </q-card>
-                            </div>
-                        </div>
+                        <taxonomy-data-source-import-update-module></taxonomy-data-source-import-update-module>
                     </q-tab-panel>
                     <q-tab-panel name="fileupload">
                         <?php include_once(__DIR__ . '/batchloader.php'); ?>
@@ -192,6 +76,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230414" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js" type="text/javascript"></script>
     <script>
         const taxonomicThesaurusManagerModule = Vue.createApp({
             data() {
@@ -246,7 +131,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 'multiple-language-auto-complete': multipleLanguageAutoComplete,
                 'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
                 'taxon-rank-checkbox-selector': taxonRankCheckboxSelector,
-                'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector
+                'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector,
+                'taxonomy-data-source-import-update-module': taxonomyDataSourceImportUpdateModule
             },
             setup() {
                 let procDisplayScrollAreaRef = Vue.ref(null);
