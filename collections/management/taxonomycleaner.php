@@ -29,56 +29,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Management Module</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <style>
-        .header-block {
-            display: flex;
-            justify-content: space-between;
-            margin: 0 30px 8px;
-        }
-        .processor-container {
-            width: 95%;
-            margin: 20px auto;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .processor-control-container {
-            width: 40%;
-        }
-        .processor-control-card {
-            height: 630px;
-        }
-        .processor-control-accordion {
-            height: 610px;
-        }
-        .processor-display-container {
-            width: 50%;
-        }
-        .processor-display {
-            height: 610px;
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-        .process-button-container {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            clear: both;
-            margin-top: 5px;
-        }
-        .accordion-panel {
-            max-height: 532px;
-            overflow: auto;
-        }
-        .process-header {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .fuzzy-match-row {
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
     <script>
         const collId = <?php echo $collid; ?>;
     </script>

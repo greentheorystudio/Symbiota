@@ -453,6 +453,70 @@ body.processing .loadingModal {
 		stroke-dasharray: 126 126;
 	}
 }
+
+/* Vue component styles */
+.header-block {
+	display: flex;
+	justify-content: space-between;
+	margin: 0 30px 8px;
+}
+.processor-container {
+	width: 95%;
+	margin: 20px auto;
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+}
+.processor-control-container {
+	width: 40%;
+}
+.processor-control-accordion {
+	height: 610px;
+}
+.processor-display-container {
+	width: 50%;
+}
+.processor-control-card {
+	height: 630px;
+}
+.processor-control-accordion {
+	height: 610px;
+}
+.processor-display-container {
+	width: 50%;
+}
+.processor-display {
+	height: 610px;
+	font-family: Arial, sans-serif;
+	background-color: #f5f5f5;
+}
+.process-button-container {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	clear: both;
+	margin-top: 5px;
+}
+.accordion-panel {
+	max-height: 532px;
+	overflow: auto;
+}
+.process-header {
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+.fuzzy-match-row {
+	display: flex;
+	justify-content: space-between;
+}
+.anchor-link {
+	font-weight: bold;
+	cursor: pointer;
+}
+a.anchor-link:link, a.anchor-link:visited, a.anchor-link:hover, a.anchor-link:active {
+	text-decoration: none;
+}
+
 /* Taxon Profile page styles */
 #inner-table{
 	width: 90%;
