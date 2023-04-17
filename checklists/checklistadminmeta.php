@@ -236,7 +236,7 @@ if(!$clid){
 					</div>
 					<div>
 						<?php
-						$activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
+						$activateKey = (array_key_exists('KEY_MOD_IS_ACTIVE',$GLOBALS) && $GLOBALS['KEY_MOD_IS_ACTIVE']);
 						if(array_key_exists('activatekey', $defaultArr)){
 							$activateKey = $defaultArr['activatekey'];
 						}
