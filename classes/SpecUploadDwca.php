@@ -531,7 +531,7 @@ class SpecUploadDwca extends SpecUploadBase{
             closedir($handle);
         }
         if(stripos($dirPath,$this->uploadTargetPath) === 0){
-            Utilities::deleteDirectory($dirPath);
+            (new Utilities)->deleteDirectory($dirPath);
         }
     }
 
