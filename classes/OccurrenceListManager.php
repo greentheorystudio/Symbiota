@@ -27,7 +27,7 @@ class OccurrenceListManager extends OccurrenceManager{
         $sql = 'SELECT DISTINCT o.occid, c.CollID, IFNULL(o.institutioncode,c.institutioncode) AS institutioncode, IFNULL(o.collectioncode,c.collectioncode) AS collectioncode, c.collectionname, c.icon, '.
             'CONCAT_WS(":",c.institutioncode, c.collectioncode) AS collection, '.
             'IFNULL(o.CatalogNumber,"") AS catalognumber, t.family, o.sciname, t.tidaccepted, '.
-            'CONCAT_WS(" to ",IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),""),DATE_FORMAT(MAKEDATE(o.year,o.endDayOfYear),"%d %M %Y")) AS date, '.
+            'IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),"") AS date, '.
             'IFNULL(o.scientificNameAuthorship,"") AS author, IFNULL(o.recordedBy,"") AS recordedby, IFNULL(o.recordNumber,"") AS recordnumber, '.
             'o.eventDate, IFNULL(o.country,"") AS country, IFNULL(o.StateProvince,"") AS state, IFNULL(o.county,"") AS county, '.
             'o.locality, o.decimallatitude, o.decimallongitude, '.
