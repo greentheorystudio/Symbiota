@@ -29,7 +29,7 @@ class ImageCleaner extends Manager{
 		}
 		$sql .= $this->getSqlWhere().
 			'GROUP BY c.collid ORDER BY c.collectionname';
-		echo $sql;
+		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$id = $r->collid;
