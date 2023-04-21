@@ -29,7 +29,7 @@ class ImageCleaner extends Manager{
 		}
 		$sql .= $this->getSqlWhere().
 			'GROUP BY c.collid ORDER BY c.collectionname';
-		//echo $sql;
+		echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$id = $r->collid;
@@ -405,7 +405,7 @@ class ImageCleaner extends Manager{
 
 	public function setTid($id): void
 	{
-		if(is_numeric($id)){
+		if(is_numeric($id) && $id > 0){
 			$this->tidArr[] = $id;
 			$sql = 'SELECT DISTINCT tidaccepted FROM taxa '.
 				'WHERE tid = '.$id.' ';
