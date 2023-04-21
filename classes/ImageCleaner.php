@@ -403,21 +403,21 @@ class ImageCleaner extends Manager{
 		}
 	}
 
-	public function setTid($id): void
-	{
-		if(is_numeric($id)){
-			$this->tidArr[] = $id;
-			$sql = 'SELECT DISTINCT tidaccepted FROM taxa '.
-				'WHERE tid = '.$id.' ';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				if($r->tid !== $id) {
-					$this->tidArr[] = $r->tidaccepted;
-				}
-			}
-			$rs->free();
-		}
-	}
+    public function setTid($id): void
+    {
+        if(is_numeric($id) && $id > 0){
+            $this->tidArr[] = $id;
+            $sql = 'SELECT DISTINCT tidaccepted FROM taxa '.
+                'WHERE tid = '.$id.' ';
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                if($r->tid !== $id) {
+                    $this->tidArr[] = $r->tidaccepted;
+                }
+            }
+            $rs->free();
+        }
+    }
 
 	public function getSciname(): string
     {
