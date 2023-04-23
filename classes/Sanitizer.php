@@ -3,9 +3,12 @@ class Sanitizer {
 
     public static function cleanInStr($conn,$str): string
     {
-        $newStr = trim($str);
-        $newStr = preg_replace('/\s\s+/', ' ',$newStr);
-        $newStr = $conn->real_escape_string($newStr);
+        $newStr = '';
+        if($str){
+            $newStr = trim($str);
+            $newStr = preg_replace('/\s\s+/', ' ',$newStr);
+            $newStr = $conn->real_escape_string($newStr);
+        }
         return $newStr;
     }
 
