@@ -362,6 +362,8 @@ class TaxonomyEditorManager{
 
     public function validateNewTaxonArr($dataArr): array
     {
+        $dataArr['kingdomid'] = 100;
+        $dataArr['family'] = '';
         if((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family'])){
             $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE tid = '.(int)$dataArr['parenttid'].' ';
             //echo $sqlKg; exit;
