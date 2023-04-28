@@ -435,7 +435,7 @@ class SpecUploadDwca extends SpecUploadBase{
                             if(strncmp($symbField, 'unmapped', 8) !== 0){
                                 $indexArr = array_keys($this->sourceArr,$sMap['field']);
                                 $index = array_shift($indexArr);
-                                if(array_key_exists($index, $recordArr) && $recordArr) {
+                                if(array_key_exists($index, $recordArr)) {
                                     $valueStr = trim($recordArr[$index]);
                                     if($valueStr){
                                         if($cset !== $this->encoding) {
@@ -531,7 +531,7 @@ class SpecUploadDwca extends SpecUploadBase{
             closedir($handle);
         }
         if(stripos($dirPath,$this->uploadTargetPath) === 0){
-            Utilities::deleteDirectory($dirPath);
+            (new Utilities)->deleteDirectory($dirPath);
         }
     }
 
@@ -574,7 +574,7 @@ class SpecUploadDwca extends SpecUploadBase{
                         if(strncmp($symbField, 'unmapped', 8) !== 0){
                             $indexArr = array_keys($sourceArr,$iMap['field']);
                             $index = array_shift($indexArr);
-                            if(array_key_exists($index, $recordArr) && $recordArr) {
+                            if(array_key_exists($index, $recordArr)) {
                                 $valueStr = trim($recordArr[$index]);
                                 if($valueStr){
                                     if($cset !== $this->encoding) {
@@ -629,7 +629,7 @@ class SpecUploadDwca extends SpecUploadBase{
             $recordArr = explode($this->delimiter,$record);
             if($this->enclosure){
                 foreach($recordArr as $k => $v){
-                    if($recordArr && strpos($v, $this->enclosure) === 0 && substr($v, -1) === $this->enclosure) {
+                    if(strpos($v, $this->enclosure) === 0 && substr($v, -1) === $this->enclosure) {
                         $recordArr[$k] = substr($v,1, -1);
                     }
                 }

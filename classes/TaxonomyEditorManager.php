@@ -446,6 +446,8 @@ class TaxonomyEditorManager{
 
     public function validateNewTaxonArr($dataArr): array
     {
+        $dataArr['kingdomid'] = 100;
+        $dataArr['family'] = '';
         if(array_key_exists('rankid',$dataArr) && (int)$dataArr['rankid'] === 10 && Sanitizer::cleanInStr($this->conn,$dataArr['sciname'])){
             $dataArr['kingdomid'] = $this->addNewTaxonomicKingdom($dataArr['sciname']);
         }
