@@ -747,7 +747,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     .then((response) => {
                         if(response.status === 200){
                             response.json().then((resObj) => {
-                                if(resObj && resObj['kingdom'].toLowerCase() === this.selectedKingdomName.toLowerCase() || resObj['scientificname'].toLowerCase() === this.selectedKingdomName.toLowerCase()){
+                                if(resObj.hasOwnProperty('kingdom') && resObj['kingdom'] && resObj['kingdom'].toLowerCase() === this.selectedKingdomName.toLowerCase() || resObj['scientificname'].toLowerCase() === this.selectedKingdomName.toLowerCase()){
                                     const resultObj = {};
                                     resultObj['id'] = resObj['AphiaID'];
                                     resultObj['sciname'] = resObj['scientificname'];
