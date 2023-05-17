@@ -523,29 +523,31 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             response.json().then((resObj) => {
                                 const resArr = resObj['hierarchyList'];
                                 const hierarchyArr = [];
-                                let foundNameRank = this.nameSearchResults[0]['rankid'];
-                                if(resArr && resArr.length > 0 && !this.nameSearchResults[0]['accepted']){
-                                    const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === this.nameSearchResults[0]['accepted_sciname']);
-                                    foundNameRank = Number(this.rankArr[acceptedObj['rankName'].toLowerCase()]);
-                                }
-                                resArr.forEach((taxResult) => {
-                                    if(taxResult['taxonName'] !== this.nameSearchResults[0]['sciname']){
-                                        const rankname = taxResult['rankName'].toLowerCase();
-                                        const rankid = Number(this.rankArr[rankname]);
-                                        if(rankid <= foundNameRank && TAXONOMIC_RANKS.includes(rankid)){
-                                            const resultObj = {};
-                                            resultObj['id'] = taxResult['tsn'];
-                                            resultObj['sciname'] = taxResult['taxonName'];
-                                            resultObj['author'] = taxResult['author'] ? taxResult['author'] : '';
-                                            resultObj['rankname'] = rankname;
-                                            resultObj['rankid'] = rankid;
-                                            if(rankname === 'family'){
-                                                this.nameSearchResults[0]['family'] = resultObj['sciname'];
-                                            }
-                                            hierarchyArr.push(resultObj);
-                                        }
+                                if(resArr && resArr.length > 0){
+                                    let foundNameRank = this.nameSearchResults[0]['rankid'];
+                                    if(!this.nameSearchResults[0]['accepted']){
+                                        const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === this.nameSearchResults[0]['accepted_sciname']);
+                                        foundNameRank = Number(this.rankArr[acceptedObj['rankName'].toLowerCase()]);
                                     }
-                                });
+                                    resArr.forEach((taxResult) => {
+                                        if(taxResult['taxonName'] !== this.nameSearchResults[0]['sciname']){
+                                            const rankname = taxResult['rankName'].toLowerCase();
+                                            const rankid = Number(this.rankArr[rankname]);
+                                            if(rankid <= foundNameRank && TAXONOMIC_RANKS.includes(rankid)){
+                                                const resultObj = {};
+                                                resultObj['id'] = taxResult['tsn'];
+                                                resultObj['sciname'] = taxResult['taxonName'];
+                                                resultObj['author'] = taxResult['author'] ? taxResult['author'] : '';
+                                                resultObj['rankname'] = rankname;
+                                                resultObj['rankid'] = rankid;
+                                                if(rankname === 'family'){
+                                                    this.nameSearchResults[0]['family'] = resultObj['sciname'];
+                                                }
+                                                hierarchyArr.push(resultObj);
+                                            }
+                                        }
+                                    });
+                                }
                                 this.nameSearchResults[0]['hierarchy'] = hierarchyArr;
                                 this.processSuccessResponse(false);
                                 this.validateNameSearchResults();
