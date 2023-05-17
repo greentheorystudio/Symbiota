@@ -333,7 +333,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     this.currentProcess = null;
                     this.undoButtonsDisabled = false;
                     this.uppercontrolsdisabled = false;
-                    this.unlinkedLoading = false;
                 },
                 adjustUIStart(id){
                     this.processorDisplayArr = [];
@@ -1540,6 +1539,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         if(result.hasOwnProperty('taxaCnt')){
                             this.unlinkedTaxaCnt = result['taxaCnt'];
                         }
+                        this.unlinkedLoading = false;
                     });
                 },
                 setUnlinkedTaxaList(){
