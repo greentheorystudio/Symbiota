@@ -1811,7 +1811,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             this.processErrorResponse(false,'Unable to distinguish accepted name');
                             this.runScinameDataSourceSearch();
                         }
-                        else{
+                        else if(this.nameSearchResults[0]['hierarchy'].length > 0){
                             const addHierchyTemp = this.nameSearchResults[0]['hierarchy'];
                             addHierchyTemp.sort((a, b) => {
                                 return a.rankid - b.rankid;
@@ -1834,6 +1834,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             const text = 'Matching parent and accepted taxa to the Taxonomic Thesaurus';
                             this.addSubprocessToProcessorDisplay(this.currentSciname,'text',text);
                             this.setTaxaToAdd();
+                        }
+                        else{
+                            this.processErrorResponse(false,'Unable to distinguish taxon by name');
+                            this.runScinameDataSourceSearch();
                         }
                     }
                     else{
