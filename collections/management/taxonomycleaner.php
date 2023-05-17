@@ -1780,13 +1780,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             if(response.status === 200){
                                 response.json().then((resObj) => {
                                     const coreMetadata = resObj['coreMetadata'];
-                                    const namestatus = coreMetadata['taxonUsageRating'];
-                                    if(namestatus === 'accepted'){
-                                        const taxonRankData = resObj['taxRank'];
-                                        taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
-                                        taxon['rankid'] = Number(taxonRankData['rankId']);
-                                        taxon['accepted'] = true;
-                                        this.nameSearchResults.push(taxon);
+                                    if(coreMetadata){
+                                        const namestatus = coreMetadata['taxonUsageRating'];
+                                        if(namestatus === 'accepted'){
+                                            const taxonRankData = resObj['taxRank'];
+                                            taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
+                                            taxon['rankid'] = Number(taxonRankData['rankId']);
+                                            taxon['accepted'] = true;
+                                            this.nameSearchResults.push(taxon);
+                                        }
                                     }
                                     this.validateITISInitialNameSearchResults();
                                 });
