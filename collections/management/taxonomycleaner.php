@@ -573,28 +573,34 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         if(response.status === 200){
                             response.json().then((resObj) => {
                                 const taxonRankData = resObj['taxRank'];
-                                this.nameSearchResults[0]['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
-                                this.nameSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
-                                const coreMetadata = resObj['coreMetadata'];
-                                const namestatus = coreMetadata['taxonUsageRating'];
-                                if(namestatus === 'accepted' || namestatus === 'valid'){
-                                    this.nameSearchResults[0]['accepted'] = true;
-                                    this.getITISNameSearchResultsHierarchy();
-                                }
-                                else{
-                                    this.nameSearchResults[0]['accepted'] = false;
-                                    const acceptedNameList = resObj['acceptedNameList'];
-                                    const acceptedNameArr = acceptedNameList['acceptedNames'];
-                                    if(acceptedNameArr.length > 0){
-                                        const acceptedName = acceptedNameArr[0];
-                                        this.nameSearchResults[0]['accepted_id'] = acceptedName['acceptedTsn'];
-                                        this.nameSearchResults[0]['accepted_sciname'] = acceptedName['acceptedName'];
+                                if(taxonRankData && taxonRankData.hasOwnProperty('rankName')){
+                                    this.nameSearchResults[0]['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
+                                    this.nameSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
+                                    const coreMetadata = resObj['coreMetadata'];
+                                    const namestatus = coreMetadata['taxonUsageRating'];
+                                    if(namestatus === 'accepted' || namestatus === 'valid'){
+                                        this.nameSearchResults[0]['accepted'] = true;
                                         this.getITISNameSearchResultsHierarchy();
                                     }
                                     else{
-                                        this.processErrorResponse(false,'Unable to distinguish taxon by name');
-                                        this.runScinameDataSourceSearch();
+                                        this.nameSearchResults[0]['accepted'] = false;
+                                        const acceptedNameList = resObj['acceptedNameList'];
+                                        const acceptedNameArr = acceptedNameList['acceptedNames'];
+                                        if(acceptedNameArr.length > 0){
+                                            const acceptedName = acceptedNameArr[0];
+                                            this.nameSearchResults[0]['accepted_id'] = acceptedName['acceptedTsn'];
+                                            this.nameSearchResults[0]['accepted_sciname'] = acceptedName['acceptedName'];
+                                            this.getITISNameSearchResultsHierarchy();
+                                        }
+                                        else{
+                                            this.processErrorResponse(false,'Unable to distinguish taxon by name');
+                                            this.runScinameDataSourceSearch();
+                                        }
                                     }
+                                }
+                                else{
+                                    this.processErrorResponse(false,'Unable to distinguish taxon by name');
+                                    this.runScinameDataSourceSearch();
                                 }
                             });
                         }
