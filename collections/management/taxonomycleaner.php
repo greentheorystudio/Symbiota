@@ -682,39 +682,41 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 const hierarchyArr = [];
                                 const foundNameRank = this.nameSearchResults[0]['rankid'];
                                 let childObj = resObj['child'];
-                                const firstObj = {};
-                                const firstrankname = childObj['rank'].toLowerCase();
-                                const firstrankid = Number(this.rankArr[firstrankname]);
-                                const newTaxonAccepted = this.nameSearchResults[0]['accepted'];
-                                firstObj['id'] = childObj['AphiaID'];
-                                firstObj['sciname'] = childObj['scientificname'];
-                                firstObj['author'] = '';
-                                firstObj['rankname'] = firstrankname;
-                                firstObj['rankid'] = firstrankid;
-                                hierarchyArr.push(firstObj);
-                                let stopLoop = false;
-                                while((childObj = childObj['child']) && !stopLoop){
-                                    if(childObj['scientificname'] !== this.nameSearchResults[0]['sciname']){
-                                        const rankname = childObj['rank'].toLowerCase();
-                                        const rankid = Number(this.rankArr[rankname]);
-                                        if((newTaxonAccepted && rankid < foundNameRank && TAXONOMIC_RANKS.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'] || TAXONOMIC_RANKS.includes(rankid)))){
-                                            const resultObj = {};
-                                            resultObj['id'] = childObj['AphiaID'];
-                                            resultObj['sciname'] = childObj['scientificname'];
-                                            resultObj['author'] = '';
-                                            resultObj['rankname'] = rankname;
-                                            resultObj['rankid'] = rankid;
-                                            if(rankname === 'family'){
-                                                this.nameSearchResults[0]['family'] = resultObj['sciname'];
+                                if(childObj){
+                                    const firstObj = {};
+                                    const firstrankname = childObj['rank'].toLowerCase();
+                                    const firstrankid = Number(this.rankArr[firstrankname]);
+                                    const newTaxonAccepted = this.nameSearchResults[0]['accepted'];
+                                    firstObj['id'] = childObj['AphiaID'];
+                                    firstObj['sciname'] = childObj['scientificname'];
+                                    firstObj['author'] = '';
+                                    firstObj['rankname'] = firstrankname;
+                                    firstObj['rankid'] = firstrankid;
+                                    hierarchyArr.push(firstObj);
+                                    let stopLoop = false;
+                                    while((childObj = childObj['child']) && !stopLoop){
+                                        if(childObj['scientificname'] !== this.nameSearchResults[0]['sciname']){
+                                            const rankname = childObj['rank'].toLowerCase();
+                                            const rankid = Number(this.rankArr[rankname]);
+                                            if((newTaxonAccepted && rankid < foundNameRank && TAXONOMIC_RANKS.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'] || TAXONOMIC_RANKS.includes(rankid)))){
+                                                const resultObj = {};
+                                                resultObj['id'] = childObj['AphiaID'];
+                                                resultObj['sciname'] = childObj['scientificname'];
+                                                resultObj['author'] = '';
+                                                resultObj['rankname'] = rankname;
+                                                resultObj['rankid'] = rankid;
+                                                if(rankname === 'family'){
+                                                    this.nameSearchResults[0]['family'] = resultObj['sciname'];
+                                                }
+                                                hierarchyArr.push(resultObj);
                                             }
-                                            hierarchyArr.push(resultObj);
-                                        }
-                                        if((newTaxonAccepted && rankid === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'])){
-                                            stopLoop = true;
+                                            if((newTaxonAccepted && rankid === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'])){
+                                                stopLoop = true;
+                                            }
                                         }
                                     }
+                                    this.nameSearchResults[0]['hierarchy'] = hierarchyArr;
                                 }
-                                this.nameSearchResults[0]['hierarchy'] = hierarchyArr;
                                 this.processSuccessResponse(false);
                                 this.validateNameSearchResults();
                             });
