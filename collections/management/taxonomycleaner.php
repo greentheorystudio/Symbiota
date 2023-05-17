@@ -42,7 +42,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <?php
         if($collid && is_numeric($collid)){
             ?>
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
             <?php
         }
         ?>
