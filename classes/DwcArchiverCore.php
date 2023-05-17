@@ -950,7 +950,7 @@ class DwcArchiverCore extends Manager{
             }
             foreach($contactArr as $contactKey => $contactValue){
                 $conElem = $newDoc->createElement($contactKey);
-                $conElem->appendChild($newDoc->createTextNode($contactValue));
+                $conElem->appendChild($newDoc->createTextNode(($contactValue ?: '')));
                 $contactElem->appendChild($conElem);
             }
             if(isset($contactArr['addr'])){
@@ -976,7 +976,7 @@ class DwcArchiverCore extends Manager{
                 }
                 foreach($assocArr as $aKey => $aArr){
                     $childAssocElem = $newDoc->createElement($aKey);
-                    $childAssocElem->appendChild($newDoc->createTextNode($aArr));
+                    $childAssocElem->appendChild($newDoc->createTextNode(($aArr ?: '')));
                     $assocElem->appendChild($childAssocElem);
                 }
                 if($addrArr){
@@ -1332,7 +1332,7 @@ class DwcArchiverCore extends Manager{
                         unset($r['collid']);
                     }
                     if($this->upperTaxonomy){
-                        $lcSciName = strtolower($r['scientificName']);
+                        $lcSciName = $r['scientificName']?strtolower($r['scientificName']):'';
                         $famStr = (isset($r['family'])?strtolower($r['family']):'');
                         $ordStr = (isset($this->upperTaxonomy[$famStr]['o'])?strtolower($this->upperTaxonomy[$famStr]['o']):'');
                         if(!$ordStr){
@@ -1457,10 +1457,10 @@ class DwcArchiverCore extends Manager{
                 if(strncmp($r['accessURI'], '/', 1) === 0) {
                     $r['accessURI'] = $localDomain . $r['accessURI'];
                 }
-                if(strncmp($r['thumbnailAccessURI'], '/', 1) === 0) {
+                if($r['thumbnailAccessURI'] && strncmp($r['thumbnailAccessURI'], '/', 1) === 0) {
                     $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
                 }
-                if(strncmp($r['goodQualityAccessURI'], '/', 1) === 0) {
+                if($r['goodQualityAccessURI'] && strncmp($r['goodQualityAccessURI'], '/', 1) === 0) {
                     $r['goodQualityAccessURI'] = $localDomain . $r['goodQualityAccessURI'];
                 }
 
@@ -1761,7 +1761,7 @@ class DwcArchiverCore extends Manager{
                 $this->serverDomain = 'https://';
             }
             $this->serverDomain .= $_SERVER['HTTP_HOST'];
-            if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
+            if($_SERVER['SERVER_PORT'] && (int)$_SERVER['SERVER_PORT'] !== 80 && (int)$_SERVER['SERVER_PORT'] !== 443) {
                 $this->serverDomain .= ':' . $_SERVER['SERVER_PORT'];
             }
         }

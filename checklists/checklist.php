@@ -48,7 +48,7 @@ $clArray = array();
 if($clValue || $dynClid){
     $clArray = $clManager->getClMetaData();
 }
-$activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
+$activateKey = (array_key_exists('KEY_MOD_IS_ACTIVE',$GLOBALS) && $GLOBALS['KEY_MOD_IS_ACTIVE']);
 $showDetails = 0;
 $clid = 0;
 if($clArray){

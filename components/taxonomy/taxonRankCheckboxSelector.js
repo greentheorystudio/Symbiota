@@ -4,6 +4,10 @@ const taxonRankCheckboxSelector = {
             type: Array,
             default: []
         },
+        requiredRanks: {
+            type: Array,
+            default: []
+        },
         linkLabel: {
             type: String,
             default: 'Select Taxonomic Ranks'
@@ -33,10 +37,11 @@ const taxonRankCheckboxSelector = {
         <a class="anchor-link" @click="rankSelectDialog = true">{{ linkLabel }}</a>
         <q-dialog v-model="rankSelectDialog">
             <q-card>
-                <q-card-section class="row items-center q-pb-none">
-                    <div class="text-h6">{{ innerLabel }}</div>
-                    <q-space></q-space>
+                <div class="row justify-end q-pb-none">
                     <q-btn icon="close" flat round dense v-close-popup></q-btn>
+                </div>
+                <q-card-section class="row justify-between q-pb-none">
+                    <div class="text-h6">{{ innerLabel }}</div>                  
                 </q-card-section>
                 <q-card-section>
                     <div>
@@ -63,6 +68,11 @@ const taxonRankCheckboxSelector = {
     },
     methods: {
         processChange(selectedArr) {
+            this.requiredRanks.forEach((rank) => {
+                if(!selectedArr.includes(rank)){
+                    selectedArr.push(rank);
+                }
+            });
             this.$emit('update:selected-ranks', selectedArr);
         },
         setRankOptions() {
@@ -84,6 +94,14 @@ const taxonRankCheckboxSelector = {
             stringKeys.forEach((key) => {
                 this.rankArr.push(Number(key));
             });
+            const selectedArr = this.selectedRanks.slice();
+            selectedArr.forEach((rank) => {
+                if(!this.rankArr.includes(Number(rank))){
+                    const index = selectedArr.indexOf(rank);
+                    selectedArr.splice(index,1);
+                }
+            });
+            this.$emit('update:selected-ranks', selectedArr);
             this.setSelectAll();
         },
         setSelectAll() {
@@ -102,7 +120,7 @@ const taxonRankCheckboxSelector = {
                 this.$emit('update:selected-ranks', this.rankArr);
             }
             else{
-                this.$emit('update:selected-ranks', []);
+                this.$emit('update:selected-ranks', this.requiredRanks);
             }
         }
     }

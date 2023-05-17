@@ -24,44 +24,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Encyclopedia of Life Media Importer</title>
 	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<style>
-        .processor-container {
-            width: 95%;
-            margin: 20px auto;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .processor-control-container {
-            width: 40%;
-        }
-        .processor-control-accordion {
-            height: 610px;
-        }
-        .processor-display-container {
-            width: 50%;
-        }
-        .processor-display {
-            height: 610px;
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-        .process-button-container {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            clear: both;
-            margin-top: 5px;
-        }
-        .anchor-link {
-            font-weight: bold;
-            cursor: pointer;
-        }
-        a.anchor-link:link, a.anchor-link:visited, a.anchor-link:hover, a.anchor-link:active {
-            text-decoration: none;
-        }
-    </style>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
 </head>
 <body>
     <?php
@@ -177,7 +140,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     ?>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/singleLanguageAutoComplete.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230414" type="text/javascript"></script>
     <script>
         const eolMediaImporterModule = Vue.createApp({
             data() {
@@ -443,7 +406,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
-                        if(mediaRecord['language'] === this.descriptionLanguage['iso']){
+                        if(mediaRecord['language'] === this.descriptionLanguage['iso-1']){
                             if(this.selectedDescSaveMethod === 'singletab'){
                                 const existingEOLTab = this.taxonMediaArr.length > 0 ? this.taxonMediaArr.find(obj => obj['caption'] === 'Encyclopedia of Life') : null;
                                 const newTaxonStatement = {};

@@ -322,8 +322,9 @@ class TaxonomyUtilities {
         }
     }
 
-    public function deleteTidFromHierarchyTable($tid): void
+    public function deleteTidFromHierarchyTable($tid): bool
     {
+        $status = false;
         $tidStr = '';
         if($tid){
             if(is_array($tid)){
@@ -336,9 +337,12 @@ class TaxonomyUtilities {
                 $sql = 'DELETE FROM taxaenumtree '.
                     'WHERE tid IN('.$tidStr.') OR parenttid IN('.$tidStr.') ';
                 //echo $sql;
-                $this->conn->query($sql);
+                if($this->conn->query($sql)){
+                    $status = true;
+                }
             }
         }
+        return $status;
     }
 
     public function getChildTidArr($tid): array
@@ -880,6 +884,16 @@ class TaxonomyUtilities {
         return false;
     }
 
+    public function addTaxonCommonName($tid, $name, $langId): bool
+    {
+        if($tid && $name && $langId){
+            $sql = 'INSERT INTO taxavernaculars(TID,VernacularName,langid) VALUES('.
+                $tid.',"'.Sanitizer::cleanInStr($this->conn,$name).'",'.(int)$langId.')';
+            return $this->conn->query($sql);
+        }
+        return false;
+    }
+
     public function getIdentifiersForTaxonomicGroup($tid, $index, $source): array
     {
         $retArr = array();
@@ -1034,27 +1048,67 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
-    public function getTaxonFromTid($tid, $includeCommonNames = false): array
+    public function getTaxonFromTid($tid, $includeCommonNames = false, $includeChildren = false): array
     {
         $retArr = array();
-        $sql = 'SELECT t.SciName, t.Author, k.kingdom_name, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
+        $sql = 'SELECT t.TID, t.SciName, t.Author, t.family, k.kingdom_name, t.kingdomId, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
             'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
             'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
             'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
             'WHERE t.TID = '.$tid.' ';
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
+                $retArr['tid'] = (int)$r->TID;
                 $retArr['sciname'] = $r->SciName;
                 $retArr['author'] = $r->Author;
+                $retArr['family'] = $r->family;
                 $retArr['kingdom'] = $r->kingdom_name;
+                $retArr['kingdomid'] = (int)$r->kingdomId;
                 $retArr['rankid'] = (int)$r->RankId;
-                $retArr['tidaccepted'] = $r->tidaccepted;
+                $retArr['tidaccepted'] = (int)$r->tidaccepted;
                 $retArr['acceptedsciname'] = $r->acceptedSciName;
-                $retArr['parenttid'] = $r->parenttid;
+                $retArr['parenttid'] = (int)$r->parenttid;
                 $retArr['parentsciname'] = $r->parentSciName;
                 $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($tid);
                 if($includeCommonNames){
                     $retArr['commonnames'] = $this->getCommonNamesFromTid($tid);
+                }
+                if($includeChildren){
+                    $retArr['children'] = $this->getChildTaxaFromTid($tid);
+                }
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getTaxonFromSciname($sciname, $kingdomId, $includeCommonNames = false, $includeChildren = false): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.TID, t.SciName, t.Author, t.family, k.kingdom_name, t.kingdomId, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
+            'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
+            'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
+            'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
+            'WHERE t.SciName = "'.$sciname.'" AND t.kingdomId = '.$kingdomId.' ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $retArr['tid'] = (int)$r->TID;
+                $retArr['sciname'] = $r->SciName;
+                $retArr['author'] = $r->Author;
+                $retArr['family'] = $r->family;
+                $retArr['kingdom'] = $r->kingdom_name;
+                $retArr['kingdomid'] = (int)$r->kingdomId;
+                $retArr['rankid'] = (int)$r->RankId;
+                $retArr['tidaccepted'] = (int)$r->tidaccepted;
+                $retArr['acceptedsciname'] = $r->acceptedSciName;
+                $retArr['parenttid'] = (int)$r->parenttid;
+                $retArr['parentsciname'] = $r->parentSciName;
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid((int)$r->TID);
+                if($includeCommonNames){
+                    $retArr['commonnames'] = $this->getCommonNamesFromTid((int)$r->TID);
+                }
+                if($includeChildren){
+                    $retArr['children'] = $this->getChildTaxaFromTid((int)$r->TID);
                 }
             }
             $rs->free();
@@ -1087,6 +1141,26 @@ class TaxonomyUtilities {
                 $nodeArr = array();
                 $nodeArr['commonname'] = $r->VernacularName;
                 $nodeArr['langid'] = $r->langid;
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getChildTaxaFromTid($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT TID, SciName, Author, RankId, family '.
+            'FROM taxa WHERE parenttid = '.$tid.' AND TID = tidaccepted ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                $nodeArr['tid'] = $r->TID;
+                $nodeArr['sciname'] = $r->SciName;
+                $nodeArr['author'] = $r->Author;
+                $nodeArr['rankid'] = $r->RankId;
+                $nodeArr['family'] = $r->family;
                 $retArr[] = $nodeArr;
             }
             $rs->free();

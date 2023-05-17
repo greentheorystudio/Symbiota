@@ -26,10 +26,10 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
 $statusStr = '';
 if($editable){
 	if(array_key_exists('taxonedits',$_POST)){
-		$statusStr = $taxonEditorObj->submitTaxonEdits($_POST);
+		$statusStr = $taxonEditorObj->editTaxon($_POST);
 	}
 	elseif($submitAction === 'updatetaxparent'){
-		$statusStr = $taxonEditorObj->submitTaxParentEdits($_POST['parenttid']);
+		$statusStr = $taxonEditorObj->editTaxonParent($_POST['parenttid']);
         $tidArr = $taxUtilities->getChildTidArr($tid);
         $taxUtilities->updateHierarchyTable($tid);
         $taxUtilities->updateHierarchyTable($tidArr);

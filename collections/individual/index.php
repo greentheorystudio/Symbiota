@@ -512,9 +512,6 @@ if($fullWindow){
                         if($occArr['eventdate']){
                             echo '<div><b>Date: </b>';
                             echo $occArr['eventdate'];
-                            if($occArr['eventdateend']){
-                                echo ' - '.$occArr['eventdateend'];
-                            }
                             echo '</div>';
                         }
                         if($occArr['verbatimeventdate']){
