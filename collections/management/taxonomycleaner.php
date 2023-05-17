@@ -1696,41 +1696,43 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         .then((response) => {
                             if(response.status === 200){
                                 response.json().then((resArr) => {
-                                    let kingdomName = '';
-                                    if(taxon['rankname'].toLowerCase() === 'kingdom'){
-                                        kingdomName = taxon['sciname'];
-                                    }
-                                    else{
-                                        const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
-                                        if(kingdomObj){
-                                            kingdomName = kingdomObj['name'];
+                                    if(resArr){
+                                        let kingdomName = '';
+                                        if(taxon['rankname'].toLowerCase() === 'kingdom'){
+                                            kingdomName = taxon['sciname'];
                                         }
-                                    }
-                                    if(kingdomName['name'].toLowerCase() === this.selectedKingdomName.toLowerCase()){
-                                        let hierarchyArr = [];
-                                        if(taxon.hasOwnProperty('hierarchy')){
-                                            hierarchyArr = taxon['hierarchy'];
-                                        }
-                                        resArr.forEach((taxResult) => {
-                                            if(taxResult['name'] !== taxon['sciname']){
-                                                const rankname = taxResult['rank'].toLowerCase();
-                                                const rankid = Number(this.rankArr[rankname]);
-                                                if(TAXONOMIC_RANKS.includes(rankid) || (!taxon['accepted'] && taxon['accepted_sciname'] === taxResult['name'])){
-                                                    const resultObj = {};
-                                                    resultObj['id'] = taxResult['id'];
-                                                    resultObj['sciname'] = taxResult['name'];
-                                                    resultObj['author'] = taxResult.hasOwnProperty('authorship') ? taxResult['authorship'] : '';
-                                                    resultObj['rankname'] = rankname;
-                                                    resultObj['rankid'] = rankid;
-                                                    if(rankname === 'family'){
-                                                        taxon['family'] = resultObj['sciname'];
-                                                    }
-                                                    hierarchyArr.push(resultObj);
-                                                }
+                                        else{
+                                            const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
+                                            if(kingdomObj){
+                                                kingdomName = kingdomObj['name'];
                                             }
-                                        });
-                                        taxon['hierarchy'] = hierarchyArr;
-                                        this.nameSearchResults.push(taxon);
+                                        }
+                                        if(kingdomName['name'].toLowerCase() === this.selectedKingdomName.toLowerCase()){
+                                            let hierarchyArr = [];
+                                            if(taxon.hasOwnProperty('hierarchy')){
+                                                hierarchyArr = taxon['hierarchy'];
+                                            }
+                                            resArr.forEach((taxResult) => {
+                                                if(taxResult['name'] !== taxon['sciname']){
+                                                    const rankname = taxResult['rank'].toLowerCase();
+                                                    const rankid = Number(this.rankArr[rankname]);
+                                                    if(TAXONOMIC_RANKS.includes(rankid) || (!taxon['accepted'] && taxon['accepted_sciname'] === taxResult['name'])){
+                                                        const resultObj = {};
+                                                        resultObj['id'] = taxResult['id'];
+                                                        resultObj['sciname'] = taxResult['name'];
+                                                        resultObj['author'] = taxResult.hasOwnProperty('authorship') ? taxResult['authorship'] : '';
+                                                        resultObj['rankname'] = rankname;
+                                                        resultObj['rankid'] = rankid;
+                                                        if(rankname === 'family'){
+                                                            taxon['family'] = resultObj['sciname'];
+                                                        }
+                                                        hierarchyArr.push(resultObj);
+                                                    }
+                                                }
+                                            });
+                                            taxon['hierarchy'] = hierarchyArr;
+                                            this.nameSearchResults.push(taxon);
+                                        }
                                     }
                                     this.validateCOLInitialNameSearchResults();
                                 });
