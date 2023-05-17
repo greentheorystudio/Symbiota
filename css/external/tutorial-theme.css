@@ -439,7 +439,7 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 ul.topic-list {
   display: flex;
   flex-flow: column wrap;
-  height: 90%;
+  height: 600px;
 }
 
 ul.topic-list li {
