@@ -1707,7 +1707,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 kingdomName = kingdomObj['name'];
                                             }
                                         }
-                                        if(kingdomName && kingdomName['name'].toLowerCase() === this.selectedKingdomName.toLowerCase()){
+                                        if(kingdomName.hasOwnProperty('name') && kingdomName['name'].toLowerCase() === this.selectedKingdomName.toLowerCase()){
                                             let hierarchyArr = [];
                                             if(taxon.hasOwnProperty('hierarchy')){
                                                 hierarchyArr = taxon['hierarchy'];
