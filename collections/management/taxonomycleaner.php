@@ -524,7 +524,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 const resArr = resObj['hierarchyList'];
                                 const hierarchyArr = [];
                                 let foundNameRank = this.nameSearchResults[0]['rankid'];
-                                if(!this.nameSearchResults[0]['accepted']){
+                                if(resArr && resArr.length > 0 && !this.nameSearchResults[0]['accepted']){
                                     const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === this.nameSearchResults[0]['accepted_sciname']);
                                     foundNameRank = Number(this.rankArr[acceptedObj['rankName'].toLowerCase()]);
                                 }
