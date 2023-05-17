@@ -330,6 +330,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     this.unlinkedNamesArr = [];
                     this.currentSciname = null;
                     this.setUnlinkedRecordCounts();
+                    this.currentProcess = null;
+                    this.undoButtonsDisabled = false;
+                    this.uppercontrolsdisabled = false;
+                    this.unlinkedLoading = false;
                 },
                 adjustUIStart(id){
                     this.processorDisplayArr = [];
@@ -481,7 +485,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 procObj['resultText'] = 'Cancelled';
                             }
                         }
-                        this.setUnlinkedRecordCounts();
                         this.adjustUIEnd();
                     }
                 },
@@ -976,7 +979,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     const text = 'Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus';
                     this.addSubprocessToProcessorDisplay(this.currentSciname,'text',text);
                     if(this.nameTidIndex.hasOwnProperty(taxonToAdd['sciname'])){
-                        this.processSubprocessSuccessResponse(this.currentSciname,false,this.nameSearchResults[0]['sciname'] + 'already added');
+                        this.processSubprocessSuccessResponse(this.currentSciname,false,this.nameSearchResults[0]['sciname'] + ' already added');
                         this.updateOccurrenceLinkages();
                     }
                     else{
@@ -1056,7 +1059,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     }
                     if(setCounts){
-                        this.setUnlinkedRecordCounts();
+                        this.adjustUIEnd();
                     }
                 },
                 processFuzzyMatches(fuzzyMatches){
@@ -1198,7 +1201,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     }
                     if(setCounts){
-                        this.setUnlinkedRecordCounts();
+                        this.adjustUIEnd();
                     }
                 },
                 processSubprocessSuccessResponse(id,complete,text = null){
@@ -1537,10 +1540,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         if(result.hasOwnProperty('taxaCnt')){
                             this.unlinkedTaxaCnt = result['taxaCnt'];
                         }
-                        this.currentProcess = null;
-                        this.undoButtonsDisabled = false;
-                        this.uppercontrolsdisabled = false;
-                        this.unlinkedLoading = false;
                     });
                 },
                 setUnlinkedTaxaList(){
