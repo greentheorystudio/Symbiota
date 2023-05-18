@@ -271,7 +271,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     changedCurrentSciname: Vue.ref(''),
                     changedParsedSciname: Vue.ref(''),
                     colInitialSearchResults: Vue.ref([]),
-                    currentProcess: Vue.ref(null),
                     currentSciname: Vue.ref(null),
                     dataSource: Vue.ref('col'),
                     itisInitialSearchResults: Vue.ref([]),
@@ -306,12 +305,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector
             },
             setup() {
+                let currentProcess = Vue.ref(null);
                 let procDisplayScrollAreaRef = Vue.ref(null);
                 let procDisplayScrollHeight = Vue.ref(0);
                 return {
+                    currentProcess,
                     procDisplayScrollAreaRef,
                     setScroller(info) {
-                        if(info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
+                        if(currentProcess.value && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
                             procDisplayScrollHeight.value = info.verticalSize;
                             procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
                         }
@@ -879,7 +880,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 populateTaxonomicHierarchy(){
                     if(this.rebuildHierarchyLoop < 40){
                         const formData = new FormData();
-                        formData.append('tidarr', JSON.stringify(this.newTidArr));
                         formData.append('action', 'populateHierarchyTable');
                         fetch(taxonomyApiUrl, {
                             method: 'POST',

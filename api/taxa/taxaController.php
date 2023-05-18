@@ -30,8 +30,8 @@ if($action){
     elseif($isEditor && $action === 'primeHierarchyTable' && array_key_exists('tidarr',$_POST)){
         echo $taxUtilities->primeHierarchyTable(json_decode($_POST['tidarr'],false));
     }
-    elseif($isEditor && $action === 'populateHierarchyTable' && array_key_exists('tidarr',$_POST)){
-        echo $taxUtilities->populateHierarchyTable(json_decode($_POST['tidarr'],false));
+    elseif($isEditor && $action === 'populateHierarchyTable'){
+        echo $taxUtilities->populateHierarchyTable();
     }
     elseif($action === 'parseSciName' && array_key_exists('sciname',$_POST)){
         echo json_encode($taxUtilities->parseScientificName($_POST['sciname']));
