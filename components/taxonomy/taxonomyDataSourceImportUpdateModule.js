@@ -139,13 +139,16 @@ const taxonomyDataSourceImportUpdateModule = {
         'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector
     },
     setup() {
+        let currentProcess = Vue.ref(null);
         let procDisplayScrollAreaRef = Vue.ref(null);
         let procDisplayScrollHeight = Vue.ref(0);
+        let tab = Vue.ref('importer');
         return {
-            tab: Vue.ref('importer'),
+            currentProcess,
             procDisplayScrollAreaRef,
+            tab,
             setScroller(info) {
-                if(info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
+                if(currentProcess.value && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
                     procDisplayScrollHeight.value = info.verticalSize;
                     procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
                 }
@@ -1340,7 +1343,6 @@ const taxonomyDataSourceImportUpdateModule = {
         populateTaxonomicHierarchy(callback){
             if(this.rebuildHierarchyLoop < 40){
                 const formData = new FormData();
-                formData.append('tidarr', JSON.stringify(this.newEditedTidArr));
                 formData.append('action', 'populateHierarchyTable');
                 fetch(taxonomyApiUrl, {
                     method: 'POST',

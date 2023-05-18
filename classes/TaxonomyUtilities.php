@@ -286,27 +286,15 @@ class TaxonomyUtilities {
         return $retCnt;
     }
 
-    public function populateHierarchyTable($tid = null): int
+    public function populateHierarchyTable(): int
     {
         $retCnt = 0;
-        $tidStr = '';
-        if($tid){
-            if(is_array($tid)){
-                $tidStr = implode(',', $tid);
-            }
-            elseif(is_numeric($tid)){
-                $tidStr = $tid;
-            }
-            if($tidStr){
-                $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
-                    'SELECT DISTINCT e.tid, t.parenttid '.
-                    'FROM taxaenumtree AS e LEFT JOIN taxa AS t ON e.parenttid = t.tid '.
-                    'WHERE e.tid IN('.$tidStr.') AND t.parenttid NOT IN(SELECT parenttid FROM taxaenumtree WHERE tid IN('.$tidStr.')) ';
-                //echo $sql . '<br />';
-                if($this->conn->query($sql)){
-                    $retCnt += $this->conn->affected_rows;
-                }
-            }
+        $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
+            'SELECT DISTINCT e.tid, t.parenttid '.
+            'FROM taxaenumtree AS e LEFT JOIN taxa AS t ON e.parenttid = t.tid ';
+        //echo $sql . '<br />';
+        if($this->conn->query($sql)){
+            $retCnt += $this->conn->affected_rows;
         }
         return $retCnt;
     }
@@ -317,7 +305,7 @@ class TaxonomyUtilities {
             $this->deleteTidFromHierarchyTable($tid);
             $this->primeHierarchyTable($tid);
             do {
-                $hierarchyAdded = $this->populateHierarchyTable($tid);
+                $hierarchyAdded = $this->populateHierarchyTable();
             } while($hierarchyAdded > 0);
         }
     }
