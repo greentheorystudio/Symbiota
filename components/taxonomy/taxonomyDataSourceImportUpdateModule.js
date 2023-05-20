@@ -16,7 +16,13 @@ const taxonomyDataSourceImportUpdateModule = {
                         <q-card class="q-my-sm" flat bordered>
                             <q-card-section>
                                 <div>
+                                    <q-checkbox v-model="updateMetadata" label="Update metadata for taxa" :disable="loading" />
+                                </div>
+                                <div>
                                     <q-checkbox v-model="updateAcceptance" label="Update acceptance for synonymized taxa" :disable="loading" />
+                                </div>
+                                <div>
+                                    <q-checkbox v-model="importTaxa" label="Import accepted taxa not currently in the Taxonomic Thesaurus" :disable="loading" />
                                 </div>
                                 <div>
                                     <q-checkbox v-model="importCommonNames" label="Import common names" :disable="loading" />
@@ -105,6 +111,7 @@ const taxonomyDataSourceImportUpdateModule = {
             dataSource: Vue.ref('col'),
             familyArr: Vue.ref([]),
             importCommonNames: Vue.ref(false),
+            importTaxa: Vue.ref(false),
             itisInitialSearchResults: Vue.ref([]),
             kingdomId: Vue.ref(null),
             kingdomName: Vue.ref(null),
@@ -129,7 +136,8 @@ const taxonomyDataSourceImportUpdateModule = {
             taxonomicGroup: Vue.ref(null),
             taxonomicGroupTid: Vue.ref(null),
             taxonSearchResults: Vue.ref([]),
-            updateAcceptance: Vue.ref(true)
+            updateAcceptance: Vue.ref(true),
+            updateMetadata: Vue.ref(true)
         }
     },
     components: {
@@ -264,8 +272,7 @@ const taxonomyDataSourceImportUpdateModule = {
             cancelAPIRequest();
         },
         currentTaxonProcessAcceptance(){
-            if(Number(this.currentTaxonExternal['tidaccepted']) !== Number(this.currentTaxonLocal['tidaccepted'])){
-                this.processSubprocessSuccessResponse(false);
+            if(this.updateAcceptance && this.currentTaxonExternal['tidaccepted'] && this.currentTaxonLocal['tidaccepted'] && Number(this.currentTaxonExternal['tidaccepted']) !== Number(this.currentTaxonLocal['tidaccepted'])){
                 const subtext = 'Updating acceptance in Taxonomic Thesaurus';
                 this.addSubprocessToProcessorDisplay('text',subtext);
                 this.updateTaxonTidAccepted(Object.assign({}, this.currentTaxonExternal),(errorText = null) => {
@@ -276,6 +283,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         });
                     }
                     else{
+                        this.processSubprocessSuccessResponse(false);
                         this.currentTaxonProcessParent();
                     }
                 });
@@ -286,7 +294,6 @@ const taxonomyDataSourceImportUpdateModule = {
         },
         currentTaxonProcessChildren(){
             if(this.currentTaxonExternal['children'].length > 0){
-                this.processSubprocessSuccessResponse(false);
                 const subtext = 'Processing subtaxa';
                 this.addSubprocessToProcessorDisplay('text',subtext);
                 this.currentTaxonExternal['children'].forEach((child) => {
@@ -321,21 +328,24 @@ const taxonomyDataSourceImportUpdateModule = {
                         familyObj['queueArr'].push(child);
                     }
                 });
+                if(this.updateAcceptance && this.currentTaxonLocal['children'].length > 0 && this.currentTaxonLocal['rankid'] < this.selectedRanksHigh){
+                    this.processSubprocessSuccessResponse(false);
+                }
+                else{
+                    this.processSubprocessSuccessResponse(true,'Complete');
+                }
             }
             if(this.updateAcceptance && this.currentTaxonLocal['children'].length > 0 && this.currentTaxonLocal['rankid'] < this.selectedRanksHigh){
-                this.processSubprocessSuccessResponse(false);
                 const subtext = 'Updating acceptance for previously existing child taxa';
                 this.addSubprocessToProcessorDisplay('text',subtext);
                 this.currentTaxonProcessLocalChildren();
             }
             else{
-                this.processSubprocessSuccessResponse(true,'Complete');
                 this.processProcessingArrays();
             }
         },
         currentTaxonProcessCommonNames(){
-            if(this.importCommonNames && this.currentTaxonExternal['commonnames'].length > 0){
-                this.processSubprocessSuccessResponse(false);
+            if(this.importCommonNames && this.currentTaxonExternal['tid'] && this.currentTaxonExternal['commonnames'].length > 0){
                 const subtext = 'Adding common names';
                 this.addSubprocessToProcessorDisplay('text',subtext);
                 this.currentTaxonExternal['commonnames'].forEach((commonname) => {
@@ -344,6 +354,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         this.addTaxonCommonName(this.currentTaxonExternal['tid'],commonname['name'],commonname['langid']);
                     }
                 });
+                this.processSubprocessSuccessResponse(false);
             }
             this.currentTaxonProcessChildren();
         },
@@ -368,10 +379,13 @@ const taxonomyDataSourceImportUpdateModule = {
         },
         currentTaxonProcessMetadata(){
             if(
-                this.currentTaxonExternal['author'] !== this.currentTaxonLocal['author'] ||
+                this.updateMetadata && this.currentTaxonExternal['tid'] &&
+                (this.currentTaxonExternal['author'] !== this.currentTaxonLocal['author'] ||
                 Number(this.currentTaxonExternal['rankid']) !== Number(this.currentTaxonLocal['rankid']) ||
-                this.currentTaxonExternal['family'] !== this.currentTaxonLocal['family']
+                this.currentTaxonExternal['family'] !== this.currentTaxonLocal['family'])
             ){
+                const subtext = 'Updating taxon in the Taxonomic Thesaurus';
+                this.addSubprocessToProcessorDisplay('text',subtext);
                 const taxonData = {};
                 taxonData['tid'] = this.currentTaxonExternal['tid'];
                 taxonData['author'] = this.currentTaxonExternal['author'];
@@ -386,6 +400,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         });
                     }
                     else{
+                        this.processSubprocessSuccessResponse(false);
                         this.currentTaxonProcessAcceptance();
                     }
                 });
@@ -395,8 +410,7 @@ const taxonomyDataSourceImportUpdateModule = {
             }
         },
         currentTaxonProcessParent(){
-            if(Number(this.currentTaxonExternal['parenttid']) !== Number(this.currentTaxonLocal['parenttid'])){
-                this.processSubprocessSuccessResponse(false);
+            if(this.currentTaxonExternal['parenttid'] && Number(this.currentTaxonExternal['parenttid']) !== Number(this.currentTaxonLocal['parenttid'])){
                 const subtext = 'Updating parent taxon in Taxonomic Thesaurus';
                 this.addSubprocessToProcessorDisplay('text',subtext);
                 this.updateTaxonParent(this.currentTaxonExternal['parenttid'],this.currentTaxonExternal['tid'],(errorText = null) => {
@@ -407,6 +421,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         });
                     }
                     else{
+                        this.processSubprocessSuccessResponse(false);
                         this.currentTaxonProcessCommonNames();
                     }
                 });
@@ -417,8 +432,6 @@ const taxonomyDataSourceImportUpdateModule = {
         },
         currentTaxonValidate(){
             if(this.currentTaxonExternal['tid']){
-                const subtext = 'Updating taxon in the Taxonomic Thesaurus';
-                this.addSubprocessToProcessorDisplay('text',subtext);
                 const dataSourceIdObj = this.currentTaxonLocal['identifiers'].find(obj => obj['name'] === this.dataSource);
                 if(!dataSourceIdObj){
                     this.addTaxonIdentifier(this.currentTaxonLocal['tid'],this.currentTaxonExternal['id']);
@@ -426,24 +439,33 @@ const taxonomyDataSourceImportUpdateModule = {
                 this.currentTaxonProcessMetadata();
             }
             else{
-                const subtext = 'Adding taxon to the Taxonomic Thesaurus';
-                this.addSubprocessToProcessorDisplay('text',subtext);
-                this.addTaxonToThesaurus(Object.assign({}, this.currentTaxonExternal),(newTaxon,errorText = null) => {
-                    if(errorText){
-                        this.processSubprocessErrorResponse(errorText);
-                        this.updateTaxonomicHierarchy(() => {
-                            this.adjustUIEnd();
-                        });
-                    }
-                    else{
-                        const newTid = Number(newTaxon['tid']);
-                        this.newEditedTidArr.push(newTid);
-                        this.currentTaxonExternal['tid'] = newTid;
-                        this.currentTaxonExternal['tidaccepted'] = newTid;
-                        this.currentTaxonLocal = Object.assign({}, newTaxon);
-                        this.currentTaxonProcessCommonNames();
-                    }
-                });
+                if(this.importTaxa){
+                    const subtext = 'Adding taxon to the Taxonomic Thesaurus';
+                    this.addSubprocessToProcessorDisplay('text',subtext);
+                    this.addTaxonToThesaurus(Object.assign({}, this.currentTaxonExternal),(newTaxon,errorText = null) => {
+                        if(errorText){
+                            this.processSubprocessErrorResponse(errorText);
+                            this.updateTaxonomicHierarchy(() => {
+                                this.adjustUIEnd();
+                            });
+                        }
+                        else{
+                            const newTid = Number(newTaxon['tid']);
+                            this.newEditedTidArr.push(newTid);
+                            this.currentTaxonExternal['tid'] = newTid;
+                            this.currentTaxonExternal['tidaccepted'] = newTid;
+                            this.currentTaxonLocal = Object.assign({}, newTaxon);
+                            this.processSubprocessSuccessResponse(false);
+                            this.currentTaxonProcessCommonNames();
+                        }
+                    });
+                }
+                else{
+                    this.currentTaxonExternal['tid'] = null;
+                    this.currentTaxonExternal['tidaccepted'] = null;
+                    this.currentTaxonLocal = Object.assign({}, this.currentTaxonExternal);
+                    this.currentTaxonProcessCommonNames();
+                }
             }
         },
         editTaxonInThesaurus(taxonData,callback){
@@ -1036,6 +1058,10 @@ const taxonomyDataSourceImportUpdateModule = {
             });
         },
         getNewProcessObject(type,text){
+            const pastProcObj = this.processorDisplayArr.find(proc => proc['current'] === true);
+            if(pastProcObj){
+                pastProcObj['current'] = false;
+            }
             const procObj = {
                 id: this.currentProcess,
                 procText: text,
