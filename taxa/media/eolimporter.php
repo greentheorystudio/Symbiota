@@ -286,6 +286,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 getNewProcessObject(id,type,text){
+                    const pastProcObj = this.processorDisplayArr.find(proc => proc['current'] === true);
+                    if(pastProcObj){
+                        pastProcObj['current'] = false;
+                        pastProcObj['loading'] = false;
+                    }
                     const procObj = {
                         id: id,
                         procText: text,

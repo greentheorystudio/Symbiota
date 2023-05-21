@@ -559,6 +559,7 @@ class TaxonomyUtilities {
             $sql .= 'AND ISNULL(i.occid) ';
         }
         $sql .= 'GROUP BY t.TID '.
+            'ORDER BY t.RankId, t.SciName '.
             'LIMIT ' . (($index - 1) * 50000) . ', 50000';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -661,6 +662,7 @@ class TaxonomyUtilities {
             $sql .= 'AND ISNULL(m.occid) ';
         }
         $sql .= 'GROUP BY t.TID '.
+            'ORDER BY t.RankId, t.SciName '.
             'LIMIT ' . (($index - 1) * 50000) . ', 50000';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -686,6 +688,7 @@ class TaxonomyUtilities {
             $sql .= 'AND ISNULL(m.occid) ';
         }
         $sql .= 'GROUP BY t.TID '.
+            'ORDER BY t.RankId, t.SciName '.
             'LIMIT ' . (($index - 1) * 50000) . ', 50000';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -745,6 +748,7 @@ class TaxonomyUtilities {
             'LEFT JOIN taxadescrblock AS tdb ON t.TID = tdb.tid '.
             'WHERE (te.parenttid = '.$tid.' OR t.TID = '.$tid.') AND t.TID = t.tidaccepted '.
             'GROUP BY t.TID '.
+            'ORDER BY t.RankId, t.SciName '.
             'LIMIT ' . (($index - 1) * 50000) . ', 50000';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
