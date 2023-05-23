@@ -28,7 +28,7 @@ class Sanitizer {
 
     public static function cleanOutStr($str): string
     {
-        return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
+        return $str ? str_replace(array('"', "'"), array('&quot;', '&apos;'), $str) : '';
     }
 
     public static function cleanOutArray($arr): array
