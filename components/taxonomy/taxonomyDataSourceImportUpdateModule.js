@@ -38,12 +38,19 @@ const taxonomyDataSourceImportUpdateModule = {
                                 </template>
                             </q-card-section>
                         </q-card>
-                        <div class="process-button-container">
-                            <div>
-                                <q-btn :loading="loading" color="secondary" @click="initializeImportUpdate();" label="Start Import/Update" dense />
+                        <div class="processor-tool-control-container">
+                            <div class="processor-cancel-message-container text-negative text-bold">
+                                <template v-if="processCancelling">
+                                    Cancelling, please wait
+                                </template>
                             </div>
-                            <div>
-                                <q-btn v-if="loading" color="red" @click="cancelProcess();" label="Cancel" dense />
+                            <div class="processor-tool-button-container">
+                                <div>
+                                    <q-btn :loading="loading" color="secondary" @click="initializeImportUpdate();" label="Start" dense />
+                                </div>
+                                <div>
+                                    <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                </div>
                             </div>
                         </div>
                     </q-card-section>
@@ -119,7 +126,7 @@ const taxonomyDataSourceImportUpdateModule = {
             loading: Vue.ref(false),
             nameTidIndex: Vue.ref({}),
             newEditedTidArr: Vue.ref([]),
-            processCancelled: Vue.ref(false),
+            processCancelling: Vue.ref(false),
             processingArr: Vue.ref([]),
             processorDisplayArr: Vue.ref([]),
             queueArr: Vue.ref([]),
@@ -242,6 +249,7 @@ const taxonomyDataSourceImportUpdateModule = {
             });
         },
         adjustUIEnd(){
+            this.processCancelling = false;
             this.loading = false;
         },
         adjustUIStart(){
@@ -268,7 +276,7 @@ const taxonomyDataSourceImportUpdateModule = {
             this.loading = true;
         },
         cancelProcess(){
-            this.processCancelled = true;
+            this.processCancelling = true;
             cancelAPIRequest();
         },
         currentTaxonProcessAcceptance(){
@@ -1086,7 +1094,7 @@ const taxonomyDataSourceImportUpdateModule = {
             };
         },
         getWoRMSAddTaxonAuthor(res,callback){
-            if(!this.processCancelled){
+            if(!this.processCancelling){
                 const id = this.setAddTaxaArr[0]['id'];
                 const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                 const formData = new FormData();
@@ -1120,6 +1128,9 @@ const taxonomyDataSourceImportUpdateModule = {
                         this.setTaxaToAdd(callback);
                     }
                 });
+            }
+            else{
+                this.adjustUIEnd();
             }
         },
         getWoRMSExternalTaxonCommonNames(callback){
@@ -1330,7 +1341,6 @@ const taxonomyDataSourceImportUpdateModule = {
         },
         initializeImportUpdate(){
             if(this.taxonomicGroupTid && this.selectedRanks.length > 0){
-                this.processCancelled = false;
                 this.adjustUIStart();
                 const text = 'Setting rank data';
                 this.currentProcess = 'setRankArr';
@@ -1605,7 +1615,7 @@ const taxonomyDataSourceImportUpdateModule = {
             });
         },
         processProcessingArrays(){
-            if(this.processCancelled){
+            if(this.processCancelling){
                 this.updateTaxonomicHierarchy(() => {
                     this.adjustUIEnd();
                 });

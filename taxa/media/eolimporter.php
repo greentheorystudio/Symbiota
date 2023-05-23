@@ -73,12 +73,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     </div>
                                 </q-card-section>
                             </q-card>
-                            <div class="process-button-container">
-                                <div>
-                                    <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start Import" dense />
+                            <div class="processor-tool-control-container">
+                                <div class="processor-cancel-message-container text-negative text-bold">
+                                    <template v-if="processCancelling">
+                                        Cancelling, please wait
+                                    </template>
                                 </div>
-                                <div>
-                                    <q-btn v-if="loading" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                <div class="processor-tool-button-container">
+                                    <div>
+                                        <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start" dense />
+                                    </div>
+                                    <div>
+                                        <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                    </div>
                                 </div>
                             </div>
                         </q-card-section>
@@ -167,7 +174,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         { label: 'Audio', value: 'audio' },
                         { label: 'Text Description', value: 'description' }
                     ],
-                    processCancelled: Vue.ref(false),
+                    processCancelling: Vue.ref(false),
                     processorDisplayArr: Vue.ref([]),
                     selectedDescSaveMethod: Vue.ref('singletab'),
                     selectedMediaType: Vue.ref('image'),
@@ -249,6 +256,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     });
                 },
                 adjustUIEnd(){
+                    this.processCancelling = false;
                     this.eolIdentifierArr = [];
                     this.taxaMediaArr = [];
                     this.identifierImportIndex = 1;
@@ -261,7 +269,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     this.loading = true;
                 },
                 cancelProcess(){
-                    this.processCancelled = true;
+                    this.processCancelling = true;
                     if(!this.currentTaxon){
                         cancelAPIRequest();
                         const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
@@ -397,7 +405,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 initializeEOLImport(){
                     if(this.taxonomicGroupTid){
-                        this.processCancelled = false;
                         this.adjustUIStart();
                         const text = 'Getting stored Encyclopedia of Life identifiers for taxa within ' + this.taxonomicGroup.name;
                         this.processorDisplayArr.push(this.getNewProcessObject('setIdentifierArr','single',text));
@@ -408,7 +415,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 processEOLDescriptionRecords(){
-                    if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
+                    if(!this.processCancelling && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
                         if(mediaRecord['language'] === this.descriptionLanguage['iso-1']){
@@ -472,7 +479,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 processEOLImageRecords(){
-                    if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
+                    if(!this.processCancelling && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
                         const existingRecord = this.taxonMediaArr.length > 0 ? this.taxonMediaArr.find(obj => obj['url'] === mediaRecord['eolMediaURL']) : null;
@@ -516,7 +523,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 processEOLMediaRecords(){
-                    if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
+                    if(!this.processCancelling && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
                         const existingRecord = this.taxonMediaArr.length > 0 ? this.taxonMediaArr.find(obj => obj['accessuri'] === mediaRecord['mediaURL']) : null;
@@ -621,7 +628,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     return newMediaArr;
                 },
                 setCurrentTaxon(){
-                    if(!this.processCancelled && this.taxaMediaArr.length > 0){
+                    if(!this.processCancelling && this.taxaMediaArr.length > 0){
                         this.taxonMediaArr = [];
                         this.eolMedia = [];
                         this.taxonUploadCount = 0;
