@@ -6,6 +6,7 @@ include_once(__DIR__ . '/../../classes/ImageProcessor.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
+ini_set('max_execution_time', 3600);
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -49,8 +50,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     echo '<div class="navpath">';
     echo '<a href="../../index.php">Home</a> &gt;&gt; ';
     echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
-    echo '<a href="index.php?collid='.$collid.'&tabindex='.$tabIndex.'"><b>Specimen Processor</b></a> &gt;&gt; ';
-    echo '<b>Processing Handler</b>';
+    echo '<a href="../upload/index.php?collid='.$collid.'&tabindex='.$tabIndex.'"><b>Occurrence Data Upload Module</b></a> &gt;&gt; ';
+    echo '<b>Image Processor</b>';
     echo '</div>';
     ?>
     <div id="innertext">
@@ -99,7 +100,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 if($specManager->getJpgQuality()) {
                     $imageProcessor->setJpgQuality($specManager->getJpgQuality());
                 }
-                $imageProcessor->setUseImageMagick($specManager->getUseImageMagick());
                 $imageProcessor->setWebImg($_POST['webimg']);
                 $imageProcessor->setTnImg($_POST['createtnimg']);
                 $imageProcessor->setLgImg($_POST['createlgimg']);
@@ -107,7 +107,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 $imageProcessor->setImgExists($_POST['imgexists']);
                 $imageProcessor->setKeepOrig(0);
                 $imageProcessor->setSkeletalFileProcessing($_POST['skeletalFileProcessing']);
-
                 $imageProcessor->batchLoadImages();
                 echo '</div>'."\n";
             }
@@ -132,7 +131,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             }
         }
         ?>
-        <div style="font-weight:bold;"><a href="index.php?collid=<?php echo $collid.'&tabindex='.$tabIndex; ?>"><b>Return to Occurrence Processor</b></a></div>
+        <div style="font-weight:bold;"><a href="../upload/index.php?collid=<?php echo $collid.'&tabindex='.$tabIndex; ?>"><b>Return to Occurrence Data Upload Module</b></a></div>
     </div>
     <?php
     include(__DIR__ . '/../../footer.php');

@@ -117,7 +117,7 @@ return <<<EOD
                 <div>
                     <label>
                         <input type="checkbox" class="switch" name="quicksearchselector" id="quicksearchcommonselector" onchange="quicksearchselectorchange();" autocomplete="off" $commonChecked>
-                        <div class="switch"></div>
+                        <div class="switch" style="width:25px;"></div>
                     </label>
                 </div>
                 <div class="quicksearchcommonselectorlabel">Common Name</div>

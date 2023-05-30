@@ -30,8 +30,8 @@ if($action){
     elseif($isEditor && $action === 'primeHierarchyTable' && array_key_exists('tidarr',$_POST)){
         echo $taxUtilities->primeHierarchyTable(json_decode($_POST['tidarr'],false));
     }
-    elseif($isEditor && $action === 'populateHierarchyTable' && array_key_exists('tidarr',$_POST)){
-        echo $taxUtilities->populateHierarchyTable(json_decode($_POST['tidarr'],false));
+    elseif($isEditor && $action === 'populateHierarchyTable'){
+        echo $taxUtilities->populateHierarchyTable();
     }
     elseif($action === 'parseSciName' && array_key_exists('sciname',$_POST)){
         echo json_encode($taxUtilities->parseScientificName($_POST['sciname']));
@@ -101,5 +101,31 @@ if($action){
     }
     elseif($action === 'getTaxaArrFromNameArr' && array_key_exists('taxa',$_POST)){
         echo json_encode($taxUtilities->getTaxaArrFromNameArr(json_decode($_POST['taxa'], true)));
+    }
+    elseif($action === 'getTaxonFromTid' && array_key_exists('tid',$_POST)){
+        $includeCommonNames = array_key_exists('includeCommonNames',$_POST) && $_POST['includeCommonNames'];
+        $includeChildren = array_key_exists('includeChildren',$_POST) && $_POST['includeChildren'];
+        echo json_encode($taxUtilities->getTaxonFromTid($_POST['tid'], $includeCommonNames, $includeChildren));
+    }
+    elseif($isEditor && $action === 'updateTaxonTidAccepted' && $tId && array_key_exists('tidaccepted',$_POST) && (int)$_POST['tidaccepted']){
+        $kingdom = array_key_exists('kingdom',$_POST)?(int)$_POST['kingdom']:0;
+        echo $taxEditorManager->submitChangeToNotAccepted($tId,$_POST['tidaccepted'],$kingdom);
+    }
+    elseif($isEditor && $action === 'editTaxon' && $tId){
+        echo $taxEditorManager->editTaxon(json_decode($_POST['taxonData'], true),$tId);
+    }
+    elseif($isEditor && $action === 'editTaxonParent' && $tId && array_key_exists('parenttid',$_POST) && (int)$_POST['parenttid']){
+        echo $taxEditorManager->editTaxonParent((int)$_POST['parenttid'],$tId);
+    }
+    elseif($isEditor && $action === 'addTaxonCommonName' && $tId && array_key_exists('name',$_POST) && array_key_exists('langid',$_POST)){
+        echo $taxUtilities->addTaxonCommonName($tId,htmlspecialchars($_POST['name']),(int)$_POST['langid']);
+    }
+    elseif($isEditor && $action === 'clearHierarchyTable' && array_key_exists('tidarr',$_POST)){
+        echo $taxUtilities->deleteTidFromHierarchyTable(json_decode($_POST['tidarr'],false));
+    }
+    elseif($action === 'getTaxonFromSciname' && array_key_exists('sciname',$_POST) && array_key_exists('kingdomid',$_POST)){
+        $includeCommonNames = array_key_exists('includeCommonNames',$_POST) && $_POST['includeCommonNames'];
+        $includeChildren = array_key_exists('includeChildren',$_POST) && $_POST['includeChildren'];
+        echo json_encode($taxUtilities->getTaxonFromSciname($_POST['sciname'], (int)$_POST['kingdomid'], $includeCommonNames, $includeChildren));
     }
 }

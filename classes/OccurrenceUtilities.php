@@ -615,7 +615,7 @@ class OccurrenceUtilities {
             }
         }
         if(isset($recMap['elevationnumber']) && $recMap['elevationnumber']){
-            $elevStr = $recMap['elevationnumber'].$recMap['elevationunits'];
+            $elevStr = $recMap['elevationnumber'].((isset($recMap['elevationunits']) && $recMap['elevationunits'])?$recMap['elevationunits']:'');
             $eArr = self::parseVerbatimElevation($elevStr);
             if($eArr && array_key_exists('minelev', $eArr)) {
                 $recMap['minimumelevationinmeters'] = $eArr['minelev'];

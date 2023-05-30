@@ -113,15 +113,18 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$itemTitleElem = $newDoc->createElement('title');
 			$itemTitleElem->appendChild($newDoc->createTextNode($title));
 			$itemElem->appendChild($itemTitleElem);
-			if(strncmp($cArr['icon'], 'images/collicons/', 17) === 0){
-				$imgLink = $urlPathPrefix.$cArr['icon'];
-			}
-			elseif(strncmp($cArr['icon'], '/', 1) === 0){
-				$imgLink = $localDomain.$cArr['icon'];
-			}
-			else{
-				$imgLink = $cArr['icon'];
-			}
+            $imgLink = '';
+            if($cArr['icon']){
+                if(strncmp($cArr['icon'], 'images/collicons/', 17) === 0){
+                    $imgLink = $urlPathPrefix.$cArr['icon'];
+                }
+                elseif(strncmp($cArr['icon'], '/', 1) === 0){
+                    $imgLink = $localDomain.$cArr['icon'];
+                }
+                else{
+                    $imgLink = $cArr['icon'];
+                }
+            }
 			$iconElem = $newDoc->createElement('image');
 			$iconElem->appendChild($newDoc->createTextNode($imgLink));
 			$itemElem->appendChild($iconElem);

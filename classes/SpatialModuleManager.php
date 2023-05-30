@@ -323,7 +323,7 @@ class SpatialModuleManager{
     protected function setTableJoins(): string
     {
         $sqlJoin = '';
-        if(array_key_exists('taxontype',$this->searchTermsArr) && (int)$this->searchTermsArr['taxontype'] === 4) {
+        if(array_key_exists('taxontype',$this->searchTermsArr) && ((int)$this->searchTermsArr['taxontype'] === 4 || (int)$this->searchTermsArr['taxontype'] === 5)) {
             $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {

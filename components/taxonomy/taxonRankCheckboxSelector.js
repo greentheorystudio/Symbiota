@@ -4,6 +4,10 @@ const taxonRankCheckboxSelector = {
             type: Array,
             default: []
         },
+        requiredRanks: {
+            type: Array,
+            default: []
+        },
         linkLabel: {
             type: String,
             default: 'Select Taxonomic Ranks'
@@ -30,13 +34,14 @@ const taxonRankCheckboxSelector = {
         }
     },
     template: `
-        <a class="anchor-link" @click="rankSelectDialog = true">{{ linkLabel }}</a>
+        <div class="text-bold text-h6 cursor-pointer" @click="rankSelectDialog = true">{{ linkLabel }}</div>
         <q-dialog v-model="rankSelectDialog">
             <q-card>
-                <q-card-section class="row items-center q-pb-none">
-                    <div class="text-h6">{{ innerLabel }}</div>
-                    <q-space></q-space>
+                <div class="row justify-end q-pb-none">
                     <q-btn icon="close" flat round dense v-close-popup></q-btn>
+                </div>
+                <q-card-section class="row justify-between q-pb-none">
+                    <div class="text-h6">{{ innerLabel }}</div>                  
                 </q-card-section>
                 <q-card-section>
                     <div>
@@ -63,7 +68,36 @@ const taxonRankCheckboxSelector = {
     },
     methods: {
         processChange(selectedArr) {
+            this.requiredRanks.forEach((rank) => {
+                if(!selectedArr.includes(rank)){
+                    selectedArr.push(rank);
+                }
+            });
             this.$emit('update:selected-ranks', selectedArr);
+        },
+        selectAllChange(val) {
+            if(val){
+                this.$emit('update:selected-ranks', this.rankArr);
+            }
+            else{
+                this.$emit('update:selected-ranks', this.requiredRanks);
+            }
+        },
+        setRankArray() {
+            this.rankArr = [];
+            const stringKeys = Object.keys(this.rankOptions);
+            stringKeys.forEach((key) => {
+                this.rankArr.push(Number(key));
+            });
+            const selectedArr = this.selectedRanks.slice();
+            selectedArr.forEach((rank) => {
+                if(!this.rankArr.includes(Number(rank))){
+                    const index = selectedArr.indexOf(rank);
+                    selectedArr.splice(index,1);
+                }
+            });
+            this.$emit('update:selected-ranks', selectedArr);
+            this.setSelectAll();
         },
         setRankOptions() {
             const url = taxonomyApiUrl + '?action=getRankArr&kingdomid=' + this.kingdomId;
@@ -78,14 +112,6 @@ const taxonRankCheckboxSelector = {
                 this.setRankArray();
             });
         },
-        setRankArray() {
-            this.rankArr = [];
-            const stringKeys = Object.keys(this.rankOptions);
-            stringKeys.forEach((key) => {
-                this.rankArr.push(Number(key));
-            });
-            this.setSelectAll();
-        },
         setSelectAll() {
             if(this.selectedRanks.length === 0){
                 this.selectAll = false;
@@ -95,14 +121,6 @@ const taxonRankCheckboxSelector = {
             }
             else{
                 this.selectAll = 'some';
-            }
-        },
-        selectAllChange(val) {
-            if(val){
-                this.$emit('update:selected-ranks', this.rankArr);
-            }
-            else{
-                this.$emit('update:selected-ranks', []);
             }
         }
     }
