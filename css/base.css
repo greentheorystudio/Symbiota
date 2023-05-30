@@ -490,12 +490,21 @@ body.processing .loadingModal {
 	font-family: Arial, sans-serif;
 	background-color: #f5f5f5;
 }
-.process-button-container {
+.processor-tool-control-container {
+	display: flex;
+	justify-content: space-between;
+	clear: both;
+	margin-top: 5px;
+}
+.processor-cancel-message-container {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+.processor-tool-button-container {
 	display: flex;
 	justify-content: flex-end;
 	gap: 10px;
-	clear: both;
-	margin-top: 5px;
 }
 .accordion-panel {
 	max-height: 532px;
@@ -508,13 +517,6 @@ body.processing .loadingModal {
 .fuzzy-match-row {
 	display: flex;
 	justify-content: space-between;
-}
-.anchor-link {
-	font-weight: bold;
-	cursor: pointer;
-}
-a.anchor-link:link, a.anchor-link:visited, a.anchor-link:hover, a.anchor-link:active {
-	text-decoration: none;
 }
 
 /* Taxon Profile page styles */

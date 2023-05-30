@@ -73,12 +73,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     </div>
                                 </q-card-section>
                             </q-card>
-                            <div class="process-button-container">
-                                <div>
-                                    <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start Import" dense />
+                            <div class="processor-tool-control-container">
+                                <div class="processor-cancel-message-container text-negative text-bold">
+                                    <template v-if="processCancelling">
+                                        Cancelling, please wait
+                                    </template>
                                 </div>
-                                <div>
-                                    <q-btn v-if="loading" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                <div class="processor-tool-button-container">
+                                    <div>
+                                        <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start" dense />
+                                    </div>
+                                    <div>
+                                        <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                    </div>
                                 </div>
                             </div>
                         </q-card-section>
@@ -89,6 +96,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     <q-card class="bg-grey-3 q-pa-sm">
                         <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
                             <q-list dense>
+                                <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
+                                    <q-item>
+                                        <q-item-section>
+                                            <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                        </q-item-section>
+                                    </q-item>
+                                </template>
                                 <q-item v-for="proc in processorDisplayArr">
                                     <q-item-section>
                                         <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
@@ -122,6 +136,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </template>
                                     </q-item-section>
                                 </q-item>
+                                <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
+                                    <q-item>
+                                        <q-item-section>
+                                            <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                        </q-item-section>
+                                    </q-item>
+                                </template>
                             </q-list>
                         </q-scroll-area>
                     </q-card>
@@ -140,7 +161,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     ?>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/singleLanguageAutoComplete.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230414" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230530" type="text/javascript"></script>
     <script>
         const eolMediaImporterModule = Vue.createApp({
             data() {
@@ -167,8 +188,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         { label: 'Audio', value: 'audio' },
                         { label: 'Text Description', value: 'description' }
                     ],
-                    processCancelled: Vue.ref(false),
+                    processCancelling: Vue.ref(false),
                     processorDisplayArr: Vue.ref([]),
+                    processorDisplayDataArr: Vue.ref([]),
+                    processorDisplayCurrentIndex: Vue.ref(0),
+                    processorDisplayIndex: Vue.ref(0),
                     selectedDescSaveMethod: Vue.ref('singletab'),
                     selectedMediaType: Vue.ref('image'),
                     selectedRanks: Vue.ref([]),
@@ -187,12 +211,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             setup() {
                 let procDisplayScrollAreaRef = Vue.ref(null);
                 let procDisplayScrollHeight = Vue.ref(0);
+                let scrollProcess = Vue.ref(null);
                 return {
                     procDisplayScrollAreaRef,
+                    scrollProcess,
                     setScroller(info) {
                         if(info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
                             procDisplayScrollHeight.value = info.verticalSize;
-                            procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                            if(scrollProcess.value && scrollProcess.value === 'scrollDown'){
+                                procDisplayScrollAreaRef.value.setScrollPosition('vertical', 0);
+                            }
+                            else{
+                                procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                            }
                         }
                     }
                 }
@@ -201,9 +232,23 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 this.selectedRanks = TAXONOMIC_RANKS;
             },
             methods: {
+                addProcessToProcessorDisplay(processObj){
+                    this.processorDisplayArr.push(processObj);
+                    if(this.processorDisplayArr.length > 100){
+                        const precessorArrSegment = this.processorDisplayArr.slice(0, 100);
+                        this.processorDisplayDataArr = this.processorDisplayDataArr.concat(precessorArrSegment);
+                        this.processorDisplayArr.splice(0, 100);
+                        this.processorDisplayIndex++;
+                        this.processorDisplayCurrentIndex = this.processorDisplayIndex;
+                    }
+                },
                 addSubprocessToProcessorDisplay(id,type,text){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     parentProcObj['subs'].push(this.getNewSubprocessObject(this.currentTaxon['sciname'],type,text));
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        dataParentProcObj['subs'].push(this.getNewSubprocessObject(this.currentTaxon['sciname'],type,text));
+                    }
                 },
                 addTaxonDescriptionStatement(statement){
                     const formData = new FormData();
@@ -249,19 +294,24 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     });
                 },
                 adjustUIEnd(){
+                    this.processCancelling = false;
                     this.eolIdentifierArr = [];
                     this.taxaMediaArr = [];
                     this.identifierImportIndex = 1;
                     this.mediaCountImportIndex = 1;
                     this.currentTaxon = null;
                     this.loading = false;
+                    this.processorDisplayDataArr = this.processorDisplayDataArr.concat(this.processorDisplayArr);
                 },
                 adjustUIStart(){
                     this.processorDisplayArr = [];
+                    this.processorDisplayDataArr = [];
+                    this.processorDisplayCurrentIndex = 0;
+                    this.processorDisplayIndex = 0;
                     this.loading = true;
                 },
                 cancelProcess(){
-                    this.processCancelled = true;
+                    this.processCancelling = true;
                     if(!this.currentTaxon){
                         cancelAPIRequest();
                         const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
@@ -335,7 +385,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 if(resObj.length < 50000){
                                     this.processSuccessResponse(true,'Complete');
                                     const text = 'Getting taxa and ' + this.selectedMediaType + ' counts for taxa within ' + this.taxonomicGroup.name;
-                                    this.processorDisplayArr.push(this.getNewProcessObject('setTaxaMediaArr','single',text));
+                                    this.addProcessToProcessorDisplay(this.getNewProcessObject('setTaxaMediaArr','single',text));
                                     this.getTaxaMediaCounts();
                                 }
                                 else{
@@ -397,10 +447,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 initializeEOLImport(){
                     if(this.taxonomicGroupTid){
-                        this.processCancelled = false;
                         this.adjustUIStart();
                         const text = 'Getting stored Encyclopedia of Life identifiers for taxa within ' + this.taxonomicGroup.name;
-                        this.processorDisplayArr.push(this.getNewProcessObject('setIdentifierArr','single',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject('setIdentifierArr','single',text));
                         this.getStoredIdentifiers();
                     }
                     else{
@@ -408,7 +457,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 processEOLDescriptionRecords(){
-                    if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
+                    if(!this.processCancelling && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
                         if(mediaRecord['language'] === this.descriptionLanguage['iso-1']){
@@ -472,7 +521,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 processEOLImageRecords(){
-                    if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
+                    if(!this.processCancelling && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
                         const existingRecord = this.taxonMediaArr.length > 0 ? this.taxonMediaArr.find(obj => obj['url'] === mediaRecord['eolMediaURL']) : null;
@@ -516,7 +565,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 processEOLMediaRecords(){
-                    if(!this.processCancelled && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
+                    if(!this.processCancelling && this.eolMedia.length > 0 && this.taxonUploadCount < this.maximumRecordsPerTaxon){
                         const mediaRecord = this.eolMedia[0];
                         this.eolMedia.splice(0, 1);
                         const existingRecord = this.taxonMediaArr.length > 0 ? this.taxonMediaArr.find(obj => obj['accessuri'] === mediaRecord['mediaURL']) : null;
@@ -571,6 +620,18 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 processMediaTypeChange(mediatype) {
                     this.descriptionSelected = (mediatype === 'description');
                 },
+                processorDisplayScrollDown(){
+                    this.scrollProcess = 'scrollDown';
+                    this.processorDisplayCurrentIndex++;
+                    this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
+                    this.resetScrollProcess();
+                },
+                processorDisplayScrollUp(){
+                    this.scrollProcess = 'scrollUp';
+                    this.processorDisplayCurrentIndex--;
+                    this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
+                    this.resetScrollProcess();
+                },
                 processSubprocessErrorResponse(id,text){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     if(parentProcObj){
@@ -620,15 +681,20 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     return newMediaArr;
                 },
+                resetScrollProcess(){
+                    setTimeout(() => {
+                        this.scrollProcess = null;
+                    }, 200);
+                },
                 setCurrentTaxon(){
-                    if(!this.processCancelled && this.taxaMediaArr.length > 0){
+                    if(!this.processCancelling && this.taxaMediaArr.length > 0){
                         this.taxonMediaArr = [];
                         this.eolMedia = [];
                         this.taxonUploadCount = 0;
                         this.currentTaxon = this.taxaMediaArr[0];
                         this.taxaMediaArr.splice(0, 1);
                         const text = 'Searching for ' + this.currentTaxon['sciname'];
-                        this.processorDisplayArr.push(this.getNewProcessObject(this.currentTaxon['sciname'],'multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentTaxon['sciname'],'multi',text));
                         if(!this.currentTaxon['eolid']){
                             const url = 'https://eol.org/api/search/1.0.json?q=' + this.currentTaxon['sciname'];
                             const formData = new FormData();
@@ -655,7 +721,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                     method: 'POST',
                                                     body: formData
                                                 })
-                                                .then((response) => {
+                                                .then(() => {
                                                     this.processSuccessResponse(false);
                                                     this.setTaxonMediaArr();
                                                 });

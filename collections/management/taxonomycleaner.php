@@ -90,12 +90,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         Run cleaning processes to remove unnecessary endings, identification qualifiers and question marks, and normalize
                                         infraspecific rank references in occurrence record scientific names that are not linked to
                                         the Taxonomic Thesaurus.
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'cleanProcesses'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -104,12 +111,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </div>
                                         Run a cleaning process to remove the scientific name authors from occurrence record scientific
                                         names that are not linked to the Taxonomic Thesaurus.
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'cleanScinameAuthor'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'cleanScinameAuthor'" :disabled="processCancelling && currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -120,12 +134,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <div class="q-mt-xs">
                                             <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="uppercontrolsdisabled" />
                                         </div>
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'updateWithTaxThesaurus'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" :disabled="processCancelling && currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -133,12 +154,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             Update Locality Security Settings
                                         </div>
                                         Update locality security settings for occurrence records of protected species.
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'updateOccLocalitySecurity'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" :disabled="processCancelling && currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -159,12 +187,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <div class="q-mb-sm">
                                             <taxonomy-data-source-bullet-selector :disable="uppercontrolsdisabled" :selected-data-source="dataSource" @update:selected-data-source="updateSelectedDataSource"></taxonomy-data-source-bullet-selector>
                                         </div>
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'resolveFromTaxaDataSource'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" :disabled="processCancelling && currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -176,12 +211,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <div class="q-mt-xs">
                                             <q-input type="number" outlined v-model="levValue" style="width:225px;" label="Character difference tolerance" :readonly="uppercontrolsdisabled" dense />
                                         </div>
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -196,6 +238,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     <q-card class="bg-grey-3 q-pa-sm">
                         <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
                             <q-list dense>
+                                <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
+                                    <q-item>
+                                        <q-item-section>
+                                            <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                        </q-item-section>
+                                    </q-item>
+                                </template>
                                 <q-item v-for="proc in processorDisplayArr">
                                     <q-item-section>
                                         <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
@@ -249,6 +298,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </template>
                                     </q-item-section>
                                 </q-item>
+                                <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
+                                    <q-item>
+                                        <q-item-section>
+                                            <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                        </q-item-section>
+                                    </q-item>
+                                </template>
                             </q-list>
                         </q-scroll-area>
                     </q-card>
@@ -278,11 +334,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     nameSearchResults: Vue.ref([]),
                     nameTidIndex: Vue.ref({}),
                     newTidArr: Vue.ref([]),
-                    processCancelled: Vue.ref(false),
+                    processCancelling: Vue.ref(false),
                     processingArr: Vue.ref([]),
                     processingLimit: Vue.ref(null),
                     processingStartIndex: Vue.ref(null),
                     processorDisplayArr: Vue.ref([]),
+                    processorDisplayDataArr: Vue.ref([]),
+                    processorDisplayCurrentIndex: Vue.ref(0),
+                    processorDisplayIndex: Vue.ref(0),
                     rankArr: Vue.ref(null),
                     rebuildHierarchyLoop: Vue.ref(0),
                     selectedKingdom: Vue.ref(null),
@@ -308,13 +367,20 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 let currentProcess = Vue.ref(null);
                 let procDisplayScrollAreaRef = Vue.ref(null);
                 let procDisplayScrollHeight = Vue.ref(0);
+                let scrollProcess = Vue.ref(null);
                 return {
                     currentProcess,
                     procDisplayScrollAreaRef,
+                    scrollProcess,
                     setScroller(info) {
-                        if(currentProcess.value && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
+                        if((currentProcess.value || scrollProcess.value) && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
                             procDisplayScrollHeight.value = info.verticalSize;
-                            procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                            if(scrollProcess.value === 'scrollDown'){
+                                procDisplayScrollAreaRef.value.setScrollPosition('vertical', 0);
+                            }
+                            else{
+                                procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                            }
                         }
                     }
                 }
@@ -323,20 +389,40 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 this.setUnlinkedRecordCounts();
             },
             methods: {
+                addProcessToProcessorDisplay(processObj){
+                    this.processorDisplayArr.push(processObj);
+                    if(this.processorDisplayArr.length > 100){
+                        const precessorArrSegment = this.processorDisplayArr.slice(0, 100);
+                        this.processorDisplayDataArr = this.processorDisplayDataArr.concat(precessorArrSegment);
+                        this.processorDisplayArr.splice(0, 100);
+                        this.processorDisplayIndex++;
+                        this.processorDisplayCurrentIndex = this.processorDisplayIndex;
+                    }
+                },
                 addSubprocessToProcessorDisplay(id,type,text){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     parentProcObj['subs'].push(this.getNewSubprocessObject(this.currentSciname,type,text));
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        dataParentProcObj['subs'].push(this.getNewSubprocessObject(this.currentSciname,type,text));
+                    }
                 },
                 adjustUIEnd(){
+                    this.processCancelling = false;
                     this.unlinkedNamesArr = [];
                     this.currentSciname = null;
                     this.setUnlinkedRecordCounts();
                     this.currentProcess = null;
                     this.undoButtonsDisabled = false;
                     this.uppercontrolsdisabled = false;
+                    this.processorDisplayDataArr = this.processorDisplayDataArr.concat(this.processorDisplayArr);
                 },
                 adjustUIStart(id){
                     this.processorDisplayArr = [];
+                    this.processorDisplayDataArr = [];
+                    this.processorDisplayCurrentIndex = 0;
+                    this.processorDisplayIndex = 0;
+                    this.scrollProcess = null;
                     this.currentProcess = id;
                     this.uppercontrolsdisabled = true;
                     this.undoButtonsDisabled = true;
@@ -346,36 +432,35 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     const formData = new FormData();
                     formData.append('collid', collId);
                     if(step === 'question-marks'){
-                        this.processCancelled = false;
                         this.adjustUIStart('cleanProcesses');
                         const text = 'Cleaning question marks from scientific names';
-                        this.processorDisplayArr.push(this.getNewProcessObject('cleanQuestionMarks','single',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanQuestionMarks','single',text));
                         formData.append('action', 'cleanQuestionMarks');
                     }
-                    if(!this.processCancelled){
+                    if(!this.processCancelling){
                         if(step === 'clean-sp'){
                             const text = 'Cleaning scientific names ending in sp., sp. nov., spp., or group';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanSpNames','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanSpNames','single',text));
                             formData.append('action', 'cleanSpNames');
                         }
                         else if(step === 'clean-infra'){
                             const text = 'Normalizing infraspecific rank abbreviations';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanInfra','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanInfra','single',text));
                             formData.append('action', 'cleanInfra');
                         }
                         else if(step === 'clean-qualifier'){
                             const text = 'Cleaning scientific names containing cf. or aff.';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanQualifierNames','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanQualifierNames','single',text));
                             formData.append('action', 'cleanQualifierNames');
                         }
                         else if(step === 'double-spaces'){
                             const text = 'Cleaning scientific names containing double spaces';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanDoubleSpaces','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanDoubleSpaces','single',text));
                             formData.append('action', 'cleanDoubleSpaces');
                         }
                         else if(step === 'leading-trailing-spaces'){
                             const text = 'Cleaning leading and trailing spaces in scientific names';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanTrimNames','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanTrimNames','single',text));
                             formData.append('action', 'cleanTrimNames');
                         }
                         fetch(occurrenceTaxonomyApiUrl, {
@@ -414,6 +499,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         })
                         .catch((err) => {});
                     }
+                    else{
+                        this.adjustUIEnd();
+                    }
                 },
                 callTaxThesaurusLinkController(step = ''){
                     if(this.selectedKingdomId){
@@ -422,16 +510,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         formData.append('collid', collId);
                         formData.append('kingdomid', this.selectedKingdomId);
                         if(!step){
-                            this.processCancelled = false;
                             this.adjustUIStart('updateWithTaxThesaurus');
                             const text = 'Updating linkages of occurrence records to the Taxonomic Thesaurus';
-                            this.processorDisplayArr.push(this.getNewProcessObject('updateOccThesaurusLinkages','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('updateOccThesaurusLinkages','single',text));
                             formData.append('action', 'updateOccThesaurusLinkages');
                         }
-                        if(!this.processCancelled){
+                        if(!this.processCancelling){
                             if(step === 'update-det-linkages'){
                                 const text = 'Updating linkages of associated determination records to the Taxonomic Thesaurus';
-                                this.processorDisplayArr.push(this.getNewProcessObject('updateDetThesaurusLinkages','single',text));
+                                this.addProcessToProcessorDisplay(this.getNewProcessObject('updateDetThesaurusLinkages','single',text));
                                 formData.append('action', 'updateDetThesaurusLinkages');
                             }
                             fetch(occurrenceTaxonomyApiUrl, {
@@ -458,13 +545,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             })
                             .catch((err) => {});
                         }
+                        else{
+                            this.adjustUIEnd();
+                        }
                     }
                     else{
                         alert('Please select a Target Kingdom from the dropdown menu above.');
                     }
                 },
                 cancelProcess(){
-                    this.processCancelled = true;
+                    this.processCancelling = true;
                     if(!this.currentSciname){
                         cancelAPIRequest();
                         const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
@@ -491,6 +581,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 clearSubprocesses(id){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     parentProcObj['subs'] = [];
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        dataParentProcObj['subs'] = [];
+                    }
                 },
                 getDataSourceName(){
                     if(this.dataSource === 'col'){
@@ -640,7 +734,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     };
                 },
                 getWoRMSAddTaxonAuthor(){
-                    if(!this.processCancelled){
+                    if(!this.processCancelling){
                         const id = this.processingArr[0]['id'];
                         const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                         const formData = new FormData();
@@ -667,6 +761,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 this.setTaxaToAdd();
                             }
                         });
+                    }
+                    else{
+                        this.adjustUIEnd();
                     }
                 },
                 getWoRMSNameSearchResultsHierarchy(){
@@ -780,10 +877,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     });
                 },
                 initializeCleanScinameAuthor(){
-                    this.processCancelled = false;
                     this.adjustUIStart('cleanScinameAuthor');
                     const text = 'Getting unlinked occurrence record scientific names';
-                    this.processorDisplayArr.push(this.getNewProcessObject('cleanScinameAuthor','multi',text));
+                    this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanScinameAuthor','multi',text));
                     abortController = new AbortController();
                     const formData = new FormData();
                     formData.append('collid', collId);
@@ -810,13 +906,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 initializeDataSourceSearch(){
                     if(this.selectedKingdomId){
-                        this.processCancelled = false;
                         this.nameTidIndex = {};
                         this.taxaLoaded = 0;
                         this.newTidArr = [];
                         this.adjustUIStart('resolveFromTaxaDataSource');
                         const text = 'Setting rank data for processing search returns';
-                        this.processorDisplayArr.push(this.getNewProcessObject('resolveFromTaxaDataSource','multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject('resolveFromTaxaDataSource','multi',text));
                         const url = taxonomyApiUrl + '?action=getRankNameArr'
                         abortController = new AbortController();
                         fetch(url, {
@@ -842,10 +937,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 initializeTaxThesaurusFuzzyMatch(){
                     if(this.selectedKingdomId && this.levValue && Number(this.levValue) > 0){
-                        this.processCancelled = false;
                         this.adjustUIStart('taxThesaurusFuzzyMatch');
                         const text = 'Getting unlinked occurrence record scientific names';
-                        this.processorDisplayArr.push(this.getNewProcessObject('taxThesaurusFuzzyMatch','multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject('taxThesaurusFuzzyMatch','multi',text));
                         abortController = new AbortController();
                         const formData = new FormData();
                         formData.append('collid', collId);
@@ -912,7 +1006,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 primeTaxonomicHierarchy(){
                     this.rebuildHierarchyLoop = 0;
                     const text = 'Populating taxonomic hierarchy with new taxa';
-                    this.processorDisplayArr.push(this.getNewProcessObject('primeHierarchyTable','multi',text));
+                    this.addProcessToProcessorDisplay(this.getNewProcessObject('primeHierarchyTable','multi',text));
                     const formData = new FormData();
                     formData.append('tidarr', JSON.stringify(this.newTidArr));
                     formData.append('action', 'primeHierarchyTable');
@@ -1198,6 +1292,18 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         this.processingLimit = null;
                     }
                 },
+                processorDisplayScrollDown(){
+                    this.scrollProcess = 'scrollDown';
+                    this.processorDisplayCurrentIndex++;
+                    this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
+                    this.resetScrollProcess();
+                },
+                processorDisplayScrollUp(){
+                    this.scrollProcess = 'scrollUp';
+                    this.processorDisplayCurrentIndex--;
+                    this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
+                    this.resetScrollProcess();
+                },
                 processSubprocessErrorResponse(id,setCounts,text){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     if(parentProcObj){
@@ -1207,6 +1313,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             subProcObj['loading'] = false;
                             subProcObj['result'] = 'error';
                             subProcObj['resultText'] = text;
+                        }
+                    }
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        dataParentProcObj['current'] = false;
+                        const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
+                        if(dataSubProcObj){
+                            dataSubProcObj['loading'] = false;
+                            dataSubProcObj['result'] = 'error';
+                            dataSubProcObj['resultText'] = text;
                         }
                     }
                     if(setCounts){
@@ -1222,6 +1338,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             subProcObj['loading'] = false;
                             subProcObj['result'] = 'success';
                             subProcObj['resultText'] = text;
+                        }
+                    }
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        dataParentProcObj['current'] = !complete;
+                        const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
+                        if(dataSubProcObj){
+                            dataSubProcObj['loading'] = false;
+                            dataSubProcObj['result'] = 'success';
+                            dataSubProcObj['resultText'] = text;
                         }
                     }
                 },
@@ -1258,12 +1384,17 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     return inArr;
                 },
+                resetScrollProcess(){
+                    setTimeout(() => {
+                        this.scrollProcess = null;
+                    }, 200);
+                },
                 runCleanScinameAuthorProcess(){
-                    if(!this.processCancelled && this.unlinkedNamesArr.length > 0){
+                    if(!this.processCancelling && this.unlinkedNamesArr.length > 0){
                         this.currentSciname = this.unlinkedNamesArr[0];
                         this.unlinkedNamesArr.splice(0, 1);
                         const text = 'Attempting to parse author name from: ' + this.currentSciname;
-                        this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                         const formData = new FormData();
                         formData.append('sciname', this.currentSciname);
                         formData.append('action', 'parseSciName');
@@ -1317,14 +1448,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 runScinameDataSourceSearch(){
-                    if(!this.processCancelled && this.unlinkedNamesArr.length > 0){
+                    if(!this.processCancelling && this.unlinkedNamesArr.length > 0){
                         this.nameSearchResults = [];
                         this.currentSciname = this.unlinkedNamesArr[0];
                         this.unlinkedNamesArr.splice(0, 1);
                         if(this.dataSource === 'col'){
                             this.colInitialSearchResults = [];
                             const text = 'Searching the Catalogue of Life (COL) for ' + this.currentSciname;
-                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                             const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + this.currentSciname;
                             const formData = new FormData();
                             formData.append('url', url);
@@ -1349,7 +1480,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         else if(this.dataSource === 'itis'){
                             this.itisInitialSearchResults = [];
                             const text = 'Searching the Integrated Taxonomic Information System (ITIS) for ' + this.currentSciname;
-                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                             const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + this.currentSciname;
                             const formData = new FormData();
                             formData.append('url', url);
@@ -1373,7 +1504,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                         else if(this.dataSource === 'worms'){
                             const text = 'Searching the World Register of Marine Species (WoRMS) for ' + this.currentSciname;
-                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                             const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + this.currentSciname + '?marine_only=false';
                             const formData = new FormData();
                             formData.append('url', url);
@@ -1416,11 +1547,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 runTaxThesaurusFuzzyMatchProcess(){
                     this.changedCurrentSciname = '';
                     this.changedParsedSciname = '';
-                    if(!this.processCancelled && this.unlinkedNamesArr.length > 0){
+                    if(!this.processCancelling && this.unlinkedNamesArr.length > 0){
                         this.currentSciname = this.unlinkedNamesArr[0];
                         this.unlinkedNamesArr.splice(0, 1);
                         const text = 'Finding fuzzy matches for ' + this.currentSciname;
-                        this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                         const formData = new FormData();
                         formData.append('sciname', this.currentSciname);
                         formData.append('lev', this.levValue);
@@ -1485,6 +1616,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     subProcObj['undoChangedName'] = newName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
                     if(tid){
                         subProcObj['changedTid'] = tid;
+                    }
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
+                        dataSubProcObj['undoOrigName'] = origName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
+                        dataSubProcObj['undoChangedName'] = newName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
+                        if(tid){
+                            dataSubProcObj['changedTid'] = tid;
+                        }
                     }
                 },
                 setTaxaToAdd(){
@@ -1553,9 +1693,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     });
                 },
                 setUnlinkedTaxaList(){
-                    if(!this.processCancelled){
+                    if(!this.processCancelling){
                         const text = 'Getting unlinked occurrence record scientific names';
-                        this.processorDisplayArr.push(this.getNewProcessObject('getUnlinkedOccSciNames','multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject('getUnlinkedOccSciNames','multi',text));
                         abortController = new AbortController();
                         const formData = new FormData();
                         formData.append('collid', collId);
@@ -1580,11 +1720,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         })
                         .catch((err) => {});
                     }
+                    else{
+                        this.adjustUIEnd();
+                    }
                 },
                 undoChangedSciname(id,oldName,newName){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     const subProcObj = parentProcObj['subs'].find(subproc => subproc['undoChangedName'] === newName);
                     subProcObj['type'] = 'text';
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['undoChangedName'] === newName);
+                        dataSubProcObj['type'] = 'text';
+                    }
                     const text = 'Reverting scientific name change from ' + oldName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' to ' + newName.replaceAll('%squot;',"'").replaceAll('%dquot;','"');
                     this.addSubprocessToProcessorDisplay(id,'text',text);
                     this.undoId = id;
@@ -1611,7 +1759,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 updateOccLocalitySecurity(){
                     this.adjustUIStart('updateOccLocalitySecurity');
                     const text = 'Updating the locality security settings for occurrence records of protected species';
-                    this.processorDisplayArr.push(this.getNewProcessObject('updateLocalitySecurity','single',text));
+                    this.addProcessToProcessorDisplay(this.getNewProcessObject('updateLocalitySecurity','single',text));
                     abortController = new AbortController();
                     const formData = new FormData();
                     formData.append('collid', collId);

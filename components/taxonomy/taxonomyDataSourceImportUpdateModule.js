@@ -1,15 +1,39 @@
 const taxonomyDataSourceImportUpdateModule = {
+    props: {
+        kingdomId: {
+            type: Number,
+            default: null
+        },
+        loading: {
+            type: Boolean,
+            default: false
+        },
+        requiredRanks: {
+            type: Array,
+            default: []
+        },
+        selectedRanks: {
+            type: Array,
+            default: []
+        },
+        selectedRanksHigh: {
+            type: Number,
+            default: 0
+        },
+        taxonomicGroup: {
+            type: Object,
+            default: null
+        },
+        taxonomicGroupTid: {
+            type: Number,
+            default: null
+        }
+    },
     template: `
         <div class="processor-container">
             <div class="processor-control-container">
                 <q-card class="processor-control-card">
                     <q-card-section>
-                        <div class="q-my-sm">
-                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disable="loading" label="Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
-                        </div>
-                        <div class="q-my-sm">
-                            <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :required-ranks="requiredRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import or update" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
-                        </div>
                         <div class="q-my-sm">
                             <taxonomy-data-source-bullet-selector :disable="loading" :selected-data-source="dataSource" @update:selected-data-source="updateSelectedDataSource"></taxonomy-data-source-bullet-selector>
                         </div>
@@ -38,12 +62,19 @@ const taxonomyDataSourceImportUpdateModule = {
                                 </template>
                             </q-card-section>
                         </q-card>
-                        <div class="process-button-container">
-                            <div>
-                                <q-btn :loading="loading" color="secondary" @click="initializeImportUpdate();" label="Start Import/Update" dense />
+                        <div class="processor-tool-control-container">
+                            <div class="processor-cancel-message-container text-negative text-bold">
+                                <template v-if="processCancelling">
+                                    Cancelling, please wait
+                                </template>
                             </div>
-                            <div>
-                                <q-btn v-if="loading" color="red" @click="cancelProcess();" label="Cancel" dense />
+                            <div class="processor-tool-button-container">
+                                <div>
+                                    <q-btn :loading="loading" color="secondary" @click="initializeImportUpdate();" label="Start" dense />
+                                </div>
+                                <div>
+                                    <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                </div>
                             </div>
                         </div>
                     </q-card-section>
@@ -54,6 +85,13 @@ const taxonomyDataSourceImportUpdateModule = {
                 <q-card class="bg-grey-3 q-pa-sm">
                     <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
                         <q-list dense>
+                            <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
+                                <q-item>
+                                    <q-item-section>
+                                        <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                    </q-item-section>
+                                </q-item>
+                            </template>
                             <q-item v-for="proc in processorDisplayArr">
                                 <q-item-section>
                                     <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
@@ -84,6 +122,13 @@ const taxonomyDataSourceImportUpdateModule = {
                                     </template>
                                 </q-item-section>
                             </q-item>
+                            <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
+                                <q-item>
+                                    <q-item-section>
+                                        <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                    </q-item-section>
+                                </q-item>
+                            </template>
                         </q-list>
                     </q-scroll-area>
                 </q-card>
@@ -113,28 +158,24 @@ const taxonomyDataSourceImportUpdateModule = {
             importCommonNames: Vue.ref(false),
             importTaxa: Vue.ref(false),
             itisInitialSearchResults: Vue.ref([]),
-            kingdomId: Vue.ref(null),
             kingdomName: Vue.ref(null),
             languageArr: Vue.ref([]),
-            loading: Vue.ref(false),
             nameTidIndex: Vue.ref({}),
             newEditedTidArr: Vue.ref([]),
-            processCancelled: Vue.ref(false),
+            processCancelling: Vue.ref(false),
             processingArr: Vue.ref([]),
             processorDisplayArr: Vue.ref([]),
+            processorDisplayDataArr: Vue.ref([]),
+            processorDisplayCurrentIndex: Vue.ref(0),
+            processorDisplayIndex: Vue.ref(0),
             queueArr: Vue.ref([]),
             rankArr: Vue.ref(null),
             rebuildHierarchyLoop: Vue.ref(0),
-            requiredRanks: Vue.ref([10]),
             selectedCommonNameFormatting: Vue.ref('upper-each'),
-            selectedRanks: Vue.ref([]),
-            selectedRanksHigh: Vue.ref(0),
             setAddTaxaArr: Vue.ref([]),
             targetTaxonIdentifier: Vue.ref(null),
             targetTaxonLocal: Vue.ref(null),
             taxaToAddArr: Vue.ref([]),
-            taxonomicGroup: Vue.ref(null),
-            taxonomicGroupTid: Vue.ref(null),
             taxonSearchResults: Vue.ref([]),
             updateAcceptance: Vue.ref(true),
             updateMetadata: Vue.ref(true)
@@ -142,30 +183,29 @@ const taxonomyDataSourceImportUpdateModule = {
     },
     components: {
         'multiple-language-auto-complete': multipleLanguageAutoComplete,
-        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-        'taxon-rank-checkbox-selector': taxonRankCheckboxSelector,
         'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector
     },
     setup() {
         let currentProcess = Vue.ref(null);
         let procDisplayScrollAreaRef = Vue.ref(null);
         let procDisplayScrollHeight = Vue.ref(0);
-        let tab = Vue.ref('importer');
+        let scrollProcess = Vue.ref(null);
         return {
             currentProcess,
             procDisplayScrollAreaRef,
-            tab,
+            scrollProcess,
             setScroller(info) {
-                if(currentProcess.value && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
+                if((currentProcess.value || scrollProcess.value) && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
                     procDisplayScrollHeight.value = info.verticalSize;
-                    procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                    if(scrollProcess.value === 'scrollDown'){
+                        procDisplayScrollAreaRef.value.setScrollPosition('vertical', 0);
+                    }
+                    else{
+                        procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                    }
                 }
             }
         }
-    },
-    mounted() {
-        this.selectedRanks = TAXONOMIC_RANKS;
-        this.setRankHigh();
     },
     methods: {
         addFamilyToFamilyArr(familyName){
@@ -175,9 +215,23 @@ const taxonomyDataSourceImportUpdateModule = {
             familyObj['queueArr'] = [];
             this.familyArr.push(familyObj);
         },
+        addProcessToProcessorDisplay(processObj){
+            this.processorDisplayArr.push(processObj);
+            if(this.processorDisplayArr.length > 100){
+                const precessorArrSegment = this.processorDisplayArr.slice(0, 100);
+                this.processorDisplayDataArr = this.processorDisplayDataArr.concat(precessorArrSegment);
+                this.processorDisplayArr.splice(0, 100);
+                this.processorDisplayIndex++;
+                this.processorDisplayCurrentIndex = this.processorDisplayIndex;
+            }
+        },
         addSubprocessToProcessorDisplay(type,text){
             const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === this.currentProcess);
             parentProcObj['subs'].push(this.getNewSubprocessObject(type,text));
+            const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === this.currentProcess);
+            if(dataParentProcObj){
+                dataParentProcObj['subs'].push(this.getNewSubprocessObject(type,text));
+            }
         },
         addTaxonCommonName(tid,name,langid){
             const formData = new FormData();
@@ -242,7 +296,9 @@ const taxonomyDataSourceImportUpdateModule = {
             });
         },
         adjustUIEnd(){
-            this.loading = false;
+            this.processCancelling = false;
+            this.$emit('update:loading', false);
+            this.processorDisplayDataArr = this.processorDisplayDataArr.concat(this.processorDisplayArr);
         },
         adjustUIStart(){
             this.childrenSearchPrimingArr = [];
@@ -258,6 +314,9 @@ const taxonomyDataSourceImportUpdateModule = {
             this.newEditedTidArr = [];
             this.processingArr = [];
             this.processorDisplayArr = [];
+            this.processorDisplayDataArr = [];
+            this.processorDisplayCurrentIndex = 0;
+            this.processorDisplayIndex = 0;
             this.queueArr = [];
             this.rebuildHierarchyLoop = 0;
             this.setAddTaxaArr = [];
@@ -265,10 +324,10 @@ const taxonomyDataSourceImportUpdateModule = {
             this.targetTaxonLocal = null;
             this.taxaToAddArr = [];
             this.taxonSearchResults = [];
-            this.loading = true;
+            this.$emit('update:loading', true);
         },
         cancelProcess(){
-            this.processCancelled = true;
+            this.processCancelling = true;
             cancelAPIRequest();
         },
         currentTaxonProcessAcceptance(){
@@ -1086,7 +1145,7 @@ const taxonomyDataSourceImportUpdateModule = {
             };
         },
         getWoRMSAddTaxonAuthor(res,callback){
-            if(!this.processCancelled){
+            if(!this.processCancelling){
                 const id = this.setAddTaxaArr[0]['id'];
                 const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                 const formData = new FormData();
@@ -1120,6 +1179,9 @@ const taxonomyDataSourceImportUpdateModule = {
                         this.setTaxaToAdd(callback);
                     }
                 });
+            }
+            else{
+                this.adjustUIEnd();
             }
         },
         getWoRMSExternalTaxonCommonNames(callback){
@@ -1302,7 +1364,7 @@ const taxonomyDataSourceImportUpdateModule = {
             this.currentTaxonExternal['tidaccepted'] = (data.hasOwnProperty('tidaccepted') && data['tidaccepted']) ? data['tidaccepted'] : null;
             const text = 'Processing ' + this.currentTaxonExternal['sciname'];
             this.currentProcess = this.currentTaxonExternal['sciname'];
-            this.processorDisplayArr.push(this.getNewProcessObject('multi',text));
+            this.addProcessToProcessorDisplay(this.getNewProcessObject('multi',text));
             this.processSuccessResponse();
             const callbackFunction = (resObj,errorText = null) => {
                 if(errorText){
@@ -1330,11 +1392,10 @@ const taxonomyDataSourceImportUpdateModule = {
         },
         initializeImportUpdate(){
             if(this.taxonomicGroupTid && this.selectedRanks.length > 0){
-                this.processCancelled = false;
                 this.adjustUIStart();
                 const text = 'Setting rank data';
                 this.currentProcess = 'setRankArr';
-                this.processorDisplayArr.push(this.getNewProcessObject('single',text));
+                this.addProcessToProcessorDisplay(this.getNewProcessObject('single',text));
                 const url = taxonomyApiUrl + '?action=getRankNameArr'
                 abortController = new AbortController();
                 fetch(url, {
@@ -1604,8 +1665,20 @@ const taxonomyDataSourceImportUpdateModule = {
                 this.currentTaxonProcessLocalChildren();
             });
         },
+        processorDisplayScrollDown(){
+            this.scrollProcess = 'scrollDown';
+            this.processorDisplayCurrentIndex++;
+            this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
+            this.resetScrollProcess();
+        },
+        processorDisplayScrollUp(){
+            this.scrollProcess = 'scrollUp';
+            this.processorDisplayCurrentIndex--;
+            this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
+            this.resetScrollProcess();
+        },
         processProcessingArrays(){
-            if(this.processCancelled){
+            if(this.processCancelling){
                 this.updateTaxonomicHierarchy(() => {
                     this.adjustUIEnd();
                 });
@@ -1696,6 +1769,11 @@ const taxonomyDataSourceImportUpdateModule = {
                 }
             }
         },
+        resetScrollProcess(){
+            setTimeout(() => {
+                this.scrollProcess = null;
+            }, 200);
+        },
         setInitialTaxa(){
             this.currentTaxonExternal['id'] = this.taxonSearchResults[0]['accepted'] ? this.taxonSearchResults[0]['id'] : this.taxonSearchResults[0]['accepted_id'];
             this.currentTaxonExternal['sciname'] = this.taxonSearchResults[0]['accepted'] ? this.taxonSearchResults[0]['sciname'] : this.taxonSearchResults[0]['accepted_sciname'];
@@ -1718,7 +1796,7 @@ const taxonomyDataSourceImportUpdateModule = {
             this.currentTaxonExternal['tidaccepted'] = null;
             const text = 'Processing ' + this.currentTaxonExternal['sciname'];
             this.currentProcess = this.currentTaxonExternal['sciname'];
-            this.processorDisplayArr.push(this.getNewProcessObject('multi',text));
+            this.addProcessToProcessorDisplay(this.getNewProcessObject('multi',text));
             this.processSuccessResponse();
             if(this.targetTaxonLocal['sciname'] === this.currentTaxonExternal['sciname']){
                 this.currentTaxonExternal['tid'] = this.targetTaxonLocal['tid'];
@@ -1774,7 +1852,7 @@ const taxonomyDataSourceImportUpdateModule = {
         setLanguageArr(){
             const text = 'Setting language data';
             this.currentProcess = 'setLanguageArr';
-            this.processorDisplayArr.push(this.getNewProcessObject('single',text));
+            this.addProcessToProcessorDisplay(this.getNewProcessObject('single',text));
             const url = languageApiUrl + '?action=getLanguages'
             abortController = new AbortController();
             fetch(url, {
@@ -1794,18 +1872,10 @@ const taxonomyDataSourceImportUpdateModule = {
                 }
             });
         },
-        setRankHigh() {
-            this.selectedRanksHigh = 0;
-            this.selectedRanks.forEach((rank) => {
-                if(rank > this.selectedRanksHigh){
-                    this.selectedRanksHigh = rank;
-                }
-            });
-        },
         setTargetSynonymy(){
             const text = 'Updating target taxonomic group accepted parent taxon';
             this.currentProcess = 'updateTargetAcceptedParent';
-            this.processorDisplayArr.push(this.getNewProcessObject('single',text));
+            this.addProcessToProcessorDisplay(this.getNewProcessObject('single',text));
             if(this.targetTaxonLocal['sciname'] !== this.taxonSearchResults[0]['accepted_sciname']){
                 this.targetTaxonLocal['tidaccepted'] = this.nameTidIndex[this.taxonSearchResults[0]['accepted_sciname']];
             }
@@ -1823,7 +1893,7 @@ const taxonomyDataSourceImportUpdateModule = {
         setTargetTaxonLocal(){
             const text = 'Setting the parent taxon for the taxonomic group from the Taxonomic Thesaurus';
             this.currentProcess = 'setTargetTaxonLocal';
-            this.processorDisplayArr.push(this.getNewProcessObject('single',text));
+            this.addProcessToProcessorDisplay(this.getNewProcessObject('single',text));
             this.findTaxonByTid(this.taxonomicGroupTid,(resObj,errorText = null) => {
                 if(errorText){
                     this.processErrorResponse(errorText);
@@ -1835,7 +1905,7 @@ const taxonomyDataSourceImportUpdateModule = {
                     this.processSuccessResponse('Complete');
                     const text = 'Finding the parent taxon for the taxonomic group from the selected Data Source';
                     this.currentProcess = 'setTargetTaxonExternal';
-                    this.processorDisplayArr.push(this.getNewProcessObject('single',text));
+                    this.addProcessToProcessorDisplay(this.getNewProcessObject('single',text));
                     const dataSourceIdObj = this.targetTaxonLocal['identifiers'].find(obj => obj['name'] === this.dataSource);
                     if(dataSourceIdObj){
                         this.targetTaxonIdentifier = dataSourceIdObj['identifier'];
@@ -1959,20 +2029,11 @@ const taxonomyDataSourceImportUpdateModule = {
         updateSelectedDataSource(dataSourceObj) {
             this.dataSource = dataSourceObj;
         },
-        updateSelectedRanks(selectedArr) {
-            this.selectedRanks = selectedArr;
-            this.setRankHigh();
-        },
-        updateTaxonomicGroup(taxonObj) {
-            this.taxonomicGroup = taxonObj;
-            this.taxonomicGroupTid = taxonObj ? taxonObj.tid : null;
-            this.kingdomId = taxonObj ? taxonObj.kingdomid : null;
-        },
         updateTaxonomicHierarchy(callback){
             if(this.newEditedTidArr.length > 0){
                 const text = 'Updating taxonomic hierarchy table with new and edited taxa';
                 this.currentProcess = 'updateTaxonomicHierarchy';
-                this.processorDisplayArr.push(this.getNewProcessObject('single',text));
+                this.addProcessToProcessorDisplay(this.getNewProcessObject('single',text));
                 this.rebuildHierarchyLoop = 0;
                 const formData = new FormData();
                 formData.append('tidarr', JSON.stringify(this.newEditedTidArr));
