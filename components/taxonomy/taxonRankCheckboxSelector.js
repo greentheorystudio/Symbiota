@@ -34,7 +34,7 @@ const taxonRankCheckboxSelector = {
         }
     },
     template: `
-        <a class="anchor-link" @click="rankSelectDialog = true">{{ linkLabel }}</a>
+        <div class="text-bold text-h6 cursor-pointer" @click="rankSelectDialog = true">{{ linkLabel }}</div>
         <q-dialog v-model="rankSelectDialog">
             <q-card>
                 <div class="row justify-end q-pb-none">
@@ -75,18 +75,13 @@ const taxonRankCheckboxSelector = {
             });
             this.$emit('update:selected-ranks', selectedArr);
         },
-        setRankOptions() {
-            const url = taxonomyApiUrl + '?action=getRankArr&kingdomid=' + this.kingdomId;
-            fetch(url)
-            .then((response) => {
-                if(response.ok){
-                    return response.json();
-                }
-            })
-            .then((data) => {
-                this.rankOptions = data;
-                this.setRankArray();
-            });
+        selectAllChange(val) {
+            if(val){
+                this.$emit('update:selected-ranks', this.rankArr);
+            }
+            else{
+                this.$emit('update:selected-ranks', this.requiredRanks);
+            }
         },
         setRankArray() {
             this.rankArr = [];
@@ -104,6 +99,19 @@ const taxonRankCheckboxSelector = {
             this.$emit('update:selected-ranks', selectedArr);
             this.setSelectAll();
         },
+        setRankOptions() {
+            const url = taxonomyApiUrl + '?action=getRankArr&kingdomid=' + this.kingdomId;
+            fetch(url)
+            .then((response) => {
+                if(response.ok){
+                    return response.json();
+                }
+            })
+            .then((data) => {
+                this.rankOptions = data;
+                this.setRankArray();
+            });
+        },
         setSelectAll() {
             if(this.selectedRanks.length === 0){
                 this.selectAll = false;
@@ -113,14 +121,6 @@ const taxonRankCheckboxSelector = {
             }
             else{
                 this.selectAll = 'some';
-            }
-        },
-        selectAllChange(val) {
-            if(val){
-                this.$emit('update:selected-ranks', this.rankArr);
-            }
-            else{
-                this.$emit('update:selected-ranks', this.requiredRanks);
             }
         }
     }

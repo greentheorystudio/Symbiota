@@ -1,15 +1,39 @@
 const taxonomyDataSourceImportUpdateModule = {
+    props: {
+        kingdomId: {
+            type: Number,
+            default: null
+        },
+        loading: {
+            type: Boolean,
+            default: false
+        },
+        requiredRanks: {
+            type: Array,
+            default: []
+        },
+        selectedRanks: {
+            type: Array,
+            default: []
+        },
+        selectedRanksHigh: {
+            type: Number,
+            default: 0
+        },
+        taxonomicGroup: {
+            type: Object,
+            default: null
+        },
+        taxonomicGroupTid: {
+            type: Number,
+            default: null
+        }
+    },
     template: `
         <div class="processor-container">
             <div class="processor-control-container">
                 <q-card class="processor-control-card">
                     <q-card-section>
-                        <div class="q-my-sm">
-                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disable="loading" label="Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
-                        </div>
-                        <div class="q-my-sm">
-                            <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :required-ranks="requiredRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import or update" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
-                        </div>
                         <div class="q-my-sm">
                             <taxonomy-data-source-bullet-selector :disable="loading" :selected-data-source="dataSource" @update:selected-data-source="updateSelectedDataSource"></taxonomy-data-source-bullet-selector>
                         </div>
@@ -134,10 +158,8 @@ const taxonomyDataSourceImportUpdateModule = {
             importCommonNames: Vue.ref(false),
             importTaxa: Vue.ref(false),
             itisInitialSearchResults: Vue.ref([]),
-            kingdomId: Vue.ref(null),
             kingdomName: Vue.ref(null),
             languageArr: Vue.ref([]),
-            loading: Vue.ref(false),
             nameTidIndex: Vue.ref({}),
             newEditedTidArr: Vue.ref([]),
             processCancelling: Vue.ref(false),
@@ -149,16 +171,11 @@ const taxonomyDataSourceImportUpdateModule = {
             queueArr: Vue.ref([]),
             rankArr: Vue.ref(null),
             rebuildHierarchyLoop: Vue.ref(0),
-            requiredRanks: Vue.ref([10]),
             selectedCommonNameFormatting: Vue.ref('upper-each'),
-            selectedRanks: Vue.ref([]),
-            selectedRanksHigh: Vue.ref(0),
             setAddTaxaArr: Vue.ref([]),
             targetTaxonIdentifier: Vue.ref(null),
             targetTaxonLocal: Vue.ref(null),
             taxaToAddArr: Vue.ref([]),
-            taxonomicGroup: Vue.ref(null),
-            taxonomicGroupTid: Vue.ref(null),
             taxonSearchResults: Vue.ref([]),
             updateAcceptance: Vue.ref(true),
             updateMetadata: Vue.ref(true)
@@ -166,8 +183,6 @@ const taxonomyDataSourceImportUpdateModule = {
     },
     components: {
         'multiple-language-auto-complete': multipleLanguageAutoComplete,
-        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-        'taxon-rank-checkbox-selector': taxonRankCheckboxSelector,
         'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector
     },
     setup() {
@@ -191,10 +206,6 @@ const taxonomyDataSourceImportUpdateModule = {
                 }
             }
         }
-    },
-    mounted() {
-        this.selectedRanks = TAXONOMIC_RANKS;
-        this.setRankHigh();
     },
     methods: {
         addFamilyToFamilyArr(familyName){
@@ -286,7 +297,7 @@ const taxonomyDataSourceImportUpdateModule = {
         },
         adjustUIEnd(){
             this.processCancelling = false;
-            this.loading = false;
+            this.$emit('update:loading', false);
             this.processorDisplayDataArr = this.processorDisplayDataArr.concat(this.processorDisplayArr);
         },
         adjustUIStart(){
@@ -313,7 +324,7 @@ const taxonomyDataSourceImportUpdateModule = {
             this.targetTaxonLocal = null;
             this.taxaToAddArr = [];
             this.taxonSearchResults = [];
-            this.loading = true;
+            this.$emit('update:loading', true);
         },
         cancelProcess(){
             this.processCancelling = true;
@@ -1861,14 +1872,6 @@ const taxonomyDataSourceImportUpdateModule = {
                 }
             });
         },
-        setRankHigh() {
-            this.selectedRanksHigh = 0;
-            this.selectedRanks.forEach((rank) => {
-                if(rank > this.selectedRanksHigh){
-                    this.selectedRanksHigh = rank;
-                }
-            });
-        },
         setTargetSynonymy(){
             const text = 'Updating target taxonomic group accepted parent taxon';
             this.currentProcess = 'updateTargetAcceptedParent';
@@ -2025,15 +2028,6 @@ const taxonomyDataSourceImportUpdateModule = {
         },
         updateSelectedDataSource(dataSourceObj) {
             this.dataSource = dataSourceObj;
-        },
-        updateSelectedRanks(selectedArr) {
-            this.selectedRanks = selectedArr;
-            this.setRankHigh();
-        },
-        updateTaxonomicGroup(taxonObj) {
-            this.taxonomicGroup = taxonObj;
-            this.taxonomicGroupTid = taxonObj ? taxonObj.tid : null;
-            this.kingdomId = taxonObj ? taxonObj.kingdomid : null;
         },
         updateTaxonomicHierarchy(callback){
             if(this.newEditedTidArr.length > 0){
