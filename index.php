@@ -16,53 +16,6 @@ include_once(__DIR__ . '/config/header-includes.php');
     <script type="text/javascript" src="js/external/jquery-ui.js"></script>
     <meta name='keywords' content='' />
     <?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            slideShow();
-        });
-
-        var imgArray = [
-            "url(/content/imglib/layout/Image01.JPG)",
-            "url(/content/imglib/layout/Image02.JPG)",
-            "url(/content/imglib/layout/Image03.jpg)",
-            "url(/content/imglib/layout/Image05.JPG)",
-            "url(/content/imglib/layout/Image07.jpg)",
-            "url(/content/imglib/layout/Image08.jpg)",
-            "url(/content/imglib/layout/Image09.jpg)",
-            "url(/content/imglib/layout/Image10.jpg)",
-            "url(/content/imglib/layout/Image11.jpg)",
-            "url(/content/imglib/layout/Image12.jpg)"];
-        var photographerArray = [
-            "Denise Knapp",
-            "Denise Knapp",
-            "",
-            "",
-            "Morgan Ball",
-            "Morgan Ball",
-            "Morgan Ball",
-            "Morgan Ball",
-            "Morgan Ball",
-            "Morgan Ball"];
-        var curIndex = 0;
-        var imgDuration = 4000;
-
-        function slideShow() {
-            setTimeout(function() {
-                document.getElementById('bannerDiv').style.backgroundImage = imgArray[curIndex];
-                if(photographerArray[curIndex] !== ""){
-                    document.getElementById('imageCredit').innerHTML = '<div style="background-color:white;opacity:60%;color:black;padding:5px;font-size: 12px;">(photographer: ' + photographerArray[curIndex] + ')</div>';
-                }
-                else{
-                    document.getElementById('imageCredit').innerHTML = '';
-                }
-            },1000);
-            curIndex++;
-            if(curIndex === imgArray.length) {
-                curIndex = 0;
-            }
-            setTimeout(slideShow, imgDuration);
-        }
-    </script>
 </head>
 <body>
 <?php

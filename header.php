@@ -20,10 +20,10 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                         <q-list dense>
                             <template v-for="item in navBarData">
                                 <template v-if="item.subItems && item.subItems.length">
-                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" v-model="navBarToggle[item.id]" @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
+                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
                                         <q-item-section>{{ item.label }}</q-item-section>
-                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="750" anchor="top end" self="top start">
-                                            <q-list dense @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
+                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start">
+                                            <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
                                                 <template v-for="subitem in item.subItems">
                                                     <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')">
                                                         <q-item-section>{{ subitem.label }}</q-item-section>
@@ -46,9 +46,9 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
             <template v-if="windowWidth >= 1440">
                 <template v-for="item in navBarData">
                     <template v-if="item.subItems && item.subItems.length">
-                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false" stretch flat no-wrap>
-                            <q-menu v-model="navBarToggle[item.id]" transition-duration="750" anchor="bottom start" self="top start" square>
-                                <q-list dense @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap>
+                            <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="bottom start" self="top start" square>
+                                <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
                                     <template v-for="subitem in item.subItems">
                                         <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" clickable v-close-popup>
                                             <q-item-section>
@@ -98,18 +98,62 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
             const dropDownNavBar = Vue.createApp({
                 data() {
                     return {
-                        windowWidth: Vue.ref(0),
-                        userDisplayName: USER_DISPLAY_NAME,
+                        curIndex: Vue.ref(0),
+                        imgArray: Vue.ref([
+                            "url(/content/imglib/layout/Image01.JPG)",
+                            "url(/content/imglib/layout/Image02.JPG)",
+                            "url(/content/imglib/layout/Image03.jpg)",
+                            "url(/content/imglib/layout/Image05.JPG)",
+                            "url(/content/imglib/layout/Image07.jpg)",
+                            "url(/content/imglib/layout/Image08.jpg)",
+                            "url(/content/imglib/layout/Image09.jpg)",
+                            "url(/content/imglib/layout/Image10.jpg)",
+                            "url(/content/imglib/layout/Image11.jpg)",
+                            "url(/content/imglib/layout/Image12.jpg)"
+                        ]),
+                        imgDuration: Vue.ref(4000),
                         navBarData: navBarData,
-                        navBarToggle: Vue.ref({})
+                        navBarToggle: Vue.ref({}),
+                        photographerArray: Vue.ref([
+                            "Denise Knapp",
+                            "Denise Knapp",
+                            "",
+                            "",
+                            "Morgan Ball",
+                            "Morgan Ball",
+                            "Morgan Ball",
+                            "Morgan Ball",
+                            "Morgan Ball",
+                            "Morgan Ball"
+                        ]),
+                        userDisplayName: USER_DISPLAY_NAME,
+                        windowWidth: Vue.ref(0)
                     }
                 },
                 mounted() {
                     this.setNavBarData();
                     window.addEventListener('resize', this.handleResize);
                     this.handleResize();
+                    this.slideShow();
                 },
                 methods: {
+                    handleResize() {
+                        this.windowWidth = window.innerWidth;
+                    },
+                    navbarToggleOff(id) {
+                        this.navBarTimeout = setTimeout(() => {
+                            this.navBarToggle[Number(id)] = false;
+                        }, 400);
+                    },
+                    navbarToggleOn(id) {
+                        clearTimeout(this.navBarTimeout);
+                        for(let i in this.navBarToggle){
+                            if(this.navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
+                                this.navBarToggle[Number(i)] = false;
+                            }
+                        }
+                        this.navBarToggle[Number(id)] = true;
+                    },
                     setNavBarData() {
                         let indexId = 1;
                         this.navBarData.forEach((dataObj) => {
@@ -120,8 +164,21 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                             }
                         });
                     },
-                    handleResize() {
-                        this.windowWidth = window.innerWidth;
+                    slideShow() {
+                        setTimeout(() => {
+                            document.getElementById('bannerDiv').style.backgroundImage = this.imgArray[this.curIndex];
+                            if(this.photographerArray[this.curIndex] !== ""){
+                                document.getElementById('imageCredit').innerHTML = '<div style="background-color:white;opacity:60%;color:black;padding:5px;font-size: 12px;">(photographer: ' + this.photographerArray[this.curIndex] + ')</div>';
+                            }
+                            else{
+                                document.getElementById('imageCredit').innerHTML = '';
+                            }
+                        },1000);
+                        this.curIndex++;
+                        if(this.curIndex === this.imgArray.length) {
+                            this.curIndex = 0;
+                        }
+                        setTimeout(this.slideShow, this.imgDuration);
                     }
                 }
             });
