@@ -79,6 +79,9 @@
                     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/index.php" >Checklists</a>
                 </li>
                 <li>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
+                </li>
+                <li>
                     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank" >Map Occurrence Search</a>
                 </li>
                 <li>
