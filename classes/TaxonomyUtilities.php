@@ -1160,6 +1160,55 @@ class TaxonomyUtilities {
         return $retArr;
     }
 
+    public function setUpdateFamiliesAccepted($parentTid): int
+    {
+        $retCnt = 0;
+        if($parentTid){
+            $sql1 = 'UPDATE taxa '.
+                'SET family = SciName '.
+                'WHERE RankId = 140 AND TID = tidaccepted AND (TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR TID = '.$parentTid.') ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql3 = 'UPDATE taxa AS t LEFT JOIN taxaenumtree AS te ON t.TID = te.tid '.
+                'LEFT JOIN taxa AS t2 ON te.parenttid = t2.TID '.
+                'SET t.family = t2.SciName '.
+                'WHERE t.RankId >= 140 AND t.TID = t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR t.TID = '.$parentTid.') AND (t2.RankId = 140 OR ISNULL(t2.RankId)) ';
+            //echo $sql3;
+            if($this->conn->query($sql3)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function setUpdateFamiliesUnaccepted($parentTid): int
+    {
+        $retCnt = 0;
+        if($parentTid){
+            $sql2 = 'UPDATE taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
+                'SET t.family = t2.family '.
+                'WHERE t.RankId = 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR t.TID = '.$parentTid.') ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql4 = 'UPDATE taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
+                'LEFT JOIN taxaenumtree AS te ON t2.TID = te.tid '.
+                'LEFT JOIN taxa AS t3 ON te.parenttid = t3.TID '.
+                'SET t.family = t2.SciName '.
+                'WHERE t.RankId >= 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR t.TID = '.$parentTid.') AND (t3.RankId = 140 OR ISNULL(t3.RankId)) ';
+            //echo $sql4;
+            if($this->conn->query($sql4)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
     public function setRankLimit($val): void
     {
         $this->rankLimit = Sanitizer::cleanInStr($this->conn,$val);

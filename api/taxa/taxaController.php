@@ -128,4 +128,10 @@ if($action){
         $includeChildren = array_key_exists('includeChildren',$_POST) && $_POST['includeChildren'];
         echo json_encode($taxUtilities->getTaxonFromSciname($_POST['sciname'], (int)$_POST['kingdomid'], $includeCommonNames, $includeChildren));
     }
+    elseif($action === 'setUpdateFamiliesAccepted' && array_key_exists('parenttid',$_POST)){
+        echo $taxUtilities->setUpdateFamiliesAccepted((int)$_POST['parenttid']);
+    }
+    elseif($action === 'setUpdateFamiliesUnaccepted' && array_key_exists('parenttid',$_POST)){
+        echo $taxUtilities->setUpdateFamiliesUnaccepted((int)$_POST['parenttid']);
+    }
 }

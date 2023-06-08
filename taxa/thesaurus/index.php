@@ -72,7 +72,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         <?php include_once(__DIR__ . '/batchloader.php'); ?>
                     </q-tab-panel>
                     <q-tab-panel name="maintenance">
-                        <taxonomic-thesaurus-maintenance-module></taxonomic-thesaurus-maintenance-module>
+                        <taxonomic-thesaurus-maintenance-module :loading="loading" :selected-ranks="selectedRanks" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomic-thesaurus-maintenance-module>
                     </q-tab-panel>
                 </q-tab-panels>
             </q-card>
@@ -91,30 +91,153 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230530" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=20230530" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=20230601" type="text/javascript"></script>
     <script>
         const taxonomicThesaurusMaintenanceModule = {
+            props: {
+                loading: {
+                    type: Boolean,
+                    default: false
+                },
+                selectedRanks: {
+                    type: Array,
+                    default: []
+                },
+                taxonomicGroupTid: {
+                    type: Number,
+                    default: null
+                }
+            },
             template: `
                 <div class="processor-container">
                     <div class="processor-control-container">
                         <q-card class="processor-control-card">
-                            <q-list class="processor-control-accordion">
-                                <q-expansion-item class="overflow-hidden" group="controlgroup" label="Thesaurus Wide Utilities" header-class="bg-grey-3 text-bold" default-opened>
-                                    <q-card class="accordion-panel">
-                                        <q-card-section>
-
-                                        </q-card-section>
-                                    </q-card>
-                                </q-expansion-item>
-                                <q-separator></q-separator>
-                                <q-expansion-item class="overflow-hidden" group="controlgroup" label="Group Based Utilities" header-class="bg-grey-3 text-bold">
-                                    <q-card class="accordion-panel">
-                                        <q-card-section>
-
-                                        </q-card-section>
-                                    </q-card>
-                                </q-expansion-item>
-                            </q-list>
+                            <q-card-section>
+                                <div class="process-header">
+                                    Set Family Names
+                                </div>
+                                Set, or update, family names for all taxa within the Taxonomic Group.
+                                <div class="processor-tool-control-container">
+                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                        <template v-if="processCancelling && currentProcess === 'setUpdateFamilies'">
+                                            Cancelling, please wait
+                                        </template>
+                                    </div>
+                                    <div class="processor-tool-button-container">
+                                        <div>
+                                            <q-btn :loading="currentProcess === 'setUpdateFamilies'" :disabled="currentProcess && currentProcess !== 'setUpdateFamilies'" color="secondary" @click="initializeSetUpdateFamilies('setUpdateFamiliesAccepted');" label="Start" dense />
+                                        </div>
+                                        <div>
+                                            <q-btn v-if="currentProcess === 'setUpdateFamilies'" :disabled="processCancelling && currentProcess === 'setUpdateFamilies'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                        </div>
+                                    </div>
+                                </div>
+                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                <div class="process-header">
+                                    Remove Taxa Ranks
+                                </div>
+                                Remove taxa within the Taxonomic Group that are ranks not included in the Selected Taxonomic
+                                Ranks and not associated with other data (e.g. occurrence records, checklists, images, etc.)
+                                <div class="processor-tool-control-container">
+                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                        <template v-if="processCancelling && currentProcess === 'cleanProcesses'">
+                                            Cancelling, please wait
+                                        </template>
+                                    </div>
+                                    <div class="processor-tool-button-container">
+                                        <div>
+                                            <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                        </div>
+                                        <div>
+                                            <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                        </div>
+                                    </div>
+                                </div>
+                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                <div class="process-header">
+                                    Remove Taxa
+                                </div>
+                                Remove taxa within the Taxonomic Group that are not associated with other data (e.g. occurrence
+                                records, checklists, images, etc.)
+                                <div class="processor-tool-control-container">
+                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                        <template v-if="processCancelling && currentProcess === 'cleanProcesses'">
+                                            Cancelling, please wait
+                                        </template>
+                                    </div>
+                                    <div class="processor-tool-button-container">
+                                        <div>
+                                            <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                        </div>
+                                        <div>
+                                            <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                        </div>
+                                    </div>
+                                </div>
+                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                <div class="process-header">
+                                    Rebuild Taxonomic Hierarchy
+                                </div>
+                                Rebuild the taxonomic heirarchy data for taxa within the Taxonomic Group.
+                                <div class="processor-tool-control-container">
+                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                        <template v-if="processCancelling && currentProcess === 'cleanProcesses'">
+                                            Cancelling, please wait
+                                        </template>
+                                    </div>
+                                    <div class="processor-tool-button-container">
+                                        <div>
+                                            <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                        </div>
+                                        <div>
+                                            <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                        </div>
+                                    </div>
+                                </div>
+                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                <div class="process-header">
+                                    Format Common Names
+                                </div>
+                                Format common names according to the formatting style selected below for all taxa within the
+                                Taxonomic Group.
+                                <div class="processor-tool-control-container">
+                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                        <template v-if="processCancelling && currentProcess === 'cleanProcesses'">
+                                            Cancelling, please wait
+                                        </template>
+                                    </div>
+                                    <div class="processor-tool-button-container">
+                                        <div>
+                                            <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                        </div>
+                                        <div>
+                                            <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                        </div>
+                                    </div>
+                                </div>
+                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                <div class="process-header">
+                                    Remove Common Names
+                                </div>
+                                Remove common names for all taxa within the
+                                Taxonomic Group.
+                                <div class="processor-tool-control-container">
+                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                        <template v-if="processCancelling && currentProcess === 'cleanProcesses'">
+                                            Cancelling, please wait
+                                        </template>
+                                    </div>
+                                    <div class="processor-tool-button-container">
+                                        <div>
+                                            <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                        </div>
+                                        <div>
+                                            <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                        </div>
+                                    </div>
+                                </div>
+                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                            </q-card-section>
                         </q-card>
                     </div>
 
@@ -197,39 +320,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             `,
             data() {
                 return {
-                    changedCurrentSciname: Vue.ref(''),
-                    changedParsedSciname: Vue.ref(''),
-                    colInitialSearchResults: Vue.ref([]),
-                    currentSciname: Vue.ref(null),
-                    dataSource: Vue.ref('col'),
-                    itisInitialSearchResults: Vue.ref([]),
-                    levValue: Vue.ref('2'),
-                    nameSearchResults: Vue.ref([]),
-                    nameTidIndex: Vue.ref({}),
-                    newTidArr: Vue.ref([]),
                     processCancelling: Vue.ref(false),
-                    processingArr: Vue.ref([]),
                     processingLimit: Vue.ref(null),
                     processingStartIndex: Vue.ref(null),
                     processorDisplayArr: Vue.ref([]),
                     processorDisplayDataArr: Vue.ref([]),
                     processorDisplayCurrentIndex: Vue.ref(0),
                     processorDisplayIndex: Vue.ref(0),
-                    rankArr: Vue.ref(null),
-                    rebuildHierarchyLoop: Vue.ref(0),
-                    selectedKingdom: Vue.ref(null),
-                    selectedKingdomId: Vue.ref(null),
-                    selectedKingdomName: Vue.ref(null),
-                    taxaLoaded: Vue.ref(0),
-                    taxaToAddArr: Vue.ref([]),
-                    undoButtonsDisabled: Vue.ref(true),
-                    undoId: Vue.ref(''),
-                    unlinkedLoading: Vue.ref(false),
-                    unlinkedNamesArr: Vue.ref([]),
-                    unlinkedOccCnt: Vue.ref(null),
-                    unlinkedTaxaCnt: Vue.ref(null),
-                    updatedet: Vue.ref(false),
-                    uppercontrolsdisabled: Vue.ref(false)
+                    rebuildHierarchyLoop: Vue.ref(0)
                 }
             },
             setup() {
@@ -275,13 +373,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 adjustUIEnd(){
                     this.processCancelling = false;
-                    this.unlinkedNamesArr = [];
-                    this.currentSciname = null;
-                    this.setUnlinkedRecordCounts();
                     this.currentProcess = null;
-                    this.undoButtonsDisabled = false;
-                    this.uppercontrolsdisabled = false;
                     this.processorDisplayDataArr = this.processorDisplayDataArr.concat(this.processorDisplayArr);
+                    this.$emit('update:loading', false);
                 },
                 adjustUIStart(id){
                     this.processorDisplayArr = [];
@@ -291,6 +385,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     this.currentProcess = id;
                     this.uppercontrolsdisabled = true;
                     this.undoButtonsDisabled = true;
+                    this.$emit('update:loading', true);
                 },
                 cancelProcess(){
                     this.processCancelling = true;
@@ -353,6 +448,49 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         resultText: ''
                     };
                 },
+                initializeSetUpdateFamilies(step){
+                    if(this.taxonomicGroupTid){
+                        const formData = new FormData();
+                        formData.append('parenttid', this.taxonomicGroupTid);
+                        if(step === 'setUpdateFamiliesAccepted'){
+                            this.adjustUIStart('setUpdateFamilies');
+                            const text = 'Setting families for accepted taxa';
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('setUpdateFamiliesAccepted','single',text));
+                            formData.append('action', 'setUpdateFamiliesAccepted');
+                        }
+                        if(!this.processCancelling){
+                            if(step === 'setUpdateFamiliesUnaccepted'){
+                                const text = 'Setting families for unaccepted taxa';
+                                this.addProcessToProcessorDisplay(this.getNewProcessObject('setUpdateFamiliesUnaccepted','single',text));
+                                formData.append('action', 'setUpdateFamiliesUnaccepted');
+                            }
+                            fetch(taxonomyApiUrl, {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then((response) => {
+                                if(response.status === 200){
+                                    response.text().then((text) => {
+                                        this.processSuccessResponse(true,'Complete: ' + text + ' records updated');
+                                        if(step === 'setUpdateFamiliesAccepted'){
+                                            this.initializeSetUpdateFamilies('setUpdateFamiliesUnaccepted');
+                                        }
+                                        else{
+                                            this.adjustUIEnd();
+                                        }
+                                    });
+                                }
+                                else{
+                                    const text = getErrorResponseText(response.status,response.statusText);
+                                    this.processErrorResponse(true,text);
+                                }
+                            });
+                        }
+                    }
+                    else{
+                        alert('Please enter a Taxonomic Group');
+                    }
+                },
                 populateTaxonomicHierarchy(){
                     if(this.rebuildHierarchyLoop < 40){
                         const formData = new FormData();
@@ -361,24 +499,24 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             method: 'POST',
                             body: formData
                         })
-                            .then((response) => {
-                                if(response.status === 200){
-                                    response.text().then((res) => {
-                                        if(Number(res) > 0){
-                                            this.rebuildHierarchyLoop++;
-                                            this.populateTaxonomicHierarchy();
-                                        }
-                                        else{
-                                            this.processSuccessResponse(true,'Complete');
-                                            this.adjustUIEnd();
-                                        }
-                                    });
-                                }
-                                else{
-                                    this.processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
-                                    this.adjustUIEnd();
-                                }
-                            });
+                        .then((response) => {
+                            if(response.status === 200){
+                                response.text().then((res) => {
+                                    if(Number(res) > 0){
+                                        this.rebuildHierarchyLoop++;
+                                        this.populateTaxonomicHierarchy();
+                                    }
+                                    else{
+                                        this.processSuccessResponse(true,'Complete');
+                                        this.adjustUIEnd();
+                                    }
+                                });
+                            }
+                            else{
+                                this.processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
+                                this.adjustUIEnd();
+                            }
+                        });
                     }
                     else{
                         this.processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
@@ -396,23 +534,23 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         method: 'POST',
                         body: formData
                     })
-                        .then((response) => {
-                            if(response.status === 200){
-                                response.text().then((res) => {
-                                    if(Number(res) > 0){
-                                        this.rebuildHierarchyLoop++;
-                                        this.populateTaxonomicHierarchy();
-                                    }
-                                    else{
-                                        this.adjustUIEnd();
-                                    }
-                                });
-                            }
-                            else{
-                                this.processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
-                                this.adjustUIEnd();
-                            }
-                        });
+                    .then((response) => {
+                        if(response.status === 200){
+                            response.text().then((res) => {
+                                if(Number(res) > 0){
+                                    this.rebuildHierarchyLoop++;
+                                    this.populateTaxonomicHierarchy();
+                                }
+                                else{
+                                    this.adjustUIEnd();
+                                }
+                            });
+                        }
+                        else{
+                            this.processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
+                            this.adjustUIEnd();
+                        }
+                    });
                 },
                 processErrorResponse(setCounts,text){
                     const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
@@ -504,8 +642,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }, 200);
                 },
                 cancelAPIRequest,
-                getErrorResponseText,
-                openTutorialWindow
+                getErrorResponseText
             }
         };
 

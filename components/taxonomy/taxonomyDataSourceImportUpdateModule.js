@@ -440,6 +440,7 @@ const taxonomyDataSourceImportUpdateModule = {
             if(
                 this.updateMetadata && this.currentTaxonExternal['tid'] &&
                 (this.currentTaxonExternal['author'] !== this.currentTaxonLocal['author'] ||
+                this.kingdomId !== Number(this.currentTaxonLocal['kingdomid']) ||
                 Number(this.currentTaxonExternal['rankid']) !== Number(this.currentTaxonLocal['rankid']) ||
                 this.currentTaxonExternal['family'] !== this.currentTaxonLocal['family'])
             ){
@@ -447,6 +448,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 this.addSubprocessToProcessorDisplay('text',subtext);
                 const taxonData = {};
                 taxonData['tid'] = this.currentTaxonExternal['tid'];
+                taxonData['kingdomid'] = this.kingdomId;
                 taxonData['author'] = this.currentTaxonExternal['author'];
                 taxonData['rankid'] = this.currentTaxonExternal['rankid'];
                 taxonData['family'] = this.currentTaxonExternal['family'];

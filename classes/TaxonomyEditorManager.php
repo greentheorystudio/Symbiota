@@ -169,6 +169,9 @@ class TaxonomyEditorManager{
         $statusStr = '';
 		if($tId){
             $sql = 'UPDATE taxa SET ';
+            if(array_key_exists('kingdomid',$postArr) && $postArr['kingdomid']){
+                $sql .= 'kingdomId = '.((int)$postArr['kingdomid'] ?: 100).', ';
+            }
             if(array_key_exists('unitind1',$postArr) && $postArr['unitind1']){
                 $sql .= 'unitind1 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind1'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind1']).'"':'NULL').', ';
             }
@@ -279,18 +282,18 @@ class TaxonomyEditorManager{
 	{
 		$status = '';
 		if(is_numeric($tid)){
-			$sql = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.' WHERE tid = '.$tid.' ';
+			$sql = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', kingdomId = (SELECT kingdomId FROM taxa WHERE TID = '.$tidAccepted.') WHERE tid = '.$tid.' ';
 			//echo $sql;
 			if($this->conn->query($sql)) {
-				$sqlSyns = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.' WHERE tidaccepted = '.$tid.' ';
+				$sqlSyns = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', kingdomId = (SELECT kingdomId FROM taxa WHERE TID = '.$tidAccepted.') WHERE tidaccepted = '.$tid.' ';
 				if(!$this->conn->query($sqlSyns)){
 					$status = 'ERROR: unable to transfer linked synonyms to accepted taxon.';
 				}
-                $sqlParent = 'UPDATE taxa SET parenttid = '.$tidAccepted.' WHERE parenttid = '.$tid.' ';
+                $sqlParent = 'UPDATE taxa SET parenttid = '.$tidAccepted.', kingdomId = (SELECT kingdomId FROM taxa WHERE TID = '.$tidAccepted.') WHERE parenttid = '.$tid.' ';
                 if(!$this->conn->query($sqlParent)){
                     $status = 'ERROR: unable to transfer children taxa to accepted taxon.';
                 }
-                $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = '.$tidAccepted.' WHERE parenttid = '.$tid.' ';
+                $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = '.$tidAccepted.', kingdomId = (SELECT kingdomId FROM taxa WHERE TID = '.$tidAccepted.') WHERE parenttid = '.$tid.' ';
                 if(!$this->conn->query($sqlHierarchy)){
                     $status = 'ERROR: unable to update taxonomic hierarchy with accepted taxon.';
                 }
