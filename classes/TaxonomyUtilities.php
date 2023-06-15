@@ -273,15 +273,13 @@ class TaxonomyUtilities {
             elseif(is_numeric($tid)){
                 $tidStr = $tid;
             }
-            if($tidStr){
-                $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
-                    'SELECT DISTINCT tid, parenttid FROM taxa '.
-                    'WHERE tid IN('.$tidStr.') AND tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
-                //echo $sql . '<br />';;
-                if($this->conn->query($sql)){
-                    $retCnt += $this->conn->affected_rows;
-                }
-            }
+        }
+        $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
+            'SELECT DISTINCT tid, parenttid FROM taxa '.
+            'WHERE '.($tidStr ? 'tid IN('.$tidStr.') AND ' : '').'tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
+        //echo $sql . '<br />';;
+        if($this->conn->query($sql)){
+            $retCnt += $this->conn->affected_rows;
         }
         return $retCnt;
     }
@@ -1207,6 +1205,228 @@ class TaxonomyUtilities {
             }
         }
         return $retCnt;
+    }
+
+    public function getRankArrForTaxonomicGroup($parentTid): array
+    {
+        $retArr = array();
+        if($parentTid){
+            $sql = 'SELECT DISTINCT t.RankId, tu.rankname FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.RankId = tu.rankid AND t.kingdomId = tu.kingdomid '.
+                'WHERE t.TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
+                'OR t.parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
+                'ORDER BY t.RankId ';
+            //echo $sql;
+            if($rs = $this->conn->query($sql)){
+                while($r = $rs->fetch_object()){
+                    $nodeArr = array();
+                    $nodeArr['rankid'] = $r->RankId;
+                    $nodeArr['rankname'] = $r->rankname;
+                    $retArr[] = $nodeArr;
+                }
+                $rs->free();
+            }
+        }
+        return $retArr;
+    }
+
+    public function getUnacceptedTaxaByTaxonomicGroup($parentTid,$index,$rankId = null): array
+    {
+        $retArr = array();
+        if($parentTid){
+            $sql = 'SELECT DISTINCT TID, SciName FROM taxa '.
+                'WHERE TID <> tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
+                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.')) ';
+            if($rankId){
+                $sql .= 'AND RankId = ' . $rankId . ' ';
+            }
+            $sql .= 'ORDER BY SciName '.
+                'LIMIT ' . (($index - 1) * 50000) . ', 50000';
+            //echo $sql;
+            if($rs = $this->conn->query($sql)){
+                while($r = $rs->fetch_object()){
+                    $nodeArr = array();
+                    $nodeArr['tid'] = $r->TID;
+                    $nodeArr['sciname'] = $r->SciName;
+                    $retArr[] = $nodeArr;
+                }
+                $rs->free();
+            }
+        }
+        return $retArr;
+    }
+
+    public function getAcceptedTaxaByTaxonomicGroup($parentTid,$index,$rankId = null): array
+    {
+        $retArr = array();
+        if($parentTid){
+            $sql = 'SELECT DISTINCT TID, SciName, parenttid FROM taxa '.
+                'WHERE TID = tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
+                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.')) ';
+            if($rankId){
+                $sql .= 'AND RankId = ' . $rankId . ' ';
+            }
+            $sql .= 'ORDER BY SciName '.
+                'LIMIT ' . (($index - 1) * 50000) . ', 50000';
+            //echo $sql;
+            if($rs = $this->conn->query($sql)){
+                while($r = $rs->fetch_object()){
+                    $nodeArr = array();
+                    $nodeArr['tid'] = $r->TID;
+                    $nodeArr['sciname'] = $r->SciName;
+                    $nodeArr['parenttid'] = $r->parenttid;
+                    $retArr[] = $nodeArr;
+                }
+                $rs->free();
+            }
+        }
+        return $retArr;
+    }
+
+    public function getCommonNamesByTaxonomicGroup($parentTid,$index): array
+    {
+        $retArr = array();
+        if($parentTid){
+            $sql = 'SELECT DISTINCT VID, VernacularName FROM taxavernaculars '.
+                'WHERE TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
+                'ORDER BY VernacularName '.
+                'LIMIT ' . (($index - 1) * 50000) . ', 50000';
+            //echo $sql;
+            if($rs = $this->conn->query($sql)){
+                while($r = $rs->fetch_object()){
+                    $nodeArr = array();
+                    $nodeArr['vid'] = $r->VID;
+                    $nodeArr['vernacularname'] = $r->VernacularName;
+                    $retArr[] = $nodeArr;
+                }
+                $rs->free();
+            }
+        }
+        return $retArr;
+    }
+
+    public function checkTidForDataLinkages($tid): int
+    {
+        $retVal = 0;
+        if($tid){
+            $sql = 'SELECT DISTINCT TID FROM taxa '.
+                'WHERE TID IN(SELECT tid FROM taxa WHERE parenttid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM taxa WHERE TID <> tidaccepted AND tidaccepted = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM fmchklsttaxalink WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM fmdyncltaxalink WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM fmvouchers WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM glossarysources WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM glossarytaxalink WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM images WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM kmchartaxalink WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM kmdescr WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM media WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM omoccurassociations WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM omoccurdeterminations WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM omoccurrences WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM referencetaxalink WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM taxadescrblock WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM taxamaps WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM tmtraittaxalink WHERE tid = '.$tid.') '.
+                'OR TID IN(SELECT tid FROM usertaxonomy WHERE tid = '.$tid.') ';
+            //echo $sql;
+            $rs = $this->conn->query($sql);
+            $retVal = $rs->num_rows;
+            $rs->free();
+        }
+        return $retVal;
+    }
+
+    public function deleteTaxonByTid($tid): int
+    {
+        $retVal = 1;
+        if($tid){
+            $sql = 'DELETE FROM taxaenumtree WHERE tid = '.$tid.' OR parenttid = '.$tid.' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+
+            $sql = 'DELETE FROM taxavernaculars WHERE TID = '.$tid.' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+
+            $sql = 'DELETE FROM taxa WHERE TID = '.$tid.' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
+    }
+
+    public function removeTaxonFromTaxonomicHierarchy($tid, $parenttid): int
+    {
+        $retVal = 1;
+        if($tid){
+            $sql = 'DELETE FROM taxaenumtree WHERE parenttid = '.$tid.' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+
+            $sql = 'UPDATE taxa SET parenttid = '.$parenttid.' WHERE parenttid = '.$tid.' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
+    }
+
+    public function editVernacular($postArr,$vId): int
+    {
+        $status = 0;
+        if((int)$vId){
+            $sql = 'UPDATE taxavernaculars SET ';
+            if(array_key_exists('tid',$postArr) && (int)$postArr['tid']){
+                $sql .= 'TID = '.(int)$postArr['tid'].', ';
+            }
+            if(array_key_exists('vernacularname',$postArr) && $postArr['vernacularname']){
+                $sql .= 'VernacularName = '.(Sanitizer::cleanInStr($this->conn,$postArr['vernacularname'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['vernacularname']).'"':'NULL').', ';
+            }
+            if(array_key_exists('language',$postArr) && $postArr['language']){
+                $sql .= '`Language` = '.(Sanitizer::cleanInStr($this->conn,$postArr['language'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['language']).'"':'NULL').', ';
+            }
+            if(array_key_exists('langid',$postArr) && (int)$postArr['langid']){
+                $sql .= 'langid = '.(int)$postArr['langid'].', ';
+            }
+            if(array_key_exists('source',$postArr) && $postArr['source']){
+                $sql .= 'Source = '.(Sanitizer::cleanInStr($this->conn,$postArr['source'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', ';
+            }
+            if(array_key_exists('notes',$postArr) && $postArr['notes']){
+                $sql .= 'notes = '.(Sanitizer::cleanInStr($this->conn,$postArr['notes'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', ';
+            }
+            if(array_key_exists('sortsequence',$postArr) && (int)$postArr['sortsequence']){
+                $sql .= 'SortSequence = '.(int)$postArr['sortsequence'].', ';
+            }
+            $sql .= 'username = "'.$GLOBALS['PARAMS_ARR']['un'].'" ';
+            $sql .= 'WHERE VID = '.$vId.' ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $status = 1;
+            }
+        }
+        return $status;
+    }
+
+    public function removeCommonNamesInTaxonomicGroup($parentTid): int
+    {
+        $retVal = 1;
+        if($parentTid){
+            $sql = 'DELETE FROM taxavernaculars WHERE TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
     }
 
     public function setRankLimit($val): void

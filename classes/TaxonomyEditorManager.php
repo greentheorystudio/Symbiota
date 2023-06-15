@@ -282,10 +282,10 @@ class TaxonomyEditorManager{
 	{
 		$status = '';
 		if(is_numeric($tid)){
-			$sql = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', kingdomId = (SELECT kingdomId FROM taxa WHERE TID = '.$tidAccepted.') WHERE tid = '.$tid.' ';
+			$sql = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', parenttid = (SELECT parenttid FROM taxa WHERE TID = '.$tidAccepted.'), kingdomId = (SELECT kingdomId FROM taxa WHERE TID = '.$tidAccepted.') WHERE tid = '.$tid.' ';
 			//echo $sql;
 			if($this->conn->query($sql)) {
-				$sqlSyns = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', kingdomId = (SELECT kingdomId FROM taxa WHERE TID = '.$tidAccepted.') WHERE tidaccepted = '.$tid.' ';
+				$sqlSyns = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', parenttid = (SELECT parenttid FROM taxa WHERE TID = '.$tidAccepted.'), kingdomId = (SELECT kingdomId FROM taxa WHERE TID = '.$tidAccepted.') WHERE tidaccepted = '.$tid.' ';
 				if(!$this->conn->query($sqlSyns)){
 					$status = 'ERROR: unable to transfer linked synonyms to accepted taxon.';
 				}
