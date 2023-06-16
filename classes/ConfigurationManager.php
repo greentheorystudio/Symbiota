@@ -148,7 +148,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20230219';
+        $GLOBALS['CSS_VERSION'] = '20230606';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -268,6 +268,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['IMAGE_ROOT_PATH']) || $GLOBALS['IMAGE_ROOT_PATH'] === ''){
             $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
             $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
+        }
+        if(!isset($GLOBALS['IMAGE_ROOT_URL'])){
+            $GLOBALS['IMAGE_ROOT_URL'] = '';
         }
         if(!isset($GLOBALS['PORTAL_GUID']) || $GLOBALS['PORTAL_GUID'] === ''){
             $GLOBALS['PORTAL_GUID'] = $this->getGUID();
