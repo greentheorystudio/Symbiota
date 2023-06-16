@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TPEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPDescEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
+include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -14,6 +15,7 @@ $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $tImageEditor = new TPImageEditorManager();
 $tDescEditor = new TPDescEditorManager();
 $tEditor = new TPEditorManager();
+$taxUtilities = new TaxonomyUtilities();
 
 $tid = $tEditor->setTid($tid?:$taxon);
 
@@ -26,8 +28,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS
 if($editable && $action){
 	if($action === 'Submit Common Name Edits'){
  		$editVernArr = array();
-		$editVernArr['vid'] = $_REQUEST['vid'];
- 		if($_REQUEST['vernacularname']) {
+		if($_REQUEST['vernacularname']) {
             $editVernArr['vernacularname'] = str_replace('"', '-', $_REQUEST['vernacularname']);
         }
 		if($_REQUEST['language']) {
@@ -38,8 +39,9 @@ if($editable && $action){
 		if($_REQUEST['sortsequence']) {
             $editVernArr['sortsequence'] = $_REQUEST['sortsequence'];
         }
-		$editVernArr['username'] = $GLOBALS['PARAMS_ARR']['un'];
-		$statusStr = $tEditor->editVernacular($editVernArr);
+		if(!$taxUtilities->editVernacular($editVernArr,(int)$_REQUEST['vid'])){
+            $statusStr = 'ERROR editing taxon.';
+        }
 	}
 	elseif($action === 'Add Common Name'){
 		$addVernArr = array();
