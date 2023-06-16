@@ -11,16 +11,16 @@ const taxaProfileMediaPanel = {
                             Audio & Video
                         </div>
                         <div class="row">
-                            <q-intersection v-for="media in taxon.media" :key="media" :class="{'media-thumb':true, 'video-thumb':(media.type === 'video'), 'audio-thumb':(media.type === 'sound')}">
+                            <q-intersection v-for="media in taxon.media" :key="media" :class="{'media-thumb':true, 'video-thumb':(media.format.startsWith('video')), 'audio-thumb':(media.format.startsWith('audio'))}">
                                 <q-card class="q-ma-md overflow-hidden">
-                                    <template v-if="media.type === 'video'">
+                                    <template v-if="media.format.startsWith('video')">
                                         <div class="video-player-container">
                                             <video class="video-player" controls>
                                                 <source :src="media.accessuri" :type="media.format">
                                             </video>
                                         </div>
                                     </template>
-                                    <template v-else-if="media.type === 'sound'">
+                                    <template v-else-if="media.format.startsWith('audio')">
                                         <div class="audio-player-container">
                                             <audio class="audio-player" controls>
                                                 <source :src="media.accessuri" :type="media.format">
@@ -44,16 +44,16 @@ const taxaProfileMediaPanel = {
                 <template v-else>
                     <q-expansion-item class="shadow-1 overflow-hidden expansion-element" label="View All Audio & Video" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
                         <div class="row">
-                            <q-intersection v-for="media in taxon.media" :key="media" :class="{'media-thumb':true, 'video-thumb':(media.type === 'video'), 'audio-thumb':(media.type === 'sound')}">
+                            <q-intersection v-for="media in taxon.media" :key="media" :class="{'media-thumb':true, 'video-thumb':(media.format.startsWith('video')), 'audio-thumb':(media.format.startsWith('audio'))}">
                                 <q-card class="q-ma-md overflow-hidden">
-                                    <template v-if="media.type === 'video'">
+                                    <template v-if="media.format.startsWith('video')">
                                         <div class="video-player-container">
                                             <video class="video-player" controls>
                                                 <source :src="media.accessuri" :type="media.format">
                                             </video>
                                         </div>
                                     </template>
-                                    <template v-else-if="media.type === 'sound'">
+                                    <template v-else-if="media.format.startsWith('audio')">
                                         <div class="audio-player-container">
                                             <audio class="audio-player" controls>
                                                 <source :src="media.accessuri" :type="media.format">

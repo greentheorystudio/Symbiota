@@ -127,24 +127,6 @@ class TPEditorManager {
 		return $vernArr;
 	}
 	
-	public function editVernacular($inArray): string
-	{
-		$editArr = Sanitizer::cleanInArray($this->taxonCon,$inArray);
-		$vid = $editArr['vid'];
-		unset($editArr['vid']);
-		$setFrag = '';
-		foreach($editArr as $keyField => $value){
-			$setFrag .= ','.$keyField.' = "'.$value.'" ';
-		}
-		$sql = 'UPDATE taxavernaculars SET '.substr($setFrag,1).' WHERE (vid = '.$this->taxonCon->real_escape_string($vid).')';
-		//echo $sql;
-		$status = '';
-		if(!$this->taxonCon->query($sql)){
-			$status = 'Error:editingVernacular.';
-		}
-		return $status;
-	}
-	
 	public function addVernacular($inArray): string
 	{
 		$newVerns = Sanitizer::cleanInArray($this->taxonCon,$inArray);

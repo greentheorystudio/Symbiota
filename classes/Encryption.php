@@ -50,15 +50,17 @@ class Encryption{
 		return $returnStr;
 	}
 
-	public static function getKey(): string
+    public static function getKey(): string
     {
-		$returnStr = '';
-	    if (strlen($GLOBALS['SECURITY_KEY']) > 32) {
-            $returnStr = substr($GLOBALS['SECURITY_KEY'],0,32);
-		}
-        elseif(strlen($GLOBALS['SECURITY_KEY']) < 32) {
-            $returnStr = str_pad($GLOBALS['SECURITY_KEY'], 32, $GLOBALS['SECURITY_KEY'][0], STR_PAD_BOTH);
-		}
-		return $returnStr;
-	}
+        $returnStr = '';
+        if(isset($GLOBALS['SECURITY_KEY'])){
+            if (strlen($GLOBALS['SECURITY_KEY']) > 32) {
+                $returnStr = substr($GLOBALS['SECURITY_KEY'],0,32);
+            }
+            elseif(strlen($GLOBALS['SECURITY_KEY']) < 32) {
+                $returnStr = str_pad($GLOBALS['SECURITY_KEY'], 32, $GLOBALS['SECURITY_KEY'][0], STR_PAD_BOTH);
+            }
+        }
+        return $returnStr;
+    }
 }

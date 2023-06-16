@@ -105,18 +105,44 @@ class TaxonProfileManager {
         }
         $result->close();
         if($tids){
-            $sql = 'SELECT t.sciname, i.url, i.thumbnailurl, i.caption '.
-                'FROM images AS i INNER JOIN '.
-                '(SELECT t.tidaccepted AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
-                'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
-                'WHERE (t.tidaccepted IN('.implode(',',$tids).')) '.
-                'GROUP BY t.tidaccepted) AS i2 ON i.imgid = i2.imgid '.
-                'INNER JOIN taxa AS t ON i2.tid = t.tid ';
+            $sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, '.
+                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, MIN(i.sortsequence) '.
+                'FROM taxa AS t LEFT JOIN images AS i ON t.tid = i.tid '.
+                'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
+                'WHERE t.tid IN('.implode(',',$tids).') '.
+                'GROUP BY t.TID ';
             //echo $sql;
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
                 $sciName = $row->sciname;
-                if(array_key_exists($sciName,$this->taxon['sppArr'])){
+                if($row->url && array_key_exists($sciName,$this->taxon['sppArr'])){
+                    $imgUrl = $row->thumbnailurl ?: $row->url;
+                    if(strncmp($imgUrl, '/', 1) === 0) {
+                        if(isset($GLOBALS['IMAGE_DOMAIN'])){
+                            $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
+                        }
+                        else{
+                            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
+                        }
+                    }
+                    $this->taxon['sppArr'][$sciName]['url'] = $imgUrl;
+                    $this->taxon['sppArr'][$sciName]['caption'] = $row->caption;
+                }
+            }
+            $result->close();
+
+            $sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, '.
+                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, MIN(i.sortsequence) '.
+                'FROM images AS i LEFT JOIN taxaenumtree AS te ON i.tid = te.tid '.
+                'LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
+                'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
+                'WHERE te.parenttid IN('.implode(',',$tids).') AND t.TID = t.tidaccepted '.
+                'GROUP BY t.TID ';
+            //echo $sql;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $sciName = $row->sciname;
+                if($row->url && array_key_exists($sciName,$this->taxon['sppArr']) && !array_key_exists('url',$this->taxon['sppArr'][$sciName])){
                     $imgUrl = $row->thumbnailurl ?: $row->url;
                     if(strncmp($imgUrl, '/', 1) === 0) {
                         if(isset($GLOBALS['IMAGE_DOMAIN'])){

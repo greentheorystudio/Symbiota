@@ -11,7 +11,7 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230313" type="text/javascript"></script>
 <script>
     const taxonProfilePage = Vue.createApp({
         template: `
@@ -138,7 +138,7 @@
                     this.imageExpansionLabel = 'View First 100 Images';
                 }
                 else{
-                    this.imageExpansionLabel = 'View All ' + this.taxon['imageCnt'] + ' Images';
+                    this.imageExpansionLabel = 'View All ' + this.taxon['images'].length + ' Images';
                 }
             },
             processMedia(){

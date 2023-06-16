@@ -6,7 +6,7 @@ const taxaProfileImagePanel = {
     template: `
         <template v-if="taxon.images.length > 0">
             <div class="expansion-container">
-                <template v-if="taxon.imageCnt < 5">
+                <template v-if="taxon.images.length < 5">
                     <q-card>
                         <div class="q-pt-sm q-pl-md text-h6 text-weight-bold">
                             Images

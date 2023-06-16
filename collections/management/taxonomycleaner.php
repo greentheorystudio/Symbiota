@@ -27,58 +27,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Management Module</title>
-    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <style>
-        .header-block {
-            display: flex;
-            justify-content: space-between;
-            margin: 0 30px 8px;
-        }
-        .processor-container {
-            width: 95%;
-            margin: 20px auto;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .processor-control-container {
-            width: 40%;
-        }
-        .processor-control-card {
-            height: 630px;
-        }
-        .processor-control-accordion {
-            height: 610px;
-        }
-        .processor-display-container {
-            width: 50%;
-        }
-        .processor-display {
-            height: 610px;
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-        .process-button-container {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            clear: both;
-            margin-top: 5px;
-        }
-        .accordion-panel {
-            max-height: 532px;
-            overflow: auto;
-        }
-        .process-header {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .fuzzy-match-row {
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <script>
         const collId = <?php echo $collid; ?>;
     </script>
@@ -92,7 +42,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <?php
         if($collid && is_numeric($collid)){
             ?>
-            <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
             <?php
         }
         ?>
@@ -140,12 +90,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         Run cleaning processes to remove unnecessary endings, identification qualifiers and question marks, and normalize
                                         infraspecific rank references in occurrence record scientific names that are not linked to
                                         the Taxonomic Thesaurus.
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'cleanProcesses'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -154,12 +111,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </div>
                                         Run a cleaning process to remove the scientific name authors from occurrence record scientific
                                         names that are not linked to the Taxonomic Thesaurus.
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'cleanScinameAuthor'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'cleanScinameAuthor'" :disabled="processCancelling && currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -170,12 +134,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <div class="q-mt-xs">
                                             <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="uppercontrolsdisabled" />
                                         </div>
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'updateWithTaxThesaurus'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" :disabled="processCancelling && currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -183,12 +154,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             Update Locality Security Settings
                                         </div>
                                         Update locality security settings for occurrence records of protected species.
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'updateOccLocalitySecurity'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" :disabled="processCancelling && currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -209,12 +187,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <div class="q-mb-sm">
                                             <taxonomy-data-source-bullet-selector :disable="uppercontrolsdisabled" :selected-data-source="dataSource" @update:selected-data-source="updateSelectedDataSource"></taxonomy-data-source-bullet-selector>
                                         </div>
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'resolveFromTaxaDataSource'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" :disabled="processCancelling && currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -226,12 +211,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <div class="q-mt-xs">
                                             <q-input type="number" outlined v-model="levValue" style="width:225px;" label="Character difference tolerance" :readonly="uppercontrolsdisabled" dense />
                                         </div>
-                                        <div class="process-button-container">
-                                            <div>
-                                                <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense />
+                                        <div class="processor-tool-control-container">
+                                            <div class="processor-cancel-message-container text-negative text-bold">
+                                                <template v-if="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'">
+                                                    Cancelling, please wait
+                                                </template>
                                             </div>
-                                            <div>
-                                                <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            <div class="processor-tool-button-container">
+                                                <div>
+                                                    <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense />
+                                                </div>
+                                                <div>
+                                                    <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                </div>
                                             </div>
                                         </div>
                                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
@@ -246,6 +238,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     <q-card class="bg-grey-3 q-pa-sm">
                         <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
                             <q-list dense>
+                                <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
+                                    <q-item>
+                                        <q-item-section>
+                                            <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                        </q-item-section>
+                                    </q-item>
+                                </template>
                                 <q-item v-for="proc in processorDisplayArr">
                                     <q-item-section>
                                         <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
@@ -299,6 +298,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </template>
                                     </q-item-section>
                                 </q-item>
+                                <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
+                                    <q-item>
+                                        <q-item-section>
+                                            <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                        </q-item-section>
+                                    </q-item>
+                                </template>
                             </q-list>
                         </q-scroll-area>
                     </q-card>
@@ -321,7 +327,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     changedCurrentSciname: Vue.ref(''),
                     changedParsedSciname: Vue.ref(''),
                     colInitialSearchResults: Vue.ref([]),
-                    currentProcess: Vue.ref(null),
                     currentSciname: Vue.ref(null),
                     dataSource: Vue.ref('col'),
                     itisInitialSearchResults: Vue.ref([]),
@@ -329,11 +334,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     nameSearchResults: Vue.ref([]),
                     nameTidIndex: Vue.ref({}),
                     newTidArr: Vue.ref([]),
-                    processCancelled: Vue.ref(false),
+                    processCancelling: Vue.ref(false),
                     processingArr: Vue.ref([]),
                     processingLimit: Vue.ref(null),
                     processingStartIndex: Vue.ref(null),
                     processorDisplayArr: Vue.ref([]),
+                    processorDisplayDataArr: Vue.ref([]),
+                    processorDisplayCurrentIndex: Vue.ref(0),
+                    processorDisplayIndex: Vue.ref(0),
                     rankArr: Vue.ref(null),
                     rebuildHierarchyLoop: Vue.ref(0),
                     selectedKingdom: Vue.ref(null),
@@ -356,14 +364,23 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector
             },
             setup() {
+                let currentProcess = Vue.ref(null);
                 let procDisplayScrollAreaRef = Vue.ref(null);
                 let procDisplayScrollHeight = Vue.ref(0);
+                let scrollProcess = Vue.ref(null);
                 return {
+                    currentProcess,
                     procDisplayScrollAreaRef,
+                    scrollProcess,
                     setScroller(info) {
-                        if(info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
+                        if((currentProcess.value || scrollProcess.value) && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
                             procDisplayScrollHeight.value = info.verticalSize;
-                            procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                            if(scrollProcess.value === 'scrollDown'){
+                                procDisplayScrollAreaRef.value.setScrollPosition('vertical', 0);
+                            }
+                            else{
+                                procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                            }
                         }
                     }
                 }
@@ -372,17 +389,40 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 this.setUnlinkedRecordCounts();
             },
             methods: {
+                addProcessToProcessorDisplay(processObj){
+                    this.processorDisplayArr.push(processObj);
+                    if(this.processorDisplayArr.length > 100){
+                        const precessorArrSegment = this.processorDisplayArr.slice(0, 100);
+                        this.processorDisplayDataArr = this.processorDisplayDataArr.concat(precessorArrSegment);
+                        this.processorDisplayArr.splice(0, 100);
+                        this.processorDisplayIndex++;
+                        this.processorDisplayCurrentIndex = this.processorDisplayIndex;
+                    }
+                },
                 addSubprocessToProcessorDisplay(id,type,text){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     parentProcObj['subs'].push(this.getNewSubprocessObject(this.currentSciname,type,text));
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        dataParentProcObj['subs'].push(this.getNewSubprocessObject(this.currentSciname,type,text));
+                    }
                 },
                 adjustUIEnd(){
+                    this.processCancelling = false;
                     this.unlinkedNamesArr = [];
                     this.currentSciname = null;
                     this.setUnlinkedRecordCounts();
+                    this.currentProcess = null;
+                    this.undoButtonsDisabled = false;
+                    this.uppercontrolsdisabled = false;
+                    this.processorDisplayDataArr = this.processorDisplayDataArr.concat(this.processorDisplayArr);
                 },
                 adjustUIStart(id){
                     this.processorDisplayArr = [];
+                    this.processorDisplayDataArr = [];
+                    this.processorDisplayCurrentIndex = 0;
+                    this.processorDisplayIndex = 0;
+                    this.scrollProcess = null;
                     this.currentProcess = id;
                     this.uppercontrolsdisabled = true;
                     this.undoButtonsDisabled = true;
@@ -392,36 +432,35 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     const formData = new FormData();
                     formData.append('collid', collId);
                     if(step === 'question-marks'){
-                        this.processCancelled = false;
                         this.adjustUIStart('cleanProcesses');
                         const text = 'Cleaning question marks from scientific names';
-                        this.processorDisplayArr.push(this.getNewProcessObject('cleanQuestionMarks','single',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanQuestionMarks','single',text));
                         formData.append('action', 'cleanQuestionMarks');
                     }
-                    if(!this.processCancelled){
+                    if(!this.processCancelling){
                         if(step === 'clean-sp'){
                             const text = 'Cleaning scientific names ending in sp., sp. nov., spp., or group';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanSpNames','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanSpNames','single',text));
                             formData.append('action', 'cleanSpNames');
                         }
                         else if(step === 'clean-infra'){
                             const text = 'Normalizing infraspecific rank abbreviations';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanInfra','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanInfra','single',text));
                             formData.append('action', 'cleanInfra');
                         }
                         else if(step === 'clean-qualifier'){
                             const text = 'Cleaning scientific names containing cf. or aff.';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanQualifierNames','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanQualifierNames','single',text));
                             formData.append('action', 'cleanQualifierNames');
                         }
                         else if(step === 'double-spaces'){
                             const text = 'Cleaning scientific names containing double spaces';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanDoubleSpaces','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanDoubleSpaces','single',text));
                             formData.append('action', 'cleanDoubleSpaces');
                         }
                         else if(step === 'leading-trailing-spaces'){
                             const text = 'Cleaning leading and trailing spaces in scientific names';
-                            this.processorDisplayArr.push(this.getNewProcessObject('cleanTrimNames','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanTrimNames','single',text));
                             formData.append('action', 'cleanTrimNames');
                         }
                         fetch(occurrenceTaxonomyApiUrl, {
@@ -460,6 +499,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         })
                         .catch((err) => {});
                     }
+                    else{
+                        this.adjustUIEnd();
+                    }
                 },
                 callTaxThesaurusLinkController(step = ''){
                     if(this.selectedKingdomId){
@@ -468,16 +510,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         formData.append('collid', collId);
                         formData.append('kingdomid', this.selectedKingdomId);
                         if(!step){
-                            this.processCancelled = false;
                             this.adjustUIStart('updateWithTaxThesaurus');
                             const text = 'Updating linkages of occurrence records to the Taxonomic Thesaurus';
-                            this.processorDisplayArr.push(this.getNewProcessObject('updateOccThesaurusLinkages','single',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject('updateOccThesaurusLinkages','single',text));
                             formData.append('action', 'updateOccThesaurusLinkages');
                         }
-                        if(!this.processCancelled){
+                        if(!this.processCancelling){
                             if(step === 'update-det-linkages'){
                                 const text = 'Updating linkages of associated determination records to the Taxonomic Thesaurus';
-                                this.processorDisplayArr.push(this.getNewProcessObject('updateDetThesaurusLinkages','single',text));
+                                this.addProcessToProcessorDisplay(this.getNewProcessObject('updateDetThesaurusLinkages','single',text));
                                 formData.append('action', 'updateDetThesaurusLinkages');
                             }
                             fetch(occurrenceTaxonomyApiUrl, {
@@ -504,13 +545,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             })
                             .catch((err) => {});
                         }
+                        else{
+                            this.adjustUIEnd();
+                        }
                     }
                     else{
                         alert('Please select a Target Kingdom from the dropdown menu above.');
                     }
                 },
                 cancelProcess(){
-                    this.processCancelled = true;
+                    this.processCancelling = true;
                     if(!this.currentSciname){
                         cancelAPIRequest();
                         const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
@@ -531,13 +575,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 procObj['resultText'] = 'Cancelled';
                             }
                         }
-                        this.setUnlinkedRecordCounts();
                         this.adjustUIEnd();
                     }
                 },
                 clearSubprocesses(id){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     parentProcObj['subs'] = [];
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        dataParentProcObj['subs'] = [];
+                    }
                 },
                 getDataSourceName(){
                     if(this.dataSource === 'col'){
@@ -571,14 +618,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             response.json().then((resObj) => {
                                 const resArr = resObj['hierarchyList'];
                                 const hierarchyArr = [];
-                                let foundNameRank = this.nameSearchResults[0]['rankid'];
-                                if(!this.nameSearchResults[0]['accepted']){
-                                    const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === this.nameSearchResults[0]['accepted_sciname']);
-                                    foundNameRank = Number(this.rankArr[acceptedObj['rankName'].toLowerCase()]);
-                                }
-                                for(let i in resArr){
-                                    if(resArr.hasOwnProperty(i)){
-                                        const taxResult = resArr[i];
+                                if(resArr && resArr.length > 0){
+                                    let foundNameRank = this.nameSearchResults[0]['rankid'];
+                                    if(!this.nameSearchResults[0]['accepted']){
+                                        const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === this.nameSearchResults[0]['accepted_sciname']);
+                                        foundNameRank = Number(this.rankArr[acceptedObj['rankName'].toLowerCase()]);
+                                    }
+                                    resArr.forEach((taxResult) => {
                                         if(taxResult['taxonName'] !== this.nameSearchResults[0]['sciname']){
                                             const rankname = taxResult['rankName'].toLowerCase();
                                             const rankid = Number(this.rankArr[rankname]);
@@ -595,7 +641,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 hierarchyArr.push(resultObj);
                                             }
                                         }
-                                    }
+                                    });
                                 }
                                 this.nameSearchResults[0]['hierarchy'] = hierarchyArr;
                                 this.processSuccessResponse(false);
@@ -622,28 +668,34 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         if(response.status === 200){
                             response.json().then((resObj) => {
                                 const taxonRankData = resObj['taxRank'];
-                                this.nameSearchResults[0]['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
-                                this.nameSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
-                                const coreMetadata = resObj['coreMetadata'];
-                                const namestatus = coreMetadata['taxonUsageRating'];
-                                if(namestatus === 'accepted' || namestatus === 'valid'){
-                                    this.nameSearchResults[0]['accepted'] = true;
-                                    this.getITISNameSearchResultsHierarchy();
-                                }
-                                else{
-                                    this.nameSearchResults[0]['accepted'] = false;
-                                    const acceptedNameList = resObj['acceptedNameList'];
-                                    const acceptedNameArr = acceptedNameList['acceptedNames'];
-                                    if(acceptedNameArr.length > 0){
-                                        const acceptedName = acceptedNameArr[0];
-                                        this.nameSearchResults[0]['accepted_id'] = acceptedName['acceptedTsn'];
-                                        this.nameSearchResults[0]['accepted_sciname'] = acceptedName['acceptedName'];
+                                if(taxonRankData && taxonRankData.hasOwnProperty('rankName')){
+                                    this.nameSearchResults[0]['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
+                                    this.nameSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
+                                    const coreMetadata = resObj['coreMetadata'];
+                                    const namestatus = coreMetadata['taxonUsageRating'];
+                                    if(namestatus === 'accepted' || namestatus === 'valid'){
+                                        this.nameSearchResults[0]['accepted'] = true;
                                         this.getITISNameSearchResultsHierarchy();
                                     }
                                     else{
-                                        this.processErrorResponse(false,'Unable to distinguish taxon by name');
-                                        this.runScinameDataSourceSearch();
+                                        this.nameSearchResults[0]['accepted'] = false;
+                                        const acceptedNameList = resObj['acceptedNameList'];
+                                        const acceptedNameArr = acceptedNameList['acceptedNames'];
+                                        if(acceptedNameArr.length > 0){
+                                            const acceptedName = acceptedNameArr[0];
+                                            this.nameSearchResults[0]['accepted_id'] = acceptedName['acceptedTsn'];
+                                            this.nameSearchResults[0]['accepted_sciname'] = acceptedName['acceptedName'];
+                                            this.getITISNameSearchResultsHierarchy();
+                                        }
+                                        else{
+                                            this.processErrorResponse(false,'Unable to distinguish taxon by name');
+                                            this.runScinameDataSourceSearch();
+                                        }
                                     }
+                                }
+                                else{
+                                    this.processErrorResponse(false,'Unable to distinguish taxon by name');
+                                    this.runScinameDataSourceSearch();
                                 }
                             });
                         }
@@ -682,7 +734,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     };
                 },
                 getWoRMSAddTaxonAuthor(){
-                    if(!this.processCancelled){
+                    if(!this.processCancelling){
                         const id = this.processingArr[0]['id'];
                         const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                         const formData = new FormData();
@@ -710,6 +762,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             }
                         });
                     }
+                    else{
+                        this.adjustUIEnd();
+                    }
                 },
                 getWoRMSNameSearchResultsHierarchy(){
                     let id;
@@ -733,39 +788,41 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 const hierarchyArr = [];
                                 const foundNameRank = this.nameSearchResults[0]['rankid'];
                                 let childObj = resObj['child'];
-                                const firstObj = {};
-                                const firstrankname = childObj['rank'].toLowerCase();
-                                const firstrankid = Number(this.rankArr[firstrankname]);
-                                const newTaxonAccepted = this.nameSearchResults[0]['accepted'];
-                                firstObj['id'] = childObj['AphiaID'];
-                                firstObj['sciname'] = childObj['scientificname'];
-                                firstObj['author'] = '';
-                                firstObj['rankname'] = firstrankname;
-                                firstObj['rankid'] = firstrankid;
-                                hierarchyArr.push(firstObj);
-                                let stopLoop = false;
-                                while((childObj = childObj['child']) && !stopLoop){
-                                    if(childObj['scientificname'] !== this.nameSearchResults[0]['sciname']){
-                                        const rankname = childObj['rank'].toLowerCase();
-                                        const rankid = Number(this.rankArr[rankname]);
-                                        if((newTaxonAccepted && rankid < foundNameRank && TAXONOMIC_RANKS.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'] || TAXONOMIC_RANKS.includes(rankid)))){
-                                            const resultObj = {};
-                                            resultObj['id'] = childObj['AphiaID'];
-                                            resultObj['sciname'] = childObj['scientificname'];
-                                            resultObj['author'] = '';
-                                            resultObj['rankname'] = rankname;
-                                            resultObj['rankid'] = rankid;
-                                            if(rankname === 'family'){
-                                                this.nameSearchResults[0]['family'] = resultObj['sciname'];
+                                if(childObj){
+                                    const firstObj = {};
+                                    const firstrankname = childObj['rank'].toLowerCase();
+                                    const firstrankid = Number(this.rankArr[firstrankname]);
+                                    const newTaxonAccepted = this.nameSearchResults[0]['accepted'];
+                                    firstObj['id'] = childObj['AphiaID'];
+                                    firstObj['sciname'] = childObj['scientificname'];
+                                    firstObj['author'] = '';
+                                    firstObj['rankname'] = firstrankname;
+                                    firstObj['rankid'] = firstrankid;
+                                    hierarchyArr.push(firstObj);
+                                    let stopLoop = false;
+                                    while((childObj = childObj['child']) && !stopLoop){
+                                        if(childObj['scientificname'] !== this.nameSearchResults[0]['sciname']){
+                                            const rankname = childObj['rank'].toLowerCase();
+                                            const rankid = Number(this.rankArr[rankname]);
+                                            if((newTaxonAccepted && rankid < foundNameRank && TAXONOMIC_RANKS.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'] || TAXONOMIC_RANKS.includes(rankid)))){
+                                                const resultObj = {};
+                                                resultObj['id'] = childObj['AphiaID'];
+                                                resultObj['sciname'] = childObj['scientificname'];
+                                                resultObj['author'] = '';
+                                                resultObj['rankname'] = rankname;
+                                                resultObj['rankid'] = rankid;
+                                                if(rankname === 'family'){
+                                                    this.nameSearchResults[0]['family'] = resultObj['sciname'];
+                                                }
+                                                hierarchyArr.push(resultObj);
                                             }
-                                            hierarchyArr.push(resultObj);
-                                        }
-                                        if((newTaxonAccepted && rankid === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'])){
-                                            stopLoop = true;
+                                            if((newTaxonAccepted && rankid === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'])){
+                                                stopLoop = true;
+                                            }
                                         }
                                     }
+                                    this.nameSearchResults[0]['hierarchy'] = hierarchyArr;
                                 }
-                                this.nameSearchResults[0]['hierarchy'] = hierarchyArr;
                                 this.processSuccessResponse(false);
                                 this.validateNameSearchResults();
                             });
@@ -788,7 +845,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     .then((response) => {
                         if(response.status === 200){
                             response.json().then((resObj) => {
-                                if(resObj['kingdom'].toLowerCase() === this.selectedKingdomName.toLowerCase()){
+                                if(resObj.hasOwnProperty('kingdom') && resObj['kingdom'] && resObj.hasOwnProperty('scientificname') && resObj['scientificname'] && (resObj['kingdom'].toLowerCase() === this.selectedKingdomName.toLowerCase() || resObj['scientificname'].toLowerCase() === this.selectedKingdomName.toLowerCase())){
                                     const resultObj = {};
                                     resultObj['id'] = resObj['AphiaID'];
                                     resultObj['sciname'] = resObj['scientificname'];
@@ -820,10 +877,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     });
                 },
                 initializeCleanScinameAuthor(){
-                    this.processCancelled = false;
                     this.adjustUIStart('cleanScinameAuthor');
                     const text = 'Getting unlinked occurrence record scientific names';
-                    this.processorDisplayArr.push(this.getNewProcessObject('cleanScinameAuthor','multi',text));
+                    this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanScinameAuthor','multi',text));
                     abortController = new AbortController();
                     const formData = new FormData();
                     formData.append('collid', collId);
@@ -850,13 +906,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 initializeDataSourceSearch(){
                     if(this.selectedKingdomId){
-                        this.processCancelled = false;
                         this.nameTidIndex = {};
                         this.taxaLoaded = 0;
                         this.newTidArr = [];
                         this.adjustUIStart('resolveFromTaxaDataSource');
                         const text = 'Setting rank data for processing search returns';
-                        this.processorDisplayArr.push(this.getNewProcessObject('resolveFromTaxaDataSource','multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject('resolveFromTaxaDataSource','multi',text));
                         const url = taxonomyApiUrl + '?action=getRankNameArr'
                         abortController = new AbortController();
                         fetch(url, {
@@ -882,10 +937,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 initializeTaxThesaurusFuzzyMatch(){
                     if(this.selectedKingdomId && this.levValue && Number(this.levValue) > 0){
-                        this.processCancelled = false;
                         this.adjustUIStart('taxThesaurusFuzzyMatch');
                         const text = 'Getting unlinked occurrence record scientific names';
-                        this.processorDisplayArr.push(this.getNewProcessObject('taxThesaurusFuzzyMatch','multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject('taxThesaurusFuzzyMatch','multi',text));
                         abortController = new AbortController();
                         const formData = new FormData();
                         formData.append('collid', collId);
@@ -920,7 +974,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 populateTaxonomicHierarchy(){
                     if(this.rebuildHierarchyLoop < 40){
                         const formData = new FormData();
-                        formData.append('tidarr', JSON.stringify(this.newTidArr));
                         formData.append('action', 'populateHierarchyTable');
                         fetch(taxonomyApiUrl, {
                             method: 'POST',
@@ -953,7 +1006,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 primeTaxonomicHierarchy(){
                     this.rebuildHierarchyLoop = 0;
                     const text = 'Populating taxonomic hierarchy with new taxa';
-                    this.processorDisplayArr.push(this.getNewProcessObject('primeHierarchyTable','multi',text));
+                    this.addProcessToProcessorDisplay(this.getNewProcessObject('primeHierarchyTable','multi',text));
                     const formData = new FormData();
                     formData.append('tidarr', JSON.stringify(this.newTidArr));
                     formData.append('action', 'primeHierarchyTable');
@@ -1029,7 +1082,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     const text = 'Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus';
                     this.addSubprocessToProcessorDisplay(this.currentSciname,'text',text);
                     if(this.nameTidIndex.hasOwnProperty(taxonToAdd['sciname'])){
-                        this.processSubprocessSuccessResponse(this.currentSciname,false,this.nameSearchResults[0]['sciname'] + 'already added');
+                        this.processSubprocessSuccessResponse(this.currentSciname,false,this.nameSearchResults[0]['sciname'] + ' already added');
                         this.updateOccurrenceLinkages();
                     }
                     else{
@@ -1109,7 +1162,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                     }
                     if(setCounts){
-                        this.setUnlinkedRecordCounts();
+                        this.adjustUIEnd();
                     }
                 },
                 processFuzzyMatches(fuzzyMatches){
@@ -1127,72 +1180,69 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 processGetCOLTaxonByScinameResponse(resObj){
                     if(resObj['total_number_of_results'] > 0){
                         const resultArr = resObj['result'];
-                        for(let i in resultArr){
-                            if(resultArr.hasOwnProperty(i)){
-                                const taxResult = resultArr[i];
-                                const status = taxResult['name_status'];
-                                if(status !== 'common name'){
-                                    const resultObj = {};
-                                    resultObj['id'] = taxResult['id'];
-                                    resultObj['author'] = taxResult.hasOwnProperty('author') ? taxResult['author'] : '';
-                                    let rankName = taxResult['rank'].toLowerCase();
+                        resultArr.forEach((taxResult) => {
+                            const status = taxResult['name_status'];
+                            if(status !== 'common name'){
+                                const resultObj = {};
+                                resultObj['id'] = taxResult['id'];
+                                resultObj['author'] = taxResult.hasOwnProperty('author') ? taxResult['author'] : '';
+                                let rankName = taxResult['rank'].toLowerCase();
+                                if(rankName === 'infraspecies'){
+                                    resultObj['sciname'] = taxResult['genus'] + ' ' + taxResult['species'] + ' ' + taxResult['infraspeciesMarker'] + ' ' + taxResult['infraspecies'];
+                                    if(taxResult['infraspeciesMarker'] === 'var.'){
+                                        rankName = 'variety';
+                                    }
+                                    else if(taxResult['infraspeciesMarker'] === 'subsp.'){
+                                        rankName = 'subspecies';
+                                    }
+                                    else if(taxResult['infraspeciesMarker'] === 'f.'){
+                                        rankName = 'form';
+                                    }
+                                }
+                                else{
+                                    resultObj['sciname'] = taxResult['name'];
+                                }
+                                resultObj['rankname'] = rankName;
+                                resultObj['rankid'] = this.rankArr.hasOwnProperty(resultObj['rankname']) ? this.rankArr[resultObj['rankname']] : null;
+                                if(status === 'accepted name'){
+                                    resultObj['accepted'] = true;
+                                }
+                                else if(status === 'synonym'){
+                                    const hierarchyArr = [];
+                                    const resultHObj = {};
+                                    const acceptedObj = taxResult['accepted_name'];
+                                    resultObj['accepted'] = false;
+                                    resultObj['accepted_id'] = acceptedObj['id'];
+                                    resultHObj['id'] = acceptedObj['id'];
+                                    resultHObj['author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
+                                    let rankName = acceptedObj['rank'].toLowerCase();
                                     if(rankName === 'infraspecies'){
-                                        resultObj['sciname'] = taxResult['genus'] + ' ' + taxResult['species'] + ' ' + taxResult['infraspeciesMarker'] + ' ' + taxResult['infraspecies'];
-                                        if(taxResult['infraspeciesMarker'] === 'var.'){
+                                        resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + acceptedObj['infraspeciesMarker'] + ' ' + acceptedObj['infraspecies'];
+                                        if(acceptedObj['infraspeciesMarker'] === 'var.'){
                                             rankName = 'variety';
                                         }
-                                        else if(taxResult['infraspeciesMarker'] === 'subsp.'){
+                                        else if(acceptedObj['infraspeciesMarker'] === 'subsp.'){
                                             rankName = 'subspecies';
                                         }
-                                        else if(taxResult['infraspeciesMarker'] === 'f.'){
+                                        else if(acceptedObj['infraspeciesMarker'] === 'f.'){
                                             rankName = 'form';
                                         }
                                     }
                                     else{
-                                        resultObj['sciname'] = taxResult['name'];
+                                        resultHObj['sciname'] = acceptedObj['name'];
                                     }
-                                    resultObj['rankname'] = rankName;
-                                    resultObj['rankid'] = this.rankArr.hasOwnProperty(resultObj['rankname']) ? this.rankArr[resultObj['rankname']] : null;
-                                    if(status === 'accepted name'){
-                                        resultObj['accepted'] = true;
-                                    }
-                                    else if(status === 'synonym'){
-                                        const hierarchyArr = [];
-                                        const resultHObj = {};
-                                        const acceptedObj = taxResult['accepted_name'];
-                                        resultObj['accepted'] = false;
-                                        resultObj['accepted_id'] = acceptedObj['id'];
-                                        resultHObj['id'] = acceptedObj['id'];
-                                        resultHObj['author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
-                                        let rankName = acceptedObj['rank'].toLowerCase();
-                                        if(rankName === 'infraspecies'){
-                                            resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + acceptedObj['infraspeciesMarker'] + ' ' + acceptedObj['infraspecies'];
-                                            if(acceptedObj['infraspeciesMarker'] === 'var.'){
-                                                rankName = 'variety';
-                                            }
-                                            else if(acceptedObj['infraspeciesMarker'] === 'subsp.'){
-                                                rankName = 'subspecies';
-                                            }
-                                            else if(acceptedObj['infraspeciesMarker'] === 'f.'){
-                                                rankName = 'form';
-                                            }
-                                        }
-                                        else{
-                                            resultHObj['sciname'] = acceptedObj['name'];
-                                        }
-                                        resultObj['accepted_sciname'] = resultHObj['sciname'];
-                                        resultHObj['rankname'] = rankName;
-                                        resultHObj['rankid'] = this.rankArr.hasOwnProperty(resultHObj['rankname']) ? this.rankArr[resultHObj['rankname']] : null;
-                                        hierarchyArr.push(resultHObj);
-                                        resultObj['hierarchy'] = hierarchyArr;
-                                    }
-                                    const existingObj = this.colInitialSearchResults.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
-                                    if(!existingObj){
-                                        this.colInitialSearchResults.push(resultObj);
-                                    }
+                                    resultObj['accepted_sciname'] = resultHObj['sciname'];
+                                    resultHObj['rankname'] = rankName;
+                                    resultHObj['rankid'] = this.rankArr.hasOwnProperty(resultHObj['rankname']) ? this.rankArr[resultHObj['rankname']] : null;
+                                    hierarchyArr.push(resultHObj);
+                                    resultObj['hierarchy'] = hierarchyArr;
+                                }
+                                const existingObj = this.colInitialSearchResults.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
+                                if(!existingObj){
+                                    this.colInitialSearchResults.push(resultObj);
                                 }
                             }
-                        }
+                        });
                         if(this.colInitialSearchResults.length > 0){
                             this.validateCOLInitialNameSearchResults();
                         }
@@ -1210,18 +1260,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     this.itisInitialSearchResults = [];
                     const resultArr = resObj['scientificNames'];
                     if(resultArr && resultArr.length > 0 && resultArr[0]){
-                        for(let i in resultArr){
-                            if(resultArr.hasOwnProperty(i)){
-                                const taxResult = resultArr[i];
-                                if(taxResult['combinedName'] === this.currentSciname && taxResult['kingdom'].toLowerCase() === this.selectedKingdomName.toLowerCase()){
-                                    const resultObj = {};
-                                    resultObj['id'] = taxResult['tsn'];
-                                    resultObj['sciname'] = taxResult['combinedName'];
-                                    resultObj['author'] = taxResult['author'];
-                                    this.itisInitialSearchResults.push(resultObj);
-                                }
+                        resultArr.forEach((taxResult) => {
+                            if(taxResult['combinedName'] === this.currentSciname && (taxResult['kingdom'].toLowerCase() === this.selectedKingdomName.toLowerCase() || taxResult['combinedName'].toLowerCase() === this.selectedKingdomName.toLowerCase())){
+                                const resultObj = {};
+                                resultObj['id'] = taxResult['tsn'];
+                                resultObj['sciname'] = taxResult['combinedName'];
+                                resultObj['author'] = taxResult['author'];
+                                this.itisInitialSearchResults.push(resultObj);
                             }
-                        }
+                        });
                         if(this.itisInitialSearchResults.length === 1){
                             this.nameSearchResults = this.itisInitialSearchResults;
                             this.getITISNameSearchResultsRecord();
@@ -1245,6 +1292,18 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         this.processingLimit = null;
                     }
                 },
+                processorDisplayScrollDown(){
+                    this.scrollProcess = 'scrollDown';
+                    this.processorDisplayCurrentIndex++;
+                    this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
+                    this.resetScrollProcess();
+                },
+                processorDisplayScrollUp(){
+                    this.scrollProcess = 'scrollUp';
+                    this.processorDisplayCurrentIndex--;
+                    this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
+                    this.resetScrollProcess();
+                },
                 processSubprocessErrorResponse(id,setCounts,text){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     if(parentProcObj){
@@ -1256,8 +1315,18 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             subProcObj['resultText'] = text;
                         }
                     }
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        dataParentProcObj['current'] = false;
+                        const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
+                        if(dataSubProcObj){
+                            dataSubProcObj['loading'] = false;
+                            dataSubProcObj['result'] = 'error';
+                            dataSubProcObj['resultText'] = text;
+                        }
+                    }
                     if(setCounts){
-                        this.setUnlinkedRecordCounts();
+                        this.adjustUIEnd();
                     }
                 },
                 processSubprocessSuccessResponse(id,complete,text = null){
@@ -1269,6 +1338,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             subProcObj['loading'] = false;
                             subProcObj['result'] = 'success';
                             subProcObj['resultText'] = text;
+                        }
+                    }
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        dataParentProcObj['current'] = !complete;
+                        const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
+                        if(dataSubProcObj){
+                            dataSubProcObj['loading'] = false;
+                            dataSubProcObj['result'] = 'success';
+                            dataSubProcObj['resultText'] = text;
                         }
                     }
                 },
@@ -1305,12 +1384,17 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                     return inArr;
                 },
+                resetScrollProcess(){
+                    setTimeout(() => {
+                        this.scrollProcess = null;
+                    }, 200);
+                },
                 runCleanScinameAuthorProcess(){
-                    if(!this.processCancelled && this.unlinkedNamesArr.length > 0){
+                    if(!this.processCancelling && this.unlinkedNamesArr.length > 0){
                         this.currentSciname = this.unlinkedNamesArr[0];
                         this.unlinkedNamesArr.splice(0, 1);
                         const text = 'Attempting to parse author name from: ' + this.currentSciname;
-                        this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                         const formData = new FormData();
                         formData.append('sciname', this.currentSciname);
                         formData.append('action', 'parseSciName');
@@ -1364,14 +1448,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     }
                 },
                 runScinameDataSourceSearch(){
-                    if(!this.processCancelled && this.unlinkedNamesArr.length > 0){
+                    if(!this.processCancelling && this.unlinkedNamesArr.length > 0){
                         this.nameSearchResults = [];
                         this.currentSciname = this.unlinkedNamesArr[0];
                         this.unlinkedNamesArr.splice(0, 1);
                         if(this.dataSource === 'col'){
                             this.colInitialSearchResults = [];
                             const text = 'Searching the Catalogue of Life (COL) for ' + this.currentSciname;
-                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                             const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + this.currentSciname;
                             const formData = new FormData();
                             formData.append('url', url);
@@ -1396,7 +1480,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         else if(this.dataSource === 'itis'){
                             this.itisInitialSearchResults = [];
                             const text = 'Searching the Integrated Taxonomic Information System (ITIS) for ' + this.currentSciname;
-                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                             const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + this.currentSciname;
                             const formData = new FormData();
                             formData.append('url', url);
@@ -1420,7 +1504,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         }
                         else if(this.dataSource === 'worms'){
                             const text = 'Searching the World Register of Marine Species (WoRMS) for ' + this.currentSciname;
-                            this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                            this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                             const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + this.currentSciname + '?marine_only=false';
                             const formData = new FormData();
                             formData.append('url', url);
@@ -1463,11 +1547,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 runTaxThesaurusFuzzyMatchProcess(){
                     this.changedCurrentSciname = '';
                     this.changedParsedSciname = '';
-                    if(!this.processCancelled && this.unlinkedNamesArr.length > 0){
+                    if(!this.processCancelling && this.unlinkedNamesArr.length > 0){
                         this.currentSciname = this.unlinkedNamesArr[0];
                         this.unlinkedNamesArr.splice(0, 1);
                         const text = 'Finding fuzzy matches for ' + this.currentSciname;
-                        this.processorDisplayArr.push(this.getNewProcessObject(this.currentSciname,'multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
                         const formData = new FormData();
                         formData.append('sciname', this.currentSciname);
                         formData.append('lev', this.levValue);
@@ -1533,6 +1617,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     if(tid){
                         subProcObj['changedTid'] = tid;
                     }
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
+                        dataSubProcObj['undoOrigName'] = origName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
+                        dataSubProcObj['undoChangedName'] = newName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
+                        if(tid){
+                            dataSubProcObj['changedTid'] = tid;
+                        }
+                    }
                 },
                 setTaxaToAdd(){
                     if(this.processingArr.length > 0){
@@ -1596,16 +1689,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         if(result.hasOwnProperty('taxaCnt')){
                             this.unlinkedTaxaCnt = result['taxaCnt'];
                         }
-                        this.currentProcess = null;
-                        this.undoButtonsDisabled = false;
-                        this.uppercontrolsdisabled = false;
                         this.unlinkedLoading = false;
                     });
                 },
                 setUnlinkedTaxaList(){
-                    if(!this.processCancelled){
+                    if(!this.processCancelling){
                         const text = 'Getting unlinked occurrence record scientific names';
-                        this.processorDisplayArr.push(this.getNewProcessObject('getUnlinkedOccSciNames','multi',text));
+                        this.addProcessToProcessorDisplay(this.getNewProcessObject('getUnlinkedOccSciNames','multi',text));
                         abortController = new AbortController();
                         const formData = new FormData();
                         formData.append('collid', collId);
@@ -1630,11 +1720,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         })
                         .catch((err) => {});
                     }
+                    else{
+                        this.adjustUIEnd();
+                    }
                 },
                 undoChangedSciname(id,oldName,newName){
                     const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
                     const subProcObj = parentProcObj['subs'].find(subproc => subproc['undoChangedName'] === newName);
                     subProcObj['type'] = 'text';
+                    const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                    if(dataParentProcObj){
+                        const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['undoChangedName'] === newName);
+                        dataSubProcObj['type'] = 'text';
+                    }
                     const text = 'Reverting scientific name change from ' + oldName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' to ' + newName.replaceAll('%squot;',"'").replaceAll('%dquot;','"');
                     this.addSubprocessToProcessorDisplay(id,'text',text);
                     this.undoId = id;
@@ -1661,7 +1759,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 updateOccLocalitySecurity(){
                     this.adjustUIStart('updateOccLocalitySecurity');
                     const text = 'Updating the locality security settings for occurrence records of protected species';
-                    this.processorDisplayArr.push(this.getNewProcessObject('updateLocalitySecurity','single',text));
+                    this.addProcessToProcessorDisplay(this.getNewProcessObject('updateLocalitySecurity','single',text));
                     abortController = new AbortController();
                     const formData = new FormData();
                     formData.append('collid', collId);
@@ -1754,15 +1852,23 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         .then((response) => {
                             if(response.status === 200){
                                 response.json().then((resArr) => {
-                                    const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
-                                    if(kingdomObj && kingdomObj['name'].toLowerCase() === this.selectedKingdomName.toLowerCase()){
-                                        let hierarchyArr = [];
-                                        if(taxon.hasOwnProperty('hierarchy')){
-                                            hierarchyArr = taxon['hierarchy'];
+                                    if(resArr){
+                                        let kingdomName = '';
+                                        if(taxon['rankname'].toLowerCase() === 'kingdom'){
+                                            kingdomName = taxon['sciname'];
                                         }
-                                        for(let i in resArr){
-                                            if(resArr.hasOwnProperty(i)){
-                                                const taxResult = resArr[i];
+                                        else{
+                                            const kingdomObj = resArr.find(rettaxon => rettaxon['rank'].toLowerCase() === 'kingdom');
+                                            if(kingdomObj){
+                                                kingdomName = kingdomObj['name'];
+                                            }
+                                        }
+                                        if(kingdomName.toLowerCase() === this.selectedKingdomName.toLowerCase()){
+                                            let hierarchyArr = [];
+                                            if(taxon.hasOwnProperty('hierarchy')){
+                                                hierarchyArr = taxon['hierarchy'];
+                                            }
+                                            resArr.forEach((taxResult) => {
                                                 if(taxResult['name'] !== taxon['sciname']){
                                                     const rankname = taxResult['rank'].toLowerCase();
                                                     const rankid = Number(this.rankArr[rankname]);
@@ -1779,10 +1885,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                         hierarchyArr.push(resultObj);
                                                     }
                                                 }
-                                            }
+                                            });
+                                            taxon['hierarchy'] = hierarchyArr;
+                                            this.nameSearchResults.push(taxon);
                                         }
-                                        taxon['hierarchy'] = hierarchyArr;
-                                        this.nameSearchResults.push(taxon);
                                     }
                                     this.validateCOLInitialNameSearchResults();
                                 });
@@ -1822,13 +1928,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             if(response.status === 200){
                                 response.json().then((resObj) => {
                                     const coreMetadata = resObj['coreMetadata'];
-                                    const namestatus = coreMetadata['taxonUsageRating'];
-                                    if(namestatus === 'accepted'){
-                                        const taxonRankData = resObj['taxRank'];
-                                        taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
-                                        taxon['rankid'] = Number(taxonRankData['rankId']);
-                                        taxon['accepted'] = true;
-                                        this.nameSearchResults.push(taxon);
+                                    if(coreMetadata){
+                                        const namestatus = coreMetadata['taxonUsageRating'];
+                                        if(namestatus === 'accepted'){
+                                            const taxonRankData = resObj['taxRank'];
+                                            taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
+                                            taxon['rankid'] = Number(taxonRankData['rankId']);
+                                            taxon['accepted'] = true;
+                                            this.nameSearchResults.push(taxon);
+                                        }
                                     }
                                     this.validateITISInitialNameSearchResults();
                                 });
@@ -1859,22 +1967,22 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             this.processErrorResponse(false,'Unable to distinguish accepted name');
                             this.runScinameDataSourceSearch();
                         }
-                        else{
+                        else if(this.nameSearchResults[0]['hierarchy'].length > 0){
                             const addHierchyTemp = this.nameSearchResults[0]['hierarchy'];
                             addHierchyTemp.sort((a, b) => {
                                 return a.rankid - b.rankid;
                             });
                             let parentName = addHierchyTemp[0]['sciname'];
-                            for(let i in addHierchyTemp){
-                                if(addHierchyTemp.hasOwnProperty(i) && addHierchyTemp[i]['sciname'] !== parentName){
-                                    addHierchyTemp[i]['parentName'] = parentName;
-                                    addHierchyTemp[i]['family'] = addHierchyTemp[i]['rankid'] >= 140 ? this.nameSearchResults[0]['family'] : null;
-                                    parentName = addHierchyTemp[i]['sciname'];
-                                    if(!this.nameSearchResults[0]['accepted'] && addHierchyTemp[i]['sciname'] === this.nameSearchResults[0]['accepted_sciname']){
-                                        this.nameSearchResults[0]['parentName'] = addHierchyTemp[i]['parentName'];
+                            addHierchyTemp.forEach((taxon) => {
+                                if(taxon['sciname'] !== parentName){
+                                    taxon['parentName'] = parentName;
+                                    taxon['family'] = taxon['rankid'] >= 140 ? this.nameSearchResults[0]['family'] : null;
+                                    parentName = taxon['sciname'];
+                                    if(!this.nameSearchResults[0]['accepted'] && taxon['sciname'] === this.nameSearchResults[0]['accepted_sciname']){
+                                        this.nameSearchResults[0]['parentName'] = taxon['parentName'];
                                     }
                                 }
-                            }
+                            });
                             if(!this.nameSearchResults[0].hasOwnProperty('parentName') || this.nameSearchResults[0]['parentName'] === ''){
                                 this.nameSearchResults[0]['parentName'] = parentName;
                             }
@@ -1882,6 +1990,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             const text = 'Matching parent and accepted taxa to the Taxonomic Thesaurus';
                             this.addSubprocessToProcessorDisplay(this.currentSciname,'text',text);
                             this.setTaxaToAdd();
+                        }
+                        else{
+                            this.processErrorResponse(false,'Unable to distinguish taxon by name');
+                            this.runScinameDataSourceSearch();
                         }
                     }
                     else{

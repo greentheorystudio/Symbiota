@@ -986,7 +986,7 @@ class ImageShared{
                             $block_size = hexdec($block_size[1]);
                             while(!feof($handle)) {
                                 $i += $block_size;
-                                $new_block .= fread($handle, $block_size);
+                                $new_block .= $block_size > 0?fread($handle, $block_size):'';
                                 if(is_int($i) && isset($new_block[$i]) && $new_block[$i] === "\xFF") {
                                     $sof_marker = array("\xC0", "\xC1", "\xC2", "\xC3", "\xC5", "\xC6", "\xC7", "\xC8", "\xC9", "\xCA", "\xCB", "\xCD", "\xCE", "\xCF");
                                     if(in_array($new_block[$i + 1], $sof_marker, true)) {
@@ -1000,7 +1000,7 @@ class ImageShared{
                                         }
                                     }
                                     $i += 2;
-                                    $block_size = unpack('H*', $new_block[$i] . $new_block[$i+1]);
+                                    $block_size = strlen($new_block) >= ($i+1)?unpack('H*', $new_block[$i] . $new_block[$i+1]):null;
                                     if($block_size){
                                         $block_size = hexdec($block_size[1]);
                                     }
@@ -1014,23 +1014,19 @@ class ImageShared{
 		return $retArr;
 	}
 
-	private static function getImgDim2($imgUrl) {
-		$curl = curl_init($imgUrl);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Range: bytes=0-65536'));
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36');
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-		$data = curl_exec($curl);
-		curl_close($curl);
-		$im = @imagecreatefromstring($data);
-		$width = @imagesx($im);
-		$height = @imagesy($im);
-		if($im) {
-			imagedestroy($im);
-		}
-		if(!$width || !$height) {
-			return false;
-		}
-		return array($width,$height);
-	}
+    private static function getImgDim2($imgUrl) {
+        $width = 0;
+        $height = 0;
+        $data = file_get_contents($imgUrl);
+        $im = @imagecreatefromstring($data);
+        if($im) {
+            $width = @imagesx($im);
+            $height = @imagesy($im);
+            imagedestroy($im);
+        }
+        if($width && $height) {
+            return array($width,$height);
+        }
+        return false;
+    }
 }

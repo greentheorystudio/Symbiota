@@ -13,10 +13,10 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                         <q-list dense>
                             <template v-for="item in navBarData">
                                 <template v-if="item.subItems && item.subItems.length">
-                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" v-model="navBarToggle[item.id]" @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
+                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
                                         <q-item-section>{{ item.label }}</q-item-section>
-                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="750" anchor="top end" self="top start">
-                                            <q-list dense @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
+                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start">
+                                            <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
                                                 <template v-for="subitem in item.subItems">
                                                     <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')">
                                                         <q-item-section>{{ subitem.label }}</q-item-section>
@@ -39,9 +39,9 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
             <template v-if="windowWidth >= 1440">
                 <template v-for="item in navBarData">
                     <template v-if="item.subItems && item.subItems.length">
-                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false" stretch flat no-wrap>
-                            <q-menu v-model="navBarToggle[item.id]" transition-duration="750" anchor="bottom start" self="top start" square>
-                                <q-list dense @mouseover="navBarToggle[item.id] = true" @mouseleave="navBarToggle[item.id] = false">
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap>
+                            <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="bottom start" self="top start" square>
+                                <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
                                     <template v-for="subitem in item.subItems">
                                         <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" clickable v-close-popup>
                                             <q-item-section>
@@ -115,6 +115,23 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                     this.handleResize();
                 },
                 methods: {
+                    handleResize() {
+                        this.windowWidth = window.innerWidth;
+                    },
+                    navbarToggleOff(id) {
+                        this.navBarTimeout = setTimeout(() => {
+                            this.navBarToggle[Number(id)] = false;
+                        }, 400);
+                    },
+                    navbarToggleOn(id) {
+                        clearTimeout(this.navBarTimeout);
+                        for(let i in this.navBarToggle){
+                            if(this.navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
+                                this.navBarToggle[Number(i)] = false;
+                            }
+                        }
+                        this.navBarToggle[Number(id)] = true;
+                    },
                     setNavBarData() {
                         let indexId = 1;
                         this.navBarData.forEach((dataObj) => {
@@ -124,9 +141,6 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                                 indexId++;
                             }
                         });
-                    },
-                    handleResize() {
-                        this.windowWidth = window.innerWidth;
                     }
                 }
             });

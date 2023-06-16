@@ -72,7 +72,7 @@ class TaxonomyAPIManager{
         }
         $rs = $this->conn->query($sql);
         while ($r = $rs->fetch_object()){
-            $label = $r->VernacularName . ' - ' . $r->SciName;
+            $label = $r->VernacularName;
             $retArr[$label]['id'] = $r->TID;
             $retArr[$label]['value'] = $label;
         }

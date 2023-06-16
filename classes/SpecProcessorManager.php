@@ -30,7 +30,6 @@ class SpecProcessorManager {
 	protected $createTnImg = 1;
 	protected $createLgImg = 2;
 	protected $lastRunDate = '';
-	protected $processUsingImageMagick = 0;
 
 	public function __construct() {
 		$connection = new DbConnection();
@@ -525,7 +524,7 @@ class SpecProcessorManager {
 	{
 		$retArr = array();
 		if($this->collid){
-			$GLOBALS['LOG_PATHFrag'] = 'imgProccessing/';
+			$GLOBALS['LOG_PATHFrag'] = '/imgProccessing';
 			if(file_exists($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag']) && $fh = opendir($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag'])) {
 				while($fileName = readdir($fh)){
 					if(strpos($fileName,$this->collid.'_') === 0){
@@ -631,25 +630,13 @@ class SpecProcessorManager {
 		return $this->createLgImg;
 	}
 
-	public function getLastRunDate(): string
-	{
-		return $this->lastRunDate;
-	}
-
-	public function getUseImageMagick(): int
-	{
- 		return $this->processUsingImageMagick;
- 	}
-
- 	public function getConn(): mysqli
+	public function getConn(): mysqli
 	{
  		return $this->conn;
  	}
 
  	protected function cleanInStr($str): string
 	{
-		$newStr = trim($str);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
+        return $this->conn->real_escape_string(trim($str));
 	}
 }

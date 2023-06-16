@@ -27,7 +27,7 @@ if($isEditor && $action === 'Submit New Name') {
         if($taxUtilities->primeHierarchyTable($tid)){
             $hierarchyAdded = 1;
             do {
-                $hierarchyAdded = $taxUtilities->populateHierarchyTable($tid);
+                $hierarchyAdded = $taxUtilities->populateHierarchyTable();
             } while($hierarchyAdded > 0);
         }
         $loaderObj->updateOccurrencesNewTaxon($_POST);
