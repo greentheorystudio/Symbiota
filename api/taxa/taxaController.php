@@ -27,8 +27,13 @@ if($action){
     elseif($isEditor && $action === 'addTaxon'){
         echo $taxEditorManager->loadNewName(json_decode($_POST['taxon'], true));
     }
-    elseif($isEditor && $action === 'primeHierarchyTable' && array_key_exists('tidarr',$_POST)){
-        echo $taxUtilities->primeHierarchyTable(json_decode($_POST['tidarr'],false));
+    elseif($isEditor && $action === 'primeHierarchyTable'){
+        if(array_key_exists('tidarr',$_POST)){
+            echo $taxUtilities->primeHierarchyTable(json_decode($_POST['tidarr'],false));
+        }
+        else{
+            echo $taxUtilities->primeHierarchyTable();
+        }
     }
     elseif($isEditor && $action === 'populateHierarchyTable'){
         echo $taxUtilities->populateHierarchyTable();
@@ -111,7 +116,7 @@ if($action){
         $kingdom = array_key_exists('kingdom',$_POST)?(int)$_POST['kingdom']:0;
         echo $taxEditorManager->submitChangeToNotAccepted($tId,$_POST['tidaccepted'],$kingdom);
     }
-    elseif($isEditor && $action === 'editTaxon' && $tId){
+    elseif($isEditor && $action === 'editTaxon' && $tId && array_key_exists('taxonData',$_POST)){
         echo $taxEditorManager->editTaxon(json_decode($_POST['taxonData'], true),$tId);
     }
     elseif($isEditor && $action === 'editTaxonParent' && $tId && array_key_exists('parenttid',$_POST) && (int)$_POST['parenttid']){
@@ -127,5 +132,40 @@ if($action){
         $includeCommonNames = array_key_exists('includeCommonNames',$_POST) && $_POST['includeCommonNames'];
         $includeChildren = array_key_exists('includeChildren',$_POST) && $_POST['includeChildren'];
         echo json_encode($taxUtilities->getTaxonFromSciname($_POST['sciname'], (int)$_POST['kingdomid'], $includeCommonNames, $includeChildren));
+    }
+    elseif($isEditor && $action === 'setUpdateFamiliesAccepted' && array_key_exists('parenttid',$_POST)){
+        echo $taxUtilities->setUpdateFamiliesAccepted((int)$_POST['parenttid']);
+    }
+    elseif($isEditor && $action === 'setUpdateFamiliesUnaccepted' && array_key_exists('parenttid',$_POST)){
+        echo $taxUtilities->setUpdateFamiliesUnaccepted((int)$_POST['parenttid']);
+    }
+    elseif($action === 'getRankArrForTaxonomicGroup' && array_key_exists('parenttid',$_POST)){
+        echo json_encode($taxUtilities->getRankArrForTaxonomicGroup((int)$_POST['parenttid']));
+    }
+    elseif($action === 'getUnacceptedTaxaByTaxonomicGroup' && array_key_exists('index',$_POST) && array_key_exists('parenttid',$_POST)){
+        $rankId = array_key_exists('rankid',$_POST)?(int)$_POST['rankid']:null;
+        echo json_encode($taxUtilities->getUnacceptedTaxaByTaxonomicGroup((int)$_POST['parenttid'],(int)$_POST['index'],$rankId));
+    }
+    elseif($action === 'getAcceptedTaxaByTaxonomicGroup' && array_key_exists('index',$_POST) && array_key_exists('parenttid',$_POST)){
+        $rankId = array_key_exists('rankid',$_POST)?(int)$_POST['rankid']:null;
+        echo json_encode($taxUtilities->getAcceptedTaxaByTaxonomicGroup((int)$_POST['parenttid'],(int)$_POST['index'],$rankId));
+    }
+    elseif($action === 'checkTidForDataLinkages' && $tId){
+        echo $taxUtilities->checkTidForDataLinkages($tId);
+    }
+    elseif($isEditor && $action === 'deleteTaxonByTid' && $tId){
+        echo $taxUtilities->deleteTaxonByTid($tId);
+    }
+    elseif($isEditor && $action === 'removeTaxonFromTaxonomicHierarchy' && $tId && array_key_exists('parenttid',$_POST)){
+        echo $taxUtilities->removeTaxonFromTaxonomicHierarchy($tId,(int)$_POST['parenttid']);
+    }
+    elseif($action === 'getCommonNamesByTaxonomicGroup' && array_key_exists('index',$_POST) && array_key_exists('parenttid',$_POST)){
+        echo json_encode($taxUtilities->getCommonNamesByTaxonomicGroup((int)$_POST['parenttid'],(int)$_POST['index']));
+    }
+    elseif($isEditor && $action === 'editCommonName' && (int)$_POST['vid'] && array_key_exists('commonNameData',$_POST)){
+        echo $taxUtilities->editVernacular(json_decode($_POST['commonNameData'], true),(int)$_POST['vid']);
+    }
+    elseif($isEditor && $action === 'removeCommonNamesInTaxonomicGroup' && array_key_exists('parenttid',$_POST)){
+        echo $taxUtilities->removeCommonNamesInTaxonomicGroup((int)$_POST['parenttid']);
     }
 }

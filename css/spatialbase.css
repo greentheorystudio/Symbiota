@@ -345,6 +345,8 @@ a.boxclose{
 .tabtitle {
 	font-family: Arial, serif;
 	font-weight: normal;
+	line-height: normal;
+	font-size: 1.17em;
 }
 
 .ui-content {
