@@ -81,7 +81,7 @@ class IRLManager {
     public function getTotalTaxa(): int
     {
         $total = 0;
-        $sql = 'SELECT COUNT(DISTINCT TID) AS cnt FROM taxa WHERE (RankId > 180) OR (RankId = 180 AND TID NOT IN(SELECT parenttid FROM taxaenumtree)) ';
+        $sql = 'SELECT COUNT(DISTINCT t2.TID) AS cnt FROM taxa AS t1 LEFT JOIN taxa AS t2 ON t1.tidaccepted = t2.TID WHERE ((t2.RankId > 180) OR (t2.RankId = 180 AND t2.TID NOT IN(SELECT parenttid FROM taxaenumtree))) ';
         //echo $sql;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
