@@ -1,7 +1,7 @@
 const vStatusArr = ["reviewed - high confidence", "reviewed - medium confidence", "reviewed - low confidence",
 	"not reviewed", "expert needed", "custom status 1", "custom status 2", "unable to georeference"];
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$("#qvstatus").autocomplete(
 		{
 			source: vStatusArr

@@ -630,11 +630,6 @@ class SpecProcessorManager {
 		return $this->createLgImg;
 	}
 
-	public function getLastRunDate(): string
-	{
-		return $this->lastRunDate;
-	}
-
 	public function getConn(): mysqli
 	{
  		return $this->conn;
@@ -642,8 +637,6 @@ class SpecProcessorManager {
 
  	protected function cleanInStr($str): string
 	{
-		$newStr = trim($str);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
+        return $this->conn->real_escape_string(trim($str));
 	}
 }

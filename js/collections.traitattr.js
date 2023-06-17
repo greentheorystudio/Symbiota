@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$("#taxonfilter").autocomplete({ 
 		source: "../../api/occurrences/getTaxonFilter.php",
 		dataType: "json",

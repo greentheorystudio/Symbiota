@@ -1,16 +1,18 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
+include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 
 if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../../index.php');
 }
 
 $confManager = new ConfigurationManager();
+$taxaUtilities = new TaxonomyUtilities();
 
 $fullConfArr = $confManager->getConfigurationsArr();
 $coreConfArr = $fullConfArr['core'];
-$taxonomyRankArr = $confManager->getTaxonomyRankArr();
+$taxonomyRankArr = $taxaUtilities->getRankArr();
 $recognizedRanks = isset($GLOBALS['TAXONOMIC_RANKS']) ? json_decode($GLOBALS['TAXONOMIC_RANKS'], true) : array();
 ?>
 <div id="taxonomyconfig">
@@ -22,12 +24,12 @@ $recognizedRanks = isset($GLOBALS['TAXONOMIC_RANKS']) ? json_decode($GLOBALS['TA
             <div>
                 <h3>Recognized Taxonomic Ranks</h3>
                 <?php
-                foreach($taxonomyRankArr as $rankId => $rankName){
+                foreach($taxonomyRankArr as $rankId => $rankArr){
                     $checked = in_array((int)$rankId, $recognizedRanks, true);
                     ?>
                     <div style="margin-top:3px;">
                         <input type="checkbox" class="taxonomy-checkbox" value="<?php echo $rankId; ?>" onchange="processTaxonomyRankCheckChange('<?php echo (isset($coreConfArr['TAXONOMIC_RANKS'])?'update':'add'); ?>');" <?php echo ($checked?'CHECKED':'').((int)$rankId === 10?' DISABLED':''); ?> />
-                        <span style="margin-left:20px;"><?php echo $rankName; ?></span> <?php echo ((int)$rankId === 10?'<span style="color:red;">(required)</span>':''); ?>
+                        <span style="margin-left:20px;"><?php echo $rankArr['rankname']; ?></span> <?php echo ((int)$rankId === 10?'<span style="color:red;">(required)</span>':''); ?>
                     </div>
                     <?php
                 }

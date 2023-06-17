@@ -237,23 +237,25 @@ class SpatialModuleManager{
 
     public function setRecordCnt(): void
     {
-        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.TID ';
-        $sql .= $this->setTableJoins();
-        $sql .= $this->sqlWhere;
-        if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
-            if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
-                $sql .= ' AND (o.CollId IN (' .implode(',',$GLOBALS['USER_RIGHTS']['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+        if($this->sqlWhere){
+            $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.TID ';
+            $sql .= $this->setTableJoins();
+            $sql .= $this->sqlWhere;
+            if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
+                if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
+                    $sql .= ' AND (o.CollId IN (' .implode(',',$GLOBALS['USER_RIGHTS']['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+                }
+                else{
+                    $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+                }
             }
-            else{
-                $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+            //echo "<div>Count sql: ".$sql."</div>";
+            $result = $this->conn->query($sql);
+            if($row = $result->fetch_object()){
+                $this->recordCount = $row->cnt;
             }
+            $result->close();
         }
-        //echo "<div>Count sql: ".$sql."</div>";
-        $result = $this->conn->query($sql);
-        if($row = $result->fetch_object()){
-            $this->recordCount = $row->cnt;
-        }
-        $result->close();
     }
 
     public function getMapRecordPageArr($pageRequest,$cntPerPage): array
@@ -321,7 +323,7 @@ class SpatialModuleManager{
     protected function setTableJoins(): string
     {
         $sqlJoin = '';
-        if(array_key_exists('taxontype',$this->searchTermsArr) && (int)$this->searchTermsArr['taxontype'] === 4) {
+        if(array_key_exists('taxontype',$this->searchTermsArr) && ((int)$this->searchTermsArr['taxontype'] === 4 || (int)$this->searchTermsArr['taxontype'] === 5)) {
             $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {
@@ -354,11 +356,8 @@ class SpatialModuleManager{
     {
         if($whereStr) {
             $whereStr .= 'AND ';
+            $this->sqlWhere = $whereStr . '(o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
         }
-        else {
-            $whereStr = 'WHERE ';
-        }
-        $this->sqlWhere = $whereStr . '(o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
     }
 
     public function getRecordCnt(): int

@@ -516,6 +516,51 @@ class ImageShared{
 		return $status;
 	}
 
+    public function addImageRecord($image): int
+    {
+        $retVal = 0;
+        if($image){
+            $sql = 'INSERT INTO images (tid, url, thumbnailurl, originalurl, archiveurl, photographer, photographeruid, imagetype, '.
+                'format, caption, owner, sourceurl, referenceUrl, copyright, rights, accessrights, locality, occid, notes, '.
+                'anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties, sortsequence) '.
+                'VALUES ('.
+                (isset($image['tid']) ? (int)$image['tid'] :'NULL').','.
+                (isset($image['url']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['url']).'"' :'NULL').','.
+                (isset($image['thumbnailurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['thumbnailurl']).'"' :'NULL').','.
+                (isset($image['originalurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['originalurl']).'"' :'NULL').','.
+                (isset($image['archiveurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['archiveurl']).'"' :'NULL').','.
+                (isset($image['photographer']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['photographer']).'"' :'NULL').','.
+                (isset($image['photographeruid']) ? (int)$image['photographeruid'] :'NULL').','.
+                (isset($image['imagetype']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['imagetype']).'"' :'NULL').','.
+                (isset($image['format']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['format']).'"' :'NULL').','.
+                (isset($image['caption']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['caption'])).'"' :'NULL').','.
+                (isset($image['owner']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['owner']).'"' :'NULL').','.
+                (isset($image['sourceurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['sourceurl']).'"' :'NULL').','.
+                (isset($image['referenceurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['referenceurl']).'"' :'NULL').','.
+                (isset($image['copyright']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['copyright']).'"' :'NULL').','.
+                (isset($image['rights']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['rights']).'"' :'NULL').','.
+                (isset($image['accessrights']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['accessrights']).'"' :'NULL').','.
+                (isset($image['locality']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['locality'])).'"' :'NULL').','.
+                (isset($image['occid']) ? (int)$image['occid'] :'NULL').','.
+                (isset($image['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['notes'])).'"' :'NULL').','.
+                (isset($image['anatomy']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['anatomy'])).'"' :'NULL').','.
+                '"'.$GLOBALS['USERNAME'].'",'.
+                (isset($image['sourceidentifier']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['sourceidentifier']).'"' :'NULL').','.
+                (isset($image['mediamd5']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['mediamd5']).'"' :'NULL').','.
+                (isset($image['dynamicproperties']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['dynamicproperties']).'"' :'NULL').','.
+                (isset($image['sortsequence']) ? (int)$image['sortsequence'] : '50').')';
+            //echo $sql; exit;
+            if($this->conn->query($sql)){
+                $guid = UuidFactory::getUuidV4();
+                $retVal = $this->conn->insert_id;
+                if(!$this->conn->query('INSERT INTO guidimages(guid,imgid) VALUES("'.$guid.'",'.$retVal.')')) {
+                    $this->errArr[] = ' Warning: GUID mapping failed';
+                }
+            }
+        }
+        return $retVal;
+    }
+
 	public function deleteImage($imgIdDel, $removeImg): bool
 	{
 		$imgUrl = '';
@@ -969,19 +1014,19 @@ class ImageShared{
 		return $retArr;
 	}
 
-	private static function getImgDim2($imgUrl) {
+    private static function getImgDim2($imgUrl) {
         $width = 0;
         $height = 0;
         $data = file_get_contents($imgUrl);
-		$im = @imagecreatefromstring($data);
-		if($im) {
+        $im = @imagecreatefromstring($data);
+        if($im) {
             $width = @imagesx($im);
             $height = @imagesy($im);
             imagedestroy($im);
-		}
-		if($width && $height) {
+        }
+        if($width && $height) {
             return array($width,$height);
-		}
-		return false;
-	}
+        }
+        return false;
+    }
 }

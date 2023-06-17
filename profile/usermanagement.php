@@ -59,14 +59,17 @@ if($GLOBALS['IS_ADMIN']){
     }
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> User Management</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 </head>
-
 <body>
     <?php
 	include(__DIR__ . '/../header.php');
@@ -175,7 +178,7 @@ if($GLOBALS['IS_ADMIN']){
 				if($user['username']){
 					?>
 					<div style="clear:both;margin:30px 0 20px 30px;">
-						<a href="usermanagement.php?loginas=<?php echo $user['username']; ?>">Login</a> as this user
+						<a href="usermanagement.php?loginas=<?php echo $user['username']; ?>">Login as this user</a>
 					</div>
 					<?php
 				}
@@ -259,6 +262,20 @@ if($GLOBALS['IS_ADMIN']){
 								</li>
 								<?php 
 							}
+                            if(array_key_exists('PublicChecklist',$userPermissions)){
+                                ?>
+                                <li>
+                                    <b><?php
+                                        echo '<span title="'.$userPermissions['PublicChecklist']['aby'].'">';
+                                        echo str_replace('PublicChecklist','Can Create Public Checklists and Biotic Inventory Projects',$userPermissions['PublicChecklist']['role']);
+                                        echo '</span>';
+                                        ?></b>
+                                    <a href="usermanagement.php?delrole=PublicChecklist&userid=<?php echo $userId; ?>">
+                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
+                                    </a>
+                                </li>
+                                <?php
+                            }
 							if(array_key_exists('RareSppAdmin',$userPermissions)){
 								?>
 								<li>
@@ -408,6 +425,9 @@ if($GLOBALS['IS_ADMIN']){
 								if(!array_key_exists('KeyEditor',$userPermissions)){
 									echo "<div><input type='checkbox' name='p[]' value='KeyEditor' /> Identification Key Editor</div>";
 								}
+                                if(!array_key_exists('PublicChecklist',$userPermissions)){
+                                    echo "<div><input type='checkbox' name='p[]' value='PublicChecklist' /> Can Create Public Checklists and Biotic Inventory Projects</div>";
+                                }
 								?>
 							</div>
 							<hr/>
@@ -448,7 +468,7 @@ if($GLOBALS['IS_ADMIN']){
 								<div style="float:right;margin:10px;">
 									<input type='submit' name='apsubmit' value='Add Permission' />
 								</div>
- 								<h3>Specimen Collections</h3>
+ 								<h3>Collections</h3>
  								<table>
  									<tr>
  										<th>Admin</th>
@@ -600,7 +620,7 @@ if($GLOBALS['IS_ADMIN']){
 									?>
 									<div style='margin-left:15px;'>
 										<?php 
-										echo '<input type="checkbox" name="p[]" value="ClAdmin-'.$k.'" />';
+										echo '<input type="checkbox" name="p[]" value="ClAdmin-'.$k.'" /> ';
 										echo '<a href="../checklists/checklist.php?cl='.$k.'" target="_blank">'.$v.'</a>';
 										?>
 									</div>
@@ -658,6 +678,7 @@ if($GLOBALS['IS_ADMIN']){
 	</div>
 	<?php
 	include(__DIR__ . '/../footer.php');
+    include_once(__DIR__ . '/../config/footer-includes.php');
 	?>
 </body>
 </html>

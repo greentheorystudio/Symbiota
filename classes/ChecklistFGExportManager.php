@@ -94,7 +94,7 @@ class ChecklistFGExportManager {
         $taxaArr = array();
         $sql = 'SELECT DISTINCT t2.tid, t2.family, t2.sciname, t2.author '.
             'FROM '.$this->linkTable.' AS ctl LEFT JOIN taxa AS t1 ON ctl.tid = t1.tid '.
-            'LEFT JOIN taxa AS t2 ON t1.tidaccepted = t.TID '.
+            'LEFT JOIN taxa AS t2 ON t1.tidaccepted = t2.TID '.
             'WHERE '.$this->sqlWhereVar.' '.
             'ORDER BY t2.family, t2.sciname ';
         if($this->index || $this->recLimit) {

@@ -126,7 +126,11 @@ if($displayLocality && ((is_numeric($occArr['decimallatitude']) && is_numeric($o
 $dupClusterArr = $indManager->getDuplicateArr();
 $commentArr = $indManager->getCommentArr($isEditor);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Detailed Collection Record Information</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -144,14 +148,13 @@ $commentArr = $indManager->getCommentArr($isEditor);
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script src="../../js/shared.js?ver=20221207" type="text/javascript"></script>
     <?php
     if($displayMap){
         ?>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20230105" rel="stylesheet" type="text/css" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221126" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20230103" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -162,7 +165,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         const coordUncertainty = <?php echo $occArr['coordinateuncertaintyinmeters'] ?: 0; ?>;
         const footprintWKT = '<?php echo $occArr['footprintwkt']; ?>';
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $('#tabs').tabs({
                 <?php
                 if($displayMap){
@@ -1452,6 +1455,7 @@ if($fullWindow){
 if($fullWindow){
     include(__DIR__ . '/../../footer.php');
 }
+include_once(__DIR__ . '/../../config/footer-includes.php');
 ?>
 </body>
 </html>

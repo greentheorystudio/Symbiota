@@ -1,13 +1,13 @@
 <?php
 class DwcArchiverOccurrence{
 
-	public static function getOccurrenceArr($schemaType, $extended): array
+    public static function getOccurrenceArr($schemaType, $extended): array
     {
         if($schemaType === 'pensoft'){
-        	$occurFieldArr['Taxon_Local_ID'] = 'v.tid AS Taxon_Local_ID';
+            $occurFieldArr['Taxon_Local_ID'] = 'v.tid AS Taxon_Local_ID';
         }
         else{
-        	$occurFieldArr['id'] = 'o.occid';
+            $occurFieldArr['id'] = 'o.occid';
         }
         $occurTermArr['institutionCode'] = 'http://rs.tdwg.org/dwc/terms/institutionCode';
         $occurFieldArr['institutionCode'] = 'IFNULL(o.institutionCode,c.institutionCode) AS institutionCode';
@@ -233,80 +233,80 @@ class DwcArchiverOccurrence{
         $occurFieldArr['dateEntered'] = 'o.dateEntered';
         $occurTermArr['dateLastModified'] = 'https://dwc.tdwg.org/list/#dwc_dateLastModified';
         $occurFieldArr['dateLastModified'] = 'o.datelastmodified';
-		if($schemaType === 'pensoft'){
-			$occurFieldArr['occid'] = 'o.occid';
-		}
+        if($schemaType === 'pensoft'){
+            $occurFieldArr['occid'] = 'o.occid';
+        }
 
-		$occurrenceFieldArr['terms'] = self::trimOccurrenceBySchemaType($occurTermArr, $schemaType, $extended);
-		$occurFieldArr = self::trimOccurrenceBySchemaType($occurFieldArr, $schemaType, $extended);
-		if($schemaType === 'dwc' || $schemaType === 'pensoft'){
-			$occurFieldArr['recordedBy'] = 'CONCAT_WS("; ",o.recordedBy,o.associatedCollectors) AS recordedBy';
-			$occurFieldArr['occurrenceRemarks'] = 'CONCAT_WS("; ",o.occurrenceRemarks,o.verbatimAttributes) AS occurrenceRemarks';
-			$occurFieldArr['habitat'] = 'CONCAT_WS("; ",o.habitat, o.substrate) AS habitat';
-		}
-		$occurrenceFieldArr['fields'] = $occurFieldArr;
-		return $occurrenceFieldArr;
-	}
+        $occurrenceFieldArr['terms'] = self::trimOccurrenceBySchemaType($occurTermArr, $schemaType, $extended);
+        $occurFieldArr = self::trimOccurrenceBySchemaType($occurFieldArr, $schemaType, $extended);
+        if($schemaType === 'dwc' || $schemaType === 'pensoft'){
+            $occurFieldArr['recordedBy'] = 'CONCAT_WS("; ",o.recordedBy,o.associatedCollectors) AS recordedBy';
+            $occurFieldArr['occurrenceRemarks'] = 'CONCAT_WS("; ",o.occurrenceRemarks,o.verbatimAttributes) AS occurrenceRemarks';
+            $occurFieldArr['habitat'] = 'CONCAT_WS("; ",o.habitat, o.substrate) AS habitat';
+        }
+        $occurrenceFieldArr['fields'] = $occurFieldArr;
+        return $occurrenceFieldArr;
+    }
 
-	private static function trimOccurrenceBySchemaType($occurArr, $schemaType, $extended): array
+    private static function trimOccurrenceBySchemaType($occurArr, $schemaType, $extended): array
     {
-		$retArr = array();
-		if($schemaType === 'dwc' || $schemaType === 'pensoft'){
-			$trimArr = array('sourcePrimaryKey-dbpk','recordedByID','associatedCollectors','associatedCollectors','substrate',
+        $retArr = array();
+        if($schemaType === 'dwc' || $schemaType === 'pensoft'){
+            $trimArr = array('sourcePrimaryKey-dbpk','recordedByID','associatedCollectors','associatedCollectors','substrate',
                 'verbatimAttributes','cultivationStatus','localitySecurityReason','footprintWKT','storageLocation',
                 'genericcolumn1','genericcolumn2','observerUid','processingStatus','recordEnteredBy','duplicateQuantity','labelProject',
                 'dynamicFields','dateEntered','dateLastModified');
-			$retArr = array_diff_key($occurArr,array_flip($trimArr));
-		}
-		elseif($schemaType === 'native'){
-			$trimArr = array();
-			if(!$extended){
-				$trimArr = array('collectionID','rights','rightsHolder','accessRights','genericcolumn1','genericcolumn2',
-					'storageLocation','observerUid','processingStatus','duplicateQuantity','dateEntered','dateLastModified');
-			}
-			$retArr = array_diff_key($occurArr,array_flip($trimArr));
-		}
-		elseif($schemaType === 'backup'){
-			$trimArr = array();
-			$retArr = array_diff_key($occurArr,array_flip($trimArr));
-		}
-		elseif($schemaType === 'coge'){
-			$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
-				'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet',
-				'recordedBy','recordNumber','eventDate','year','month','day','fieldNumber','country','stateProvince','county','municipality',
-				'locality','localitySecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
-				'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters',
-				'sex','occurrenceRemarks','preparationType','individualCount','dateEntered','dateLastModified','recordId','references','collId');
-			$retArr = array_intersect_key($occurArr,array_flip($targetArr));
-		}
-		return $retArr;
-	}
+            $retArr = array_diff_key($occurArr,array_flip($trimArr));
+        }
+        elseif($schemaType === 'native'){
+            $trimArr = array();
+            if(!$extended){
+                $trimArr = array('collectionID','rights','rightsHolder','accessRights','genericcolumn1','genericcolumn2',
+                    'storageLocation','observerUid','processingStatus','duplicateQuantity','dateEntered','dateLastModified');
+            }
+            $retArr = array_diff_key($occurArr,array_flip($trimArr));
+        }
+        elseif($schemaType === 'backup'){
+            $trimArr = array();
+            $retArr = array_diff_key($occurArr,array_flip($trimArr));
+        }
+        elseif($schemaType === 'coge'){
+            $targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
+                'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet',
+                'recordedBy','recordNumber','eventDate','year','month','day','fieldNumber','country','stateProvince','county','municipality',
+                'locality','localitySecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
+                'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters',
+                'sex','occurrenceRemarks','preparationType','individualCount','dateEntered','dateLastModified','recordId','references','collId');
+            $retArr = array_intersect_key($occurArr,array_flip($targetArr));
+        }
+        return $retArr;
+    }
 
-	public static function getSqlOccurrences($fieldArr, $conditionSql, $tableJoinStr, $fullSql): string
+    public static function getSqlOccurrences($fieldArr, $conditionSql, $tableJoinStr, $fullSql): string
     {
-		$sql = '';
-		if($conditionSql){
-			if($fullSql){
-				$sqlFrag = '';
-				foreach($fieldArr as $fieldName => $colName){
-					if($colName){
-						$sqlFrag .= ', '.$colName;
-					}
-					else{
-						$sqlFrag .= ', "" AS t_'.$fieldName;
-					}
-				}
-				$sql = 'SELECT DISTINCT '.trim($sqlFrag,', ');
-			}
-			$sql .= ' FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
-				'INNER JOIN guidoccurrences AS g ON o.occid = g.occid '.
-				'LEFT JOIN taxa AS t ON o.tid = t.TID ';
-			$sql .= $tableJoinStr.$conditionSql;
-			if($fullSql) {
+        $sql = '';
+        if($conditionSql){
+            if($fullSql){
+                $sqlFrag = '';
+                foreach($fieldArr as $fieldName => $colName){
+                    if($colName){
+                        $sqlFrag .= ', '.$colName;
+                    }
+                    else{
+                        $sqlFrag .= ', "" AS t_'.$fieldName;
+                    }
+                }
+                $sql = 'SELECT DISTINCT '.trim($sqlFrag,', ');
+            }
+            $sql .= ' FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
+                'INNER JOIN guidoccurrences AS g ON o.occid = g.occid '.
+                'LEFT JOIN taxa AS t ON o.tid = t.TID ';
+            $sql .= $tableJoinStr.$conditionSql;
+            if($fullSql) {
                 $sql .= ' ORDER BY c.collid ';
             }
-			//echo '<div>'.$sql.'</div>'; exit;
-		}
-		return $sql;
-	}
+            //echo '<div>'.$sql.'</div>'; exit;
+        }
+        return $sql;
+    }
 }

@@ -22,19 +22,19 @@ const blankdragdropsource = new ol.source.Vector({
 layersObj['dragdrop1'] = new ol.layer.Vector({
     zIndex: 1,
     source: blankdragdropsource,
-    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+    style: getVectorLayerStyle(SPATIAL_DRAGDROP_FILL_COLOR, SPATIAL_DRAGDROP_BORDER_COLOR, SPATIAL_DRAGDROP_BORDER_WIDTH, SPATIAL_DRAGDROP_POINT_RADIUS, SPATIAL_DRAGDROP_OPACITY)
 });
 layersArr.push(layersObj['dragdrop1']);
 layersObj['dragdrop2'] = new ol.layer.Vector({
     zIndex: 2,
     source: blankdragdropsource,
-    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+    style: getVectorLayerStyle(SPATIAL_DRAGDROP_FILL_COLOR, SPATIAL_DRAGDROP_BORDER_COLOR, SPATIAL_DRAGDROP_BORDER_WIDTH, SPATIAL_DRAGDROP_POINT_RADIUS, SPATIAL_DRAGDROP_OPACITY)
 });
 layersArr.push(layersObj['dragdrop2']);
 layersObj['dragdrop3'] = new ol.layer.Vector({
     zIndex: 3,
     source: blankdragdropsource,
-    style: getVectorLayerStyle(dragDropFillColor, dragDropBorderColor, dragDropBorderWidth, dragDropPointRadius, dragDropOpacity)
+    style: getVectorLayerStyle(SPATIAL_DRAGDROP_FILL_COLOR, SPATIAL_DRAGDROP_BORDER_COLOR, SPATIAL_DRAGDROP_BORDER_WIDTH, SPATIAL_DRAGDROP_POINT_RADIUS, SPATIAL_DRAGDROP_OPACITY)
 });
 layersArr.push(layersObj['dragdrop3']);
 
@@ -95,11 +95,11 @@ layersObj['vector'] = new ol.layer.Vector({
 layersArr.push(layersObj['vector']);
 
 const mapView = new ol.View({
-    zoom: initialMapZoom,
+    zoom: SPATIAL_INITIAL_ZOOM,
     projection: 'EPSG:3857',
     minZoom: 2.5,
     maxZoom: 19,
-    center: ol.proj.transform(initialMapCenter, 'EPSG:4326', 'EPSG:3857'),
+    center: ol.proj.transform(SPATIAL_INITIAL_CENTER, 'EPSG:4326', 'EPSG:3857'),
 });
 
 const map = new ol.Map({
@@ -239,7 +239,7 @@ dragAndDropInteraction.on('addfeatures', function(event) {
                     width: imageWidth,
                     height: imageHeight,
                     domain: [minValue, maxValue],
-                    colorScale: dragDropRasterColorScale
+                    colorScale: SPATIAL_DRAGDROP_RASTER_COLOR_SCALE
                 });
                 plot.render();
                 layersObj[sourceIndex] = new ol.source.ImageStatic({

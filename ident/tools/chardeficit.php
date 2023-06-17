@@ -28,7 +28,11 @@ $brownStripStr = 'brown_hor_strip.gif';
 $editorStr = 'editor.php?tid=';
 $charStr = '';
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Character Deficit Finder</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -146,6 +150,9 @@ $charStr = '';
     }
     ?>
     </div>
-    <?php include(__DIR__ . '/../../footer.php'); ?>
+    <?php
+    include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>

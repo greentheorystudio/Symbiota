@@ -310,7 +310,7 @@ a.boxclose{
 	padding-bottom: 3px;
 	padding-left: 20px;
 	z-index: 10;
-	height: 2.6rem;
+	height: 2.5rem;
 }
 
 #defaultpanel{
@@ -345,6 +345,8 @@ a.boxclose{
 .tabtitle {
 	font-family: Arial, serif;
 	font-weight: normal;
+	line-height: normal;
+	font-size: 1.17em;
 }
 
 .ui-content {

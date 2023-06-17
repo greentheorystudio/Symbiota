@@ -36,7 +36,7 @@ if($stArrJson){
             <i style='width:15px;height:15px;' class="fas fa-download"></i>
         </button>
         <?php
-        if($GLOBALS['KEY_MOD_IS_ACTIVE']){
+        if(isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
         ?>
             <button class="icon-button" title='Open in Interactive Key Interface' onclick="submitInteractiveKeyFormTaxaList();">
                 <i style='width:15px;height:15px;' class="fas fa-key"></i>
