@@ -10,11 +10,11 @@ include_once(__DIR__ . '/../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 
-$taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
+$taxonValue = array_key_exists('taxon',$_REQUEST)?htmlspecialchars($_REQUEST['taxon']): '';
 $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
 $projValue = array_key_exists('proj',$_REQUEST)?(int)$_REQUEST['proj']:0;
-$lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$GLOBALS['DEFAULT_LANG'];
-$descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?$_REQUEST['displaylevel']: '';
+$lang = array_key_exists('lang',$_REQUEST)?htmlspecialchars($_REQUEST['lang']):$GLOBALS['DEFAULT_LANG'];
+$descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?htmlspecialchars($_REQUEST['displaylevel']): '';
 $showAllImages = array_key_exists('allimages',$_REQUEST);
 
 if(!$taxonValue && array_key_exists('quicksearchtaxon',$_REQUEST)){
