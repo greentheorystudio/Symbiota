@@ -439,10 +439,10 @@ const taxonomyDataSourceImportUpdateModule = {
         currentTaxonProcessMetadata(){
             if(
                 this.updateMetadata && this.currentTaxonExternal['tid'] &&
-                (this.currentTaxonExternal['author'] !== this.currentTaxonLocal['author'] ||
+                ((this.currentTaxonExternal['author'] && (this.currentTaxonExternal['author'] !== this.currentTaxonLocal['author'])) ||
                 this.kingdomId !== Number(this.currentTaxonLocal['kingdomid']) ||
-                Number(this.currentTaxonExternal['rankid']) !== Number(this.currentTaxonLocal['rankid']) ||
-                this.currentTaxonExternal['family'] !== this.currentTaxonLocal['family'])
+                (this.currentTaxonExternal['rankid'] && (Number(this.currentTaxonExternal['rankid']) !== Number(this.currentTaxonLocal['rankid']))) ||
+                (this.currentTaxonExternal['family'] && (this.currentTaxonExternal['family'] !== this.currentTaxonLocal['family'])))
             ){
                 const subtext = 'Updating taxon in the Taxonomic Thesaurus';
                 this.addSubprocessToProcessorDisplay('text',subtext);
