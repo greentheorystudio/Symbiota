@@ -15,6 +15,9 @@
 <script>
     const taxonProfilePage = Vue.createApp({
         template: `
+            <template v-if="loading">
+                <div class="fill-viewport"></div>
+            </template>
             <template v-if="!loading">
                 <template v-if="taxon">
                     <div class="profile-split-row">
