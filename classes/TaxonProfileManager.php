@@ -303,13 +303,8 @@ class TaxonProfileManager {
             $result = $this->conn->query($sql);
             if($row = $result->fetch_object()){
                 $map = $row->url;
-                if(strncmp($map, '/', 1) === 0){
-                    if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                        $map = $GLOBALS['IMAGE_DOMAIN'] . $map;
-                    }
-                    else{
-                        $map = $GLOBALS['CLIENT_ROOT'] . $map;
-                    }
+                if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($map, '/', 1) === 0){
+                    $map = $GLOBALS['IMAGE_DOMAIN'] . $map;
                 }
             }
             $result->close();
