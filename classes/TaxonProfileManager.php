@@ -237,21 +237,11 @@ class TaxonProfileManager {
                 $imageArr = array();
                 $imgUrl = $row->url;
                 $imgThumbnail = $row->thumbnailurl;
-                if($imgUrl && strncmp($imgUrl, '/', 1) === 0) {
-                    if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                        $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
-                    }
-                    else{
-                        $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
-                    }
+                if($imgUrl && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) {
+                    $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                 }
-                if($imgThumbnail && strncmp($imgThumbnail, '/', 1) === 0) {
-                    if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                        $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
-                    }
-                    else{
-                        $imgThumbnail = $GLOBALS['CLIENT_ROOT'] . $imgThumbnail;
-                    }
+                if($imgThumbnail && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgThumbnail, '/', 1) === 0) {
+                    $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
                 }
                 $imageArr['id'] = $row->imgid;
                 $imageArr['url'] = $imgUrl;
