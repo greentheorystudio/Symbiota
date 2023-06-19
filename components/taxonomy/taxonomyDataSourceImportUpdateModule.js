@@ -43,6 +43,9 @@ const taxonomyDataSourceImportUpdateModule = {
                                     <q-checkbox v-model="updateMetadata" label="Update metadata for taxa" :disable="loading" />
                                 </div>
                                 <div>
+                                    <q-checkbox v-model="updateParent" label="Update parent linkages for taxa" :disable="loading" />
+                                </div>
+                                <div>
                                     <q-checkbox v-model="updateAcceptance" label="Update acceptance for synonymized taxa" :disable="loading" />
                                 </div>
                                 <div>
@@ -177,8 +180,9 @@ const taxonomyDataSourceImportUpdateModule = {
             targetTaxonLocal: Vue.ref(null),
             taxaToAddArr: Vue.ref([]),
             taxonSearchResults: Vue.ref([]),
-            updateAcceptance: Vue.ref(true),
-            updateMetadata: Vue.ref(true)
+            updateAcceptance: Vue.ref(false),
+            updateMetadata: Vue.ref(true),
+            updateParent: Vue.ref(true)
         }
     },
     components: {
@@ -440,9 +444,9 @@ const taxonomyDataSourceImportUpdateModule = {
             if(
                 this.updateMetadata && this.currentTaxonExternal['tid'] &&
                 ((this.currentTaxonExternal['author'] && (this.currentTaxonExternal['author'] !== this.currentTaxonLocal['author'])) ||
-                this.kingdomId !== Number(this.currentTaxonLocal['kingdomid']) ||
-                (this.currentTaxonExternal['rankid'] && (Number(this.currentTaxonExternal['rankid']) !== Number(this.currentTaxonLocal['rankid']))) ||
-                (this.currentTaxonExternal['family'] && (this.currentTaxonExternal['family'] !== this.currentTaxonLocal['family'])))
+                    this.kingdomId !== Number(this.currentTaxonLocal['kingdomid']) ||
+                    (this.currentTaxonExternal['rankid'] && (Number(this.currentTaxonExternal['rankid']) !== Number(this.currentTaxonLocal['rankid']))) ||
+                    (this.currentTaxonExternal['family'] && (this.currentTaxonExternal['family'] !== this.currentTaxonLocal['family'])))
             ){
                 const subtext = 'Updating taxon in the Taxonomic Thesaurus';
                 this.addSubprocessToProcessorDisplay('text',subtext);
@@ -471,7 +475,7 @@ const taxonomyDataSourceImportUpdateModule = {
             }
         },
         currentTaxonProcessParent(){
-            if(this.currentTaxonExternal['parenttid'] && Number(this.currentTaxonExternal['parenttid']) !== Number(this.currentTaxonLocal['parenttid'])){
+            if(this.updateParent && this.currentTaxonExternal['parenttid'] && Number(this.currentTaxonExternal['parenttid']) !== Number(this.currentTaxonLocal['parenttid'])){
                 const subtext = 'Updating parent taxon in Taxonomic Thesaurus';
                 this.addSubprocessToProcessorDisplay('text',subtext);
                 this.updateTaxonParent(this.currentTaxonExternal['parenttid'],this.currentTaxonExternal['tid'],(errorText = null) => {
@@ -1119,9 +1123,31 @@ const taxonomyDataSourceImportUpdateModule = {
             });
         },
         getNewProcessObject(type,text){
-            const pastProcObj = this.processorDisplayArr.find(proc => proc['current'] === true);
-            if(pastProcObj){
-                pastProcObj['current'] = false;
+            if(this.processorDisplayArr.length > 0){
+                const pastProcObj = this.processorDisplayArr[(this.processorDisplayArr.length - 1)];
+                if(pastProcObj){
+                    pastProcObj['current'] = false;
+                    if(pastProcObj.hasOwnProperty('subs') && pastProcObj['subs'].length > 0){
+                        const subProcObj = pastProcObj['subs'][(pastProcObj['subs'].length - 1)];
+                        if(subProcObj){
+                            subProcObj['loading'] = false;
+                            if(!subProcObj['result'] || subProcObj['result'] === ''){
+                                subProcObj['result'] = 'success';
+                            }
+                            if(!subProcObj['resultText'] || subProcObj['resultText'] === ''){
+                                subProcObj['resultText'] = 'Complete';
+                            }
+                        }
+                    }
+                    else{
+                        if(!pastProcObj['result'] || pastProcObj['result'] === ''){
+                            pastProcObj['result'] = 'success';
+                        }
+                        if(!pastProcObj['resultText'] || pastProcObj['resultText'] === ''){
+                            pastProcObj['resultText'] = 'Complete';
+                        }
+                    }
+                }
             }
             const procObj = {
                 id: this.currentProcess,
