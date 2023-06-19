@@ -237,7 +237,7 @@ class TaxonProfileManager {
                 $imageArr = array();
                 $imgUrl = $row->url;
                 $imgThumbnail = $row->thumbnailurl;
-                if(strncmp($imgUrl, '/', 1) === 0) {
+                if($imgUrl && strncmp($imgUrl, '/', 1) === 0) {
                     if(isset($GLOBALS['IMAGE_DOMAIN'])){
                         $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                     }
@@ -245,7 +245,7 @@ class TaxonProfileManager {
                         $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
                     }
                 }
-                if(strncmp($imgThumbnail, '/', 1) === 0) {
+                if($imgThumbnail && strncmp($imgThumbnail, '/', 1) === 0) {
                     if(isset($GLOBALS['IMAGE_DOMAIN'])){
                         $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
                     }
