@@ -228,12 +228,24 @@ class TaxonProfileManager {
             if(!$this->displayLocality) {
                 $sql .= 'AND ISNULL(ti.occid) ';
             }
-            $sql .= 'ORDER BY ti.sortsequence ';
             //echo $sql;
             $result = $this->conn->query($sql);
             $this->taxon['imageCnt'] = $result->num_rows;
-            $imgCnt = 0;
-            while(($row = $result->fetch_object()) && $imgCnt <= 100){
+            $result->free();
+
+            $tidStr = implode(',',$tidArr);
+            $sql = 'SELECT t.tid, t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
+                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner '.
+                'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
+                'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
+                'WHERE t.tidaccepted IN('.$tidStr.') ';
+            if(!$this->displayLocality) {
+                $sql .= 'AND ISNULL(ti.occid) ';
+            }
+            $sql .= 'ORDER BY ti.sortsequence LIMIT 100 ';
+            //echo $sql;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
                 $imageArr = array();
                 $imgUrl = $row->url;
                 $imgThumbnail = $row->thumbnailurl;
@@ -253,14 +265,13 @@ class TaxonProfileManager {
                 $imageArr['sciname'] = $row->sciname;
                 $imageArr['tid'] = $row->tid;
                 $this->taxon['images'][] = $imageArr;
-                $imgCnt++;
             }
             $result->free();
 
             $sql = 'SELECT t.tid, t.sciname, m.mediaid, m.accessuri, m.title, m.creator, m.`type`, m.occid, m.format, m.owner, m.description '.
                 'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
                 'WHERE t.tidaccepted IN('.$tidStr.') '.
-                'ORDER BY m.sortsequence ';
+                'ORDER BY m.sortsequence LIMIT 100 ';
             //echo $sql;
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
