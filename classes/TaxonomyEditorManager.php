@@ -161,13 +161,13 @@ class TaxonomyEditorManager{
 		$rs->free();
 	}
 
-	public function editTaxon($postArr,$tId = null): string
-	{
-		if(!$tId){
+    public function editTaxon($postArr,$tId = null): string
+    {
+        if(!$tId){
             $tId = $this->tid;
         }
         $statusStr = '';
-		if($tId){
+        if($tId){
             $sql = 'UPDATE taxa SET ';
             if(array_key_exists('kingdomid',$postArr) && $postArr['kingdomid']){
                 $sql .= 'kingdomId = '.((int)$postArr['kingdomid'] ?: 100).', ';
@@ -213,10 +213,10 @@ class TaxonomyEditorManager{
             }
             elseif(array_key_exists('unitname1',$postArr) && $postArr['unitname1']){
                 $sql .= 'sciname = "'.Sanitizer::cleanInStr($this->conn,($postArr['unitind1']?$postArr['unitind1']. ' ' : '').
-                    $postArr['unitname1'].($postArr['unitind2']? ' ' .$postArr['unitind2']: '').
-                    ($postArr['unitname2']? ' ' .$postArr['unitname2']: '').
-                    ($postArr['unitind3']? ' ' .$postArr['unitind3']: '').
-                    ($postArr['unitname3']? ' ' .$postArr['unitname3']: '')).'" ';
+                        $postArr['unitname1'].($postArr['unitind2']? ' ' .$postArr['unitind2']: '').
+                        ($postArr['unitname2']? ' ' .$postArr['unitname2']: '').
+                        ($postArr['unitind3']? ' ' .$postArr['unitind3']: '').
+                        ($postArr['unitname3']? ' ' .$postArr['unitname3']: '')).'", ';
             }
             $sql .= 'modifiedUid = '.$GLOBALS['SYMB_UID'].', ';
             $sql .= 'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'" ';
@@ -230,8 +230,8 @@ class TaxonomyEditorManager{
                 $this->conn->query($sql2);
             }
         }
-		return $statusStr;
-	}
+        return $statusStr;
+    }
 	
 	public function editTaxonParent($parentTid,$tId = null): string
 	{
