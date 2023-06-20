@@ -94,9 +94,9 @@ if($collManager->validateSearchTermsArr($stArr)){
                 $imgUrl = $imgArr['url'];
                 $imgTn = $imgArr['thumbnailurl'];
                 if($imgTn){
-                    $imgUrl = (isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) ? $GLOBALS['IMAGE_DOMAIN'].$imgTn : $imgTn;
+                    $imgUrl = ($imgUrl && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) ? $GLOBALS['IMAGE_DOMAIN'].$imgTn : $imgTn;
                 }
-                elseif(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0){
+                elseif($imgUrl && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0){
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                 }
                 $recordListHtml .= '<div class="tndiv">';
