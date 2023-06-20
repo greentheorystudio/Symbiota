@@ -228,30 +228,32 @@ class TaxonProfileManager {
             if(!$this->displayLocality) {
                 $sql .= 'AND ISNULL(ti.occid) ';
             }
-            $sql .= 'ORDER BY ti.sortsequence ';
             //echo $sql;
             $result = $this->conn->query($sql);
             $this->taxon['imageCnt'] = $result->num_rows;
-            $imgCnt = 0;
-            while(($row = $result->fetch_object()) && $imgCnt <= 100){
+            $result->free();
+
+            $tidStr = implode(',',$tidArr);
+            $sql = 'SELECT t.tid, t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
+                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner '.
+                'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
+                'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
+                'WHERE t.tidaccepted IN('.$tidStr.') ';
+            if(!$this->displayLocality) {
+                $sql .= 'AND ISNULL(ti.occid) ';
+            }
+            $sql .= 'ORDER BY ti.sortsequence LIMIT 100 ';
+            //echo $sql;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
                 $imageArr = array();
                 $imgUrl = $row->url;
                 $imgThumbnail = $row->thumbnailurl;
-                if($imgUrl && strncmp($imgUrl, '/', 1) === 0) {
-                    if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                        $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
-                    }
-                    else{
-                        $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
-                    }
+                if($imgUrl && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) {
+                    $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                 }
-                if($imgThumbnail && strncmp($imgThumbnail, '/', 1) === 0) {
-                    if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                        $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
-                    }
-                    else{
-                        $imgThumbnail = $GLOBALS['CLIENT_ROOT'] . $imgThumbnail;
-                    }
+                if($imgThumbnail && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgThumbnail, '/', 1) === 0) {
+                    $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
                 }
                 $imageArr['id'] = $row->imgid;
                 $imageArr['url'] = $imgUrl;
@@ -263,14 +265,13 @@ class TaxonProfileManager {
                 $imageArr['sciname'] = $row->sciname;
                 $imageArr['tid'] = $row->tid;
                 $this->taxon['images'][] = $imageArr;
-                $imgCnt++;
             }
             $result->free();
 
             $sql = 'SELECT t.tid, t.sciname, m.mediaid, m.accessuri, m.title, m.creator, m.`type`, m.occid, m.format, m.owner, m.description '.
                 'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
                 'WHERE t.tidaccepted IN('.$tidStr.') '.
-                'ORDER BY m.sortsequence ';
+                'ORDER BY m.sortsequence LIMIT 100 ';
             //echo $sql;
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
@@ -303,13 +304,8 @@ class TaxonProfileManager {
             $result = $this->conn->query($sql);
             if($row = $result->fetch_object()){
                 $map = $row->url;
-                if(strncmp($map, '/', 1) === 0){
-                    if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                        $map = $GLOBALS['IMAGE_DOMAIN'] . $map;
-                    }
-                    else{
-                        $map = $GLOBALS['CLIENT_ROOT'] . $map;
-                    }
+                if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($map, '/', 1) === 0){
+                    $map = $GLOBALS['IMAGE_DOMAIN'] . $map;
                 }
             }
             $result->close();
