@@ -220,8 +220,7 @@ class TaxonProfileManager {
             $rs1->free();
 
             $tidStr = implode(',',$tidArr);
-            $sql = 'SELECT t.tid, t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
-                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner '.
+            $sql = 'SELECT t.tid '.
                 'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
                 'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
                 'WHERE t.tidaccepted IN('.$tidStr.') ';
