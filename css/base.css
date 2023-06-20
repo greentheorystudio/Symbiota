@@ -704,3 +704,7 @@ body.processing .loadingModal {
 	padding: 5px;
 	font-size: 75%;
 }
+.fill-viewport{
+	width: 100vw;
+	height: 100vh;
+}

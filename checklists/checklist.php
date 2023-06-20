@@ -396,7 +396,7 @@ if(!$printMode){
             }
             if($clArray['publication']){
                 $pubStr = $clArray['publication'];
-                if(strncmp($pubStr, 'http', 4) === 0 && !strpos($pubStr,' ')) {
+                if($pubStr && strncmp($pubStr, 'http', 4) === 0 && !strpos($pubStr,' ')) {
                     $pubStr = '<a href="' . $pubStr . '" target="_blank">' . $pubStr . '</a>';
                 }
                 echo "<div><span style='font-weight:bold;'>Citation:</span> ".$pubStr. '</div>';
