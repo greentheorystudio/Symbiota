@@ -169,43 +169,43 @@ class TaxonomyEditorManager{
         $statusStr = '';
         if($tId){
             $sql = 'UPDATE taxa SET ';
-            if(array_key_exists('kingdomid',$postArr) && $postArr['kingdomid']){
-                $sql .= 'kingdomId = '.((int)$postArr['kingdomid'] ?: 100).', ';
+            if(array_key_exists('kingdomid',$postArr) && (int)$postArr['kingdomid']){
+                $sql .= 'kingdomId = '.(int)$postArr['kingdomid'].', ';
             }
-            if(array_key_exists('unitind1',$postArr) && $postArr['unitind1']){
+            if(array_key_exists('unitind1',$postArr)){
                 $sql .= 'unitind1 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind1'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind1']).'"':'NULL').', ';
             }
             if(array_key_exists('unitname1',$postArr) && $postArr['unitname1']){
                 $sql .= 'unitname1 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitname1'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname1']).'"':'NULL').', ';
             }
-            if(array_key_exists('unitind2',$postArr) && $postArr['unitind2']){
+            if(array_key_exists('unitind2',$postArr)){
                 $sql .= 'unitind2 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind2'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind2']).'"':'NULL').', ';
             }
-            if(array_key_exists('unitname2',$postArr) && $postArr['unitname2']){
+            if(array_key_exists('unitname2',$postArr)){
                 $sql .= 'unitname2 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitname2'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname2']).'"':'NULL').', ';
             }
-            if(array_key_exists('unitind3',$postArr) && $postArr['unitind3']){
+            if(array_key_exists('unitind3',$postArr)){
                 $sql .= 'unitind3 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind3'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind3']).'"':'NULL').', ';
             }
-            if(array_key_exists('unitname3',$postArr) && $postArr['unitname3']){
+            if(array_key_exists('unitname3',$postArr)){
                 $sql .= 'unitname3 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitname3'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname3']).'"':'NULL').', ';
             }
-            if(array_key_exists('author',$postArr) && $postArr['author']){
+            if(array_key_exists('author',$postArr)){
                 $sql .= 'author = '.(Sanitizer::cleanInStr($this->conn,$postArr['author'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['author']).'"':'NULL').', ';
             }
-            if(array_key_exists('family',$postArr) && $postArr['family']){
+            if(array_key_exists('family',$postArr)){
                 $sql .= 'family = '.(Sanitizer::cleanInStr($this->conn,$postArr['family'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['family']).'"':'NULL').', ';
             }
-            if(array_key_exists('rankid',$postArr) && is_numeric($postArr['rankid']) && $postArr['rankid']){
+            if(array_key_exists('rankid',$postArr) && (int)$postArr['rankid']){
                 $sql .= 'rankid = '.(int)$postArr['rankid'].', ';
             }
-            if(array_key_exists('source',$postArr) && $postArr['source']){
+            if(array_key_exists('source',$postArr)){
                 $sql .= '`source` = '.(Sanitizer::cleanInStr($this->conn,$postArr['source'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', ';
             }
-            if(array_key_exists('notes',$postArr) && $postArr['notes']){
+            if(array_key_exists('notes',$postArr)){
                 $sql .= 'notes = '.(Sanitizer::cleanInStr($this->conn,$postArr['notes'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', ';
             }
-            if(array_key_exists('securitystatus',$postArr) && is_numeric($postArr['securitystatus'])){
+            if(array_key_exists('securitystatus',$postArr)){
                 $sql .= 'securitystatus = '.(int)$postArr['securitystatus'].', ';
             }
             if(array_key_exists('sciname',$postArr) && $postArr['sciname']){
