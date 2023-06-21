@@ -452,10 +452,18 @@ const taxonomyDataSourceImportUpdateModule = {
                 this.addSubprocessToProcessorDisplay('text',subtext);
                 const taxonData = {};
                 taxonData['tid'] = this.currentTaxonExternal['tid'];
-                taxonData['kingdomid'] = this.kingdomId;
-                taxonData['author'] = this.currentTaxonExternal['author'];
-                taxonData['rankid'] = this.currentTaxonExternal['rankid'];
-                taxonData['family'] = this.currentTaxonExternal['family'];
+                if(this.kingdomId !== Number(this.currentTaxonLocal['kingdomid'])){
+                    taxonData['kingdomid'] = this.kingdomId;
+                }
+                if(this.currentTaxonExternal['author'] && (this.currentTaxonExternal['author'] !== this.currentTaxonLocal['author'])){
+                    taxonData['author'] = this.currentTaxonExternal['author'];
+                }
+                if(this.currentTaxonExternal['rankid'] && (Number(this.currentTaxonExternal['rankid']) !== Number(this.currentTaxonLocal['rankid']))){
+                    taxonData['rankid'] = this.currentTaxonExternal['rankid'];
+                }
+                if(this.currentTaxonExternal['family'] && (this.currentTaxonExternal['family'] !== this.currentTaxonLocal['family'])){
+                    taxonData['family'] = this.currentTaxonExternal['family'];
+                }
                 taxonData['source'] = this.getDataSourceName();
                 this.editTaxonInThesaurus(taxonData,(errorText = null) => {
                     if(errorText){
