@@ -654,6 +654,7 @@ body.processing .loadingModal {
 }
 .spp-image-container{
 	height: 150px;
+	overflow: hidden;
 }
 .no-spptaxon-image{
 	width: 125px;
@@ -669,6 +670,7 @@ body.processing .loadingModal {
 .spp-map-container{
 	margin-top: 10px;
 	height: 160px;
+	overflow: hidden;
 }
 .media-thumb{
 	width: 400px;
