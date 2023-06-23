@@ -185,13 +185,16 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     }
                 },
                 processTargetTaxonPath(){
-                    if(this.targetTaxonPathArr.length > 0){
+                    if(this.targetTaxonPathArr.length > 0 && this.treeRef.getNodeByKey(this.targetTaxonPathArr[0]['tid'])){
                         this.treeRef.setExpanded(this.targetTaxonPathArr[0]['tid'],true);
                         this.targetTaxonPathArr.splice(0, 1);
                     }
                     else if(this.selectedTid && this.targetNodeRef && !this.targetFound){
                         this.targetNodeRef.scrollIntoView();
                         this.targetFound = true;
+                        this.loading = false;
+                    }
+                    else{
                         this.loading = false;
                     }
                 },

@@ -555,7 +555,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 },
                 cancelProcess(){
                     this.processCancelling = true;
-                    if(!this.currentSciname){
+                    if(this.currentProcess === 'taxThesaurusFuzzyMatch' || !this.currentSciname){
                         cancelAPIRequest();
                         const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
                         if(procObj){
