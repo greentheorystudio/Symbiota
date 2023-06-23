@@ -27,7 +27,7 @@ const taxaProfileTaxonMap = {
                 taxonType = 4;
             }
             else{
-                taxonType = 2;
+                taxonType = 1;
             }
             const url = CLIENT_ROOT + '/spatial/index.php?starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
             window.open(url, '_blank');
