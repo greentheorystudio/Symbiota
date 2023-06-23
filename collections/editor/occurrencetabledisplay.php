@@ -286,9 +286,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 										<option value="">----------------------</option>
 										<?php
 										foreach($headerMapBase as $k => $v){
-											if($k !== 'scientificnameauthorship' && $k !== 'sciname' && $k !== 'verbatimsciname'){
-												echo '<option value="'.$k.'" '.($buFieldName === $k?'SELECTED':'').'>'.$v.'</option>';
-											}
+                                            echo '<option value="'.$k.'" '.($buFieldName === $k?'SELECTED':'').'>'.$v.'</option>';
 										}
 										?>
 									</select>
