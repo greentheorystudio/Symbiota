@@ -30,10 +30,10 @@ const taxonomicThesaurusMaintenanceModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="currentProcess === 'setUpdateFamilies'" :disabled="currentProcess && currentProcess !== 'setUpdateFamilies'" color="secondary" @click="initializeSetUpdateFamilies('setUpdateFamiliesAccepted');" label="Start" dense />
+                                    <q-btn :loading="currentProcess === 'setUpdateFamilies'" :disabled="currentProcess && currentProcess !== 'setUpdateFamilies'" color="secondary" @click="initializeSetUpdateFamilies('setUpdateFamiliesAccepted');" label="Start" dense /></q-btn>
                                 </div>
                                 <div>
-                                    <q-btn v-if="currentProcess === 'setUpdateFamilies'" :disabled="processCancelling && currentProcess === 'setUpdateFamilies'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                    <q-btn v-if="currentProcess === 'setUpdateFamilies'" :disabled="processCancelling && currentProcess === 'setUpdateFamilies'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                 </div>
                             </div>
                         </div>
@@ -51,10 +51,10 @@ const taxonomicThesaurusMaintenanceModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="currentProcess === 'removeUnacceptedTaxa'" :disabled="currentProcess && currentProcess !== 'removeUnacceptedTaxa'" color="secondary" @click="initializeRemoveUnacceptedTaxa();" label="Start" dense />
+                                    <q-btn :loading="currentProcess === 'removeUnacceptedTaxa'" :disabled="currentProcess && currentProcess !== 'removeUnacceptedTaxa'" color="secondary" @click="initializeRemoveUnacceptedTaxa();" label="Start" dense /></q-btn>
                                 </div>
                                 <div>
-                                    <q-btn v-if="currentProcess === 'removeUnacceptedTaxa'" :disabled="processCancelling && currentProcess === 'removeUnacceptedTaxa'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                    <q-btn v-if="currentProcess === 'removeUnacceptedTaxa'" :disabled="processCancelling && currentProcess === 'removeUnacceptedTaxa'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                 </div>
                             </div>
                         </div>
@@ -72,10 +72,10 @@ const taxonomicThesaurusMaintenanceModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="currentProcess === 'removeTaxaByRank'" :disabled="currentProcess && currentProcess !== 'removeTaxaByRank'" color="secondary" @click="initializeRemoveTaxaByRank();" label="Start" dense />
+                                    <q-btn :loading="currentProcess === 'removeTaxaByRank'" :disabled="currentProcess && currentProcess !== 'removeTaxaByRank'" color="secondary" @click="initializeRemoveTaxaByRank();" label="Start" dense /></q-btn>
                                 </div>
                                 <div>
-                                    <q-btn v-if="currentProcess === 'removeTaxaByRank'" :disabled="processCancelling && currentProcess === 'removeTaxaByRank'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                    <q-btn v-if="currentProcess === 'removeTaxaByRank'" :disabled="processCancelling && currentProcess === 'removeTaxaByRank'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                 </div>
                             </div>
                         </div>
@@ -93,10 +93,10 @@ const taxonomicThesaurusMaintenanceModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="currentProcess === 'removeTaxa'" :disabled="currentProcess && currentProcess !== 'removeTaxa'" color="secondary" @click="initializeRemoveTaxa();" label="Start" dense />
+                                    <q-btn :loading="currentProcess === 'removeTaxa'" :disabled="currentProcess && currentProcess !== 'removeTaxa'" color="secondary" @click="initializeRemoveTaxa();" label="Start" dense /></q-btn>
                                 </div>
                                 <div>
-                                    <q-btn v-if="currentProcess === 'removeTaxa'" :disabled="processCancelling && currentProcess === 'removeTaxa'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                    <q-btn v-if="currentProcess === 'removeTaxa'" :disabled="processCancelling && currentProcess === 'removeTaxa'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                 </div>
                             </div>
                         </div>
@@ -113,10 +113,10 @@ const taxonomicThesaurusMaintenanceModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="currentProcess === 'rebuildHierarchy'" :disabled="currentProcess && currentProcess !== 'rebuildHierarchy'" color="secondary" @click="initializeRebuildHierarchy();" label="Start" dense />
+                                    <q-btn :loading="currentProcess === 'rebuildHierarchy'" :disabled="currentProcess && currentProcess !== 'rebuildHierarchy'" color="secondary" @click="initializeRebuildHierarchy();" label="Start" dense /></q-btn>
                                 </div>
                                 <div>
-                                    <q-btn v-if="currentProcess === 'rebuildHierarchy'" :disabled="processCancelling && currentProcess === 'rebuildHierarchy'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                    <q-btn v-if="currentProcess === 'rebuildHierarchy'" :disabled="processCancelling && currentProcess === 'rebuildHierarchy'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                 </div>
                             </div>
                         </div>
@@ -137,10 +137,10 @@ const taxonomicThesaurusMaintenanceModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="currentProcess === 'formatCommonNames'" :disabled="currentProcess && currentProcess !== 'formatCommonNames'" color="secondary" @click="initializeFormatCommonNames();" label="Start" dense />
+                                    <q-btn :loading="currentProcess === 'formatCommonNames'" :disabled="currentProcess && currentProcess !== 'formatCommonNames'" color="secondary" @click="initializeFormatCommonNames();" label="Start" dense /></q-btn>
                                 </div>
                                 <div>
-                                    <q-btn v-if="currentProcess === 'formatCommonNames'" :disabled="processCancelling && currentProcess === 'formatCommonNames'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                    <q-btn v-if="currentProcess === 'formatCommonNames'" :disabled="processCancelling && currentProcess === 'formatCommonNames'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                 </div>
                             </div>
                         </div>
@@ -158,10 +158,10 @@ const taxonomicThesaurusMaintenanceModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="currentProcess === 'removeCommonNames'" :disabled="currentProcess && currentProcess !== 'removeCommonNames'" color="secondary" @click="initializeRemoveCommonNames();" label="Start" dense />
+                                    <q-btn :loading="currentProcess === 'removeCommonNames'" :disabled="currentProcess && currentProcess !== 'removeCommonNames'" color="secondary" @click="initializeRemoveCommonNames();" label="Start" dense /></q-btn>
                                 </div>
                                 <div>
-                                    <q-btn v-if="currentProcess === 'removeCommonNames'" :disabled="processCancelling && currentProcess === 'removeCommonNames'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                    <q-btn v-if="currentProcess === 'removeCommonNames'" :disabled="processCancelling && currentProcess === 'removeCommonNames'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                 </div>
                             </div>
                         </div>
@@ -202,7 +202,7 @@ const taxonomicThesaurusMaintenanceModule = {
                                                             {{subproc.resultText}}
                                                         </div>
                                                         <div v-if="subproc.result === 'success' && subproc.type === 'undo'" class="q-ml-sm text-weight-bold text-green-9">
-                                                            {{subproc.resultText}} <q-btn :disabled="undoButtonsDisabled" class="q-ml-md text-grey-9" color="warning" size="sm" @click="undoChangedSciname(proc.id,subproc.undoOrigName,subproc.undoChangedName);" label="Undo" dense />
+                                                            {{subproc.resultText}} <q-btn :disabled="undoButtonsDisabled" class="q-ml-md text-grey-9" color="warning" size="sm" @click="undoChangedSciname(proc.id,subproc.undoOrigName,subproc.undoChangedName);" label="Undo" dense /></q-btn>
                                                         </div>
                                                         <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
                                                             {{subproc.resultText}}
@@ -214,7 +214,7 @@ const taxonomicThesaurusMaintenanceModule = {
                                                         <div class="q-mx-xl q-my-sm fuzzy-match-row">
                                                             <div></div>
                                                             <div>
-                                                                <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense />
+                                                                <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense /></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -224,7 +224,7 @@ const taxonomicThesaurusMaintenanceModule = {
                                                                 {{ subproc.procText }}
                                                             </div>
                                                             <div>
-                                                                <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="selectFuzzyMatch(subproc.undoOrigName,subproc.undoChangedName,subproc.changedTid);" label="Select" dense />
+                                                                <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="selectFuzzyMatch(subproc.undoOrigName,subproc.undoChangedName,subproc.changedTid);" label="Select" dense /></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
