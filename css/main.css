@@ -738,7 +738,7 @@ ol.report-caterories li p.heading {
 	padding-left: 20px;
 }
 
-.login-container {
+.login-bar {
 	position: absolute;
 	top: 15px;
 	right: 0;
@@ -751,7 +751,7 @@ ol.report-caterories li p.heading {
 	align-items: center;
 }
 
-.login-container a {
+.login-bar a {
 	color: white;
 }
 

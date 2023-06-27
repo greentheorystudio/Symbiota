@@ -12,7 +12,7 @@
             Species Inventory</span>
         </a>
     </div>
-    <div class="login-container">
+    <div class="login-bar">
         <?php
         include(__DIR__ . '/header-login.php');
         ?>
