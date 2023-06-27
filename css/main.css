@@ -74,6 +74,7 @@ div.navpath {
 }
 .horizontalDropDownButton, .horizontalDropDownIconButton{
 	background-color: #c5050c!important;
+	font-size: 1.1rem;
 	text-decoration: none;
 }
 .horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{

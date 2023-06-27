@@ -91,7 +91,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
             <template v-if="userDisplayName">
                 <q-breadcrumbs-el class="header-username-text">Welcome {{ userDisplayName }}!</q-breadcrumbs-el>
                 <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php" label="My Profile" stretch flat no-wrap></q-btn>
-                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/index.php?submit=logout" label="Logout" stretch flat no-wrap></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" @click="logout();" label="Logout" stretch flat no-wrap></q-btn>
             </template>
             <template v-else>
                 <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>" label="Log In" stretch flat no-wrap></q-btn>
@@ -127,6 +127,13 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                 methods: {
                     handleResize() {
                         this.windowWidth = window.innerWidth;
+                    },
+                    logout() {
+                        const url = profileApiUrl + '?action=logout';
+                        fetch(url)
+                            .then(() => {
+                                window.location.href = CLIENT_ROOT + '/index.php';
+                            })
                     },
                     navbarToggleOff(id) {
                         this.navBarTimeout = setTimeout(() => {
