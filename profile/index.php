@@ -235,6 +235,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                                     else{
                                         this.showDialog('There was an error sending your username to the email address you entered. Please ensure it is entered correctly.');
                                     }
+                                    this.retrieveUsernameWindow = false;
                                 });
                             });
                         }
