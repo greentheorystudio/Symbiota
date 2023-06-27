@@ -50,9 +50,9 @@ class ProfileManager extends Manager{
         $this->conn->query($sql);
     }
 
-    public function authenticate($pwdStr = null): bool
+    public function authenticate($pwdStr = null): int
     {
-        $authStatus = false;
+        $authStatus = 0;
         unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
         if($this->userName){
             if(!$this->authSql){
@@ -81,7 +81,7 @@ class ProfileManager extends Manager{
                         $this->displayName = substr($this->displayName, 0, 10) . '...';
                     }
 
-                    $authStatus = true;
+                    $authStatus = 1;
                     $this->reset();
                     $this->setUserRights($this->uid);
                     $this->setUserParams();
@@ -198,14 +198,17 @@ class ProfileManager extends Manager{
         return $success;
     }
 
-    public function validateUser($userId){
+    public function validateUser($userId): void
+    {
         if($userId){
             $connection = new DbConnection();
             $editCon = $connection->getConnection();
-            $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$userId.')';
-            //echo $sql; Exit;
-            $editCon->query($sql);
-            $editCon->close();
+            if($editCon){
+                $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$userId.')';
+                //echo $sql; Exit;
+                $editCon->query($sql);
+                $editCon->close();
+            }
         }
     }
 
@@ -266,52 +269,51 @@ class ProfileManager extends Manager{
 
     public function resetPassword($uid,$admin): string
     {
-        $returnStr = '';
+        $returnVal = '0';
         $status = false;
         if($uid && ($admin || $GLOBALS['EMAIL_CONFIGURED'])){
             $newPassword = $this->generateNewPassword();
             $connection = new DbConnection();
             $editCon = $connection->getConnection();
-            $sql = '';
-            if($this->encryption === 'password'){
-                $sql = 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($this->conn,$newPassword).'") '.
-                    'WHERE (uid = '.(int)$uid.')';
-            }
-            if($this->encryption === 'sha2'){
-                $sql = 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($this->conn,$newPassword).'", 224) '.
-                    'WHERE (uid = '.(int)$uid.')';
-            }
-            $status = $editCon->query($sql);
-            $editCon->close();
-            if($status){
-                if($admin){
-                    $returnStr = $newPassword;
+            if($editCon){
+                $sql = '';
+                if($this->encryption === 'password'){
+                    $sql = 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($this->conn,$newPassword).'") '.
+                        'WHERE uid = '.(int)$uid.' ';
                 }
-                else{
-                    $emailAddr = '';
-                    $sql = 'SELECT email FROM users '.
-                        'WHERE (uid = '.(int)$uid.')';
-                    $result = $this->conn->query($sql);
-                    if($row = $result->fetch_object()){
-                        $emailAddr = $row->email;
+                if($this->encryption === 'sha2'){
+                    $sql = 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($this->conn,$newPassword).'", 224) '.
+                        'WHERE uid = '.(int)$uid.' ';
+                }
+                $status = $editCon->query($sql);
+                $editCon->close();
+                if($status){
+                    if($admin){
+                        $returnVal = $newPassword;
                     }
-                    $result->free();
+                    else{
+                        $emailAddr = '';
+                        $sql = 'SELECT email FROM users '.
+                            'WHERE uid = '.(int)$uid.' ';
+                        $result = $this->conn->query($sql);
+                        if($row = $result->fetch_object()){
+                            $emailAddr = $row->email;
+                        }
+                        $result->free();
 
-                    $subject = 'Your password';
-                    $bodyStr = 'Your ' .$GLOBALS['DEFAULT_TITLE'].' password has been reset to: ' .$newPassword. ' ';
-                    $bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='".(((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http')."://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."/profile/viewprofile.php'>View Profile</a> link and then click the View Profile tab.";
-                    if($GLOBALS['ADMIN_EMAIL']){
-                        $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                        $subject = 'Your password';
+                        $bodyStr = 'Your ' .$GLOBALS['DEFAULT_TITLE'].' password has been reset to: ' .$newPassword. ' ';
+                        $bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='".(((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http')."://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."/profile/viewprofile.php'>View Profile</a> link and then click the View Profile tab.";
+                        if($GLOBALS['ADMIN_EMAIL']){
+                            $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
+                        }
+                        (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
+                        $returnVal = '1';
                     }
-                    (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
-                    $returnStr = 'Your new password has been emailed to: ' .$emailAddr.' Please check your junk folder if no email appears in your inbox.';
                 }
-            }
-            else{
-                $returnStr = 'Password reset failed';
             }
         }
-        return $returnStr;
+        return $returnVal;
     }
 
     private function generateNewPassword(): string
@@ -476,7 +478,7 @@ class ProfileManager extends Manager{
             $result->free();
             if($email && $code){
                 $confirmationLink = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http')."://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'];
-                $confirmationLink .= '/profile/index.php?action=confirm&uid='.$uid.'&confirmationcode='.$code;
+                $confirmationLink .= '/profile/index.php?uid='.$uid.'&confirmationcode='.$code;
                 $subject = $GLOBALS['DEFAULT_TITLE'].' Confirmation';
                 $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' account has been created. ';
                 $bodyStr .= "<br/><br/><a href='".$confirmationLink."'>Please follow this link to confirm your new account.</a>";
@@ -495,17 +497,14 @@ class ProfileManager extends Manager{
         return $status;
     }
 
-    public function lookupUserName($emailAddr): bool
+    public function lookupUserName($emailAddr): int
     {
-        $status = false;
+        $status = 0;
         if($GLOBALS['EMAIL_CONFIGURED']){
-            if(!$this->validateEmailAddress($emailAddr)) {
-                return false;
-            }
             $loginStr = '';
             $sql = 'SELECT uid, username, concat_ws("; ",lastname,firstname) '.
                 'FROM users '.
-                'WHERE (email = "'.$emailAddr.'")';
+                'WHERE email = "'.$emailAddr.'" ';
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
                 if($loginStr) {
@@ -522,14 +521,8 @@ class ProfileManager extends Manager{
                 }
                 $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
                 if($mailerResult === 'Sent'){
-                    $status = true;
+                    $status = 1;
                 }
-                else{
-                    $this->errorStr = $mailerResult;
-                }
-            }
-            else{
-                $this->errorStr = 'There are no users registered to email address: '.$emailAddr;
             }
         }
         return $status;
@@ -548,7 +541,7 @@ class ProfileManager extends Manager{
                 return false;
             }
 
-            $sqlTestLogin = 'SELECT uid FROM users WHERE (username = "'.$newLogin.'") ';
+            $sqlTestLogin = 'SELECT uid FROM users WHERE username = "'.$newLogin.'" ';
             $rs = $this->conn->query($sqlTestLogin);
             if($rs->num_rows){
                 $this->errorStr = 'Login '.$newLogin.' is already being used by another user. Please try a new login.';
@@ -565,7 +558,7 @@ class ProfileManager extends Manager{
                 if($status){
                     $sql = 'UPDATE users '.
                         'SET username = "'.$newLogin.'" '.
-                        'WHERE (uid = '.$this->uid.') AND (username = "'.$this->userName.'")';
+                        'WHERE uid = '.$this->uid.' AND username = "'.$this->userName.'" ';
                     //echo $sql;
                     $connection = new DbConnection();
                     $editCon = $connection->getConnection();
@@ -594,7 +587,7 @@ class ProfileManager extends Manager{
         $status = true;
         $sql = 'SELECT email, username '.
             'FROM users '.
-            'WHERE (username = "'.$this->userName.'" OR email = "'.$email.'" )';
+            'WHERE username = "'.$this->userName.'" OR email = "'.$email.'" ';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $status = false;
@@ -656,7 +649,7 @@ class ProfileManager extends Manager{
         $retCnt = 0;
         $sql = 'SELECT count(c.comid) AS reccnt '.
             'FROM omoccurrences AS o INNER JOIN omoccurcomments AS c ON o.occid = c.occid '.
-            'WHERE (o.observeruid = '.$GLOBALS['SYMB_UID'].') AND (o.collid = '.$collid.') AND (c.reviewstatus < 3)';
+            'WHERE o.observeruid = '.$GLOBALS['SYMB_UID'].' AND o.collid = '.$collid.' AND c.reviewstatus < 3 ';
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
                 $retCnt = $r->reccnt;
@@ -833,7 +826,7 @@ class ProfileManager extends Manager{
     {
         if($uId){
             $userrights = array();
-            $sql = 'SELECT role, tablepk FROM userroles WHERE (uid = '.$uId.') ';
+            $sql = 'SELECT role, tablepk FROM userroles WHERE uid = '.$uId.' ';
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
@@ -859,7 +852,7 @@ class ProfileManager extends Manager{
     {
         $this->authSql = 'SELECT u.uid, u.firstname, u.lastname '.
             'FROM users AS u INNER JOIN useraccesstokens AS ut ON u.uid = ut.uid '.
-            'WHERE (u.username = "'.$this->userName.'") AND (ut.token = "'.$this->token.'") ';
+            'WHERE u.username = "'.$this->userName.'" AND ut.token = "'.$this->token.'" ';
     }
 
     public function setToken($token): void
@@ -884,7 +877,7 @@ class ProfileManager extends Manager{
             $this->userName = $GLOBALS['USERNAME'];
         }
         elseif($this->uid){
-            $sql = 'SELECT username FROM users WHERE (uid = '.$this->uid.') ';
+            $sql = 'SELECT username FROM users WHERE uid = '.$this->uid.' ';
             //echo $sql;
             $rs = $this->conn->query($sql);
             if($r = $rs->fetch_object()){
@@ -948,9 +941,6 @@ class ProfileManager extends Manager{
         }
         if (substr($un,-1) === ' ') {
             $status = false;
-        }
-        if(!$status) {
-            $this->errorStr = 'username not valid';
         }
         return $status;
     }
@@ -1106,13 +1096,15 @@ class ProfileManager extends Manager{
         //echo $sql;
         $connection = new DbConnection();
         $editCon = $connection->getConnection();
-        if($editCon->query($sql)){
-            $statusStr = 'Access token cleared!';
+        if($editCon){
+            if($editCon->query($sql)){
+                $statusStr = 'Access token cleared!';
+            }
+            else{
+                $statusStr = 'ERROR clearing access token.';
+            }
+            $editCon->close();
         }
-        else{
-            $statusStr = 'ERROR clearing access token.';
-        }
-        $editCon->close();
         return $statusStr;
     }
 
@@ -1122,78 +1114,77 @@ class ProfileManager extends Manager{
         //echo $sql;
         $connection = new DbConnection();
         $editCon = $connection->getConnection();
-        if($editCon->query($sql)){
-            $statusStr = 'Access tokens cleared!';
+        if($editCon){
+            if($editCon->query($sql)){
+                $statusStr = 'Access tokens cleared!';
+            }
+            else{
+                $statusStr = 'ERROR clearing access tokens.';
+            }
+            $editCon->close();
         }
-        else{
-            $statusStr = 'ERROR clearing access tokens.';
-        }
-        $editCon->close();
         return $statusStr;
     }
 
-    public function validateFromConfirmationEmail($uid,$confirmationCode): string
+    public function validateFromConfirmationEmail($uid,$confirmationCode): int
     {
-        $returnStr = '';
+        $returnVal = 0;
         if($uid && $confirmationCode){
             $sql = 'SELECT guid, validated '.
                 'FROM users '.
-                'WHERE (uid = '.$uid.')';
+                'WHERE uid = '.$uid.' ';
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
-                if((int)$row->validated !== 1){
-                    if($row->guid && $row->guid === $confirmationCode){
-                        $connection = new DbConnection();
-                        $editCon = $connection->getConnection();
-                        $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$uid.')';
+                if((int)$row->validated !== 1 && $row->guid && $row->guid === $confirmationCode) {
+                    $connection = new DbConnection();
+                    $editCon = $connection->getConnection();
+                    if($editCon){
+                        $sql = 'UPDATE users SET validated = 1 WHERE uid = '.$uid.' ';
                         $editCon->query($sql);
                         $editCon->close();
-                        $returnStr = 'Success! Your account has been confirmed. Please login to activate confirmation.';
-                    }
-                    else{
-                        $returnStr = 'There was a problem confirming your account. ';
-                        $returnStr .= '<a href="viewprofile.php">Please follow this link to your profile page and click the Resend Confirmation Email button.</a> ';
-                        if($GLOBALS['ADMIN_EMAIL']){
-                            $returnStr .= 'If you continue to have trouble confirming your account, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
-                        }
+                        $returnVal = 1;
                     }
                 }
             }
             $result->free();
         }
-        return $returnStr;
+        return $returnVal;
     }
 
     public function validateAllUnconfirmedUsers(): void
     {
-        $sql = 'SELECT uid FROM users WHERE (validated <> "1")';
+        $sql = 'SELECT uid FROM users WHERE validated <> "1" ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $connection = new DbConnection();
             $editCon = $connection->getConnection();
-            $sql = 'UPDATE users SET validated = 1 WHERE (uid = '.$r->uid.')';
-            $editCon->query($sql);
-            $editCon->close();
+            if($editCon){
+                $sql = 'UPDATE users SET validated = 1 WHERE uid = '.$r->uid.' ';
+                $editCon->query($sql);
+                $editCon->close();
+            }
         }
         $rs->free();
     }
 
     public function deleteAllUnconfirmedUsers(): void
     {
-        $sql = 'SELECT uid FROM users WHERE (validated <> "1")';
+        $sql = 'SELECT uid FROM users WHERE validated <> "1" ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $connection = new DbConnection();
             $editCon = $connection->getConnection();
-            $sql = 'DELETE FROM useraccesstokens WHERE (uid = '.$r->uid.')';
-            $editCon->query($sql);
-            $sql = 'DELETE FROM userroles WHERE (uid = '.$r->uid.')';
-            $editCon->query($sql);
-            $sql = 'DELETE FROM usertaxonomy WHERE (uid = '.$r->uid.')';
-            $editCon->query($sql);
-            $sql = 'DELETE FROM users WHERE (uid = '.$r->uid.')';
-            $editCon->query($sql);
-            $editCon->close();
+            if($editCon){
+                $sql = 'DELETE FROM useraccesstokens WHERE uid = '.$r->uid.' ';
+                $editCon->query($sql);
+                $sql = 'DELETE FROM userroles WHERE uid = '.$r->uid.' ';
+                $editCon->query($sql);
+                $sql = 'DELETE FROM usertaxonomy WHERE uid = '.$r->uid.' ';
+                $editCon->query($sql);
+                $sql = 'DELETE FROM users WHERE uid = '.$r->uid.' ';
+                $editCon->query($sql);
+                $editCon->close();
+            }
         }
         $rs->free();
     }

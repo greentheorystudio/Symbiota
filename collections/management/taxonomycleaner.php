@@ -66,10 +66,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         <taxa-kingdom-selector :disable="uppercontrolsdisabled" :selected-kingdom="selectedKingdom" label="Target Kingdom" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
                     </div>
                     <div class="q-mt-xs">
-                        <q-input outlined v-model="processingStartIndex" label="Processing Start Index" style="width:250px;" :readonly="uppercontrolsdisabled" dense />
+                        <q-input outlined v-model="processingStartIndex" label="Processing Start Index" style="width:250px;" :readonly="uppercontrolsdisabled" dense /></q-input>
                     </div>
                     <div class="q-mt-xs">
-                        <q-input type="number" outlined v-model="processingLimit" label="Processing Batch Limit" style="width:175px;" @update:model-value="processingBatchLimitChange" :readonly="uppercontrolsdisabled" dense />
+                        <q-input type="number" outlined v-model="processingLimit" label="Processing Batch Limit" style="width:175px;" @update:model-value="processingBatchLimitChange" :readonly="uppercontrolsdisabled" dense /></q-input>
                     </div>
                 </div>
                 <div class="text-weight-bold">
@@ -98,10 +98,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             </div>
                                             <div class="processor-tool-button-container">
                                                 <div>
-                                                    <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                                    <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense /></q-btn>
                                                 </div>
                                                 <div>
-                                                    <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                    <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                                 </div>
                                             </div>
                                         </div>
@@ -119,10 +119,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             </div>
                                             <div class="processor-tool-button-container">
                                                 <div>
-                                                    <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense />
+                                                    <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense /></q-btn>
                                                 </div>
                                                 <div>
-                                                    <q-btn v-if="currentProcess === 'cleanScinameAuthor'" :disabled="processCancelling && currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                    <q-btn v-if="currentProcess === 'cleanScinameAuthor'" :disabled="processCancelling && currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                                 </div>
                                             </div>
                                         </div>
@@ -132,7 +132,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </div>
                                         Set occurrence record linkages to the Taxonomic Thesaurus.
                                         <div class="q-mt-xs">
-                                            <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="uppercontrolsdisabled" />
+                                            <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="uppercontrolsdisabled" /></q-checkbox>
                                         </div>
                                         <div class="processor-tool-control-container">
                                             <div class="processor-cancel-message-container text-negative text-bold">
@@ -142,10 +142,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             </div>
                                             <div class="processor-tool-button-container">
                                                 <div>
-                                                    <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense />
+                                                    <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense /></q-btn>
                                                 </div>
                                                 <div>
-                                                    <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" :disabled="processCancelling && currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                    <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" :disabled="processCancelling && currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                                 </div>
                                             </div>
                                         </div>
@@ -162,10 +162,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             </div>
                                             <div class="processor-tool-button-container">
                                                 <div>
-                                                    <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense />
+                                                    <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense /></q-btn>
                                                 </div>
                                                 <div>
-                                                    <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" :disabled="processCancelling && currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                    <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" :disabled="processCancelling && currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                                 </div>
                                             </div>
                                         </div>
@@ -195,10 +195,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             </div>
                                             <div class="processor-tool-button-container">
                                                 <div>
-                                                    <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense />
+                                                    <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense /></q-btn>
                                                 </div>
                                                 <div>
-                                                    <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" :disabled="processCancelling && currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                    <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" :disabled="processCancelling && currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                                 </div>
                                             </div>
                                         </div>
@@ -209,7 +209,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
                                         with taxa currently in the Taxonomic Thesaurus.
                                         <div class="q-mt-xs">
-                                            <q-input type="number" outlined v-model="levValue" style="width:225px;" label="Character difference tolerance" :readonly="uppercontrolsdisabled" dense />
+                                            <q-input type="number" outlined v-model="levValue" style="width:225px;" label="Character difference tolerance" :readonly="uppercontrolsdisabled" dense /></q-input>
                                         </div>
                                         <div class="processor-tool-control-container">
                                             <div class="processor-cancel-message-container text-negative text-bold">
@@ -219,10 +219,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             </div>
                                             <div class="processor-tool-button-container">
                                                 <div>
-                                                    <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense />
+                                                    <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense /></q-btn>
                                                 </div>
                                                 <div>
-                                                    <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                    <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
                                                 </div>
                                             </div>
                                         </div>
@@ -266,7 +266,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                                 {{subproc.resultText}}
                                                             </div>
                                                             <div v-if="subproc.result === 'success' && subproc.type === 'undo'" class="q-ml-sm text-weight-bold text-green-9">
-                                                                {{subproc.resultText}} <q-btn :disabled="undoButtonsDisabled" class="q-ml-md text-grey-9" color="warning" size="sm" @click="undoChangedSciname(proc.id,subproc.undoOrigName,subproc.undoChangedName);" label="Undo" dense />
+                                                                {{subproc.resultText}} <q-btn :disabled="undoButtonsDisabled" class="q-ml-md text-grey-9" color="warning" size="sm" @click="undoChangedSciname(proc.id,subproc.undoOrigName,subproc.undoChangedName);" label="Undo" dense /></q-btn>
                                                             </div>
                                                             <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
                                                                 {{subproc.resultText}}
@@ -278,7 +278,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                             <div class="q-mx-xl q-my-sm fuzzy-match-row">
                                                                 <div></div>
                                                                 <div>
-                                                                    <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense />
+                                                                    <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense /></q-btn>
                                                                 </div>
                                                             </div>
                                                         </template>
@@ -288,7 +288,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                                     {{ subproc.procText }}
                                                                 </div>
                                                                 <div>
-                                                                    <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="selectFuzzyMatch(subproc.undoOrigName,subproc.undoChangedName,subproc.changedTid);" label="Select" dense />
+                                                                    <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="selectFuzzyMatch(subproc.undoOrigName,subproc.undoChangedName,subproc.changedTid);" label="Select" dense /></q-btn>
                                                                 </div>
                                                             </div>
                                                         </template>
