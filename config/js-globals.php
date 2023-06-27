@@ -33,6 +33,7 @@
 
     const http = new XMLHttpRequest();
     let abortController;
+    const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
     const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
