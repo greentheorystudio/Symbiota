@@ -365,17 +365,9 @@ h5{
 	line-height: 18px;
 }
 
-#top_navbar{
-	clear:both;
-	background-color: #173753;
-	padding: 0;
-	min-width: 900px;
-}
 .nav-bar-container {
 	width: 100%;
 	background-color: #173753;
-	display: flex;
-	justify-content: center;
 }
 #right_navbarlinks{
 	clear:both;
@@ -383,8 +375,11 @@ h5{
 	color:#000000;
 	margin-top:9px;
 }
-#hor_dropdown{
-	list-style:none;
+#topNavigation {
+	clear:both;
+	background-color: #173753;
+}
+.horizontalDropDown{
 	font-size: 11pt;
 	width:auto;
 	color: white;
@@ -393,92 +388,30 @@ h5{
 	background-color: #173753;
 	margin: 0;
 	padding: 0;
-	height: 64px;
+	height: 72px;
 }
-#hor_dropdown li{
-	float:left;
-	position:relative;
-	padding:0;
-	margin:0;
-}
-#hor_dropdown a{
-	display:block;
+.horizontalDropDown a{
 	color: white;
 	text-decoration: none;
-	padding: 25px 18px;
 }
-#hor_dropdown a:hover{
-	background-color: #FDBA35;
-	color: black;
-	padding: 25px 18px;
-}
-/* Submenu */
-#hor_dropdown ul {
-	list-style:none;
-	position:absolute;
-	left:0;
-	top: 67px;
-	padding:0;
-	z-index:1000;
-	background-color: #173753;
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-}
-#hor_dropdown ul li{
-	float:none;
-}
-#hor_dropdown ul a{
-	white-space:nowrap;
-	padding: 10px 15px;
-	text-decoration:none;
-	text-indent:8px;
-}
-#hor_dropdown li:hover ul {
-	visibility: visible;
-	opacity: 1;
-}
-#hor_dropdown li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 10px 15px;
-	background-color: #173753;
+.horizontalDropDownButton, .horizontalDropDownIconButton{
+	background-color: #173753!important;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-size: 11pt;
+	font-weight: normal;
 	color: white;
-	z-index:1000;
 }
-#hor_dropdown li:hover ul li a:hover {
-	background-color: #FDBA35;
+.horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
+	background-color: #FDBA35!important;
+	text-decoration: none;
 	color: black;
 }
-/* Submenu to right */
-#hor_dropdown li ul li ul {
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
+.horizontalDropDownButton i {
+	display: none;
 }
-#hor_dropdown li ul li:hover ul {
-	left:100%;
-	top: 0;
-	visibility: visible;
-	opacity: 1;
-	padding:0;
-	z-index:1000;
-}
-#hor_dropdown li ul li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 10px 15px;
-	background-image: none;
-	background-color: #173753;
-	z-index:1000;
-}
-#hor_dropdown li ul li:hover ul li a:hover {
-	background-color: #FDBA35;
-	color: black;
+.header-username-text {
+	margin-right: 15px;
 }
 
 .as {
