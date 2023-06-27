@@ -127,13 +127,6 @@
                 handleResize() {
                     this.windowWidth = window.innerWidth;
                 },
-                logout() {
-                    const url = profileApiUrl + '?action=logout';
-                    fetch(url)
-                        .then(() => {
-                            window.location.href = CLIENT_ROOT + '/index.php';
-                        })
-                },
                 navbarToggleOff(id) {
                     this.navBarTimeout = setTimeout(() => {
                         this.navBarToggle[Number(id)] = false;

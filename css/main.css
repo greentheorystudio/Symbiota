@@ -282,8 +282,7 @@ body{
 }
 
 #innertext{
-	width: 70%;
-	min-height:200px;
+	width: 80%;
 	margin: 0 auto;
 	padding: 10px 15px 15px;
 	font-family: 'Fira Sans';
@@ -742,24 +741,24 @@ ol.report-caterories li p.heading {
 	position: absolute;
 	top: 15px;
 	right: 0;
-	background-color: rgba(0, 0, 0, 0.5);
 	width: 500px;
-	height: 35px;
-	padding-left: 10px;
+}
+
+.login-bar-wrapper {
+	background-color: rgba(0, 0, 0, 0.5);
+	padding-left: 20px;
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-}
-
-.login-bar a {
-	color: white;
+	gap: 20px;
+	height: 35px;
 }
 
 .login-link {
 	font-family: 'Fira Sans';
 	font-size: 11pt;
-	color: white;
-	margin: 10px;
+	padding: 0;
+	margin: 0;
 }
 
 .nav-bar-container {

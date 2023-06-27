@@ -1,38 +1,38 @@
 <?php
 include_once(__DIR__ . '/classes/Sanitizer.php');
 ?>
-<div>
-    <a class="login-link" href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/contact.php'>Contact Us</a>
+<div id="loginBar" class="login-bar-wrapper">
+    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/contact.php" class="text-white login-link">Contact Us</a>
+    <template v-if="userDisplayName">
+        <span class="text-white login-link">Welcome {{ userDisplayName }}!</span>
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php" class="text-white login-link">My Profile</a>
+        <a class="text-white cursor-pointer login-link" @click="logout();">Logout</a>
+    </template>
+    <template v-else>
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>" class="text-white login-link">Log In</a>
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php" class="text-white login-link">New Account</a>
+    </template>
+    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" class="text-white login-link">Sitemap</a>
 </div>
-<?php
-if($GLOBALS['USER_DISPLAY_NAME']){
-    ?>
-    <div class="login-link">
-        Welcome <?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>!
-    </div>
-    <div>
-        <a class="login-link" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php">My Profile</a>
-    </div>
-    <div>
-        <a class="login-link" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/index.php?submit=logout">Logout</a>
-    </div>
-    <?php
-}
-else{
-    ?>
-    <div>
-        <a class="login-link" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>">
-            Log In
-        </a>
-    </div>
-    <div>
-        <a class="login-link" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php">
-            New Account
-        </a>
-    </div>
-    <?php
-}
-?>
-<div>
-    <a class="login-link" href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php'>Sitemap</a>
-</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const loginBar = Vue.createApp({
+            data() {
+                return {
+                    userDisplayName: USER_DISPLAY_NAME
+                }
+            },
+            methods: {
+                logout() {
+                    const url = profileApiUrl + '?action=logout';
+                    fetch(url)
+                        .then(() => {
+                            window.location.href = CLIENT_ROOT + '/index.php';
+                        })
+                }
+            }
+        });
+        loginBar.use(Quasar, { config: {} });
+        loginBar.mount('#loginBar');
+    });
+</script>
