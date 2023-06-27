@@ -28,9 +28,6 @@ elseif(array_key_exists('refurl',$_REQUEST)){
             .login-container {
                 width: 30%;
             }
-            .login-section {
-                background-color: #ffffcc;
-            }
         </style>
     </head>
     <body>
@@ -40,10 +37,10 @@ elseif(array_key_exists('refurl',$_REQUEST)){
         <div id="innertext">
             <div class="row justify-center q-mt-lg q-mb-xl">
                 <q-card class="login-container">
-                    <q-card-section class="login-section column">
+                    <q-card-section class="bg-indigo-1 column">
                         <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense /></q-input>
                         <q-input outlined v-model="password" type="password" label="Password" bg-color="white" class="q-mb-sm" dense /></q-input>
-                        <q-checkbox v-model="rememberMe" label="Remember me on this computer" bg-color="white" class="q-mb-sm" /></q-checkbox>
+                        <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm" /></q-checkbox>
                         <div class="row justify-end q-pr-md">
                             <q-btn :loading="loading" color="secondary" @click="processLogin();" label="Login" dense />
                         </div>
