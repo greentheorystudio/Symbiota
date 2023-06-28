@@ -60,9 +60,6 @@
                     <taxa-profile-not-found :taxon-value="taxonValue" :fuzzy-matches="fuzzyMatches"></taxa-profile-not-found>
                 </template>
             </template>
-            <q-dialog v-model="loadingDialog">
-                <q-spinner color="green" size="10em" :thickness="5">
-            </q-dialog>
         `,
         data() {
             return {
@@ -76,7 +73,6 @@
                 isEditor: isEditor,
                 fuzzyMatches: Vue.ref([]),
                 loading: Vue.ref(true),
-                loadingDialog: Vue.ref(false),
                 parentLink: Vue.ref(null),
                 subtaxaArr: Vue.ref([]),
                 subtaxaExpansionLabel: Vue.ref(''),
@@ -102,8 +98,27 @@
             'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel,
             'taxa-profile-media-panel': taxaProfileMediaPanel
         },
+        setup () {
+            const $q = useQuasar();
+            return {
+                showLoading(){
+                    $q.loading.show({
+                        spinner: QSpinnerHourglass,
+                        spinnerColor: 'primary',
+                        spinnerSize: 140,
+                        backgroundColor: 'grey',
+                        message: 'Loading...',
+                        messageColor: 'primary',
+                        customClass: 'text-h4'
+                    })
+                },
+                hideLoading(){
+                    $q.loading.hide();
+                }
+            }
+        },
         mounted() {
-            this.loadingDialog = true;
+            this.showLoading();
             this.setTaxon();
         },
         methods: {
@@ -212,7 +227,7 @@
                     body: formData
                 })
                 .then((response) => {
-                    this.loadingDialog = false;
+                    this.hideLoading();
                     if(response.status === 200){
                         response.json().then((resObj) => {
                             this.loading = false;

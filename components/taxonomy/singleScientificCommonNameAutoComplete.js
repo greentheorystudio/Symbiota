@@ -46,23 +46,27 @@ const singleScientificCommonNameAutoComplete = {
     },
     template: `
         <q-select v-model="sciname" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="tid" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
-        <q-dialog v-model="warning">
-            <q-card style="width: 300px">
-                <q-card-section>
-                    Name was not found in the Taxonomic Thesaurus.
-                </q-card-section>
-                <q-card-actions align="right" class="bg-white text-teal">
-                    <q-btn flat label="OK" v-close-popup></q-btn>
-                </q-card-actions>
-            </q-card>
-        </q-dialog>
     `,
     data() {
         return {
-            warning: Vue.ref(false),
             inputAllowed: Vue.ref(true),
             clearInput: Vue.ref(false),
             autocompleteOptions: Vue.ref([])
+        }
+    },
+    setup() {
+        const $q = useQuasar();
+        return {
+            showNotification(type, text){
+                $q.notify({
+                    type: type,
+                    icon: null,
+                    message: text,
+                    multiLine: true,
+                    position: 'top',
+                    timeout: 5000
+                });
+            }
         }
     },
     methods: {
@@ -134,7 +138,7 @@ const singleScientificCommonNameAutoComplete = {
                     this.processChange({tid: null,label:val.target.value,name:val.target.value});
                 }
                 else{
-                    this.warning = true;
+                    this.showNotification('negative','That name was not found in the Taxonomic Thesaurus.');
                 }
             }
             this.clearInput = false;
@@ -153,7 +157,7 @@ const singleScientificCommonNameAutoComplete = {
                     done({tid: null,label:val,name:val}, 'add');
                 }
                 else{
-                    this.warning = true;
+                    this.showNotification('negative','That name was not found in the Taxonomic Thesaurus.');
                 }
             }
         }
