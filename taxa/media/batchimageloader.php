@@ -128,7 +128,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </q-item-label>
                                     </q-item-section>
                                     <q-item-section top class="col-2 gt-sm"></q-item-section>
-                                    <q-item-section v-if="file.__img" class="thumbnail-section" >
+                                    <q-item-section v-if="file.__img" class="thumbnail-section">
                                         <q-img :src="file.__img.src" spinner-color="white"></q-img>
                                     </q-item-section>
                                     <q-item-section>
@@ -145,7 +145,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             <?php
         }
         else{
-            echo '<div style="font-weight:bold;">You do not have permissions to access this tool</div>';
+            echo '<div class="text-weight-bold">You do not have permissions to access this tool</div>';
         }
         ?>
     </div>

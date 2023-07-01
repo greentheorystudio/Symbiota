@@ -79,7 +79,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             <?php
         }
         else{
-            echo '<div style="font-weight:bold;">You do not have permissions to access this tool</div>';
+            echo '<div class="text-weight-bold">You do not have permissions to access this tool</div>';
         }
         ?>
     </div>

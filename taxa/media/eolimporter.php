@@ -62,14 +62,14 @@ include(__DIR__ . '/../../header.php');
                                         <q-option-group :options="descriptionSaveOptions" type="radio" v-model="selectedDescSaveMethod" :disable="loading" dense />
                                     </div>
                                 </template>
-                                <div class="q-my-sm">
-                                    <q-input type="number" outlined v-model="maximumRecordsPerTaxon" style="width:225px;" label="Maximum records per taxon" hint="(Maximum 25)" min="1" max="25" :readonly="loading" @update:model-value="validateMaximumRecordsValue" dense /></q-input>
+                                <div class="row q-my-sm">
+                                    <q-input type="number" outlined v-model="maximumRecordsPerTaxon" class="col-6" label="Maximum records per taxon" hint="(Maximum 25)" min="1" max="25" :readonly="loading" @update:model-value="validateMaximumRecordsValue" dense />
                                 </div>
                                 <div class="q-my-sm">
                                     <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
                                 </div>
                                 <div class="q-my-sm">
-                                    <q-checkbox v-model="importMissingOnly" label="Import only for taxa missing selected media type" :disable="loading" /></q-checkbox>
+                                    <q-checkbox v-model="importMissingOnly" label="Import only for taxa missing selected media type" :disable="loading" />
                                 </div>
                             </q-card-section>
                         </q-card>
@@ -81,10 +81,10 @@ include(__DIR__ . '/../../header.php');
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start" dense /></q-btn>
+                                    <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start" dense />
                                 </div>
                                 <div>
-                                    <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
+                                    <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense />
                                 </div>
                             </div>
                         </div>
@@ -151,7 +151,7 @@ include(__DIR__ . '/../../header.php');
         <?php
     }
     else{
-        echo '<div style="font-weight:bold;">You do not have permissions to access this tool</div>';
+        echo '<div class="text-weight-bold">You do not have permissions to access this tool</div>';
     }
     ?>
 </div>

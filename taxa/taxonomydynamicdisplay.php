@@ -60,11 +60,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     <single-scientific-common-name-auto-complete :sciname="targetTaxon" :disable="loading" label="Find a taxon" limit-to-thesaurus="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
                 </div>
                 <div class="button-div">
-                    <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense /></q-btn>
+                    <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense />
                 </div>
                 <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                 <div class="q-my-sm">
-                    <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" /></q-checkbox>
+                    <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" />
                 </div>
             </q-card-section>
         </q-card>
