@@ -38,4 +38,8 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'processConfirmationCode' && array_key_exists('uid',$_POST) && array_key_exists('confirmationCode',$_POST)){
         echo $profileHandler->validateFromConfirmationEmail($_POST['uid'],$_POST['confirmationCode']);
     }
+    elseif($action === 'validatePermission' && array_key_exists('permission',$_POST)){
+        $key = array_key_exists('key',$_POST) ? (int)$_POST['key'] : null;
+        echo $profileHandler->validatePermission($_POST['permission'],$key);
+    }
 }

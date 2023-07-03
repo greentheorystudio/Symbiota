@@ -106,10 +106,10 @@ elseif(array_key_exists('refurl',$_REQUEST)){
             const loginModule = Vue.createApp({
                 data() {
                     return {
-                        adminEmail: Vue.ref('<?php echo $GLOBALS['ADMIN_EMAIL']; ?>'),
+                        adminEmail: ADMIN_EMAIL,
                         confirmationCode: Vue.ref('<?php echo $confirmationCode; ?>'),
                         email: Vue.ref(null),
-                        emailConfigured: Vue.ref(<?php echo ($GLOBALS['EMAIL_CONFIGURED'] ? 'true' : 'false'); ?>),
+                        emailConfigured: EMAIL_CONFIGURED,
                         loading: Vue.ref(false),
                         password: Vue.ref(null),
                         refUrl: Vue.ref('<?php echo $refUrl; ?>'),

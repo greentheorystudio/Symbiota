@@ -1188,4 +1188,16 @@ class ProfileManager extends Manager{
         }
         $rs->free();
     }
+
+    public function validatePermission($permission, $key): int
+    {
+        $returnVal = 0;
+        if($GLOBALS['IS_ADMIN']){
+            $returnVal = 1;
+        }
+        else if(array_key_exists($permission,$GLOBALS['USER_RIGHTS']) && (!$key || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permission], true))){
+            $returnVal = 1;
+        }
+        return $returnVal;
+    }
 }

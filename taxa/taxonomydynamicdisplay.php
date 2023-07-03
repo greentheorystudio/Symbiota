@@ -2,17 +2,12 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
-
-$isEditor = false;
-if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
-    $isEditor = true;
-}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
-<?php
-include_once(__DIR__ . '/../config/header-includes.php');
-?>
+    <?php
+    include_once(__DIR__ . '/../config/header-includes.php');
+    ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Explorer</title>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -41,9 +36,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
             }
         </style>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            const isEditor = Vue.ref(<?php echo ($isEditor?'true':'false'); ?>);
-        </script>
     </head>
     <body>
     <?php
@@ -93,7 +85,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             data() {
                 return {
                     displayAuthors: Vue.ref(false),
-                    isEditor: isEditor,
+                    isEditor: Vue.ref(false),
                     loading: Vue.ref(false),
                     taxaNodes: Vue.ref([]),
                     selectedTid: Vue.ref(null),
@@ -114,6 +106,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 }
             },
             mounted() {
+                this.setEditor();
                 this.setKingdomNodes();
             },
             methods: {
@@ -197,6 +190,20 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     else{
                         this.loading = false;
                     }
+                },
+                setEditor(){
+                    const formData = new FormData();
+                    formData.append('permission', 'Taxonomy');
+                    formData.append('action', 'validatePermission');
+                    fetch(profileApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        response.text().then((res) => {
+                            this.isEditor = Number(res) === 1;
+                        });
+                    });
                 },
                 setKingdomNodes(){
                     const formData = new FormData();
