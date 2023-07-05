@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class GlossaryManager{
 
@@ -1330,6 +1331,29 @@ class GlossaryManager{
 			}
 		}
 	}
+    public function getTaxonGlossary($tid): array
+    {
+        $retArr = array();
+        if($tid){
+            $tidArr = (new TaxonomyUtilities)->getParentTids($tid);
+            $tidArr[] = $tid;
+            $sql = 'SELECT g.glossid, g.term, g.definition '.
+                'FROM glossary AS g LEFT JOIN glossarytaxalink AS gt ON g.glossid = gt.glossid '.
+                'WHERE gt.tid IN('.implode(',', $tidArr).') '.
+                'ORDER BY g.term ';
+            //echo $sql; exit;
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $glossArr = array();
+                $glossArr['id'] = $r->glossid;
+                $glossArr['term'] = $r->term;
+                $glossArr['definition'] = $r->definition;
+                $retArr[] = $glossArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
 	
 	private function getTranslationGroup($id): array
 	{

@@ -1,5 +1,4 @@
 <?php
-
 class Utilities {
 
 	public function getContentString($url): array

@@ -73,7 +73,7 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 	}
 
 	function openSpatialInputWindow(type) {
-        let mapWindow = open("../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+        let mapWindow = open("../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
         if (mapWindow.opener == null) {
             mapWindow.opener = self;
         }
@@ -246,13 +246,19 @@ if(!$clid){
 					</div>
 				</fieldset>
 			</div>
-			<div style="clear:both;margin-top:15px;">
-				<b>Access</b><br/>
-				<select name="access">
-					<option value="private">Private</option>
-					<option value="public" <?php echo (($clArray && $clArray['access'] === 'public') ? 'selected' : ''); ?>>Public</option>
-				</select>
-			</div>
+			<?php
+            if($GLOBALS['PUBLIC_CHECKLIST']){
+                ?>
+                <div style="clear:both;margin-top:15px;">
+                    <b>Access</b><br/>
+                    <select name="access">
+                        <option value="private">Private</option>
+                        <option value="public" <?php echo (($clArray && $clArray['access'] === 'public') ? 'selected' : ''); ?>>Public</option>
+                    </select>
+                </div>
+                <?php
+            }
+            ?>
 			<div style="clear:both;float:left;margin-top:15px;">
 				<?php
 				if($clid){

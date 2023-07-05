@@ -1493,7 +1493,7 @@ class OccurrenceEditorManager {
         $fn = Sanitizer::cleanInStr($this->conn,$fieldName);
         $ov = Sanitizer::cleanInStr($this->conn,$oldValue);
 
-        $sql = 'SELECT COUNT(o2.occid) AS retcnt '.
+        $sql = 'SELECT COUNT(DISTINCT o2.occid) AS retcnt '.
             'FROM omoccurrences AS o2 ';
         $sql = $this->addTableJoins($sql);
         $sql .= $this->getBatchUpdateWhere($fn,$ov,$buMatch);

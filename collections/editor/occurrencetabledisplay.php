@@ -197,7 +197,11 @@ else{
 	header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Edit Existing Record</title>
     <style>
@@ -210,8 +214,7 @@ else{
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
+    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;border:0;">
 	<div>
@@ -283,9 +286,7 @@ else{
 										<option value="">----------------------</option>
 										<?php
 										foreach($headerMapBase as $k => $v){
-											if($k !== 'scientificnameauthorship' && $k !== 'sciname' && $k !== 'verbatimsciname'){
-												echo '<option value="'.$k.'" '.($buFieldName === $k?'SELECTED':'').'>'.$v.'</option>';
-											}
+                                            echo '<option value="'.$k.'" '.($buFieldName === $k?'SELECTED':'').'>'.$v.'</option>';
 										}
 										?>
 									</select>
@@ -431,5 +432,8 @@ else{
         }
 		?>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>

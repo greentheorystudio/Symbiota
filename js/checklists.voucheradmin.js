@@ -1,9 +1,4 @@
-$('html').hide();
-$(document).ready(function() {
-	$('html').show();
-});
-
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$('#tabs').tabs({ 
 		active: tabIndex,
 		beforeLoad: function( event, ui ) {

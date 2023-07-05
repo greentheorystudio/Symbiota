@@ -3,23 +3,21 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TPEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPDescEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
+include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 
 $tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
-$lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 
 $tImageEditor = new TPImageEditorManager();
 $tDescEditor = new TPDescEditorManager();
 $tEditor = new TPEditorManager();
+$taxUtilities = new TaxonomyUtilities();
 
 $tid = $tEditor->setTid($tid?:$taxon);
-if($lang) {
-    $tEditor->setLanguage($lang);
-}
 
 $statusStr = '';
 $editable = false;
@@ -30,8 +28,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS
 if($editable && $action){
 	if($action === 'Submit Common Name Edits'){
  		$editVernArr = array();
-		$editVernArr['vid'] = $_REQUEST['vid'];
- 		if($_REQUEST['vernacularname']) {
+		if($_REQUEST['vernacularname']) {
             $editVernArr['vernacularname'] = str_replace('"', '-', $_REQUEST['vernacularname']);
         }
 		if($_REQUEST['language']) {
@@ -42,8 +39,9 @@ if($editable && $action){
 		if($_REQUEST['sortsequence']) {
             $editVernArr['sortsequence'] = $_REQUEST['sortsequence'];
         }
-		$editVernArr['username'] = $GLOBALS['PARAMS_ARR']['un'];
-		$statusStr = $tEditor->editVernacular($editVernArr);
+		if(!$taxUtilities->editVernacular($editVernArr,(int)$_REQUEST['vid'])){
+            $statusStr = 'ERROR editing taxon.';
+        }
 	}
 	elseif($action === 'Add Common Name'){
 		$addVernArr = array();
@@ -110,14 +108,17 @@ if($editable && $action){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxon Editor: ' .$tEditor->getSciName(); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link type="text/css" href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/external/tiny_mce/tiny_mce.js"></script>
@@ -130,7 +131,7 @@ if($editable && $action){
             valid_elements: "*[*]"
         });
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			$("#sninput").autocomplete({
 				source: function( request, response ) {
 					$.getJSON( "../../api/taxa/autofillsciname.php", { "term": request.term, "hideauth": 1 }, response );
@@ -202,10 +203,10 @@ if($editable && $action){
 				<div id="tabs" style="margin:10px;">
 					<ul>
 						<li><a href="#commontab"><span>Synonyms / Vernaculars</span></a></li>
-				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&lang='.$lang; ?>"><span>Images</span></a></li>
-				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&lang='.$lang.'&cat=imagequicksort'; ?>"><span>Image Sort</span></a></li>
-				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&lang='.$lang.'&cat=imageadd'; ?>"><span>Add Image</span></a></li>
-				        <li><a href="tpdesceditor.php?tid=<?php echo $tEditor->getTid().'&lang='.$lang.'&action='.$action; ?>"><span>Descriptions</span></a></li>
+				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid(); ?>"><span>Images</span></a></li>
+				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&cat=imagequicksort'; ?>"><span>Image Sort</span></a></li>
+				        <li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&cat=imageadd'; ?>"><span>Add Image</span></a></li>
+				        <li><a href="tpdesceditor.php?tid=<?php echo $tEditor->getTid().'&action='.$action; ?>"><span>Descriptions</span></a></li>
 				    </ul>
 					<div id="commontab">
 						<?php
@@ -370,7 +371,6 @@ if($editable && $action){
 				</div>
 				<form name="gettidform" action="tpeditor.php" method="post" onsubmit="return checkGetTidForm(this);">
 					<input id="sninput" name="taxon" value="<?php echo $taxon; ?>" size="40" />
-					<input type="hidden" name="lang" value="<?php echo $lang; ?>" />
 					<input type="hidden" name="tabindex" value="<?php echo $tabIndex; ?>" />
 					<input type="submit" name="action" value="Edit Taxon" />
 				</form>
@@ -381,6 +381,7 @@ if($editable && $action){
 	</div>
 	<?php
 	include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
 	?>
 </body>
 </html>
