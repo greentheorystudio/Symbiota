@@ -129,16 +129,10 @@ if(is_array($imgObj)){
         if($GLOBALS['IMAGE_DOMAIN']){
             $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
         }
-        else{
-            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
-        }
     }
     if(strpos($imgThumbnail, '/') === 0) {
         if($GLOBALS['IMAGE_DOMAIN']){
             $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
-        }
-        else{
-            $imgThumbnail = $GLOBALS['CLIENT_ROOT'] . $imgThumbnail;
         }
     }
     if($imgObj['occid']){
@@ -177,9 +171,6 @@ if($displayLocality){
         if(strpos($url, '/') === 0) {
             if($GLOBALS['IMAGE_DOMAIN']){
                 $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
-            }
-            else{
-                $url = $GLOBALS['CLIENT_ROOT'] . $url;
             }
         }
         echo '<a href="#" onclick="'.$mAnchor.';return false">';
