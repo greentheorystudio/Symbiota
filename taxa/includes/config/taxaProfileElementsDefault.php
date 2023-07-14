@@ -349,9 +349,6 @@ ob_start();
                         if(isset($GLOBALS['IMAGE_DOMAIN'])){
                             $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                         }
-                        else{
-                            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
-                        }
                     }
                     echo '<img class="taxonimage" src="'.$imgUrl.'" title="'.$subArr['caption'].'" alt="Image of '.$sciNameKey.'" />';
                     echo '</a>';
@@ -372,9 +369,6 @@ ob_start();
                     if(strncmp($mapUrl, '/', 1) === 0) {
                         if(isset($GLOBALS['IMAGE_DOMAIN'])){
                             $mapUrl = $GLOBALS['IMAGE_DOMAIN'] . $mapUrl;
-                        }
-                        else{
-                            $mapUrl = $GLOBALS['CLIENT_ROOT'] . $mapUrl;
                         }
                     }
                     echo '<img src="'.$mapUrl.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
