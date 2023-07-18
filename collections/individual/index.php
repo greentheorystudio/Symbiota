@@ -790,62 +790,6 @@ if($fullWindow){
                                                     }
                                                     ?>
                                                 </div>
-                                                <div style="margin-left:25px;">
-                                                    <?php
-                                                    $photographer = '';
-                                                    if($imgArr['photographer']){
-                                                        $photographer = $imgArr['photographer'];
-                                                    }
-                                                    elseif($imgArr['photographeruid']){
-                                                        $pArr = $indManager->getPhotographerArr();
-                                                        $photographer = $pArr[$imgArr['photographeruid']];
-                                                    }
-                                                    if($photographer){
-                                                        echo '<div><b>Photographer:</b> '.wordwrap($photographer, 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['caption']){
-                                                        echo '<div><b>Caption:</b> '.wordwrap($imgArr['caption'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['locality']){
-                                                        echo '<div><b>Locality:</b> '.wordwrap($imgArr['locality'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['notes']){
-                                                        echo '<div><b>Notes:</b> '.wordwrap($imgArr['notes'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['anatomy']){
-                                                        echo '<div><b>Anatomy:</b> '.wordwrap($imgArr['anatomy'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['dynamicProperties']){
-                                                        echo '<div><b>Dynamic Properties:</b> '.wordwrap($imgArr['dynamicProperties'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['owner']){
-                                                        echo '<div><b>Owner:</b> '.wordwrap($imgArr['owner'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['sourceurl']){
-                                                        $urlDisplay = $imgArr['sourceurl'];
-                                                        if(strlen($urlDisplay) > 57) {
-                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
-                                                        }
-                                                        echo '<div><b>Source URL:</b> <a href="'.$imgArr['sourceurl'].'" target="_blank">'.$urlDisplay.'</a></div>';
-                                                    }
-                                                    if($imgArr['referenceUrl']){
-                                                        $urlDisplay = $imgArr['referenceUrl'];
-                                                        if(strlen($urlDisplay) > 57) {
-                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
-                                                        }
-                                                        echo '<div><b>Reference URL:</b> <a href="'.$imgArr['referenceUrl'].'" target="_blank">'.$urlDisplay.'</a></div>';
-                                                    }
-                                                    if($imgArr['copyright']){
-                                                        echo '<div><b>Copyright:</b> '.wordwrap($imgArr['copyright'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['rights']){
-                                                        echo '<div><b>Rights:</b> '.wordwrap($imgArr['rights'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['accessrights']){
-                                                        echo '<div><b>Access Rights:</b> '.wordwrap($imgArr['accessrights'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    ?>
-                                                </div>
                                             </div>
                                             <?php
                                         }

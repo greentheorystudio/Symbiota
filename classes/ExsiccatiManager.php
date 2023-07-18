@@ -659,7 +659,7 @@ class ExsiccatiManager {
 					'INNER JOIN omexsiccatinumbers en ON ol.omenid = en.omenid ';
 			}
 		}
-		$sql .= 'WHERE (colltype != "General Observations") ';
+		$sql .= 'WHERE (colltype != "HumanObservation") ';
 		if($ometid && is_numeric($ometid)){
 			$sql .= 'AND (en.ometid = '.$ometid.') ';
 		}
@@ -683,7 +683,7 @@ class ExsiccatiManager {
 		if($collArr){
 			$sql ='SELECT DISTINCT c.collid, c.collectionname, c.institutioncode, c.collectioncode '.
 				'FROM omcollections c '.
-				'WHERE (colltype != "Preserved Specimens") '.
+				'WHERE (colltype != "PreservedSpecimen") '.
 				'ORDER BY c.collectionname, c.institutioncode';
 			//echo $sql;
 			$rs = $this->conn->query($sql);

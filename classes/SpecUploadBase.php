@@ -1094,7 +1094,7 @@ class SpecUploadBase extends SpecUpload{
         }
 
         if(!array_key_exists('basisofrecord',$recMap) || !$recMap['basisofrecord']){
-            $recMap['basisofrecord'] = ($this->collMetadataArr['colltype'] === 'Preserved Specimens' ?'PreservedSpecimen':'HumanObservation');
+            $recMap['basisofrecord'] = ($this->collMetadataArr['colltype'] === 'PreservedSpecimen' ?'PreservedSpecimen':'HumanObservation');
         }
 
         $sqlFragments = $this->getSqlFragments($recMap,$this->fieldMap);

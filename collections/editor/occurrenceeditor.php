@@ -59,7 +59,7 @@ if($GLOBALS['SYMB_UID']){
         $collId = $collMap['collid'];
     }
 
-    if($collMap && $collMap['colltype'] === 'General Observations') {
+    if($collMap && $collMap['colltype'] === 'HumanObservation') {
         $isGenObs = 1;
     }
 
@@ -660,9 +660,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     <?php
                                     if($occId && $isEditor){
                                         $pHandler = new ProfileManager();
-                                        $pHandler->setUid($GLOBALS['SYMB_UID']);
-                                        $person = $pHandler->getPerson();
-                                        $userEmail = ($person?$person->getEmail():'');
+                                        $accountInfo = $pHandler->getAccountInfoByUid($GLOBALS['SYMB_UID']);
+                                        $userEmail = (($accountInfo && $accountInfo['email']) ? $accountInfo['email'] : '');
 
                                         $anchorVars = 'occid='.$occId.'&occindex='.$occIndex.'&csmode='.$crowdSourceMode.'&collid='.$collId;
                                         $detVars = 'identby='.urlencode($occArr['identifiedby']).'&dateident='.urlencode($occArr['dateidentified']).
@@ -1325,10 +1324,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                         }
                                                     }
                                                     if(!isset($occArr['basisofrecord']) || !$occArr['basisofrecord']){
-                                                        if($collMap['colltype'] === 'General Observations' || $collMap['colltype'] === 'Observations'){
+                                                        if($collMap['colltype'] === 'HumanObservation'){
                                                             $targetBOR = 'HumanObservation';
                                                         }
-                                                        elseif($collMap['colltype'] === 'Preserved Specimens'){
+                                                        elseif($collMap['colltype'] === 'PreservedSpecimen'){
                                                             $targetBOR = 'PreservedSpecimen';
                                                         }
                                                     }
