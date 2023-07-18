@@ -40,19 +40,19 @@ const taxonomyDataSourceImportUpdateModule = {
                         <q-card class="q-my-sm" flat bordered>
                             <q-card-section>
                                 <div>
-                                    <q-checkbox v-model="updateMetadata" label="Update metadata for taxa" :disable="loading" /></q-checkbox>
+                                    <q-checkbox v-model="updateMetadata" label="Update metadata for taxa" :disable="loading" />
                                 </div>
                                 <div>
-                                    <q-checkbox v-model="updateParent" label="Update parent linkages for taxa" :disable="loading" /></q-checkbox>
+                                    <q-checkbox v-model="updateParent" label="Update parent linkages for taxa" :disable="loading" />
                                 </div>
                                 <div>
-                                    <q-checkbox v-model="updateAcceptance" label="Update acceptance for synonymized taxa" :disable="loading" /></q-checkbox>
+                                    <q-checkbox v-model="updateAcceptance" label="Update acceptance for synonymized taxa" :disable="loading" />
                                 </div>
                                 <div>
-                                    <q-checkbox v-model="importTaxa" label="Import accepted taxa not currently in the Taxonomic Thesaurus" :disable="loading" /></q-checkbox>
+                                    <q-checkbox v-model="importTaxa" label="Import accepted taxa not currently in the Taxonomic Thesaurus" :disable="loading" />
                                 </div>
                                 <div>
-                                    <q-checkbox v-model="importCommonNames" label="Import common names" :disable="loading" /></q-checkbox>
+                                    <q-checkbox v-model="importCommonNames" label="Import common names" :disable="loading" />
                                 </div>
                                 <template v-if="importCommonNames">
                                     <div class="q-my-sm">
@@ -73,10 +73,10 @@ const taxonomyDataSourceImportUpdateModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="loading" color="secondary" @click="initializeImportUpdate();" label="Start" dense /></q-btn>
+                                    <q-btn :loading="loading" color="secondary" @click="initializeImportUpdate();" label="Start" dense />
                                 </div>
                                 <div>
-                                    <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense /></q-btn>
+                                    <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense />
                                 </div>
                             </div>
                         </div>

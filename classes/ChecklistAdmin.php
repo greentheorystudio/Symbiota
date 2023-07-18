@@ -28,7 +28,7 @@ class ChecklistAdmin{
                 'c.abstract, c.authors, c.parentclid, c.notes, ' .
                 'c.latcentroid, c.longcentroid, c.pointradiusmeters, c.access, c.defaultsettings, ' .
                 'c.dynamicsql, c.datelastmodified, c.uid, c.type, c.initialtimestamp, c.footprintwkt ' .
-                'FROM fmchecklists c WHERE (c.clid = ' .$this->clid.')';
+                'FROM fmchecklists AS c WHERE c.clid = ' .$this->clid.' ';
 	 		$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$this->clName = Sanitizer::cleanOutStr($row->name);
@@ -145,7 +145,7 @@ class ChecklistAdmin{
                 }
             }
 		}
-		$sql = 'UPDATE fmchecklists SET '.substr($setSql,2).' WHERE (clid = '.$this->clid.')';
+		$sql = 'UPDATE fmchecklists SET '.substr($setSql,2).' WHERE clid = '.$this->clid.' ';
 		//echo $sql; exit;
 		if($this->conn->query($sql)){
 			if(($postArr['type'] === 'rarespp') && $postArr['locality']) {
@@ -168,16 +168,16 @@ class ChecklistAdmin{
 	public function deleteChecklist($delClid){
 		$statusStr = true;
 		$sql1 = 'SELECT uid FROM userroles '.
-			'WHERE (role = "ClAdmin") AND (tablename = "fmchecklists") AND (tablepk = "'.$delClid.'") AND uid <> '.$GLOBALS['SYMB_UID'];
+			'WHERE role = "ClAdmin" AND tablename = "fmchecklists" AND tablepk = "'.$delClid.'" AND uid <> '.$GLOBALS['SYMB_UID'];
 		$rs1 = $this->conn->query($sql1);
 		if($rs1->num_rows === 0){
-			$sql2 = 'DELETE FROM fmvouchers WHERE (clid = ' .$delClid.')';
+			$sql2 = 'DELETE FROM fmvouchers WHERE clid = ' .$delClid.' ';
 			if($this->conn->query($sql2)){
-				$sql3 = 'DELETE FROM fmchklsttaxalink WHERE (clid = ' .$delClid.')';
+				$sql3 = 'DELETE FROM fmchklsttaxalink WHERE clid = ' .$delClid.' ';
 				if($this->conn->query($sql3)){
-					$sql4 = 'DELETE FROM fmchecklists WHERE (clid = ' .$delClid.')';
+					$sql4 = 'DELETE FROM fmchecklists WHERE clid = ' .$delClid.' ';
 					if($this->conn->query($sql4)){
-						$sql5 = 'DELETE FROM userroles WHERE (role = "ClAdmin") AND (tablename = "fmchecklists") AND (tablepk = "'.$delClid.'")';
+						$sql5 = 'DELETE FROM userroles WHERE role = "ClAdmin" AND tablename = "fmchecklists" AND tablepk = "'.$delClid.'" ';
 						$this->conn->query($sql5);
 					}
 					else{
@@ -203,7 +203,7 @@ class ChecklistAdmin{
     {
 		$retStr = '';
 		if($this->clid){
-			$sql = 'SELECT footprintwkt FROM fmchecklists WHERE (clid = '.$this->clid.')';
+			$sql = 'SELECT footprintwkt FROM fmchecklists WHERE clid = '.$this->clid.' ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$retStr = $r->footprintwkt;
@@ -217,7 +217,7 @@ class ChecklistAdmin{
     {
 		$status = true;
 		if($this->clid){
-			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.Sanitizer::cleanInStr($this->conn,$polygonStr).'"':'NULL').' WHERE (clid = '.$this->clid.')';
+			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.Sanitizer::cleanInStr($this->conn,$polygonStr).'"':'NULL').' WHERE clid = '.$this->clid.' ';
 			if(!$this->conn->query($sql)){
 				echo 'ERROR saving polygon to checklist.';
 				$status = false;
@@ -231,8 +231,8 @@ class ChecklistAdmin{
 		$retArr = array();
 		$targetStr = $this->clid;
 		do{
-			$sql = 'SELECT c.clid, c.name, child.clid as pclid '.
-				'FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clidchild = c.clid '.
+			$sql = 'SELECT c.clid, c.name, child.clid AS pclid '.
+				'FROM fmchklstchildren AS child INNER JOIN fmchecklists AS c ON child.clidchild = c.clid '.
 				'WHERE child.clid IN('.trim($targetStr,',').') '.
 				'ORDER BY c.name ';
 			$rs = $this->conn->query($sql);
@@ -254,8 +254,8 @@ class ChecklistAdmin{
 		$retArr = array();
 		$targetStr = $this->clid;
 		do{
-			$sql = 'SELECT c.clid, c.name, child.clid as pclid '.
-				'FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clid = c.clid '.
+			$sql = 'SELECT c.clid, c.name, child.clid AS pclid '.
+				'FROM fmchklstchildren AS child INNER JOIN fmchecklists AS c ON child.clid = c.clid '.
 				'WHERE child.clidchild IN('.trim($targetStr,',').') ';
 			$rs = $this->conn->query($sql);
 			$targetStr = '';
@@ -363,9 +363,9 @@ class ChecklistAdmin{
 	public function getEditors(): array
     {
 		$editorArr = array();
-		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",u.username,")") as uname '.
-			'FROM userroles ur INNER JOIN users u ON ur.uid = u.uid '.
-			'WHERE (ur.role = "ClAdmin") AND (ur.tablename = "fmchecklists") AND (ur.tablepk = '.$this->clid.') '.
+		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",u.username,")") AS uname '.
+			'FROM userroles AS ur INNER JOIN users AS u ON ur.uid = u.uid '.
+			'WHERE ur.role = "ClAdmin" AND ur.tablename = "fmchecklists" AND ur.tablepk = '.$this->clid.' '.
 			'ORDER BY u.lastname,u.firstname';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
@@ -397,7 +397,7 @@ class ChecklistAdmin{
     {
 		$statusStr = '';
 		$sql = 'DELETE FROM userroles '.
-			'WHERE (uid = '.$u.') AND (role = "ClAdmin") AND (tablename = "fmchecklists") AND (tablepk = '.$this->clid.') ';
+			'WHERE uid = '.$u.' AND role = "ClAdmin" AND tablename = "fmchecklists" AND tablepk = '.$this->clid.' ';
 		if(!$this->conn->query($sql)){
 			$statusStr = 'ERROR: unable to remove editor.';
 		}
@@ -428,7 +428,7 @@ class ChecklistAdmin{
     {
 		$retArr = array();
 		$sql = 'SELECT t.tid, t.sciname '.
-			'FROM fmchklsttaxalink l INNER JOIN taxa t ON l.tid = t.tid '.
+			'FROM fmchklsttaxalink AS l INNER JOIN taxa AS t ON l.tid = t.tid '.
 			'WHERE l.clid = '.$this->clid.' ORDER BY t.sciname';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
@@ -443,7 +443,7 @@ class ChecklistAdmin{
     {
 		$returnArr = array();
 		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",u.username,")") AS uname '.
-			'FROM users u '.
+			'FROM users AS u '.
 			'ORDER BY u.lastname,u.firstname';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
@@ -459,7 +459,7 @@ class ChecklistAdmin{
 		$retArr = array();
 		if($this->clid){
 			$sql = 'SELECT p.pid, p.projname '.
-				'FROM fmprojects p INNER JOIN fmchklstprojlink pl ON p.pid = pl.pid '.
+				'FROM fmprojects AS p INNER JOIN fmchklstprojlink AS pl ON p.pid = pl.pid '.
 				'WHERE pl.clid = '.$this->clid.' ORDER BY p.projname';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
@@ -476,7 +476,7 @@ class ChecklistAdmin{
 		$retArr = array();
 		$runQuery = true;
 		$sql = 'SELECT collid, collectionname '.
-			'FROM omcollections WHERE (colltype = "Observations" OR colltype = "General Observations") ';
+			'FROM omcollections WHERE colltype = "HumanObservation" ';
 		if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS'])){
 			$collInStr = '';
 			foreach($GLOBALS['USER_RIGHTS'] as $k => $v){
@@ -509,7 +509,7 @@ class ChecklistAdmin{
 			$clStr = '';
 			$projStr = '';
 			$sql = 'SELECT role,tablepk FROM userroles '.
-				'WHERE (uid = '.$uid.') AND (role = "ClAdmin" OR role = "ProjAdmin") ';
+				'WHERE uid = '.(int)$uid.' AND (role = "ClAdmin" OR role = "ProjAdmin") ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->role === 'ClAdmin') {
@@ -521,23 +521,31 @@ class ChecklistAdmin{
 			}
 			$rs->free();
 			if($clStr){
-				$sql = 'SELECT clid, name FROM fmchecklists '.
-						'WHERE (clid IN('.substr($clStr,1).')) '.
+                $returnArr['cl'] = array();
+                $sql = 'SELECT clid, name FROM fmchecklists '.
+						'WHERE clid IN('.substr($clStr,1).') '.
 						'ORDER BY name';
 				$rs = $this->conn->query($sql);
 				while($row = $rs->fetch_object()){
-					$returnArr['cl'][$row->clid] = $row->name;
+					$nodeArr = array();
+                    $nodeArr['clid'] = $row->clid;
+                    $nodeArr['name'] = $row->name;
+                    $returnArr['cl'][] = $nodeArr;
 				}
 				$rs->free();
 			}
 			if($projStr){
-				$sql = 'SELECT pid, projname '.
+                $returnArr['proj'] = array();
+                $sql = 'SELECT pid, projname '.
 						'FROM fmprojects '.
-						'WHERE (pid IN('.substr($projStr,1).')) '.
+						'WHERE pid IN('.substr($projStr,1).') '.
 						'ORDER BY projname';
 				$rs = $this->conn->query($sql);
 				while($row = $rs->fetch_object()){
-					$returnArr['proj'][$row->pid] = $row->projname;
+                    $nodeArr = array();
+                    $nodeArr['pid'] = $row->pid;
+                    $nodeArr['projname'] = $row->projname;
+                    $returnArr['proj'][] = $nodeArr;
 				}
 				$rs->free();
 			}

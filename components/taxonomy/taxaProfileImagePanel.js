@@ -18,7 +18,7 @@ const taxaProfileImagePanel = {
                                         <q-img :src="image.url" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
                                     </a>
                                     <div class="photographer">
-                                        <a :href="image.taxonUrl">
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)">
                                             <span class="text-italic">{{ image.sciname }}</span>
                                         </a>
                                     </div>
@@ -36,7 +36,7 @@ const taxaProfileImagePanel = {
                                         <q-img :src="image.url" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
                                     </a>
                                     <div class="photographer">
-                                        <a :href="image.taxonUrl">
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)">
                                             <span class="text-italic">{{ image.sciname }}</span>
                                         </a>
                                     </div>
@@ -47,5 +47,10 @@ const taxaProfileImagePanel = {
                 </template>
             </div>
         </template>
-    `
+    `,
+    data() {
+        return {
+            clientRoot: Vue.ref(CLIENT_ROOT)
+        }
+    }
 };

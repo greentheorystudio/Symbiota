@@ -38,11 +38,11 @@ elseif(array_key_exists('refurl',$_REQUEST)){
             <div class="row justify-center q-mt-lg q-mb-xl">
                 <q-card class="login-container">
                     <q-card-section class="bg-indigo-1 column">
-                        <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense /></q-input>
-                        <q-input outlined v-model="password" type="password" label="Password" bg-color="white" class="q-mb-sm" dense /></q-input>
-                        <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm" /></q-checkbox>
+                        <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense></q-input>
+                        <q-input outlined v-model="password" type="password" label="Password" bg-color="white" class="q-mb-sm" dense></q-input>
+                        <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm"></q-checkbox>
                         <div class="row justify-end q-pr-md">
-                            <q-btn :loading="loading" color="secondary" @click="processLogin();" label="Login" dense />
+                            <q-btn :loading="loading" color="secondary" @click="processLogin();" label="Login" dense></q-btn>
                         </div>
                     </q-card-section>
                     <q-separator size="1px" color="grey-8"></q-separator>
@@ -82,9 +82,9 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                             </template>
                             <template v-else>
                                 <div class="column justify-center q-mb-xs text-bold">
-                                    <q-input outlined v-model="email" label="Your Email" bg-color="white" class="q-mb-sm" dense /></q-input>
+                                    <q-input outlined v-model="email" label="Your Email" bg-color="white" class="q-mb-sm" dense></q-input>
                                     <div class="row justify-center">
-                                        <q-btn :loading="loading" color="secondary" @click="retrieveUsername();" label="Retrieve Username" dense />
+                                        <q-btn :loading="loading" color="secondary" @click="retrieveUsername();" label="Retrieve Username" dense></q-btn>
                                     </div>
                                 </div>
                             </template>
@@ -97,16 +97,6 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                     </q-card-section>
                 </q-card>
             </div>
-            <q-dialog v-model="dialog">
-                <q-card>
-                    <q-card-section>
-                        {{ dialogText }}
-                    </q-card-section>
-                    <q-card-actions align="right" class="bg-white text-teal">
-                        <q-btn flat label="OK" @click="dialogText = null" v-close-popup></q-btn>
-                    </q-card-actions>
-                </q-card>
-            </q-dialog>
         </div>
         <?php
         include(__DIR__ . '/../footer.php');
@@ -116,12 +106,10 @@ elseif(array_key_exists('refurl',$_REQUEST)){
             const loginModule = Vue.createApp({
                 data() {
                     return {
-                        adminEmail: Vue.ref('<?php echo $GLOBALS['ADMIN_EMAIL']; ?>'),
+                        adminEmail: ADMIN_EMAIL,
                         confirmationCode: Vue.ref('<?php echo $confirmationCode; ?>'),
-                        dialog: Vue.ref(false),
-                        dialogText: Vue.ref(null),
                         email: Vue.ref(null),
-                        emailConfigured: Vue.ref(<?php echo ($GLOBALS['EMAIL_CONFIGURED'] ? 'true' : 'false'); ?>),
+                        emailConfigured: EMAIL_CONFIGURED,
                         loading: Vue.ref(false),
                         password: Vue.ref(null),
                         refUrl: Vue.ref('<?php echo $refUrl; ?>'),
@@ -129,6 +117,21 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                         retrieveUsernameWindow: Vue.ref(false),
                         uid: Vue.ref(<?php echo $uid; ?>),
                         username: Vue.ref(null)
+                    }
+                },
+                setup () {
+                    const $q = useQuasar();
+                    return {
+                        showNotification(type, text){
+                            $q.notify({
+                                type: type,
+                                icon: null,
+                                message: text,
+                                multiLine: true,
+                                position: 'top',
+                                timeout: 5000
+                            });
+                        }
                     }
                 },
                 mounted() {
@@ -140,7 +143,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                 methods: {
                     checkCookiePermissions(){
                         if(!navigator.cookieEnabled){
-                            this.showDialog('Your browser cookies are disabled. To be able to login and access your profile correctly, they must be enabled for this domain.');
+                            this.showNotification('negative','Your browser cookies are disabled. To be able to login and access your profile correctly, they must be enabled for this domain.');
                         }
                     },
                     processConfirmationCode(){
@@ -155,10 +158,10 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                         .then((response) => {
                             response.text().then((res) => {
                                 if(Number(res) === 1){
-                                    this.showDialog('Success! Your account has been confirmed. Please login to activate confirmation.');
+                                    this.showNotification('positive','Success! Your account has been confirmed. Please login to activate confirmation.');
                                 }
                                 else{
-                                    this.showDialog('There was a problem confirming your account. Please contact springsdata@springstewardship.org for assistance.');
+                                    this.showNotification('negative','There was a problem confirming your account. Please contact springsdata@springstewardship.org for assistance.');
                                 }
                             });
                         });
@@ -185,13 +188,13 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                                         }
                                     }
                                     else{
-                                        this.showDialog('Your username and/or password were incorrect. Please try again. If you are unable to remember your user credentials, use the links below to retrieve your username or reset your password.');
+                                        this.showNotification('negative','Your username and/or password were incorrect.');
                                     }
                                 });
                             });
                         }
                         else{
-                            this.showDialog('Please enter your username and password to login.');
+                            this.showNotification('negative','Please enter your username and password to login.');
                         }
                     },
                     resetPassword(){
@@ -206,16 +209,16 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                             .then((response) => {
                                 response.text().then((res) => {
                                     if(Number(res) === 1){
-                                        this.showDialog('Your new password has been emailed to the address associated with your account. Please check your junk folder if no email appears in your inbox.');
+                                        this.showNotification('positive','Your new password has been emailed to the address associated with your account. Please check your junk folder if no email appears in your inbox.');
                                     }
                                     else{
-                                        this.showDialog('There was an error resetting your password.');
+                                        this.showNotification('negative','There was an error resetting your password.');
                                     }
                                 });
                             });
                         }
                         else{
-                            this.showDialog('Please enter your username.');
+                            this.showNotification('negative','Please enter your username.');
                         }
                     },
                     retrieveUsername(){
@@ -230,21 +233,18 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                             .then((response) => {
                                 response.text().then((res) => {
                                     if(Number(res) === 1){
-                                        this.showDialog('Your username has been emailed to you.');
+                                        this.showNotification('positive','Your username has been emailed to you.');
                                     }
                                     else{
-                                        this.showDialog('There was an error sending your username to the email address you entered. Please ensure it is entered correctly.');
+                                        this.showNotification('negative','There was an error sending your username to the email address you entered. Please ensure it is entered correctly.');
                                     }
+                                    this.retrieveUsernameWindow = false;
                                 });
                             });
                         }
                         else{
-                            this.showDialog('Please enter the email address that is associated with your account.');
+                            this.showNotification('negative','Please enter the email address that is associated with your account.');
                         }
-                    },
-                    showDialog(text){
-                        this.dialogText = text;
-                        this.dialog = true;
                     }
                 }
             });

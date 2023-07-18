@@ -227,7 +227,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$sql = 'SELECT c.collid, c.collectionname, CONCAT_WS("-",c.institutioncode,c.collectioncode) as instcode, c.guidtarget, c.dwcaurl, c.managementtype '.
 			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
 			'LEFT JOIN omcollcatlink l ON c.collid = l.collid '.
-			'WHERE (c.colltype = "Preserved Specimens") AND (s.recordcnt > 0) ';
+			'WHERE (c.colltype = "PreservedSpecimen") AND (s.recordcnt > 0) ';
 		if($catID) {
 			$sql .= 'AND (l.ccpk = ' . $catID . ') ';
 		}
@@ -249,7 +249,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		}
 		$sql = 'SELECT substring_index(c.dwcaurl,"/content/",1)  as portalDomain, count(c.collid) as cnt '.
 			'FROM omcollections c LEFT JOIN omcollcatlink l ON c.collid = l.collid '.
-			'WHERE (c.colltype = "Preserved Specimens") AND (c.dwcaurl IS NOT NULL) AND (l.ccpk IS NULL OR l.ccpk != '.$catID.') '.
+			'WHERE (c.colltype = "PreservedSpecimen") AND (c.dwcaurl IS NOT NULL) AND (l.ccpk IS NULL OR l.ccpk != '.$catID.') '.
 			'GROUP BY portalDomain';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){

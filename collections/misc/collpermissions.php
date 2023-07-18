@@ -55,7 +55,7 @@ if($isEditor){
 $collMetadataFull = $permManager->getCollectionMetadata($collId);
 $collMetadata = $collMetadataFull[$collId];
 $isGenObs = 0;
-if($collMetadata['colltype'] === 'General Observations') {
+if($collMetadata['colltype'] === 'HumanObservation') {
     $isGenObs = 1;
 }
 ?>
