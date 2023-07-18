@@ -11,7 +11,7 @@ const taxaProfileNotFound = {
                     Did you mean?
                     <div class="q-ml-lg">
                         <template v-for="match in fuzzyMatches">
-                            <a :href="match.url">{{ match.sciname }}</a><br/>
+                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + match.tid)">{{ match.sciname }}</a><br/>
                         </template>
                     </div>
                 </template>
@@ -20,5 +20,10 @@ const taxaProfileNotFound = {
                 </template>
             </div>
         </div>
-    `
+    `,
+    data() {
+        return {
+            clientRoot: Vue.ref(CLIENT_ROOT)
+        }
+    }
 };
