@@ -119,7 +119,7 @@ class ImageLibraryManager{
                 $collName .= ' (' . $collCode . ')';
             }
             $stagingArr[$r->collid]['name'] = $collName;
-            $stagingArr[$r->collid]['type'] = (strpos($r->colltype,'Observations') !== false?'obs':'coll');
+            $stagingArr[$r->collid]['type'] = ($r->colltype === 'HumanObservation'?'obs':'coll');
         }
         $rs->free();
         $sql = 'SELECT o.collid, COUNT(i.imgid) AS imgcnt '.

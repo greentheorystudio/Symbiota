@@ -51,7 +51,7 @@ if($isEditor && $action){
         }
     }
 }
-$isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General Observations');
+$isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'HumanObservation');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

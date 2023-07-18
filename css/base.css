@@ -455,11 +455,6 @@ body.processing .loadingModal {
 }
 
 /* Vue component styles */
-.header-block {
-	display: flex;
-	justify-content: space-between;
-	margin: 0 30px 8px;
-}
 .processor-container {
 	width: 95%;
 	margin: 20px auto;

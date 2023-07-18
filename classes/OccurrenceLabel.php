@@ -135,7 +135,7 @@ class OccurrenceLabel{
                 $sqlWhere .= 'AND ('.substr($iWhere,3).') ';
                 $sqlOrderBy .= ',o.catalogNumber';
             }
-            if($this->collArr['colltype'] === 'General Observations'){
+            if($this->collArr['colltype'] === 'HumanObservation'){
                 $sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
                 $sqlWhere .= (!array_key_exists('extendedsearch', $pArr)) ? ' AND (o.observeruid = ' . $GLOBALS['SYMB_UID'] . ') ' : '';
             }
@@ -684,7 +684,7 @@ class OccurrenceLabel{
                 'CONCAT_WS(", ",d.identifiedBy,d.dateIdentified,d.identificationRemarks,d.identificationReferences) AS determination '.
                 'FROM omoccurrences AS o INNER JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
                 'WHERE (o.collid = '.$this->collid.') AND (d.printqueue = 1) ';
-            if($this->collArr['colltype'] === 'General Observations'){
+            if($this->collArr['colltype'] === 'HumanObservation'){
                 $sql .= ' AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
             }
             $sql .= 'LIMIT 400 ';
@@ -707,7 +707,7 @@ class OccurrenceLabel{
         $retArr = array();
         if($this->collid){
             $sql = 'SELECT DISTINCT labelproject FROM omoccurrences WHERE labelproject IS NOT NULL AND collid = '.$this->collid.' ';
-            if($this->collArr['colltype'] === 'General Observations' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) {
+            if($this->collArr['colltype'] === 'HumanObservation' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) {
                 $sql .= 'AND (observeruid = ' . $GLOBALS['SYMB_UID'] . ') ';
             }
             $rs = $this->conn->query($sql);
@@ -729,7 +729,7 @@ class OccurrenceLabel{
                 'INNER JOIN omoccurdatasetlink AS dl ON ds.datasetid = dl.datasetid '.
                 'INNER JOIN omoccurrences AS o ON dl.occid = o.occid '.
                 'WHERE (r.tablename = "omoccurdatasets") AND (o.collid = '.$this->collid.') ';
-            if($this->collArr['colltype'] === 'General Observations' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) {
+            if($this->collArr['colltype'] === 'HumanObservation' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) {
                 $sql .= 'AND (o.observeruid = ' . $GLOBALS['SYMB_UID'] . ') ';
             }
             $rs = $this->conn->query($sql);

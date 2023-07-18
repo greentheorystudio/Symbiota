@@ -14,28 +14,28 @@ const multipleLanguageAutoComplete = {
     },
     template: `
         <q-select ref="inputRef" v-model="languageArr" outlined dense options-dense hide-dropdown-icon clearable use-input multiple use-chips input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
-        <q-dialog v-model="warning">
-            <q-card style="width: 300px">
-                <q-card-section>
-                    That language was not found in the database.
-                </q-card-section>
-                <q-card-actions align="right" class="bg-white text-teal">
-                    <q-btn flat label="OK" v-close-popup></q-btn>
-                </q-card-actions>
-            </q-card>
-        </q-dialog>
     `,
     data() {
         return {
-            warning: Vue.ref(false),
             clearInput: Vue.ref(false),
             autocompleteOptions: Vue.ref([])
         }
     },
     setup() {
+        const $q = useQuasar();
         let inputRef = Vue.ref(null);
         return {
-            inputRef
+            inputRef,
+            showNotification(type, text){
+                $q.notify({
+                    type: type,
+                    icon: null,
+                    message: text,
+                    multiLine: true,
+                    position: 'top',
+                    timeout: 5000
+                });
+            }
         }
     },
     methods: {
@@ -81,7 +81,7 @@ const multipleLanguageAutoComplete = {
                     this.processChange(currLanguageArr);
                 }
                 else{
-                    this.warning = true;
+                    this.showNotification('negative','That language was not found in the database.');
                 }
             }
             this.clearInput = false;
@@ -96,7 +96,7 @@ const multipleLanguageAutoComplete = {
                     done(optionObj, 'add');
                 }
                 else{
-                    this.warning = true;
+                    this.showNotification('negative','That language was not found in the database.');
                 }
             }
         },
