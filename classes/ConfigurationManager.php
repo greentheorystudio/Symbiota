@@ -738,7 +738,7 @@ class ConfigurationManager{
             $tokenArr = json_decode(Encryption::decrypt($_COOKIE['BioSurvCrumb']), true);
             if($tokenArr){
                 $pHandler = new ProfileManager();
-                $uid = $pHandler->getUid($tokenArr[0]);
+                $uid = $pHandler->getUidFromUsername($tokenArr[0]);
                 $pHandler->deleteToken($uid,$tokenArr[1]);
                 $pHandler->__destruct();
             }

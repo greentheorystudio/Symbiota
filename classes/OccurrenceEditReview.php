@@ -43,7 +43,7 @@ class OccurrenceEditReview extends Manager{
 				if($code){
                     $collName .= ' (' . $code . ')';
                 }
-				if($r->colltype === 'General Observations') {
+				if($r->colltype === 'HumanObservation') {
 					$this->obsUid = $GLOBALS['SYMB_UID'];
 				}
 			}

@@ -206,7 +206,7 @@ include(__DIR__ . '/../../header.php');
             </div>
             <?php
         }
-        $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General Observations');
+        $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'HumanObservation');
         echo '<h2>'.$labelManager->getCollName().'</h2>';
         ?>
         <div id="labels">

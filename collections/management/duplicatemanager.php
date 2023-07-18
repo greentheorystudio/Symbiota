@@ -18,7 +18,7 @@ $collMap = $dupManager->getCollMap($collId);
 
 $statusStr = '';
 $isEditor = 0; 
-if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'General Observations')
+if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'HumanObservation')
 	|| (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
@@ -212,7 +212,7 @@ if($isEditor && $formSubmit){
             <?php
         }
         else{
-            if($collMap['colltype'] !== 'General Observations'){
+            if($collMap['colltype'] !== 'HumanObservation'){
                 ?>
                 <div style="margin: 10px 0;">
                     <h3>Duplicate Records</h3>

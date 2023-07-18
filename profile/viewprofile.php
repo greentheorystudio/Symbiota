@@ -1,191 +1,140 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/../classes/ProfileManager.php');
-include_once(__DIR__ . '/../classes/Person.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
-
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$userId = array_key_exists('userid',$_REQUEST)?(int)$_REQUEST['userid']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
-
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
-    $action = '';
-}
-
-$isSelf = 0;
-$isEditor = 0;
-if(isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID']){
-    if(!$userId){
-        $userId = $GLOBALS['SYMB_UID'];
-    }
-    if($userId === $GLOBALS['SYMB_UID']){
-        $isSelf = 1;
-    }
-    if($isSelf || $GLOBALS['IS_ADMIN']){
-        $isEditor = 1;
-    }
-}
-if(!$userId) {
-    header('Location: index.php?refurl=viewprofile.php');
-}
-
-$pHandler = new ProfileManager();
-$pHandler->setUid($userId);
-
-$statusStr = '';
-$person = null;
-if($isEditor){
-    if($action === 'Submit Edits'){
-        $firstname = $_REQUEST['firstname'];
-        $middleinitial = (array_key_exists('middleinitial',$_REQUEST)?$_REQUEST['middleinitial']:'');
-        $lastname = $_REQUEST['lastname'];
-        $email = $_REQUEST['email'];
-
-        $title = array_key_exists('title',$_REQUEST)?$_REQUEST['title']: '';
-        $institution = array_key_exists('institution',$_REQUEST)?$_REQUEST['institution']: '';
-        $department = array_key_exists('department',$_REQUEST)?$_REQUEST['department']: '';
-        $address = array_key_exists('address',$_REQUEST)?$_REQUEST['address']: '';
-        $city = array_key_exists('city',$_REQUEST)?$_REQUEST['city']: '';
-        $state = array_key_exists('state',$_REQUEST)?$_REQUEST['state']: '';
-        $zip = array_key_exists('zip',$_REQUEST)?$_REQUEST['zip']: '';
-        $country = array_key_exists('country',$_REQUEST)?$_REQUEST['country']: '';
-        $url = array_key_exists('url',$_REQUEST)?$_REQUEST['url']: '';
-        $biography = array_key_exists('biography',$_REQUEST)?$_REQUEST['biography']: '';
-        $isPublic = array_key_exists('ispublic',$_REQUEST)?$_REQUEST['ispublic']: '';
-
-        $newPerson = new Person();
-        $newPerson->setUid($userId);
-        $newPerson->setFirstName($firstname);
-        if($middleinitial) {
-            $newPerson->setMiddleInitial($middleinitial);
-        }
-        $newPerson->setLastName($lastname);
-        $newPerson->setTitle($title);
-        $newPerson->setInstitution($institution);
-        $newPerson->setDepartment($department);
-        $newPerson->setAddress($address);
-        $newPerson->setCity($city);
-        $newPerson->setState($state);
-        $newPerson->setZip($zip);
-        $newPerson->setCountry($country);
-        $newPerson->setEmail($email);
-        $newPerson->setUrl($url);
-        $newPerson->setBiography($biography);
-        $newPerson->setIsPublic($isPublic);
-
-        if(!$pHandler->updateProfile($newPerson)){
-            $statusStr = 'Profile update failed!';
-        }
-    }
-    elseif($action === 'Change Password'){
-        $newPwd = $_REQUEST['newpwd'];
-        $updateStatus = false;
-        if($isSelf){
-            $oldPwd = $_REQUEST['oldpwd'];
-            $updateStatus = $pHandler->changePassword($newPwd, $oldPwd, $isSelf);
-        }
-        else{
-            $updateStatus = $pHandler->changePassword($newPwd);
-        }
-        if($updateStatus){
-            $statusStr = "<span style='color:green;'>Password update successful!</span>";
-        }
-        else{
-            $statusStr = 'Password update failed! Are you sure you typed the old password correctly?';
-        }
-    }
-    elseif($action === 'Change Login'){
-        $pwd = '';
-        if($isSelf && isset($_POST['newloginpwd'])) {
-            $pwd = $_POST['newloginpwd'];
-        }
-        if(!$pHandler->changeLogin($_POST['newlogin'], $pwd)){
-            $statusStr = $pHandler->getErrorStr();
-        }
-    }
-    elseif($action === 'Clear Tokens'){
-        $statusStr = $pHandler->clearAccessTokens();
-    }
-    elseif($action === 'Delete Profile'){
-        if($pHandler->deleteProfile(true)){
-            header('Location: ../index.php');
-        }
-        else{
-            $statusStr = 'Profile deletion failed! Please contact the system administrator';
-        }
-    }
-    elseif($action === 'delusertaxonomy'){
-        $statusStr = $pHandler->deleteUserTaxonomy($_GET['utid']);
-    }
-    elseif($action === 'Add Taxonomic Relationship'){
-        $statusStr = $pHandler->addUserTaxonomy($_POST['taxon'], $_POST['editorstatus'], $_POST['geographicscope'], $_POST['notes']);
-    }
-    elseif($action === 'resendconfirmationemail'){
-        $pHandler->sendConfirmationEmail($userId);
-        $statusStr = 'Resent confirmation email!';
-    }
-    $person = $pHandler->getPerson();
-    if($action){
-        if($GLOBALS['VALID_USER']){
-            $tabIndex = 2;
-        }
-        else{
-            $tabIndex = 0;
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
-<?php
-include_once(__DIR__ . '/../config/header-includes.php');
-?>
-<head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - View User Profile</title>
-    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
-    <script src="../js/external/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/external/jquery.js"></script>
-    <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/external/tiny_mce/tiny_mce.js"></script>
-    <script type="text/javascript">
-        let tabIndex = <?php echo $tabIndex; ?>;
-    </script>
-    <script type="text/javascript" src="../js/profile.viewprofile.js?ver=20230103"></script>
-</head>
-<body>
-<?php
-include(__DIR__ . '/../header.php');
-?>
-<div id="innertext">
     <?php
-    if($isEditor){
-        if($statusStr){
-            echo "<div style='color:#FF0000;margin:10px 0 10px 10px;'>".$statusStr.'</div>';
-        }
+    include_once(__DIR__ . '/../config/header-includes.php');
+    ?>
+    <head>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - View User Profile</title>
+        <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <style>
+            .create-account-container {
+                width: 90%;
+            }
+        </style>
+        <script src="../js/external/all.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="../js/external/tiny_mce/tiny_mce.js"></script>
+    </head>
+    <body>
+        <?php
+        include(__DIR__ . '/../header.php');
         ?>
-        <div id="tabs" style="margin:10px;">
-            <ul>
-                <?php
-                if($GLOBALS['VALID_USER']){
-                    ?>
-                    <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Checklists and Projects</a></li>
-                    <li><a href="occurrencemenu.php">Occurrence Management</a></li>
-                    <?php
-                }
-                ?>
-                <li><a href="userprofile.php?userid=<?php echo $userId; ?>">User Profile</a></li>
-            </ul>
+        <div id="innertext">
+            <template v-if="accountInfo">
+                <q-card class="q-mt-lg">
+                    <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
+                        <template v-if="validUser">
+                            <q-tab name="checklists" label="Checklists and Projects" no-caps></q-tab>
+                            <q-tab name="occurrence" label="Occurrence Management" no-caps></q-tab>
+                        </template>
+                        <q-tab name="account" label="Account Information" no-caps></q-tab>
+                    </q-tabs>
+                    <q-separator></q-separator>
+                    <q-tab-panels v-model="tab">
+                        <q-tab-panel name="checklists">
+                            <?php include_once(__DIR__ . '/../checklists/checklistadminmeta.php'); ?>
+                            <account-checklist-project-list :checklist-arr="checklistArr" :project-arr="projectArr"></account-checklist-project-list>
+                        </q-tab-panel>
+                        <q-tab-panel name="occurrence">
+                            <view-profile-occurrence-module :account-info="accountInfo"></view-profile-occurrence-module>
+                        </q-tab-panel>
+                        <q-tab-panel name="account">
+                            <view-profile-account-module :account-info="accountInfo" :checklist-arr="checklistArr" :project-arr="projectArr" :uid="uid"  @update:account-information="updateAccountObj"></view-profile-account-module>
+                        </q-tab-panel>
+                    </q-tab-panels>
+                </q-card>
+            </template>
         </div>
         <?php
-    }
-    ?>
-</div>
-<?php
-include(__DIR__ . '/../footer.php');
-include_once(__DIR__ . '/../config/footer-includes.php');
-?>
-</body>
+        include(__DIR__ . '/../footer.php');
+        include_once(__DIR__ . '/../config/footer-includes.php');
+        ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/pwdInput.js?ver=20230702" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=20230707" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileAccountModule.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountChecklistProjectList.js?ver=20230709" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionControlPanelMenus.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileOccurrenceModule.js" type="text/javascript"></script>
+        <script>
+            const viewProfileModule = Vue.createApp({
+                data() {
+                    return {
+                        accountInfo: Vue.ref(null),
+                        checklistArr: Vue.ref([]),
+                        clientRoot: Vue.ref(CLIENT_ROOT),
+                        projectArr: Vue.ref([]),
+                        solrMode: Vue.ref(SOLR_MODE),
+                        uid: Vue.ref(SYMB_UID)
+                    }
+                },
+                components: {
+                    'view-profile-account-module': viewProfileAccountModule,
+                    'account-checklist-project-list': accountChecklistProjectList,
+                    'view-profile-occurrence-module': viewProfileOccurrenceModule
+                },
+                setup () {
+                    const validUser = Vue.ref(VALID_USER);
+                    const tab = validUser ? Vue.ref('checklists') : Vue.ref('account');
+                    return {
+                        validUser,
+                        tab
+                    }
+                },
+                mounted() {
+                    if(Number(this.uid) > 0){
+                        this.setAccountInfo();
+                        this.setAccountChecklistsProjects();
+                    }
+                    else{
+                        window.location.href = CLIENT_ROOT + '/index.php';
+                    }
+                },
+                methods: {
+                    setAccountChecklistsProjects(){
+                        const formData = new FormData();
+                        formData.append('uid', this.uid);
+                        formData.append('action', 'getChecklistsProjectsByUid');
+                        fetch(checklistApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            response.json().then((resObj) => {
+                                if(resObj.hasOwnProperty('cl')){
+                                    this.checklistArr = resObj['cl'];
+                                }
+                                if(resObj.hasOwnProperty('proj')){
+                                    this.projectArr = resObj['proj'];
+                                }
+                            });
+                        });
+                    },
+                    setAccountInfo(){
+                        const formData = new FormData();
+                        formData.append('uid', this.uid);
+                        formData.append('action', 'getAccountInfoByUid');
+                        fetch(profileApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            response.json().then((resObj) => {
+                                this.accountInfo = resObj;
+                            });
+                        });
+                    },
+                    updateAccountObj(obj) {
+                        this.accountInfo = Object.assign({}, obj);
+                    }
+                }
+            });
+            viewProfileModule.use(Quasar, { config: {} });
+            viewProfileModule.mount('#innertext');
+        </script>
+    </body>
 </html>

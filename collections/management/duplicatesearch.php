@@ -31,11 +31,11 @@ $collMap = $cleanManager->getCollMap();
 
 $statusStr = '';
 $isEditor = 0;
-if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'General Observations') || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'HumanObservation') || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
-if($collMap['colltype'] === 'General Observations'){
+if($collMap['colltype'] === 'HumanObservation'){
 	$cleanManager->setObsUid($GLOBALS['SYMB_UID']);
 }
 
