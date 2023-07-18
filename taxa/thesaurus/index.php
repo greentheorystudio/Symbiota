@@ -25,7 +25,7 @@ if(!$GLOBALS['SYMB_UID']) {
     </head>
     <body>
         <?php
-            include(__DIR__ . '/../../header.php');
+        include(__DIR__ . '/../../header.php');
         ?>
         <div class="navpath">
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;

@@ -386,7 +386,7 @@ class OccurrenceCollectionProfile {
 			($accessRights?'"'.$accessRights.'"':'NULL').','.
 			($icon?'"'.$icon.'"':'NULL').','.
 			($managementType?'"'.$managementType.'"':'Snapshot').','.
-			($collType?'"'.$collType.'"':'Preserved Specimens').',"'.
+			($collType?'"'.$collType.'"':'PreservedSpecimen').',"'.
 			$guid.'",'.($indUrl?'"'.$indUrl.'"':'NULL').','.
 			($sortSeq?:'NULL').') ';
 		//echo "<div>$sql</div>";
@@ -413,7 +413,7 @@ class OccurrenceCollectionProfile {
 	private function addIconImageFile(): string
 	{
 		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
-		$urlBase = $GLOBALS['CLIENT_ROOT'].'/content/collicon/';
+		$urlBase = '/content/collicon/';
 		$urlPrefix = 'http://';
 		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 			$urlPrefix = 'https://';

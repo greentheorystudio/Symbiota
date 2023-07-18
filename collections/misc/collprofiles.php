@@ -149,11 +149,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 						</fieldset>
 						<ul>
 							<?php
-							if(stripos($collData['colltype'],'observation') !== false){
+							if($collData['colltype'] === 'HumanObservation'){
 								?>
 								<li>
 									<a href="../editor/observationsubmit.php?collid=<?php echo $collid; ?>">
-                                        Submit an Image Voucher
+                                        Create A New Observation Record
 									</a>
 								</li>
 								<?php
@@ -161,22 +161,22 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 							?>
 							<li>
 								<a href="../editor/occurrenceeditor.php?gotomode=1&collid=<?php echo $collid; ?>">
-                                    Create New Record
+                                    Create A New Occurrence Record
 								</a>
 							</li>
                             <li>
                                 <a href="../editor/imageoccursubmit.php?collid=<?php echo $collid; ?>">
-                                    Create New Record From Image
+                                    Create A New Occurrence Record From An Image
                                 </a>
                             </li>
                             <li>
                                 <a href="../editor/skeletalsubmit.php?collid=<?php echo $collid; ?>">
-                                    Create Skeletal Record
+                                    Create A New Skeletal Occurrence Record
                                 </a>
                             </li>
 							<li>
 								<a href="../editor/occurrencetabledisplay.php?displayquery=1&collid=<?php echo $collid; ?>">
-                                    Edit Existing Record
+                                    View/Edit Existing Records
 								</a>
 							</li>
 							<li>
@@ -200,7 +200,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 								</a>
 							</li>
 							<?php
-							if($collData['colltype'] === 'Preserved Specimens'){
+							if($collData['colltype'] === 'PreservedSpecimen'){
 								?>
 								<li>
 									<a href="../loans/index.php?collid=<?php echo $collid; ?>">
