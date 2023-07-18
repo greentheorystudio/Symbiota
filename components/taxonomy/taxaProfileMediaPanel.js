@@ -29,7 +29,7 @@ const taxaProfileMediaPanel = {
                                     </template>
                                     <div class="media-info">
                                         <template v-if="taxon.sciName !== media.sciname">
-                                            <a :href="media.taxonUrl"><span class="text-italic">{{ media.sciname }}</span>. </a>
+                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + media.tid)"><span class="text-italic">{{ media.sciname }}</span>. </a>
                                         </template>
                                         <span v-if="media.title">{{ media.title }} - </span>
                                         {{ media.description }}
@@ -62,7 +62,7 @@ const taxaProfileMediaPanel = {
                                     </template>
                                     <div class="media-info">
                                         <template v-if="taxon.sciName !== media.sciname">
-                                            <a :href="media.taxonUrl"><span class="text-italic">{{ media.sciname }}</span>. </a>
+                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + media.tid)"><span class="text-italic">{{ media.sciname }}</span>. </a>
                                         </template>
                                         <span v-if="media.title">{{ media.title }} - </span>
                                         {{ media.description }}
@@ -76,5 +76,10 @@ const taxaProfileMediaPanel = {
                 </template>
             </div>
         </template>
-    `
+    `,
+    data() {
+        return {
+            clientRoot: Vue.ref(CLIENT_ROOT)
+        }
+    }
 };

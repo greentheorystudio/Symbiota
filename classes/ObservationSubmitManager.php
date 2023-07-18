@@ -226,7 +226,7 @@ class ObservationSubmitManager {
 			$sql .= 'WHERE (collid = '.$this->collId.')';
 		}
 		else{
-			$sql .= 'WHERE (colltype = "General Observations")';
+			$sql .= 'WHERE (colltype = "HumanObservation")';
 		}
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){

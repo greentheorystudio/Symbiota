@@ -97,7 +97,7 @@ class GamesManager {
 					'FROM fmchklsttaxalink l INNER JOIN images i ON l.TID = i.tid '.
 					'LEFT JOIN omoccurrences o ON i.occid = o.occid '.
 					'LEFT JOIN omcollections c ON o.collid = c.collid '.
-					'WHERE (l.CLID IN('.$clid.')) AND (i.occid IS NULL OR c.CollType LIKE "%Observations") '.
+					'WHERE (l.CLID IN('.$clid.')) AND (i.occid IS NULL OR c.CollType = "HumanObservation") '.
 					'GROUP BY l.TID';
 				//echo '<div>'.$sql.'</div>';
 				$rs = $this->conn->query($sql);

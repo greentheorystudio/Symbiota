@@ -475,29 +475,6 @@ class OccurrenceTaxonomyCleaner extends Manager{
         return $retCnt;
     }
 
-	public function getCollMap(): array
-	{
-		$retArr = array();
-		$collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'] ?? array();
-		if($GLOBALS['IS_ADMIN']) {
-			$collArr = array_merge($collArr, explode(',', $this->collid));
-		}
-		$sql = 'SELECT collid, CONCAT_WS("-",institutioncode, collectioncode) AS code, collectionname, icon, colltype, managementtype FROM omcollections '.
-			'WHERE collid IN('.implode(',', $collArr).') '.
-			'ORDER BY collectionname, collectioncode ';
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->collid]['code'] = $r->code;
-			$retArr[$r->collid]['collectionname'] = $r->collectionname;
-			$retArr[$r->collid]['icon'] = $r->icon;
-			$retArr[$r->collid]['colltype'] = $r->colltype;
-			$retArr[$r->collid]['managementtype'] = $r->managementtype;
-		}
-		$rs->free();
-		return $retArr;
-	}
-
 	public function protectGlobalSpecies($collid = null): int
     {
         $status = 0;

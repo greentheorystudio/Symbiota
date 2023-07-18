@@ -122,10 +122,10 @@ class DwcArchiverCore extends Manager{
         $collType = Sanitizer::cleanInStr($this->conn,$collTypeStr);
         $sqlWhere = '';
         if($collType === 'specimens'){
-            $sqlWhere = '(c.colltype = "Preserved Specimens") ';
+            $sqlWhere = '(c.colltype = "PreservedSpecimen") ';
         }
         elseif($collType === 'observations'){
-            $sqlWhere = '(c.colltype = "Observations" OR c.colltype = "General Observations") ';
+            $sqlWhere = '(c.colltype = "HumanObservation") ';
         }
         if($collTarget){
             $this->addCondition('collid', 'EQUALS', $collTarget);

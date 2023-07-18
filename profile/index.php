@@ -38,11 +38,11 @@ elseif(array_key_exists('refurl',$_REQUEST)){
             <div class="row justify-center q-mt-lg q-mb-xl">
                 <q-card class="login-container">
                     <q-card-section class="bg-indigo-1 column">
-                        <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense /></q-input>
-                        <q-input outlined v-model="password" type="password" label="Password" bg-color="white" class="q-mb-sm" dense /></q-input>
-                        <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm" /></q-checkbox>
+                        <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense></q-input>
+                        <q-input outlined v-model="password" type="password" label="Password" bg-color="white" class="q-mb-sm" dense></q-input>
+                        <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm"></q-checkbox>
                         <div class="row justify-end q-pr-md">
-                            <q-btn :loading="loading" color="secondary" @click="processLogin();" label="Login" dense />
+                            <q-btn :loading="loading" color="secondary" @click="processLogin();" label="Login" dense></q-btn>
                         </div>
                     </q-card-section>
                     <q-separator size="1px" color="grey-8"></q-separator>
@@ -82,9 +82,9 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                             </template>
                             <template v-else>
                                 <div class="column justify-center q-mb-xs text-bold">
-                                    <q-input outlined v-model="email" label="Your Email" bg-color="white" class="q-mb-sm" dense /></q-input>
+                                    <q-input outlined v-model="email" label="Your Email" bg-color="white" class="q-mb-sm" dense></q-input>
                                     <div class="row justify-center">
-                                        <q-btn :loading="loading" color="secondary" @click="retrieveUsername();" label="Retrieve Username" dense />
+                                        <q-btn :loading="loading" color="secondary" @click="retrieveUsername();" label="Retrieve Username" dense></q-btn>
                                     </div>
                                 </div>
                             </template>
@@ -106,10 +106,10 @@ elseif(array_key_exists('refurl',$_REQUEST)){
             const loginModule = Vue.createApp({
                 data() {
                     return {
-                        adminEmail: Vue.ref('<?php echo $GLOBALS['ADMIN_EMAIL']; ?>'),
+                        adminEmail: ADMIN_EMAIL,
                         confirmationCode: Vue.ref('<?php echo $confirmationCode; ?>'),
                         email: Vue.ref(null),
-                        emailConfigured: Vue.ref(<?php echo ($GLOBALS['EMAIL_CONFIGURED'] ? 'true' : 'false'); ?>),
+                        emailConfigured: EMAIL_CONFIGURED,
                         loading: Vue.ref(false),
                         password: Vue.ref(null),
                         refUrl: Vue.ref('<?php echo $refUrl; ?>'),

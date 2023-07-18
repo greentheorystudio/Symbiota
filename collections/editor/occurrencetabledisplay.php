@@ -139,7 +139,7 @@ if($GLOBALS['SYMB_UID']){
 		$isEditor = 1;
 	}
 
-	if($collMap && $collMap['colltype'] === 'General Observations') {
+	if($collMap && $collMap['colltype'] === 'HumanObservation') {
         $isGenObs = 1;
     }
 	if(!$isEditor && ((array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)) || ($isGenObs && ($action || $occManager->getObserverUid() === $GLOBALS['SYMB_UID'])))){

@@ -117,11 +117,6 @@ include_once(__DIR__ . '/config/header-includes.php');
                         <h3>Taxonomy</h3>
                         <ul>
                             <?php
-                            if($GLOBALS['IS_ADMIN']){
-                                ?>
-                                <li><a href="profile/usertaxonomymanager.php">Taxonomic Interest Permissions</a></li>
-                                <?php
-                            }
                             if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
                                 ?>
                                 <li><a href="taxa/thesaurus/index.php">Taxonomic Thesaurus Manager</a></li>
