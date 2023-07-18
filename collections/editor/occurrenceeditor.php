@@ -59,7 +59,7 @@ if($GLOBALS['SYMB_UID']){
         $collId = $collMap['collid'];
     }
 
-    if($collMap && $collMap['colltype'] === 'General Observations') {
+    if($collMap && $collMap['colltype'] === 'HumanObservation') {
         $isGenObs = 1;
     }
 
@@ -473,7 +473,11 @@ else{
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.($occId?'Occurrence Editor':'Create New Record'); ?></title>
     <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
@@ -487,16 +491,6 @@ else{
         ?>
         <link href="../../css/occureditor.css?ver=20221204" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
-        if(isset($CSSARR)){
-            foreach($CSSARR as $cssVal){
-                echo '<link href="includes/config/'.$cssVal.'?ver=170603" type="text/css" rel="stylesheet" id="editorCssLink" />';
-            }
-        }
-        if(isset($JSARR)){
-            foreach($JSARR as $jsVal){
-                echo '<script src="includes/config/'.$jsVal.'?ver=170603" type="text/javascript"></script>';
-            }
-        }
     }
     ?>
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
@@ -525,7 +519,7 @@ else{
         ?>
 
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
@@ -535,11 +529,10 @@ else{
             });
         }
     </script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
     <script type="text/javascript" src="../../js/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20221204"></script>
+    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20230103"></script>
     <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221204"></script>
-    <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20220921"></script>
+    <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20230103"></script>
     <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
 </head>
 <body>
@@ -667,9 +660,8 @@ else{
                                     <?php
                                     if($occId && $isEditor){
                                         $pHandler = new ProfileManager();
-                                        $pHandler->setUid($GLOBALS['SYMB_UID']);
-                                        $person = $pHandler->getPerson();
-                                        $userEmail = ($person?$person->getEmail():'');
+                                        $accountInfo = $pHandler->getAccountInfoByUid($GLOBALS['SYMB_UID']);
+                                        $userEmail = (($accountInfo && $accountInfo['email']) ? $accountInfo['email'] : '');
 
                                         $anchorVars = 'occid='.$occId.'&occindex='.$occIndex.'&csmode='.$crowdSourceMode.'&collid='.$collId;
                                         $detVars = 'identby='.urlencode($occArr['identifiedby']).'&dateident='.urlencode($occArr['dateidentified']).
@@ -1332,10 +1324,10 @@ else{
                                                         }
                                                     }
                                                     if(!isset($occArr['basisofrecord']) || !$occArr['basisofrecord']){
-                                                        if($collMap['colltype'] === 'General Observations' || $collMap['colltype'] === 'Observations'){
+                                                        if($collMap['colltype'] === 'HumanObservation'){
                                                             $targetBOR = 'HumanObservation';
                                                         }
-                                                        elseif($collMap['colltype'] === 'Preserved Specimens'){
+                                                        elseif($collMap['colltype'] === 'PreservedSpecimen'){
                                                             $targetBOR = 'PreservedSpecimen';
                                                         }
                                                     }
@@ -1562,5 +1554,8 @@ else{
     }
     ?>
 </div>
+<?php
+include_once(__DIR__ . '/../../config/footer-includes.php');
+?>
 </body>
 </html>

@@ -1,8 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: SAMEORIGIN');
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
@@ -19,14 +17,14 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 }
 ?>
 <script type="text/javascript">
-	tinyMCE.init({
-		mode : "textareas",
-		theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
-		theme_advanced_buttons2 : "",
-		theme_advanced_buttons3 : ""
-	});
+    tinyMCE.init({
+        mode : "textareas",
+        theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
+        theme_advanced_buttons2 : "",
+        theme_advanced_buttons3 : ""
+    });
 
-	function validateChecklistForm(f){
+    function validateChecklistForm(f){
 		if(f.name.value === ""){
 			alert("Checklist name field must have a value");
 			return false;
@@ -73,32 +71,32 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 	}
 
 	function openSpatialInputWindow(type) {
-		let mapWindow = open("../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
-		if (mapWindow.opener == null) {
-			mapWindow.opener = self;
-		}
-		mapWindow.addEventListener('blur', function(){
-			mapWindow.close();
-			mapWindow = null;
-		});
-	}
+        let mapWindow = open("../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
+        if (mapWindow.opener == null) {
+            mapWindow.opener = self;
+        }
+        mapWindow.addEventListener('blur', function(){
+            mapWindow.close();
+            mapWindow = null;
+        });
+    }
 
-	function processFootprintWktChange() {
-		const wktValue = document.getElementById('footprintWKT').value;
-		if(!wktValue && wktValue ===''){
-			document.getElementById("polyDefDiv").style.display = "none";
-			document.getElementById("polyNotDefDiv").style.display = "block";
-		}
-		else{
-			document.getElementById("polyDefDiv").style.display = "block";
-			document.getElementById("polyNotDefDiv").style.display = "none";
-		}
-	}
+    function processFootprintWktChange() {
+        const wktValue = document.getElementById('footprintWKT').value;
+        if(!wktValue && wktValue ===''){
+            document.getElementById("polyDefDiv").style.display = "none";
+            document.getElementById("polyNotDefDiv").style.display = "block";
+        }
+        else{
+            document.getElementById("polyDefDiv").style.display = "block";
+            document.getElementById("polyNotDefDiv").style.display = "none";
+        }
+    }
 </script>
 <?php
 if(!$clid){
 	?>
-	<div style="float:right;">
+	<div style="width: 100%;display: flex;justify-content: flex-end;">
 		<a href="#" onclick="toggle('checklistDiv')" title="Create a New Checklist"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
 	</div>
 	<?php
@@ -126,7 +124,7 @@ if(!$clid){
 						<option value="rarespp" <?php echo ($clArray && $clArray['type'] === 'rarespp'?'SELECTED':'') ?>>Rare, threatened, protected species list</option>
 					</select>
 				</div>
-				<?php
+			<?php
 			}
 			?>
 			<div>
@@ -181,10 +179,10 @@ if(!$clid){
 							<a href="#" onclick="openSpatialInputWindow('input-polygon,wkt');" title="Create/Edit Polygon"><i style='width:15px;height:15px;' class="fas fa-globe"></i></a>
 						</div>
 						<div id="polyDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'block':'none'); ?>;">
-							'Polygon footprint defined<br/>Click globe to view/edit'
+                            Polygon footprint defined<br/>Click globe to view/edit
 						</div>
 						<div id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'none':'block'); ?>;">
-							Polygon footprint not defined<br/>Click globe to create polygon
+                            Polygon footprint not defined<br/>Click globe to create polygon
 						</div>
 						<input type="hidden" id="footprintWKT" name="footprintwkt" onchange="processFootprintWktChange();" value="<?php echo ($clArray?$clArray['footprintwkt']:''); ?>" />
 					</fieldset>
@@ -193,46 +191,46 @@ if(!$clid){
 			<div style="clear:both;margin-top:5px;">
 				<fieldset style="width:300px;">
 					<legend><b>Default Display Settings</b></legend>
-					<div>
-						<input name='thesfilter' id='thesfilter' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['thesfilter'])? 'checked' : ''); ?> />
-						Filter Through Thesaurus
-					</div>
-					<div>
-						<input name='showsynonyms' id='showsynonyms' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['showsynonyms'])? 'checked' : ''); ?> />
-						Display Synonyms
-					</div>
-					<div>
+                    <div>
+                        <input name='thesfilter' id='thesfilter' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['thesfilter'])? 'checked' : ''); ?> />
+                        Filter Through Thesaurus
+                    </div>
+                    <div>
+                        <input name='showsynonyms' id='showsynonyms' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['showsynonyms'])? 'checked' : ''); ?> />
+                        Display Synonyms
+                    </div>
+                    <div>
 						<input name='ddetails' id='ddetails' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['ddetails'])? 'checked' : ''); ?> />
-						Show Details
+                        Show Details
 					</div>
-					<div>
-						<input id='dcommon' name='dcommon' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['dcommon'])? 'checked' : ''); ?> />
-						Display Common Names
-					</div>
+                    <div>
+                        <input id='dcommon' name='dcommon' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['dcommon'])? 'checked' : ''); ?> />
+                        Display Common Names
+                    </div>
 					<div>
 						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['dimages'])? 'checked' : ''); ?> onclick="showImagesDefaultChecked(this.form);" />
-						Display as Images
+                        Display as Images
 					</div>
-					<?php
-					$text = '';
-					if($defaultArr && $defaultArr['dimages']) {
-						$text = 'disabled';
-					}
-					elseif($defaultArr && ($defaultArr['dvouchers'] || $defaultArr['dauthors'])) {
-						$text = 'disabled';
-					}
-					?>
+                    <?php
+                    $text = '';
+                    if($defaultArr && $defaultArr['dimages']) {
+                        $text = 'disabled';
+                    }
+                    elseif($defaultArr && ($defaultArr['dvouchers'] || $defaultArr['dauthors'])) {
+                        $text = 'disabled';
+                    }
+                    ?>
 					<div>
 						<input name='dvouchers' id='dvouchers' type='checkbox' value='1' <?php echo $text; ?>/>
-						Show Notes &amp; Vouchers
+                        Show Notes &amp; Vouchers
 					</div>
 					<div>
 						<input name='dauthors' id='dauthors' type='checkbox' value='1' <?php echo $text; ?>/>
-						Dislay Taxon Authors
+                        Dislay Taxon Authors
 					</div>
 					<div>
 						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr && $defaultArr['dalpha']? 'checked' : ''); ?> />
-						Display Taxa Alphabetically
+                        Display Taxa Alphabetically
 					</div>
 					<div>
 						<?php
@@ -242,17 +240,23 @@ if(!$clid){
 						}
 						?>
 						<input name='activatekey' type='checkbox' value='1' <?php echo ($activateKey? 'checked' : ''); ?> />
-						Activate Identification Key
+                        Activate Identification Key
 					</div>
 				</fieldset>
 			</div>
-			<div style="clear:both;margin-top:15px;">
-				<b>Access</b><br/>
-				<select name="access">
-					<option value="private">Private</option>
-					<option value="public" <?php echo (($clArray && $clArray['access'] === 'public') ? 'selected' : ''); ?>>Public</option>
-				</select>
-			</div>
+			<?php
+            if($GLOBALS['PUBLIC_CHECKLIST']){
+                ?>
+                <div style="clear:both;margin-top:15px;">
+                    <b>Access</b><br/>
+                    <select name="access">
+                        <option value="private">Private</option>
+                        <option value="public" <?php echo (($clArray && $clArray['access'] === 'public') ? 'selected' : ''); ?>>Public</option>
+                    </select>
+                </div>
+                <?php
+            }
+            ?>
 			<div style="clear:both;float:left;margin-top:15px;">
 				<?php
 				if($clid){
@@ -274,72 +278,4 @@ if(!$clid){
 			<input type="hidden" name="pid" value="<?php echo $pid; ?>" />
 		</fieldset>
 	</form>
-</div>
-
-<div>
-	<?php
-	if(array_key_exists('userid',$_REQUEST) && $GLOBALS['VALID_USER']){
-		$userId = $_REQUEST['userid'];
-		echo '<div style="font-weight:bold;">Checklists assigned to your account</div>';
-		$listArr = $clManager->getManagementLists($userId);
-		if(array_key_exists('cl',$listArr)){
-			$clArr = $listArr['cl'];
-			?>
-			<ul>
-				<?php
-				foreach($clArr as $kClid => $vName){
-					?>
-					<li>
-						<a href="../checklists/checklist.php?cl=<?php echo $kClid; ?>&emode=0">
-							<?php echo $vName; ?>
-						</a>
-						<a href="../checklists/checklistadmin.php?clid=<?php echo $kClid; ?>&emode=1">
-							<i style='width:15px;height:15px;' title="Edit Checklist" class="far fa-edit"></i>
-						</a>
-					</li>
-					<?php
-				}
-				?>
-			</ul>
-			<?php
-		}
-		else{
-			?>
-			<div style="margin:10px;">
-				<div>You have no personal checklists</div>
-				<div style="margin-top:5px">
-					<a href="#" onclick="toggle('checklistDiv')">Click here to create a new checklist</a>
-				</div>
-			</div>
-			<?php
-		}
-
-		echo '<div style="font-weight:bold;margin-top:25px;">Biotic Inventory Project Administration</div>'."\n";
-		if(array_key_exists('proj',$listArr)){
-			$projArr = $listArr['proj'];
-			?>
-			<ul>
-				<?php
-				foreach($projArr as $pid => $projName){
-					?>
-					<li>
-						<a href="../projects/index.php?pid=<?php echo $pid; ?>&emode=0">
-							<?php echo $projName; ?>
-						</a>
-						<a href="../projects/index.php?pid=<?php echo $pid; ?>&emode=1">
-							<i style='width:15px;height:15px;' title="Edit Project" class="far fa-edit"></i>
-						</a>
-					</li>
-					<?php
-				}
-				?>
-			</ul>
-			<?php
-		}
-		else{
-			echo '<div style="margin:10px;">There are no Projects for which you have administrative permissions.<br />';
-			echo '<a href="../projects/index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></div>';
-		}
-	}
-	?>
 </div>

@@ -1,167 +1,54 @@
 <?php
-/** @var array $topRowElements */
-/** @var array $leftColumnElements */
-/** @var array $rightColumnElements */
-/** @var array $bottomRowElements */
-/** @var array $footerRowElements */
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
-include_once(__DIR__ . '/../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 
 $taxonValue = array_key_exists('taxon',$_REQUEST)?htmlspecialchars($_REQUEST['taxon']): '';
 $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
-$projValue = array_key_exists('proj',$_REQUEST)?(int)$_REQUEST['proj']:0;
-$lang = array_key_exists('lang',$_REQUEST)?htmlspecialchars($_REQUEST['lang']):$GLOBALS['DEFAULT_LANG'];
-$descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?htmlspecialchars($_REQUEST['displaylevel']): '';
-$showAllImages = array_key_exists('allimages',$_REQUEST);
 
 if(!$taxonValue && array_key_exists('quicksearchtaxon',$_REQUEST)){
     $taxonValue = htmlspecialchars($_REQUEST['quicksearchtaxon']);
 }
 
-$taxonManager = new TaxonProfileManager();
-$taxonUtilities = new TaxonomyUtilities();
-if($clValue) {
-    $taxonManager->setClName($clValue);
-}
-if($projValue) {
-    $taxonManager->setProj($projValue);
-}
-if($lang) {
-    $taxonManager->setLanguage($lang);
-}
-if($taxonValue) {
-    $taxonManager->setTaxon($taxonValue);
-    $taxonManager->setAttributes();
-}
-$ambiguous = $taxonManager->getAmbSyn();
-$acceptedName = $taxonManager->getAcceptance();
-$synonymArr = $taxonManager->getSynonymArr();
-$spDisplay = $taxonManager->getDisplayName();
-$taxonRank = (int)$taxonManager->getRankId();
-$vernStr = $taxonManager->getVernacularStr();
-$vernArr = $taxonManager->getVernacularArr();
-$synStr = $taxonManager->getSynonymStr();
-
-$styleClass = '';
-if($taxonRank > 180) {
-    $styleClass = 'species';
-}
-elseif($taxonRank === 180) {
-    $styleClass = 'genus';
-}
-else {
-    $styleClass = 'higher';
-}
-
-$displayLocality = 0;
 $isEditor = false;
 if($GLOBALS['SYMB_UID']){
     if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
         $isEditor = true;
     }
-    if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
-        $displayLocality = 1;
-    }
-}
-if((int)$taxonManager->getSecurityStatus() === 0){
-    $displayLocality = 1;
-}
-$taxonManager->setDisplayLocality($displayLocality);
-$descr = array();
-
-if(file_exists('includes/config/taxaProfileTemplateCustom.php')){
-    include(__DIR__ . '/includes/config/taxaProfileTemplateCustom.php');
-}
-else{
-    include(__DIR__ . '/includes/config/taxaProfileTemplateDefault.php');
 }
 ?>
-
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']. ' - ' .$spDisplay; ?></title>
-    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/speciesprofilebase.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <script src="../js/external/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/external/jquery.js"></script>
-    <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxon Profile</title>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
-        let currentLevel = <?php echo ($descrDisplayLevel?: '1'); ?>;
-        const levelArr = [<?php echo ($descr?"'".implode("','",array_keys($descr))."'":''); ?>];
-        const allImages = <?php echo ($showAllImages?'true':'false'); ?>;
-        let tid = <?php echo $taxonManager->getTid(); ?>;
+        const taxonVal = Vue.ref('<?php echo $taxonValue; ?>');
+        const clVal = Vue.ref(<?php echo $clValue; ?>);
+        const isEditor = Vue.ref(<?php echo ($isEditor?'true':'false'); ?>);
     </script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-    <script src="../js/taxa.index.js?ver=20221115" type="text/javascript"></script>
-    <?php
-    if(isset($CSSARR)){
-        foreach($CSSARR as $cssVal){
-            echo '<link href="includes/config/'.$cssVal.'?ver=150106" type="text/css" rel="stylesheet" id="editorCssLink" />';
-        }
-    }
-    if(isset($JSARR)){
-        foreach($JSARR as $jsVal){
-            echo '<script src="includes/config/'.$jsVal.'?ver=150106" type="text/javascript"></script>';
-        }
-    }
-    ?>
 </head>
 <body>
-<?php
-include(__DIR__ . '/../header.php');
-?>
-<div id="innertable">
-    <div id="toprow">
-        <?php
-        foreach($topRowElements as $e){
-            echo $e;
-        }
-        ?>
-    </div>
-
-    <div id="middlerow">
-        <div id="leftcolumn" class="<?php echo $styleClass; ?>">
-            <?php
-            foreach($leftColumnElements as $e){
-                echo $e;
-            }
-            ?>
-        </div>
-
-
-        <div id="rightcolumn" class="<?php echo $styleClass; ?>">
-            <?php
-            foreach($rightColumnElements as $e){
-                echo $e;
-            }
-            ?>
-        </div>
-    </div>
-
-    <div id="bottomrow">
-        <?php
-        foreach($bottomRowElements as $e){
-            echo $e;
-        }
-        ?>
-    </div>
-
-    <div id="footerrow">
-        <?php
-        foreach($footerRowElements as $e){
-            echo $e;
-        }
-        ?>
-    </div>
-</div>
-<?php
-include(__DIR__ . '/../footer.php');
-?>
+    <?php
+    include(__DIR__ . '/../header.php');
+    ?>
+    <div id="inner-table"></div>
+    <?php
+    include(__DIR__ . '/../footer.php');
+    include_once(__DIR__ . '/../config/footer-includes.php');
+    if(file_exists(__DIR__ . '/profile-custom.php')){
+        include_once(__DIR__ . '/profile-custom.php');
+    }
+    else{
+        include_once(__DIR__ . '/profile-default.php');
+    }
+    ?>
 </body>
 </html>

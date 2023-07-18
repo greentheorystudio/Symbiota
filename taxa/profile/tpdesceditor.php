@@ -5,15 +5,11 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 
 $tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
-$lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 
 $descEditor = new TPDescEditorManager();
 if($tid) {
     $descEditor->setTid($tid);
-}
-if($lang) {
-    $descEditor->setLanguage($lang);
 }
 
 $statusStr = '';

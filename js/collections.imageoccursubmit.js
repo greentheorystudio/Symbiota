@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 
 	$("#sciname").autocomplete({ 
 		source: "../../api/taxa/getspeciessuggest.php",

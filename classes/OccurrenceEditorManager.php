@@ -1043,7 +1043,7 @@ class OccurrenceEditorManager {
                 $occArr['dateentered'] = date('Y-m-d H:i:s');
             }
             if(!isset($occArr['basisofrecord']) || !$occArr['basisofrecord']) {
-                $occArr['basisofrecord'] = (strpos($this->collMap['colltype'], 'Observations') !== false ? 'HumanObservation' : 'PreservedSpecimen');
+                $occArr['basisofrecord'] = ($this->collMap['colltype'] === 'HumanObservation' ? 'HumanObservation' : 'PreservedSpecimen');
             }
             if(isset($occArr['institutionCode']) && $occArr['institutionCode'] === $this->collMap['institutioncode']) {
                 $occArr['institutionCode'] = '';
@@ -1493,7 +1493,7 @@ class OccurrenceEditorManager {
         $fn = Sanitizer::cleanInStr($this->conn,$fieldName);
         $ov = Sanitizer::cleanInStr($this->conn,$oldValue);
 
-        $sql = 'SELECT COUNT(o2.occid) AS retcnt '.
+        $sql = 'SELECT COUNT(DISTINCT o2.occid) AS retcnt '.
             'FROM omoccurrences AS o2 ';
         $sql = $this->addTableJoins($sql);
         $sql .= $this->getBatchUpdateWhere($fn,$ov,$buMatch);
@@ -1974,7 +1974,7 @@ class OccurrenceEditorManager {
             $collEditorArr = $GLOBALS['USER_RIGHTS']['CollEditor'];
         }
         if($collEditorArr){
-            $sql .= 'OR (collid IN('.implode(',',$collEditorArr).') AND colltype = "General Observations") ';
+            $sql .= 'OR (collid IN('.implode(',',$collEditorArr).') AND colltype = "HumanObservation") ';
         }
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){

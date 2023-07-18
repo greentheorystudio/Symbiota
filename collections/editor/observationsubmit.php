@@ -50,8 +50,11 @@ if($collMap){
     }
 }
 ?>
-
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Observation Submission</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -70,12 +73,11 @@ if($collMap){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script src="../../js/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
-	<script src="../../js/collections.observationsubmit.js?ver=20221115" type="text/javascript"></script>
+    <script src="../../js/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
+	<script src="../../js/collections.observationsubmit.js?ver=20230103" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
@@ -452,7 +454,8 @@ if($collMap){
 		?>
 	</div>
 <?php 	
-	include(__DIR__ . '/../../footer.php');
+include(__DIR__ . '/../../footer.php');
+include_once(__DIR__ . '/../../config/footer-includes.php');
 ?>
 </body>
 </html>

@@ -246,10 +246,10 @@ class PermissionsManager{
 			'FROM omcollections ';
 		$sqlWhere = '';
 		if($collTypeLimit === 'specimens'){
-			$sqlWhere .= 'AND (colltype = "Preserved Specimens") ';
+			$sqlWhere .= 'AND (colltype = "PreservedSpecimen") ';
 		}
 		elseif($collTypeLimit === 'observations'){
-			$sqlWhere .= 'AND (colltype = "Observations" OR colltype = "General Observations") ';
+			$sqlWhere .= 'AND (colltype = "HumanObservation") ';
 		}
 		if($targetCollid){
 			$sqlWhere .= 'AND (collid = '.$targetCollid.') ';
@@ -380,5 +380,17 @@ class PermissionsManager{
             $retVal = 1;
         }
         return $retVal;
+    }
+
+    public function validatePermission($permission, $key): int
+    {
+        $returnVal = 0;
+        if($GLOBALS['IS_ADMIN']){
+            $returnVal = 1;
+        }
+        else if(array_key_exists($permission,$GLOBALS['USER_RIGHTS']) && (!$key || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permission], true))){
+            $returnVal = 1;
+        }
+        return $returnVal;
     }
 }

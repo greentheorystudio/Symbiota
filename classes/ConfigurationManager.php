@@ -148,7 +148,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20221204';
+        $GLOBALS['CSS_VERSION'] = '20230630';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -384,6 +384,9 @@ class ConfigurationManager{
         }
         if(!isset($GLOBALS['DYN_CHECKLIST_RADIUS']) || !$GLOBALS['DYN_CHECKLIST_RADIUS']){
             $GLOBALS['DYN_CHECKLIST_RADIUS'] = '100';
+        }
+        if(!isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
+            $GLOBALS['KEY_MOD_IS_ACTIVE'] = false;
         }
         $GLOBALS['EMAIL_CONFIGURED'] = (
             isset($GLOBALS['PORTAL_EMAIL_ADDRESS'], $GLOBALS['SMTP_USERNAME'], $GLOBALS['SMTP_PASSWORD'], $GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) &&
@@ -735,7 +738,7 @@ class ConfigurationManager{
             $tokenArr = json_decode(Encryption::decrypt($_COOKIE['BioSurvCrumb']), true);
             if($tokenArr){
                 $pHandler = new ProfileManager();
-                $uid = $pHandler->getUid($tokenArr[0]);
+                $uid = $pHandler->getUidFromUsername($tokenArr[0]);
                 $pHandler->deleteToken($uid,$tokenArr[1]);
                 $pHandler->__destruct();
             }
@@ -793,22 +796,5 @@ class ConfigurationManager{
             $status = true;
         }
         return $status;
-    }
-
-    public function getTaxonomyRankArr(): array
-    {
-        $retArr = array();
-        $sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits ORDER BY rankid ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            if(array_key_exists($row->rankid,$retArr)){
-                $retArr[$row->rankid] .= ', ' . $row->rankname;
-            }
-            else{
-                $retArr[$row->rankid] = $row->rankname;
-            }
-        }
-        $result->free();
-        return $retArr;
     }
 }

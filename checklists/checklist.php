@@ -186,11 +186,15 @@ if($clArray){
     }
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <meta charset="<?php echo $GLOBALS['CHARSET']; ?>">
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Research Checklist: <?php echo $clManager->getClName(); ?></title>
-    <link type="text/css" href="../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" />
+    <link type="text/css" href="../css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" />
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
@@ -198,7 +202,6 @@ if($clArray){
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20221207"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         <?php
@@ -232,7 +235,7 @@ if($clArray){
             http.send(params);
         }
     </script>
-    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20221119"></script>
+    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20230103"></script>
     <?php
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>
@@ -240,7 +243,7 @@ if($clArray){
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/vfs_fonts.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.fieldguideexport.js?ver=20221025" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.fieldguideexport.js?ver=20230103" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -393,7 +396,7 @@ if(!$printMode){
             }
             if($clArray['publication']){
                 $pubStr = $clArray['publication'];
-                if(strncmp($pubStr, 'http', 4) === 0 && !strpos($pubStr,' ')) {
+                if($pubStr && strncmp($pubStr, 'http', 4) === 0 && !strpos($pubStr,' ')) {
                     $pubStr = '<a href="' . $pubStr . '" target="_blank">' . $pubStr . '</a>';
                 }
                 echo "<div><span style='font-weight:bold;'>Citation:</span> ".$pubStr. '</div>';
@@ -913,6 +916,7 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']){
     </div>
     <?php
 }
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>

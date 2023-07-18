@@ -63,7 +63,11 @@ if($GLOBALS['SYMB_UID']){
     }
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' ' .($collid?$collData[$collid]['collectionname']: '') ; ?> Collection Profiles</title>
 	<meta name="keywords" content="Natural history collections,<?php echo ($collid?$collData[$collid]['collectionname']: ''); ?>" />
@@ -145,11 +149,11 @@ if($GLOBALS['SYMB_UID']){
 						</fieldset>
 						<ul>
 							<?php
-							if(stripos($collData['colltype'],'observation') !== false){
+							if($collData['colltype'] === 'HumanObservation'){
 								?>
 								<li>
 									<a href="../editor/observationsubmit.php?collid=<?php echo $collid; ?>">
-                                        Submit an Image Voucher
+                                        Create A New Observation Record
 									</a>
 								</li>
 								<?php
@@ -157,22 +161,22 @@ if($GLOBALS['SYMB_UID']){
 							?>
 							<li>
 								<a href="../editor/occurrenceeditor.php?gotomode=1&collid=<?php echo $collid; ?>">
-                                    Create New Record
+                                    Create A New Occurrence Record
 								</a>
 							</li>
                             <li>
                                 <a href="../editor/imageoccursubmit.php?collid=<?php echo $collid; ?>">
-                                    Create New Record From Image
+                                    Create A New Occurrence Record From An Image
                                 </a>
                             </li>
                             <li>
                                 <a href="../editor/skeletalsubmit.php?collid=<?php echo $collid; ?>">
-                                    Create Skeletal Record
+                                    Create A New Skeletal Occurrence Record
                                 </a>
                             </li>
 							<li>
 								<a href="../editor/occurrencetabledisplay.php?displayquery=1&collid=<?php echo $collid; ?>">
-                                    Edit Existing Record
+                                    View/Edit Existing Records
 								</a>
 							</li>
 							<li>
@@ -196,7 +200,7 @@ if($GLOBALS['SYMB_UID']){
 								</a>
 							</li>
 							<?php
-							if($collData['colltype'] === 'Preserved Specimens'){
+							if($collData['colltype'] === 'PreservedSpecimen'){
 								?>
 								<li>
 									<a href="../loans/index.php?collid=<?php echo $collid; ?>">
@@ -507,6 +511,7 @@ if($GLOBALS['SYMB_UID']){
 	</div>
 	<?php
 	include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
 	?>
 </body>
 </html>

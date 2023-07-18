@@ -82,7 +82,11 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
     $dwcaManager->deleteArchive($_POST['colliddel']);
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title>Darwin Core Archive Publisher</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -95,8 +99,7 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=20221025"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript">
+    <script type="text/javascript">
 		function verifyDwcaAdminForm(){
             const dbElements = document.getElementsByName("coll[]");
             for(let i = 0; i < dbElements.length; i++){
@@ -487,6 +490,7 @@ include(__DIR__ . '/../../header.php');
 </div>
 <?php
 include(__DIR__ . '/../../footer.php');
+include_once(__DIR__ . '/../../config/footer-includes.php');
 ?>
 </body>
 </html>

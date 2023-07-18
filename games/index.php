@@ -9,7 +9,11 @@ $pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']:0;
 $gameManager = new GamesManager();
 $clArr = $gameManager->getChecklistArr($pid);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Games</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -94,6 +98,7 @@ $clArr = $gameManager->getChecklistArr($pid);
 	</div>
 	<?php
 	include(__DIR__ . '/../footer.php');
+    include_once(__DIR__ . '/../config/footer-includes.php');
 	?>
 </body>
 </html>

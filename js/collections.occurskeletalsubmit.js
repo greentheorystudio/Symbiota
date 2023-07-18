@@ -1,7 +1,7 @@
 let sec = 0;
 let count = 0;
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$("#fsciname").autocomplete({
 		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,

@@ -74,7 +74,11 @@ if($collid){
     $collData = Sanitizer::cleanOutArray($collDataFull[$collid]);
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.($collid?'Edit Collection Metadata':'Create New Collection Profile'); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -98,9 +102,8 @@ if($collid){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script>
-        $(document).ready(function() {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
             const dialogArr = ["instcode", "collcode", "pedits", "pubagg", "rights", "rightsholder", "accessrights", "guid", "colltype", "management", "icon", "collectionguid", "sourceurl", "sort", "collectionid"];
             let dialogStr = "";
             for(let i=0;i<dialogArr.length;i++){
@@ -120,7 +123,7 @@ if($collid){
 		});
 
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
@@ -433,22 +436,18 @@ if($collid){
                                     <span class="field-label">Dataset Type:</span>
                                     <span class="field-elem">
                                         <select name="colltype">
-                                            <option>Preserved Specimens</option>
-                                            <option <?php echo ($collid && $collData['colltype'] === 'Observations'?'SELECTED':''); ?>>Observations</option>
-                                            <option <?php echo ($collid && $collData['colltype'] === 'General Observations'?'SELECTED':''); ?>>Personal Observation Management</option>
+                                            <option value="PreservedSpecimen" <?php echo ($collid && ($collData['colltype'] === 'PreservedSpecimen')?'SELECTED':''); ?>>Preserved Specimens</option>
+                                            <option value="HumanObservation" <?php echo ($collid && ($collData['colltype'] === 'HumanObservation')?'SELECTED':''); ?>>Observations</option>
+                                            <option value="FossilSpecimen" <?php echo ($collid && $collData['colltype'] === 'FossilSpecimen'?'SELECTED':''); ?>>Fossil Specimens</option>
+                                            <option value="LivingSpecimen" <?php echo ($collid && $collData['colltype'] === 'LivingSpecimen'?'SELECTED':''); ?>>Living Specimens</option>
+                                            <option value="MaterialSample" <?php echo ($collid && $collData['colltype'] === 'MaterialSample'?'SELECTED':''); ?>>Material Samples</option>
                                         </select>
                                         <a id="colltypeinfo" href="#" onclick="return false" title="More information about Collection Type">
                                             <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                         </a>
                                         <span id="colltypeinfodialog">
                                             Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts.
-                                            Use Observations when the record is not based on a physical specimen.
-                                            General Observations are used for setting up group projects where registered users
-                                            can independently manage their own dataset directly within the single collection. General Observation
-                                            collections are typically used by field researchers to manage their collection data and print labels
-                                            prior to depositing the physical material within a collection. Even though personal collections
-                                            are represented by a physical sample, they are classified as &quot;observations&quot; until the
-                                            physical material is deposited within a publicly available collection with active curation.
+                                            Observations are collections where records are not based on a physical specimens.
                                         </span>
                                     </span>
                                 </div>
@@ -712,6 +711,7 @@ if($collid){
 	</div>
 	<?php
 	include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
 	?>
 </body>
 </html>

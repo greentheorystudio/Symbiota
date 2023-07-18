@@ -13,7 +13,7 @@ $result = $con->query($sql);
 while ($r = $result->fetch_object()) {
     $retArr[] = array(
         'id' => $r->sciname,
-		'value' => $r->tid,
+        'value' => $r->tid,
         'label' => $r->sciname);
 }
 $con->close();

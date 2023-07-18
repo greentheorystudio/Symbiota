@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$( "#targettaxon" ).autocomplete({
 		source: "../api/search/gettaxasuggest.php",
 		minLength: 3,
@@ -25,8 +25,8 @@ function verifyChangeTaxonForm(f){
 	const sciName = f.targettaxon.value;
 	const tid = f.targettid.value;
 	if(sciName === ""){
-        alert("Enter a taxon name to which the image will be transferred");
-    }
+		alert("Enter a taxon name to which the image will be transferred");
+	}
 	else if(tid === ""){
 		alert("Taxon name not found in the taxonomic thesaurus");
 	}

@@ -23,12 +23,16 @@ if($stArrJson){
     }
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search Results</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/external/bootstrap.min.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <link href="../css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" type="text/css" />
     <link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <style>
         .ui-tabs .ui-tabs-nav li { width:32%; }
@@ -47,7 +51,6 @@ if($stArrJson){
     <script type="text/javascript" src="../js/external/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
     <script type="text/javascript" src="../js/collections.search.js?ver=20221025"></script>
     <script type="text/javascript" src="../js/search.term.manager.js?ver=20221110"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
@@ -55,7 +58,7 @@ if($stArrJson){
         let stArr = {};
         let listPage = <?php echo $pageNumber; ?>;
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $('#csvoptions').popup({
                 transition: 'all 0.3s',
                 scrolllock: true
@@ -196,6 +199,7 @@ echo '</div>';
 </div>
 <?php
 include(__DIR__ . '/../footer.php');
+include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>

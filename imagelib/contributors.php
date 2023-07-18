@@ -6,7 +6,11 @@ header('X-Frame-Options: SAMEORIGIN');
 
 $pManager = new ImageLibraryManager();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Photographer List</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -23,27 +27,27 @@ $pManager = new ImageLibraryManager();
 		<b>Image contributors</b> 
 	</div>
 
-	<div id="innertext">
-		<?php
-		$pList = $pManager->getPhotographerList();
-		if($pList){
-			echo '<div style="float:left;;margin-right:40px;">';
-			echo '<h2>Image Contributors</h2>';
-			echo '<div style="margin-left:15px">';
-			foreach($pList as $uid => $pArr){
-				echo '<div>';
-				$phLink = 'search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"phuid":"'.$uid.'"}';
-				echo "<a href='".$phLink."'>".$pArr['name'].'</a> ('.$pArr['imgcnt'].')</div>';
-			}
-			echo '</div>';
-			echo '</div>';
-		}
-		?>
+    <div id="innertext">
+        <?php
+        $pList = $pManager->getPhotographerList();
+        if($pList){
+            echo '<div style="float:left;;margin-right:40px;">';
+            echo '<h2>Image Contributors</h2>';
+            echo '<div style="margin-left:15px">';
+            foreach($pList as $uid => $pArr){
+                echo '<div>';
+                $phLink = 'search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"phuid":"'.$uid.'"}';
+                echo "<a href='".$phLink."'>".$pArr['name'].'</a> ('.$pArr['imgcnt'].')</div>';
+            }
+            echo '</div>';
+            echo '</div>';
+        }
+        ?>
 
-		<div style="float:left">
-			<?php
-			$collList = $pManager->getCollectionImageList();
-			if($collList){
+        <div style="float:left">
+            <?php
+            $collList = $pManager->getCollectionImageList();
+            if($collList){
                 $specList = $collList['coll'];
                 if($specList){
                     echo '<h2>Specimens</h2>';
@@ -68,11 +72,12 @@ $pManager = new ImageLibraryManager();
                     echo '</div>';
                 }
             }
-			?>
-		</div>
-	</div>
+            ?>
+        </div>
+    </div>
 	<?php 
 	include(__DIR__ . '/../footer.php');
+    include_once(__DIR__ . '/../config/footer-includes.php');
 	?>
 </body>
 </html>

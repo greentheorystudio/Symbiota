@@ -10,8 +10,7 @@ class TPEditorManager {
 	protected $parentTid;
 	protected $family;
 	protected $rankId;
-	protected $language = 'English';
- 	protected $submittedTid;
+	protected $submittedTid;
  	protected $submittedSciName;
 	protected $taxonCon;
 	protected $errorStr = '';
@@ -88,21 +87,21 @@ class TPEditorManager {
  		return $this->submittedSciName;
  	}
 
-    public function getSynonym(): array
-    {
-        $synArr = array();
-        $sql = 'SELECT t2.tid, t2.SciName ' .
-            'FROM taxa AS t1 INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.tid ' .
-            'WHERE t1.tid <> t1.tidaccepted AND t1.tid = ' .$this->tid. ' ' .
-            'ORDER BY t2.SciName';
-        //echo $sql."<br>";
-        $result = $this->taxonCon->query($sql);
-        while($row = $result->fetch_object()){
-            $synArr[$row->tid]['sciname'] = $row->SciName;
-        }
-        $result->close();
-        return $synArr;
-    }
+	public function getSynonym(): array
+	{
+ 		$synArr = array();
+		$sql = 'SELECT t2.tid, t2.SciName ' .
+			'FROM taxa AS t1 INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.tid ' .
+			'WHERE t1.tid <> t1.tidaccepted AND t1.tid = ' .$this->tid. ' ' .
+			'ORDER BY t2.SciName';
+		//echo $sql."<br>";
+		$result = $this->taxonCon->query($sql);
+		while($row = $result->fetch_object()){
+			$synArr[$row->tid]['sciname'] = $row->SciName;
+		}
+		$result->close();
+ 		return $synArr;
+ 	}
  	
 	public function getVernaculars(): array
 	{
@@ -126,24 +125,6 @@ class TPEditorManager {
 		}
 		$result->close();
 		return $vernArr;
-	}
-	
-	public function editVernacular($inArray): string
-	{
-		$editArr = Sanitizer::cleanInArray($this->taxonCon,$inArray);
-		$vid = $editArr['vid'];
-		unset($editArr['vid']);
-		$setFrag = '';
-		foreach($editArr as $keyField => $value){
-			$setFrag .= ','.$keyField.' = "'.$value.'" ';
-		}
-		$sql = 'UPDATE taxavernaculars SET '.substr($setFrag,1).' WHERE (vid = '.$this->taxonCon->real_escape_string($vid).')';
-		//echo $sql;
-		$status = '';
-		if(!$this->taxonCon->query($sql)){
-			$status = 'Error:editingVernacular.';
-		}
-		return $status;
 	}
 	
 	public function addVernacular($inArray): string
@@ -190,11 +171,6 @@ class TPEditorManager {
  		return $this->parentTid;
  	}
 
- 	public function setLanguage($lang): string
-	{
- 		return $this->language = $this->taxonCon->real_escape_string($lang);
- 	}
- 	
  	public function getErrorStr(): string
 	{
  		return $this->errorStr;

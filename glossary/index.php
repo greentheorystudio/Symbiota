@@ -57,7 +57,11 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 $addTermUrl = 'addterm.php';
 $indTermUrl = 'individual.php';
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -66,8 +70,7 @@ $indTermUrl = 'individual.php';
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript">
+    <script type="text/javascript">
 		const langArr = {<?php
 			$d = '';
 			foreach($languageArr as $k => $v){ 
@@ -140,7 +143,7 @@ $indTermUrl = 'individual.php';
 		}
 
 	</script>
-	<script src="../js/glossary.index.js?ver=20221115" type="text/javascript"></script>
+	<script src="../js/glossary.index.js?ver=20230103" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -390,6 +393,7 @@ $indTermUrl = 'individual.php';
 	</div>
 	<?php
 	include(__DIR__ . '/../footer.php');
+    include_once(__DIR__ . '/../config/footer-includes.php');
 	?>
 </body>
 </html>

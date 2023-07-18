@@ -377,7 +377,7 @@ class OccurrenceIndividualManager extends Manager{
             $this->conn->close();
 
             $emailAddr = $GLOBALS['ADMIN_EMAIL'];
-            $comUrl = 'http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
+            $comUrl = $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
             $subject = $GLOBALS['DEFAULT_TITLE'].' inappropriate comment reported<br/>';
             $bodyStr = 'The following comment has been reported as inappropriate:<br/> '.
                 '<a href="'.$comUrl.'">'.$comUrl.'</a>';
