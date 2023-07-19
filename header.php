@@ -4,125 +4,181 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
 <div id="mainContainer">
     <div id="bannerContainer">
         <div style="width:850px;margin-left:auto;margin-right:auto;">
-            <img style="" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/wiscflora_banner6.png" />
+            <img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/wiscflora_banner6.png" />
         </div>
     </div>
     <div id="topNavigation">
-        <ul id="horizontalDropDown">
-            <li>
-                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" >Home</a>
-            </li>
-            <li>
-                <a href="#" >Advanced Searches</a>
-                <ul>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" ><b>SEARCH</b> for Species &amp; Specimen Records</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php" ><b>BROWSE</b> the Flora  &amp; Image Library</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank">Map Search</a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" >Checklists</a>
-                <ul>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=7" >County Floras</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=8" >Wildflowers by Color</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=9" >Wildflowers by Month</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=11" >Largest Plant Families</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=20" >BCW Botany Blitzes</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=25" >WIS/BCW Botany Forays</a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" >Floristic Projects</a>
-                <ul>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=14" >Brule River State Forest</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=15" >Ridgeway Pine Relict SNA</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=23" >Amsterdam Sloughs State Wildlife Area</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=21" >Crex Meadows State Wildlife Area</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=24" >Fish Lake State Wildlife Area</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?proj=19" >Navarino Cedar Swamp State Natural Area</a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" >Resources</a>
-                <ul>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/resources/Keys_pdfs/KEYS_Asteraceae_of_Wisconsin.pdf" target="_blank">Asteraceae of Wisconsin</a>
-                    </li>
-                    <li>
-                        <a href="https://herbarium.wisc.edu/research/publications/" target="_blank">Atlas of the Wisconsin Prairie and Savanna Flora</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/resources/Keys_pdfs/KEYS_Fern_Allies_of_Wisconsin.pdf" target="_blank">Fern Allies of Wisconsin</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/resources/Keys_pdfs/KEYS_Ferns_of_Wisconsin.pdf" target="_blank">Ferns of Wisconsin</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/resources/Keys_pdfs/KEYS_Gymnosperms_of_Wisconsin.pdf" target="_blank">Gymnosperms of Wisconsin</a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" >For Further Information</a>
-                <ul>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collstats.php" >About the Consortium of Wisconsin Herbaria</a>
-                    </li>
-                    <li>
-                        <a href="https://herbarium.wisc.edu" target="_blank">WI State Herbarium</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/links.php">Links</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        <div id="rightNavigationLinks">
-            <?php
-            if($GLOBALS['USER_DISPLAY_NAME']){
-                ?>
-                <span>Welcome <?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>!</span>
-                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php">My Profile</a></span>
-                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/index.php?submit=logout">Logout</a></span>
-                <?php
-            }
-            else{
-                ?>
-                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>">Log In</a></span>
-                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php">New Account</a></span>
-                <?php
-            }
-            ?>
-            <span><a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php'>Sitemap</a></span>
-        </div>
+        <q-toolbar class="q-pa-md horizontalDropDown">
+            <template v-if="windowWidth < 1440">
+                <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu">
+                    <q-menu>
+                        <q-list dense>
+                            <template v-for="item in navBarData">
+                                <template v-if="item.subItems && item.subItems.length">
+                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
+                                        <q-item-section>{{ item.label }}</q-item-section>
+                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start">
+                                            <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
+                                                <template v-for="subitem in item.subItems">
+                                                    <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')">
+                                                        <q-item-section>{{ subitem.label }}</q-item-section>
+                                                    </q-item>
+                                                </template>
+                                            </q-list>
+                                        </q-menu>
+                                    </q-item>
+                                </template>
+                                <template v-else>
+                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')">
+                                        <q-item-section>{{ item.label }}</q-item-section>
+                                    </q-item>
+                                </template>
+                            </template>
+                        </q-list>
+                    </q-menu>
+                </q-btn>
+            </template>
+            <template v-if="windowWidth >= 1440">
+                <template v-for="item in navBarData">
+                    <template v-if="item.subItems && item.subItems.length">
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap>
+                            <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="bottom start" self="top start" square>
+                                <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
+                                    <template v-for="subitem in item.subItems">
+                                        <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" clickable v-close-popup>
+                                            <q-item-section>
+                                                <q-item-label>{{ subitem.label }}</q-item-label>
+                                            </q-item-section>
+                                        </q-item>
+                                    </template>
+                                </q-list>
+                            </q-menu>
+                        </q-btn>
+                    </template>
+                    <template v-else>
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" stretch flat no-wrap></q-btn>
+                    </template>
+                </template>
+            </template>
+            <q-space></q-space>
+            <template v-if="userDisplayName">
+                <q-breadcrumbs-el class="header-username-text">Welcome {{ userDisplayName }}!</q-breadcrumbs-el>
+                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php" label="My Profile" stretch flat no-wrap></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" @click="logout();" label="Logout" stretch flat no-wrap></q-btn>
+            </template>
+            <template v-else>
+                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>" label="Log In" stretch flat no-wrap></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php" label="New Account" stretch flat no-wrap></q-btn>
+            </template>
+            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" label="Sitemap" stretch flat no-wrap></q-btn>
+        </q-toolbar>
     </div>
+    <script>
+        const navBarData = [
+            {url: CLIENT_ROOT + '/index.php', label: 'Home'},
+            {
+                label: 'Advanced Searches',
+                subItems: [
+                    {url: CLIENT_ROOT + '/collections/index.php', label: 'SEARCH for Species & Specimen Records'},
+                    {url: CLIENT_ROOT + '/imagelib/index.php', label: 'BROWSE the Flora & Image Library'},
+                    {url: CLIENT_ROOT + '/spatial/index.php', label: 'Map Search', newTab: true}
+                ]
+            },
+            {
+                label: 'Checklists',
+                subItems: [
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=7', label: 'County Floras'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=8', label: 'Wildflowers by Color'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=9', label: 'Wildflowers by Month'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=11', label: 'Largest Plant Families'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=20', label: 'BCW Botany Blitzes'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=25', label: 'WIS/BCW Botany Forays'}
+                ]
+            },
+            {
+                label: 'Floristic Projects',
+                subItems: [
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=14', label: 'Brule River State Forest'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=15', label: 'Ridgeway Pine Relict SNA'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=23', label: 'Amsterdam Sloughs State Wildlife Area'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=21', label: 'Crex Meadows State Wildlife Area'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=24', label: 'Fish Lake State Wildlife Area'},
+                    {url: CLIENT_ROOT + '/projects/index.php?proj=19', label: 'Navarino Cedar Swamp State Natural Area'}
+                ]
+            },
+            {
+                label: 'Resources',
+                subItems: [
+                    {url: CLIENT_ROOT + '/resources/Keys_pdfs/KEYS_Asteraceae_of_Wisconsin.pdf', label: 'Asteraceae of Wisconsin', newTab: true},
+                    {url: 'https://herbarium.wisc.edu/research/publications/', label: 'Atlas of the Wisconsin Prairie and Savanna Flora', newTab: true},
+                    {url: CLIENT_ROOT + '/resources/Keys_pdfs/KEYS_Fern_Allies_of_Wisconsin.pdf', label: 'Fern Allies of Wisconsin', newTab: true},
+                    {url: CLIENT_ROOT + '/resources/Keys_pdfs/KEYS_Ferns_of_Wisconsin.pdf', label: 'Ferns of Wisconsin', newTab: true},
+                    {url: CLIENT_ROOT + '/resources/Keys_pdfs/KEYS_Gymnosperms_of_Wisconsin.pdf', label: 'Gymnosperms of Wisconsin', newTab: true}
+                ]
+            },
+            {
+                label: 'For Further Information',
+                subItems: [
+                    {url: CLIENT_ROOT + '/collections/misc/collstats.php', label: 'About the Consortium of Wisconsin Herbaria'},
+                    {url: 'https://herbarium.wisc.edu', label: 'WI State Herbarium', newTab: true},
+                    {url: CLIENT_ROOT + '/misc/links.php', label: 'Links'}
+                ]
+            }
+        ];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const dropDownNavBar = Vue.createApp({
+                data() {
+                    return {
+                        windowWidth: Vue.ref(0),
+                        userDisplayName: USER_DISPLAY_NAME,
+                        navBarData: navBarData,
+                        navBarToggle: Vue.ref({})
+                    }
+                },
+                mounted() {
+                    this.setNavBarData();
+                    window.addEventListener('resize', this.handleResize);
+                    this.handleResize();
+                },
+                methods: {
+                    handleResize() {
+                        this.windowWidth = window.innerWidth;
+                    },
+                    logout() {
+                        const url = profileApiUrl + '?action=logout';
+                        fetch(url)
+                            .then(() => {
+                                window.location.href = CLIENT_ROOT + '/index.php';
+                            })
+                    },
+                    navbarToggleOff(id) {
+                        this.navBarTimeout = setTimeout(() => {
+                            this.navBarToggle[Number(id)] = false;
+                        }, 400);
+                    },
+                    navbarToggleOn(id) {
+                        clearTimeout(this.navBarTimeout);
+                        for(let i in this.navBarToggle){
+                            if(this.navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
+                                this.navBarToggle[Number(i)] = false;
+                            }
+                        }
+                        this.navBarToggle[Number(id)] = true;
+                    },
+                    setNavBarData() {
+                        let indexId = 1;
+                        this.navBarData.forEach((dataObj) => {
+                            if(dataObj.hasOwnProperty('subItems')){
+                                dataObj['id'] = indexId;
+                                this.navBarToggle[indexId] = false;
+                                indexId++;
+                            }
+                        });
+                    }
+                }
+            });
+            dropDownNavBar.use(Quasar, { config: {} });
+            dropDownNavBar.mount('#topNavigation');
+        });
+    </script>

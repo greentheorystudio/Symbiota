@@ -6,13 +6,6 @@
         Madison, WI 53706 • Phone: 608-262-2792
         <br>Direct comments to&nbsp;<a href="#"></a><a href="mailto:wisconsin.state.herbarium@gmail.com">wisconsin.state.herbarium@gmail.com</a>
         <br>
-
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']."/profile/index.php?refurl=".$_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']; ?>">
-            Log In
-        </a> |
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php">
-            New Account
-        </a>
     </div>
 </div>
 </div>
