@@ -1,161 +1,101 @@
 html {
 	font-size: 90%;
 }
-
 body{
-	width: 80%;
-	min-width:980px;
-	min-height:300px;
-	margin-top:0;
 	background-color:#385723;
 }
-
 .title {
 	font-weight: bold;
 }
-
 #mainContainer{
-	width: 100%;
 	background-color:#FFFFFF;
+	display: block;
+	width: 80%;
+	min-width: 980px;
+	min-height: 300px;
+	margin-left: auto;
+	margin-right: auto;
 	border: 1px solid black;
 }
-
 #bannerContainer{
 	clear: both;
-	text-align:left;
+	text-align: left;
 	padding: 0;
-	background-color:#026B6E;
-	color:#FFFFFF;
+	background-color: #D9E636;
+	height: 175px;
+	display: flex;
+	justify-content: space-between;
 }
-
+.bannerTitleContainer{
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
+	color: black;
+	font-size: 40px;
+}
+.bannerTitle{
+	height: 175px;
+	width: 400px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
 #innertext{
 	min-height:400px;
 	margin: 0 auto;
 	padding: 10px 15px 15px;
 }
-
 div.navpath {
 	padding-top: 8px;
 	padding-bottom: 0;
 	padding-left: 10px;
 	margin-bottom: 0;
 }
-
 #topNavigation {
 	clear:both;
 	background-color:#D9E636;
-	padding: 0;
-	height:36px;
-	display: flex;
-	justify-content: space-between;
+	border-top:1px solid black;
 	border-bottom:1px solid black;
 }
-#rightNavigationLinks{
-	display: flex;
-	align-items: center;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
-	color:#000000;
-}
-
-#rightNavigationLinks a{
-	color:#000000;
-}
-
-#rightNavigationLinks span{
-	margin-right: 15px;
-}
-#horizontalDropDown{
-	list-style:none;
+.horizontalDropDown{
 	width:auto;
-	background-color:#D9E636;
+	background-color: #D9E636;
 	margin: 0;
 	padding: 0;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
-	color:#000000;
-	height:34px;
+	clear:both;
 }
-#horizontalDropDown li{
-	float:left;
-	position:relative;
-	padding:0;
-	margin:0;
-}
-#horizontalDropDown a{
-	display:block;
-	color:#000000;
+.horizontalDropDown a{
 	text-decoration: none;
-	padding: 8px 10px 10px;
+}
+.horizontalDropDownButton, .horizontalDropDownIconButton{
+	background-color: #D9E636!important;
+	text-decoration: none;
+}
+.horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
+	background-color: #9DA626!important;
+	text-decoration: none;
+}
+.horizontalDropDownButton i {
+	display: none;
+}
+.header-username-text {
+	margin-right: 15px;
+}
+.top-nav-text {
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
+	font-weight: bold;
+	color: #000000;
+}
+.top-nav-border-bottom {
+	border-bottom:1px solid black;
+}
+.top-nav-border-top {
+	border-top:1px solid black;
+}
+.top-nav-border-left {
+	border-left:1px solid black;
+}
+.top-nav-border-right {
 	border-right:1px solid black;
-}
-#horizontalDropDown a:hover{
-	background-color:#9DA626;
-	padding: 8px 10px 10px;
-}
-/* Submenu */
-#horizontalDropDown ul {
-	list-style:none;
-	position:absolute;
-	left:0;
-	top:37px;
-	padding:0;
-	z-index:1000;
-	background-color:#D9E636;
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-}
-#horizontalDropDown ul li{
-	float:none;
-}
-#horizontalDropDown ul a{
-	white-space:nowrap;
-	padding: 5px 8px 5px 5px;
-	text-decoration:none;
-	text-indent:8px;
-}
-#horizontalDropDown li:hover ul {
-	visibility: visible;
-	opacity: 1;
-}
-#horizontalDropDown li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 5px 8px 5px 5px;
-	background-image: none;
-	background-color:#D9E636;
-	z-index:1000;
-}
-#horizontalDropDown li:hover ul li a:hover {
-	background:#9DA626;
-}
-/* Submenu to right */
-#horizontalDropDown li ul li ul {
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-}
-#horizontalDropDown li ul li:hover ul {
-	left:100%;
-	top: 0;
-	visibility: visible;
-	opacity: 1;
-	padding:0;
-	z-index:1000;
-}
-#horizontalDropDown li ul li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 5px 8px 5px 5px;
-	background-image: none;
-	background-color:#D9E636;
-	z-index:1000;
-}
-#horizontalDropDown li ul li:hover ul li a:hover {
-	background:#9DA626;
 }
 
 /* Quick Search Plugin */
@@ -190,25 +130,6 @@ div.navpath {
 	border:1px solid black;
 }
 
-#innertable{
-	width:90%;
-	margin-top: 15px;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-div.spptab{
-	height:		200px;
-	width:		500px;
-	overflow: 	auto;
-}
-
-#descsource{
-	text-align:	right;
-	width:		400px;
-	padding:	10px 20px 10px 10px;
-}
-
 #key-couplet {
 	margin:10px 20px 10px 20px;
 }
@@ -220,525 +141,6 @@ div.spptab{
 }
 #key-taxon a{
 	text-decoration:underline;
-}
-
-#toprow{
-	width:			100%;
-	display:		table-row;
-	clear:			both;
-}
-
-#middlerow{
-	width:			100%;
-	display:		table;
-	clear:			both;
-}
-
-#leftcolumn{
-	display:		table-cell;
-}
-
-#leftcolumn.species{
-	width:			300px;
-}
-
-#leftcolumn.genus{
-	width:			250px;
-}
-
-#leftcolumn.higher{
-	width:			250px;
-}
-
-#rightcolumn{
-	display:		table-cell;
-	vertical-align:	top;
-	/*width:			525px;*/
-	width: 			90%;
-	padding-left: 		20px;
-}
-
-#bottomrow{
-	width:			100%;
-	display:		table-row;
-	clear:			both;
-}
-
-#footerrow{
-	width:			100%;
-	display:		block;
-	margin-top:		10px;
-	text-align:		center;
-	clear:			both;
-}
-
-#scinameheader{
-	display:		block;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
-}
-
-#scinameheader.species{
-	float: 			left;
-	margin-left:	0;
-	margin-bottom:	0;
-	font-size:		130%;
-}
-
-#scinameheader.genus{
-	margin-left:	0;
-	font-size:		130%;
-}
-
-#scinameheader.higher{
-	margin-left:	0;
-	font-size:		130%;
-}
-
-#sciname.species{
-	font-size:		130%;
-	font-weight:	bold;
-	margin-left:	10px;
-	color:			#990000;
-}
-
-#sciname.genus{
-	font-size:		130%;
-	font-weight:	bold;
-	margin-top:		15px;
-	margin-left:	10px;
-	color:			#990000;
-}
-
-#sciname.higher{
-	font-size:		130%;
-	font-weight:	bold;
-	margin-top:		15px;
-	margin-left:	10px;
-	color:			#990000;
-}
-
-#penaButtonDiv{
-	width: 420px;
-	margin-top:5px;
-	margin-left: 10px;
-	clear:both;
-	display: flex;
-	justify-content: space-between;
-}
-
-#penaLeftButtonDiv{
-	width: 200px;
-	display: inline-block;
-}
-
-#taxscpecrecordbutton{
-	padding:3px;
-	border-radius: 6px;
-	border:1px solid black;
-	background-color:#D9E636;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
-	cursor: pointer;
-}
-
-#penaRightButtonDiv{
-	width: 200px;
-	display: inline-block;
-}
-
-#taxinfrabutton{
-	margin: 0;
-	padding:3px;
-	border-radius: 6px;
-	border:1px solid black;
-	background-color:#D9E636;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
-	cursor: pointer;
-}
-
-#parenttaxonicon{
-	border:			0;
-	margin:			0;
-	height:			10px;
-}
-
-#redirectedfrom{
-	margin-left: 	25px;
-}
-
-#ambiguous{
-	display:		block;
-	float:			left;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
-	font-weight:	bold;
-	clear:			both;
-}
-
-#editbutton{
-	float: 			right;
-	width:			16px;
-	margin:			0;
-	padding:		0;
-}
-
-#editicon{
-	border:			0;
-}
-
-#weblinks{
-	margin-left: 	25px;
-	margin-top: 	0;
-	clear: 			both;
-}
-
-#family.species{
-	display:		block;
-	margin-left:	25px;
-}
-
-#family.genus{
-	display:		block;
-	margin-top:		3px;
-	margin-left:	20px;
-}
-
-#family.higher{
-	display:		block;
-	margin-top:		3px;
-	margin-left:	20px;
-}
-
-#project{
-	display:		block;
-	margin-top:		3px;
-	margin-left:	20px;
-}
-
-#vernaculars{
-	display:		block;
-	margin-left:	10px;
-	margin-top: 0;
-	margin-bottom:0;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
-	font-size:		120%;
-}
-
-#synonyms{
-	display:		block;
-	margin-left:	20px;
-}
-
-#nocentralimage{
-	display:		block;
-	width:			260px;
-	height:			260px;
-	border-style:	solid;
-	margin-top:		5px;
-	margin-left:	20px;
-	text-align:		center;
-}
-
-#desctabs{
-	height:			400px;
-	width: 550px;
-}
-
-#desctabs.species{
-	display:		none;
-}
-
-#desctabs.genus{
-	display:		none;
-	margin:			10px;
-	clear:			both;
-}
-
-#desctabs.higher{
-	display:		none;
-	margin:			10px;
-	clear:			both;
-}
-
-#nodesc{
-	display:		block;
-	margin:			70px 0 20px 50px;
-	width: 400px;
-}
-
-#img-div{
-	width: 100%;
-	display: none;
-	clear: both;
-}
-
-#img-tab-div{
-	border-top:		2px solid gray;
-	margin-top:		2px;
-}
-
-#img-tab-expand{
-	padding:		10px;
-	border-radius: 6px;
-	border:1px solid black;
-	background-color:#D9E636;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
-	width:			200px;
-	margin: 15px 0 0;
-	text-align:		center;
-}
-
-#imagebox{
-	padding:		10px 2px 10px 2px;
-}
-
-#spptaxonbox{
-	margin-top:		10px;
-}
-
-#imgphotographer{
-	text-align:		right;
-	position:		relative;
-	top:			-26px;
-	left:			5px;
-}
-
-div.photographer{
-	text-align:			right;
-	margin: 		2px;
-	margin-right:	20px;
-	font-size:		75%;
-}
-
-.parentlink{
-	margin-left:		30px;
-}
-
-#links{
-	width:				200px;
-	margin:				auto;
-}
-
-#linksbanner{
-	margin-left:		20px;
-}
-
-#linkslist{
-	margin-left:		10px;
-}
-
-#notfoundbox{
-	display:		block;
-	margin-top:		45px;
-	margin-left:	20px;
-}
-
-#suggestionbox{
-	margin-left:	15px;
-	font-weight:	bold;
-	font-size:		120%;
-}
-
-#suggestionlist{
-	margin-left:	25px;
-}
-
-#centralimage{
-	text-align:	center;
-	margin:		15px;
-}
-
-#centralimage img{
-	width: 		320px;
-	border:		1px dotted black;
-}
-
-#centralimage a:hover img{
-	border: 1px solid #0000ff;
-}
-
-#centralimage div.photographer{
-	text-align:			right;
-	margin: 2px 20px 2px 2px;
-	font-size:		75%;
-}
-
-#penacentralimage {
-	width: 420px;
-	margin-top:5px;
-	margin-left: 10px;
-	clear: both;
-	display: flex;
-	justify-content: space-between;
-	min-height: 440px;
-}
-
-#penacentralimageleftcolumn {
-	width: 210px;
-}
-
-#penacentralimagerightcolumn {
-	width: 210px;
-}
-
-div.penafieldimage {
-	margin: 10px 10px 8px;
-	width: 200px;
-}
-
-div.penafieldimage img {
-	width: 200px;
-}
-
-div.penaspecimenimage {
-	margin: 10px 10px 8px;
-    width: 200px;
-}
-
-div.penaspecimenimage img {
-	width: 200px;
-}
-
-/*Text Description*/
-div.sptab{
-	height:		330px;
-	width:		94%;
-	overflow: 	auto;
-}
-
-div.spptab{
-	height:		330px;
-	width:		94%;
-	overflow: 	auto;
-}
-
-#descsource{
-	text-align:	right;
-	width:		400px;
-	float:		right;
-	padding:	10px 20px 10px 10px;
-}
-
-#clinfo{
-	margin:				5px;
-	padding:			5px;
-	text-align:			center;
-	vertical-align:		middle;
-	background-color:	lightgreen;
-	overflow: 			auto;
-}
-
-#img-container{
-	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-start;
-}
-
-div.imgthumb{
-	margin: 		5px;
-	float:left;
-	text-align: 	left;
-	width: 220px;
-	height: 250px;
-}
-
-div.imgthumb img{
-	max-width: 		215px;
-	max-height: 		220px;
-	margin: 	0;
-	border:		1px dotted grey;
-}
-
-div.imgthumb a{
-
-}
-
-div.imgthumb a:hover img {
-	border: 1px solid #0000ff;
-}
-
-div.imgthumb div.photographer{
-	font-size:		75%;
-	text-align: 	right;
-	width: 			180px;
-	margin: 2px 15px 2px 2px;
-}
-
-div.mapthumb{
-	margin: 5px;
-	border: 0;
-	width: 175px;
-	height: 220px;
-	float: right;
-	text-align: center;
-}
-
-div.mapthumb img{
-	width: 165px;
-	margin: 0;
-	border: 1px dotted black;
-}
-
-div.mapthumb a:hover img {
-	border: 1px solid #0000ff;
-}
-
-div.spptaxon{
-	text-align: 	center;
-	width:			170px;
-	float:	 		left;
-	border: 		1px dotted gray;
-	margin:			3px;
-}
-
-div.sppimg{
-	margin-left: 	auto;
-	margin-right: 	auto;
-	overflow:		hidden;
-}
-
-div.sppimg img{
-	margin: 5px auto;
-	border:			1px dotted gray;
-}
-
-div.sppmap{
-	margin: 2px auto;
-	border: 	0;
-	width: 	160px;
-	text-align: center;
-}
-
-div.sppmap img{
-	max-width: 130px;
-	margin: 0 auto;
-	border: 1px dotted black;
-}
-
-div.sppmap a{
-	border: 1px solid #0000ff;
-}
-
-div.sppmap a:hover {
-
-}
-
-div.spptext{
-	font-weight:		bold;
-	margin-left:		auto;
-	margin-right:		auto;
-	margin-top:			7px;
-	padding-top:		25px;
-	padding-bottom:		50px;
-	border:				1px dotted grey;
-	width:				125px;
-}
-
-.clear{
-	clear:				both;
-}
-
-.taxonimage{
-	z-index:			-1;
 }
 
 .key {

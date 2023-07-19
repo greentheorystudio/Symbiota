@@ -2,12 +2,18 @@
 include_once(__DIR__ . '/config/symbbase.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+    <?php
+    include_once(__DIR__ . '/config/header-includes.php');
+    ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
         <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
         <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-        <meta name='keywords' content='' />
+        <link href="css/external/jquery-ui.css" type="text/css" rel="Stylesheet" />
+        <script src="js/external/jquery.js" type="text/javascript"></script>
+        <script src="js/external/jquery-ui.js" type="text/javascript"></script>
         <?php include_once('config/googleanalytics.php'); ?>
     </head>
     <body>
@@ -92,5 +98,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
                 <br>Direct comments to&nbsp;<a href="#"></a><a href="mailto:wisconsin.state.herbarium@gmail.com">wisconsin.state.herbarium@gmail.com</a>
             </p>
         </div>
+        <?php
+        include_once(__DIR__ . '/config/footer-includes.php');
+        ?>
     </body>
 </html>
