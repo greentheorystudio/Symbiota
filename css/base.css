@@ -606,7 +606,7 @@ body.processing .loadingModal {
 	max-width: 175px;
 	text-align: center;
 }
-.all-images-link-frame{
+.all-images-link-frame, .occurrences-link-frame{
 	text-align: center;
 }
 .map-thumb-container{
@@ -614,10 +614,10 @@ body.processing .loadingModal {
 	flex-direction: column;
 	padding: 5px;
 }
-.all-images-link{
+.all-images-link, .occurrences-link{
 	padding: 5px;
 }
-.map-thumb-spatial-link, .all-images-link{
+.map-thumb-spatial-link, .all-images-link, .occurrences-link{
 	font-size: 1.1rem;
 	font-weight: bold;
 }
