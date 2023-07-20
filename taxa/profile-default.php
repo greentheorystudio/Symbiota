@@ -9,6 +9,7 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=20230621" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonOccurrenceLink.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=20230715" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230715" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230715" type="text/javascript"></script>
@@ -43,6 +44,9 @@
                             </div>
                             <div class="right-inner-row">
                                 <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
+                            </div>
+                            <div class="right-inner-row">
+                                <taxa-profile-taxon-occurrence-link :taxon="taxon"></taxa-profile-taxon-occurrence-link>
                             </div>
                         </div>
                     </div>
@@ -92,6 +96,7 @@
             'taxa-profile-description-tabs': taxaProfileDescriptionTabs,
             'taxa-profile-taxon-map': taxaProfileTaxonMap,
             'taxa-profile-taxon-image-link': taxaProfileTaxonImageLink,
+            'taxa-profile-taxon-occurrence-link': taxaProfileTaxonOccurrenceLink,
             'taxa-profile-image-panel': taxaProfileImagePanel,
             'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel,
             'taxa-profile-media-panel': taxaProfileMediaPanel
