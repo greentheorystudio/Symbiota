@@ -1,6 +1,3 @@
-html {
-	font-size: 90%;
-}
 body{
 	background-color:#385723;
 }
@@ -27,7 +24,7 @@ body{
 	justify-content: space-between;
 }
 .bannerTitleContainer{
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,sans-serif;
 	color: black;
 	font-size: 40px;
 }
@@ -81,7 +78,7 @@ div.navpath {
 	margin-right: 15px;
 }
 .top-nav-text {
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,sans-serif;
 	font-weight: bold;
 	color: #000000;
 }
@@ -116,7 +113,7 @@ div.navpath {
 	border-radius: 6px;
 	border:1px solid black;
 	background-color:#D9E636;
-    font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
+    font-family: Chalkboard,Comic Sans MS,Comic Sans,sans-serif;
 }
 
 #quicksearchtaxon{
@@ -194,4 +191,8 @@ div.navpath {
 ul.key span.link a {
 	color: blue;
 	text-decoration: underline;
+}
+.img-sideways-scroller{
+	height: 280px;
+	max-width: 100%;
 }
