@@ -8,7 +8,7 @@ const taxaProfileImagePanel = {
             <div class="expansion-container">
                 <template v-if="taxon.images.length < 5">
                     <q-card>
-                        <div class="q-pt-sm q-pl-md text-h6 text-weight-bold">
+                        <div class="q-pt-sm q-pl-md text-h6 text-weight-bold taxon-profile-image-panel-label">
                             Images
                         </div>
                         <div class="row">
