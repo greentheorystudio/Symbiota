@@ -22,4 +22,10 @@ if($action){
     elseif($isEditor && $action === 'uploadTaxonMedia' && $_FILES && array_key_exists('tid',$_POST)){
         echo $tImageEditor->loadMedia($_POST);
     }
+    elseif($action === 'getTaxonMedia' && array_key_exists('tid',$_POST)){
+        $mediaType = array_key_exists('mediatypa',$_POST)?$_POST['mediatypa']:'';
+        $limit = array_key_exists('limit',$_POST)?(int)$_POST['limit']:0;
+        $includeAV = (array_key_exists('includeav',$_POST) && (int)$_POST['includeav'] === 1);
+        echo json_encode($tpManager->getTaxaMedia((int)$_POST['tid'], $mediaType, $limit, $includeAV));
+    }
 }

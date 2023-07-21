@@ -10,7 +10,7 @@ const taxaProfileSubtaxaPanel = {
             <div class="expansion-container">
                 <template v-if="subtaxaArr.length < 5">
                     <q-card>
-                        <div class="q-pt-sm q-pl-md text-h6 text-weight-bold">
+                        <div class="q-pt-sm q-pl-md text-h6 text-weight-bold taxon-profile-subtaxa-panel-label">
                             {{ subtaxaLabel }}
                         </div>
                         <div class="row">
