@@ -667,6 +667,22 @@ body.processing .loadingModal {
 	height: 160px;
 	overflow: hidden;
 }
+.image-carousel-image {
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-color: black;
+}
+.taxon-profile-image-carousel{
+	background-color: black;
+}
+.taxon-profile-image-carousel .q-carousel__slides-container{
+	height: 91%;
+}
+.taxon-profile-image-carousel-info-box{
+	background: rgba(255, 255, 255, .8);
+	padding: 4px 8px;
+	max-width: 25rem;
+}
 .media-thumb{
 	width: 400px;
 }
