@@ -8,10 +8,11 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=20230715" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=20230621" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=20230715" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230715" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230715" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js?ver=20230715" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonOccurrenceLink.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230718" type="text/javascript"></script>
 <script>
     const taxonProfilePage = Vue.createApp({
         template: `
@@ -41,8 +42,13 @@
                             <div class="right-inner-row">
                                 <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
                             </div>
+                            <template v-if="taxon.imageCnt > 100">
+                                <div class="right-inner-row">
+                                    <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
+                                </div>
+                            </template>
                             <div class="right-inner-row">
-                                <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
+                                <taxa-profile-taxon-occurrence-link :taxon="taxon"></taxa-profile-taxon-occurrence-link>
                             </div>
                         </div>
                     </div>
@@ -92,6 +98,7 @@
             'taxa-profile-description-tabs': taxaProfileDescriptionTabs,
             'taxa-profile-taxon-map': taxaProfileTaxonMap,
             'taxa-profile-taxon-image-link': taxaProfileTaxonImageLink,
+            'taxa-profile-taxon-occurrence-link': taxaProfileTaxonOccurrenceLink,
             'taxa-profile-image-panel': taxaProfileImagePanel,
             'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel,
             'taxa-profile-media-panel': taxaProfileMediaPanel
@@ -216,14 +223,13 @@
                     this.hideLoading();
                     if(response.status === 200){
                         response.json().then((resObj) => {
-                            this.loading = false;
                             if(resObj.hasOwnProperty('submittedTid')){
                                 this.taxon = resObj;
                                 this.setStyleClass();
-                                this.processImages();
                                 this.setTaxonDescriptions();
                                 this.setGlossary();
                                 this.processSubtaxa();
+                                this.setTaxonMedia();
                             }
                             else if(this.taxonValue !== ''){
                                 const formData = new FormData();
@@ -261,6 +267,27 @@
                     if(response.status === 200){
                         response.json().then((resObj) => {
                             this.processDescriptions(resObj);
+                        });
+                    }
+                });
+            },
+            setTaxonMedia(){
+                const formData = new FormData();
+                formData.append('tid', this.taxon['tid']);
+                formData.append('limit', '100');
+                formData.append('includeav', '1');
+                formData.append('action', 'getTaxonMedia');
+                fetch(taxaProfileApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    if(response.status === 200){
+                        response.json().then((resObj) => {
+                            this.loading = false;
+                            this.taxon['images'] = resObj['images'];
+                            this.taxon['media'] = resObj['media'];
+                            this.processImages();
                         });
                     }
                 });

@@ -31,10 +31,10 @@ class TaxonProfileManager {
             't2.parenttid AS accParentTid, t2.SecurityStatus AS accSecurityStatus, t2.Notes AS accNotes, t2.Source AS accSource '.
             'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID ';
         if(is_numeric($t)){
-            $sql .= 'WHERE (t.TID = '.$this->conn->real_escape_string($t).') ';
+            $sql .= 'WHERE t.TID = '.$this->conn->real_escape_string($t).' ';
         }
         else{
-            $sql .= 'WHERE (t.SciName = "'.$this->conn->real_escape_string($t).'") ';
+            $sql .= 'WHERE t.SciName = "'.$this->conn->real_escape_string($t).'" ';
         }
         $sql .= 'ORDER BY accSciName ';
         //echo $sql;
@@ -60,9 +60,7 @@ class TaxonProfileManager {
             }
             $this->taxon['vernaculars'] = array();
             $this->taxon['synonyms'] = array();
-            $this->taxon['images'] = array();
             $this->taxon['imageCnt'] = array();
-            $this->taxon['media'] = array();
             $this->taxon['map'] = $this->getMapImgUrl($this->taxon['tid'],$this->taxon['securityStatus']);
             if($clId){
                 $this->setClName($clId);
@@ -70,7 +68,7 @@ class TaxonProfileManager {
             if($this->taxon['submittedTid'] === $this->taxon['tid']){
                 $this->setVernaculars();
                 $this->setSynonyms();
-                $this->setTaxaMedia();
+                $this->setTaxaImageCount();
                 $this->taxon['sppArr'] = array();
                 $this->setSppData($clId);
             }
@@ -85,12 +83,12 @@ class TaxonProfileManager {
         if($clId){
             $sql = 'SELECT t.tid, t.RankId, t.sciname, t.securitystatus '.
                 'FROM taxa AS t INNER JOIN fmchklsttaxalink AS ctl ON ctl.TID = t.tid '.
-                'WHERE ctl.clid = '.$clId.' AND t.parenttid = '.$this->taxon['tid'].' '.
+                'WHERE t.tid = t.tidaccepted AND ctl.clid = '.$clId.' AND t.parenttid = '.$this->taxon['tid'].' '.
                 'ORDER BY t.sciname ';
         }
         else{
             $sql = 'SELECT DISTINCT t.sciname, t.RankId, t.tid, t.securitystatus '.
-                'FROM taxa AS t WHERE t.parenttid = '.$this->taxon['tid'].' '.
+                'FROM taxa AS t WHERE t.tid = t.tidaccepted AND t.parenttid = '.$this->taxon['tid'].' '.
                 'ORDER BY t.sciname ';
         }
         //echo $sql; exit;
@@ -205,25 +203,13 @@ class TaxonProfileManager {
         }
     }
 
-    private function setTaxaMedia(): void
+    private function setTaxaImageCount(): void
     {
         if($this->taxon['tid']){
-            $tidArr = array($this->taxon['tid']);
-            $sql1 = 'SELECT DISTINCT t.tid '.
-                'FROM taxa AS t LEFT JOIN taxaenumtree AS tn ON t.tid = tn.tid '.
-                'WHERE t.tid = t.tidaccepted '.
-                'AND tn.parenttid = '.$this->taxon['tid'];
-            $rs1 = $this->conn->query($sql1);
-            while($r1 = $rs1->fetch_object()){
-                $tidArr[] = $r1->tid;
-            }
-            $rs1->free();
-
-            $tidStr = implode(',',$tidArr);
             $sql = 'SELECT t.tid '.
-                'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
-                'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
-                'WHERE t.tidaccepted IN('.$tidStr.') ';
+                'FROM images AS ti LEFT JOIN taxa AS t ON ti.tid = t.tid '.
+                'WHERE t.tidaccepted IN(SELECT DISTINCT t.tid FROM taxa AS t LEFT JOIN taxaenumtree AS tn ON t.tid = tn.tid '.
+                'WHERE t.tid = t.tidaccepted AND (tn.parenttid = '.$this->taxon['tid'].' OR t.tid = '.$this->taxon['tid'].')) ';
             if(!$this->displayLocality) {
                 $sql .= 'AND ISNULL(ti.occid) ';
             }
@@ -231,17 +217,45 @@ class TaxonProfileManager {
             $result = $this->conn->query($sql);
             $this->taxon['imageCnt'] = $result->num_rows;
             $result->free();
+        }
+    }
 
-            $tidStr = implode(',',$tidArr);
+    public function getTaxaMedia($tid, $mediaType, $limit, $includeAV): array
+    {
+        $returnArr = array();
+        $returnArr['images'] = array();
+        $returnArr['media'] = array();
+        if($tid){
+            $sql = 'SELECT t.TID, t.tidaccepted, t.SecurityStatus, t2.SecurityStatus AS accSecurityStatus '.
+                'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
+                'WHERE t.TID = '.$this->conn->real_escape_string($tid).' ';
+            //echo $sql;
+            $result = $this->conn->query($sql);
+            if($row = $result->fetch_object()){
+                $accepted = ($row->TID === $row->tidaccepted);
+                $securityStatus = $accepted ? (int)$row->SecurityStatus : (int)$row->accSecurityStatus;
+                if($securityStatus === 0 || $this->teReader){
+                    $this->displayLocality = true;
+                }
+            }
+            $result->free();
+
             $sql = 'SELECT t.tid, t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
-                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner '.
+                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner, o.basisOfRecord '.
                 'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
                 'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
-                'WHERE t.tidaccepted IN('.$tidStr.') ';
-            if(!$this->displayLocality) {
+                'LEFT JOIN omoccurrences AS o ON ti.occid = o.occid '.
+                'WHERE t.tidaccepted IN(SELECT DISTINCT t.tid FROM taxa AS t LEFT JOIN taxaenumtree AS tn ON t.tid = tn.tid '.
+                'WHERE t.tid = t.tidaccepted AND (tn.parenttid = '.$tid.' OR t.tid = '.$tid.')) ';
+            if(!$this->displayLocality || $mediaType === 'taxon') {
                 $sql .= 'AND ISNULL(ti.occid) ';
             }
-            $sql .= 'ORDER BY ti.sortsequence LIMIT 100 ';
+            if($mediaType === 'occurrence') {
+                $sql .= 'AND ti.occid IS NOT NULL ';
+            }
+            if($limit){
+                $sql .= 'ORDER BY ti.sortsequence LIMIT '.(int)$limit.' ';
+            }
             //echo $sql;
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
@@ -260,36 +274,49 @@ class TaxonProfileManager {
                 $imageArr['photographer'] = Sanitizer::cleanOutStr($row->photographer);
                 $imageArr['caption'] = Sanitizer::cleanOutStr($row->caption);
                 $imageArr['occid'] = $row->occid;
+                $imageArr['basisofrecord'] = $row->basisOfRecord;
                 $imageArr['owner'] = Sanitizer::cleanOutStr($row->owner);
                 $imageArr['sciname'] = $row->sciname;
                 $imageArr['tid'] = $row->tid;
-                $this->taxon['images'][] = $imageArr;
+                $returnArr['images'][] = $imageArr;
             }
             $result->free();
 
-            $sql = 'SELECT t.tid, t.sciname, m.mediaid, m.accessuri, m.title, m.creator, m.`type`, m.occid, m.format, m.owner, m.description '.
-                'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
-                'WHERE t.tidaccepted IN('.$tidStr.') '.
-                'ORDER BY m.sortsequence LIMIT 100 ';
-            //echo $sql;
-            $result = $this->conn->query($sql);
-            while($row = $result->fetch_object()){
-                $mediaArr = array();
-                $mediaArr['id'] = $row->mediaid;
-                $mediaArr['accessuri'] = $row->accessuri;
-                $mediaArr['title'] = $row->title;
-                $mediaArr['creator'] = $row->creator;
-                $mediaArr['type'] = $row->type;
-                $mediaArr['occid'] = $row->occid;
-                $mediaArr['format'] = $row->format;
-                $mediaArr['owner'] = $row->owner;
-                $mediaArr['description'] = $row->description;
-                $mediaArr['sciname'] = $row->sciname;
-                $mediaArr['tid'] = $row->tid;
-                $this->taxon['media'][] = $mediaArr;
+            if($includeAV){
+                $sql = 'SELECT t.tid, t.sciname, m.mediaid, m.accessuri, m.title, m.creator, m.`type`, m.occid, m.format, m.owner, m.description '.
+                    'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
+                    'WHERE t.tidaccepted IN(SELECT DISTINCT t.tid FROM taxa AS t LEFT JOIN taxaenumtree AS tn ON t.tid = tn.tid '.
+                    'WHERE t.tid = t.tidaccepted AND (tn.parenttid = '.$tid.' OR t.tid = '.$tid.')) ';
+                if($mediaType === 'taxon') {
+                    $sql .= 'AND ISNULL(m.occid) ';
+                }
+                if($mediaType === 'occurrence') {
+                    $sql .= 'AND m.occid IS NOT NULL ';
+                }
+                if($limit){
+                    $sql .= 'ORDER BY m.sortsequence LIMIT '.(int)$limit.' ';
+                }
+                //echo $sql;
+                $result = $this->conn->query($sql);
+                while($row = $result->fetch_object()){
+                    $mediaArr = array();
+                    $mediaArr['id'] = $row->mediaid;
+                    $mediaArr['accessuri'] = $row->accessuri;
+                    $mediaArr['title'] = $row->title;
+                    $mediaArr['creator'] = $row->creator;
+                    $mediaArr['type'] = $row->type;
+                    $mediaArr['occid'] = $row->occid;
+                    $mediaArr['format'] = $row->format;
+                    $mediaArr['owner'] = $row->owner;
+                    $mediaArr['description'] = $row->description;
+                    $mediaArr['sciname'] = $row->sciname;
+                    $mediaArr['tid'] = $row->tid;
+                    $returnArr['media'][] = $mediaArr;
+                }
+                $result->free();
             }
-            $result->free();
         }
+        return $returnArr;
     }
 
     public function getMapImgUrl($tid,$security): string

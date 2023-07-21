@@ -3,15 +3,13 @@ const taxaProfileTaxonImageLink = {
         'taxon'
     ],
     template: `
-        <template v-if="taxon.imageCnt > 100">
-            <div class="all-images-link-frame">
-                <q-card>
-                    <div class="all-images-link">
-                        <span class="cursor-pointer" @click="openImageSearch();">View All {{ taxon.imageCnt }} Images</span>
-                    </div>
-                </q-card>
-            </div>
-        </template>
+        <div class="all-images-link-frame">
+            <q-card>
+                <div class="all-images-link">
+                    <span class="cursor-pointer" @click="openImageSearch();">View All {{ taxon.imageCnt }} Images</span>
+                </div>
+            </q-card>
+        </div>
     `,
     methods: {
         openImageSearch(){
