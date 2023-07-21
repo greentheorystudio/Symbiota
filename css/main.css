@@ -1,3 +1,6 @@
+html{
+	font-size: 90%;
+}
 body{
 	background-color:#385723;
 }
@@ -195,4 +198,24 @@ ul.key span.link a {
 .img-sideways-scroller{
 	height: 280px;
 	max-width: 100%;
+}
+
+#sciname{
+	font-weight: bold;
+	font-size: 180%;
+	color: #990000;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,sans-serif;
+}
+#sciname-author{
+	margin-left: 1rem;
+	font-weight: bold;
+	font-size: 180%;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,sans-serif;
+}
+#family, #synonyms, #vernaculars{
+	font-size: 130%;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,sans-serif;
+}
+.map-thumb-spatial-link, .all-images-link, .occurrences-link, .image-sideways-scroller-label, .taxon-profile-subtaxa-panel-label{
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,sans-serif;
 }

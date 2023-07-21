@@ -10,9 +10,9 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=20230621" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js?ver=20230715" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonOccurrenceLink.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230715" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230715" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=20230718" type="text/javascript"></script>
 <script>
     const taxonProfilePage = Vue.createApp({
         template: `
@@ -56,7 +56,7 @@
                         <div class="profile-center-row">
                             <div class="expansion-container">
                                 <q-card>
-                                    <div class="q-pt-sm q-pl-md text-h6 text-weight-bold">
+                                    <div class="q-pt-sm q-pl-md text-h6 text-weight-bold image-sideways-scroller-label">
                                         Field Images
                                     </div>
                                     <q-scroll-area class="q-px-md img-sideways-scroller">
@@ -81,7 +81,7 @@
                         <div class="profile-center-row">
                             <div class="expansion-container">
                                 <q-card>
-                                    <div class="q-pt-sm q-pl-md text-h6 text-weight-bold">
+                                    <div class="q-pt-sm q-pl-md text-h6 text-weight-bold image-sideways-scroller-label">
                                         Specimen Images
                                     </div>
                                     <q-scroll-area class="q-px-md img-sideways-scroller">
