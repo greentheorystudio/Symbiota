@@ -104,10 +104,10 @@ class TaxonProfileManager {
         $result->close();
         if($tids){
             $sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, '.
-                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, MIN(i.sortsequence) '.
+                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
                 'FROM taxa AS t LEFT JOIN images AS i ON t.tid = i.tid '.
                 'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
-                'WHERE t.tid IN('.implode(',',$tids).') '.
+                'WHERE t.tid IN('.implode(',',$tids).') AND i.sortsequence < 50 '.
                 'GROUP BY t.TID ';
             //echo $sql;
             $result = $this->conn->query($sql);
@@ -130,11 +130,11 @@ class TaxonProfileManager {
             $result->close();
 
             $sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, '.
-                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, MIN(i.sortsequence) '.
+                'IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
                 'FROM images AS i LEFT JOIN taxaenumtree AS te ON i.tid = te.tid '.
                 'LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
                 'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
-                'WHERE te.parenttid IN('.implode(',',$tids).') AND t.TID = t.tidaccepted '.
+                'WHERE te.parenttid IN('.implode(',',$tids).') AND t.TID = t.tidaccepted AND i.sortsequence < 50 '.
                 'GROUP BY t.TID ';
             //echo $sql;
             $result = $this->conn->query($sql);
