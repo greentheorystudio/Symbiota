@@ -225,3 +225,21 @@ ul.key span.link a {
 	color: blue;
 	text-decoration: underline;
 }
+.img-sideways-scroller{
+	height: 280px;
+	max-width: 100%;
+}
+
+#sciname{
+	font-weight: bold;
+	font-size: 1.3rem;
+	color: #990000;
+}
+#sciname-author{
+	margin-left: 1rem;
+	font-weight: bold;
+	font-size: 1.3rem;
+}
+#family, #synonyms, #vernaculars{
+	font-size: 1rem;
+}
