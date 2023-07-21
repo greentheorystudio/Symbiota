@@ -8,7 +8,7 @@ const taxaProfileTaxonMap = {
                 <div class="map-thumb-container">
                     <template v-if="taxon.map">
                         <div class="map-thumb-image">
-                            <a :href="taxon.map">
+                            <a @click="openMapPopup(true);" class="cursor-pointer">
                                 <q-img :src="taxon.map" :fit="contain" :title="taxon.sciName" :alt="taxon.sciName"></q-img>
                             </a>
                         </div>
