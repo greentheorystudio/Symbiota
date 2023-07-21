@@ -230,6 +230,7 @@
                     this.centralImage = this.specimenImageArr.shift();
                 }
                 this.loading = false;
+                this.hideLoading();
             },
             processSubtaxa(){
                 if(this.taxon['clName']){
@@ -283,7 +284,6 @@
                     body: formData
                 })
                 .then((response) => {
-                    this.hideLoading();
                     if(response.status === 200){
                         response.json().then((resObj) => {
                             if(resObj.hasOwnProperty('submittedTid')){
