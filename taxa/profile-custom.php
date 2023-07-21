@@ -103,9 +103,6 @@
                         </div>
                     </template>
                     <div class="profile-center-row">
-                        <taxa-profile-media-panel :taxon="taxon"></taxa-profile-media-panel>
-                    </div>
-                    <div class="profile-center-row">
                         <taxa-profile-subtaxa-panel :subtaxa-arr="subtaxaArr" :subtaxa-label="subtaxaLabel" :subtaxa-expansion-label="subtaxaExpansionLabel" :is-editor="isEditor"></taxa-profile-subtaxa-panel>
                     </div>
                 </template>
@@ -232,6 +229,7 @@
                 else{
                     this.centralImage = this.specimenImageArr.shift();
                 }
+                this.loading = false;
             },
             processSubtaxa(){
                 if(this.taxon['clName']){
@@ -368,7 +366,6 @@
                 .then((response) => {
                     if(response.status === 200){
                         response.json().then((resObj) => {
-                            this.loading = false;
                             this.taxon['images'] = this.taxon['images'].concat(resObj['images']);;
                             this.processImages();
                         });
