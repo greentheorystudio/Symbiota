@@ -56,7 +56,7 @@
                         <div class="profile-center-row">
                             <div class="expansion-container">
                                 <q-card>
-                                    <div class="q-pt-sm q-pl-md text-h6 text-weight-bold image-sideways-scroller-label">
+                                    <div class="q-pt-sm q-pl-md q-mb-md text-h6 text-weight-bold image-sideways-scroller-label">
                                         Field Images
                                     </div>
                                     <q-scroll-area class="q-px-md img-sideways-scroller">
@@ -81,7 +81,7 @@
                         <div class="profile-center-row">
                             <div class="expansion-container">
                                 <q-card>
-                                    <div class="q-pt-sm q-pl-md text-h6 text-weight-bold image-sideways-scroller-label">
+                                    <div class="q-pt-sm q-pl-md q-mb-md text-h6 text-weight-bold image-sideways-scroller-label">
                                         Specimen Images
                                     </div>
                                     <q-scroll-area class="q-px-md img-sideways-scroller">
@@ -288,14 +288,13 @@
                     this.hideLoading();
                     if(response.status === 200){
                         response.json().then((resObj) => {
-                            this.loading = false;
                             if(resObj.hasOwnProperty('submittedTid')){
                                 this.taxon = resObj;
                                 this.setStyleClass();
-                                this.processImages();
                                 this.setTaxonDescriptions();
                                 this.setGlossary();
                                 this.processSubtaxa();
+                                this.setTaxonFieldImages();
                             }
                             else if(this.taxonValue !== ''){
                                 const formData = new FormData();
@@ -333,6 +332,45 @@
                     if(response.status === 200){
                         response.json().then((resObj) => {
                             this.processDescriptions(resObj);
+                        });
+                    }
+                });
+            },
+            setTaxonFieldImages(){
+                const formData = new FormData();
+                formData.append('tid', this.taxon['tid']);
+                formData.append('mediatypa', 'taxon');
+                formData.append('limit', '100');
+                formData.append('action', 'getTaxonMedia');
+                fetch(taxaProfileApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    if(response.status === 200){
+                        response.json().then((resObj) => {
+                            this.taxon['images'] = resObj['images'];
+                            this.setTaxonSpecimenImages();
+                        });
+                    }
+                });
+            },
+            setTaxonSpecimenImages(){
+                const formData = new FormData();
+                formData.append('tid', this.taxon['tid']);
+                formData.append('mediatypa', 'occurrence');
+                formData.append('limit', '100');
+                formData.append('action', 'getTaxonMedia');
+                fetch(taxaProfileApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    if(response.status === 200){
+                        response.json().then((resObj) => {
+                            this.loading = false;
+                            this.taxon['images'] = this.taxon['images'].concat(resObj['images']);;
+                            this.processImages();
                         });
                     }
                 });
