@@ -223,14 +223,13 @@
                     this.hideLoading();
                     if(response.status === 200){
                         response.json().then((resObj) => {
-                            this.loading = false;
                             if(resObj.hasOwnProperty('submittedTid')){
                                 this.taxon = resObj;
                                 this.setStyleClass();
-                                this.processImages();
                                 this.setTaxonDescriptions();
                                 this.setGlossary();
                                 this.processSubtaxa();
+                                this.setTaxonMedia();
                             }
                             else if(this.taxonValue !== ''){
                                 const formData = new FormData();
@@ -268,6 +267,27 @@
                     if(response.status === 200){
                         response.json().then((resObj) => {
                             this.processDescriptions(resObj);
+                        });
+                    }
+                });
+            },
+            setTaxonMedia(){
+                const formData = new FormData();
+                formData.append('tid', this.taxon['tid']);
+                formData.append('limit', '100');
+                formData.append('includeav', '1');
+                formData.append('action', 'getTaxonMedia');
+                fetch(taxaProfileApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    if(response.status === 200){
+                        response.json().then((resObj) => {
+                            this.loading = false;
+                            this.taxon['images'] = resObj['images'];
+                            this.taxon['media'] = resObj['media'];
+                            this.processImages();
                         });
                     }
                 });
