@@ -25,7 +25,7 @@ const taxaProfileImageCarousel = {
                     </q-carousel-slide>
                 </template>
                 <template v-slot:control>
-                    <q-carousel-control position="top-right" offset="[0, 0]">
+                    <q-carousel-control position="top-right" :offset="[9, 9]">
                         <q-btn push round dense color="red" text-color="white" icon="fas fa-times" @click="hideImageCarousel();"></q-btn>
                     </q-carousel-control>
                 </template>
