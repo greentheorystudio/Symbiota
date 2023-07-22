@@ -22,7 +22,7 @@
             <template v-if="!loading">
                 <template v-if="taxon">
                     <div class="profile-split-row">
-                        <div class="left-column profile-column">
+                        <div class="profile-column">
                             <taxa-profile-sciname-header :taxon="taxon" :style-class="styleClass"></taxa-profile-sciname-header>
                             <taxa-profile-taxon-family :taxon="taxon"></taxa-profile-taxon-family>
                             <taxa-profile-taxon-notes :taxon="taxon"></taxa-profile-taxon-notes>
