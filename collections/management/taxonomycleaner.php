@@ -1114,9 +1114,11 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                             })
                                             .then((response) => {
                                                 if(response.status === 200){
-                                                    this.setSubprocessUndoNames(this.currentSciname,this.changedCurrentSciname,this.changedParsedSciname);
-                                                    this.processSubprocessSuccessResponse(this.currentSciname,false,(res + ' records updated'));
-                                                    this.updateOccurrenceLinkages();
+                                                    response.text().then((resp) => {
+                                                        this.setSubprocessUndoNames(this.currentSciname,this.changedCurrentSciname,this.changedParsedSciname);
+                                                        this.processSubprocessSuccessResponse(this.currentSciname,false,(resp + ' records updated'));
+                                                        this.updateOccurrenceLinkages();
+                                                    });
                                                 }
                                                 else{
                                                     this.processSubprocessErrorResponse(this.currentSciname,true,'Error updating occurrence records');
