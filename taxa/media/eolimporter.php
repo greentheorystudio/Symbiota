@@ -552,6 +552,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                 newImageObj['accessrights'] = mediaRecord.hasOwnProperty('license') ? mediaRecord['license'] : null;
                                 newImageObj['notes'] = mediaRecord.hasOwnProperty('description') ? mediaRecord['description'] : null;
                                 newImageObj['sourceidentifier'] = mediaRecord['identifier'];
+                                newImageObj['sortsequence'] = '20';
                                 const formData = new FormData();
                                 formData.append('image', JSON.stringify(newImageObj));
                                 formData.append('action', 'addImageRecord');
@@ -594,6 +595,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                 newMediaObj['language'] = mediaRecord.hasOwnProperty('language') ? mediaRecord['language'] : null;
                                 newMediaObj['usageterms'] = mediaRecord.hasOwnProperty('license') ? mediaRecord['license'] : null;
                                 newMediaObj['description'] = mediaRecord.hasOwnProperty('description') ? mediaRecord['description'] : null;
+                                newMediaObj['sortsequence'] = '20';
                                 const formData = new FormData();
                                 formData.append('media', JSON.stringify(newMediaObj));
                                 formData.append('action', 'addMediaRecord');
