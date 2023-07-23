@@ -10,9 +10,10 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=20230718" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js?ver=20230715" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonOccurrenceLink.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=20230719" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230718" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=20230719" type="text/javascript"></script>
 <script>
     const taxonProfilePage = Vue.createApp({
         template: `
@@ -53,7 +54,7 @@
                         </div>
                     </div>
                     <div class="profile-center-row">
-                        <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel"></taxa-profile-image-panel>
+                        <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel" @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
                     </div>
                     <div class="profile-center-row">
                         <taxa-profile-media-panel :taxon="taxon"></taxa-profile-media-panel>
@@ -65,6 +66,9 @@
                 <template v-else>
                     <taxa-profile-not-found :taxon-value="taxonValue" :fuzzy-matches="fuzzyMatches"></taxa-profile-not-found>
                 </template>
+                <q-dialog v-model="imageCarousel" persistent full-width full-height>
+                    <taxa-profile-image-carousel :image-arr="this.taxon.images" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
+                </q-dialog>
             </template>
         `,
         data() {
@@ -74,6 +78,8 @@
                 clValue: clVal,
                 descriptionArr: Vue.ref([]),
                 glossaryArr: Vue.ref([]),
+                imageCarousel: Vue.ref(false),
+                imageCarouselSlide: Vue.ref(null),
                 imageExpansionLabel: Vue.ref(''),
                 isEditor: isEditor,
                 fuzzyMatches: Vue.ref([]),
@@ -101,7 +107,8 @@
             'taxa-profile-taxon-occurrence-link': taxaProfileTaxonOccurrenceLink,
             'taxa-profile-image-panel': taxaProfileImagePanel,
             'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel,
-            'taxa-profile-media-panel': taxaProfileMediaPanel
+            'taxa-profile-media-panel': taxaProfileMediaPanel,
+            'taxa-profile-image-carousel': taxaProfileImageCarousel
         },
         setup () {
             const $q = useQuasar();
@@ -167,6 +174,8 @@
                 else{
                     this.imageExpansionLabel = 'View All ' + this.taxon['images'].length + ' Images';
                 }
+                this.loading = false;
+                this.hideLoading();
             },
             processSubtaxa(){
                 if(this.taxon['clName']){
@@ -220,7 +229,6 @@
                     body: formData
                 })
                 .then((response) => {
-                    this.hideLoading();
                     if(response.status === 200){
                         response.json().then((resObj) => {
                             if(resObj.hasOwnProperty('submittedTid')){
@@ -284,13 +292,22 @@
                 .then((response) => {
                     if(response.status === 200){
                         response.json().then((resObj) => {
-                            this.loading = false;
                             this.taxon['images'] = resObj['images'];
                             this.taxon['media'] = resObj['media'];
                             this.processImages();
                         });
                     }
                 });
+            },
+            showImageCarousel(index){
+                this.imageCarouselSlide = index;
+                this.imageCarousel = true;
+            },
+            toggleImageCarousel(val){
+                this.imageCarousel = val;
+            },
+            updateImageCarousel(val){
+                this.imageCarouselSlide = val;
             }
         }
     });

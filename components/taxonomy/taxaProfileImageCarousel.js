@@ -19,6 +19,7 @@ const taxaProfileImageCarousel = {
                                 <template v-if="image.sciname"><span class="text-italic">{{ image.sciname }}</span>. </template>
                                 <template v-if="image.photographer">Photo by: {{ image.photographer }}. </template>
                                 <template v-if="image.caption">{{ image.caption }} </template>
+                                <template v-if="image.owner">Image provided by: {{ image.owner }}. </template>
                                 <a :href="image.anchorUrl" target="_blank">See image details</a>
                             </div>
                         </div>

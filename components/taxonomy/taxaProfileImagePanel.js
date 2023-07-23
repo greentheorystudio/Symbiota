@@ -14,7 +14,7 @@ const taxaProfileImagePanel = {
                         <div class="row">
                             <q-intersection v-for="image in taxon.images" :key="image" class="img-thumb q-mb-sm">
                                 <q-card class="q-ma-md overflow-hidden">
-                                    <a :href="image.anchorUrl">
+                                    <a @click="toggleImageCarousel(image.url);" class="cursor-pointer">
                                         <q-img :src="image.url" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
                                     </a>
                                     <div class="photographer">
@@ -32,7 +32,7 @@ const taxaProfileImagePanel = {
                         <div class="row">
                             <q-intersection v-for="image in taxon.images" :key="image" class="img-thumb q-mb-sm">
                                 <q-card class="q-ma-md overflow-hidden">
-                                    <a :href="image.anchorUrl">
+                                    <a @click="toggleImageCarousel(image.url);" class="cursor-pointer">
                                         <q-img :src="image.url" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
                                     </a>
                                     <div class="photographer">
@@ -51,6 +51,11 @@ const taxaProfileImagePanel = {
     data() {
         return {
             clientRoot: Vue.ref(CLIENT_ROOT)
+        }
+    },
+    methods: {
+        toggleImageCarousel(index){
+            this.$emit('update:set-image-carousel', index);
         }
     }
 };
