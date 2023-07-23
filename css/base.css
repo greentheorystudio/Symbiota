@@ -584,7 +584,7 @@ body.processing .loadingModal {
 	font-weight: bold;
 }
 .desc-tabs{
-	height: 450px;
+	height: 475px;
 }
 .desc-tab-panels{
 	height: 350px;
@@ -606,7 +606,7 @@ body.processing .loadingModal {
 	max-width: 175px;
 	text-align: center;
 }
-.all-images-link-frame{
+.all-images-link-frame, .occurrences-link-frame{
 	text-align: center;
 }
 .map-thumb-container{
@@ -614,10 +614,10 @@ body.processing .loadingModal {
 	flex-direction: column;
 	padding: 5px;
 }
-.all-images-link{
+.all-images-link, .occurrences-link{
 	padding: 5px;
 }
-.map-thumb-spatial-link, .all-images-link{
+.map-thumb-spatial-link, .all-images-link, .occurrences-link{
 	font-size: 1.1rem;
 	font-weight: bold;
 }
@@ -666,6 +666,22 @@ body.processing .loadingModal {
 	margin-top: 10px;
 	height: 160px;
 	overflow: hidden;
+}
+.image-carousel-image {
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-color: black;
+}
+.taxon-profile-image-carousel{
+	background-color: black;
+}
+.taxon-profile-image-carousel .q-carousel__slides-container{
+	height: 91%;
+}
+.taxon-profile-image-carousel-info-box{
+	background: rgba(255, 255, 255, .8);
+	padding: 4px 8px;
+	max-width: 25rem;
 }
 .media-thumb{
 	width: 400px;
