@@ -46,7 +46,7 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'createAccount' && array_key_exists('user',$_POST)){
         echo $profileHandler->register(json_decode($_POST['user'], true));
     }
-    elseif($action === 'getAccountInfoByUid' && array_key_exists('uid',$_POST) && ((int)$_POST['uid'] === $GLOBALS['SYMB_UID'] || $GLOBALS['IS_ADMIN'])){
+    elseif($action === 'getAccountInfoByUid' && array_key_exists('uid',$_POST) && ((int)$_POST['uid'] === (int)$GLOBALS['SYMB_UID'] || $GLOBALS['IS_ADMIN'])){
         echo json_encode($profileHandler->getAccountInfoByUid($_POST['uid']));
     }
     elseif($action === 'sendConfirmationEmail' && array_key_exists('uid',$_POST)){
