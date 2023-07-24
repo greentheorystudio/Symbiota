@@ -1,17 +1,19 @@
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileEditButton.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileScinameHeader.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileNotFound.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileEditButton.js?ver=20230715" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileScinameHeader.js?ver=20230715" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileNotFound.js?ver=20230715" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonNotes.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonFamily.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonVernaculars.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonVernaculars.js?ver=20230630" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js?ver=20230630" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=20230715" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230313" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js?ver=20230715" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonOccurrenceLink.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=20230719" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=20230719" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/custom/taxaProfileTaxonNativeStatus.js" type="text/javascript"></script>
 <script>
     const taxonProfilePage = Vue.createApp({
@@ -46,7 +48,7 @@
                         </div>
                     </div>
                     <div class="profile-center-row">
-                        <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel"></taxa-profile-image-panel>
+                        <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel" @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
                     </div>
                     <div class="profile-center-row">
                         <taxa-profile-media-panel :taxon="taxon"></taxa-profile-media-panel>
@@ -58,6 +60,9 @@
                 <template v-else>
                     <taxa-profile-not-found :taxon-value="taxonValue" :fuzzy-matches="fuzzyMatches"></taxa-profile-not-found>
                 </template>
+                <q-dialog v-model="imageCarousel" persistent full-width full-height>
+                    <taxa-profile-image-carousel :image-arr="this.taxon.images" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
+                </q-dialog>
             </template>
         `,
         data() {
@@ -68,6 +73,8 @@
                 descriptionArr: Vue.ref([]),
                 editLink: Vue.ref(null),
                 glossaryArr: Vue.ref([]),
+                imageCarousel: Vue.ref(false),
+                imageCarouselSlide: Vue.ref(null),
                 imageExpansionLabel: Vue.ref(''),
                 isEditor: isEditor,
                 fuzzyMatches: Vue.ref([]),
@@ -96,6 +103,7 @@
             'taxa-profile-image-panel': taxaProfileImagePanel,
             'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel,
             'taxa-profile-media-panel': taxaProfileMediaPanel,
+            'taxa-profile-image-carousel': taxaProfileImageCarousel,
             'taxa-profile-taxon-native-status': taxaProfileTaxonNativeStatus
         },
         mounted() {
@@ -134,20 +142,16 @@
                     else{
                         image['anchorUrl'] = CLIENT_ROOT + '/imagelib/imgdetails.php?imgid=' + image['id'];
                     }
-                    image['taxonUrl'] = CLIENT_ROOT + '/taxa/index.php?taxon=' + image['tid'];
                 });
                 this.centralImage = this.taxon['images'].shift();
                 if(Number(this.taxon['imageCnt']) > 100){
                     this.imageExpansionLabel = 'View First 100 Images';
                 }
                 else{
-                    this.imageExpansionLabel = 'View All ' + this.taxon['imageCnt'] + ' Images';
+                    this.imageExpansionLabel = 'View All ' + this.taxon['images'].length + ' Images';
                 }
-            },
-            processMedia(){
-                this.taxon['media'].forEach((media) => {
-                    media['taxonUrl'] = CLIENT_ROOT + '/taxa/index.php?taxon=' + media['tid'];
-                });
+                this.loading = false;
+                this.hideLoading();
             },
             processSubtaxa(){
                 if(this.taxon['clName']){
@@ -160,8 +164,6 @@
                 for(let i in this.taxon['sppArr']){
                     if(this.taxon['sppArr'].hasOwnProperty(i)){
                         const subTaxon = this.taxon['sppArr'][i];
-                        subTaxon['taxaurl'] = CLIENT_ROOT + '/taxa/index.php?taxon=' + subTaxon['tid'] + '&cl=' + (this.taxon.hasOwnProperty('clid')?this.taxon['clid']:'');
-                        subTaxon['editurl'] = CLIENT_ROOT + '/taxa/profile/tpeditor.php?tid=' + subTaxon['tid'];
                         this.subtaxaArr.push(subTaxon);
                     }
                 }
@@ -181,10 +183,6 @@
                         });
                     }
                 });
-            },
-            setLinks(){
-                this.editLink = CLIENT_ROOT + '/taxa/profile/tpeditor.php?tid=' + this.taxon['tid'];
-                this.parentLink = CLIENT_ROOT + '/taxa/index.php?taxon=' + this.taxon['parentTid'] + '&cl=' + (this.taxon.hasOwnProperty('clid')?this.taxon['clid']:'');
             },
             setStyleClass(){
                 if(Number(this.taxon['rankId']) > 180){
@@ -209,16 +207,13 @@
                 .then((response) => {
                     if(response.status === 200){
                         response.json().then((resObj) => {
-                            this.loading = false;
                             if(resObj.hasOwnProperty('submittedTid')){
                                 this.taxon = resObj;
-                                this.setLinks();
                                 this.setStyleClass();
-                                this.processImages();
                                 this.setTaxonDescriptions();
                                 this.setGlossary();
                                 this.processSubtaxa();
-                                this.processMedia();
+                                this.setTaxonMedia();
                             }
                             else if(this.taxonValue !== ''){
                                 const formData = new FormData();
@@ -232,9 +227,6 @@
                                 .then((response) => {
                                     if(response.status === 200){
                                         response.json().then((matches) => {
-                                            matches.forEach((match) => {
-                                                match['url'] = CLIENT_ROOT + '/taxa/index.php?taxon=' + match['tid'];
-                                            });
                                             this.fuzzyMatches = matches;
                                         });
                                     }
@@ -262,6 +254,36 @@
                         });
                     }
                 });
+            },
+            setTaxonMedia(){
+                const formData = new FormData();
+                formData.append('tid', this.taxon['tid']);
+                formData.append('limit', '100');
+                formData.append('includeav', '1');
+                formData.append('action', 'getTaxonMedia');
+                fetch(taxaProfileApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    if(response.status === 200){
+                        response.json().then((resObj) => {
+                            this.taxon['images'] = resObj['images'];
+                            this.taxon['media'] = resObj['media'];
+                            this.processImages();
+                        });
+                    }
+                });
+            },
+            showImageCarousel(index){
+                this.imageCarouselSlide = index;
+                this.imageCarousel = true;
+            },
+            toggleImageCarousel(val){
+                this.imageCarousel = val;
+            },
+            updateImageCarousel(val){
+                this.imageCarouselSlide = val;
             }
         }
     });
