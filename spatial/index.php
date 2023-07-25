@@ -776,13 +776,29 @@ include_once(__DIR__ . '/../config/header-includes.php');
             let infoHTML = '';
             let idArr = [];
             map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-                for(let i = 0; i<selectobject.length; i++){
-                    if(layer === layersObj[selectobject.options[i].value] && !idArr.includes(selectobject.options[i].value)){
-                        idArr.push(selectobject.options[i].value);
-                        if(infoHTML){
-                            infoHTML += '<br />';
+                if(layer === layersObj['pointv']){
+                    let iFeature = '';
+                    if(feature){
+                        if(clusterPoints && feature.get('features').length === 1){
+                            iFeature = feature.get('features')[0];
                         }
-                        infoHTML += selectobject.options[i].innerHTML;
+                        else if(!clusterPoints){
+                            iFeature = feature;
+                        }
+                    }
+                    if(iFeature){
+                        infoHTML = getPointFeatureInfoHtml(iFeature);
+                    }
+                }
+                else{
+                    for(let i = 0; i < selectobject.length; i++){
+                        if(layer === layersObj[selectobject.options[i].value] && !idArr.includes(selectobject.options[i].value)){
+                            idArr.push(selectobject.options[i].value);
+                            if(infoHTML){
+                                infoHTML += '<br />';
+                            }
+                            infoHTML += selectobject.options[i].innerHTML;
+                        }
                     }
                 }
             });
