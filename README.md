@@ -85,5 +85,3 @@ These configurations are recommended for the php and MySQL/MariaDB installations
 - Edit the `misc/usagepolicy.php` file within your new installation to customize the usage policy for your portal.
 - An initial admin user has been installed with the login: `admin` and the password: `admin`. Use this initial user account to 
   create new admin users and then delete the initial user account.
-
-[Go to the Documentation site](https://greentheorystudio.github.io/Symbiota/)
