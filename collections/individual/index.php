@@ -240,16 +240,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     </script>
 </head>
 <body <?php echo ($fullWindow ? '' : 'style="border:0;width:950px;"'); ?>>
-<div id="fb-root"></div>
-<script>
-    (function(d, s, id) {
-        let js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-</script>
 <?php
 if($fullWindow){
     include(__DIR__ . '/../../header.php');
@@ -297,24 +287,6 @@ if($fullWindow){
                 ?>
             </ul>
             <div id="occurtab">
-                <div style="float:right;">
-                    <div style="float:right;">
-                        <a class="twitter-share-button" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid.'&clid='.$clid; ?>">Tweet</a>
-                        <script>
-                            window.twttr=(function(d,s,id){
-                                let js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};
-                                if(d.getElementById(id))return;js=d.createElement(s);
-                                js.id=id;js.src="https://platform.twitter.com/widgets.js";
-                                fjs.parentNode.insertBefore(js,fjs);t._e=[];
-                                t.ready=function(f){t._e.push(f);};
-                                return t;
-                            }(document,"script","twitter-wjs"));
-                        </script>
-                    </div>
-                    <div style="float:right;margin-right:10px;">
-                        <div class="fb-share-button" data-href="" data-layout="button_count"></div>
-                    </div>
-                </div>
                 <div style="float:left;margin:15px 0;text-align:center;font-weight:bold;width:120px;">
                     <?php
                     if($collMetadata['icon']){
