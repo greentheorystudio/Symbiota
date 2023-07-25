@@ -18,7 +18,7 @@ const taxaProfileTaxonOccurrenceLink = {
                 taxonType = 4;
             }
             else{
-                taxonType = 2;
+                taxonType = 1;
             }
             const url = CLIENT_ROOT + '/collections/list.php?starr={"imagetype":"all","usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'].replaceAll("'",'%squot;') + '"}';
             window.open(url, '_blank');
