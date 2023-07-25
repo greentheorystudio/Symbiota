@@ -410,7 +410,7 @@ class TaxonomyEditorManager{
     {
 		$tid = 0;
         $dataArr = $this->validateNewTaxonArr($dataArr);
-	    $sqlTaxa = 'INSERT INTO taxa(sciname,author,kingdomId,rankid,unitind1,unitname1,unitind2,unitname2,unitind3,unitname3,'.
+	    $sqlTaxa = 'INSERT IGNORE INTO taxa(sciname,author,kingdomId,rankid,unitind1,unitname1,unitind2,unitname2,unitind3,unitname3,'.
 			'tidaccepted,parenttid,family,`source`,notes,securitystatus,modifiedUid,modifiedTimeStamp) '.
 			'VALUES ("'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'",'.
 			($dataArr['author']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['author']).'"':'NULL').','.
@@ -432,16 +432,18 @@ class TaxonomyEditorManager{
 		//echo "sqlTaxa: ".$sqlTaxa;
 		if($this->conn->query($sqlTaxa)){
 			$tid = $this->conn->insert_id;
-		 	if((int)$dataArr['acceptstatus'] === 1){
-                $sqlNewTaxUpdate = 'UPDATE taxa SET tidaccepted = '.$tid.' WHERE tid = '.$tid.' ';
-                //echo "sqlNewTaxUpdate: ".$sqlNewTaxUpdate;
-                $this->conn->query($sqlNewTaxUpdate);
-            }
-            if(array_key_exists('source-name',$dataArr) && array_key_exists('source-id',$dataArr) && $dataArr['source-name'] && $dataArr['source-id']){
-                $sqlId = 'INSERT IGNORE INTO taxaidentifiers(tid,`name`,identifier) VALUES('.
-                    $tid.',"'.Sanitizer::cleanInStr($this->conn,$dataArr['source-name']).'","'.Sanitizer::cleanInStr($this->conn,$dataArr['source-id']).'")';
-                //echo $sqlId; exit;
-                $this->conn->query($sqlId);
+		 	if($tid){
+                if((int)$dataArr['acceptstatus'] === 1){
+                    $sqlNewTaxUpdate = 'UPDATE taxa SET tidaccepted = '.$tid.' WHERE tid = '.$tid.' ';
+                    //echo "sqlNewTaxUpdate: ".$sqlNewTaxUpdate;
+                    $this->conn->query($sqlNewTaxUpdate);
+                }
+                if(array_key_exists('source-name',$dataArr) && array_key_exists('source-id',$dataArr) && $dataArr['source-name'] && $dataArr['source-id']){
+                    $sqlId = 'INSERT IGNORE INTO taxaidentifiers(tid,`name`,identifier) VALUES('.
+                        $tid.',"'.Sanitizer::cleanInStr($this->conn,$dataArr['source-name']).'","'.Sanitizer::cleanInStr($this->conn,$dataArr['source-id']).'")';
+                    //echo $sqlId; exit;
+                    $this->conn->query($sqlId);
+                }
             }
 		}
 		return $tid;
@@ -449,7 +451,7 @@ class TaxonomyEditorManager{
 
     public function validateNewTaxonArr($dataArr): array
     {
-        $dataArr['kingdomid'] = 100;
+        $dataArr['kingdomid'] = 0;
         $dataArr['family'] = '';
         if(array_key_exists('rankid',$dataArr) && (int)$dataArr['rankid'] === 10 && Sanitizer::cleanInStr($this->conn,$dataArr['sciname'])){
             $dataArr['kingdomid'] = $this->addNewTaxonomicKingdom($dataArr['sciname']);

@@ -511,7 +511,7 @@ class ProfileManager{
 
     public function setTokenAuthSql(): void
     {
-        $this->authSql = 'SELECT u.uid, u.firstname, u.lastname '.
+        $this->authSql = 'SELECT u.uid, u.firstname, u.lastname, u.validated '.
             'FROM users AS u INNER JOIN useraccesstokens AS ut ON u.uid = ut.uid '.
             'WHERE u.username = "'.$this->userName.'" AND ut.token = "'.$this->token.'" ';
     }
