@@ -12,7 +12,7 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonOccurrenceLink.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230718" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230718" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=20230720" type="text/javascript"></script>
 <script>
     const taxonProfilePage = Vue.createApp({
         template: `
@@ -39,20 +39,22 @@
                         </div>
                         <div class="right-column profile-column">
                             <taxa-profile-description-tabs :description-arr="descriptionArr" :glossary-arr="glossaryArr"></taxa-profile-description-tabs>
-                            <div class="right-inner-row">
-                                <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
-                            </div>
-                            <template v-if="taxon.imageCnt > 100">
-                                <div class="right-inner-row">
-                                    <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
-                                </div>
-                            </template>
-                            <div class="right-inner-row">
-                                <taxa-profile-taxon-occurrence-link :taxon="taxon"></taxa-profile-taxon-occurrence-link>
-                            </div>
                         </div>
                     </div>
-                    <template v-if="fieldImageArr.length > 0">
+                    <div class="row justify-between items-center q-mt-md">
+                        <div>
+                            <taxa-profile-taxon-occurrence-link :taxon="taxon"></taxa-profile-taxon-occurrence-link>
+                        </div>
+                        <template v-if="taxon.imageCnt > 100">
+                            <div>
+                                <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
+                            </div>
+                        </template>
+                        <div>
+                            <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
+                        </div>
+                    </div>
+                    <template v-if="taxon.rankId > 180 && fieldImageArr.length > 0">
                         <div class="profile-center-row">
                             <div class="expansion-container">
                                 <q-card>
@@ -77,7 +79,7 @@
                             </div>
                         </div>
                     </template>
-                    <template v-if="specimenImageArr.length > 0">
+                    <template v-if="taxon.rankId > 180 && specimenImageArr.length > 0">
                         <div class="profile-center-row">
                             <div class="expansion-container">
                                 <q-card>
@@ -109,12 +111,14 @@
                 <template v-else>
                     <taxa-profile-not-found :taxon-value="taxonValue" :fuzzy-matches="fuzzyMatches"></taxa-profile-not-found>
                 </template>
-                <q-dialog v-model="fieldImageCarousel" persistent full-width full-height>
-                    <taxa-profile-image-carousel :image-arr="fieldImageArr" :image-index="fieldImageCarouselSlide" @update:show-image-carousel="toggleFieldImageCarousel" @update:current-image="updateFieldImageCarousel"></taxa-profile-image-carousel>
-                </q-dialog>
-                <q-dialog v-model="specimenImageCarousel" persistent full-width full-height>
-                    <taxa-profile-image-carousel :image-arr="specimenImageArr" :image-index="specimenImageCarouselSlide" @update:show-image-carousel="toggleSpecimenImageCarousel" @update:current-image="updateSpecimenImageCarousel"></taxa-profile-image-carousel>
-                </q-dialog>
+                <template v-if="taxon.rankId > 180">
+                    <q-dialog v-model="fieldImageCarousel" persistent full-width full-height>
+                        <taxa-profile-image-carousel :image-arr="fieldImageArr" :image-index="fieldImageCarouselSlide" @update:show-image-carousel="toggleFieldImageCarousel" @update:current-image="updateFieldImageCarousel"></taxa-profile-image-carousel>
+                    </q-dialog>
+                    <q-dialog v-model="specimenImageCarousel" persistent full-width full-height>
+                        <taxa-profile-image-carousel :image-arr="specimenImageArr" :image-index="specimenImageCarouselSlide" @update:show-image-carousel="toggleSpecimenImageCarousel" @update:current-image="updateSpecimenImageCarousel"></taxa-profile-image-carousel>
+                    </q-dialog>
+                </template>
             </template>
         `,
         data() {
@@ -292,7 +296,12 @@
                                 this.setTaxonDescriptions();
                                 this.setGlossary();
                                 this.processSubtaxa();
-                                this.setTaxonFieldImages();
+                                if(Number(this.taxon['rankId']) > 180){
+                                    this.setTaxonFieldImages(100);
+                                }
+                                else{
+                                    this.setTaxonFieldImages(1);
+                                }
                             }
                             else if(this.taxonValue !== ''){
                                 const formData = new FormData();
@@ -334,11 +343,11 @@
                     }
                 });
             },
-            setTaxonFieldImages(){
+            setTaxonFieldImages(limit){
                 const formData = new FormData();
                 formData.append('tid', this.taxon['tid']);
                 formData.append('mediatypa', 'taxon');
-                formData.append('limit', '100');
+                formData.append('limit', limit);
                 formData.append('action', 'getTaxonMedia');
                 fetch(taxaProfileApiUrl, {
                     method: 'POST',
@@ -348,7 +357,12 @@
                     if(response.status === 200){
                         response.json().then((resObj) => {
                             this.taxon['images'] = resObj['images'];
-                            this.setTaxonSpecimenImages();
+                            if(Number(this.taxon['rankId']) > 180){
+                                this.setTaxonSpecimenImages();
+                            }
+                            else{
+                                this.processImages();
+                            }
                         });
                     }
                 });
