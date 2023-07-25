@@ -7,7 +7,7 @@ const taxaProfileMediaPanel = {
             <div class="expansion-container">
                 <template v-if="taxon.media.length">
                     <q-card>
-                        <div class="q-pt-sm q-pl-md text-h6 text-weight-bold">
+                        <div class="q-pt-sm q-pl-md text-h6 text-weight-bold taxon-profile-media-panel-label">
                             Audio & Video
                         </div>
                         <div class="row">

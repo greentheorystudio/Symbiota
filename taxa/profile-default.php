@@ -7,11 +7,13 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js?ver=20230630" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=20230715" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=20230621" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=20230715" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230715" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230715" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js?ver=20230715" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonOccurrenceLink.js?ver=20230720" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=20230719" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230718" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=20230720" type="text/javascript"></script>
 <script>
     const taxonProfilePage = Vue.createApp({
         template: `
@@ -21,7 +23,7 @@
             <template v-if="!loading">
                 <template v-if="taxon">
                     <div class="profile-split-row">
-                        <div class="left-column profile-column">
+                        <div class="profile-column">
                             <taxa-profile-sciname-header :taxon="taxon" :style-class="styleClass"></taxa-profile-sciname-header>
                             <taxa-profile-taxon-family :taxon="taxon"></taxa-profile-taxon-family>
                             <taxa-profile-taxon-notes :taxon="taxon"></taxa-profile-taxon-notes>
@@ -41,13 +43,18 @@
                             <div class="right-inner-row">
                                 <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
                             </div>
+                            <template v-if="taxon.imageCnt > 100">
+                                <div class="right-inner-row">
+                                    <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
+                                </div>
+                            </template>
                             <div class="right-inner-row">
-                                <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
+                                <taxa-profile-taxon-occurrence-link :taxon="taxon"></taxa-profile-taxon-occurrence-link>
                             </div>
                         </div>
                     </div>
                     <div class="profile-center-row">
-                        <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel"></taxa-profile-image-panel>
+                        <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel" @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
                     </div>
                     <div class="profile-center-row">
                         <taxa-profile-media-panel :taxon="taxon"></taxa-profile-media-panel>
@@ -59,6 +66,9 @@
                 <template v-else>
                     <taxa-profile-not-found :taxon-value="taxonValue" :fuzzy-matches="fuzzyMatches"></taxa-profile-not-found>
                 </template>
+                <q-dialog v-model="imageCarousel" persistent full-width full-height>
+                    <taxa-profile-image-carousel :image-arr="this.taxon.images" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
+                </q-dialog>
             </template>
         `,
         data() {
@@ -68,6 +78,8 @@
                 clValue: clVal,
                 descriptionArr: Vue.ref([]),
                 glossaryArr: Vue.ref([]),
+                imageCarousel: Vue.ref(false),
+                imageCarouselSlide: Vue.ref(null),
                 imageExpansionLabel: Vue.ref(''),
                 isEditor: isEditor,
                 fuzzyMatches: Vue.ref([]),
@@ -92,9 +104,11 @@
             'taxa-profile-description-tabs': taxaProfileDescriptionTabs,
             'taxa-profile-taxon-map': taxaProfileTaxonMap,
             'taxa-profile-taxon-image-link': taxaProfileTaxonImageLink,
+            'taxa-profile-taxon-occurrence-link': taxaProfileTaxonOccurrenceLink,
             'taxa-profile-image-panel': taxaProfileImagePanel,
             'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel,
-            'taxa-profile-media-panel': taxaProfileMediaPanel
+            'taxa-profile-media-panel': taxaProfileMediaPanel,
+            'taxa-profile-image-carousel': taxaProfileImageCarousel
         },
         setup () {
             const $q = useQuasar();
@@ -160,6 +174,8 @@
                 else{
                     this.imageExpansionLabel = 'View All ' + this.taxon['images'].length + ' Images';
                 }
+                this.loading = false;
+                this.hideLoading();
             },
             processSubtaxa(){
                 if(this.taxon['clName']){
@@ -213,17 +229,15 @@
                     body: formData
                 })
                 .then((response) => {
-                    this.hideLoading();
                     if(response.status === 200){
                         response.json().then((resObj) => {
-                            this.loading = false;
                             if(resObj.hasOwnProperty('submittedTid')){
                                 this.taxon = resObj;
                                 this.setStyleClass();
-                                this.processImages();
                                 this.setTaxonDescriptions();
                                 this.setGlossary();
                                 this.processSubtaxa();
+                                this.setTaxonMedia();
                             }
                             else if(this.taxonValue !== ''){
                                 const formData = new FormData();
@@ -264,6 +278,36 @@
                         });
                     }
                 });
+            },
+            setTaxonMedia(){
+                const formData = new FormData();
+                formData.append('tid', this.taxon['tid']);
+                formData.append('limit', '100');
+                formData.append('includeav', '1');
+                formData.append('action', 'getTaxonMedia');
+                fetch(taxaProfileApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    if(response.status === 200){
+                        response.json().then((resObj) => {
+                            this.taxon['images'] = resObj['images'];
+                            this.taxon['media'] = resObj['media'];
+                            this.processImages();
+                        });
+                    }
+                });
+            },
+            showImageCarousel(index){
+                this.imageCarouselSlide = index;
+                this.imageCarousel = true;
+            },
+            toggleImageCarousel(val){
+                this.imageCarousel = val;
+            },
+            updateImageCarousel(val){
+                this.imageCarouselSlide = val;
             }
         }
     });

@@ -64,19 +64,6 @@ if($imgArr){
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-	<?php
-	if($imgArr){
-		?>
-		<meta property="og:title" content="<?php echo $imgArr['sciname']; ?>"/>
-		<meta property="og:site_name" content="<?php echo $GLOBALS['DEFAULT_TITLE']; ?>"/>
-		<meta property="og:image" content="<?php echo $metaUrl; ?>"/>
-		<meta name="twitter:card" content="photo" data-dynamic="true" />
-		<meta name="twitter:title" content="<?php echo $imgArr['sciname']; ?>" />
-		<meta name="twitter:image" content="<?php echo $metaUrl; ?>" />
-		<meta name="twitter:url" content="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/imgdetails.php?imgid='.$imgId; ?>" />
-		<?php
-	}
-	?>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Image Details: #' .$imgId; ?></title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -87,48 +74,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<script src="../js/imagelib.imgdetails.js?ver=20230316" type="text/javascript"></script>
 </head>
 <body>
-	<div id="fb-root"></div>
-	<script>
-		(function(d, s, id) {
-            let js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {
-                return;
-            }
-			js = d.createElement(s); js.id = id;
-			js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
-	</script>
 	<?php
 	include(__DIR__ . '/../header.php');
 	?>
 	<div id="innertext">
 		<?php
-		if($imgArr){
-			?>
-			<div style="width:100%;float:right;clear:both;margin-top:10px;">
-				<div style="float:right;">
-					<a class="twitter-share-button" data-text="<?php echo $imgArr['sciname']; ?>" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/imgdetails.php?imgid='.$imgId; ?>">Tweet</a>
-					<script>
-						window.twttr=(function(d,s,id){
-                            let js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
-                            if(d.getElementById(id)){
-                                return;
-                            }
-                            js=d.createElement(s);
-							js.id=id;js.src="https://platform.twitter.com/widgets.js";
-							fjs.parentNode.insertBefore(js,fjs);t._e=[];
-							t.ready=function(f){t._e.push(f);};
-							return t;
-						}(document,"script","twitter-wjs"));
-					</script>
-				</div>
-				<div style="float:right;margin-right:10px;">
-					<div class="fb-share-button" data-href="" data-layout="button_count"></div>
-				</div>
-			</div>
-			<?php
-		}
 		if($status){
 			?>
 			<hr/>
