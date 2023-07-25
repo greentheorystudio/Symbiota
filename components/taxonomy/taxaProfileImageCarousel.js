@@ -20,7 +20,14 @@ const taxaProfileImageCarousel = {
                                 <template v-if="image.photographer">Photo by: {{ image.photographer }}. </template>
                                 <template v-if="image.caption">{{ image.caption }} </template>
                                 <template v-if="image.owner">Image provided by: {{ image.owner }}. </template>
-                                <a :href="image.anchorUrl" target="_blank">See image details</a>
+                                <div class="row justify-between q-gutter-md">
+                                    <div>
+                                        <a :href="image.anchorUrl" target="_blank">See image details</a>
+                                    </div>
+                                    <div>
+                                        <a :href="image.url" target="_blank">View full size</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </q-carousel-slide>

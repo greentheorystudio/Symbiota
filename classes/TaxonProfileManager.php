@@ -253,8 +253,9 @@ class TaxonProfileManager {
             if($mediaType === 'occurrence') {
                 $sql .= 'AND ti.occid IS NOT NULL ';
             }
+            $sql .= 'ORDER BY ti.sortsequence ';
             if($limit){
-                $sql .= 'ORDER BY ti.sortsequence LIMIT '.(int)$limit.' ';
+                $sql .= 'LIMIT '.(int)$limit.' ';
             }
             //echo $sql;
             $result = $this->conn->query($sql);
@@ -293,8 +294,9 @@ class TaxonProfileManager {
                 if($mediaType === 'occurrence') {
                     $sql .= 'AND m.occid IS NOT NULL ';
                 }
+                $sql .= 'ORDER BY m.sortsequence ';
                 if($limit){
-                    $sql .= 'ORDER BY m.sortsequence LIMIT '.(int)$limit.' ';
+                    $sql .= 'LIMIT '.(int)$limit.' ';
                 }
                 //echo $sql;
                 $result = $this->conn->query($sql);
