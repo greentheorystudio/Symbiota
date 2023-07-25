@@ -676,7 +676,13 @@ body.processing .loadingModal {
 	background-color: black;
 }
 .taxon-profile-image-carousel .q-carousel__slides-container{
-	height: 91%;
+	height: calc(100% - 100px);
+}
+.q-carousel__navigation--bottom {
+	bottom: 2px;
+}
+.q-carousel__navigation--thumbnails, .q-carousel .q-carousel__thumbnail, .q-carousel .q-carousel__thumbnail--active, .q-carousel .q-carousel__thumbnail--inactive {
+	height: 97px;
 }
 .taxon-profile-image-carousel-info-box{
 	background: rgba(255, 255, 255, .8);
