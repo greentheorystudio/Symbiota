@@ -32,8 +32,8 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
             <template v-if="isEditor">
                 <div class="row justify-between q-px-md q-mb-sm">
                     <div class="text-h6 text-weight-bold">
-                        <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
-                        <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
+                        <template v-if="collInfo && collInfo.collectionname">{{ collInfo.collectionname }}</template>
+                        <template v-if="collInfo && (collInfo.institutioncode || collInfo.collectioncode)"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
                     </div>
                     <div onclick="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=<?php echo $collid; ?>');" title="Open Tutorial Window">
                         <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
