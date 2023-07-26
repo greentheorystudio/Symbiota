@@ -18,6 +18,6 @@ if($action){
         echo json_encode($langManager->getAutocompleteLanguageList(htmlspecialchars($_POST['term'])));
     }
     elseif($action === 'getLanguages'){
-        echo $langManager->getLanguageArr();
+        echo json_encode($langManager->getLanguageArr());
     }
 }

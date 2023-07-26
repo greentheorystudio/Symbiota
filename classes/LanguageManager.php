@@ -17,7 +17,7 @@ class LanguageManager {
         }
     }
 
-    public function getLanguageArr(): string
+    public function getLanguageArr(): array
     {
         $retArr = array();
         $sql = 'SELECT langid, iso639_1, iso639_2, langname '.
@@ -33,7 +33,7 @@ class LanguageManager {
             $retArr[] = $langArr;
         }
         $rs->free();
-        return $sql;
+        return $retArr;
     }
 
     public function getLanguageByIso($iso): array
