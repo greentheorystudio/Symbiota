@@ -1172,7 +1172,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                     resultObj['author'] = taxResult.hasOwnProperty('author') ? taxResult['author'] : '';
                                     let rankName = taxResult['rank'].toLowerCase();
                                     if(rankName === 'infraspecies'){
-                                        resultObj['sciname'] = taxResult['genus'] + ' ' + taxResult['species'] + ' ' + taxResult['infraspeciesMarker'] + ' ' + taxResult['infraspecies'];
+                                        resultObj['sciname'] = taxResult['genus'] + ' ' + taxResult['species'] + ' ' + (taxResult['infraspeciesMarker'] ? (taxResult['infraspeciesMarker'] + ' ') : '') + taxResult['infraspecies'];
                                         if(taxResult['infraspeciesMarker'] === 'var.'){
                                             rankName = 'variety';
                                         }
@@ -1201,7 +1201,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                         resultHObj['author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
                                         let rankName = acceptedObj['rank'].toLowerCase();
                                         if(rankName === 'infraspecies'){
-                                            resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + acceptedObj['infraspeciesMarker'] + ' ' + acceptedObj['infraspecies'];
+                                            resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + (acceptedObj['infraspeciesMarker'] ? (acceptedObj['infraspeciesMarker'] + ' ') : '') + acceptedObj['infraspecies'];
                                             if(acceptedObj['infraspeciesMarker'] === 'var.'){
                                                 rankName = 'variety';
                                             }
