@@ -47,19 +47,7 @@ class Manager  {
 		}
 	}
 
-    public function checkFieldExists($table, $field): bool
-	{
-        $exists = false;
-        $sql = 'SHOW COLUMNS FROM '.$table.' WHERE field = "'.$field.'"';
-        //echo "<div>SQL: ".$sql."</div>";
-        $result = $this->conn->query($sql);
-        if($result->num_rows) {
-			$exists = true;
-		}
-        return $exists;
-    }
-
-	public function setVerboseMode($c): void
+    public function setVerboseMode($c): void
 	{
 		$this->verboseMode = $c;
 	}

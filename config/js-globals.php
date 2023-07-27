@@ -1,8 +1,12 @@
 <script type="text/javascript">
     const DEFAULT_LANG = '<?php echo $GLOBALS['DEFAULT_LANG']; ?>';
     const CLIENT_ROOT = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>';
-    const SOLR_MODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
+    const SOLR_MODE = <?php echo ($GLOBALS['SOLR_MODE'] ? 'true' : 'false'); ?>;
     const MAX_UPLOAD_FILESIZE = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
+    const ADMIN_EMAIL = '<?php echo $GLOBALS['ADMIN_EMAIL']; ?>';
+    const EMAIL_CONFIGURED = <?php echo ($GLOBALS['EMAIL_CONFIGURED'] ? 'true' : 'false'); ?>;
+    const VALID_USER = <?php echo ($GLOBALS['VALID_USER'] ? 'true' : 'false'); ?>;
+    const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;
     const USER_DISPLAY_NAME = '<?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>';
 
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
@@ -35,6 +39,8 @@
     let abortController;
     const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
     const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';
+    const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
+    const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
     const taxonomyApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';

@@ -10,27 +10,27 @@ const taxaProfileSubtaxaPanel = {
             <div class="expansion-container">
                 <template v-if="subtaxaArr.length < 5">
                     <q-card>
-                        <div class="q-pt-sm q-pl-md text-h6 text-weight-bold">
+                        <div class="q-pt-sm q-pl-md text-h6 text-weight-bold taxon-profile-subtaxa-panel-label">
                             {{ subtaxaLabel }}
                         </div>
                         <div class="row">
                             <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" :class="{'spp-taxon':true, 'below-family':(spptaxon.rankid > 140), 'family-or-above':(spptaxon.rankid <= 140)}">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <div class="spp-taxon-label">
-                                        <a :href="spptaxon.taxaurl">
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid + '&cl=' + (spptaxon.clid ? spptaxon.clid : ''))">
                                             {{ spptaxon.sciName }}
                                         </a>
                                     </div>
                                     <div class="spp-image-container">
                                         <template v-if="spptaxon.url">
-                                            <a :href="spptaxon.taxaurl">
+                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid + '&cl=' + (spptaxon.clid ? spptaxon.clid : ''))">
                                                 <q-img :src="spptaxon.url" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciName"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
                                             <div class="no-spptaxon-image">
                                                 <template v-if="isEditor">
-                                                    <a :href="spptaxon.editurl">Add an Image</a>
+                                                    <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + spptaxon.tid)">Add an Image</a>
                                                 </template>
                                                 <template v-else>
                                                     Image not available
@@ -61,20 +61,20 @@ const taxaProfileSubtaxaPanel = {
                             <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" :class="{'spp-taxon':true, 'below-family':(spptaxon.rankid > 140), 'family-or-above':(spptaxon.rankid <= 140)}">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <div class="spp-taxon-label">
-                                        <a :href="spptaxon.taxaurl">
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid + '&cl=' + (spptaxon.clid ? spptaxon.clid : ''))">
                                             {{ spptaxon.sciName }}
                                         </a>
                                     </div>
                                     <div class="spp-image-container">
                                         <template v-if="spptaxon.url">
-                                            <a :href="spptaxon.taxaurl">
+                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid + '&cl=' + (spptaxon.clid ? spptaxon.clid : ''))">
                                                 <q-img :src="spptaxon.url" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciName"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
                                             <div class="no-spptaxon-image">
                                                 <template v-if="isEditor">
-                                                    <a :href="spptaxon.editurl">Add an Image</a>
+                                                    <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + spptaxon.tid)">Add an Image</a>
                                                 </template>
                                                 <template v-else>
                                                     Image not available
@@ -101,5 +101,10 @@ const taxaProfileSubtaxaPanel = {
                 </template>
             </div>
         </template>
-    `
+    `,
+    data() {
+        return {
+            clientRoot: Vue.ref(CLIENT_ROOT)
+        }
+    }
 };

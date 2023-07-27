@@ -640,7 +640,7 @@ CREATE TABLE `omcollections` (
     `latitudedecimal` decimal(8,6) DEFAULT NULL,
     `longitudedecimal` decimal(9,6) DEFAULT NULL,
     `icon` varchar(250) DEFAULT NULL,
-    `CollType` varchar(45) NOT NULL DEFAULT 'Preserved Specimens' COMMENT 'Preserved Specimens, General Observations, Observations',
+    `CollType` varchar(45) NOT NULL DEFAULT 'PreservedSpecimen' COMMENT 'PreservedSpecimen, HumanObservation, FossilSpecimen, LivingSpecimen, MaterialSample',
     `ManagementType` varchar(45) DEFAULT 'Snapshot' COMMENT 'Snapshot, Live Data',
     `PublicEdits` int(1) unsigned NOT NULL DEFAULT '1',
     `collectionguid` varchar(45) DEFAULT NULL,

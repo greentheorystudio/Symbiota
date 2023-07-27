@@ -2,8 +2,7 @@ const taxaProfileCentralImage = {
     props: [
         'taxon',
         'central-image',
-        'is-editor',
-        'edit-link'
+        'is-editor'
     ],
     template: `
         <q-card class="overflow-hidden">
@@ -14,7 +13,7 @@ const taxaProfileCentralImage = {
                         <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">
                                 <template v-if="taxon.sciName !== centralImage.sciname">
-                                    <a :href="centralImage.taxonUrl"><span class="text-italic">{{ centralImage.sciname }}</span>. </a>
+                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + centralImage.tid)"><span class="text-italic">{{ centralImage.sciname }}</span>. </a>
                                 </template>
                                 <span v-if="centralImage.photographer">Photo by: {{ centralImage.photographer }}. </span><span v-html="centralImage.caption"></span>
                             </div>
@@ -25,7 +24,7 @@ const taxaProfileCentralImage = {
             <template v-else>
                 <div class="no-central-image">
                     <template v-if="isEditor">
-                        <div><a :href="editLink"><span class="text-weight-bold">Add an Image</span></a></div>
+                        <div><a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + taxon.tid)"><span class="text-weight-bold">Add an Image</span></a></div>
                     </template>
                     <template v-else>
                         <div>Image not available</div>
@@ -33,5 +32,10 @@ const taxaProfileCentralImage = {
                 </div>
             </template>
         </q-card>
-    `
+    `,
+    data() {
+        return {
+            clientRoot: Vue.ref(CLIENT_ROOT)
+        }
+    }
 };

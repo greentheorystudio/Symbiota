@@ -45,11 +45,11 @@ const taxonRankCheckboxSelector = {
                 </q-card-section>
                 <q-card-section>
                     <div>
-                        <q-checkbox indeterminate-value="some" v-model="selectAll" label="Select All" :disable="disable" @update:model-value="selectAllChange" /></q-checkbox>
+                        <q-checkbox indeterminate-value="some" v-model="selectAll" label="Select All" :disable="disable" @update:model-value="selectAllChange" />
                     </div>
                     <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                     <template v-for="option in rankOptions">
-                        <q-checkbox v-model="selectedRanks" :val="option.rankid" :label="option.rankname" :disable="disable" @update:model-value="processChange" /></q-checkbox>
+                        <q-checkbox v-model="selectedRanks" :val="option.rankid" :label="option.rankname" :disable="disable" @update:model-value="processChange" />
                     </template>
                 </q-card-section>
             </q-card>

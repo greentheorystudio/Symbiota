@@ -240,16 +240,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     </script>
 </head>
 <body <?php echo ($fullWindow ? '' : 'style="border:0;width:950px;"'); ?>>
-<div id="fb-root"></div>
-<script>
-    (function(d, s, id) {
-        let js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-</script>
 <?php
 if($fullWindow){
     include(__DIR__ . '/../../header.php');
@@ -297,24 +287,6 @@ if($fullWindow){
                 ?>
             </ul>
             <div id="occurtab">
-                <div style="float:right;">
-                    <div style="float:right;">
-                        <a class="twitter-share-button" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid.'&clid='.$clid; ?>">Tweet</a>
-                        <script>
-                            window.twttr=(function(d,s,id){
-                                let js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};
-                                if(d.getElementById(id))return;js=d.createElement(s);
-                                js.id=id;js.src="https://platform.twitter.com/widgets.js";
-                                fjs.parentNode.insertBefore(js,fjs);t._e=[];
-                                t.ready=function(f){t._e.push(f);};
-                                return t;
-                            }(document,"script","twitter-wjs"));
-                        </script>
-                    </div>
-                    <div style="float:right;margin-right:10px;">
-                        <div class="fb-share-button" data-href="" data-layout="button_count"></div>
-                    </div>
-                </div>
                 <div style="float:left;margin:15px 0;text-align:center;font-weight:bold;width:120px;">
                     <?php
                     if($collMetadata['icon']){
@@ -787,62 +759,6 @@ if($fullWindow){
                                                     }
                                                     if($imgArr['lgurl']) {
                                                         echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">Open Large Image</a></div>';
-                                                    }
-                                                    ?>
-                                                </div>
-                                                <div style="margin-left:25px;">
-                                                    <?php
-                                                    $photographer = '';
-                                                    if($imgArr['photographer']){
-                                                        $photographer = $imgArr['photographer'];
-                                                    }
-                                                    elseif($imgArr['photographeruid']){
-                                                        $pArr = $indManager->getPhotographerArr();
-                                                        $photographer = $pArr[$imgArr['photographeruid']];
-                                                    }
-                                                    if($photographer){
-                                                        echo '<div><b>Photographer:</b> '.wordwrap($photographer, 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['caption']){
-                                                        echo '<div><b>Caption:</b> '.wordwrap($imgArr['caption'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['locality']){
-                                                        echo '<div><b>Locality:</b> '.wordwrap($imgArr['locality'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['notes']){
-                                                        echo '<div><b>Notes:</b> '.wordwrap($imgArr['notes'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['anatomy']){
-                                                        echo '<div><b>Anatomy:</b> '.wordwrap($imgArr['anatomy'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['dynamicProperties']){
-                                                        echo '<div><b>Dynamic Properties:</b> '.wordwrap($imgArr['dynamicProperties'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['owner']){
-                                                        echo '<div><b>Owner:</b> '.wordwrap($imgArr['owner'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['sourceurl']){
-                                                        $urlDisplay = $imgArr['sourceurl'];
-                                                        if(strlen($urlDisplay) > 57) {
-                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
-                                                        }
-                                                        echo '<div><b>Source URL:</b> <a href="'.$imgArr['sourceurl'].'" target="_blank">'.$urlDisplay.'</a></div>';
-                                                    }
-                                                    if($imgArr['referenceUrl']){
-                                                        $urlDisplay = $imgArr['referenceUrl'];
-                                                        if(strlen($urlDisplay) > 57) {
-                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
-                                                        }
-                                                        echo '<div><b>Reference URL:</b> <a href="'.$imgArr['referenceUrl'].'" target="_blank">'.$urlDisplay.'</a></div>';
-                                                    }
-                                                    if($imgArr['copyright']){
-                                                        echo '<div><b>Copyright:</b> '.wordwrap($imgArr['copyright'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['rights']){
-                                                        echo '<div><b>Rights:</b> '.wordwrap($imgArr['rights'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['accessrights']){
-                                                        echo '<div><b>Access Rights:</b> '.wordwrap($imgArr['accessrights'], 50, '<br />\n', true).'</div>';
                                                     }
                                                     ?>
                                                 </div>

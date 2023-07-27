@@ -877,7 +877,7 @@ class TaxonomyUtilities {
     public function addTaxonCommonName($tid, $name, $langId): bool
     {
         if($tid && $name && $langId){
-            $sql = 'INSERT INTO taxavernaculars(TID,VernacularName,langid) VALUES('.
+            $sql = 'INSERT IGNORE INTO taxavernaculars(TID,VernacularName,langid) VALUES('.
                 $tid.',"'.Sanitizer::cleanInStr($this->conn,$name).'",'.(int)$langId.')';
             return $this->conn->query($sql);
         }

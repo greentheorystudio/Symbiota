@@ -1,5 +1,4 @@
 <?php
-/** @var int $isEditor */
 include_once(__DIR__ . '/../../classes/TaxonomyUpload.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 ini_set('max_execution_time', 7200);
@@ -12,7 +11,8 @@ $taxaUtilities = new TaxonomyUtilities();
 
 $status = '';
 $fieldMap = array();
-if($isEditor){
+
+if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	if($ulFileName){
 		$loaderManager->setFileName($ulFileName);
 	}

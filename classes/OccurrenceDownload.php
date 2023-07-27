@@ -219,7 +219,7 @@ class OccurrenceDownload{
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN images i ON o.occid = i.occid '.
 			'INNER JOIN guidoccurrences g ON o.occid = g.occid '.
-			'WHERE c.colltype = "Preserved Specimens" '.
+			'WHERE c.colltype = "PreservedSpecimen" '.
 			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';
 		if($days && is_numeric($days)) {
 			$sql .= 'AND (o.datelastmodified > DATE_SUB(NOW(), INTERVAL ' . $days . ' DAY)) ';
