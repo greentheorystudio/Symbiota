@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/LanguageManager.php');
+header('Content-Type: text/html; charset=utf-8');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $iso = array_key_exists('iso',$_REQUEST)?htmlspecialchars($_REQUEST['iso']):'';
