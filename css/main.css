@@ -401,10 +401,17 @@ h5{
 	font-weight: normal;
 	color: white;
 }
+.horizontalDropDownDonateButton{
+	background-color: #D04902!important;
+}
 .horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
 	background-color: #FDBA35!important;
 	text-decoration: none;
 	color: black;
+}
+.horizontalDropDownDonateButton:hover{
+	background-color: #D87C4A!important;
+	color: white;
 }
 .horizontalDropDownButton i {
 	display: none;

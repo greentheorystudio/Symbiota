@@ -25,6 +25,9 @@
                                 </q-item>
                             </template>
                         </template>
+                        <q-item clickable v-close-popup @click="donateConfirm = true">
+                            <q-item-section>DONATE</q-item-section>
+                        </q-item>
                     </q-list>
                 </q-menu>
             </q-btn>
@@ -52,8 +55,22 @@
                     <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" stretch flat no-wrap></q-btn>
                 </template>
             </template>
+            <q-btn class="horizontalDropDownButton horizontalDropDownDonateButton text-capitalize" label="Donate" stretch flat no-wrap @click="donateConfirm = true"></q-btn>
         </q-toolbar>
     </template>
+    <q-dialog v-model="donateConfirm" persistent>
+        <q-card class="text-h6">
+            <q-card-section>
+                You are about to be directed to the donation page for the Smithsonian National Musuem of Natural History, the curator
+                of the IRL Species Inventory. To make sure your online donation is applied to this project, please type "IRL Species
+                Inventory" in the "Apply my donation to" box.
+            </q-card-section>
+            <q-card-actions align="right">
+                <q-btn flat label="OK" color="primary" v-close-popup @click="openDonatePage();"></q-btn>
+                <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
 </div>
 <script>
     const navBarData = [
@@ -112,10 +129,11 @@
         const dropDownNavBar = Vue.createApp({
             data() {
                 return {
-                    windowWidth: Vue.ref(0),
-                    userDisplayName: USER_DISPLAY_NAME,
+                    donateConfirm: Vue.ref(false),
                     navBarData: navBarData,
-                    navBarToggle: Vue.ref({})
+                    navBarToggle: Vue.ref({}),
+                    userDisplayName: USER_DISPLAY_NAME,
+                    windowWidth: Vue.ref(0)
                 }
             },
             mounted() {
@@ -140,6 +158,9 @@
                         }
                     }
                     this.navBarToggle[Number(id)] = true;
+                },
+                openDonatePage() {
+                    window.open('https://support.si.edu/site/Donation2;jsessionid=00000000.app30030a?idb=172924536&df_id=19745&mfc_pref=T&19745.donation=form1&NONCE_TOKEN=B8237A09ED48545AB4117EA7BD9F20EF&s_subsrc=top-btn&s_src=main-web&autologin=true&19745_donation=form1', '_blank');
                 },
                 setNavBarData() {
                     let indexId = 1;
