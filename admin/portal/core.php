@@ -16,15 +16,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
     <fieldset style="margin: 10px 0;">
         <legend><b>Server - <span style="color:red;">Do Not Change Unless You Know What You're Doing</span></b></legend>
         <div class="field-block">
-            <span class="field-label">Portal Character Set:  <button type="button" onclick="enableProtectedEditing('CHARSET');">Edit</button></span>
-            <span class="field-elem">
-                <select id="CHARSET" style="width:600px;" onchange="sendAPIRequest('update','CHARSET',this.value);" disabled>
-                    <option value="UTF-8" <?php echo (array_key_exists('CHARSET',$coreConfArr)&&$coreConfArr['CHARSET'] === 'UTF-8'?'selected':''); ?>>UTF-8</option>
-                    <option value="ISO-8859-1" <?php echo (array_key_exists('CHARSET',$coreConfArr)&&$coreConfArr['CHARSET'] === 'ISO-8859-1'?'selected':''); ?>>ISO-8859-1</option>
-                </select>
-            </span>
-        </div>
-        <div class="field-block">
             <span class="field-label">Maximum Upload Filesize (Mb):  <button type="button" onclick="enableProtectedEditing('MAX_UPLOAD_FILESIZE');">Edit</button></span>
             <span class="field-elem">
                 <input type="text" id="MAX_UPLOAD_FILESIZE" value="<?php echo (array_key_exists('MAX_UPLOAD_FILESIZE',$coreConfArr)?$coreConfArr['MAX_UPLOAD_FILESIZE']:''); ?>" style="width:600px;" onchange="processUploadFilesizeConfigurationChange('MAX_UPLOAD_FILESIZE','<?php echo (array_key_exists('MAX_UPLOAD_FILESIZE',$coreConfArr)?$coreConfArr['MAX_UPLOAD_FILESIZE']:''); ?>');" disabled />

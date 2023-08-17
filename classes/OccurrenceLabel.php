@@ -238,7 +238,7 @@ class OccurrenceLabel{
                 header('Content-Description: Label Output File');
                 header ('Content-Type: text/csv');
                 header ('Content-Disposition: attachment; filename="'.$fileName.'"');
-                header('Content-Transfer-Encoding: '.strtoupper($GLOBALS['CHARSET']));
+                header('Content-Transfer-Encoding: UTF-8');
                 header('Expires: 0');
                 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
                 header('Pragma: public');

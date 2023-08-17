@@ -483,8 +483,8 @@ class SpecProcessorManager {
  	public function downloadReportData($target): void
 	{
 		$fileName = 'SymbSpecNoImages_'.time().'.csv';
-		header ('Content-Type: text/csv; charset='.$GLOBALS['CHARSET']);
-		header ('Content-Disposition: attachment; filename="'.$fileName.'"');
+		header('Content-Type: text/csv; charset=UTF-8');
+		header('Content-Disposition: attachment; filename="'.$fileName.'"');
 		$headerArr = array('occid','catalogNumber','sciname','recordedBy','recordNumber','eventDate','country','stateProvince','county');
 		$sqlFrag = '';
 		if($target === 'dlnoimg'){

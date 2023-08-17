@@ -1151,7 +1151,7 @@ class OccurrenceEditorManager {
             if($r = $rs->fetch_assoc()){
                 foreach($r as $k => $v){
                     if($v) {
-                        $archiveArr[$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
+                        $archiveArr[$k] = $this->encodeStrTargeted($v, 'UTF-8', 'utf8');
                     }
                 }
             }
@@ -1164,12 +1164,12 @@ class OccurrenceEditorManager {
                     $detId = $r['detid'];
                     foreach($r as $k => $v){
                         if($v) {
-                            $detArr[$detId][$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
+                            $detArr[$detId][$k] = $this->encodeStrTargeted($v, 'UTF-8', 'utf8');
                         }
                     }
                     $detObj = json_encode($detArr[$detId]);
                     $sqlArchive = 'UPDATE guidoccurdeterminations '.
-                        'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$this->encodeStrTargeted($detObj,'utf8',$GLOBALS['CHARSET'])).'" '.
+                        'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$this->encodeStrTargeted($detObj,'utf8','UTF-8')).'" '.
                         'WHERE (detid = '.$detId.')';
                     $this->conn->query($sqlArchive);
                 }
@@ -1183,12 +1183,12 @@ class OccurrenceEditorManager {
                     $imgId = $r['imgid'];
                     foreach($r as $k => $v){
                         if($v) {
-                            $imgArr[$imgId][$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
+                            $imgArr[$imgId][$k] = $this->encodeStrTargeted($v, 'UTF-8', 'utf8');
                         }
                     }
                     $imgObj = json_encode($imgArr[$imgId]);
                     $sqlArchive = 'UPDATE guidimages '.
-                        'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$this->encodeStrTargeted($imgObj,'utf8',$GLOBALS['CHARSET'])).'" '.
+                        'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$this->encodeStrTargeted($imgObj,'utf8','UTF-8')).'" '.
                         'WHERE (imgid = '.$imgId.')';
                     $this->conn->query($sqlArchive);
                 }
@@ -1214,7 +1214,7 @@ class OccurrenceEditorManager {
                 if($r = $rs->fetch_assoc()){
                     foreach($r as $k => $v){
                         if($v) {
-                            $exsArr[$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
+                            $exsArr[$k] = $this->encodeStrTargeted($v, 'UTF-8', 'utf8');
                         }
                     }
                 }
@@ -1224,7 +1224,7 @@ class OccurrenceEditorManager {
                 $archiveArr['dateDeleted'] = date('r').' by '.$GLOBALS['USER_DISPLAY_NAME'];
                 $archiveObj = json_encode($archiveArr);
                 $sqlArchive = 'UPDATE guidoccurrences '.
-                    'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$this->encodeStrTargeted($archiveObj,'utf8',$GLOBALS['CHARSET'])).'" '.
+                    'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$this->encodeStrTargeted($archiveObj,'utf8','UTF-8')).'" '.
                     'WHERE (occid = '.$delOccid.')';
                 //echo $sqlArchive;
                 $this->conn->query($sqlArchive);
@@ -2046,18 +2046,8 @@ class OccurrenceEditorManager {
         $replace = array("'","'",'"','"','*','-','-');
         $inStr= str_replace($search, $replace, $inStr);
 
-        if($inStr){
-            $lowerStr = strtolower($GLOBALS['CHARSET']);
-            if($lowerStr === 'utf-8' || $lowerStr === 'utf8'){
-                if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-                    $retStr = utf8_encode($inStr);
-                }
-            }
-            elseif($lowerStr === 'iso-8859-1'){
-                if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-                    $retStr = utf8_decode($inStr);
-                }
-            }
+        if($inStr && mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
+            $retStr = utf8_encode($inStr);
         }
         return $retStr;
     }

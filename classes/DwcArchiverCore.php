@@ -54,7 +54,7 @@ class DwcArchiverCore extends Manager{
             $this->setLogFH($GLOBALS['LOG_PATH']);
         }
 
-        $this->charSetSource = strtoupper($GLOBALS['CHARSET']);
+        $this->charSetSource = 'UTF-8';
         $this->charSetOut = $this->charSetSource;
 
         $this->securityArr = array('recordNumber','locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',

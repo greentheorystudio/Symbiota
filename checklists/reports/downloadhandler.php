@@ -73,10 +73,10 @@ if($outputFile){
 		header('Content-Type: application/zip');
 	}
 	elseif($format === 'csv'){
-		header('Content-Type: text/csv; charset='.$GLOBALS['CHARSET']);
+		header('Content-Type: text/csv; charset=UTF-8');
 	}
 	else{
-		header('Content-Type: text/html; charset='.$GLOBALS['CHARSET']);
+		header('Content-Type: text/html; charset=UTF-8' );
 	}
 
 	header('Content-Disposition: attachment; filename='.basename($outputFile));
