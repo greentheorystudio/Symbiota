@@ -156,8 +156,8 @@ class TaxonProfileManager {
             }
             $result->close();
         }
-        if($this->taxon['rankId'] > 140){
-            foreach($this->taxon['sppArr'] as $sn => $snArr){
+        foreach($this->taxon['sppArr'] as $sn => $snArr){
+            if((int)$snArr['rankid'] > 140){
                 $this->taxon['sppArr'][$sn]['map'] = $this->getMapImgUrl((int)$snArr['tid'],(int)$snArr['security']);
             }
         }
