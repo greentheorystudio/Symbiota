@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
-header('Content-Type: application/json; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: application/json; charset=UTF-8' );
 ini_set('max_execution_time', 300);
 
 $stArrJson = $_REQUEST['starr'];

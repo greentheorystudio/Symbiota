@@ -53,22 +53,6 @@
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td style="vertical-align:top">
-                    <div style="margin:10px;">
-                        <b>Character Set:</b>
-                    </div>
-                </td>
-                <td>
-                    <div style="margin:10px 0;">
-                        <?php
-                        $cSet = strtolower($GLOBALS['CHARSET']);
-                        ?>
-                        <input data-role="none" type="radio" name="cset" id="csvcsetiso" value="iso-8859-1" <?php echo ($cSet === 'iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br />
-                        <input data-role="none" type="radio" name="cset" id="csvcsetutf" value="utf-8" <?php echo ($cSet === 'utf-8'?'checked':''); ?> /> UTF-8 (unicode)
-                    </div>
-                </td>
-            </tr>
             <tr id="zipSelectionRow">
                 <td style="vertical-align:top">
                     <div style="margin:10px;">
@@ -83,6 +67,7 @@
             </tr>
             <tr>
                 <td colspan="2" style="width:550px;">
+                    <input type="hidden" name="cset" value='utf-8' />
                     <div style="margin:10px;float:right;">
                         <button data-role="none" onclick='prepCsvControlForm();' >Download Data</button>
                     </div>

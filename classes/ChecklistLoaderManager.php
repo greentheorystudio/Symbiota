@@ -213,18 +213,9 @@ class ChecklistLoaderManager {
 		$replace = array("'","'",'"','"','*','-','-');
 		$inStr= str_replace($search, $replace, $inStr);
 
-		if($inStr){
-			if(in_array(strtolower($GLOBALS['CHARSET']), array('utf-8', 'utf8'))){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-					$retStr = utf8_encode($inStr);
-				}
-			}
-			elseif(strtolower($GLOBALS['CHARSET']) === 'iso-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-					$retStr = utf8_decode($inStr);
-				}
-			}
- 		}
+		if($inStr && mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
+            $retStr = utf8_encode($inStr);
+        }
 		return $retStr;
 	}
 }

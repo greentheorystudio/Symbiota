@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 require_once __DIR__ . '/../vendor/autoload.php';
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 ini_set('max_execution_time', 3600);
 
 use PhpOffice\PhpWord\PhpWord;

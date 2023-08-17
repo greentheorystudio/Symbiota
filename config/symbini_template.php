@@ -3,7 +3,6 @@ $GLOBALS['DEFAULT_LANG'] = 'en';
 $GLOBALS['DEFAULTCATID'] = 0;
 $GLOBALS['DEFAULT_TITLE'] = '';
 $GLOBALS['ADMIN_EMAIL'] = '';
-$GLOBALS['CHARSET'] = '';					//ISO-8859-1 or UTF-8
 $GLOBALS['MAX_UPLOAD_FILESIZE'] = 20000000;
 $GLOBALS['PORTAL_GUID'] = '';				//Typically a UUID
 $GLOBALS['SECURITY_KEY'] = '';				//Typically a UUID used to verify access to certain web service
