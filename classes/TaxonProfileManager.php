@@ -156,8 +156,8 @@ class TaxonProfileManager {
             }
             $result->close();
         }
-        if($this->taxon['rankId'] > 140){
-            foreach($this->taxon['sppArr'] as $sn => $snArr){
+        foreach($this->taxon['sppArr'] as $sn => $snArr){
+            if((int)$snArr['rankid'] > 140){
                 $this->taxon['sppArr'][$sn]['map'] = $this->getMapImgUrl((int)$snArr['tid'],(int)$snArr['security']);
             }
         }
@@ -168,7 +168,7 @@ class TaxonProfileManager {
         if($this->taxon['tid']){
             $sql = 'SELECT v.VernacularName, v.`language`, l.iso639_1 '.
                 'FROM taxavernaculars AS v INNER JOIN taxa AS t ON v.tid = t.tidaccepted '.
-                'LEFT JOIN adminlanguages AS l ON v.`language` = l.langname '.
+                'LEFT JOIN adminlanguages AS l ON v.langid = l.langid '.
                 'WHERE t.TID = '.$this->taxon['tid'].' '.
                 'ORDER BY v.VernacularName';
             //echo $sql;
