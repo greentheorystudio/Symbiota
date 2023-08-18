@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/config/symbbase.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -20,7 +20,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         <?php
         include(__DIR__ . '/header.php');
         ?>
-        <div  id="innertext">
+        <div id="innertext">
             <div style="float:right;width:380px;">
                 <?php
                 $oodID = 1;

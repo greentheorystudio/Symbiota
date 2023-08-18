@@ -1,8 +1,6 @@
-html{
-	font-size: 90%;
-}
 body{
 	background-color:#385723;
+	font-size: 16px;
 }
 .title {
 	font-weight: bold;
@@ -69,6 +67,7 @@ div.navpath {
 .horizontalDropDownButton, .horizontalDropDownIconButton{
 	background-color: #D9E636!important;
 	text-decoration: none;
+	font-size: 90%;
 }
 .horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
 	background-color: #9DA626!important;
@@ -99,6 +98,10 @@ div.navpath {
 }
 
 /* Quick Search Plugin */
+.quicksearchselectorcontainer{
+	margin-bottom: 8px;
+}
+
 #quicksearchtext{
 	margin-top:0;
 	padding-bottom:0;
@@ -218,4 +221,11 @@ ul.key span.link a {
 }
 .map-thumb-spatial-link, .all-images-link, .occurrences-link, .image-sideways-scroller-label, .taxon-profile-subtaxa-panel-label{
 	font-family: Chalkboard,Comic Sans MS,Comic Sans,sans-serif;
+}
+.taxon-profile-taxon-map-card, .taxon-profile-image-link-card, .taxon-profile-occurrence-link-card {
+	background-color:#D9E636;
+	border:1px solid black;
+}
+.taxon-profile-taxon-map-card:hover, .taxon-profile-image-link-card:hover, .taxon-profile-occurrence-link-card:hover {
+	background-color: #9DA626;
 }
