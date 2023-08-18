@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 
 $action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']):'';
 $datasetID = array_key_exists('targetdatasetid',$_POST)?htmlspecialchars($_POST['targetdatasetid']):'';

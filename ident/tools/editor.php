@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/KeyEditorManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Cache-control: private; Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Cache-control: private; Content-Type: text/html; charset=UTF-8');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));

@@ -639,7 +639,6 @@ class ChecklistVoucherAdmin {
 						}
 					}
 				}
-				$this->encodeArr($row);
 				fputcsv($out, $row);
 			}
 			$rs->free();
@@ -889,36 +888,5 @@ class ChecklistVoucherAdmin {
 	public function getChildClidArr(): array
 	{
 		return $this->childClidArr;
-	}
-
-	private function encodeArr(&$inArr): void
-	{
-		$charSetOut = 'ISO-8859-1';
-		$charSetSource = strtoupper($GLOBALS['CHARSET']);
-		if($charSetSource && $charSetOut !== $charSetSource){
-			foreach($inArr as $k => $v){
-				$inArr[$k] = $this->encodeStr($v);
-			}
-		}
-	}
-
-	protected function encodeStr($inStr): string
-	{
-		$charSetSource = strtoupper($GLOBALS['CHARSET']);
-		$charSetOut = 'ISO-8859-1';
-		$retStr = $inStr;
-		if($inStr && $charSetSource){
-			if($charSetOut === 'UTF-8' && $charSetSource === 'ISO-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-					$retStr = utf8_encode($inStr);
-				}
-			}
-			elseif($charSetOut === 'ISO-8859-1' && $charSetSource === 'UTF-8'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-					$retStr = utf8_decode($inStr);
-				}
-			}
-		}
-		return $retStr;
 	}
 }

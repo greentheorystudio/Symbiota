@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $locality = $_REQUEST['locality'];
@@ -27,21 +27,6 @@ if(preg_match('/\d{1,2}[NS]T\s\d{1,2}[EW]R\s\d{1,2}S/',$locality)){
 }
 elseif(preg_match('/R\d{1,2}[EW]\sS\d{1,2}/i',$locality)){
 	$locality = preg_replace('/\sS(\d{1,2})/', ' Sec$1', $locality);
-}
-
-if(strtolower($GLOBALS['CHARSET']) === 'iso-8859-1'){
-	if(mb_detect_encoding($country,'UTF-8,ISO-8859-1') === 'UTF-8'){
-		$country = utf8_encode($country);
-	}
-	if(mb_detect_encoding($state,'UTF-8,ISO-8859-1') === 'UTF-8'){
-		$state = utf8_encode($state);
-	}
-	if(mb_detect_encoding($county,'UTF-8,ISO-8859-1') === 'UTF-8'){
-		$county = utf8_encode($county);
-	}
-	if(mb_detect_encoding($locality,'UTF-8,ISO-8859-1') === 'UTF-8'){
-		$locality = utf8_encode($locality);
-	}
 }
 
 $country = removeAccents($country);
