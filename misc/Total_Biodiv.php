@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

@@ -63,7 +63,7 @@
             <q-card-section>
                 You are about to be directed to the donation page for the Smithsonian National Musuem of Natural History, the curator
                 of the IRL Species Inventory. To make sure your online donation is applied to this project, please type "IRL Species
-                Inventory" in the "Apply my donation to" box.
+                Inventory" in the "Apply my donation to" box. Thank you for your support!
             </q-card-section>
             <q-card-actions align="right">
                 <q-btn flat label="OK" color="primary" v-close-popup @click="openDonatePage();"></q-btn>
