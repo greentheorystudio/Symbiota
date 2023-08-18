@@ -4,7 +4,7 @@ const taxaProfileTaxonMap = {
     ],
     template: `
         <div class="map-thumb-frame">
-            <q-card>
+            <q-card class="taxon-profile-taxon-map-card">
                 <div class="map-thumb-container">
                     <template v-if="taxon.map">
                         <div class="map-thumb-image">
