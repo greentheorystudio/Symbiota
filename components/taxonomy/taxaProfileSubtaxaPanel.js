@@ -1,5 +1,9 @@
 const taxaProfileSubtaxaPanel = {
     props: {
+        collapsible: {
+            type: Boolean,
+            default: true
+        },
         isEditor: {
             type: Boolean
         },
@@ -11,10 +15,6 @@ const taxaProfileSubtaxaPanel = {
         },
         subtaxaLabel: {
             type: String
-        },
-        collapsible: {
-            type: Boolean,
-            default: true
         }
     },
     template: `
