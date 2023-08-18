@@ -675,14 +675,27 @@ body.processing .loadingModal {
 .taxon-profile-image-carousel{
 	background-color: black;
 }
-.taxon-profile-image-carousel .q-carousel__slides-container{
-	height: calc(100% - 100px);
+@media (min-width: 100px) {
+	.taxon-profile-image-carousel .q-carousel__slides-container{
+		height: calc(100% - 150px);
+	}
+	.q-carousel__navigation--bottom {
+		bottom: 2px;
+	}
+	.q-carousel__navigation--thumbnails, .q-carousel .q-carousel__thumbnail, .q-carousel .q-carousel__thumbnail--active, .q-carousel .q-carousel__thumbnail--inactive {
+		height: 147px;
+	}
 }
-.q-carousel__navigation--bottom {
-	bottom: 2px;
-}
-.q-carousel__navigation--thumbnails, .q-carousel .q-carousel__thumbnail, .q-carousel .q-carousel__thumbnail--active, .q-carousel .q-carousel__thumbnail--inactive {
-	height: 97px;
+@media (min-width: 1400px) {
+	.taxon-profile-image-carousel .q-carousel__slides-container{
+		height: calc(100% - 100px);
+	}
+	.q-carousel__navigation--bottom {
+		bottom: 2px;
+	}
+	.q-carousel__navigation--thumbnails, .q-carousel .q-carousel__thumbnail, .q-carousel .q-carousel__thumbnail--active, .q-carousel .q-carousel__thumbnail--inactive {
+		height: 97px;
+	}
 }
 .taxon-profile-image-carousel-info-box{
 	background: rgba(255, 255, 255, .8);
