@@ -1,5 +1,5 @@
-html {
-	font-size: 90%;
+body {
+	font-size: 16px;
 }
 .title {
 	font-weight: bold;
@@ -56,6 +56,7 @@ div.navpath {
 .horizontalDropDownButton, .horizontalDropDownIconButton{
 	background-color: #c2c2c2!important;
 	text-decoration: none;
+	font-size: 100%;
 }
 .horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
 	background-color: #999999!important;
