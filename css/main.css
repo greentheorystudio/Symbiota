@@ -1,9 +1,6 @@
-html {
-	font-size: 90%;
-}
-
 body{
 	background-color:#9EBC7B;
+	font-size: 16px;
 }
 
 #mainContainer{
@@ -63,6 +60,7 @@ div.navpath {
 .horizontalDropDownButton, .horizontalDropDownIconButton{
 	background-color: #c2c2c2!important;
 	text-decoration: none;
+	font-size: 90%;
 }
 .horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
 	background-color: #999999!important;
@@ -232,14 +230,18 @@ ul.key span.link a {
 
 #sciname{
 	font-weight: bold;
-	font-size: 1.3rem;
+	font-size: 180%;
 	color: #990000;
 }
 #sciname-author{
 	margin-left: 1rem;
 	font-weight: bold;
-	font-size: 1.3rem;
+	font-size: 180%;
 }
 #family, #synonyms, #vernaculars{
-	font-size: 1rem;
+	font-size: 130%;
+}
+.taxon-profile-taxon-map-card, .taxon-profile-image-link-card, .taxon-profile-occurrence-link-card {
+	background-color:#9EBC7B;
+	border:1px solid black;
 }

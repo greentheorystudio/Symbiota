@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/config/symbbase.php');
 include_once(__DIR__ . '/classes/TaxonQuickSearchManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 
 $taxon = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST["taxon"]):'';
 
@@ -16,7 +16,14 @@ include_once(__DIR__ . '/config/header-includes.php');
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <meta name='keywords' content='' />
+    <style>
+        .update-card {
+            width: 55%;
+        }
+        .text-underline {
+            text-decoration: underline;
+        }
+    </style>
     <?php include_once('config/googleanalytics.php'); ?>
 </head>
 <body>
@@ -49,8 +56,39 @@ include_once(__DIR__ . '/config/header-includes.php');
             </div>
         </div>
 
-        <div style="margin: 20px; text-align: left; font-size: 14px;">
-            <p>This site is a collaborative effort between the herbaria of the UW-Madison (WIS) and the UW-Steven's Point (UWSP), along with most of the other herbaria located in the state of Wisconsin. It contains information on each of the more than 2600 vascular plant species that occurs in Wisconsin, including photos, distribution maps, specimen records, and more.</p>
+        <div style="margin: 20px; text-align: left;">
+            <q-card class="update-card q-mb-md bg-green-1">
+                <q-card-section>
+                    <div class="text-h5 text-bold q-mb-sm">We’ve been making some changes!</div>
+                    <div>
+                        You may have noticed some changes on the Online Flora of Wisconsin website lately!
+                    </div>
+                    <div>
+                        Here are some of the changes we have made and/or are working on:
+                        <ul>
+                            <li>New layouts for the Taxon Profile Pages.</li>
+                            <li>Changes to the way images are displayed.</li>
+                            <li>Updates to the spatial module with new map layers and functionality.</li>
+                            <li>Updating the photos with new higher resolution images.</li>
+                            <li>Adding dichotomous keys from the ongoing work on the <span class="text-underline">Flora of Wisconsin.</span></li>
+                            <li>Updating the county level maps.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        This is all currently a work in progress, and we welcome your comments and constructive criticisms. Check
+                        out the site and let us know what you like, don’t like, or would like to see in the future! Also, we would
+                        like to add more photographs of the plants of Wisconsin to the website and replace some of the old low-resolution
+                        images. If you have photographs that would like to donate to the website, please let us know. Contact me at
+                        the email at the bottom of the page. Mary Ann Feist, Curator, Wisconsin State Herbarium.
+                    </div>
+                </q-card-section>
+            </q-card>
+            <p>
+                This site is a collaborative effort between the herbaria of the UW-Madison (WIS) and the UW-Steven's Point (UWSP),
+                along with most of the other herbaria located in the state of Wisconsin. It contains information on each of
+                the more than 2600 vascular plant species that occurs in Wisconsin, including photos, distribution maps, specimen
+                records, and more.
+            </p>
             <form name='searchform1' action='index.php' method='post'>
                 <fieldset style="width:410px;">
                     <legend><b>Quick Search</b></legend>
@@ -78,16 +116,16 @@ include_once(__DIR__ . '/config/header-includes.php');
             <ul>
                 <li><b>Enter a genus, species, or common name to view the species description pages.</b></li>
                 <li>View detailed species descriptions, photos, interactive maps, and links to specimen records and additional information.</li></ul>
-            <p><strong>Advanced Searches</strong>              </p>
+            <p><strong>Advanced Searches</strong></p>
             <ul>
                 <li>See <strong>Advanced Searches</strong> tab above to <strong>Search for Specimen Records</strong> and to <strong>Browse the Image Library</strong>. <br>
                 </li>
                 <li>Search, view, and download nearly 400,000 in-state herbarium specimen records and thousands of images.<br>
                 </li>
             </ul>
-            <p><strong>Checklists</strong> (e.g., County Floras, Wildflowers by Color) are under development.  Take a look or create your own!<br>
+            <p>
+                <strong>Checklists</strong> (e.g., County Floras, Wildflowers by Color) are under development.  Take a look or create your own!<br>
             </p>
-            <p>&nbsp;</p>
             <p><em>NOTE: 'Interactive Maps' will plot only collections with known GPS localities.</em></p>
             <p><em>NOTE: This site was constructed using the </em><a href="http://symbiota.org/docs/" target="_blank">Symbiota</a><em> software platform and was launched in Feb 2015; it is still in development.
                     We encourage your comments for improvement, and  appreciate your patience. Thank you.</em></p>
@@ -97,5 +135,10 @@ include_once(__DIR__ . '/config/header-includes.php');
     include(__DIR__ . '/footer.php');
     include_once(__DIR__ . '/config/footer-includes.php');
     ?>
+    <script>
+        const homePageModule = Vue.createApp({});
+        homePageModule.use(Quasar, { config: {} });
+        homePageModule.mount('#innertext');
+    </script>
 </body>
 </html>
