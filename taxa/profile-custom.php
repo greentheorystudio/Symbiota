@@ -5,7 +5,7 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonFamily.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonVernaculars.js?ver=20230630" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js?ver=20230630" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=20230715" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=20230817" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=20230817" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js?ver=20230817" type="text/javascript"></script>
@@ -35,7 +35,7 @@
                     </div>
                     <div class="profile-split-row">
                         <div class="left-column profile-column">
-                            <taxa-profile-central-image :taxon="taxon" :central-image="centralImage" :is-editor="isEditor"></taxa-profile-central-image>
+                            <taxa-profile-central-image :taxon="taxon" :central-image="centralImage" :is-editor="isEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
                         </div>
                         <div class="right-column profile-column">
                             <taxa-profile-description-tabs :description-arr="descriptionArr" :glossary-arr="glossaryArr"></taxa-profile-description-tabs>
@@ -228,10 +228,10 @@
                     }
                 });
                 if(this.fieldImageArr.length > 0){
-                    this.centralImage = this.fieldImageArr.shift();
+                    this.centralImage = this.fieldImageArr[0];
                 }
                 else{
-                    this.centralImage = this.specimenImageArr.shift();
+                    this.centralImage = this.specimenImageArr[0];
                 }
                 this.loading = false;
                 this.hideLoading();
