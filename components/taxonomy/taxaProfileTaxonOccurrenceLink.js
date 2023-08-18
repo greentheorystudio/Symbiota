@@ -4,7 +4,7 @@ const taxaProfileTaxonOccurrenceLink = {
     ],
     template: `
         <div class="occurrences-link-frame">
-            <q-card>
+            <q-card class="taxon-profile-occurrence-link-card">
                 <div class="occurrences-link">
                     <span class="cursor-pointer" @click="openOccurrenceSearch();">View Occurrence Records</span>
                 </div>
