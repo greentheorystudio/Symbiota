@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/Sanitizer.php');
-header('Content-Type: application/json;' .$GLOBALS['CHARSET']);
+header('Content-Type: application/json; charset=UTF-8' );
 
 $url = str_replace(' ','%20',$_REQUEST['url']);
 $action = $_REQUEST['action'];
@@ -30,7 +30,7 @@ if(Sanitizer::validateInternalRequest()){
     $result = curl_exec($curl);
     curl_close($curl);
     if($result){
-        echo mb_convert_encoding($result, $GLOBALS['CHARSET'], 'UTF-8,ISO-8859-1');
+        echo mb_convert_encoding($result, 'UTF-8', 'UTF-8,ISO-8859-1');
     }
     else{
         echo '{}';
