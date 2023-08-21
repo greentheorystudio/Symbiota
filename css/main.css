@@ -1,6 +1,6 @@
 body{
 	background-color:#385723;
-	font-size: 16px;
+	font-size: 90%;
 }
 .title {
 	font-weight: bold;
@@ -228,4 +228,10 @@ ul.key span.link a {
 }
 .taxon-profile-taxon-map-card:hover, .taxon-profile-image-link-card:hover, .taxon-profile-occurrence-link-card:hover {
 	background-color: #9DA626;
+}
+.q-tab__label {
+	font-size: 120%;
+}
+.desc-tab-panels{
+	font-size: 110%;
 }
