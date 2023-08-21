@@ -586,8 +586,12 @@ body.processing .loadingModal {
 .desc-tabs{
 	height: 475px;
 }
+.q-tab__label {
+	font-size: 110%;
+}
 .desc-tab-panels{
 	height: 350px;
+	font-size: 100%;
 }
 .desc-source{
 	text-align:	right;
