@@ -17,9 +17,6 @@ include_once(__DIR__ . '/config/header-includes.php');
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <style>
-        .update-card {
-            width: 55%;
-        }
         .text-underline {
             text-decoration: underline;
         }
@@ -57,32 +54,6 @@ include_once(__DIR__ . '/config/header-includes.php');
         </div>
 
         <div style="margin: 20px; text-align: left;">
-            <q-card class="update-card q-mb-md bg-green-1">
-                <q-card-section>
-                    <div class="text-h5 text-bold q-mb-sm">We’ve been making some changes!</div>
-                    <div>
-                        You may have noticed some changes on the Online Flora of Wisconsin website lately!
-                    </div>
-                    <div>
-                        Here are some of the changes we have made and/or are working on:
-                        <ul>
-                            <li>New layouts for the Taxon Profile Pages.</li>
-                            <li>Changes to the way images are displayed.</li>
-                            <li>Updates to the spatial module with new map layers and functionality.</li>
-                            <li>Updating the photos with new higher resolution images.</li>
-                            <li>Adding dichotomous keys from the ongoing work on the <span class="text-underline">Flora of Wisconsin.</span></li>
-                            <li>Updating the county level maps.</li>
-                        </ul>
-                    </div>
-                    <div>
-                        This is all currently a work in progress, and we welcome your comments and constructive criticisms. Check
-                        out the site and let us know what you like, don’t like, or would like to see in the future! Also, we would
-                        like to add more photographs of the plants of Wisconsin to the website and replace some of the old low-resolution
-                        images. If you have photographs that would like to donate to the website, please let us know. Contact me at
-                        the email at the bottom of the page. Mary Ann Feist, Curator, Wisconsin State Herbarium.
-                    </div>
-                </q-card-section>
-            </q-card>
             <p>
                 This site is a collaborative effort between the herbaria of the UW-Madison (WIS) and the UW-Steven's Point (UWSP),
                 along with most of the other herbaria located in the state of Wisconsin. It contains information on each of
@@ -127,8 +98,32 @@ include_once(__DIR__ . '/config/header-includes.php');
                 <strong>Checklists</strong> (e.g., County Floras, Wildflowers by Color) are under development.  Take a look or create your own!<br>
             </p>
             <p><em>NOTE: 'Interactive Maps' will plot only collections with known GPS localities.</em></p>
-            <p><em>NOTE: This site was constructed using the </em><a href="http://symbiota.org/docs/" target="_blank">Symbiota</a><em> software platform and was launched in Feb 2015; it is still in development.
-                    We encourage your comments for improvement, and  appreciate your patience. Thank you.</em></p>
+            <q-card class="update-card q-mb-md bg-green-1">
+                <q-card-section>
+                    <div class="text-h5 text-bold q-mb-sm">We’ve been making some changes!</div>
+                    <div>
+                        You may have noticed some changes on the Online Flora of Wisconsin website lately!
+                    </div>
+                    <div>
+                        Here are some of the changes we have made and/or are working on:
+                        <ul>
+                            <li>New layouts for the Taxon Profile Pages.</li>
+                            <li>Changes to the way images are displayed.</li>
+                            <li>Updates to the spatial module with new map layers and functionality.</li>
+                            <li>Updating the photos with new higher resolution images.</li>
+                            <li>Adding dichotomous keys from the ongoing work on the <span class="text-underline">Flora of Wisconsin.</span></li>
+                            <li>Updating the county level maps.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        This is all currently a work in progress, and we welcome your comments and constructive criticisms. Check
+                        out the site and let us know what you like, don’t like, or would like to see in the future! Also, we would
+                        like to add more photographs of the plants of Wisconsin to the website and replace some of the old low-resolution
+                        images. If you have photographs that would like to donate to the website, please let us know. Contact me at
+                        the email at the bottom of the page. Mary Ann Feist, Curator, Wisconsin State Herbarium.
+                    </div>
+                </q-card-section>
+            </q-card>
         </div>
     </div>
     <?php

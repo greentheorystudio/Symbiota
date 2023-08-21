@@ -1,6 +1,6 @@
 body{
 	background-color:#9EBC7B;
-	font-size: 16px;
+	font-size: 90%;
 }
 
 #mainContainer{
@@ -244,4 +244,10 @@ ul.key span.link a {
 .taxon-profile-taxon-map-card, .taxon-profile-image-link-card, .taxon-profile-occurrence-link-card {
 	background-color:#9EBC7B;
 	border:1px solid black;
+}
+.q-tab__label {
+	font-size: 120%;
+}
+.desc-tab-panels{
+	font-size: 110%;
 }

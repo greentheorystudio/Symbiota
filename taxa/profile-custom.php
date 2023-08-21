@@ -93,8 +93,13 @@
                                                     <q-img :src="image.url" fit="contain" height="240px" :title="image.caption" :alt="image.sciname"></q-img>
                                                 </a>
                                                 <div class="photographer">
-                                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)">
-                                                        <span class="text-italic">{{ image.sciname }}</span>
+                                                    <a :href="(clientRoot + '/collections/individual/index.php?occid=' + image.occid)" target="_blank">
+                                                        <template v-if="image.catalognumber || image.othercatalognumbers">
+                                                            {{ image.catalognumber ? image.catalognumber : '' }}{{ image.catalognumber && image.othercatalognumbers ? '/' : '' }}{{ image.othercatalognumbers ? image.othercatalognumbers : '' }}
+                                                        </template>
+                                                        <template v-else>
+                                                            [See Full Record]
+                                                        </template>
                                                     </a>
                                                 </div>
                                             </div>
