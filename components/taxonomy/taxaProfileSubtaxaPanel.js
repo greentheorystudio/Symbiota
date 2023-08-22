@@ -1,14 +1,26 @@
 const taxaProfileSubtaxaPanel = {
-    props: [
-        'subtaxa-arr',
-        'subtaxa-label',
-        'subtaxa-expansion-label',
-        'is-editor'
-    ],
+    props: {
+        collapsible: {
+            type: Boolean,
+            default: true
+        },
+        isEditor: {
+            type: Boolean
+        },
+        subtaxaArr: {
+            type: Array
+        },
+        subtaxaExpansionLabel: {
+            type: String
+        },
+        subtaxaLabel: {
+            type: String
+        }
+    },
     template: `
         <template v-if="subtaxaArr.length">
             <div class="expansion-container">
-                <template v-if="subtaxaArr.length < 5">
+                <template v-if="!collapsible || subtaxaArr.length < 5">
                     <q-card>
                         <div class="q-pt-sm q-pl-md text-h6 text-weight-bold taxon-profile-subtaxa-panel-label">
                             {{ subtaxaLabel }}

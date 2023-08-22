@@ -13,7 +13,6 @@ class ConfigurationManager{
         'DEFAULTCATID',
         'DEFAULT_TITLE',
         'ADMIN_EMAIL',
-        'CHARSET',
         'MAX_UPLOAD_FILESIZE',
         'PORTAL_GUID',
         'SECURITY_KEY',
@@ -148,7 +147,7 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20230720';
+        $GLOBALS['CSS_VERSION'] = '20230819';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -221,9 +220,6 @@ class ConfigurationManager{
 
     public function validateGlobalArr(): void
     {
-        if(!isset($GLOBALS['CHARSET']) || $GLOBALS['CHARSET'] === '' || !in_array($GLOBALS['CHARSET'], array('UTF-8','ISO-8859-1'))){
-            $GLOBALS['CHARSET'] = 'UTF-8';
-        }
         if(!isset($GLOBALS['DEFAULT_LANG']) || $GLOBALS['DEFAULT_LANG'] !== 'en'){
             $GLOBALS['DEFAULT_LANG'] = 'en';
         }
@@ -400,7 +396,6 @@ class ConfigurationManager{
 
     public function setGlobalArrFromDefaults(): void
     {
-        $GLOBALS['CHARSET'] = 'UTF-8';
         $GLOBALS['DEFAULT_LANG'] = 'en';
         $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
         $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();

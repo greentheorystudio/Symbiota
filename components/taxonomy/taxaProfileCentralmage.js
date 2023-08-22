@@ -8,7 +8,7 @@ const taxaProfileCentralImage = {
         <q-card class="overflow-hidden">
             <template v-if="centralImage">
                 <div id="central-image">
-                    <a :href="centralImage.anchorUrl">
+                    <a @click="toggleImageCarousel(centralImage.url);" class="cursor-pointer">
                         <q-img :src="centralImage.url" :fit="contain" :title="centralImage.caption" :alt="centralImage.sciname"></q-img>
                         <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">
@@ -36,6 +36,11 @@ const taxaProfileCentralImage = {
     data() {
         return {
             clientRoot: Vue.ref(CLIENT_ROOT)
+        }
+    },
+    methods: {
+        toggleImageCarousel(index){
+            this.$emit('update:set-image-carousel', index);
         }
     }
 };

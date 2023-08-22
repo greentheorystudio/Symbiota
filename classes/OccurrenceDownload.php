@@ -36,7 +36,7 @@ class OccurrenceDownload{
 			$this->rareReaderArr = array_unique(array_merge($this->rareReaderArr,$GLOBALS['USER_RIGHTS']['RareSppReader']));
 		}
 
-		$this->charSetSource = strtoupper($GLOBALS['CHARSET']);
+		$this->charSetSource = 'UTF-8';
 		$this->charSetOut = $this->charSetSource;
 	}
 

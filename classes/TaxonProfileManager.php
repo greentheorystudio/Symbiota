@@ -156,8 +156,8 @@ class TaxonProfileManager {
             }
             $result->close();
         }
-        if($this->taxon['rankId'] > 140){
-            foreach($this->taxon['sppArr'] as $sn => $snArr){
+        foreach($this->taxon['sppArr'] as $sn => $snArr){
+            if((int)$snArr['rankid'] > 140){
                 $this->taxon['sppArr'][$sn]['map'] = $this->getMapImgUrl((int)$snArr['tid'],(int)$snArr['security']);
             }
         }
@@ -241,7 +241,8 @@ class TaxonProfileManager {
             $result->free();
 
             $sql = 'SELECT t.tid, t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
-                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner, o.basisOfRecord '.
+                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner, o.basisOfRecord, '.
+                'o.catalogNumber, o.otherCatalogNumbers '.
                 'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
                 'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON ti.occid = o.occid '.
@@ -275,6 +276,8 @@ class TaxonProfileManager {
                 $imageArr['photographer'] = Sanitizer::cleanOutStr($row->photographer);
                 $imageArr['caption'] = Sanitizer::cleanOutStr($row->caption);
                 $imageArr['occid'] = $row->occid;
+                $imageArr['catalognumber'] = $row->catalogNumber;
+                $imageArr['othercatalognumbers'] = $row->otherCatalogNumbers;
                 $imageArr['basisofrecord'] = $row->basisOfRecord;
                 $imageArr['owner'] = Sanitizer::cleanOutStr($row->owner);
                 $imageArr['sciname'] = $row->sciname;

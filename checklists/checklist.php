@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
 include_once(__DIR__ . '/../classes/ChecklistFGExportManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
@@ -192,7 +192,6 @@ if($clArray){
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-    <meta charset="<?php echo $GLOBALS['CHARSET']; ?>">
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Research Checklist: <?php echo $clManager->getClName(); ?></title>
     <link type="text/css" href="../css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" />
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DbConnection.php');
-header('Content-Type: application/json; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: application/json; charset=UTF-8' );
 
 $connection = new DbConnection();
 $con = $connection->getConnection();

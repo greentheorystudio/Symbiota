@@ -1549,18 +1549,8 @@ class SpecUploadBase extends SpecUpload{
         $fixedwordchars=array("'", "'", '"', '"', '-', '...');
         $inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
-        if($inStr){
-            $lowerStr = strtolower($GLOBALS['CHARSET']);
-            if($lowerStr === 'utf-8' || $lowerStr === 'utf8'){
-                if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-                    $retStr = utf8_encode($inStr);
-                }
-            }
-            elseif($lowerStr === 'iso-8859-1'){
-                if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-                    $retStr = utf8_decode($inStr);
-                }
-            }
+        if($inStr && mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
+            $retStr = utf8_encode($inStr);
         }
         return $retStr;
     }
