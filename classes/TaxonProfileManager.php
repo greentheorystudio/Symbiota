@@ -65,13 +65,11 @@ class TaxonProfileManager {
             if($clId){
                 $this->setClName($clId);
             }
-            if($this->taxon['submittedTid'] === $this->taxon['tid']){
-                $this->setVernaculars();
-                $this->setSynonyms();
-                $this->setTaxaImageCount();
-                $this->taxon['sppArr'] = array();
-                $this->setSppData($clId);
-            }
+            $this->setVernaculars();
+            $this->setSynonyms();
+            $this->setTaxaImageCount();
+            $this->taxon['sppArr'] = array();
+            $this->setSppData($clId);
         }
 
         return $this->taxon;
