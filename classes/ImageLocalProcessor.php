@@ -533,7 +533,7 @@ class ImageLocalProcessor {
                         if($this->lgImg){
                             $lgTargetFileName = substr($targetFileName,0,-4). '_lg.jpg';
                             if($this->lgImg === 1){
-                                if($width > ($this->webPixWidth*1.3)){
+                                if($width > ($this->webPixWidth * 1.3)){
                                     if($width > $this->lgPixWidth || ($fileSize && $fileSize > $this->lgFileSizeLimit)){
                                         if($this->createNewImage($sourcePath.$fileName,$targetPath.$lgTargetFileName,$this->lgPixWidth,round($this->lgPixWidth*($height/$width)),$width,$height)){
                                             $lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
