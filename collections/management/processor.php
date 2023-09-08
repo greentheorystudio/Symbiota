@@ -100,9 +100,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 if($specManager->getJpgQuality()) {
                     $imageProcessor->setJpgQuality($specManager->getJpgQuality());
                 }
-                $imageProcessor->setWebImg($_POST['webimg']);
-                $imageProcessor->setTnImg($_POST['createtnimg']);
-                $imageProcessor->setLgImg($_POST['createlgimg']);
+                $imageProcessor->setWebImg((int)$_POST['webimg']);
+                $imageProcessor->setTnImg((int)$_POST['createtnimg']);
+                $imageProcessor->setLgImg((int)$_POST['createlgimg']);
                 $imageProcessor->setCreateNewRec($_POST['createnewrec']);
                 $imageProcessor->setImgExists($_POST['imgexists']);
                 $imageProcessor->setKeepOrig(0);

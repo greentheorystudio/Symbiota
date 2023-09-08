@@ -332,9 +332,14 @@ class ImageShared{
 				if(strncmp($this->sourcePath, 'http://', 7) === 0 || strncmp($this->sourcePath, 'https://', 8) === 0) {
 					$imgLgUrl = $this->sourcePath;
 				}
-				else if(($this->sourceWidth < ($this->lgPixWidth * 1.2)) && copy($this->sourcePath, $this->targetPath . $this->imgName . '_lg' . $this->imgExt, $this->context)) {
-                    $imgLgUrl = $this->imgName.'_lg'.$this->imgExt;
-                }
+				else if($this->sourceWidth < ($this->lgPixWidth * 1.2)){
+					if(copy($this->sourcePath,$this->targetPath.$this->imgName.'_lg'.$this->imgExt, $this->context)){
+						$imgLgUrl = $this->imgName.'_lg'.$this->imgExt;
+					}
+				}
+				else if($this->createNewImage('_lg',$this->lgPixWidth)){
+					$imgLgUrl = $this->imgName.'_lg.jpg';
+				}
 			}
 		}
 
@@ -343,14 +348,21 @@ class ImageShared{
 			$imgWebUrl = $this->sourcePath;
 		}
 		if(!$imgWebUrl){
-            if(strncasecmp($this->sourcePath, 'http://', 7) === 0 || strncasecmp($this->sourcePath, 'https://', 8) === 0){
-                if(copy($this->sourcePath, $this->targetPath.$this->imgName.$this->imgExt, $this->context)){
-                    $imgWebUrl = $this->imgName.$this->imgExt;
-                }
-            }
-            else{
-                $imgWebUrl = $this->imgName.$this->imgExt;
-            }
+			if($this->sourceWidth < ($this->webPixWidth*1.2) && $this->sourceFileSize < $this->webFileSizeLimit){
+				if(strncasecmp($this->sourcePath, 'http://', 7) === 0 || strncasecmp($this->sourcePath, 'https://', 8) === 0){
+					if(copy($this->sourcePath, $this->targetPath.$this->imgName.$this->imgExt, $this->context)){
+						$imgWebUrl = $this->imgName.$this->imgExt;
+					}
+				}
+				else{
+					$imgWebUrl = $this->imgName.$this->imgExt;
+				}
+			}
+			else{
+				$newWidth = ($this->sourceWidth<($this->webPixWidth*1.2)?$this->sourceWidth:$this->webPixWidth);
+				$this->createNewImage('',$newWidth);
+				$imgWebUrl = $this->imgName.'.jpg';
+			}
 		}
 
 		$status = true;
