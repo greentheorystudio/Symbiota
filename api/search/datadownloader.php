@@ -16,7 +16,6 @@ $images = array_key_exists('imagescsv',$_REQUEST)?(int)$_REQUEST['imagescsv']:0;
 $rows = array_key_exists('dh-rows',$_REQUEST)?(int)$_REQUEST['dh-rows']:0;
 $format = array_key_exists('formatcsv',$_REQUEST)?$_REQUEST['formatcsv']:'';
 $zip = array_key_exists('zipcsv',$_REQUEST)?$_REQUEST['zipcsv']:'';
-$cset = array_key_exists('csetcsv',$_REQUEST)?$_REQUEST['csetcsv']:'';
 $stArrJson = array_key_exists('starrjson',$_REQUEST)?$_REQUEST['starrjson']:'';
 
 $spatialManager = new SpatialModuleManager();
@@ -122,7 +121,6 @@ else if($schema === 'checklist'){
     $occManager->setSearchTermsArr($stArr);
     $dlManager->setSqlWhere($occManager->getSqlWhere());
     $dlManager->setSchemaType($schema);
-    $dlManager->setCharSetOut($cset);
     $dlManager->setDelimiter($fileType);
     $dlManager->setZipFile($zip);
     $dlManager->downloadData();
@@ -138,7 +136,7 @@ else{
         }
         $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
     }
-    $dwcaHandler->setCharSetOut($cset);
+    $dwcaHandler->setCharSetOut('UTF-8');
     $dwcaHandler->setSchemaType($schema);
     $dwcaHandler->setDelimiter($format);
     $dwcaHandler->setVerboseMode(0);

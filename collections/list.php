@@ -52,7 +52,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/collections.search.js?ver=20221025"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20221110"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=20230901"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
@@ -194,7 +194,6 @@ echo '</div>';
         <input id="imagescsv" name="imagescsv" type="hidden" />
         <input id="formatcsv" name="formatcsv" type="hidden" />
         <input id="zipcsv" name="zipcsv" type="hidden" />
-        <input id="csetcsv" name="csetcsv" type="hidden" />
     </form>
 </div>
 <?php
