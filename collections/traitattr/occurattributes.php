@@ -131,58 +131,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         ?>
 
         document.addEventListener("DOMContentLoaded", function() {
-            setImgRes();
             $("#specimg").imagetool({
                 maxWidth: 6000
                 ,viewportWidth: <?php echo $paneX; ?>
                 ,viewportHeight: <?php echo $paneY; ?>
             });
         });
-
-        function setImgRes(){
-            if(imgLgArr[activeImgIndex] != null){
-                if($("#imgres1").val() === 'lg') {
-                    changeImgRes('lg');
-                }
-            }
-            else{
-                if(imgArr[activeImgIndex] != null){
-                    $("#specimg").attr("src",imgArr[activeImgIndex]);
-                    document.getElementById("imgresmed").checked = true;
-                    const imgResLgRadio = document.getElementById("imgreslg");
-                    imgResLgRadio.disabled = true;
-                    imgResLgRadio.title = "Large resolution image not available";
-                }
-            }
-            else{
-                if(imgLgArr[activeImgIndex] != null){
-                    $("#specimg").attr("src",imgLgArr[activeImgIndex]);
-                    document.getElementById("imgreslg").checked = true;
-                    const imgResMedRadio = document.getElementById("imgresmed");
-                    imgResMedRadio.disabled = true;
-                    imgResMedRadio.title = "Medium resolution image not available";
-                }
-            }
-        }
-
-        function changeImgRes(resType){
-            if(resType === 'lg'){
-                $("#imgres1").val("lg");
-                $("#imgres2").val("lg");
-                if(imgLgArr[activeImgIndex]){
-                    $("#specimg").attr("src",imgLgArr[activeImgIndex]);
-                    $( "#imgreslg" ).prop( "checked", true );
-                }
-            }
-            else{
-                $("#imgres1").val("med");
-                $("#imgres2").val("med");
-                if(imgArr[activeImgIndex]){
-                    $("#specimg").attr("src",imgArr[activeImgIndex]);
-                    $( "#imgresmed" ).prop( "checked", true );
-                }
-            }
-        }
 
         function setPortXY(portWidth,portHeight){
             $("#panex1").val(portWidth);
@@ -468,8 +422,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             if($imgArr){
                 ?>
                 <div>
-                    <span><input id="imgresmed" name="resradio"  type="radio" checked onchange="changeImgRes('med')" />Med Res.</span>
-                    <span style="margin-left:6px;"><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" />High Res.</span>
                     <?php
                     if($occid){
                         if(!$catNum) {
