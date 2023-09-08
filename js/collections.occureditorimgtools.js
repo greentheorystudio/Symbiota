@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	if(imgTd !== "close") {
 		toggleImageTdOn();
 	}
-	initImgRes();
 });
 
 function toggleImageTdOn(){
@@ -61,60 +60,6 @@ function initImageTool(imgId){
 
 function setPortXY(portWidth,portHeight){
 	document.cookie = "symbimgport=" + portWidth + ":" + portHeight;
-}
-
-function initImgRes(){
-	const imgObj = document.getElementById("activeimg-" + activeImgIndex);
-	if(imgObj){
-		if(imgLgArr[activeImgIndex]){
-			const imgRes = getCookie("symbimgres");
-			if(imgRes === 'lg'){
-				changeImgRes('lg');
-			}
-		}
-		else{
-			imgObj.src = imgArr[activeImgIndex];
-			document.getElementById("imgresmed").checked = true;
-			const imgResLgRadio = document.getElementById("imgreslg");
-			imgResLgRadio.disabled = true;
-			imgResLgRadio.title = "Large resolution image not available";
-		}
-		if(!imgArr[activeImgIndex]){
-			if(imgLgArr[activeImgIndex]){
-				imgObj.src = imgLgArr[activeImgIndex];
-				document.getElementById("imgreslg").checked = true;
-				const imgResMedRadio = document.getElementById("imgresmed");
-				imgResMedRadio.disabled = true;
-				imgResMedRadio.title = "Medium resolution image not available";
-			}
-		}
-	}
-}
-
-function changeImgRes(resType){
-	const imgObj = document.getElementById("activeimg-" + activeImgIndex);
-	let oldSrc = imgObj.src;
-	if(resType === 'lg'){
-        document.cookie = "symbimgres=lg";
-    	if(imgLgArr[activeImgIndex]){
-    		imgObj.src = imgLgArr[activeImgIndex];
-    		document.getElementById("imgreslg").checked = true;
-    	}
-	}
-	else{
-        document.cookie = "symbimgres=med";
-    	if(imgArr[activeImgIndex]){
-    		imgObj.src = imgArr[activeImgIndex];
-    		document.getElementById("imgresmed").checked = true;
-    	}
-	}
-	if(oldSrc.indexOf("rotate=") > -1){
-		oldSrc = oldSrc.substring(0,oldSrc.indexOf('&format='));
-		oldSrc = oldSrc.substring(oldSrc.indexOf('rotate=')+7);
-		let currentSrc = imgObj.src;
-		currentSrc = currentSrc.substring(0,currentSrc.indexOf('&format='));
-		imgObj.src = currentSrc + '&rotate=' + oldSrc + '&format=jpeg';
-	}
 }
 
 function nextLabelProcessingImage(imgCnt){

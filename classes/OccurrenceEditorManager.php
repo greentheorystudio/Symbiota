@@ -1735,7 +1735,7 @@ class OccurrenceEditorManager {
                 $imageMap[$imgId]['occid'] = $row->occid;
                 $imageMap[$imgId]['username'] = Sanitizer::cleanOutStr($row->username);
                 $imageMap[$imgId]['sortseq'] = $row->sortsequence;
-                if(strpos($row->originalurl, 'api.idigbio.org') && strtotime($row->initialtimestamp) > strtotime('-2 days')) {
+                if($row->originalurl && strpos($row->originalurl, 'api.idigbio.org') && strtotime($row->initialtimestamp) > strtotime('-2 days')) {
                     $headerArr = get_headers($row->originalurl,1);
                     if($headerArr && $headerArr['Content-Type'] === 'image/svg+xml') {
                         $imageMap[$imgId]['error'] = 'NOTICE: iDigBio image derivatives not yet available, it may take upto 24 hours before image processing is complete';

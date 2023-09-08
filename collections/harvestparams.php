@@ -24,7 +24,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/collections.harvestparams.js?ver=20230103"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20221110"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=20230901"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script type="text/javascript">
