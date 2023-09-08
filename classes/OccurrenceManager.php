@@ -1111,7 +1111,7 @@ class OccurrenceManager{
 
     protected function cleanOutStr($str): string
     {
-        return htmlspecialchars($str);
+        return $str ? htmlspecialchars($str) : '';
     }
 
     protected function cleanInputStr($str): string

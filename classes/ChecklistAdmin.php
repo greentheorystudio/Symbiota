@@ -128,13 +128,9 @@ class ChecklistAdmin{
                 if($fieldName !== 'abstract') {
                     $v = strip_tags($v, '<i><u><b><a>');
                 }
-
                 if($v){
-                    if($fieldType === 's'){
-                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($this->conn,$v).'"';
-                    }
-                    elseif($fieldType === 'n' && is_numeric($v)){
-                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($this->conn,$v).'"';
+                    if($fieldType === 's' || ($fieldType === 'n' && is_numeric($v))){
+                        $setSql .= ', '.$fieldName.' = "'.$v.'"';
                     }
                     else{
                         $setSql .= ', '.$fieldName.' = NULL';
