@@ -520,7 +520,6 @@ function processDownloadChecklist(){
     document.getElementById("schemacsv").value = 'checklist';
     document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
     document.getElementById("dh-filename").value = filename;
-    document.getElementById("csetcsv").value = 'utf-8';
     document.getElementById("dh-contentType").value = 'text/csv; charset=utf-8';
     document.getElementById("datadownloadform").submit();
 }
@@ -537,7 +536,6 @@ function getDateTimeString(){
 }
 
 function prepCsvControlForm(){
-    let cset;
     let format;
     let schema;
     if (document.getElementById('csvschemasymb').checked) {
@@ -552,12 +550,6 @@ function prepCsvControlForm(){
     if (document.getElementById('csvformattab').checked) {
         format = document.getElementById('csvformattab').value;
     }
-    if (document.getElementById('csvcsetiso').checked) {
-        cset = document.getElementById('csvcsetiso').value;
-    }
-    if (document.getElementById('csvcsetutf').checked) {
-        cset = document.getElementById('csvcsetutf').value;
-    }
     document.getElementById("schemacsv").value = schema;
     document.getElementById("dh-filename").value = document.getElementById("dh-filename").value+'.'+schema;
     if(document.getElementById("csvidentifications").checked === true){
@@ -567,7 +559,6 @@ function prepCsvControlForm(){
         document.getElementById("imagescsv").value = 1;
     }
     document.getElementById("formatcsv").value = format;
-    document.getElementById("csetcsv").value = cset;
     if(document.getElementById("csvzip").checked === true){
         document.getElementById("zipcsv").value = 1;
         document.getElementById("dh-type").value = 'zip';
@@ -576,7 +567,7 @@ function prepCsvControlForm(){
     else{
         document.getElementById("zipcsv").value = false;
         document.getElementById("dh-type").value = 'csv';
-        document.getElementById("dh-contentType").value = 'text/csv; charset='+cset;
+        document.getElementById("dh-contentType").value = 'text/csv; charset=UTF-8';
     }
     $("#csvoptions").popup("hide");
     document.getElementById("datadownloadform").submit();

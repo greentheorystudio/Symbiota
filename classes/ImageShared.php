@@ -332,7 +332,7 @@ class ImageShared{
 				if(strncmp($this->sourcePath, 'http://', 7) === 0 || strncmp($this->sourcePath, 'https://', 8) === 0) {
 					$imgLgUrl = $this->sourcePath;
 				}
-				else if($this->sourceWidth < ($this->lgPixWidth*1.2)){
+				else if($this->sourceWidth < ($this->lgPixWidth * 1.2)){
 					if(copy($this->sourcePath,$this->targetPath.$this->imgName.'_lg'.$this->imgExt, $this->context)){
 						$imgLgUrl = $this->imgName.'_lg'.$this->imgExt;
 					}

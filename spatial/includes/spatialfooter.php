@@ -21,7 +21,6 @@ include_once(__DIR__ . '/../../collections/csvoptions.php');
         <input id="imagescsv" name="imagescsv" type="hidden" />
         <input id="formatcsv" name="formatcsv" type="hidden" />
         <input id="zipcsv" name="zipcsv" type="hidden" />
-        <input id="csetcsv" name="csetcsv" type="hidden" />
     </form>
 </div>
 
