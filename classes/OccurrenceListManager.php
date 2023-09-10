@@ -73,7 +73,7 @@ class OccurrenceListManager extends OccurrenceManager{
                 $returnArr[$occId]['institutioncode'] = $this->cleanOutStr($row->institutioncode);
                 $returnArr[$occId]['collectioncode'] = $this->cleanOutStr($row->collectioncode);
                 $returnArr[$occId]['collectionname'] = $this->cleanOutStr($row->collectionname);
-                $returnArr[$occId]['collicon'] = $row->icon;
+                $returnArr[$occId]['collicon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
                 $returnArr[$occId]['accession'] = $this->cleanOutStr($row->catalognumber);
                 $returnArr[$occId]['family'] = $this->cleanOutStr($row->family);
                 $returnArr[$occId]['sciname'] = $this->cleanOutStr($row->sciname);

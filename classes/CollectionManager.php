@@ -26,7 +26,7 @@ class CollectionManager {
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $retArr['collectionname'] = $r->collectionname;
-            $retArr['icon'] = $r->icon;
+            $retArr['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
             $retArr['institutioncode'] = $r->institutioncode;
             $retArr['collectioncode'] = $r->collectioncode;
             $retArr['colltype'] = $r->colltype;

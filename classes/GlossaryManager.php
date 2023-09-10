@@ -166,8 +166,8 @@ class GlossaryManager{
 			while($r = $rs->fetch_object()){
 				$retArr[$r->glimgid]['glimgid'] = $r->glimgid;
 				$retArr[$r->glimgid]['glossid'] = $r->glossid;
-				$retArr[$r->glimgid]['url'] = $r->url;
-				$retArr[$r->glimgid]['thumbnailurl'] = $r->thumbnailurl;
+				$retArr[$r->glimgid]['url'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->url) : $r->url;
+				$retArr[$r->glimgid]['thumbnailurl'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->thumbnailurl) : $r->thumbnailurl;
 				$retArr[$r->glimgid]['structures'] = $r->structures;
 				$retArr[$r->glimgid]['notes'] = $r->notes;
 				$retArr[$r->glimgid]['createdBy'] = $r->createdBy;
@@ -1128,7 +1128,7 @@ class GlossaryManager{
 					}
 				}
 				if(isset($retArr[$targetId]) && $r2->url && !isset($retArr[$targetId]['images'])) {
-					$retArr[$targetId]['images'][$r2->glimgid]['url'] = $r2->url;
+					$retArr[$targetId]['images'][$r2->glimgid]['url'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r2->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r2->url) : $r2->url;
 					$retArr[$targetId]['images'][$r2->glimgid]['createdBy'] = $r2->createdBy;
 					$retArr[$targetId]['images'][$r2->glimgid]['structures'] = $r2->structures;
 					$retArr[$targetId]['images'][$r2->glimgid]['notes'] = $r2->notes;
