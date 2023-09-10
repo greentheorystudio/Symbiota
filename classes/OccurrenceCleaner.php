@@ -828,7 +828,7 @@ class OccurrenceCleaner extends Manager{
 			while($row = $rs->fetch_object()){
 				$retArr['code'] = $row->code;
 				$retArr['collectionname'] = $row->collectionname;
-				$retArr['icon'] = $row->icon;
+				$retArr['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
 				$retArr['colltype'] = $row->colltype;
 				$retArr['managementtype'] = $row->managementtype;
 			}

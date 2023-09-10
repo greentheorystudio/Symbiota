@@ -290,8 +290,11 @@ if($fullWindow){
                 <div style="float:left;margin:15px 0;text-align:center;font-weight:bold;width:120px;">
                     <?php
                     if($collMetadata['icon']){
+                        if($GLOBALS['CLIENT_ROOT'] && strncmp($collMetadata['icon'], '/', 1) === 0){
+                            $collMetadata['icon'] = $GLOBALS['CLIENT_ROOT'] . $collMetadata['icon'];
+                        }
                         ?>
-                        <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo (strncmp($collMetadata['icon'], 'images', 6) === 0 ?'../../':'').$collMetadata['icon']; ?>'/><br/>
+                        <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo $collMetadata['icon']; ?>'/><br/>
                         <?php
                     }
                     $collCode = '';

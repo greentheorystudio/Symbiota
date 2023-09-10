@@ -108,9 +108,9 @@ class SpecUpload{
     private function setCollInfo(): void
     {
         if($this->collId){
-            $sql = 'SELECT DISTINCT c.collid, c.collectionname, c.institutioncode, c.collectioncode, c.icon, c.colltype, c.managementtype, cs.uploaddate, c.securitykey, c.guidtarget '.
-                'FROM omcollections c LEFT JOIN omcollectionstats cs ON c.collid = cs.collid '.
-                'WHERE (c.collid = '.$this->collId.')';
+            $sql = 'SELECT DISTINCT c.collid, c.collectionname, c.institutioncode, c.collectioncode, c.colltype, c.managementtype, cs.uploaddate, c.securitykey, c.guidtarget '.
+                'FROM omcollections AS c LEFT JOIN omcollectionstats AS cs ON c.collid = cs.collid '.
+                'WHERE c.collid = '.$this->collId.' ';
             //echo $sql;
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
