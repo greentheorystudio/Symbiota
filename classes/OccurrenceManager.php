@@ -675,13 +675,13 @@ class OccurrenceManager{
                     $collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
                     $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
                     $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
-                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
                 }
                 else{
                     $collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
                     $collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
                     $collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
-                    $collArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
+                    $collArr[$collType]['coll'][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
                 }
             }
         }
@@ -957,7 +957,7 @@ class OccurrenceManager{
             $retArr[$r->collid]['instcode'] = $r->institutioncode;
             $retArr[$r->collid]['collcode'] = $r->collectioncode;
             $retArr[$r->collid]['name'] = $r->collectionname;
-            $retArr[$r->collid]['icon'] = $r->icon;
+            $retArr[$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
             $retArr[$r->collid]['category'] = $r->category;
         }
         $rs->free();

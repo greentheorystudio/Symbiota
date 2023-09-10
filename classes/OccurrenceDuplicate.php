@@ -781,7 +781,7 @@ class OccurrenceDuplicate {
                 $returnArr['institutioncode'] = $row->institutioncode;
                 $returnArr['collectioncode'] = $row->collectioncode;
                 $returnArr['collectionname'] = $row->collectionname;
-                $returnArr['icon'] = $row->icon;
+                $returnArr['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
                 $returnArr['colltype'] = $row->colltype;
                 $returnArr['managementtype'] = $row->managementtype;
             }
