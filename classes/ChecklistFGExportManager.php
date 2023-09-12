@@ -210,11 +210,11 @@ class ChecklistFGExportManager {
                 }
                 if($i < $this->maxPhoto){
                     $imgUrl = $row->thumbnailurl;
-                    if((!$imgUrl || $imgUrl === 'empty') && $row->url) {
+                    if(!$imgUrl && $row->url) {
                         $imgUrl = $row->url;
                     }
                     $this->dataArr[$row->tid]['img'][$row->imgid]['id'] = $row->imgid;
-                    $this->dataArr[$row->tid]['img'][$row->imgid]['url'] = $imgUrl;
+                    $this->dataArr[$row->tid]['img'][$row->imgid]['url'] = ($imgUrl && $GLOBALS['CLIENT_ROOT'] && strncmp($imgUrl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $imgUrl) : $imgUrl;
                     $this->dataArr[$row->tid]['img'][$row->imgid]['owner'] = $row->owner;
                     $this->dataArr[$row->tid]['img'][$row->imgid]['photographer'] = $this->cleanOutStr(htmlspecialchars_decode($row->photographer));
                 }
@@ -230,9 +230,11 @@ class ChecklistFGExportManager {
         //echo $sql; exit;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $imgUrl = $row->thumbnailurl;
-            if((!$imgUrl || $imgUrl === 'empty') && $row->url) {
-                $imgUrl = $row->url;
+            if($row->thumbnailurl){
+                $imgUrl = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+            }
+            if(!$imgUrl && $row->url) {
+                $imgUrl = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
             }
         }
         $result->free();

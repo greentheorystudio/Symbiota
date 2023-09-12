@@ -94,10 +94,7 @@ if($collManager->validateSearchTermsArr($stArr)){
                 $imgUrl = $imgArr['url'];
                 $imgTn = $imgArr['thumbnailurl'];
                 if($imgTn){
-                    $imgUrl = ($imgUrl && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) ? $GLOBALS['IMAGE_DOMAIN'].$imgTn : $imgTn;
-                }
-                elseif($imgUrl && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0){
-                    $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
+                    $imgUrl = $imgTn;
                 }
                 $recordListHtml .= '<div class="tndiv">';
                 $recordListHtml .= '<div class="tnimg">';

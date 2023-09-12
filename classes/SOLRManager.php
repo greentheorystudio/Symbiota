@@ -201,9 +201,6 @@ class SOLRManager extends OccurrenceManager{
             }
             if(isset($k['thumbnailurl'])){
                 $tnUrl = $k['thumbnailurl'][0];
-                if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($tnUrl, '/', 1) === 0) {
-                    $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
-                }
                 $returnArr[$occId]['img'] = $tnUrl;
             }
             if(isset($k['imgid'])){

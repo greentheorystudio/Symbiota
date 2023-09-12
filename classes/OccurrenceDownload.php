@@ -189,12 +189,9 @@ class OccurrenceDownload{
 			$serverDomain = 'https://';
 		}
 		$serverDomain .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-			$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
-		}
 		$urlPathPrefix = '';
 		if($serverDomain){
-			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
+			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'];
 		}
 
 		$linkElem = $newDoc->createElement('link');
@@ -255,17 +252,12 @@ class OccurrenceDownload{
 			}
 
 			$itemLinkElem = $newDoc->createElement('link');
-			$itemLinkElem->appendChild($newDoc->createTextNode($serverDomain.'/collections/individual/index.php?occid='.$r->occid));
+			$itemLinkElem->appendChild($newDoc->createTextNode($urlPathPrefix.'/collections/individual/index.php?occid='.$r->occid));
 			$itemElem->appendChild($itemLinkElem);
 
 			$tnUrl = $r->thumbnailurl;
 			if(strncmp($tnUrl, '/', 1) === 0){
-				if(isset($GLOBALS['IMAGE_DOMAIN'])){
-					$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
-				}
-				else{
-					$tnUrl = $serverDomain.$tnUrl;
-				}
+                $tnUrl = $urlPathPrefix.$tnUrl;
 			}
 			$tnLinkElem = $newDoc->createElement('thumbnailUri');
 			$tnLinkElem->appendChild($newDoc->createTextNode($tnUrl));
