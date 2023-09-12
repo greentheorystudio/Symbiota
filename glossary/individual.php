@@ -206,21 +206,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
 						<?php
 						foreach($termImgArr as $imgId => $imgArr){
 							$imgUrl = $imgArr['url'];
-							if(strncmp($imgUrl, '/', 1) === 0){
-								if(isset($GLOBALS['IMAGE_DOMAIN'])){
-									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-								}
-								else{
-									$urlPrefix = 'http://';
-									if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                                        $urlPrefix = 'https://';
-                                    }
-									$urlPrefix .= $_SERVER['HTTP_HOST'];
-									if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-                                        $urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-                                    }
-									$imgUrl = $urlPrefix.$imgUrl;
-								}
+							if($imgUrl && strncmp($imgUrl, '/', 1) === 0){
+                                $urlPrefix = 'http://';
+                                if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                                    $urlPrefix = 'https://';
+                                }
+                                $urlPrefix .= $_SERVER['HTTP_HOST'];
+                                $imgUrl = $urlPrefix.$imgUrl;
 							}
 							?>
 							<fieldset style='clear:both;border:0;padding:0;margin-top:10px;'>

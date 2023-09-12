@@ -76,8 +76,8 @@ class OccurrenceAttributes extends Manager {
 				$rs2 = $this->conn->query($sql2);
 				$cnt = 1;
 				while($r2 = $rs2->fetch_object()){
-					$retArr[$r2->occid][$cnt]['web'] = $r2->url;
-					$retArr[$r2->occid][$cnt]['lg'] = $r2->originalurl;
+					$retArr[$r2->occid][$cnt]['web'] = ($r2->url && $GLOBALS['CLIENT_ROOT'] && strncmp($r2->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r2->url) : $r2->url;
+					$retArr[$r2->occid][$cnt]['lg'] = ($r2->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r2->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r2->originalurl) : $r2->originalurl;
 					$cnt++;
 				}
 				$rs2->free();
@@ -327,8 +327,8 @@ class OccurrenceAttributes extends Manager {
 			$rs = $this->conn->query($sql);
 			$cnt = 1;
 			while($r = $rs->fetch_object()){
-				$retArr[$r->occid][$cnt]['web'] = $r->url;
-				$retArr[$r->occid][$cnt]['lg'] = $r->originalurl;
+				$retArr[$r->occid][$cnt]['web'] = ($r->url && $GLOBALS['CLIENT_ROOT'] && strncmp($r->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->url) : $r->url;
+				$retArr[$r->occid][$cnt]['lg'] = ($r->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->originalurl) : $r->originalurl;
 				$cnt++;
 			}
 			$rs->free();

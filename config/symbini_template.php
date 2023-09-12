@@ -18,7 +18,6 @@ $GLOBALS['SMTP_ENCRYPTION_MECHANISM'] = 'STARTTLS';        //SMTP encryption mec
 $GLOBALS['SMTP_USERNAME'] = '';                            //SMTP Username
 $GLOBALS['SMTP_PASSWORD'] = '';                            //SMTP Password
 
-$GLOBALS['IMAGE_DOMAIN'] = '';				//Domain path to images, if different from portal
 $GLOBALS['IMAGE_ROOT_URL'] = '/content/imglib';				//URL path to images
 $GLOBALS['IMAGE_ROOT_PATH'] = $GLOBALS['SERVER_ROOT'].'/content/imglib';			//Writable path to images, especially needed for downloading images
 

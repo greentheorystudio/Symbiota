@@ -28,7 +28,6 @@ class ConfigurationManager{
         'SMTP_ENCRYPTION_MECHANISM',
         'SMTP_USERNAME',
         'SMTP_PASSWORD',
-        'IMAGE_DOMAIN',
         'IMAGE_ROOT_URL',
         'IMAGE_ROOT_PATH',
         'IMG_WEB_WIDTH',
@@ -608,9 +607,6 @@ class ConfigurationManager{
             $testURL = 'https://';
         }
         $testURL .= $_SERVER['HTTP_HOST'];
-        if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-            $testURL .= ':' . $_SERVER['SERVER_PORT'];
-        }
         $testURL .= $path . '/sitemap.php';
         $headers = @get_headers($testURL);
         $firstHeader = ($headers ? $headers[0] : '');

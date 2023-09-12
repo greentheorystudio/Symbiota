@@ -1444,9 +1444,9 @@ class DwcArchiverCore extends Manager{
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
 
             $this->setServerDomain();
-            $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
+            $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'];
 
-            $localDomain = $GLOBALS['IMAGE_DOMAIN'] ?? $this->serverDomain;
+            $localDomain = $this->serverDomain.$GLOBALS['CLIENT_ROOT'];
 
             while($r = $rs->fetch_assoc()){
                 if(strncmp($r['identifier'], '/', 1) === 0) {
@@ -1489,7 +1489,7 @@ class DwcArchiverCore extends Manager{
                     }
                 }
                 $r['providermanagedid'] = 'urn:uuid:'.$r['providermanagedid'];
-                $r['associatedSpecimenReference'] = $urlPathPrefix.'collections/individual/index.php?occid='.$r['occid'];
+                $r['associatedSpecimenReference'] = $urlPathPrefix.'/collections/individual/index.php?occid='.$r['occid'];
                 $r['type'] = 'StillImage';
                 $r['subtype'] = 'Photograph';
                 $extStr = strtolower(substr($r['accessURI'],strrpos($r['accessURI'],'.')+1));
@@ -1759,9 +1759,6 @@ class DwcArchiverCore extends Manager{
                 $this->serverDomain = 'https://';
             }
             $this->serverDomain .= $_SERVER['HTTP_HOST'];
-            if($_SERVER['SERVER_PORT'] && (int)$_SERVER['SERVER_PORT'] !== 80 && (int)$_SERVER['SERVER_PORT'] !== 443) {
-                $this->serverDomain .= ':' . $_SERVER['SERVER_PORT'];
-            }
         }
     }
 

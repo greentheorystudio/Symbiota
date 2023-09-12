@@ -442,7 +442,7 @@ if($GLOBALS['SYMB_UID']){
 
     $specImgArr = $occManager->getImageMap();
     if($specImgArr){
-        $imgUrlPrefix = ($GLOBALS['IMAGE_DOMAIN'] ?? '');
+        $imgUrlPrefix = '';
         $imgCnt = 1;
         foreach($specImgArr as $imgId => $i2){
             $iUrl = $i2['url'];
