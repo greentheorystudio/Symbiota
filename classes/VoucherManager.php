@@ -207,7 +207,7 @@ class VoucherManager {
 		$rs = $this->conn->query($sql);
 		if(($r = $rs->fetch_object()) && $r->securitystatus === 0) {
 			$sqlRare = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
-				'SET o.localitysecurity = NULL '.
+				'SET o.localitysecurity = 0 '.
 				'WHERE o.localitysecurity = 1 AND ISNULL(o.localitySecurityReason) '.
 				'AND o.stateprovince = "'.$rareLocality.'" AND t.tidaccepted = '.$this->tid;
 			//echo $sqlRare; exit;

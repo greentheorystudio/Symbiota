@@ -148,8 +148,7 @@ class ChecklistAdmin{
                 $sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
                     'INNER JOIN fmchklsttaxalink AS cl ON t.tidaccepted = cl.tid '.
                     'SET o.localitysecurity = 1 '.
-                    'WHERE cl.clid = '.$this->clid.' AND o.stateprovince = "'.$postArr['locality'].'" AND ISNULL(o.localitySecurityReason) '.
-                    'AND (ISNULL(o.localitysecurity) OR o.localitysecurity = 0) ';
+                    'WHERE cl.clid = '.$this->clid.' AND o.stateprovince = "'.$postArr['locality'].'" AND ISNULL(o.localitySecurityReason) ';
                 if(!$this->conn->query($sql)){
                     $statusStr = 'Error updating rare state species.';
                 }
