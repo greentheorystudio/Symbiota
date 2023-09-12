@@ -213,14 +213,6 @@ if($userChecklists || $checklistArr){
 									if(!$tnUrl) {
                                         $tnUrl = $url;
                                     }
-									if(isset($GLOBALS['IMAGE_DOMAIN'])){
-										if(strncmp($url, '/', 1) === 0) {
-                                            $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
-                                        }
-										if(strncmp($tnUrl, '/', 1) === 0) {
-                                            $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
-                                        }
-									}
 									echo '<div style="float:left;margin:10px;">';
 									echo '<a href="'.$url.'" target="_blank">';
 									echo '<img src="'.$tnUrl.'" style="width:100px;border:1px solid grey" />';

@@ -887,7 +887,7 @@ class SpecUploadBase extends SpecUpload{
                     if(strpos($mediaUrl,'"')) {
                         continue;
                     }
-                    $this->loadImageRecord(array('occid'=>$r->occid,'tid'=>($r->tid?:''),'originalurl'=>$mediaUrl,'url'=>'empty'));
+                    $this->loadImageRecord(array('occid'=>$r->occid,'tid'=>($r->tid?:''),'originalurl'=>$mediaUrl,'url'=>''));
                 }
             }
         }
@@ -938,7 +938,7 @@ class SpecUploadBase extends SpecUpload{
                 $this->outputMsg('<li style="margin-left:20px;">ERROR deleting uploadimagetemp records with matching originalurls</li> ');
             }
             $sql = 'DELETE u.* FROM uploadimagetemp u INNER JOIN images i ON u.occid = i.occid '.
-                'WHERE (u.collid = '.$this->collId.') AND (u.url = i.url) AND (i.url != "") AND (i.url != "empty")';
+                'WHERE (u.collid = '.$this->collId.') AND (u.url = i.url) AND (i.url != "")';
             if(!$this->conn->query($sql)){
                 $this->outputMsg('<li style="margin-left:20px;">ERROR deleting uploadimagetemp records with matching originalurls</li> ');
             }
@@ -1240,7 +1240,7 @@ class SpecUploadBase extends SpecUpload{
                         }
 
                         if(!isset($recMap['url'])) {
-                            $recMap['url'] = 'empty';
+                            $recMap['url'] = '';
                         }
 
                         $sqlFragments = $this->getSqlFragments($recMap,$this->imageFieldMap);

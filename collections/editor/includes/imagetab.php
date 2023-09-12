@@ -135,18 +135,6 @@ $specImgArr = $occManager->getImageMap();
 							$imgUrl = $imgArr['url'];
 							$origUrl = $imgArr['origurl'];
 							$tnUrl = $imgArr['tnurl'];
-							if(isset($GLOBALS['IMAGE_DOMAIN'])){
-								if(strncmp($imgUrl, '/', 1) === 0){
-									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-								}
-								if($origUrl && strncmp($origUrl, '/', 1) === 0){
-									$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
-								}
-								if($tnUrl && strncmp($tnUrl, '/', 1) === 0){
-									$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
-								}
-							}
-							
 							if($imgUrl === 'empty' && $origUrl) {
                                 $imgUrl = $origUrl;
                             }
