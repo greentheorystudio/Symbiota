@@ -586,9 +586,9 @@ class TaxonomyUtilities {
         while($row = $result->fetch_object()){
             $resultArr = array();
             $resultArr['imgid'] = $row->imgid;
-            $resultArr['url'] = $row->url;
-            $resultArr['thumbnailurl'] = $row->thumbnailurl;
-            $resultArr['originalurl'] = $row->originalurl;
+            $resultArr['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+            $resultArr['thumbnailurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+            $resultArr['originalurl'] = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
             $resultArr['archiveurl'] = $row->archiveurl;
             $resultArr['photographer'] = $row->photographer;
             $resultArr['imagetype'] = $row->imagetype;
@@ -627,7 +627,7 @@ class TaxonomyUtilities {
             $resultArr = array();
             $resultArr['mediaid'] = $row->mediaid;
             $resultArr['occid'] = $row->occid;
-            $resultArr['accessuri'] = $row->accessuri;
+            $resultArr['accessuri'] = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
             $resultArr['title'] = $row->title;
             $resultArr['creator'] = $row->creator;
             $resultArr['type'] = $row->type;
@@ -716,7 +716,7 @@ class TaxonomyUtilities {
             $resultArr = array();
             $resultArr['mediaid'] = $row->mediaid;
             $resultArr['occid'] = $row->occid;
-            $resultArr['accessuri'] = $row->accessuri;
+            $resultArr['accessuri'] = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
             $resultArr['title'] = $row->title;
             $resultArr['creator'] = $row->creator;
             $resultArr['type'] = $row->type;

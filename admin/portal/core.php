@@ -183,12 +183,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
     <fieldset style="margin: 10px 0;">
         <legend><b>Media/Images</b></legend>
         <div class="field-block">
-            <span class="field-label">External Media Domain:</span>
-            <span class="field-elem">
-                <input type="text" id="IMAGE_DOMAIN" value="<?php echo (array_key_exists('IMAGE_DOMAIN',$coreConfArr)?$coreConfArr['IMAGE_DOMAIN']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('IMAGE_DOMAIN','<?php echo (array_key_exists('IMAGE_DOMAIN',$coreConfArr)?$coreConfArr['IMAGE_DOMAIN']:''); ?>',false);" />
-            </span>
-        </div>
-        <div class="field-block">
             <span class="field-label">Web Image Width (px):</span>
             <span class="field-elem">
                 <input type="text" id="IMG_WEB_WIDTH" value="<?php echo (array_key_exists('IMG_WEB_WIDTH',$coreConfArr)?$coreConfArr['IMG_WEB_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_WEB_WIDTH','<?php echo (array_key_exists('IMG_WEB_WIDTH',$coreConfArr)?$coreConfArr['IMG_WEB_WIDTH']:''); ?>',true);" />

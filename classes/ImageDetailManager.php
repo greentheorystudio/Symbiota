@@ -40,9 +40,9 @@ class ImageDetailManager {
 				$retArr['sciname'] = $row->sciname;
 				$retArr['author'] = Sanitizer::cleanOutStr($row->author);
 				$retArr['rankid'] = $row->rankid;
-				$retArr['url'] = $row->url;
-				$retArr['thumbnailurl'] = $row->thumbnailurl;
-				$retArr['originalurl'] = $row->originalurl;
+				$retArr['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+				$retArr['thumbnailurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+				$retArr['originalurl'] = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
 				$retArr['photographer'] = Sanitizer::cleanOutStr($row->photographer);
 				$retArr['photographerdisplay'] = $row->photographerdisplay;
 				$retArr['photographeruid'] = $row->photographeruid;

@@ -787,10 +787,6 @@ if($fullWindow){
                                                     <?php
                                                     $medUrl = $medArr['accessuri'];
                                                     $medFormat = $medArr['format'];
-                                                    if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($medUrl, '/', 1) === 0) {
-                                                        $medUrl = $GLOBALS['IMAGE_DOMAIN'].$medUrl;
-                                                    }
-
                                                     if(strncmp($medFormat, 'video/', 6) === 0){
                                                         echo '<video width="250" controls>';
                                                         echo '<source src="'.$medUrl.'" type="'.$medFormat.'">';
@@ -1069,14 +1065,6 @@ if($fullWindow){
                                         $tnUrl = $dupArr['tnurl'];
                                         if(!$tnUrl) {
                                             $tnUrl = $url;
-                                        }
-                                        if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                                            if(strncmp($url, '/', 1) === 0) {
-                                                $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
-                                            }
-                                            if(strncmp($tnUrl, '/', 1) === 0) {
-                                                $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
-                                            }
                                         }
                                         echo '<div style="float:left;margin:10px;">';
                                         echo '<a href="'.$url.'">';

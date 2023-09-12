@@ -198,21 +198,13 @@ class ImageShared{
 	{
 		$status = false;
 		$url = str_replace(' ','%20',$url);
-		if(strncmp($url, '/', 1) === 0){
-			if(isset($GLOBALS['IMAGE_DOMAIN'])){
-				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
-			}
-			else{
-				$urlPrefix = 'http://';
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-					$urlPrefix = 'https://';
-				}
-				$urlPrefix .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-					$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-				}
-				$url = $urlPrefix.$url;
-			}
+		if($url && strncmp($url, '/', 1) === 0){
+            $urlPrefix = 'http://';
+            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                $urlPrefix = 'https://';
+            }
+            $urlPrefix .= $_SERVER['HTTP_HOST'];
+            $url = $urlPrefix.$url;
 		}
 
 		$this->sourceUrl = $url;
@@ -603,9 +595,6 @@ class ImageShared{
 					$domain = 'https://';
 				}
 				$domain .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-					$domain .= ':' . $_SERVER['SERVER_PORT'];
-				}
 				if(stripos($imgUrl,$domain) === 0){
 					$imgUrl2 = $imgUrl;
 					$imgUrl = substr($imgUrl,strlen($domain));
@@ -706,17 +695,6 @@ class ImageShared{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if(isset($GLOBALS['IMAGE_DOMAIN'])){
-			$urlPrefix = 'http://';
-			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-				$urlPrefix = 'https://';
-			}
-			$urlPrefix .= $_SERVER['HTTP_HOST'];
-			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-				$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-			}
-			$urlBase = $urlPrefix.$urlBase;
-		}
 		return $urlBase;
 	}
 
@@ -884,20 +862,12 @@ class ImageShared{
 					$exists = true;
 				}
 			}
-			if(isset($GLOBALS['IMAGE_DOMAIN'])){
-				$uri = $GLOBALS['IMAGE_DOMAIN'].$uri;
-			}
-			else{
-				$urlPrefix = 'http://';
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-					$urlPrefix = 'https://';
-				}
-				$urlPrefix .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-					$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-				}
-				$uri = $urlPrefix.$uri;
-			}
+            $urlPrefix = 'http://';
+            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                $urlPrefix = 'https://';
+            }
+            $urlPrefix .= $_SERVER['HTTP_HOST'];
+            $uri = $urlPrefix.$uri;
 		}
 
 		if(!$exists && function_exists('curl_init')) {

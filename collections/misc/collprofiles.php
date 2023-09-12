@@ -447,9 +447,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     $serverDomain = 'https://';
                 }
 				$serverDomain .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-                    $serverDomain .= ':' . $_SERVER['SERVER_PORT'];
-                }
 				echo 'RSS feed: <a href="../datasets/rsshandler.php" target="_blank">'.$serverDomain.$GLOBALS['CLIENT_ROOT'].'collections/datasets/rsshandler.php</a>';
 				?>
 				<hr/>

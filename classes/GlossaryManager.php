@@ -857,10 +857,7 @@ class GlossaryManager{
 		$exists = false;
 		$localUrl = '';
 		if(strncmp($url, '/', 1) === 0){
-			if(isset($GLOBALS['IMAGE_DOMAIN'])){
-				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
-			}
-			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){
+			if($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){
 				$localUrl = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$url);
 			}
 			else{
@@ -964,9 +961,6 @@ class GlossaryManager{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if(isset($GLOBALS['IMAGE_DOMAIN'])){
-			$urlBase = $this->getServerDomain().$urlBase;
-    	}
 		return $urlBase;
 	}
 	
@@ -1000,8 +994,8 @@ class GlossaryManager{
 		if(!file_exists($this->imageRootPath . 'glossimg/' . $folderName) && !mkdir($concurrentDirectory = $this->imageRootPath . 'glossimg/' . $folderName, 0775) && !is_dir($concurrentDirectory)) {
 			throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
 		}
-		$path = $this->imageRootPath. 'glossimg/' .$folderName. '/';
-		$url = $this->imageRootUrl. 'glossimg/' .$folderName. '/';
+		$path = $this->imageRootPath. '/glossimg/' .$folderName. '/';
+		$url = $this->imageRootUrl. '/glossimg/' .$folderName. '/';
 		
 		$this->targetPath = $path;
 		$this->urlBase = $url;
@@ -1414,9 +1408,6 @@ class GlossaryManager{
 			$domain = 'https://';
 		}
 		$domain .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-			$domain .= ':' . $_SERVER['SERVER_PORT'];
-		}
 		return $domain;
 	}
 }

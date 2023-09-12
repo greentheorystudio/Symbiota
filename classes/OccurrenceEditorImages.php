@@ -92,19 +92,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		$sortSeq = (is_numeric($_REQUEST['sortsequence'])?$_REQUEST['sortsequence']:'');
 		$sourceUrl = Sanitizer::cleanInStr($this->conn,$_REQUEST['sourceurl']);
 
-		if(isset($GLOBALS['IMAGE_DOMAIN'])){
-    		if(strncmp($url, '/', 1) === 0){
-	    		$url = 'http://'.$_SERVER['HTTP_HOST'].$url;
-    		}
-    		if($tnUrl && strncmp($tnUrl, '/', 1) === 0){
-	    		$tnUrl = 'http://'.$_SERVER['HTTP_HOST'].$tnUrl;
-    		}
-    		if($origUrl && strncmp($origUrl, '/', 1) === 0){
-	    		$origUrl = 'http://'.$_SERVER['HTTP_HOST'].$origUrl;
-    		}
-    	}
-
-	    $sql = 'UPDATE images '.
+		$sql = 'UPDATE images '.
 			'SET url = "'.$url.'", thumbnailurl = '.($tnUrl?'"'.$tnUrl.'"':'NULL').
 			',originalurl = '.($origUrl?'"'.$origUrl.'"':'NULL').',occid = '.$occId.',caption = '.
 			($caption?'"'.$caption.'"':'NULL').
