@@ -313,8 +313,6 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                                     <b>Thumbnail:</b>
                                     <div style="margin:5px 15px;">
                                         <input name="createtnimg" type="radio" value="1" <?php echo ($specManager->getCreateTnImg() === 1?'CHECKED':''); ?> /> Create new thumbnail from source image<br/>
-                                        <input name="createtnimg" type="radio" value="2" <?php echo ($specManager->getCreateTnImg() === 2?'CHECKED':''); ?> /> Import thumbnail from source location (source name with _tn.jpg suffix)<br/>
-                                        <input name="createtnimg" type="radio" value="3" <?php echo ($specManager->getCreateTnImg() === 3?'CHECKED':''); ?> /> Map to thumbnail at source location (source name with _tn.jpg suffix)<br/>
                                         <input name="createtnimg" type="radio" value="0" <?php echo (!$specManager->getCreateTnImg()?'CHECKED':''); ?> /> Exclude thumbnail <br/>
                                     </div>
                                 </div>
@@ -324,9 +322,6 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                                     <b>Large Image:</b>
                                     <div style="margin:5px 15px;">
                                         <input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg() === 1?'CHECKED':''); ?> /> Import source image as large version<br/>
-                                        <input name="createlgimg" type="radio" value="2" <?php echo ($specManager->getCreateLgImg() === 2?'CHECKED':''); ?> /> Map to source image as large version<br/>
-                                        <input name="createlgimg" type="radio" value="3" <?php echo ($specManager->getCreateLgImg() === 3?'CHECKED':''); ?> /> Import large version from source location (source name with _lg.jpg suffix)<br/>
-                                        <input name="createlgimg" type="radio" value="4" <?php echo ($specManager->getCreateLgImg() === 4?'CHECKED':''); ?> /> Map to large version at source location (source name with _lg.jpg suffix)<br/>
                                         <input name="createlgimg" type="radio" value="0" <?php echo (!$specManager->getCreateLgImg()?'CHECKED':''); ?> /> Exclude large version<br/>
                                     </div>
                                 </div>
