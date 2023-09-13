@@ -9,84 +9,42 @@ include_once(__DIR__ . '/Sanitizer.php');
 class ImageLocalProcessor {
 
     protected $conn;
-
     private $collArr = array();
     private $activeCollid;
     private $collProcessedArr = array();
-
     protected $sourcePathBase;
-    private $targetPathBase;
     private $targetPathFrag;
     private $origPathFrag;
-    private $imgUrlBase;
-    private $serverRoot;
-
     private $matchCatalogNumber = true;
     private $matchOtherCatalogNumbers = false;
-    private $webPixWidth = '';
-    private $tnPixWidth = '';
-    private $lgPixWidth = '';
-    private $webFileSizeLimit = 300000;
-    private $lgFileSizeLimit = 3000000;
-    private $jpgQuality= 80;
-    private $webImg = 1;
-    private $tnImg = 1;
-    private $lgImg = 1;
-    private $webSourceSuffix = '';
+    private $tnImg = 0;
+    private $lgImg = 0;
     private $tnSourceSuffix = '_tn';
     private $lgSourceSuffix = '_lg';
     private $keepOrig = 0;
-
     private $skeletalFileProcessing = true;
     private $createNewRec = true;
     private $imgExists = 0;
-    protected $dbMetadata = 1;
-    private $processUsingImageMagick = 0;
-
     private $logMode = 0;
     private $logPath = '';
     private $logFH;
-    private $mdOutputFH;
     private $errorMessage;
-
     private $sourceGdImg;
     private $sourceImagickImg;
-
-    private $dataLoaded = 0;
-
-    private $monthNames = array('jan'=>'01','ene'=>'01','feb'=>'02','mar'=>'03','abr'=>'04','apr'=>'04',
-        'may'=>'05','jun'=>'06','jul'=>'07','ago'=>'08','aug'=>'08','sep'=>'09','oct'=>'10','nov'=>'11','dec'=>'12','dic'=>'12');
-
     private $processedFiles = array();
-
 
     public function __construct(){
         ini_set('memory_limit','1024M');
         ini_set('auto_detect_line_endings', true);
         $connection = new DbConnection();
         $this->conn = $connection->getConnection();
-        if($GLOBALS['IMG_WEB_WIDTH']) {
-            $this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
-        }
-        if($GLOBALS['IMG_TN_WIDTH']) {
-            $this->tnPixWidth = $GLOBALS['IMG_TN_WIDTH'];
-        }
-        if($GLOBALS['IMG_LG_WIDTH']) {
-            $this->lgPixWidth = $GLOBALS['IMG_LG_WIDTH'];
-        }
-        if($GLOBALS['MAX_UPLOAD_FILESIZE']) {
-            $this->webFileSizeLimit = $GLOBALS['MAX_UPLOAD_FILESIZE'];
-        }
         if($GLOBALS['LOG_PATH']) {
             $this->logPath = $GLOBALS['LOG_PATH'];
-        }
-        if($GLOBALS['SERVER_ROOT']) {
-            $this->serverRoot = $GLOBALS['SERVER_ROOT'];
         }
     }
 
     public function __destruct(){
-        if($this->dbMetadata && $this->conn) {
+        if($this->conn) {
             $this->conn->close();
         }
 
@@ -125,15 +83,15 @@ class ImageLocalProcessor {
                 exit();
             }
             preg_match('/http.+\s(\d{3})\s/i',$headerArr[0],$codeArr);
-            if((int)$codeArr[1] === 403){
+            if ((int)$codeArr[1] === 403) {
                 $this->logOrEcho('ABORT: sourcePathBase returned Forbidden ('.$this->sourcePathBase.')');
                 exit();
             }
-            elseif((int)$codeArr[1] === 404){
+            if ((int)$codeArr[1] === 404) {
                 $this->logOrEcho('ABORT: sourcePathBase returned a page Not Found error ('.$this->sourcePathBase.')');
                 exit();
             }
-            elseif((int)$codeArr[1] !== 200){
+            if((int)$codeArr[1] !== 200) {
                 $this->logOrEcho('ABORT: sourcePathBase returned error code '.$codeArr[1].' ('.$this->sourcePathBase.')');
                 exit();
             }
@@ -142,20 +100,6 @@ class ImageLocalProcessor {
             $this->logOrEcho('ABORT: sourcePathBase does not exist ('.$this->sourcePathBase.')');
             exit();
         }
-        if(!$this->targetPathBase){
-            $this->targetPathBase = $GLOBALS['IMAGE_ROOT_PATH'];
-        }
-        if($this->targetPathBase && substr($this->targetPathBase,-1) !== '/' && substr($this->targetPathBase,-1) !== "\\"){
-            $this->targetPathBase .= '/';
-        }
-
-        if(!$this->imgUrlBase){
-            $this->imgUrlBase = $GLOBALS['IMAGE_ROOT_URL'];
-        }
-        if($this->imgUrlBase && substr($this->imgUrlBase,-1) !== '/' && substr($this->imgUrlBase,-1) !== "\\"){
-            $this->imgUrlBase .= '/';
-        }
-
         if($this->logMode === 1){
             echo '<ul>';
         }
@@ -167,20 +111,6 @@ class ImageLocalProcessor {
             }
             if(!$collStr) {
                 $collStr = str_replace('/', '_', $cArr['sourcePathFrag']);
-            }
-
-            $mdFileName = '';
-            if(!$this->dbMetadata){
-                $mdFileName = $this->logPath.$collStr.'_imagedata_'.date('Y-m-d').'_'.time().'.csv';
-                $this->mdOutputFH = fopen($mdFileName, 'wb');
-                fwrite($this->mdOutputFH, '"collid","catalogNumber","url","thumbnailurl","originalurl"'."\n");
-                if($this->mdOutputFH){
-                    $this->logOrEcho("Image Metadata written out to CSV file: '".$mdFileName."' (same folder as script)");
-                }
-                else{
-                    $this->logOrEcho('Image upload aborted: Unable to establish connection to output file to where image metadata is to be written');
-                    exit('ABORT: Image upload aborted: Unable to establish connection to output file to where image metadata is to be written');
-                }
             }
 
             $sourcePathFrag = '';
@@ -198,18 +128,18 @@ class ImageLocalProcessor {
             if($sourcePathFrag && substr($sourcePathFrag,-1) !== '/' && substr($sourcePathFrag,-1) !== "\\"){
                 $sourcePathFrag .= '/';
             }
-            if(!file_exists($this->targetPathBase . $this->targetPathFrag) && !mkdir($concurrentDirectory = $this->targetPathBase . $this->targetPathFrag, 0777, true) && !is_dir($concurrentDirectory)) {
-                $this->logOrEcho('ERROR: unable to create new folder (' .$this->targetPathBase.$this->targetPathFrag. ') ');
-                exit('ABORT: unable to create new folder (' .$this->targetPathBase.$this->targetPathFrag. ')');
+            if(!file_exists($GLOBALS['IMAGE_ROOT_PATH'] . '/' . $this->targetPathFrag) && !mkdir($concurrentDirectory = $GLOBALS['IMAGE_ROOT_PATH'] . '/' . $this->targetPathFrag, 0777, true) && !is_dir($concurrentDirectory)) {
+                $this->logOrEcho('ERROR: unable to create new folder (' .$GLOBALS['IMAGE_ROOT_PATH'].'/'.$this->targetPathFrag. ') ');
+                exit('ABORT: unable to create new folder (' .$GLOBALS['IMAGE_ROOT_PATH'].'/'.$this->targetPathFrag. ')');
             }
 
             if($this->keepOrig){
                 $this->origPathFrag = 'orig/'.date('Ym').'/';
-                if(!file_exists($this->targetPathBase . $this->targetPathFrag . 'orig/') && !mkdir($concurrentDirectory = $this->targetPathBase . $this->targetPathFrag . 'orig/') && !is_dir($concurrentDirectory)) {
-                    $this->logOrEcho('NOTICE: unable to create base folder to store original files (' .$this->targetPathBase.$this->targetPathFrag. ') ');
+                if(!file_exists($GLOBALS['IMAGE_ROOT_PATH'] . '/' . $this->targetPathFrag . 'orig/') && !mkdir($concurrentDirectory = $GLOBALS['IMAGE_ROOT_PATH'] . '/' . $this->targetPathFrag . 'orig/') && !is_dir($concurrentDirectory)) {
+                    $this->logOrEcho('NOTICE: unable to create base folder to store original files (' .$GLOBALS['IMAGE_ROOT_PATH'].'/'.$this->targetPathFrag. ') ');
                 }
-                if(file_exists($this->targetPathBase . $this->targetPathFrag . 'orig/') && !file_exists($this->targetPathBase . $this->targetPathFrag . $this->origPathFrag) && !mkdir($concurrentDirectory = $this->targetPathBase . $this->targetPathFrag . $this->origPathFrag) && !is_dir($concurrentDirectory)) {
-                    $this->logOrEcho('NOTICE: unable to create folder to store original files (' .$this->targetPathBase.$this->targetPathFrag.$this->origPathFrag. ') ');
+                if(file_exists($GLOBALS['IMAGE_ROOT_PATH'] . '/' . $this->targetPathFrag . 'orig/') && !file_exists($GLOBALS['IMAGE_ROOT_PATH'] . '/' . $this->targetPathFrag . $this->origPathFrag) && !mkdir($concurrentDirectory = $GLOBALS['IMAGE_ROOT_PATH'] . '/' . $this->targetPathFrag . $this->origPathFrag) && !is_dir($concurrentDirectory)) {
+                    $this->logOrEcho('NOTICE: unable to create folder to store original files (' .$GLOBALS['IMAGE_ROOT_PATH'].'/'.$this->targetPathFrag.$this->origPathFrag. ') ');
                 }
             }
 
@@ -220,14 +150,6 @@ class ImageLocalProcessor {
             else if($this->errorMessage === 'abort' || !$this->processFolder($sourcePathFrag)) {
                 $this->errorMessage = '';
                 continue;
-            }
-            if(!$this->dbMetadata){
-                if($this->mdOutputFH) {
-                    fclose($this->mdOutputFH);
-                }
-                if(array_key_exists('email', $cArr) && $cArr['email']) {
-                    $this->sendMetadata($cArr['email'], $mdFileName);
-                }
             }
             $this->logOrEcho('Done uploading '.$sourcePathFrag.' ('.date('Y-m-d h:i:s A').')');
         }
@@ -308,7 +230,7 @@ class ImageLocalProcessor {
         return true;
     }
 
-    private function processHtml($pathFrag = null): ?bool
+    private function processHtml($pathFrag = null): void
     {
         $codeArr = array();
         set_time_limit(3600);
@@ -338,7 +260,7 @@ class ImageLocalProcessor {
                                     }
                                 }
                                 else if($this->errorMessage === 'abort') {
-                                    return false;
+                                    return;
                                 }
                             }
                             elseif($fileExt === 'tif'){
@@ -375,7 +297,6 @@ class ImageLocalProcessor {
         else{
             $this->logOrEcho('Source directory skipped (code ' .$codeArr[0]. ') : ' .$this->sourcePathBase.$pathFrag,1);
         }
-        return true;
     }
 
     private function processImageFile($fileName,$sourcePathFrag = null): bool
@@ -385,22 +306,10 @@ class ImageLocalProcessor {
         $retVal = true;
         $fileExists = false;
         if($specPk = $this->getPrimaryKey($fileName)){
-            $occId = 0;
-            if($this->dbMetadata){
-                $occId = $this->getOccId($specPk);
-            }
+            $occId = $this->getOccId($specPk);
             $targetFileName = str_replace(' ','_',$fileName);
             $fileName = rawurlencode($fileName);
-            $fileNameExt = '.jpg';
-            $fileNameBase = $fileName;
-            if($p = strrpos($fileName,'.')){
-                $fileNameExt = substr($fileName,$p);
-                $fileNameBase = substr($fileName,0,$p);
-                if($this->webSourceSuffix){
-                    $fileNameBase = substr($fileNameBase,0,-1*strlen($this->webSourceSuffix));
-                }
-            }
-            if($occId || !$this->dbMetadata){
+            if($occId){
                 $sourcePath = $this->sourcePathBase.$sourcePathFrag;
                 $targetFolder = '';
                 if(strlen($specPk) > 3){
@@ -418,14 +327,14 @@ class ImageLocalProcessor {
                     $targetFolder = date('Ym') . '/';
                 }
                 $targetFrag = $this->targetPathFrag.$targetFolder;
-                $targetPath = $this->targetPathBase.$targetFrag;
+                $targetPath = $GLOBALS['IMAGE_ROOT_PATH'].'/'.$targetFrag;
                 if(!file_exists($targetPath) && !mkdir($targetPath) && !is_dir($targetPath)) {
                     $this->logOrEcho('ERROR: unable to create new folder (' .$targetPath. ') ');
                 }
                 if(file_exists($targetPath.$targetFileName)){
                     $fileExists = true;
                 }
-                if($fileExists && ($this->webImg === 1 || $this->webImg === 2)){
+                if($fileExists){
                     if($this->imgExists === 2){
                         unlink($targetPath.$targetFileName);
                         if(file_exists($targetPath.substr($targetFileName,0, -4). 'tn.jpg')){
@@ -454,22 +363,6 @@ class ImageLocalProcessor {
                         $retVal = false;
                     }
                 }
-                elseif(!$this->imgExists && $this->webImg === 3){
-                    $recExists = 0;
-                    $sql = 'SELECT url '.
-                        'FROM images WHERE (occid = '.$occId.') ';
-                    $rs = $this->conn->query($sql);
-                    while($r = $rs->fetch_object()){
-                        if(stripos($r->url,$fileName) || stripos($r->url,str_replace('%20', '_', $fileName)) || stripos($r->url,str_replace('%20', ' ', $fileName))){
-                            $recExists = 1;
-                        }
-                    }
-                    $rs->free();
-                    if($recExists){
-                        $this->logOrEcho('NOTICE: image import skipped because occurrence record already exists ',1);
-                        $retVal = false;
-                    }
-                }
                 if(!$fileExists || $this->imgExists !== 0){
                     [$width, $height] = getimagesize($sourcePath . $fileName);
                     if($width && $height){
@@ -487,33 +380,14 @@ class ImageLocalProcessor {
                         else {
                             $fileSize = @filesize($sourcePath.$fileName);
                         }
+                        if($fileSize){
+                            $fileSize /= 1000000;
+                        }
 
                         $webUrlFrag = '';
-                        if($this->webImg){
-                            if($this->webImg === 1){
-                                if($fileSize < $this->webFileSizeLimit && $width < ($this->webPixWidth*2)){
-                                    if(copy($sourcePath.$fileName,$targetPath.$targetFileName)){
-                                        $webUrlFrag = $this->imgUrlBase.$targetFrag.$targetFileName;
-                                        $this->logOrEcho('Source image imported as web image (' .date('Y-m-d h:i:s A'). ') ',1);
-                                    }
-                                }
-                                else if($this->createNewImage($sourcePath.$fileName,$targetPath.$targetFileName,$this->webPixWidth,round($this->webPixWidth*$height/$width),$width,$height)){
-                                    $webUrlFrag = $this->imgUrlBase.$targetFrag.$targetFileName;
-                                    $this->logOrEcho('Web image created from source image (' .date('Y-m-d h:i:s A'). ') ',1);
-                                }
-                            }
-                            elseif($this->webImg === 2){
-                                $webFileName = $fileNameBase.$this->webSourceSuffix.$fileNameExt;
-                                if(copy($sourcePath.$webFileName,$targetPath.$targetFileName)){
-                                    $webUrlFrag = $this->imgUrlBase.$targetFrag.$targetFileName;
-                                    $this->logOrEcho('Source image imported as web image (' .date('Y-m-d h:i:s A'). ') ',1);
-                                }
-                            }
-                            elseif($this->webImg === 3){
-                                $webFileName = $fileNameBase.$this->webSourceSuffix.$fileNameExt;
-                                $webUrlFrag = $sourcePath.$webFileName;
-                                $this->logOrEcho('Source used as web image (' .date('Y-m-d h:i:s A'). ') ',1);
-                            }
+                        if($this->createNewImage($sourcePath.$fileName,$targetPath.$targetFileName,$GLOBALS['IMG_WEB_WIDTH'],round($GLOBALS['IMG_WEB_WIDTH'] * ($height / $width)),$width,$height)){
+                            $webUrlFrag = $GLOBALS['IMAGE_ROOT_URL'].'/'.$targetFrag.$targetFileName;
+                            $this->logOrEcho('Web image created from source image (' .date('Y-m-d h:i:s A'). ') ',1);
                         }
                         if(!$webUrlFrag){
                             $this->logOrEcho('Failed to create web image ',1);
@@ -521,76 +395,26 @@ class ImageLocalProcessor {
                         $lgUrlFrag = '';
                         if($this->lgImg){
                             $lgTargetFileName = substr($targetFileName,0,-4). '_lg.jpg';
-                            if($this->lgImg === 1){
-                                if($width > ($this->webPixWidth * 1.3)){
-                                    if($width > $this->lgPixWidth || ($fileSize && $fileSize > $this->lgFileSizeLimit)){
-                                        if($this->createNewImage($sourcePath.$fileName,$targetPath.$lgTargetFileName,$this->lgPixWidth,round($this->lgPixWidth*($height/$width)),$width,$height)){
-                                            $lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
-                                            $this->logOrEcho('Resized source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
-                                        }
-                                    }
-                                    else if(copy($sourcePath.$fileName,$targetPath.$lgTargetFileName)){
-                                        $lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
-                                        $this->logOrEcho('Imported source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
-                                    }
-                                    else{
-                                        $this->logOrEcho('WARNING: unable to import large derivative (' .$sourcePath.$fileName. ') ',1);
-                                    }
+                            if($fileSize && $fileSize > $GLOBALS['MAX_UPLOAD_FILESIZE']){
+                                if($this->createNewImage($sourcePath.$fileName,$targetPath.$lgTargetFileName,$GLOBALS['IMG_LG_WIDTH'],round($GLOBALS['IMG_LG_WIDTH'] * ($height / $width)),$width,$height)){
+                                    $lgUrlFrag = $GLOBALS['IMAGE_ROOT_URL'].'/'.$targetFrag.$lgTargetFileName;
+                                    $this->logOrEcho('Resized source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
                                 }
                             }
-                            elseif($this->lgImg === 2){
-                                $lgUrlFrag = $sourcePath.$fileName;
-                                $this->logOrEcho('Used source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
+                            else if(copy($sourcePath.$fileName,$targetPath.$lgTargetFileName)){
+                                $lgUrlFrag = $GLOBALS['IMAGE_ROOT_URL'].'/'.$targetFrag.$lgTargetFileName;
+                                $this->logOrEcho('Imported source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
                             }
-                            elseif($this->lgImg === 3){
-                                $lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
-                                if($this->uriExists($sourcePath.$lgSourceFileName)){
-                                    if(copy($sourcePath.$lgSourceFileName,$targetPath.$lgTargetFileName)){
-                                        if(strncmp($sourcePath, 'http', 4) !== 0) {
-                                            unlink($sourcePath . $lgSourceFileName);
-                                        }
-                                        $lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
-                                        $this->logOrEcho('Imported large derivative of source for large version(' .date('Y-m-d h:i:s A'). ') ',1);
-                                    }
-                                }
-                                else{
-                                    $this->logOrEcho('WARNING: unable to import large derivative (' .$sourcePath.$lgSourceFileName. ') ',1);
-                                }
-                            }
-                            elseif($this->lgImg === 4){
-                                $lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
-                                if($this->uriExists($sourcePath.$lgSourceFileName)){
-                                    $lgUrlFrag = $sourcePath.$lgSourceFileName;
-                                    $this->logOrEcho('Large version mapped to large derivative of source (' .date('Y-m-d h:i:s A'). ') ',1);
-                                }
-                                else{
-                                    $this->logOrEcho('WARNING: unable to map to large derivative (' .$sourcePath.$lgSourceFileName. ') ',1);
-                                }
+                            else{
+                                $this->logOrEcho('WARNING: unable to import large derivative (' .$sourcePath.$fileName. ') ',1);
                             }
                         }
                         $tnUrlFrag = '';
                         if($this->tnImg){
                             $tnTargetFileName = substr($targetFileName,0,-4). '_tn.jpg';
-                            if($this->tnImg === 1){
-                                if($this->createNewImage($sourcePath.$fileName,$targetPath.$tnTargetFileName,$this->tnPixWidth,round($this->tnPixWidth*($height/$width)),$width,$height)){
-                                    $tnUrlFrag = $this->imgUrlBase.$targetFrag.$tnTargetFileName;
-                                    $this->logOrEcho('Created thumbnail from source (' .date('Y-m-d h:i:s A'). ') ',1);
-                                }
-                            }
-                            elseif($this->tnImg === 2){
-                                $tnFileName = $fileNameBase.$this->tnSourceSuffix.$fileNameExt;
-                                if($this->uriExists($sourcePath.$tnFileName)){
-                                    rename($sourcePath.$tnFileName,$targetPath.$tnTargetFileName);
-                                }
-                                $tnUrlFrag = $this->imgUrlBase.$targetFrag.$tnTargetFileName;
-                                $this->logOrEcho('Imported source as thumbnail (' .date('Y-m-d h:i:s A'). ') ',1);
-                            }
-                            elseif($this->tnImg === 3){
-                                $tnFileName = $fileNameBase.$this->tnSourceSuffix.$fileNameExt;
-                                if($this->uriExists($sourcePath.$tnFileName)){
-                                    $tnUrlFrag = $sourcePath.$tnFileName;
-                                    $this->logOrEcho('Thumbnail is map of source thumbnail (' .date('Y-m-d h:i:s A'). ') ',1);
-                                }
+                            if($this->createNewImage($sourcePath.$fileName,$targetPath.$tnTargetFileName,$GLOBALS['IMG_TN_WIDTH'],round($GLOBALS['IMG_TN_WIDTH'] * ( $height / $width)),$width,$height)){
+                                $tnUrlFrag = $GLOBALS['IMAGE_ROOT_URL'].'/'.$targetFrag.$tnTargetFileName;
+                                $this->logOrEcho('Created thumbnail from source (' .date('Y-m-d h:i:s A'). ') ',1);
                             }
                         }
 
@@ -602,11 +426,11 @@ class ImageLocalProcessor {
                             $this->sourceImagickImg->clear();
                             $this->sourceImagickImg = null;
                         }
-                        $this->recordImageMetadata(($this->dbMetadata?$occId:$specPk),$webUrlFrag,$tnUrlFrag,$lgUrlFrag);
+                        $this->recordImageMetadata($occId,$webUrlFrag,$tnUrlFrag,$lgUrlFrag);
                         if(file_exists($sourcePath.$fileName)){
                             if($this->keepOrig){
-                                if(file_exists($this->targetPathBase.$this->targetPathFrag.$this->origPathFrag)){
-                                    rename($sourcePath.$fileName,$this->targetPathBase.$this->targetPathFrag.$this->origPathFrag.$fileName. '.orig');
+                                if(file_exists($GLOBALS['IMAGE_ROOT_PATH'].'/'.$this->targetPathFrag.$this->origPathFrag)){
+                                    rename($sourcePath.$fileName,$GLOBALS['IMAGE_ROOT_PATH'].'/'.$this->targetPathFrag.$this->origPathFrag.$fileName. '.orig');
                                 }
                             } else {
                                 unlink($sourcePath.$fileName);
@@ -647,25 +471,18 @@ class ImageLocalProcessor {
         if(!$this->sourceGdImg){
             $this->sourceGdImg = imagecreatefromjpeg($sourcePathBase);
         }
-        if(!$newWidth || !$newHeight){
-            $this->logOrEcho('ERROR: Unable to create image because new width or height is not set (w:' .$newWidth.' h:'.$newHeight.')');
-            return $status;
-        }
-        $tmpImg = imagecreatetruecolor($newWidth,$newHeight);
-        imagecopyresized($tmpImg,$this->sourceGdImg,0,0,0,0,$newWidth,$newHeight,$sourceWidth,$sourceHeight);
-
-        if($this->jpgQuality){
-            $status = imagejpeg($tmpImg, $targetPath, $this->jpgQuality);
+        if($newWidth && $newHeight){
+            $tmpImg = imagecreatetruecolor($newWidth,$newHeight);
+            imagecopyresized($tmpImg,$this->sourceGdImg,0,0,0,0,$newWidth,$newHeight,$sourceWidth,$sourceHeight);
+            $status = imagejpeg($tmpImg, $targetPath, 90);
+            if(!$status){
+                $this->logOrEcho('ERROR: Unable to resize and write file: ' .$targetPath,1);
+            }
+            imagedestroy($tmpImg);
         }
         else{
-            $status = imagejpeg($tmpImg, $targetPath);
+            $this->logOrEcho('ERROR: Unable to create image because new width or height is not set (w:' .$newWidth.' h:'.$newHeight.')');
         }
-
-        if(!$status){
-            $this->logOrEcho('ERROR: Unable to resize and write file: ' .$targetPath,1);
-        }
-
-        imagedestroy($tmpImg);
         return $status;
     }
 
@@ -688,15 +505,13 @@ class ImageLocalProcessor {
                 if (isset($this->collArr[$this->activeCollid]['prpatt'])) {
                     $specPk = preg_replace($this->collArr[$this->activeCollid]['prpatt'],$this->collArr[$this->activeCollid]['prrepl'],$specPk);
                 }
-                if(isset($matchArr[2])){
-                    $this->webSourceSuffix = $matchArr[2];
-                }
             }
         }
         return $specPk;
     }
 
-    private function getOccId($specPk){
+    private function getOccId($specPk): int
+    {
         $occId = 0;
         if($this->matchCatalogNumber){
             $sql = 'SELECT occid FROM omoccurrences '.
@@ -735,22 +550,15 @@ class ImageLocalProcessor {
         return $occId;
     }
 
-    private function recordImageMetadata($specID,$webUrl,$tnUrl,$oUrl){
-        if($this->dbMetadata){
-            $status = $this->databaseImage($specID,$webUrl,$tnUrl,$oUrl);
-        }
-        else{
-            $status = $this->writeMetadataToFile($specID,$webUrl,$tnUrl,$oUrl);
-        }
-        return $status;
+    private function recordImageMetadata($specID,$webUrl,$tnUrl,$oUrl): void
+    {
+        $this->databaseImage($specID,$webUrl,$tnUrl,$oUrl);
     }
 
-    private function databaseImage($occId,$webUrl,$tnUrl,$oUrl): bool
+    private function databaseImage($occId,$webUrl,$tnUrl,$oUrl): void
     {
-        $status = true;
         if($occId && is_numeric($occId)){
             $this->logOrEcho('Preparing to load record into database',1);
-            $imgId = 0;
             $sql = 'SELECT imgid, url, thumbnailurl, originalurl '.
                 'FROM images WHERE (occid = '.$occId.') ';
             $rs = $this->conn->query($sql);
@@ -763,22 +571,22 @@ class ImageLocalProcessor {
                 elseif($this->imgExists === 2 && strcasecmp(basename($r->url),basename($webUrl)) === 0){
                     if($this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
                         $urlPath = parse_url($r->url, PHP_URL_PATH);
-                        if($urlPath && strpos($urlPath, $this->imgUrlBase) === 0){
-                            $wFile = str_replace($this->imgUrlBase,$this->targetPathBase,$urlPath);
+                        if($urlPath && strpos($urlPath, $GLOBALS['IMAGE_ROOT_URL']) === 0){
+                            $wFile = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$urlPath);
                             if(file_exists($wFile) && is_writable($wFile)) {
                                 unlink($wFile);
                             }
                         }
                         $urlTnPath = parse_url($r->thumbnailurl, PHP_URL_PATH);
-                        if($urlTnPath && strpos($urlTnPath, $this->imgUrlBase) === 0){
-                            $wFile = str_replace($this->imgUrlBase,$this->targetPathBase,$urlTnPath);
+                        if($urlTnPath && strpos($urlTnPath, $GLOBALS['IMAGE_ROOT_URL']) === 0){
+                            $wFile = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$urlTnPath);
                             if(file_exists($wFile) && is_writable($wFile)) {
                                 unlink($wFile);
                             }
                         }
                         $urlLgPath = parse_url($r->url, PHP_URL_PATH);
-                        if($urlLgPath && strpos($urlLgPath, $this->imgUrlBase) === 0){
-                            $wFile = str_replace($this->imgUrlBase,$this->targetPathBase,$urlLgPath);
+                        if($urlLgPath && strpos($urlLgPath, $GLOBALS['IMAGE_ROOT_URL']) === 0){
+                            $wFile = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$urlLgPath);
                             if(file_exists($wFile) && is_writable($wFile)) {
                                 unlink($wFile);
                             }
@@ -797,7 +605,7 @@ class ImageLocalProcessor {
                 $sql1 .= ',thumbnailurl';
                 $sql2 .= ',"'.$tnUrl.'"';
             }
-            if($oUrl && strpos($oUrl, 'http') === 0){
+            if($oUrl){
                 $sql1 .= ',originalurl';
                 $sql2 .= ',"'.$oUrl.'"';
             }
@@ -806,34 +614,17 @@ class ImageLocalProcessor {
             $sql = $sql1.$sql2;
             if($sql){
                 if($this->conn->query($sql)){
-                    $this->dataLoaded = 1;
-                }
-                else{
-                    $status = false;
-                    $this->logOrEcho('ERROR: Unable to load image record into database.',1);
-                }
-                if($imgId){
-                    $this->logOrEcho("WARNING: Existing image record replaced; occid: $occId ",1);
-                }
-                else{
                     $this->logOrEcho('SUCCESS: Image record loaded into database',1);
+                }
+                else{
+                    $this->logOrEcho('ERROR: Unable to load image record into database.',1);
                 }
             }
         }
         else{
-            $status = false;
             $this->logOrEcho('ERROR: Missing occid (omoccurrences PK), unable to load record ');
         }
         flush();
-        return $status;
-    }
-
-    private function writeMetadataToFile($specPk,$webUrl,$tnUrl,$oUrl){
-        $status = true;
-        if($this->mdOutputFH){
-            $status = fwrite($this->mdOutputFH, $this->activeCollid.',"'.$specPk.'","'.$webUrl.'","'.$tnUrl.'","'.$oUrl.'"'."\n");
-        }
-        return $status;
     }
 
     private function processSkeletalFile($filePath): ?bool
@@ -925,23 +716,21 @@ class ImageLocalProcessor {
                         $catNum = 0;
                         $recMap = array();
                         foreach($headerArr as $k => $hStr){
-                            if($recordArr){
-                                if($hStr === 'catalognumber') {
-                                    $catNum = $recordArr[$k];
+                            if($hStr === 'catalognumber') {
+                                $catNum = $recordArr[$k];
+                            }
+                            if(array_key_exists($hStr,$symbMap)){
+                                $valueStr = '';
+                                if(array_key_exists($k,$recordArr)) {
+                                    $valueStr = $recordArr[$k];
                                 }
-                                if(array_key_exists($hStr,$symbMap)){
-                                    $valueStr = '';
-                                    if(array_key_exists($k,$recordArr)) {
-                                        $valueStr = $recordArr[$k];
+                                if($valueStr){
+                                    if(strncmp($valueStr, '"', 1) === 0 && substr($valueStr,-1) === '"'){
+                                        $valueStr = substr($valueStr,1, -1);
                                     }
-                                    if($valueStr){
-                                        if(strncmp($valueStr, '"', 1) === 0 && substr($valueStr,-1) === '"'){
-                                            $valueStr = substr($valueStr,1, -1);
-                                        }
-                                        $valueStr = trim($valueStr);
-                                        if($valueStr) {
-                                            $recMap[$hStr] = $valueStr;
-                                        }
+                                    $valueStr = trim($valueStr);
+                                    if($valueStr) {
+                                        $recMap[$hStr] = $valueStr;
                                     }
                                 }
                             }
@@ -1126,12 +915,8 @@ class ImageLocalProcessor {
                                         }
                                         if($updateFrag){
                                             $sqlUpdate = 'UPDATE omoccurrences SET '.substr($updateFrag,1).' WHERE occid = '.$occid;
-                                            if($this->conn->query($sqlUpdate)){
-                                                $this->dataLoaded = 1;
-                                            }
-                                            else{
+                                            if(!$this->conn->query($sqlUpdate)){
                                                 $this->logOrEcho('ERROR: Unable to update existing record with new skeletal record ');
-                                                $this->logOrEcho("SQL : $sqlUpdate ",1);
                                             }
                                         }
                                     }
@@ -1181,7 +966,6 @@ class ImageLocalProcessor {
                                 }
                                 $sqlIns = $sqlIns1.') '.$sqlIns2.')';
                                 if($this->conn->query($sqlIns)){
-                                    $this->dataLoaded = 1;
                                     $occid = $this->conn->insert_id;
                                 }
                                 else{
@@ -1205,17 +989,12 @@ class ImageLocalProcessor {
             }
             $this->logOrEcho('Skeletal file loaded ',1);
             fclose($fh);
-            if(true){
-                $fileName = substr($filePath,strrpos($filePath,'/')).'.orig_'.time();
-                if(!file_exists($this->targetPathBase . $this->targetPathFrag . 'orig_skeletal') && !mkdir($concurrentDirectory = $this->targetPathBase . $this->targetPathFrag . 'orig_skeletal') && !is_dir($concurrentDirectory)) {
-                    throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
-                }
-                if(!rename($filePath,$this->targetPathBase.$this->targetPathFrag.'orig_skeletal'.$fileName)){
-                    $this->logOrEcho('ERROR: unable to move (' .$filePath. ') ',1);
-                }
+            $fileName = substr($filePath,strrpos($filePath,'/')).'.orig_'.time();
+            if(!file_exists($GLOBALS['IMAGE_ROOT_PATH'] . '/' . $this->targetPathFrag . 'orig_skeletal') && !mkdir($concurrentDirectory = $GLOBALS['IMAGE_ROOT_PATH'] . '/' . $this->targetPathFrag . 'orig_skeletal') && !is_dir($concurrentDirectory)) {
+                throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
             }
-            else if(!unlink($filePath)){
-                $this->logOrEcho('ERROR: unable to delete file (' .$filePath. ') ',1);
+            if(!rename($filePath,$GLOBALS['IMAGE_ROOT_PATH'].'/'.$this->targetPathFrag.'orig_skeletal'.$fileName)){
+                $this->logOrEcho('ERROR: unable to move (' .$filePath. ') ',1);
             }
         }
         else{
@@ -1243,73 +1022,32 @@ class ImageLocalProcessor {
 
     private function updateCollectionStats(): void
     {
-        if($this->dbMetadata){
-            $occurMain = new OccurrenceMaintenance($this->conn);
+        $occurMain = new OccurrenceMaintenance($this->conn);
 
-            $this->logOrEcho('Cleaning house...');
-            $collString = implode(',',$this->collProcessedArr);
-            if(!$occurMain->generalOccurrenceCleaning($collString)){
-                $errorArr = $occurMain->getErrorArr();
-                foreach($errorArr as $errorStr){
-                    $this->logOrEcho($errorStr,1);
-                }
+        $this->logOrEcho('Cleaning house...');
+        $collString = implode(',',$this->collProcessedArr);
+        if(!$occurMain->generalOccurrenceCleaning($collString)){
+            $errorArr = $occurMain->getErrorArr();
+            foreach($errorArr as $errorStr){
+                $this->logOrEcho($errorStr,1);
             }
-
-            $this->logOrEcho('Protecting sensitive species...');
-            $occurMain->protectRareSpecies();
-
-            $this->logOrEcho('Updating statistics...');
-            foreach($this->collProcessedArr as $collid){
-                $occurMain->updateCollectionStats($collid);
-            }
-            $occurMain->__destruct();
-
-            $this->logOrEcho('Populating global unique identifiers (GUIDs) for all records...');
-            $uuidManager = new UuidFactory($this->conn);
-            $uuidManager->setSilent(1);
-            $uuidManager->populateGuids();
-            $uuidManager->__destruct();
         }
+
+        $this->logOrEcho('Protecting sensitive species...');
+        $occurMain->protectRareSpecies();
+
+        $this->logOrEcho('Updating statistics...');
+        foreach($this->collProcessedArr as $collid){
+            $occurMain->updateCollectionStats($collid);
+        }
+        $occurMain->__destruct();
+
+        $this->logOrEcho('Populating global unique identifiers (GUIDs) for all records...');
+        $uuidManager = new UuidFactory($this->conn);
+        $uuidManager->setSilent(1);
+        $uuidManager->populateGuids();
+        $uuidManager->__destruct();
         $this->logOrEcho('Stats update completed');
-    }
-
-    private function sendMetadata($email,$mdFileName): void
-    {
-        if($email && $mdFileName){
-            $subject = 'Images processed on '.date('Y-m-d');
-
-            $separator = md5(time());
-            $eol = "\r\n";
-
-            $headers = 'MIME-Version: 1.0 '.$eol.
-                'Content-Type: multipart/mixed; boundary="'.$separator.'"'.$eol.
-                'To: '.$email.$eol.
-                'From: Admin <seinetAdmin@asu.edu> '.$eol.
-                'Content-Transfer-Encoding: 8bit'.$eol.
-                'This is a MIME encoded message.'.$eol;
-
-            $url = 'http://swbiodiversity.org/seinet/collections/misc/specprocessor/index.php?tabindex=1&collid='.$this->activeCollid;
-            $body = '--' .$separator.$eol.
-                'Content-Type: text/html; charset=iso-8859-1'.$eol.
-                'Content-Transfer-Encoding: 8bit'.$eol.
-                'Images in the attached file have been processed and are ready to be uploaded into your collection. '.
-                'This can be done using the image loading tools located in the Processing Tools (see link below).'.
-                '<a href="'.$url.'">'.$url.'</a>'.
-                '<br/>If you have problems with the new password, contact the System Administrator ';
-
-            $fname = substr(strrchr($mdFileName, '/'), 1);
-            $data = file_get_contents($mdFileName);
-            $body .= '--' . $separator . $eol.
-                'Content-Type: application/octet-stream; name="'.$fname.'"'.$eol.
-                'Content-Transfer-Encoding: base64'.$eol.
-                'Content-Disposition: attachment'.$eol.
-                chunk_split( base64_encode($data)).$eol.
-                '--'.$separator.'--';
-
-            if(!mail($email,$subject,$body,$headers)){
-                echo 'Mail send ... ERROR!';
-            }
-        }
     }
 
     public function setCollArr($cArr): void
@@ -1317,28 +1055,26 @@ class ImageLocalProcessor {
         if($cArr){
             if(is_array($cArr)){
                 $this->collArr = $cArr;
-                if($this->dbMetadata){
-                    $sql = 'SELECT collid, institutioncode, collectioncode, collectionname, managementtype FROM omcollections '.
-                        'WHERE (collid IN('.implode(',',array_keys($cArr)).'))';
-                    if($rs = $this->conn->query($sql)){
-                        if($rs->num_rows){
-                            while($r = $rs->fetch_object()){
-                                $this->collArr[$r->collid]['instcode'] = $r->institutioncode;
-                                $this->collArr[$r->collid]['collcode'] = $r->collectioncode;
-                                $this->collArr[$r->collid]['collname'] = $r->collectionname;
-                                $this->collArr[$r->collid]['managementtype'] = $r->managementtype;
-                            }
+                $sql = 'SELECT collid, institutioncode, collectioncode, collectionname, managementtype FROM omcollections '.
+                    'WHERE (collid IN('.implode(',',array_keys($cArr)).'))';
+                if($rs = $this->conn->query($sql)){
+                    if($rs->num_rows){
+                        while($r = $rs->fetch_object()){
+                            $this->collArr[$r->collid]['instcode'] = $r->institutioncode;
+                            $this->collArr[$r->collid]['collcode'] = $r->collectioncode;
+                            $this->collArr[$r->collid]['collname'] = $r->collectionname;
+                            $this->collArr[$r->collid]['managementtype'] = $r->managementtype;
                         }
-                        else{
-                            $this->logOrEcho('ABORT: unable to get collection metadata from database (collids might be wrong) ');
-                            exit('ABORT: unable to get collection metadata from database');
-                        }
-                        $rs->free();
                     }
                     else{
-                        $this->logOrEcho('ABORT: unable run SQL to obtain additional collection metadata.');
-                        exit('ABORT: unable run SQL to obtain additional collection metadata');
+                        $this->logOrEcho('ABORT: unable to get collection metadata from database (collids might be wrong) ');
+                        exit('ABORT: unable to get collection metadata from database');
                     }
+                    $rs->free();
+                }
+                else{
+                    $this->logOrEcho('ABORT: unable run SQL to obtain additional collection metadata.');
+                    exit('ABORT: unable run SQL to obtain additional collection metadata');
                 }
             }
         }
@@ -1355,28 +1091,6 @@ class ImageLocalProcessor {
             $p .= '/';
         }
         $this->sourcePathBase = $p;
-    }
-
-    public function setTargetPathBase($p): void
-    {
-        $sub = substr($p,-1);
-        if($p && $sub !== '/' && $sub !== "\\") {
-            $p .= '/';
-        }
-        $this->targetPathBase = $p;
-    }
-
-    public function setImgUrlBase($u): void
-    {
-        if($u && substr($u,-1) !== '/') {
-            $u .= '/';
-        }
-        $this->imgUrlBase = $u;
-    }
-
-    public function setServerRoot($path): void
-    {
-        $this->serverRoot = $path;
     }
 
     public function setMatchCatalogNumber($b): void
@@ -1397,41 +1111,6 @@ class ImageLocalProcessor {
         else {
             $this->matchOtherCatalogNumbers = false;
         }
-    }
-
-    public function setWebPixWidth($w): void
-    {
-        $this->webPixWidth = (int)$w;
-    }
-
-    public function setTnPixWidth($tn): void
-    {
-        $this->tnPixWidth = (int)$tn;
-    }
-
-    public function setLgPixWidth($lg): void
-    {
-        $this->lgPixWidth = (int)$lg;
-    }
-
-    public function setWebFileSizeLimit($size): void
-    {
-        $this->webFileSizeLimit = (int)$size;
-    }
-
-    public function setLgFileSizeLimit($size): void
-    {
-        $this->lgFileSizeLimit = (int)$size;
-    }
-
-    public function setJpgQuality($q): void
-    {
-        $this->jpgQuality = (int)$q;
-    }
-
-    public function setWebImg($c): void
-    {
-        $this->webImg = (int)$c;
     }
 
     public function setTnImg($c): void
@@ -1464,11 +1143,6 @@ class ImageLocalProcessor {
         $this->imgExists = (int)$c;
     }
 
-    public function setDbMetadata($v): void
-    {
-        $this->dbMetadata = $v;
-    }
-
     public function setLogMode($c): void
     {
         $this->logMode = (int)$c;
@@ -1481,49 +1155,6 @@ class ImageLocalProcessor {
             $path .= '/';
         }
         $this->logPath = $path;
-    }
-
-    private function uriExists($url) {
-        $exists = false;
-        $localUrl = '';
-        if(strncmp($url, '/', 1) === 0){
-            if($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){
-                $localUrl = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$url);
-            }
-            else{
-                $urlPrefix = 'http://';
-                if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                    $urlPrefix = 'https://';
-                }
-                $urlPrefix .= $_SERVER['HTTP_HOST'];
-                $url = $urlPrefix.$url;
-            }
-        }
-
-        if(file_exists($url) || ($localUrl && file_exists($localUrl))){
-            return true;
-        }
-
-        if(!$exists){
-            $handle   = curl_init($url);
-            curl_setopt($handle, CURLOPT_HEADER, false);
-            curl_setopt($handle, CURLOPT_FAILONERROR, true);  // this works
-            curl_setopt($handle, CURLOPT_HTTPHEADER, Array('User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15') );
-            curl_setopt($handle, CURLOPT_NOBODY, true);
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, false);
-            $exists = curl_exec($handle);
-            curl_close($handle);
-        }
-
-        if(!$exists){
-            $exists = (@fclose(@fopen($url, 'rb')));
-        }
-
-        if(!@exif_imagetype($url)) {
-            $exists = false;
-        }
-
-        return $exists;
     }
 
     private function encodeString($inStr): string
@@ -1548,7 +1179,7 @@ class ImageLocalProcessor {
             fwrite($this->logFH,$str."\n");
         }
         if($this->logMode === 1 || $this->logMode === 3){
-            echo '<li '.($indent?'style="margin-left:'.($indent?$indent*15:'0').'px"':'').'>'.$str."</li>\n";
+            echo '<li '.($indent ? 'style="margin-left:'.($indent * 15).'px"':'').'>'.$str."</li>\n";
             @flush();
         }
     }

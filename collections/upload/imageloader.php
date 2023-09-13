@@ -45,7 +45,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
 ?>
 <script>
     $(function() {
-        const dialogArr = ["speckeypattern", "patternreplace", "replacestr", "sourcepath", "targetpath", "imgurl", "webpixwidth", "tnpixwidth", "lgpixwidth", "jpgcompression"];
+        const dialogArr = ["speckeypattern", "sourcepath"];
         let dialogStr = "";
         for(let i=0;i<dialogArr.length;i++){
             dialogStr = dialogArr[i]+"info";
@@ -67,15 +67,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
         if(uploadType === 'local'){
             document.getElementById("titleDiv").style.display = "flex";
             document.getElementById("specKeyPatternDiv").style.display = "flex";
-            document.getElementById("patternReplaceDiv").style.display = "flex";
-            document.getElementById("replaceStrDiv").style.display = "flex";
             document.getElementById("sourcePathDiv").style.display = "flex";
-            document.getElementById("targetPathDiv").style.display = "flex";
-            document.getElementById("urlBaseDiv").style.display = "flex";
-            document.getElementById("centralWidthDiv").style.display = "flex";
-            document.getElementById("thumbWidthDiv").style.display = "flex";
-            document.getElementById("largeWidthDiv").style.display = "flex";
-            document.getElementById("jpgQualityDiv").style.display = "flex";
             document.getElementById("thumbnailDiv").style.display = "flex";
             document.getElementById("largeImageDiv").style.display = "flex";
             document.getElementById("sourcePathInfoOther").style.display = "block";
@@ -89,15 +81,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
         else if(uploadType === 'file'){
             document.getElementById("titleDiv").style.display = "none";
             document.getElementById("specKeyPatternDiv").style.display = "none";
-            document.getElementById("patternReplaceDiv").style.display = "none";
-            document.getElementById("replaceStrDiv").style.display = "none";
             document.getElementById("sourcePathDiv").style.display = "none";
-            document.getElementById("targetPathDiv").style.display = "none";
-            document.getElementById("urlBaseDiv").style.display = "none";
-            document.getElementById("centralWidthDiv").style.display = "none";
-            document.getElementById("thumbWidthDiv").style.display = "none";
-            document.getElementById("largeWidthDiv").style.display = "none";
-            document.getElementById("jpgQualityDiv").style.display = "none";
             document.getElementById("thumbnailDiv").style.display = "none";
             document.getElementById("largeImageDiv").style.display = "none";
             document.getElementById("sourcePathInfoOther").style.display = "none";
@@ -108,15 +92,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
         else{
             document.getElementById("titleDiv").style.display = "none";
             document.getElementById("specKeyPatternDiv").style.display = "none";
-            document.getElementById("patternReplaceDiv").style.display = "none";
-            document.getElementById("replaceStrDiv").style.display = "none";
             document.getElementById("sourcePathDiv").style.display = "none";
-            document.getElementById("targetPathDiv").style.display = "none";
-            document.getElementById("urlBaseDiv").style.display = "none";
-            document.getElementById("centralWidthDiv").style.display = "none";
-            document.getElementById("thumbWidthDiv").style.display = "none";
-            document.getElementById("largeWidthDiv").style.display = "none";
-            document.getElementById("jpgQualityDiv").style.display = "none";
             document.getElementById("thumbnailDiv").style.display = "none";
             document.getElementById("largeImageDiv").style.display = "none";
             document.getElementById("sourcePathInfoOther").style.display = "none";
@@ -145,36 +121,14 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
             return false;
         }
         if(f.projecttype.value === 'local'){
-            if(isNaN(f.webpixwidth.value)){
-                alert("Central image pixel width can only be a numeric value");
-                return false;
-            }
-            else if(isNaN(f.tnpixwidth.value)){
-                alert("Thumbnail pixel width can only be a numeric value");
-                return false;
-            }
-            else if(isNaN(f.lgpixwidth.value)){
-                alert("Large image pixel width can only be a numeric value");
-                return false;
-            }
-            else if(f.title.value === ""){
+            if(f.title.value === ""){
                 alert("Title cannot be empty");
                 return false;
             }
-            else if(isNaN(f.jpgcompression.value) || f.jpgcompression.value < 30 || f.jpgcompression.value > 100){
-                alert("JPG compression needs to be a numeric value between 30 and 100");
-                return false;
-            }
-            else if(f.sourcepath.value === ""){
+            if(f.sourcepath.value === ""){
                 alert("Image source path must have a value");
                 return false;
             }
-        }
-        if(f.patternreplace.value === "-- Optional --") {
-            f.patternreplace.value = "";
-        }
-        if(f.replacestr.value === "-- Optional --") {
-            f.replacestr.value = "";
         }
         if(f.sourcepath.value === "-- Use Default Path --") {
             f.sourcepath.value = "";
@@ -335,36 +289,6 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                                     </div>
                                 </div>
                             </div>
-                            <div id="patternReplaceDiv" style="display:<?php echo ($projectType?'flex':'none'); ?>;clear:both;width:700px;justify-content:space-between;">
-                                <div style="width:180px;">
-                                    <b>Replacement term:</b>
-                                </div>
-                                <div>
-                                    <input name="patternreplace" type="text" style="width:300px;" value="<?php echo ($specManager->getPatternReplace()?:'-- Optional --'); ?>" />
-                                    <a id="patternreplaceinfo" href="#" onclick="return false" title="More Information">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <div id="patternreplaceinfodialog">
-                                        Optional regular expression for match on Catalog Number to be replaced with replacement term.
-                                        Example 1: expression replace term = '/^/' combined with replace string = 'barcode-' will convert 0001234 => barcode-0001234.
-                                        Example 2: expression replace term = '/XYZ-/' combined with empty replace string will convert XYZ-0001234 => 0001234.
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="replaceStrDiv" style="display:<?php echo ($projectType?'flex':'none'); ?>;clear:both;width:700px;justify-content:space-between;">
-                                <div style="width:180px;">
-                                    <b>Replacement string:</b>
-                                </div>
-                                <div>
-                                    <input name="replacestr" type="text" style="width:300px;" value="<?php echo ($specManager->getReplaceStr()?:'-- Optional --'); ?>" />
-                                    <a id="replacestrinfo" href="#" onclick="return false" title="More Information">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <div id="replacestrinfodialog">
-                                        Optional replacement string to apply for Expression replacement term matches on catalogNumber.
-                                    </div>
-                                </div>
-                            </div>
                             <div id="sourcePathDiv" style="display:<?php echo ($projectType === 'local'?'flex':'none'); ?>;clear:both;width:700px;justify-content:space-between;">
                                 <div style="width:180px;">
                                     <b>Image source path:</b>
@@ -381,103 +305,6 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                                             all files within the directory, or the html output can simply list all images within anchor tags.
                                             In all cases, scripts will attempt to crawl through all child directories.
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="targetPathDiv" style="display:<?php echo ($projectType === 'local'?'flex':'none'); ?>;clear:both;width:700px;justify-content:space-between;">
-                                <div style="width:180px;">
-                                    <b>Image target path:</b>
-                                </div>
-                                <div>
-                                    <input name="targetpath" type="text" style="width:400px;" value="<?php echo ($specManager->getTargetPath()?:$globalImageRootPath); ?>" />
-                                    <a id="targetpathinfo" href="#" onclick="return false" title="More Information">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <div id="targetpathinfodialog">
-                                        Web server path to where the image derivatives will be depositied.
-                                        The web server (e.g. apache user) must have read/write access to this directory.
-                                        If this field is left blank, the portal's default image target (imageRootPath) will be used.
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="urlBaseDiv" style="display:<?php echo ($projectType === 'local'?'flex':'none'); ?>;clear:both;width:700px;justify-content:space-between;">
-                                <div style="width:180px;">
-                                    <b>Image URL base:</b>
-                                </div>
-                                <div>
-                                    <input name="imgurl" type="text" style="width:400px;" value="<?php echo ($specManager->getImgUrlBase()?:$globalImageRootUrl); ?>" />
-                                    <a id="imgurlinfo" href="#" onclick="return false" title="More Information">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <div id="imgurlinfodialog">
-                                        Image URL prefix that will access the target folder from the browser.
-                                        This will be used to create the image URLs that will be stored in the database.
-                                        If absolute URL is supplied without the domain name, the portal domain will be assumed.
-                                        If this field is left blank, the portal's default image url will be used.
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="centralWidthDiv" style="display:<?php echo ($projectType === 'local'?'flex':'none'); ?>;clear:both;width:700px;justify-content:space-between;">
-                                <div style="width:180px;">
-                                    <b>Central pixel width:</b>
-                                </div>
-                                <div>
-                                    <input name="webpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getWebPixWidth()?:$globalImageWebWidth); ?>" />
-                                    <a id="webpixwidthinfo" href="#" onclick="return false" title="More Information">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <div id="webpixwidthinfodialog">
-                                        Width of the standard web image.
-                                        If the source image is smaller than this width, the file will simply be copied over without resizing.
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="thumbWidthDiv" style="display:<?php echo ($projectType === 'local'?'flex':'none'); ?>;clear:both;width:700px;justify-content:space-between;">
-                                <div style="width:180px;">
-                                    <b>Thumbnail pixel width:</b>
-                                </div>
-                                <div>
-                                    <input name="tnpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getTnPixWidth()?:$globalImageTnWidth); ?>" />
-                                    <a id="tnpixwidthinfo" href="#" onclick="return false" title="More Information">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <div id="tnpixwidthinfodialog">
-                                        Width of the image thumbnail. Width should be greater than image sizing within the thumbnail display pages.
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="largeWidthDiv" style="display:<?php echo ($projectType === 'local'?'flex':'none'); ?>;clear:both;width:700px;justify-content:space-between;">
-                                <div style="width:180px;">
-                                    <b>Large pixel width:</b>
-                                </div>
-                                <div>
-                                    <input name="lgpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getLgPixWidth()?:$globalImageLgWidth); ?>" />
-                                    <a id="lgpixwidthinfo" href="#" onclick="return false" title="More Information">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <div id="lgpixwidthinfodialog">
-                                        Width of the large version of the image.
-                                        If the source image is smaller than this width, the file will simply be copied over without resizing.
-                                        Note that resizing large images may be limited by the PHP configuration settings (e.g. memory_limit).
-                                        If this is a problem, having this value greater than the maximum width of your source images will avoid
-                                        errors related to resampling large images.
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="jpgQualityDiv" style="display:<?php echo ($projectType === 'local'?'flex':'none'); ?>;clear:both;width:700px;justify-content:space-between;">
-                                <div style="width:180px;">
-                                    <b>JPG quality:</b>
-                                </div>
-                                <div>
-                                    <input name="jpgcompression" type="text" style="width:50px;" value="<?php echo $specManager->getJpgQuality(); ?>" />
-                                    <a id="jpgcompressioninfo" href="#" onclick="return false" title="More Information">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <div id="jpgcompressioninfodialog">
-                                        JPG quality refers to amount of compression applied.
-                                        Value should be numeric and range from 0 (worst quality, smaller file) to
-                                        100 (best quality, biggest file).
-                                        If null, 75 is used as the default.
                                     </div>
                                 </div>
                             </div>
@@ -565,91 +392,11 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                                         <input name="matchothercatalognumbers" type="checkbox" value="1" style="margin-left:30px;" /> Other Catalog Numbers
                                     </div>
                                 </div>
-                                <div style="margin-top:10px;clear:both;">
-                                    <div style="width:200px;float:left;">
-                                        <b>Replacement term:</b>
-                                    </div>
-                                    <div style="float:left;">
-                                        <?php echo $specManager->getPatternReplace(); ?>
-                                        <input type='hidden' name='patternreplace' value='<?php echo $specManager->getPatternReplace();?>' />
-                                    </div>
-                                </div>
-                                <div style="margin-top:10px;clear:both;">
-                                    <div style="width:200px;float:left;">
-                                        <b>Replacement string:</b>
-                                    </div>
-                                    <div style="float:left;">
-                                        <?php
-                                        echo str_replace(' ', '&lt;space&gt;', $specManager->getReplaceStr());
-                                        ?>
-                                        <input type='hidden' name='replacestr' value='<?php echo $specManager->getReplaceStr(); ?>' />
-                                    </div>
-                                </div>
-                                <div style="clear:both;">
-                                    <div style="width:200px;float:left;">
-                                        <b>Target folder:</b>
-                                    </div>
-                                    <div style="float:left;">
-                                        <?php echo ($specManager->getTargetPath()?:$globalImageRootPath); ?>
-                                    </div>
-                                </div>
-                                <div style="clear:both;">
-                                    <div style="width:200px;float:left;">
-                                        <b>URL prefix:</b>
-                                    </div>
-                                    <div style="float:left;">
-                                        <?php echo ($specManager->getImgUrlBase()?:$globalImageRootUrl); ?>
-                                    </div>
-                                </div>
-                                <div style="clear:both;">
-                                    <div style="width:200px;float:left;">
-                                        <b>Web image width:</b>
-                                    </div>
-                                    <div style="float:left;">
-                                        <?php echo ($specManager->getWebPixWidth()?:$globalImageWebWidth); ?>
-                                    </div>
-                                </div>
-                                <div style="clear:both;">
-                                    <div style="width:200px;float:left;">
-                                        <b>Thumbnail width:</b>
-                                    </div>
-                                    <div style="float:left;">
-                                        <?php echo ($specManager->getTnPixWidth()?:$globalImageTnWidth); ?>
-                                    </div>
-                                </div>
-                                <div style="clear:both;">
-                                    <div style="width:200px;float:left;">
-                                        <b>Large image width:</b>
-                                    </div>
-                                    <div style="float:left;">
-                                        <?php echo ($specManager->getLgPixWidth()?:$globalImageLgWidth); ?>
-                                    </div>
-                                </div>
-                                <div style="clear:both;">
-                                    <div style="width:200px;float:left;">
-                                        <b>JPG quality (1-100): </b>
-                                    </div>
-                                    <div style="float:left;">
-                                        <?php echo ($specManager->getJpgQuality()?:80); ?>
-                                    </div>
-                                </div>
-                                <div style="clear:both;padding-top:10px;">
-                                    <div>
-                                        <b>Web Image:</b>
-                                        <div style="margin:5px 15px">
-                                            <input name="webimg" type="radio" value="1" CHECKED /> Evaluate and import source image<br/>
-                                            <input name="webimg" type="radio" value="2" /> Import source image as is without resizing<br/>
-                                            <input name="webimg" type="radio" value="3" /> Map to source image without importing<br/>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div style="clear:both;">
                                     <div>
                                         <b>Thumbnail:</b>
                                         <div style="margin:5px 15px">
-                                            <input name="createtnimg" type="radio" value="1" <?php echo ($specManager->getCreateTnImg() === 1?'CHECKED':'') ?> /> Create new from source image<br/>
-                                            <input name="createtnimg" type="radio" value="2" <?php echo ($specManager->getCreateTnImg() === 2?'CHECKED':'') ?> /> Import existing source thumbnail (source name with _tn.jpg suffix)<br/>
-                                            <input name="createtnimg" type="radio" value="3" <?php echo ($specManager->getCreateTnImg() === 3?'CHECKED':'') ?> /> Map to existing source thumbnail (source name with _tn.jpg suffix)<br/>
+                                            <input name="createtnimg" type="radio" value="1" <?php echo ($specManager->getCreateTnImg()?'CHECKED':'') ?> /> Create new thumbnail from source image<br/>
                                             <input name="createtnimg" type="radio" value="0" <?php echo (!$specManager->getCreateTnImg()?'CHECKED':'') ?> /> Exclude thumbnail <br/>
                                         </div>
                                     </div>
@@ -658,10 +405,7 @@ $globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
                                     <div>
                                         <b>Large Image:</b>
                                         <div style="margin:5px 15px">
-                                            <input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg() === 1?'CHECKED':'') ?> /> Import source image as large version<br/>
-                                            <input name="createlgimg" type="radio" value="2" <?php echo ($specManager->getCreateLgImg() === 2?'CHECKED':'') ?> /> Map to source image as large version<br/>
-                                            <input name="createlgimg" type="radio" value="3" <?php echo ($specManager->getCreateLgImg() === 3?'CHECKED':'') ?> /> Import existing large version (source name with _lg.jpg suffix)<br/>
-                                            <input name="createlgimg" type="radio" value="4" <?php echo ($specManager->getCreateLgImg() === 4?'CHECKED':'') ?> /> Map to existing large version (source name with _lg.jpg suffix)<br/>
+                                            <input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg()?'CHECKED':'') ?> /> Import source image as large version<br/>
                                             <input name="createlgimg" type="radio" value="0" <?php echo (!$specManager->getCreateLgImg()?'CHECKED':'') ?> /> Exclude large version<br/>
                                         </div>
                                     </div>
