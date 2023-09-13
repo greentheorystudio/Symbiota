@@ -13,7 +13,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS
     $isEditor = 1;
 }
 
-$rsManager = new OccurrenceProtectedSpecies($isEditor?'write':'readonly');
+$rsManager = new OccurrenceProtectedSpecies();
 
 if($isEditor){
 	if($action === 'addspecies'){
