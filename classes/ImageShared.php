@@ -470,8 +470,15 @@ class ImageShared{
 				}
 				$rs1->free();
 			}
-
-			$sql = 'INSERT INTO images (tid, url, thumbnailurl, originalurl, photographer, photographeruid, format, caption, '.
+            if(!$this->sortSeq){
+                if($this->occid){
+                    $this->sortSeq = 50;
+                }
+                else{
+                    $this->sortSeq = 40;
+                }
+            }
+            $sql = 'INSERT INTO images (tid, url, thumbnailurl, originalurl, photographer, photographeruid, format, caption, '.
 				'owner, sourceurl, copyright, locality, occid, notes, username, sortsequence, sourceIdentifier, ' .
 				' rights, accessrights) '.
 				'VALUES ('.($this->tid?:'NULL').',"'.$imgWebUrl.'",'.
@@ -488,7 +495,7 @@ class ImageShared{
 				($this->occid?:'NULL').','.
 				($this->notes?'"'.$this->notes.'"':'NULL').',"'.
 				Sanitizer::cleanInStr($this->conn,$GLOBALS['USERNAME']).'",'.
-				($this->sortSeq?:'50').','.
+                $this->sortSeq.','.
 				($this->sourceIdentifier?'"'.$this->sourceIdentifier.'"':'NULL').','.
 				($this->rights?'"'.$this->rights.'"':'NULL').','.
 				($this->accessRights?'"'.$this->accessRights.'"':'NULL').')';
