@@ -18,7 +18,7 @@ class SpecProcessorManager {
 	protected $coordY2;
 	protected $sourcePath;
 	protected $createTnImg = 1;
-	protected $createLgImg = 2;
+	protected $createLgImg = 1;
 	protected $lastRunDate = '';
 
 	public function __construct() {
