@@ -117,8 +117,16 @@
                 {url: CLIENT_ROOT + '/checklists/index.php', label: 'Checklists'},
                 {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist', label: 'Dynamic Checklist'},
                 {url: CLIENT_ROOT + '/spatial/index.php', label: 'Map Occurrence Search', newTab: true},
-                {url: CLIENT_ROOT + '/tutorial/spatial/index.php', label: 'Map Search Tutorial', newTab: true},
                 {url: CLIENT_ROOT + '/collections/index.php', label: 'Text Occurrence Search'}
+            ]
+        },
+        {
+            label: 'Tutorials',
+            subItems: [
+                {url: CLIENT_ROOT + '/tutorial/spatial/index.php', label: 'Map Search Tutorial', newTab: true},
+                {url: 'https://youtu.be/YwBC-52j6Ps?si=TAGXz8qev1nvyFCZ', label: 'Checklists Overview', newTab: true},
+                {url: 'https://youtu.be/jm2_mn2nClo?si=kDnHt7EE1ERlSYRB', label: 'Creating a Checklist', newTab: true},
+                {url: 'https://youtu.be/L45s7c19kNw?si=rpNhc_r2OdTOSdk_', label: 'Checklists from Occurrence Records', newTab: true}
             ]
         },
         {url: CLIENT_ROOT + '/misc/Protect-IRL.php', label: 'Stewardship'},
