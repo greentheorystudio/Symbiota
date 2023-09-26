@@ -411,19 +411,12 @@ class TaxonomyUtilities {
     public function getSensitiveTaxa(): array
     {
         $sensitiveArr = array();
-        $sql = 'SELECT DISTINCT tid FROM taxa WHERE (SecurityStatus > 0)';
+        $sql = 'SELECT DISTINCT tid FROM taxa WHERE SecurityStatus = 1 ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $sensitiveArr[] = $r->tid;
         }
         $rs->free();
-        $sql2 = 'SELECT DISTINCT tidaccepted FROM taxa '.
-            'WHERE SecurityStatus > 0 AND tid <> tidaccepted ';
-        $rs2 = $this->conn->query($sql2);
-        while($r2 = $rs2->fetch_object()){
-            $sensitiveArr[] = $r2->tidaccepted;
-        }
-        $rs2->free();
         return $sensitiveArr;
     }
 
@@ -586,9 +579,9 @@ class TaxonomyUtilities {
         while($row = $result->fetch_object()){
             $resultArr = array();
             $resultArr['imgid'] = $row->imgid;
-            $resultArr['url'] = $row->url;
-            $resultArr['thumbnailurl'] = $row->thumbnailurl;
-            $resultArr['originalurl'] = $row->originalurl;
+            $resultArr['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+            $resultArr['thumbnailurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+            $resultArr['originalurl'] = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
             $resultArr['archiveurl'] = $row->archiveurl;
             $resultArr['photographer'] = $row->photographer;
             $resultArr['imagetype'] = $row->imagetype;
@@ -627,7 +620,7 @@ class TaxonomyUtilities {
             $resultArr = array();
             $resultArr['mediaid'] = $row->mediaid;
             $resultArr['occid'] = $row->occid;
-            $resultArr['accessuri'] = $row->accessuri;
+            $resultArr['accessuri'] = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
             $resultArr['title'] = $row->title;
             $resultArr['creator'] = $row->creator;
             $resultArr['type'] = $row->type;
@@ -716,7 +709,7 @@ class TaxonomyUtilities {
             $resultArr = array();
             $resultArr['mediaid'] = $row->mediaid;
             $resultArr['occid'] = $row->occid;
-            $resultArr['accessuri'] = $row->accessuri;
+            $resultArr['accessuri'] = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
             $resultArr['title'] = $row->title;
             $resultArr['creator'] = $row->creator;
             $resultArr['type'] = $row->type;

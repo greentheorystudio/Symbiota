@@ -199,8 +199,11 @@ class ExsiccatiManager {
 					$retArr[$r->omenid][$r->occid]['lng'] = $r->decimallongitude;
 				}
 				if($r->url){
-					$retArr[$r->omenid][$r->occid]['img'][$r->imgid]['url'] = $r->url;
-					$retArr[$r->omenid][$r->occid]['img'][$r->imgid]['tnurl'] = ($r->thumbnailurl?:$r->url);
+					$retArr[$r->omenid][$r->occid]['img'][$r->imgid]['url'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->url) : $r->url;
+					$retArr[$r->omenid][$r->occid]['img'][$r->imgid]['tnurl'] = ($r->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->thumbnailurl) : $r->thumbnailurl;
+                    if(!$retArr[$r->omenid][$r->occid]['img'][$r->imgid]['tnurl']){
+                        $retArr[$r->omenid][$r->occid]['img'][$r->imgid]['tnurl'] = $retArr[$r->omenid][$r->occid]['img'][$r->imgid]['url'];
+                    }
 				}
 			}
 			$rs->free();

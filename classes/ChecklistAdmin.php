@@ -128,13 +128,9 @@ class ChecklistAdmin{
                 if($fieldName !== 'abstract') {
                     $v = strip_tags($v, '<i><u><b><a>');
                 }
-
                 if($v){
-                    if($fieldType === 's'){
-                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($this->conn,$v).'"';
-                    }
-                    elseif($fieldType === 'n' && is_numeric($v)){
-                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($this->conn,$v).'"';
+                    if($fieldType === 's' || ($fieldType === 'n' && is_numeric($v))){
+                        $setSql .= ', '.$fieldName.' = "'.$v.'"';
                     }
                     else{
                         $setSql .= ', '.$fieldName.' = NULL';
@@ -152,8 +148,7 @@ class ChecklistAdmin{
                 $sql = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
                     'INNER JOIN fmchklsttaxalink AS cl ON t.tidaccepted = cl.tid '.
                     'SET o.localitysecurity = 1 '.
-                    'WHERE cl.clid = '.$this->clid.' AND o.stateprovince = "'.$postArr['locality'].'" AND ISNULL(o.localitySecurityReason) '.
-                    'AND (ISNULL(o.localitysecurity) OR o.localitysecurity = 0) ';
+                    'WHERE cl.clid = '.$this->clid.' AND o.stateprovince = "'.$postArr['locality'].'" AND ISNULL(o.localitySecurityReason) ';
                 if(!$this->conn->query($sql)){
                     $statusStr = 'Error updating rare state species.';
                 }

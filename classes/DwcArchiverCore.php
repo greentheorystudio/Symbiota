@@ -155,7 +155,7 @@ class DwcArchiverCore extends Manager{
                 $this->collArr[$r->collid]['dwcaurl'] = $r->dwcaurl;
                 $this->collArr[$r->collid]['lat'] = $r->latitudedecimal;
                 $this->collArr[$r->collid]['lng'] = $r->longitudedecimal;
-                $this->collArr[$r->collid]['icon'] = $r->icon;
+                $this->collArr[$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
                 $this->collArr[$r->collid]['colltype'] = $r->colltype;
                 $this->collArr[$r->collid]['managementtype'] = $r->managementtype;
                 $this->collArr[$r->collid]['rights'] = $r->rights;
@@ -803,16 +803,15 @@ class DwcArchiverCore extends Manager{
             $emlArr['collMetadata'][$cnt]['collectionIdentifier'] = $collArr['collcode'];
             $emlArr['collMetadata'][$cnt]['collectionName'] = $collArr['collname'];
             if($collArr['icon']){
-                if(strncmp($collArr['icon'], 'images/collicons/', 17) === 0){
-                    $imgLink = $urlPathPrefix.$collArr['icon'];
+                if(strncmp($collArr['icon'], '/', 1) === 0){
+                    $urlPrefix = 'http://';
+                    if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                        $urlPrefix = 'https://';
+                    }
+                    $urlPrefix .= $_SERVER['HTTP_HOST'];
+                    $collArr['icon'] = $urlPrefix . $collArr['icon'];
                 }
-                elseif(strncmp($collArr['icon'], '/', 1) === 0){
-                    $imgLink = $localDomain.$collArr['icon'];
-                }
-                else{
-                    $imgLink = $collArr['icon'];
-                }
-                $emlArr['collMetadata'][$cnt]['resourceLogoUrl'] = $imgLink;
+                $emlArr['collMetadata'][$cnt]['resourceLogoUrl'] = $collArr['icon'];
             }
             $emlArr['collMetadata'][$cnt]['onlineUrl'] = $collArr['url'];
             $emlArr['collMetadata'][$cnt]['intellectualRights'] = $collArr['rights'];
@@ -1130,30 +1129,29 @@ class DwcArchiverCore extends Manager{
             $itemTitleElem = $newDoc->createElement('title');
             $itemTitleElem->appendChild($newDoc->createTextNode($title));
             $itemElem->appendChild($itemTitleElem);
-            if(strncmp($cArr['icon'], 'images/collicons/', 17) === 0){
-                $imgLink = $urlPathPrefix.$cArr['icon'];
+            if($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0){
+                $cArr['icon'] = $GLOBALS['CLIENT_ROOT'] . $cArr['icon'];
             }
-            elseif(strncmp($cArr['icon'], '/', 1) === 0){
-                $imgLink = $localDomain.$cArr['icon'];
-            }
-            else{
-                $imgLink = $cArr['icon'];
+            if(strncmp($cArr['icon'], '/', 1) === 0){
+                $urlPrefix = 'http://';
+                if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                    $urlPrefix = 'https://';
+                }
+                $urlPrefix .= $_SERVER['HTTP_HOST'];
+                $cArr['icon'] = $urlPrefix . $cArr['icon'];
             }
             $iconElem = $newDoc->createElement('image');
-            $iconElem->appendChild($newDoc->createTextNode($imgLink));
+            $iconElem->appendChild($newDoc->createTextNode($cArr['icon']));
             $itemElem->appendChild($iconElem);
-
             $descTitleElem = $newDoc->createElement('description');
             $descTitleElem->appendChild($newDoc->createTextNode($cArr['collectionname']));
             $itemElem->appendChild($descTitleElem);
             $guidElem = $newDoc->createElement('guid');
             $guidElem->appendChild($newDoc->createTextNode($cArr['collectionguid']));
             $itemElem->appendChild($guidElem);
-
             $emlElem = $newDoc->createElement('emllink');
             $emlElem->appendChild($newDoc->createTextNode($urlPathPrefix.'collections/datasets/emlhandler.php?collid='.$cArr['collid']));
             $itemElem->appendChild($emlElem);
-
             $link = $cArr['dwcaurl'];
             if(!$link){
                 $link = $urlPathPrefix.'collections/misc/collprofiles.php?collid='.$cArr['collid'];
@@ -1446,9 +1444,9 @@ class DwcArchiverCore extends Manager{
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
 
             $this->setServerDomain();
-            $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
+            $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'];
 
-            $localDomain = $GLOBALS['IMAGE_DOMAIN'] ?? $this->serverDomain;
+            $localDomain = $this->serverDomain.$GLOBALS['CLIENT_ROOT'];
 
             while($r = $rs->fetch_assoc()){
                 if(strncmp($r['identifier'], '/', 1) === 0) {
@@ -1491,7 +1489,7 @@ class DwcArchiverCore extends Manager{
                     }
                 }
                 $r['providermanagedid'] = 'urn:uuid:'.$r['providermanagedid'];
-                $r['associatedSpecimenReference'] = $urlPathPrefix.'collections/individual/index.php?occid='.$r['occid'];
+                $r['associatedSpecimenReference'] = $urlPathPrefix.'/collections/individual/index.php?occid='.$r['occid'];
                 $r['type'] = 'StillImage';
                 $r['subtype'] = 'Photograph';
                 $extStr = strtolower(substr($r['accessURI'],strrpos($r['accessURI'],'.')+1));
@@ -1761,9 +1759,6 @@ class DwcArchiverCore extends Manager{
                 $this->serverDomain = 'https://';
             }
             $this->serverDomain .= $_SERVER['HTTP_HOST'];
-            if($_SERVER['SERVER_PORT'] && (int)$_SERVER['SERVER_PORT'] !== 80 && (int)$_SERVER['SERVER_PORT'] !== 443) {
-                $this->serverDomain .= ':' . $_SERVER['SERVER_PORT'];
-            }
         }
     }
 

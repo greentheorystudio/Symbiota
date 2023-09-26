@@ -40,7 +40,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 	 		$sql = 'UPDATE taxa AS t SET t.SecurityStatus = 1 WHERE (t.tid = '.$tid.')';
 	 		//echo $sql;
 			$this->conn->query($sql);
-			$protectCnt = OccurrenceTaxonomyCleaner::protectGlobalSpecies();
+			$protectCnt = (new OccurrenceTaxonomyCleaner)->protectGlobalSpecies();
 		}
 		return $protectCnt;
 	}
@@ -51,12 +51,12 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 			$sql = 'UPDATE taxa AS t SET t.SecurityStatus = 0 WHERE t.tid = '.$tid.' ';
 	 		//echo $sql;
 			$this->conn->query($sql);
-			$sql2 = 'UPDATE omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
+			$sql2 = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid '.
 				'SET o.LocalitySecurity = 0 '.
 				'WHERE t.tidaccepted = '.$tid.' AND ISNULL(o.localitySecurityReason) ';
 			//echo $sql2; exit;
 			$this->conn->query($sql2);
-			$protectCnt = OccurrenceTaxonomyCleaner::protectGlobalSpecies();
+			$protectCnt = (new OccurrenceTaxonomyCleaner)->protectGlobalSpecies();
 		}
 		return $protectCnt;
 	}
@@ -94,7 +94,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 		$rs->free();
 
 		if($this->taxaArr){
-			$sql = 'SELECT tid FROM taxa WHERE tidaccepted IN('.implode(',',$this->taxaArr). ')';
+			$sql = 'SELECT tid FROM taxa WHERE tidaccepted IN('.implode(',',$this->taxaArr). ') ';
 			$rs = $this->conn->query($sql);
 			if($rs) {
 				while($r = $rs->fetch_object()){
@@ -111,7 +111,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 	public function getOccRecordCnt(): int
     {
 		$retCnt = 0;
-		$sql = 'SELECT COUNT(*) AS cnt FROM omoccurrences WHERE (LocalitySecurity > 0)';
+		$sql = 'SELECT COUNT(occid) AS cnt FROM omoccurrences WHERE LocalitySecurity > 0 ';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$retCnt = $r->cnt;
@@ -120,4 +120,3 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 		return $retCnt;
 	}
 }
-?>

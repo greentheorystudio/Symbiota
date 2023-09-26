@@ -64,7 +64,7 @@ class OccurrenceCollectionProfile {
 			$retArr[$row->collid]['email'] = $row->email;
 			$retArr[$row->collid]['latitudedecimal'] = $row->latitudedecimal;
 			$retArr[$row->collid]['longitudedecimal'] = $row->longitudedecimal;
-			$retArr[$row->collid]['icon'] = $row->icon;
+			$retArr[$row->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
 			$retArr[$row->collid]['colltype'] = $row->colltype;
 			$retArr[$row->collid]['managementtype'] = $row->managementtype;
 			$retArr[$row->collid]['publicedits'] = $row->publicedits;
@@ -414,16 +414,6 @@ class OccurrenceCollectionProfile {
 	{
 		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
 		$urlBase = '/content/collicon/';
-		$urlPrefix = 'http://';
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-			$urlPrefix = 'https://';
-		}
-		$urlPrefix .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-			$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-		}
-		$urlBase = $urlPrefix.$urlBase;
-
 		$fileName = basename($_FILES['iconfile']['name']);
 		$imgExt = '';
 		if($p = strrpos($fileName, '.')) {
@@ -794,13 +784,13 @@ class OccurrenceCollectionProfile {
 					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
 					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
 					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
+					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
 				}
 				else{
 					$collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
 					$collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
 					$collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
-					$collArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
+					$collArr[$collType]['coll'][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
 				}
 			}
 		}

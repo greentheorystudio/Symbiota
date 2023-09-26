@@ -155,21 +155,10 @@ class OccurrenceIndividualManager extends Manager{
         if($result){
             while($row = $result->fetch_object()){
                 $imgId = $row->imgid;
-                $url = $row->url;
-                $tnUrl = $row->thumbnailurl;
-                $lgUrl = $row->originalurl;
-                if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                    if(strncmp($url, '/', 1) === 0) {
-                        $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
-                    }
-                    if($lgUrl && strncmp($lgUrl, '/', 1) === 0) {
-                        $lgUrl = $GLOBALS['IMAGE_DOMAIN'] . $lgUrl;
-                    }
-                    if($tnUrl && strncmp($tnUrl, '/', 1) === 0) {
-                        $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
-                    }
-                }
-                if((!$url || $url === 'empty') && $lgUrl) {
+                $url = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+                $tnUrl = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+                $lgUrl = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
+                if(!$url && $lgUrl) {
                     $url = $lgUrl;
                 }
                 $this->occArr['imgs'][$imgId]['url'] = $url;
@@ -203,10 +192,7 @@ class OccurrenceIndividualManager extends Manager{
         if($result){
             while($row = $result->fetch_object()){
                 $medId = $row->mediaid;
-                $url = $row->accessuri;
-                if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($url, '/', 1) === 0) {
-                    $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
-                }
+                $url = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
                 $this->occArr['media'][$medId]['accessuri'] = $url;
                 $this->occArr['media'][$medId]['title'] = $row->title;
                 $this->occArr['media'][$medId]['creatoruid'] = $row->creatoruid;

@@ -192,9 +192,9 @@ class ImageLibraryManager{
             $retArr[$imgId]['tidaccepted'] = $r->tidaccepted;
             $retArr[$imgId]['tid'] = $r->tid;
             $retArr[$imgId]['sciname'] = $r->sciname;
-            $retArr[$imgId]['url'] = $r->url;
-            $retArr[$imgId]['thumbnailurl'] = $r->thumbnailurl;
-            $retArr[$imgId]['originalurl'] = $r->originalurl;
+            $retArr[$imgId]['url'] = ($r->url && $GLOBALS['CLIENT_ROOT'] && strncmp($r->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->url) : $r->url;
+            $retArr[$imgId]['thumbnailurl'] = ($r->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->thumbnailurl) : $r->thumbnailurl;
+            $retArr[$imgId]['originalurl'] = ($r->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->originalurl) : $r->originalurl;
             $retArr[$imgId]['uid'] = $r->uid;
             $retArr[$imgId]['lastname'] = $r->lastname;
             $retArr[$imgId]['firstname'] = $r->firstname;

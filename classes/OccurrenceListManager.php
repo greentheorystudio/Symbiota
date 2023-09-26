@@ -73,7 +73,7 @@ class OccurrenceListManager extends OccurrenceManager{
                 $returnArr[$occId]['institutioncode'] = $this->cleanOutStr($row->institutioncode);
                 $returnArr[$occId]['collectioncode'] = $this->cleanOutStr($row->collectioncode);
                 $returnArr[$occId]['collectionname'] = $this->cleanOutStr($row->collectionname);
-                $returnArr[$occId]['collicon'] = $row->icon;
+                $returnArr[$occId]['collicon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
                 $returnArr[$occId]['accession'] = $this->cleanOutStr($row->catalognumber);
                 $returnArr[$occId]['family'] = $this->cleanOutStr($row->family);
                 $returnArr[$occId]['sciname'] = $this->cleanOutStr($row->sciname);
@@ -128,11 +128,8 @@ class OccurrenceListManager extends OccurrenceManager{
             $previousOccid = 0;
             while($r = $rs->fetch_object()){
                 if($r->occid !== $previousOccid){
-                    $tnUrl = $r->thumbnailurl;
+                    $tnUrl = ($r->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->thumbnailurl) : $r->thumbnailurl;
                     if($tnUrl){
-                        if(isset($GLOBALS['IMAGE_DOMAIN']) && $tnUrl && strncmp($tnUrl, '/', 1) === 0) {
-                            $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
-                        }
                         $returnArr[$r->occid]['img'] = $tnUrl;
                     }
                     if($r->url){

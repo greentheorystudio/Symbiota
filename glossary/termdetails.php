@@ -653,9 +653,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
 										<div style="float:left;">
 											<?php
 											$imgUrl = $imgArr['url'];
-											if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) {
-                                                $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-                                            }
 											$displayUrl = $imgUrl;
 											?>
 											<a href="<?php echo $imgUrl;?>" target="_blank">

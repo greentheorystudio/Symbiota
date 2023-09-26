@@ -11,8 +11,6 @@ class OccurrenceDownload{
 	private $schemaType = 'native';
 	private $extended = 0;
 	private $delimiter = ',';
-	private $charSetSource;
-	private $charSetOut;
 	private $zipFile = false;
  	private $sqlWhere = '';
  	private $conditionArr = array();
@@ -35,10 +33,7 @@ class OccurrenceDownload{
 		if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
 			$this->rareReaderArr = array_unique(array_merge($this->rareReaderArr,$GLOBALS['USER_RIGHTS']['RareSppReader']));
 		}
-
-		$this->charSetSource = 'UTF-8';
-		$this->charSetOut = $this->charSetSource;
-	}
+    }
 
 	public function __destruct(){
  		if($this->conn) {
@@ -110,7 +105,7 @@ class OccurrenceDownload{
 		header('Content-Description: '.$contentDesc);
 		header('Content-Type: '.$this->getContentType());
 		header('Content-Disposition: attachment; filename='.$fileName);
-		header('Content-Transfer-Encoding: '.$this->charSetOut);
+		header('Content-Transfer-Encoding: UTF-8');
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: public');
@@ -141,7 +136,6 @@ class OccurrenceDownload{
 						}
 						$outputHeader = false;
 					}
-					$this->encodeArr($row);
 					if($this->delimiter === ','){
 						fputcsv($outstream, $row);
 					}
@@ -175,7 +169,7 @@ class OccurrenceDownload{
 
 	private function getDataEntryXML($days, $limit): string
 	{
-		$newDoc = new DOMDocument('1.0',$this->charSetOut);
+		$newDoc = new DOMDocument('1.0','UTF-8');
 
 		$rootElem = $newDoc->createElement('rss');
 		$rootAttr = $newDoc->createAttribute('version');
@@ -195,12 +189,9 @@ class OccurrenceDownload{
 			$serverDomain = 'https://';
 		}
 		$serverDomain .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-			$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
-		}
 		$urlPathPrefix = '';
 		if($serverDomain){
-			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
+			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'];
 		}
 
 		$linkElem = $newDoc->createElement('link');
@@ -261,17 +252,12 @@ class OccurrenceDownload{
 			}
 
 			$itemLinkElem = $newDoc->createElement('link');
-			$itemLinkElem->appendChild($newDoc->createTextNode($serverDomain.'/collections/individual/index.php?occid='.$r->occid));
+			$itemLinkElem->appendChild($newDoc->createTextNode($urlPathPrefix.'/collections/individual/index.php?occid='.$r->occid));
 			$itemElem->appendChild($itemLinkElem);
 
 			$tnUrl = $r->thumbnailurl;
 			if(strncmp($tnUrl, '/', 1) === 0){
-				if(isset($GLOBALS['IMAGE_DOMAIN'])){
-					$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
-				}
-				else{
-					$tnUrl = $serverDomain.$tnUrl;
-				}
+                $tnUrl = $urlPathPrefix.$tnUrl;
 			}
 			$tnLinkElem = $newDoc->createElement('thumbnailUri');
 			$tnLinkElem->appendChild($newDoc->createTextNode($tnUrl));
@@ -600,24 +586,16 @@ class OccurrenceDownload{
 
 	private function getContentType(): ?string
 	{
-		$retStr = 'text/html; charset='.$this->charSetOut;
+		$retStr = 'text/html; charset=UTF-8';
 	    if ($this->zipFile) {
-            $retStr = 'application/zip; charset='.$this->charSetOut;
+            $retStr = 'application/zip; charset=UTF-8';
 		}
 
 		if($this->delimiter === 'comma' || $this->delimiter === ',') {
-            $retStr = 'text/csv; charset='.$this->charSetOut;
+            $retStr = 'text/csv; charset=UTF-8';
 		}
 
 		return $retStr;
-	}
-
-	public function setCharSetOut($cs): void
-	{
-		$cs = strtoupper($cs);
-		if($cs === 'ISO-8859-1' || $cs === 'UTF-8'){
-			$this->charSetOut = $cs;
-		}
 	}
 
 	public function setZipFile($c): void
@@ -655,31 +633,4 @@ class OccurrenceDownload{
             $this->occArr = $occArr;
         }
     }
-
-	private function encodeArr(&$inArr): void
-	{
-		if($this->charSetSource && $this->charSetOut !== $this->charSetSource){
-			foreach($inArr as $k => $v){
-				$inArr[$k] = $this->encodeStr($v);
-			}
-		}
-	}
-
-	private function encodeStr($inStr): string
-	{
-		$retStr = $inStr;
-		if($this->charSetSource){
-			if($this->charSetOut === 'UTF-8' && $this->charSetSource === 'ISO-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-					$retStr = utf8_encode($inStr);
-				}
-			}
-			elseif($this->charSetOut === 'ISO-8859-1' && $this->charSetSource === 'UTF-8'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-					$retStr = utf8_decode($inStr);
-				}
-			}
-		}
-		return $retStr;
-	}
 }

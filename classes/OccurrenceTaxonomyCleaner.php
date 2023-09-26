@@ -481,21 +481,21 @@ class OccurrenceTaxonomyCleaner extends Manager{
         $sensitiveArr = (new TaxonomyUtilities)->getSensitiveTaxa();
 
         if($sensitiveArr){
-            $sql = 'UPDATE omoccurrences '.
-                'SET localitySecurity = 1 '.
-                'WHERE (ISNULL(localitySecurity) OR localitySecurity = 0) AND ISNULL(localitySecurityReason) AND tid IN('.implode(',',$sensitiveArr).') ';
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+                'SET o.localitySecurity = 1 '.
+                'WHERE ISNULL(o.localitySecurityReason) AND t.tidaccepted IN('.implode(',',$sensitiveArr).') ';
             if($collid) {
-                $sql .= 'AND collid = ' . $collid . ' ';
+                $sql .= 'AND o.collid = ' . $collid . ' ';
             }
             if($this->conn->query($sql)){
                 $status += $this->conn->affected_rows;
             }
         }
-        $sql2 = 'UPDATE omoccurrences '.
-            'SET localitySecurity = 0 '.
-            'WHERE localitySecurity = 1 AND ISNULL(localitySecurityReason) AND tid NOT IN('.implode(',',$sensitiveArr).') ';
+        $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+            'SET o.localitySecurity = 0 '.
+            'WHERE ISNULL(o.localitySecurityReason) AND t.tidaccepted NOT IN('.implode(',',$sensitiveArr).') ';
         if($collid) {
-            $sql2 .= 'AND collid = ' . $collid . ' ';
+            $sql2 .= 'AND o.collid = ' . $collid . ' ';
         }
         if($this->conn->query($sql2)){
             $status += $this->conn->affected_rows;
