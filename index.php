@@ -98,6 +98,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                 <strong>Checklists</strong> (e.g., County Floras, Wildflowers by Color) are under development.  Take a look or create your own!<br>
             </p>
             <p><em>NOTE: 'Interactive Maps' will plot only collections with known GPS localities.</em></p>
+            <div style="width: 100%; clear:both;"></div>
             <q-card class="update-card q-mb-md bg-green-1">
                 <q-card-section>
                     <div class="text-h5 text-bold q-mb-sm">We’ve been making some changes!</div>
