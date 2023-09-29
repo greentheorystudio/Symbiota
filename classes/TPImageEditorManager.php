@@ -19,7 +19,7 @@ class TPImageEditorManager extends TPEditorManager{
         $tidArr = Array($this->tid);
         if($this->rankId === 220){
             $sql1 = 'SELECT DISTINCT tid FROM taxa '.
-                'WHERE (tid = tidaccepted) AND (parenttid = '.$this->tid.')';
+                'WHERE tid = tidaccepted AND parenttid = '.$this->tid.' ';
             $rs1 = $this->taxonCon->query($sql1);
             while($r1 = $rs1->fetch_object()){
                 $tidArr[] = $r1->tid;
@@ -41,9 +41,9 @@ class TPImageEditorManager extends TPEditorManager{
         $imgCnt = 0;
         while($row = $result->fetch_object()){
             $imageArr[$imgCnt]['imgid'] = $row->imgid;
-            $imageArr[$imgCnt]['url'] = $row->url;
-            $imageArr[$imgCnt]['thumbnailurl'] = $row->thumbnailurl;
-            $imageArr[$imgCnt]['originalurl'] = $row->originalurl;
+            $imageArr[$imgCnt]['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+            $imageArr[$imgCnt]['thumbnailurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+            $imageArr[$imgCnt]['originalurl'] = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
             $imageArr[$imgCnt]['photographer'] = $row->photographer;
             $imageArr[$imgCnt]['photographeruid'] = $row->photographeruid;
             $imageArr[$imgCnt]['photographerdisplay'] = $row->photographerdisplay;
@@ -66,7 +66,7 @@ class TPImageEditorManager extends TPEditorManager{
     public function echoPhotographerSelect($userId = null): void
     {
         $sql = "SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname ".
-            'FROM users u ORDER BY u.lastname, u.firstname ';
+            'FROM users AS u ORDER BY u.lastname, u.firstname ';
         $result = $this->taxonCon->query($sql);
         while($row = $result->fetch_object()){
             echo "<option value='".$row->uid."' ".($row->uid === $userId? 'SELECTED' : ''). '>' .$row->fullname."</option>\n";
