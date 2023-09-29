@@ -36,7 +36,22 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
-.map {
+.mapbody {
+	background-color: white;
+}
+.mapbody:-moz-full-screen {
+	height: 100%;
+}
+.mapbody:-webkit-full-screen {
+	height: 100%;
+}
+.mapbody:-ms-fullscreen {
+	height: 100%;
+}
+.mapbody:fullscreen {
+	height: 100%;
+}
+#map {
 	position: absolute;
 	top: 0;
 	bottom: 0;
