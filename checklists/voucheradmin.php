@@ -348,7 +348,7 @@ if($clid && $isEditor){
 											?>
 											<div>
 												<a href="#" onclick="openPopup('../taxa/index.php?taxon=<?php echo $tid.'&cl='.$clid; ?>');return false;"><?php echo $sciname; ?></a>
-												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>');return false;">
+												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>');return false;">
 													<i style='width:15px;height:15px;' title="Link Voucher Occurrences" class="fas fa-link"></i>
 												</a>
 											</div>

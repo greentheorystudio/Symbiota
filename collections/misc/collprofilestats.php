@@ -44,7 +44,7 @@ if($statDisplay === 'geography'){
 					if(!$stateDist) {
                         echo '</a>';
                     }
-					echo ' (<a href="../list.php?db='.$collid.'&reset=1&country='.$countryTerm.'&state='.$stateTerm.'&county='.$countyTerm.'" target="_blank">'.$cnt.'</a>)';
+					echo ' (<a href="../list.php?db='.$collid.'&country='.$countryTerm.'&state='.$stateTerm.'&county='.$countyTerm.'" target="_blank">'.$cnt.'</a>)';
 					echo '</li>';
 				}
 				?>
@@ -67,7 +67,7 @@ elseif($statDisplay === 'taxonomy'){
 				foreach($famArr as $name => $cnt){
 					echo '<li>';
 					echo $name;
-					echo ' (<a href="../list.php?db='.$collid.'&type=1&reset=1&taxa='.$name.'" target="_blank">'.$cnt.'</a>)';
+					echo ' (<a href="../list.php?db='.$collid.'&type=1&taxa='.$name.'" target="_blank">'.$cnt.'</a>)';
 					echo '</li>';
 				}
 				?>

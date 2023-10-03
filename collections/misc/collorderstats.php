@@ -70,7 +70,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
                     echo '<td>';
                     if($data['SpecimensPerOrder'] === 1){
-                        echo '<a href="../list.php?db[]='.$collId.'&reset=1&taxa='.$name.'" target="_blank">';
+                        echo '<a href="../list.php?db[]='.$collId.'&taxa='.$name.'" target="_blank">';
                     }
                     echo number_format($data['SpecimensPerOrder']);
                     if($data['SpecimensPerOrder'] === 1){

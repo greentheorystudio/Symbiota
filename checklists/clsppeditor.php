@@ -254,7 +254,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </div>
                 <div id="voucherdiv">
                     <div style="float:right;margin-top:10px;">
-                        <a href="../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $vManager->getTaxonName(). '&targetclid=' .$vManager->getClid(). '&targettid=' .$tid;?>">
+                        <a href="../collections/list.php?db=all&thes=1&taxa=<?php echo $vManager->getTaxonName(). '&targetclid=' .$vManager->getClid(). '&targettid=' .$tid;?>">
                             <i style='width:15px;height:15px;' class="fas fa-link"></i>
                         </a>
                     </div>
