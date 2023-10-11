@@ -85,7 +85,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     echo '<a href="../index.php">Home</a> &gt;&gt; ';
     if($dynClid){
         if($dataManager->getClType() === 'Specimen Checklist'){
-            echo '<a href="'.$GLOBALS['CLIENT_ROOT'].'/collections/list.php?tabindex=0">';
+            $link = $GLOBALS['CLIENT_ROOT'].'/collections/list.php?starr={"clid":"'.$clid.'"}';
+            echo "<a href='".$link."'>";
             echo 'Occurrence Checklist';
             echo '</a> &gt;&gt; ';
         }

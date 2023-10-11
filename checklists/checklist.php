@@ -233,6 +233,16 @@ include_once(__DIR__ . '/../config/header-includes.php');
             };
             http.send(params);
         }
+
+        function setPopup(tid,clid){
+            const starrObj = {
+                usethes: true,
+                taxa: tid,
+                targetclid: clid
+            };
+            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj) + '&targettid=' + clid;
+            openPopup(url);
+        }
     </script>
     <script type="text/javascript" src="../js/checklists.checklist.js?ver=20230103"></script>
     <?php
@@ -736,7 +746,7 @@ if(!$printMode){
                             if($showVouchers && array_key_exists('dynamicsql',$clArray) && $clArray['dynamicsql']){
                                 ?>
                                 <span class="editspp" style="display:none;">
-                                    <i style='width:13px;height:13px;cursor:pointer;' title='Link Voucher Occurrences' class="fas fa-link" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>');"></i>
+                                    <i style='width:13px;height:13px;cursor:pointer;' title='Link Voucher Occurrences' class="fas fa-link" onclick="setPopup(<?php echo $tid . ',' . $clid;?>);"></i>
                                 </span>
                                 <?php
                             }

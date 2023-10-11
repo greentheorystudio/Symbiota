@@ -51,7 +51,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/external/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../js/collections.search.js?ver=20221025"></script>
+    <script type="text/javascript" src="../js/collections.search.js?ver=20231011"></script>
     <script type="text/javascript" src="../js/search.term.manager.js?ver=20230901"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
@@ -114,7 +114,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             http.onreadystatechange = function() {
                 if(http.readyState === 4 && http.status === 200) {
-                    if(http.responseText === "1"){
+                    if(Number(http.responseText) === 1){
                         alert("Success! All vouchers added to checklist.");
                     }
                     else{
