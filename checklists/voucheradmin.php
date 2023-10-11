@@ -67,6 +67,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 mapWindow = null;
             });
         }
+
+        function setPopup(sciname,clid){
+            if(!Number(sciname)){
+                sciname = sciname.replaceAll("'",'%squot;');
+            }
+            const starrObj = {
+                usethes: true,
+                taxa: sciname,
+                targetclid: clid
+            };
+            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj) + '&targettid=' + sciname;
+            openPopup(url);
+        }
     </script>
 	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20230103"></script>
 	<style>
@@ -328,8 +341,7 @@ if($clid && $isEditor){
 								?>
 							</div>
 						</div>
-
-					<?php
+                        <?php
 					}
 					else{
 						?>
@@ -348,7 +360,7 @@ if($clid && $isEditor){
 											?>
 											<div>
 												<a href="#" onclick="openPopup('../taxa/index.php?taxon=<?php echo $tid.'&cl='.$clid; ?>');return false;"><?php echo $sciname; ?></a>
-												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>');return false;">
+												<a href="#" onclick="setPopup('<?php echo $sciname . "'," . $clid;?>);return false;">
 													<i style='width:15px;height:15px;' title="Link Voucher Occurrences" class="fas fa-link"></i>
 												</a>
 											</div>
@@ -383,7 +395,7 @@ if($clid && $isEditor){
 								?>
 							</div>
 						</div>
-					<?php
+					    <?php
 					}
 					?>
 				</div>
