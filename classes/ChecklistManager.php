@@ -332,10 +332,10 @@ class ChecklistManager {
     {
         if($this->taxaList){
             $tempArr = array();
-            $sql = 'SELECT t.tid, t2.sciname, t2.author '.
+            $sql = 'SELECT t2.tid, t.sciname, t.author '.
                 'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.tid '.
-                'WHERE t.tid IN('.implode(',',array_keys($this->taxaList)).') AND t.tid <> t2.tid '.
-                'ORDER BY t2.sciname';
+                'WHERE t2.tid IN('.implode(',',array_keys($this->taxaList)).') AND t.tid <> t2.tid '.
+                'ORDER BY t.sciname';
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
