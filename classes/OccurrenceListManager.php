@@ -94,7 +94,7 @@ class OccurrenceListManager extends OccurrenceManager{
                 if(!$localitySecurity || $canReadRareSpp
                     || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($row->CollID, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
                     || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($row->CollID, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
-                    $returnArr[$occId]['locality'] = $this->cleanOutStr(str_replace('.,',',',$row->locality));
+                    $returnArr[$occId]['locality'] = $row->locality ? $this->cleanOutStr(str_replace('.,',',',$row->locality)) : '';
                     $returnArr[$occId]['collnumber'] = $this->cleanOutStr($row->recordnumber);
                     $returnArr[$occId]['habitat'] = $this->cleanOutStr($row->habitat);
                     $returnArr[$occId]['date'] = $row->date;
