@@ -1,6 +1,19 @@
 <?php
 include_once(__DIR__ . '/config/symbbase.php');
 header('Content-Type: text/html; charset=UTF-8' );
+
+$editor = false;
+if($GLOBALS['SYMB_UID']){
+    if($GLOBALS['IS_ADMIN']){
+        $editor = true;
+    }
+    elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array(1, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+        $editor = true;
+    }
+    elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array(1, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+        $editor = true;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -19,11 +32,26 @@ include_once(__DIR__ . '/config/header-includes.php');
 include(__DIR__ . '/header.php');
 ?>
 <div id="innertext">
-    <h1>Welcome to your portal!</h1>
-
-    <p>
-        Here's where all the great stuff on your homepage goes.
-    </p>
+    <?php
+    if($editor){
+        ?>
+        <fieldset style="width: 300px;">
+            <legend><b>Quick Search</b></legend>
+            <b>Catalog Number</b><br/>
+            <form name="quicksearch" action="collections/editor/occurrenceeditor.php" method="post">
+                <input name="q_catalognumber" type="text" />
+                <input name="collid" type="hidden" value="1" />
+                <input name="occindex" type="hidden" value="0" />
+            </form>
+        </fieldset>
+        <?php
+    }
+    elseif(!$GLOBALS['SYMB_UID']){
+        ?>
+        <a href="profile/index.php">Please login</a>
+        <?php
+    }
+    ?>
 </div>
 
 <?php
