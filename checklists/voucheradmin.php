@@ -17,6 +17,7 @@ $displayMode = (array_key_exists('displaymode',$_REQUEST)?(int)$_REQUEST['displa
 
 $clManager = new ChecklistVoucherAdmin();
 $clManager->setClid($clid);
+$clManager->setCollectionVariables();
 
 $statusStr = '';
 $isEditor = 0;
@@ -37,6 +38,9 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 	elseif($action === 'resolveconflicts'){
 		$clManager->batchAdjustChecklist($_POST);
 	}
+    elseif($action === 'Add All Taxa to Checklist'){
+        $clManager->batchAddAllUnlinkedTaxa();
+    }
 }
 $clManager->setCollectionVariables();
 ?>

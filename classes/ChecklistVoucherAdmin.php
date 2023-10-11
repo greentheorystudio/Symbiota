@@ -355,6 +355,15 @@ class ChecklistVoucherAdmin {
 		return $retArr;
 	}
 
+    public function batchAddAllUnlinkedTaxa(): void
+    {
+        if($sqlFrag = $this->getSqlFrag()){
+            $sql = 'INSERT IGNORE INTO fmchklsttaxalink(tid,clid) '.
+                'SELECT DISTINCT t2.tid, '.$this->clid.' '.$this->getMissingTaxaBaseSql($sqlFrag);
+            $this->conn->query($sql);
+        }
+    }
+
 	public function getMissingTaxaSpecimens($limitIndex): array
 	{
 		$retArr = array();
