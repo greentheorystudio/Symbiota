@@ -1222,7 +1222,14 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                         resultObj['hierarchy'] = hierarchyArr;
                                     }
                                     const existingObj = this.colInitialSearchResults.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
-                                    if(!existingObj){
+                                    if(existingObj){
+                                        if(Number(existingObj['rankid']) < Number(resultObj['rankid'])){
+                                            const index = this.colInitialSearchResults.indexOf(existingObj);
+                                            this.colInitialSearchResults.splice(index, 1);
+                                            this.colInitialSearchResults.push(resultObj);
+                                        }
+                                    }
+                                    else{
                                         this.colInitialSearchResults.push(resultObj);
                                     }
                                 }
@@ -1645,24 +1652,26 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     setTaxaToAdd(){
                         if(this.processingArr.length > 0){
                             const sciname = this.processingArr[0]['sciname'];
+                            const rankid = this.processingArr[0]['rankid'];
                             if(!this.nameTidIndex.hasOwnProperty(sciname)){
-                                const url = CLIENT_ROOT + '/api/taxa/gettid.php';
                                 const formData = new FormData();
                                 formData.append('sciname', sciname);
+                                formData.append('rankid', rankid);
                                 formData.append('kingdomid', this.selectedKingdomId);
-                                fetch(url, {
+                                formData.append('action', 'getTid');
+                                fetch(taxonomyApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
                                 .then((response) => {
                                     if(response.status === 200){
                                         response.text().then((res) => {
-                                            if(this.dataSource === 'worms' && !res){
+                                            if(this.dataSource === 'worms' && Number(res) === 0){
                                                 this.getWoRMSAddTaxonAuthor();
                                             }
                                             else{
                                                 const currentTaxon = this.processingArr[0];
-                                                if(res){
+                                                if(Number(res) > 0){
                                                     this.nameTidIndex[currentTaxon['sciname']] = Number(res);
                                                 }
                                                 else{
@@ -1950,7 +1959,17 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                                 taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
                                                 taxon['rankid'] = Number(taxonRankData['rankId']);
                                                 taxon['accepted'] = true;
-                                                this.nameSearchResults.push(taxon);
+                                                const existingObj = this.nameSearchResults.find(nSTaxon => (nSTaxon['sciname'] === taxon['sciname']));
+                                                if(existingObj){
+                                                    if(Number(existingObj['rankid']) < Number(taxon['rankid'])){
+                                                        const index = this.nameSearchResults.indexOf(existingObj);
+                                                        this.nameSearchResults.splice(index, 1);
+                                                        this.nameSearchResults.push(taxon);
+                                                    }
+                                                }
+                                                else{
+                                                    this.nameSearchResults.push(taxon);
+                                                }
                                             }
                                         }
                                         this.validateITISInitialNameSearchResults();
