@@ -18,6 +18,11 @@ if($action){
     if($action === 'getRankNameArr'){
         echo json_encode($taxUtilities->getRankNameArr());
     }
+    elseif($action === 'getTid' && array_key_exists('sciname',$_POST) && array_key_exists('kingdomid',$_POST)){
+        $rankid = array_key_exists('rankid',$_POST) ? (int)$_POST['rankid'] : null;
+        $author = array_key_exists('author',$_POST) ? $_POST['author'] : null;
+        echo $taxUtilities->getTid(htmlspecialchars($_POST['sciname']), (int)$_POST['kingdomid'], $rankid, $author);
+    }
     elseif($action === 'getKingdomArr'){
         echo json_encode($taxUtilities->getKingdomArr());
     }
