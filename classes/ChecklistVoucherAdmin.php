@@ -12,15 +12,9 @@ class ChecklistVoucherAdmin {
 	private $missingTaxaCount = 0;
 	private $closeConnOnDestroy = true;
 
-	public function __construct($con = null) {
-		if($con) {
-			$this->conn = $con;
-			$this->closeConnOnDestroy = false;
-		}
-		else{
-			$connection = new DbConnection();
-			$this->conn = $connection->getConnection();
-		}
+	public function __construct() {
+        $connection = new DbConnection();
+        $this->conn = $connection->getConnection();
 	}
 
 	public function __destruct(){
