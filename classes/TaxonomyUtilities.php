@@ -377,15 +377,23 @@ class TaxonomyUtilities {
         }
     }
 
-    public function getTidAccepted($tid): int
+    public function getTid($sciName, $kingdomid, $rankid, $author): int
     {
         $retTid = 0;
-        $sql = 'SELECT tidaccepted FROM taxa WHERE tid = '.$tid.' ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $retTid = (int)$r->tidaccepted;
+        if($sciName && $kingdomid){
+            $sql = 'SELECT tid FROM taxa WHERE sciname = "'.$sciName.'" AND kingdomId = '.$kingdomid.' ';
+            if($rankid){
+                $sql .= 'AND rankid = '.$rankid.' ';
+            }
+            if($author){
+                $sql .= 'AND author = "'.$author.'" ';
+            }
+            $rs = $this->conn->query($sql);
+            if($r = $rs->fetch_object()){
+                $retTid = (int)$r->tid;
+            }
+            $rs->close();
         }
-        $rs->free();
         return $retTid;
     }
 

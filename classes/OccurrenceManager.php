@@ -495,7 +495,7 @@ class OccurrenceManager{
         if(array_key_exists('targetclid',$this->searchTermsArr) && $this->searchTermsArr['targetclid']){
             $clid = $this->searchTermsArr['targetclid'];
             if(is_numeric($clid)){
-                $voucherManager = new ChecklistVoucherAdmin($this->conn);
+                $voucherManager = new ChecklistVoucherAdmin();
                 $voucherManager->setClid($clid);
                 $voucherManager->setCollectionVariables();
                 $this->clName = $voucherManager->getClName();
