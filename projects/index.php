@@ -427,6 +427,9 @@ echo '</div>';
     }
     else{
         $projectArr = $projManager->getProjectList();
+        if($GLOBALS['VALID_USER']){
+            echo '<div><b><a href="index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></b></div>';
+        }
         if($projectArr){
             echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Biotic Inventory Projects</h1>';
             foreach($projectArr as $pid => $projList){
@@ -441,9 +444,6 @@ echo '</div>';
         }
         else{
             echo '<div><b>There are no biotic inventory projects available at this time.</b></div>';
-            if($GLOBALS['VALID_USER']){
-                echo '<div><a href="index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></div>';
-            }
         }
     }
     ?>
