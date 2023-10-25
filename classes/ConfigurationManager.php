@@ -721,7 +721,6 @@ class ConfigurationManager{
                         $pHandler->reset();
                     }
                 }
-                $pHandler->__destruct();
             }
         }
 
@@ -731,7 +730,6 @@ class ConfigurationManager{
                 $pHandler = new ProfileManager();
                 $uid = $pHandler->getUidFromUsername($tokenArr[0]);
                 $pHandler->deleteToken($uid,$tokenArr[1]);
-                $pHandler->__destruct();
             }
         }
     }
