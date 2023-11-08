@@ -272,8 +272,7 @@ class OccurrenceLabel{
     {
         if(!$this->labelFieldArr){
             $this->labelFieldArr = array('occid'=>'o.occid', 'collid'=>'o.collid', 'catalognumber'=>'o.catalognumber', 'othercatalognumbers'=>'o.othercatalognumbers', 'family'=>'o.family',
-                'sciname'=>'o.sciname','genus'=>'o.genus','specificepithet'=>'o.specificepithet','taxonrank'=>'o.taxonrank',
-                'infraspecificepithet'=>'o.infraspecificepithet', 'scientificnameauthorship'=>'o.scientificnameauthorship', 'identifiedby'=>'o.identifiedby',
+                'sciname'=>'o.sciname','identifiedby'=>'o.identifiedby',
                 'dateidentified'=>'o.dateidentified', 'identificationreferences'=>'o.identificationreferences', 'identificationremarks'=>'o.identificationremarks', 'taxonremarks'=>'o.taxonremarks','locationid'=>'o.locationid',
                 'identificationqualifier'=>'o.identificationqualifier', 'typestatus'=>'o.typestatus', 'recordedby'=>'o.recordedby', 'recordnumber'=>'o.recordnumber', 'associatedcollectors'=>'o.associatedcollectors',
                 'eventdate'=>'DATE_FORMAT(o.eventdate,"%e %M %Y") AS eventdate', 'year'=>'o.year', 'month'=>'o.month', 'day'=>'o.day', 'monthname'=>'DATE_FORMAT(o.eventdate,"%M") AS monthname',
