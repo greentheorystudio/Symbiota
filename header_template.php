@@ -13,9 +13,9 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                         <q-list dense>
                             <template v-for="item in navBarData">
                                 <template v-if="item.subItems && item.subItems.length">
-                                    <q-item clickable @click="navBarToggle[item.id] = true">
+                                    <q-item clickable>
                                         <q-item-section>{{ item.label }}</q-item-section>
-                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start" @hide="navBarToggle[item.id] = false">
+                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start">
                                             <q-list dense>
                                                 <template v-for="subitem in item.subItems">
                                                     <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')">
@@ -102,29 +102,12 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                         }
                     ]);
                     let navBarTimeout = null;
-                    const navBarToggle = Vue.reactive({});
-                    const navBarToggleRefs = Vue.toRefs(navBarToggle);
+                    const navBarToggle = Vue.ref({});
                     const userDisplayName = USER_DISPLAY_NAME;
                     const windowWidth = Vue.ref(0);
 
                     function  handleResize() {
                         windowWidth.value = window.innerWidth;
-                    }
-
-                    function navbarToggleOff(id) {
-                        navBarTimeout = setTimeout(() => {
-                            navBarToggle[Number(id)] = false;
-                        }, 400);
-                    }
-
-                    function navbarToggleOn(id) {
-                        clearTimeout(navBarTimeout);
-                        for(let i in navBarToggle){
-                            if(navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
-                                navBarToggle[Number(i)] = false;
-                            }
-                        }
-                        navBarToggle[Number(id)] = true;
                     }
 
                     function logout() {
@@ -152,14 +135,30 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
 
                     return {
                         navBarData,
-                        navBarToggle: navBarToggleRefs,
+                        navBarToggle,
+                        navBarTimeout,
                         userDisplayName,
                         windowWidth,
-                        navbarToggleOff,
-                        navbarToggleOn,
-                        logout,
-                        setNavBarData
+                        setNavBarData,
+                        handleResize,
+                        logout
                     };
+                },
+                methods: {
+                    navbarToggleOff(id) {
+                        this.navBarTimeout = setTimeout(() => {
+                            this.navBarToggle[Number(id)] = false;
+                        }, 400);
+                    },
+                    navbarToggleOn(id) {
+                        clearTimeout(this.navBarTimeout);
+                        for(let i in this.navBarToggle){
+                            if(this.navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
+                                this.navBarToggle[Number(i)] = false;
+                            }
+                        }
+                        this.navBarToggle[Number(id)] = true;
+                    }
                 }
             });
             dropDownNavBar.use(Quasar, { config: {} });
