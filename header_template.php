@@ -13,10 +13,10 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                         <q-list dense>
                             <template v-for="item in navBarData">
                                 <template v-if="item.subItems && item.subItems.length">
-                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
+                                    <q-item clickable @click="navBarToggle[item.id] = true">
                                         <q-item-section>{{ item.label }}</q-item-section>
-                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start">
-                                            <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
+                                        <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start" @hide="navBarToggle[item.id] = false">
+                                            <q-list dense>
                                                 <template v-for="subitem in item.subItems">
                                                     <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')">
                                                         <q-item-section>{{ subitem.label }}</q-item-section>
@@ -72,83 +72,94 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
         </q-toolbar>
     </div>
     <script>
-        const navBarData = [
-            {url: CLIENT_ROOT + '/index.php', label: 'Home'},
-            {url: CLIENT_ROOT + '/collections/index.php', label: 'Search Collections'},
-            {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true},
-            {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
-            {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'},
-            {
-                url: CLIENT_ROOT + '/projects/index.php',
-                label: 'Inventories',
-                subItems: [
-                    {url: CLIENT_ROOT + '/projects/index.php?pid=1', label: 'Project 1'},
-                    {url: CLIENT_ROOT + '/projects/index.php?pid=2', label: 'Project 2'},
-                    {url: CLIENT_ROOT + '/projects/index.php?pid=3', label: 'Project 3'},
-                    {url: CLIENT_ROOT + '/projects/index.php?pid=4', label: 'Project 4'}
-                ]
-            },
-            {
-                label: 'Interactive Tools',
-                subItems: [
-                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=1', label: 'Dynamic Checklist 1'},
-                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=2', label: 'Dynamic Checklist 2'},
-                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=3', label: 'Dynamic Checklist 3'},
-                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=4', label: 'Dynamic Checklist 4'}
-                ]
-            }
-        ];
-
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", () => {
             const dropDownNavBar = Vue.createApp({
-                data() {
-                    return {
-                        windowWidth: Vue.ref(0),
-                        userDisplayName: USER_DISPLAY_NAME,
-                        navBarData: navBarData,
-                        navBarToggle: Vue.ref({})
+                setup() {
+                    const navBarData = Vue.ref([
+                        {url: CLIENT_ROOT + '/index.php', label: 'Home'},
+                        {url: CLIENT_ROOT + '/collections/index.php', label: 'Search Collections'},
+                        {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true},
+                        {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
+                        {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'},
+                        {
+                            url: CLIENT_ROOT + '/projects/index.php',
+                            label: 'Inventories',
+                            subItems: [
+                                {url: CLIENT_ROOT + '/projects/index.php?pid=1', label: 'Project 1'},
+                                {url: CLIENT_ROOT + '/projects/index.php?pid=2', label: 'Project 2'},
+                                {url: CLIENT_ROOT + '/projects/index.php?pid=3', label: 'Project 3'},
+                                {url: CLIENT_ROOT + '/projects/index.php?pid=4', label: 'Project 4'}
+                            ]
+                        },
+                        {
+                            label: 'Interactive Tools',
+                            subItems: [
+                                {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=1', label: 'Dynamic Checklist 1'},
+                                {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=2', label: 'Dynamic Checklist 2'},
+                                {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=3', label: 'Dynamic Checklist 3'},
+                                {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=4', label: 'Dynamic Checklist 4'}
+                            ]
+                        }
+                    ]);
+                    let navBarTimeout = null;
+                    const navBarToggle = Vue.reactive({});
+                    const navBarToggleRefs = Vue.toRefs(navBarToggle);
+                    const userDisplayName = USER_DISPLAY_NAME;
+                    const windowWidth = Vue.ref(0);
+
+                    function  handleResize() {
+                        windowWidth.value = window.innerWidth;
                     }
-                },
-                mounted() {
-                    this.setNavBarData();
-                    window.addEventListener('resize', this.handleResize);
-                    this.handleResize();
-                },
-                methods: {
-                    handleResize() {
-                        this.windowWidth = window.innerWidth;
-                    },
-                    logout() {
+
+                    function navbarToggleOff(id) {
+                        navBarTimeout = setTimeout(() => {
+                            navBarToggle[Number(id)] = false;
+                        }, 400);
+                    }
+
+                    function navbarToggleOn(id) {
+                        clearTimeout(navBarTimeout);
+                        for(let i in navBarToggle){
+                            if(navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
+                                navBarToggle[Number(i)] = false;
+                            }
+                        }
+                        navBarToggle[Number(id)] = true;
+                    }
+
+                    function logout() {
                         const url = profileApiUrl + '?action=logout';
                         fetch(url)
                         .then(() => {
                             window.location.href = CLIENT_ROOT + '/index.php';
                         })
-                    },
-                    navbarToggleOff(id) {
-                        this.navBarTimeout = setTimeout(() => {
-                            this.navBarToggle[Number(id)] = false;
-                        }, 400);
-                    },
-                    navbarToggleOn(id) {
-                        clearTimeout(this.navBarTimeout);
-                        for(let i in this.navBarToggle){
-                            if(this.navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
-                                this.navBarToggle[Number(i)] = false;
-                            }
-                        }
-                        this.navBarToggle[Number(id)] = true;
-                    },
-                    setNavBarData() {
-                        let indexId = 1;
-                        this.navBarData.forEach((dataObj) => {
+                    }
+
+                    function setNavBarData() {
+                        navBarData.value.forEach((dataObj, index) => {
                             if(dataObj.hasOwnProperty('subItems')){
-                                dataObj['id'] = indexId;
-                                this.navBarToggle[indexId] = false;
-                                indexId++;
+                                dataObj['id'] = index;
+                                navBarToggle[index] = false;
                             }
                         });
                     }
+
+                    Vue.onMounted(() => {
+                        setNavBarData();
+                        window.addEventListener('resize', handleResize);
+                        handleResize();
+                    });
+
+                    return {
+                        navBarData,
+                        navBarToggle: navBarToggleRefs,
+                        userDisplayName,
+                        windowWidth,
+                        navbarToggleOff,
+                        navbarToggleOn,
+                        logout,
+                        setNavBarData
+                    };
                 }
             });
             dropDownNavBar.use(Quasar, { config: {} });
