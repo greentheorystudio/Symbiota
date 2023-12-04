@@ -84,7 +84,7 @@ class OccurrenceManager{
         if(array_key_exists('taxa',$this->searchTermsArr) && $this->searchTermsArr['taxa']){
             $sqlWhereTaxa = '';
             $useThes = (array_key_exists('usethes',$this->searchTermsArr)?$this->searchTermsArr['usethes']:0);
-            $this->taxaSearchType = (int)$this->searchTermsArr['taxontype'];
+            $this->taxaSearchType = (isset($this->searchTermsArr['taxontype']) && (int)$this->searchTermsArr['taxontype'] > 0) ? (int)$this->searchTermsArr['taxontype'] : 1;
             $taxaArr = explode(';',trim($this->searchTermsArr['taxa']));
             foreach($taxaArr as $sName){
                 $trimmedName = trim($sName);
@@ -495,7 +495,7 @@ class OccurrenceManager{
         if(array_key_exists('targetclid',$this->searchTermsArr) && $this->searchTermsArr['targetclid']){
             $clid = $this->searchTermsArr['targetclid'];
             if(is_numeric($clid)){
-                $voucherManager = new ChecklistVoucherAdmin($this->conn);
+                $voucherManager = new ChecklistVoucherAdmin();
                 $voucherManager->setClid($clid);
                 $voucherManager->setCollectionVariables();
                 $this->clName = $voucherManager->getClName();

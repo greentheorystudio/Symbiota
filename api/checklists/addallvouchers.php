@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ChecklistVoucherAdmin.php');
 
 $clid = (int)$_REQUEST['clid'];
-$occArr = $_REQUEST['jsonOccArr'];
+$occArr = json_decode($_REQUEST['jsonOccArr'], true);
 $tid = (int)$_REQUEST['tid'];
 
 if(!$clid){
@@ -24,8 +24,7 @@ elseif($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin', $GLOBALS['USER_RIGHT
 			$result = 0;
 			break;
 		}
-
-		$result = 1;
+        $result = 1;
 	}
 	if($result){
 		echo 1;

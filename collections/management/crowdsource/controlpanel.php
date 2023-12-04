@@ -84,7 +84,7 @@ $projArr = $csManager->getProjectDetails();
                             $unprocessedCnt = $statsArr[0];
                         }
 						if($unprocessedCnt){
-							echo '<a href="../editor/occurrencetabledisplay.php?csmode=1&occindex=0&displayquery=1&reset=1&collid='.$collid.'" target="_blank">';
+							echo '<a href="../editor/occurrencetabledisplay.php?csmode=1&occindex=0&displayquery=1&collid='.$collid.'" target="_blank">';
 							echo $unprocessedCnt;
 							echo '</a> ';
 							echo '<a href="index.php?submitaction=delqueue&tabindex=2&collid='.$collid.'&omcsid='.$omcsid.'">';
