@@ -80,9 +80,9 @@
                     {url: CLIENT_ROOT + '/index.php', label: 'Home'},
                     {url: CLIENT_ROOT + '/misc/Maps.php', label: 'The Indian River Lagoon'},
                     {
-                        url: CLIENT_ROOT + '/misc/Whatsa_Habitat.php',
                         label: 'Habitats',
                         subItems: [
+                            {url: CLIENT_ROOT + '/misc/Whatsa_Habitat.php', label: 'Overview'},
                             {url: CLIENT_ROOT + '/misc/Barrierislnd.php', label: 'Barrier Islands'},
                             {url: CLIENT_ROOT + '/misc/Beaches.php', label: 'Beaches'},
                             {url: CLIENT_ROOT + '/misc/Dunes.php', label: 'Dunes'},
@@ -96,9 +96,9 @@
                         ]
                     },
                     {
-                        url: CLIENT_ROOT + '/misc/Habitat_Threats.php',
                         label: 'Threats',
                         subItems: [
+                            {url: CLIENT_ROOT + '/misc/Habitat_Threats.php', label: 'Overview'},
                             {url: CLIENT_ROOT + '/misc/impoundments.php', label: 'Mosquito Impoundments'},
                             {url: CLIENT_ROOT + '/misc/development.php', label: 'Shoreline Development'},
                             {url: CLIENT_ROOT + '/misc/muck-nutrients.php', label: 'Muck & Nutrients'},
@@ -108,9 +108,9 @@
                         ]
                     },
                     {
-                        url: CLIENT_ROOT + '/misc/Total_Biodiv.php',
                         label: 'Biodiversity',
                         subItems: [
+                            {url: CLIENT_ROOT + '/misc/Total_Biodiv.php', label: 'Overview'},
                             {url: CLIENT_ROOT + '/misc/benthic_story.php', label: 'Benthic Monitoring in the IRL'}
                         ]
                     },
