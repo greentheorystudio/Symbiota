@@ -1826,19 +1826,19 @@ function getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, o
     if(Number(borderWidth) !== 0){
         return new ol.style.Style({
             fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                color: getRgbaStrFromHexOpacity((fillColor),opacity)
             }),
             stroke: new ol.style.Stroke({
-                color: ('#' + borderColor),
+                color: (borderColor),
                 width: borderWidth
             }),
             image: new ol.style.Circle({
                 radius: pointRadius,
                 fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                    color: getRgbaStrFromHexOpacity((fillColor),opacity)
                 }),
                 stroke: new ol.style.Stroke({
-                    color: ('#' + borderColor),
+                    color: (borderColor),
                     width: borderWidth
                 })
             })
@@ -1847,12 +1847,12 @@ function getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, o
     else{
         return new ol.style.Style({
             fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                color: getRgbaStrFromHexOpacity((fillColor),opacity)
             }),
             image: new ol.style.Circle({
                 radius: pointRadius,
                 fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                    color: getRgbaStrFromHexOpacity((fillColor),opacity)
                 })
             })
         })
