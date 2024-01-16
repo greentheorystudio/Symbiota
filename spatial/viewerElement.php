@@ -1,6 +1,5 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/includes/spatialvars.php');
 ?>
 <div id="map" class="map">
     <div id="popup" class="ol-popup">

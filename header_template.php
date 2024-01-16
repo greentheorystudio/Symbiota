@@ -118,6 +118,22 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                         })
                     }
 
+                    function navbarToggleOff(id) {
+                        this.navBarTimeout = setTimeout(() => {
+                            this.navBarToggle[Number(id)] = false;
+                        }, 400);
+                    }
+
+                    function navbarToggleOn(id) {
+                        clearTimeout(this.navBarTimeout);
+                        for(let i in this.navBarToggle){
+                            if(this.navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
+                                this.navBarToggle[Number(i)] = false;
+                            }
+                        }
+                        this.navBarToggle[Number(id)] = true;
+                    }
+
                     function setNavBarData() {
                         navBarData.value.forEach((dataObj, index) => {
                             if(dataObj.hasOwnProperty('subItems')){
@@ -139,26 +155,12 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                         navBarTimeout,
                         userDisplayName,
                         windowWidth,
+                        navbarToggleOff,
+                        navbarToggleOn,
                         setNavBarData,
                         handleResize,
                         logout
                     };
-                },
-                methods: {
-                    navbarToggleOff(id) {
-                        this.navBarTimeout = setTimeout(() => {
-                            this.navBarToggle[Number(id)] = false;
-                        }, 400);
-                    },
-                    navbarToggleOn(id) {
-                        clearTimeout(this.navBarTimeout);
-                        for(let i in this.navBarToggle){
-                            if(this.navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
-                                this.navBarToggle[Number(i)] = false;
-                            }
-                        }
-                        this.navBarToggle[Number(id)] = true;
-                    }
                 }
             });
             dropDownNavBar.use(Quasar, { config: {} });

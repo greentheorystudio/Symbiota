@@ -64,11 +64,15 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20240115" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20230901" type="text/javascript"></script>
-    <?php include_once(__DIR__ . '/includes/spatialvars.php'); ?>
     <script type="text/javascript">
         const WINDOWMODE = '<?php echo $windowType; ?>';
         const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
         const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
+        let clusterPoints = <?php echo ($GLOBALS['SPATIAL_POINT_CLUSTER']?'true':'false'); ?>;
+        let clusterDistance = <?php echo $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE']; ?>;
+        let showHeatMap = <?php echo ($GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP']?'true':'false'); ?>;
+        let heatMapRadius = <?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS']; ?>;
+        let heatMapBlur = <?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR']; ?>;
     </script>
     <?php include_once(__DIR__ . '/includes/spatialinitialize.php'); ?>
 </head>
