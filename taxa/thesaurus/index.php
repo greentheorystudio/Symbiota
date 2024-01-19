@@ -160,6 +160,7 @@ if(!$GLOBALS['SYMB_UID']) {
                 }
             });
             taxonomicThesaurusManagerModule.use(Quasar, { config: {} });
+            taxonomicThesaurusManagerModule.use(Pinia.createPinia());
             taxonomicThesaurusManagerModule.mount('#innertext');
         </script>
     </body>

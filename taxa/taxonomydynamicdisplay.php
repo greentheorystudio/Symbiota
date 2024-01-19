@@ -244,6 +244,7 @@ header('X-Frame-Options: SAMEORIGIN');
             }
         });
         taxonomyDynamicDisplayModule.use(Quasar, { config: {} });
+        taxonomyDynamicDisplayModule.use(Pinia.createPinia());
         taxonomyDynamicDisplayModule.mount('#innertext');
     </script>
     </body>

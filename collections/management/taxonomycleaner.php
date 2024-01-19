@@ -2139,6 +2139,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                 }
             });
             occurrenceTaxonomyManagementModule.use(Quasar, { config: {} });
+            occurrenceTaxonomyManagementModule.use(Pinia.createPinia());
             occurrenceTaxonomyManagementModule.mount('#innertext');
         </script>
     </body>

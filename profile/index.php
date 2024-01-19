@@ -255,6 +255,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                 }
             });
             loginModule.use(Quasar, { config: {} });
+            loginModule.use(Pinia.createPinia());
             loginModule.mount('#innertext');
         </script>
     </body>

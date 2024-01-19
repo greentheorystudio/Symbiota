@@ -962,6 +962,7 @@ if(!$GLOBALS['SYMB_UID']) {
                 }
             });
             eolMediaImporterModule.use(Quasar, { config: {} });
+            eolMediaImporterModule.use(Pinia.createPinia());
             eolMediaImporterModule.mount('#innertext');
         </script>
     </body>

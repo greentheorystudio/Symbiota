@@ -186,6 +186,7 @@ header('X-Frame-Options: SAMEORIGIN');
                 }
             });
             createAccountModule.use(Quasar, { config: {} });
+            createAccountModule.use(Pinia.createPinia());
             createAccountModule.mount('#innertext');
         </script>
     </body>

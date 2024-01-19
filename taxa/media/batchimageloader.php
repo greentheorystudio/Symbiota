@@ -562,6 +562,7 @@ if(!$GLOBALS['SYMB_UID']) {
                 }
             });
             taxaBatchMediaUploaderModule.use(Quasar, { config: {} });
+            taxaBatchMediaUploaderModule.use(Pinia.createPinia());
             taxaBatchMediaUploaderModule.mount('#innertext');
         </script>
     </body>
