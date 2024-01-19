@@ -1,7 +1,10 @@
 const taxaProfileTaxonOccurrenceLink = {
-    props: [
-        'taxon'
-    ],
+    props: {
+        taxon: {
+            type: Object,
+            default: {}
+        }
+    },
     template: `
         <div class="occurrences-link-frame">
             <q-card class="taxon-profile-occurrence-link-card">
@@ -11,17 +14,24 @@ const taxaProfileTaxonOccurrenceLink = {
             </q-card>
         </div>
     `,
-    methods: {
-        openOccurrenceSearch(){
+    setup(props) {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
+        function openOccurrenceSearch() {
             let taxonType;
-            if(Number(this.taxon['rankId']) < 140){
+            if(Number(props.taxon['rankId']) < 140){
                 taxonType = 4;
             }
             else{
                 taxonType = 1;
             }
-            const url = CLIENT_ROOT + '/collections/list.php?starr={"imagetype":"all","usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'].replaceAll("'",'%squot;') + '"}';
+            const url = clientRoot + '/collections/list.php?starr={"imagetype":"all","usethes":true,"taxontype":"' + taxonType + '","taxa":"' + props.taxon['sciName'].replaceAll("'",'%squot;') + '"}';
             window.open(url, '_blank');
+        }
+
+        return {
+            openOccurrenceSearch
         }
     }
 };

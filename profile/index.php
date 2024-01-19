@@ -29,6 +29,11 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                 width: 30%;
             }
         </style>
+        <script type="text/javascript">
+            const CONFIRMATION_CODE = '<?php echo $confirmationCode; ?>';
+            const REF_URL = '<?php echo $refUrl; ?>';
+            const UID = <?php echo $uid; ?>;
+        </script>
     </head>
     <body>
         <?php
@@ -42,7 +47,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                         <q-input outlined v-model="password" type="password" label="Password" bg-color="white" class="q-mb-sm" dense></q-input>
                         <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm"></q-checkbox>
                         <div class="row justify-end q-pr-md">
-                            <q-btn :loading="loading" color="secondary" @click="processLogin();" label="Login" dense></q-btn>
+                            <q-btn color="secondary" @click="processLogin();" label="Login" dense></q-btn>
                         </div>
                     </q-card-section>
                     <q-separator size="1px" color="grey-8"></q-separator>
@@ -84,7 +89,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                                 <div class="column justify-center q-mb-xs text-bold">
                                     <q-input outlined v-model="email" label="Your Email" bg-color="white" class="q-mb-sm" dense></q-input>
                                     <div class="row justify-center">
-                                        <q-btn :loading="loading" color="secondary" @click="retrieveUsername();" label="Retrieve Username" dense></q-btn>
+                                        <q-btn color="secondary" @click="retrieveUsername();" label="Retrieve Username" dense></q-btn>
                                     </div>
                                 </div>
                             </template>
@@ -104,52 +109,30 @@ elseif(array_key_exists('refurl',$_REQUEST)){
         ?>
         <script>
             const loginModule = Vue.createApp({
-                data() {
-                    return {
-                        adminEmail: ADMIN_EMAIL,
-                        confirmationCode: Vue.ref('<?php echo $confirmationCode; ?>'),
-                        email: Vue.ref(null),
-                        emailConfigured: EMAIL_CONFIGURED,
-                        loading: Vue.ref(false),
-                        password: Vue.ref(null),
-                        refUrl: Vue.ref('<?php echo $refUrl; ?>'),
-                        rememberMe: Vue.ref(false),
-                        retrieveUsernameWindow: Vue.ref(false),
-                        uid: Vue.ref(<?php echo $uid; ?>),
-                        username: Vue.ref(null)
-                    }
-                },
-                setup () {
-                    const $q = useQuasar();
-                    return {
-                        showNotification(type, text){
-                            $q.notify({
-                                type: type,
-                                icon: null,
-                                message: text,
-                                multiLine: true,
-                                position: 'top',
-                                timeout: 5000
-                            });
-                        }
-                    }
-                },
-                mounted() {
-                    this.checkCookiePermissions();
-                    if(Number(this.uid) > 0 && this.confirmationCode !== ''){
-                        this.processConfirmationCode();
-                    }
-                },
-                methods: {
-                    checkCookiePermissions(){
+                setup() {
+                    const { showNotification } = useCore();
+                    const store = useBaseStore();
+                    const adminEmail = store.getAdminEmail;
+                    const confirmationCode = CONFIRMATION_CODE;
+                    const email = Vue.ref(null);
+                    const emailConfigured = store.getEmailConfigured;
+                    const password = Vue.ref(null);
+                    const refUrl = REF_URL;
+                    const rememberMe = Vue.ref(false);
+                    const retrieveUsernameWindow = Vue.ref(false);
+                    const uid = UID;
+                    const username = Vue.ref(null);
+
+                    function checkCookiePermissions() {
                         if(!navigator.cookieEnabled){
-                            this.showNotification('negative','Your browser cookies are disabled. To be able to login and access your profile correctly, they must be enabled for this domain.');
+                            showNotification('negative', 'Your browser cookies are disabled. To be able to login and access your profile correctly, they must be enabled for this domain.');
                         }
-                    },
-                    processConfirmationCode(){
+                    }
+
+                    function processConfirmationCode() {
                         const formData = new FormData();
-                        formData.append('uid', this.uid);
-                        formData.append('confirmationCode', this.confirmationCode);
+                        formData.append('uid', uid);
+                        formData.append('confirmationCode', confirmationCode);
                         formData.append('action', 'processConfirmationCode');
                         fetch(profileApiUrl, {
                             method: 'POST',
@@ -158,20 +141,21 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                         .then((response) => {
                             response.text().then((res) => {
                                 if(Number(res) === 1){
-                                    this.showNotification('positive','Success! Your account has been confirmed. Please login to activate confirmation.');
+                                    showNotification('positive','Success! Your account has been confirmed. Please login to activate confirmation.');
                                 }
                                 else{
-                                    this.showNotification('negative','There was a problem confirming your account. Please contact springsdata@springstewardship.org for assistance.');
+                                    showNotification('negative','There was a problem confirming your account. Please contact springsdata@springstewardship.org for assistance.');
                                 }
                             });
                         });
-                    },
-                    processLogin(){
-                        if(this.username && this.password){
+                    }
+
+                    function processLogin() {
+                        if(username.value && password.value){
                             const formData = new FormData();
-                            formData.append('username', this.username);
-                            formData.append('password', this.password);
-                            formData.append('remember', (this.rememberMe ? '1' : '0'));
+                            formData.append('username', username.value);
+                            formData.append('password', password.value);
+                            formData.append('remember', (rememberMe.value ? '1' : '0'));
                             formData.append('action', 'login');
                             fetch(profileApiUrl, {
                                 method: 'POST',
@@ -180,27 +164,28 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                             .then((response) => {
                                 response.text().then((res) => {
                                     if(Number(res) === 1){
-                                        if(this.refUrl === '' || this.refUrl.startsWith('http') || this.refUrl.includes('newprofile.php')){
+                                        if(refUrl === '' || refUrl.startsWith('http') || refUrl.includes('newprofile.php')){
                                             window.location.href = CLIENT_ROOT + '/index.php';
                                         }
                                         else{
-                                            window.location.href = this.refUrl;
+                                            window.location.href = refUrl;
                                         }
                                     }
                                     else{
-                                        this.showNotification('negative','Your username and/or password were incorrect.');
+                                        showNotification('negative','Your username and/or password were incorrect.');
                                     }
                                 });
                             });
                         }
                         else{
-                            this.showNotification('negative','Please enter your username and password to login.');
+                            showNotification('negative','Please enter your username and password to login.');
                         }
-                    },
-                    resetPassword(){
-                        if(this.username){
+                    }
+
+                    function resetPassword() {
+                        if(username.value){
                             const formData = new FormData();
-                            formData.append('username', this.username);
+                            formData.append('username', username.value);
                             formData.append('action', 'resetPassword');
                             fetch(profileApiUrl, {
                                 method: 'POST',
@@ -209,22 +194,23 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                             .then((response) => {
                                 response.text().then((res) => {
                                     if(Number(res) === 1){
-                                        this.showNotification('positive','Your new password has been emailed to the address associated with your account. Please check your junk folder if no email appears in your inbox.');
+                                        showNotification('positive','Your new password has been emailed to the address associated with your account. Please check your junk folder if no email appears in your inbox.');
                                     }
                                     else{
-                                        this.showNotification('negative','There was an error resetting your password.');
+                                        showNotification('negative','There was an error resetting your password.');
                                     }
                                 });
                             });
                         }
                         else{
-                            this.showNotification('negative','Please enter your username.');
+                            showNotification('negative','Please enter your username.');
                         }
-                    },
-                    retrieveUsername(){
-                        if(this.email){
+                    }
+
+                    function retrieveUsername() {
+                        if(email.value){
                             const formData = new FormData();
-                            formData.append('email', this.email);
+                            formData.append('email', email.value);
                             formData.append('action', 'retrieveUsername');
                             fetch(profileApiUrl, {
                                 method: 'POST',
@@ -233,18 +219,38 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                             .then((response) => {
                                 response.text().then((res) => {
                                     if(Number(res) === 1){
-                                        this.showNotification('positive','Your username has been emailed to you.');
+                                        showNotification('positive','Your username has been emailed to you.');
                                     }
                                     else{
-                                        this.showNotification('negative','There was an error sending your username to the email address you entered. Please ensure it is entered correctly.');
+                                        showNotification('negative','There was an error sending your username to the email address you entered. Please ensure it is entered correctly.');
                                     }
-                                    this.retrieveUsernameWindow = false;
+                                    retrieveUsernameWindow.value = false;
                                 });
                             });
                         }
                         else{
-                            this.showNotification('negative','Please enter the email address that is associated with your account.');
+                            showNotification('negative','Please enter the email address that is associated with your account.');
                         }
+                    }
+
+                    Vue.onMounted(() => {
+                        checkCookiePermissions();
+                        if(Number(uid) > 0 && confirmationCode !== ''){
+                            processConfirmationCode();
+                        }
+                    });
+                    
+                    return {
+                        adminEmail,
+                        email,
+                        emailConfigured,
+                        password,
+                        rememberMe,
+                        retrieveUsernameWindow,
+                        username,
+                        processLogin,
+                        resetPassword,
+                        retrieveUsername
                     }
                 }
             });

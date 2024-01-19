@@ -1,8 +1,14 @@
 const taxaProfileNotFound = {
-    props: [
-        'taxon-value',
-        'fuzzy-matches'
-    ],
+    props: {
+        fuzzyMatches: {
+            type: Array,
+            default: []
+        },
+        taxonValue: {
+            type: String,
+            default: ''
+        }
+    },
     template: `
         <div class="q-mt-xl q-ml-lg">
             <h2><span class="text-italic">{{ taxonValue }}</span> not found</h2>
@@ -21,9 +27,12 @@ const taxaProfileNotFound = {
             </div>
         </div>
     `,
-    data() {
+    setup() {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            clientRoot
         }
     }
 };

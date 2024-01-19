@@ -148,23 +148,25 @@ if(!$GLOBALS['SYMB_UID']) {
         <script>
             const mediaScientificNameAutoComplete = {
                 props: {
-                    sciname: {
-                        type: Object
+                    acceptedTaxaOnly: {
+                        type: Boolean,
+                        default: false
+                    },
+                    filename: {
+                        type: String,
+                        default: null
                     },
                     label: {
                         type: String,
                         default: 'Scientific Name'
                     },
-                    filename: {
-                        type: String
-                    },
                     limitToThesaurus: {
                         type: Boolean,
                         default: false
                     },
-                    acceptedTaxaOnly: {
-                        type: Boolean,
-                        default: false
+                    sciname: {
+                        type: Object,
+                        default: null
                     }
                 },
                 template: `
@@ -173,59 +175,55 @@ if(!$GLOBALS['SYMB_UID']) {
                 components: {
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
                 },
-                methods: {
-                    updateMediaTaxon(taxonObj) {
+                setup(props, context) {
+                    function updateMediaTaxon(taxonObj) {
                         const resObj = {};
-                        resObj['filename'] = this.filename;
+                        resObj['filename'] = props.filename;
                         resObj['sciname'] = taxonObj ? taxonObj.name : null;
                         resObj['tid'] = taxonObj ? taxonObj.tid : null;
-                        this.$emit('update:mediataxon', resObj);
+                        context.emit('update:mediataxon', resObj);
+                    }
+
+                    return {
+                        updateMediaTaxon
                     }
                 }
             };
 
             const taxaBatchMediaUploaderModule = Vue.createApp({
-                data() {
-                    return {
-                        csvFileData: Vue.ref([]),
-                        fileArr: Vue.ref([]),
-                        isEditor: Vue.ref(false),
-                        queueSize: Vue.ref(0),
-                        queueSizeLabel: Vue.ref(''),
-                        systemProperties: Vue.ref(['format','type']),
-                        taxaDataArr: Vue.ref([])
-                    }
-                },
                 components: {
                     'media-scientific-name-auto-complete': mediaScientificNameAutoComplete
                 },
                 setup() {
-                    let uploaderRef = Vue.ref(null);
-                    return {
-                        uploaderRef
+                    const store = useBaseStore();
+                    const csvFileData = Vue.ref([]);
+                    const fileArr = Vue.ref([]);
+                    const isEditor = Vue.ref(false);
+                    const maxUploadFilesize = store.getMaxUploadFilesize;
+                    const queueSize = Vue.ref(0);
+                    const queueSizeLabel = Vue.ref('');
+                    const systemProperties = Vue.ref(['format','type']);
+                    const taxaDataArr = Vue.ref([]);
+                    const uploaderRef = Vue.ref(null);
+
+                    function cancelUpload() {
+                        csvFileData.value = [];
+                        fileArr.value = [];
+                        taxaDataArr.value = [];
+                        updateQueueSize();
+                        uploaderRef.value.reset();
                     }
-                },
-                mounted() {
-                    this.setEditor();
-                },
-                methods: {
-                    cancelUpload(){
-                        this.csvFileData = [];
-                        this.fileArr = [];
-                        this.taxaDataArr = [];
-                        this.updateQueueSize();
-                        this.uploaderRef.reset();
-                    },
-                    csvToArray(str){
+
+                    function csvToArray(str) {
                         const headers = str.slice(0, str.indexOf("\n")).split(',');
                         if(str.endsWith("\n")){
                             str = str.substring(0, str.length - 2);
                         }
                         const rows = str.slice(str.indexOf("\n") + 1).split("\n");
-                        return rows.map(function (row){
+                        return rows.map((row) => {
                             if(row){
                                 const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                                return headers.reduce(function (object, header, index) {
+                                return headers.reduce((object, header, index) => {
                                     const fieldName = header.trim();
                                     let fieldValue = values[index] ? values[index].replace('\r', '') : '';
                                     if(fieldValue.startsWith('"')){
@@ -236,17 +234,19 @@ if(!$GLOBALS['SYMB_UID']) {
                                 }, {});
                             }
                         });
-                    },
-                    initializeUpload(){
-                        this.fileArr.forEach((file) => {
+                    }
+
+                    function initializeUpload() {
+                        fileArr.value.forEach((file) => {
                             if(file.hasOwnProperty('tid') && file.tid && Number(file.tid) > 0){
                                 file['metadata'].push({name: 'tid', value: file.tid, system: true});
-                                this.uploaderRef.updateFileStatus(file,'idle');
+                                uploaderRef.value.updateFileStatus(file,'idle');
                             }
                         });
-                        this.uploaderRef.upload();
-                    },
-                    parseScinameFromFilename(fileName){
+                        uploaderRef.value.upload();
+                    }
+
+                    function parseScinameFromFilename(fileName) {
                         let adjustedFileName = fileName.replace(/_/g, ' ');
                         adjustedFileName = adjustedFileName.replace(/\s+/g, ' ').trim();
                         const lastDotIndex = adjustedFileName.lastIndexOf('.');
@@ -258,20 +258,21 @@ if(!$GLOBALS['SYMB_UID']) {
                                 adjustedFileName = adjustedFileName.substring(0, lastSpaceIndex);
                             }
                         }
-                        this.setTaxaData([adjustedFileName],fileName);
-                    },
-                    processCsvFile(file){
+                        setTaxaData([adjustedFileName],fileName);
+                    }
+
+                    function processCsvFile(file) {
                         const fileReader = new FileReader();
                         fileReader.onload = () => {
-                            this.csvFileData = this.csvToArray(fileReader.result);
-                            if(this.csvFileData.length > 0){
+                            csvFileData.value = csvToArray(fileReader.result);
+                            if(csvFileData.value.length > 0){
                                 const taxaArr = [];
-                                this.csvFileData.forEach((dataObj) => {
+                                csvFileData.value.forEach((dataObj) => {
                                     if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.includes(dataObj['scientificname'])){
                                         taxaArr.push(dataObj['scientificname']);
                                     }
                                     if(dataObj.hasOwnProperty('filename') && dataObj['filename']){
-                                        const file = this.fileArr.find((obj) => obj.name.toLowerCase() === dataObj['filename'].toLowerCase());
+                                        const file = fileArr.value.find((obj) => obj.name.toLowerCase() === dataObj['filename'].toLowerCase());
                                         if(file){
                                             const keys = Object.keys(dataObj);
                                             keys.forEach((key) => {
@@ -285,21 +286,22 @@ if(!$GLOBALS['SYMB_UID']) {
                                                             existingData['value'] = dataObj[key];
                                                         }
                                                         else{
-                                                            file['metadata'].push({name: key, value: dataObj[key], system: this.systemProperties.includes(key)});
+                                                            file['metadata'].push({name: key, value: dataObj[key], system: systemProperties.value.includes(key)});
                                                         }
                                                     }
                                                 }
                                             });
-                                            this.setAdditionalData(file);
+                                            setAdditionalData(file);
                                         }
                                     }
                                 });
-                                this.setTaxaData(taxaArr);
+                                setTaxaData(taxaArr);
                             }
                         };
                         fileReader.readAsText(file);
-                    },
-                    processImageFileData(file, csvData){
+                    }
+
+                    function processImageFileData(file, csvData) {
                         file['metadata'].push({name: 'type', value: 'StillImage', system: true});
                         file['metadata'].push({name: 'action', value: 'uploadTaxonImage', system: true});
                         file['metadata'].push({name: 'photographer', value: ((csvData && csvData.hasOwnProperty('photographer') && csvData['photographer'] !== '') ? csvData['photographer'] : ''), system: false});
@@ -309,8 +311,9 @@ if(!$GLOBALS['SYMB_UID']) {
                         file['metadata'].push({name: 'copyright', value: ((csvData && csvData.hasOwnProperty('copyright') && csvData['copyright'] !== '') ? csvData['copyright'] : ''), system: false});
                         file['metadata'].push({name: 'locality', value: ((csvData && csvData.hasOwnProperty('locality') && csvData['locality'] !== '') ? csvData['locality'] : ''), system: false});
                         file['metadata'].push({name: 'notes', value: ((csvData && csvData.hasOwnProperty('notes') && csvData['notes'] !== '') ? csvData['notes'] : ''), system: false});
-                    },
-                    processMediaFileData(file, csvData){
+                    }
+
+                    function processMediaFileData(file, csvData) {
                         if(file.name.endsWith(".mp4")){
                             file['metadata'].push({name: 'type', value: 'MovingImage', system: true});
                             file['metadata'].push({name: 'format', value: 'video/mp4', system: true});
@@ -353,19 +356,22 @@ if(!$GLOBALS['SYMB_UID']) {
                         file['metadata'].push({name: 'bibliographiccitation', value: ((csvData && csvData.hasOwnProperty('bibliographiccitation') && csvData['bibliographiccitation'] !== '') ? csvData['bibliographiccitation'] : ''), system: false});
                         file['metadata'].push({name: 'furtherinformationurl', value: ((csvData && csvData.hasOwnProperty('furtherinformationurl') && csvData['furtherinformationurl'] !== '') ? csvData['furtherinformationurl'] : ''), system: false});
                         file['metadata'].push({name: 'accessuri', value: ((csvData && csvData.hasOwnProperty('accessuri') && csvData['accessuri'] !== '') ? csvData['accessuri'] : ''), system: false});
-                    },
-                    processUploaded(info){
+                    }
+
+                    function processUploaded(info) {
                         info.files.forEach((file) => {
-                            this.removePickedFile(file);
+                            removePickedFile(file);
                         });
-                    },
-                    removePickedFile(file){
-                        const fileIndex = this.fileArr.indexOf(file);
-                        this.fileArr.splice(fileIndex,1);
-                        this.uploaderRef.removeFile(file);
-                        this.updateQueueSize();
-                    },
-                    setAdditionalData(file){
+                    }
+
+                    function removePickedFile(file) {
+                        const fileIndex = fileArr.value.indexOf(file);
+                        fileArr.value.splice(fileIndex,1);
+                        uploaderRef.value.removeFile(file);
+                        updateQueueSize();
+                    }
+
+                    function setAdditionalData(file) {
                         let additionalData = false;
                         file['metadata'].forEach((data) => {
                             if(data.value && data.value !== '' && !data.system){
@@ -373,9 +379,10 @@ if(!$GLOBALS['SYMB_UID']) {
                             }
                         });
                         file['additionalData'] = additionalData;
-                        this.uploaderRef.updateFileStatus(file,new Date().toTimeString());
-                    },
-                    setEditor(){
+                        uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
+                    }
+
+                    function setEditor() {
                         const formData = new FormData();
                         formData.append('permission', 'TaxonProfile');
                         formData.append('action', 'validatePermission');
@@ -385,11 +392,12 @@ if(!$GLOBALS['SYMB_UID']) {
                         })
                         .then((response) => {
                             response.text().then((res) => {
-                                this.isEditor = Number(res) === 1;
+                                isEditor.value = Number(res) === 1;
                             });
                         });
-                    },
-                    setTaxaData(nameArr,fileName = null){
+                    }
+
+                    function setTaxaData(nameArr, fileName = null) {
                         const formData = new FormData();
                         formData.append('taxa', JSON.stringify(nameArr));
                         formData.append('action', 'getTaxaArrFromNameArr');
@@ -399,23 +407,24 @@ if(!$GLOBALS['SYMB_UID']) {
                         })
                         .then((response) => {
                             response.json().then((resObj) => {
-                                this.taxaDataArr = this.taxaDataArr.concat(resObj);
+                                taxaDataArr.value = taxaDataArr.value.concat(resObj);
                                 if(fileName && resObj.length === 1){
-                                    const file = this.fileArr.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
+                                    const file = fileArr.value.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
                                     file['scientificname'] = resObj[0]['sciname'];
                                     file['tid'] = resObj[0]['tid'];
-                                    this.uploaderRef.updateFileStatus(file,new Date().toTimeString());
+                                    uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
                                 }
-                                this.updateMediaDataTids();
+                                updateMediaDataTids();
                             });
                         });
-                    },
-                    updateMediaDataTids(){
-                        this.fileArr.forEach((file) => {
+                    }
+
+                    function updateMediaDataTids() {
+                        fileArr.value.forEach((file) => {
                             if(!file.hasOwnProperty('tid') || !file.tid || file.tid === ''){
                                 const sciname = file.scientificname;
                                 if(sciname){
-                                    const taxonData = this.taxaDataArr.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
+                                    const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
                                     if(taxonData){
                                         file.tid = taxonData['tid'];
                                         file.errorMessage = '';
@@ -423,13 +432,14 @@ if(!$GLOBALS['SYMB_UID']) {
                                     else{
                                         file.errorMessage = 'Scientific name not found in taxonomic thesaurus';
                                     }
-                                    this.uploaderRef.updateFileStatus(file,new Date().toTimeString());
+                                    uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
                                 }
                             }
                         });
-                    },
-                    updateMediaScientificName(taxonObj) {
-                        const file = this.fileArr.find((obj) => obj.name.toLowerCase() === taxonObj['filename'].toLowerCase());
+                    }
+
+                    function updateMediaScientificName(taxonObj) {
+                        const file = fileArr.value.find((obj) => obj.name.toLowerCase() === taxonObj['filename'].toLowerCase());
                         file['scientificname'] = taxonObj['sciname'];
                         file['tid'] = taxonObj['tid'];
                         if(taxonObj['sciname'] && taxonObj['tid']){
@@ -441,18 +451,20 @@ if(!$GLOBALS['SYMB_UID']) {
                         else{
                             file['errorMessage'] = 'Scientific name required';
                         }
-                        this.uploaderRef.updateFileStatus(file,new Date().toTimeString());
-                    },
-                    updateQueueSize(){
+                        uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
+                    }
+
+                    function updateQueueSize() {
                         let size = 0;
-                        this.fileArr.forEach((file) => {
+                        fileArr.value.forEach((file) => {
                             size += file.size;
                         });
                         const sizeMb = (Math.round((size / 1000000) * 10 ) / 10);
-                        this.queueSize = size;
-                        this.queueSizeLabel = sizeMb.toString() + 'MB';
-                    },
-                    uploadFiles(files){
+                        queueSize.value = size;
+                        queueSizeLabel.value = sizeMb.toString() + 'MB';
+                    }
+
+                    function uploadFiles(files) {
                         if(files[0].hasOwnProperty('tid') && files[0].tid && Number(files[0].tid) > 0){
                             const typeData = files[0]['metadata'].find((obj) => obj.name === 'type');
                             if(typeData.value === 'StillImage' || typeData.value === 'MovingImage' || typeData.value === 'Sound'){
@@ -469,9 +481,10 @@ if(!$GLOBALS['SYMB_UID']) {
                         else{
                             return false;
                         }
-                    },
-                    validateFiles(files){
-                        const maxFileSizeBytes = MAX_UPLOAD_FILESIZE * 1000 * 1000;
+                    }
+
+                    function validateFiles(files) {
+                        const maxFileSizeBytes = maxUploadFilesize * 1000 * 1000;
                         const videoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
                         const audioTypes = ['audio/mpeg', 'audio/ogg', 'audio/wav'];
                         const fileExtensionTypes = ['jpeg', 'jpg', 'png', 'zc'];
@@ -480,22 +493,22 @@ if(!$GLOBALS['SYMB_UID']) {
                             const fileType = file.type;
                             const fileName = file.name;
                             const fileExtension = fileName.split('.').pop().toLowerCase();
-                            const existingData = this.fileArr.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
+                            const existingData = fileArr.value.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
                             if(fileName.endsWith(".csv")){
-                                this.processCsvFile(file);
+                                processCsvFile(file);
                             }
                             else if(!existingData && (file.size <= maxFileSizeBytes && (videoTypes.includes(fileType) || audioTypes.includes(fileType) || fileExtensionTypes.includes(fileExtension)))){
                                 let tid = null;
-                                let csvData = this.csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
+                                let csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
                                 if(!csvData){
-                                    csvData = this.csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
+                                    csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
                                 }
                                 if(!csvData || !csvData.hasOwnProperty('scientificname')){
-                                    this.parseScinameFromFilename(file.name);
+                                    parseScinameFromFilename(file.name);
                                 }
                                 const sciname = (csvData && csvData.hasOwnProperty('scientificname')) ? csvData['scientificname'] : null;
                                 if(sciname){
-                                    const taxonData = this.taxaDataArr.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
+                                    const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
                                     if(taxonData){
                                         tid = taxonData['tid'];
                                     }
@@ -514,18 +527,37 @@ if(!$GLOBALS['SYMB_UID']) {
                                 file['metadata'] = [];
                                 file['correctedSizeLabel'] =   (Math.round((file.size / 1000000) * 10 ) / 10).toString() + 'MB';
                                 if(videoTypes.includes(fileType) || audioTypes.includes(fileType) || fileName.endsWith(".zc")){
-                                    this.processMediaFileData(file, csvData);
+                                    processMediaFileData(file, csvData);
                                 }
                                 else{
-                                    this.processImageFileData(file, csvData);
+                                    processImageFileData(file, csvData);
                                 }
-                                this.setAdditionalData(file);
-                                this.fileArr.push(file);
-                                this.updateQueueSize();
+                                setAdditionalData(file);
+                                fileArr.value.push(file);
+                                updateQueueSize();
                                 returnArr.push(file);
                             }
                         });
                         return returnArr;
+                    }
+
+                    Vue.onMounted(() => {
+                        setEditor();
+                    });
+
+                    return {
+                        csvFileData,
+                        isEditor,
+                        queueSize,
+                        queueSizeLabel,
+                        uploaderRef,
+                        cancelUpload,
+                        initializeUpload,
+                        processUploaded,
+                        removePickedFile,
+                        updateMediaScientificName,
+                        uploadFiles,
+                        validateFiles
                     }
                 }
             });

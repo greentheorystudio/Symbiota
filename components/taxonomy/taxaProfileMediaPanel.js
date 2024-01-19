@@ -1,7 +1,10 @@
 const taxaProfileMediaPanel = {
-    props: [
-        'taxon'
-    ],
+    props: {
+        taxon: {
+            type: Object,
+            default: {}
+        }
+    },
     template: `
         <template v-if="taxon.media.length > 0">
             <div class="expansion-container">
@@ -77,9 +80,12 @@ const taxaProfileMediaPanel = {
             </div>
         </template>
     `,
-    data() {
+    setup() {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            clientRoot
         }
     }
 };

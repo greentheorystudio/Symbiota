@@ -1,22 +1,46 @@
 const useBaseStore = Pinia.defineStore('base', {
     state: () => ({
+        adminEmail: ADMIN_EMAIL,
         clientRoot: CLIENT_ROOT,
-        springUid: SPRING_UID,
+        defaultLanguage: DEFAULT_LANG,
+        emailConfigured: EMAIL_CONFIGURED,
+        maxUploadFilesize: MAX_UPLOAD_FILESIZE,
+        solrMode: SOLR_MODE,
+        symbUid: SYMB_UID,
+        taxonomicRanks: TAXONOMIC_RANKS,
         userDisplayName: USER_DISPLAY_NAME,
-        userRights: {}
+        validUser: VALID_USER
     }),
     getters: {
-        getClientRoot(state) {
-            return state.clientRoot
+        getAdminEmail(state) {
+            return state.adminEmail;
         },
-        getSpringUid(state) {
-            return state.springUid
+        getClientRoot(state) {
+            return state.clientRoot;
+        },
+        getDefaultLanguage(state) {
+            return state.defaultLanguage;
+        },
+        getEmailConfigured(state) {
+            return state.emailConfigured;
+        },
+        getMaxUploadFilesize(state) {
+            return state.maxUploadFilesize;
+        },
+        getSolrMode(state) {
+            return state.solrMode;
+        },
+        getSymbUid(state) {
+            return state.symbUid;
+        },
+        getTaxonomicRanks(state) {
+            return state.taxonomicRanks;
         },
         getUserDisplayName(state) {
-            return state.userDisplayName
+            return state.userDisplayName;
         },
-        getUserRights(state) {
-            return state.userRights
+        getValidUser(state) {
+            return state.validUser;
         }
     },
     actions: {
@@ -27,19 +51,6 @@ const useBaseStore = Pinia.defineStore('base', {
                 window.location.href = this.clientRoot + '/index.php';
                 this.userRights = Object.assign({}, {});
             })
-        },
-        async setUserRights() {
-            const formData = new FormData();
-            formData.append('action', 'getCurrentUserRights');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.json().then((res) => {
-                    this.userRights = Object.assign({}, res);
-                });
-            });
         }
     }
 });

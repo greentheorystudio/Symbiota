@@ -40,17 +40,22 @@ const taxaProfileImageCarousel = {
             </q-carousel>
         </div>
     `,
-    data() {
-        return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+    setup(props, context) {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
+        function hideImageCarousel() {
+            context.emit('update:show-image-carousel', false);
         }
-    },
-    methods: {
-        hideImageCarousel(){
-            this.$emit('update:show-image-carousel', false);
-        },
-        updateCurrentImage(val){
-            this.$emit('update:current-image', val);
+
+        function updateCurrentImage(val) {
+            context.emit('update:current-image', val);
+        }
+
+        return {
+            clientRoot,
+            hideImageCarousel,
+            updateCurrentImage
         }
     }
 };

@@ -15,44 +15,46 @@ const multipleLanguageAutoComplete = {
     template: `
         <q-select ref="inputRef" v-model="languageArr" outlined dense options-dense hide-dropdown-icon clearable use-input multiple use-chips input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
     `,
-    data() {
-        return {
-            clearInput: Vue.ref(false),
-            autocompleteOptions: Vue.ref([])
-        }
-    },
-    setup() {
-        const $q = useQuasar();
+    setup(props, context) {
+        const { showNotification } = useCore();
+        const store = useBaseStore();
+        const autocompleteOptions = Vue.ref([]);
+        const clearInput = Vue.ref(false);
+        const defaultLanguage = store.getDefaultLanguage;
         let inputRef = Vue.ref(null);
-        return {
-            inputRef,
-            showNotification(type, text){
-                $q.notify({
-                    type: type,
-                    icon: null,
-                    message: text,
-                    multiLine: true,
-                    position: 'top',
-                    timeout: 5000
-                });
+
+        function blurAction(val) {
+            if(val.target.value && !clearInput.value){
+                const optionObj = autocompleteOptions.value.find(option => option['name'].toLowerCase() === val.target.value.toLowerCase());
+                if(optionObj){
+                    const currLanguageArr = props.languageArr;
+                    currLanguageArr.push(optionObj);
+                    processChange(currLanguageArr);
+                }
+                else{
+                    showNotification('negative','That language was not found in the database.');
+                }
+            }
+            clearInput.value = false;
+        }
+
+        function clearAction() {
+            clearInput.value = true;
+        }
+
+        function createValue(val, done) {
+            if(val.length > 0) {
+                const optionObj = autocompleteOptions.value.find(option => option['name'].toLowerCase() === val.toLowerCase());
+                if(optionObj){
+                    done(optionObj, 'add');
+                }
+                else{
+                    showNotification('negative','That language was not found in the database.');
+                }
             }
         }
-    },
-    methods: {
-        processChange(languageObj) {
-            const newValArr = [];
-            if(languageObj){
-                languageObj.forEach((lang) => {
-                    const existingObj = newValArr.find(obj => obj['name'] === lang['name']);
-                    if(!existingObj){
-                        newValArr.push(lang);
-                    }
-                });
-            }
-            this.$emit('update:language', newValArr);
-            this.inputRef.updateInputValue('');
-        },
-        getOptions(val, update) {
+
+        function getOptions(val, update) {
             update(() => {
                 if(val.length > 1) {
                     const formData = new FormData();
@@ -64,53 +66,31 @@ const multipleLanguageAutoComplete = {
                     })
                     .then((response) => response.json())
                     .then((result) => {
-                        this.autocompleteOptions = result;
+                        autocompleteOptions.value = result;
                     });
                 }
                 else{
-                    this.autocompleteOptions = [];
+                    autocompleteOptions.value = [];
                 }
             });
-        },
-        blurAction(val) {
-            if(val.target.value && !this.clearInput){
-                const optionObj = this.autocompleteOptions.find(option => option['name'].toLowerCase() === val.target.value.toLowerCase());
-                if(optionObj){
-                    const currLanguageArr = this.languageArr;
-                    currLanguageArr.push(optionObj);
-                    this.processChange(currLanguageArr);
-                }
-                else{
-                    this.showNotification('negative','That language was not found in the database.');
-                }
+        }
+
+        function processChange(languageObj) {
+            const newValArr = [];
+            if(languageObj){
+                languageObj.forEach((lang) => {
+                    const existingObj = newValArr.find(obj => obj['name'] === lang['name']);
+                    if(!existingObj){
+                        newValArr.push(lang);
+                    }
+                });
             }
-            this.clearInput = false;
-        },
-        clearAction() {
-            this.clearInput = true;
-        },
-        createValue(val, done) {
-            if(val.length > 0) {
-                const optionObj = this.autocompleteOptions.find(option => option['name'].toLowerCase() === val.toLowerCase());
-                if(optionObj){
-                    done(optionObj, 'add');
-                }
-                else{
-                    this.showNotification('negative','That language was not found in the database.');
-                }
-            }
-        },
-        setLanguage() {
-            let url;
-            if(this.language && (!this.language.hasOwnProperty('iso') || !this.language['iso']) && this.language.hasOwnProperty('name') && this.language['name']){
-                url = languageApiUrl + '?action=getLanguageByName&name=' + this.language['name'];
-            }
-            else if(this.language && (!this.language.hasOwnProperty('name') || !this.language['name']) && this.language.hasOwnProperty('iso') && this.language['iso']){
-                url = languageApiUrl + '?action=getLanguageByIso&iso=' + this.language['iso'];
-            }
-            else{
-                url = languageApiUrl + '?action=getLanguageByIso&iso=' + DEFAULT_LANG;
-            }
+            context.emit('update:language', newValArr);
+            inputRef.value.updateInputValue('');
+        }
+
+        function setLanguage() {
+            const url = languageApiUrl + '?action=getLanguageByIso&iso=' + defaultLanguage;
             fetch(url)
             .then((response) => {
                 if(response.ok){
@@ -118,11 +98,22 @@ const multipleLanguageAutoComplete = {
                 }
             })
             .then((data) => {
-                this.$emit('update:language', [data]);
+                context.emit('update:language', [data]);
             });
         }
-    },
-    mounted() {
-        this.setLanguage();
+
+        Vue.onMounted(() => {
+            setLanguage();
+        });
+
+        return {
+            autocompleteOptions,
+            inputRef,
+            blurAction,
+            clearAction,
+            createValue,
+            getOptions,
+            processChange
+        }
     }
 };

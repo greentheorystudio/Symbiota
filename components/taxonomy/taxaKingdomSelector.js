@@ -1,25 +1,29 @@
 const taxaKingdomSelector = {
-    props: [
-        'selected-kingdom',
-        'label',
-        'disable'
-    ],
+    props: {
+        disable: {
+            type: Boolean,
+            default: false
+        },
+        label: {
+            type: String,
+            default: null
+        },
+        selectedKingdom: {
+            type: Object,
+            default: null
+        }
+    },
     template: `
         <q-select outlined v-model="selectedKingdom" :options="kingdomOpts" option-value="id" option-label="name" :label="label" @update:model-value="processChange" :readonly="disable" dense options-dense />
     `,
-    data() {
-        return {
-            kingdomOpts: Vue.ref([])
-        };
-    },
-    mounted() {
-        this.setKingdomOptions();
-    },
-    methods: {
-        processChange(kingdomobj) {
-            this.$emit('update:selected-kingdom', kingdomobj);
-        },
-        setKingdomOptions() {
+    setup(props, context) {
+        const kingdomOpts = Vue.ref([]);
+
+        function processChange(kingdomobj) {
+            context.emit('update:selected-kingdom', kingdomobj);
+        }
+
+        function setKingdomOptions() {
             const url = taxonomyApiUrl + '?action=getKingdomArr';
             fetch(url)
             .then((response) => {
@@ -28,8 +32,17 @@ const taxaKingdomSelector = {
                 }
             })
             .then((data) => {
-                this.kingdomOpts = data;
+                kingdomOpts.value = data;
             });
+        }
+
+        Vue.onMounted(() => {
+            setKingdomOptions();
+        });
+
+        return {
+            kingdomOpts,
+            processChange
         }
     }
 };

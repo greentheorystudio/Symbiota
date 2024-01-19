@@ -1,10 +1,8 @@
 const taxaProfileTaxonSynonyms = {
-    props: [
-        'synonyms'
-    ],
-    watch: {
-        synonyms: function(){
-            this.processSynonyms();
+    props: {
+        synonyms: {
+            type: Array,
+            default: []
         }
     },
     template: `
@@ -30,9 +28,11 @@ const taxaProfileTaxonSynonyms = {
             </div>
         </template>
     `,
-    data() {
+    setup() {
+        const showAll = Vue.ref(false);
+
         return {
-            showAll: Vue.ref(false)
-        };
+            showAll
+        }
     }
 };

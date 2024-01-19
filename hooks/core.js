@@ -104,6 +104,17 @@ function useCore() {
         });
     }
 
+    function getErrorResponseText(status, statusText){
+        let text;
+        if(status === 0){
+            text = 'Cancelled';
+        }
+        else{
+            text = 'Error: ' + status + ' ' + statusText;
+        }
+        return text;
+    }
+
     function getRgbaStrFromHexOpacity(hex, opacity) {
         const rgbArr = hexToRgb(hex);
         let retStr = '';
@@ -199,6 +210,7 @@ function useCore() {
         convertMysqlWKT,
         generateRandHexColor,
         getArrayBuffer,
+        getErrorResponseText,
         getRgbaStrFromHexOpacity,
         hexToRgb,
         hideWorking,

@@ -1,14 +1,12 @@
 const taxaProfileDescriptionTabs = {
-    props: [
-        'description-arr',
-        'glossary-arr'
-    ],
-    watch: {
-        descriptionArr: function(){
-            this.processTabs();
+    props: {
+        descriptionArr: {
+            type: Array,
+            default: []
         },
-        glossaryArr: function(){
-            this.processTabs();
+        glossaryArr: {
+            type: Array,
+            default: []
         }
     },
     template: `
@@ -63,22 +61,33 @@ const taxaProfileDescriptionTabs = {
             </template>
         </q-card>
     `,
-    data() {
-        return {
-            selectedDescTab: Vue.ref(null)
+    setup(props) {
+        const propsRefs = Vue.toRefs(props);
+        const selectedDescTab = Vue.ref(null);
+
+        Vue.watch(propsRefs.descriptionArr, () => {
+            processTabs();
+        });
+
+        Vue.watch(propsRefs.glossaryArr, () => {
+            processTabs();
+        });
+
+        function processTabs() {
+            if(props.descriptionArr.length > 0){
+                selectedDescTab.value = props.descriptionArr[0]['tdbid'];
+            }
+            else if(props.glossaryArr.length > 0){
+                selectedDescTab.value = 'glossaryTab';
+            }
         }
-    },
-    mounted(){
-        this.processTabs();
-    },
-    methods: {
-        processTabs() {
-            if(this.descriptionArr.length > 0){
-                this.selectedDescTab = this.descriptionArr[0]['tdbid'];
-            }
-            else if(this.glossaryArr.length > 0){
-                this.selectedDescTab = 'glossaryTab';
-            }
+
+        Vue.onMounted(() => {
+            processTabs();
+        });
+
+        return {
+
         }
     }
 };

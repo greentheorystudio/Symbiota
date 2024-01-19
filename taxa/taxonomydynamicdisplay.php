@@ -82,37 +82,26 @@ header('X-Frame-Options: SAMEORIGIN');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=20230627" type="text/javascript"></script>
     <script>
         const taxonomyDynamicDisplayModule = Vue.createApp({
-            data() {
-                return {
-                    displayAuthors: Vue.ref(false),
-                    isEditor: Vue.ref(false),
-                    loading: Vue.ref(false),
-                    taxaNodes: Vue.ref([]),
-                    selectedTid: Vue.ref(null),
-                    targetFound: Vue.ref(false),
-                    targetTaxon: Vue.ref(null),
-                    targetTaxonPathArr: Vue.ref([])
-                }
-            },
             components: {
                 'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
             },
             setup() {
-                let targetNodeRef = Vue.ref(null);
-                let treeRef = Vue.ref(null);
-                return {
-                    targetNodeRef,
-                    treeRef
-                }
-            },
-            mounted() {
-                this.setEditor();
-                this.setKingdomNodes();
-            },
-            methods: {
-                getTargetTaxonPath(){
+                const store = useBaseStore();
+                const clientRoot = store.getClientRoot;
+                const displayAuthors = Vue.ref(false);
+                const isEditor = Vue.ref(false);
+                const loading = Vue.ref(false);
+                const selectedTid = Vue.ref(null);
+                const targetFound = Vue.ref(false);
+                const targetNodeRef = Vue.ref(null);
+                const targetTaxon = Vue.ref(null);
+                const targetTaxonPathArr = Vue.ref([]);
+                const taxaNodes = Vue.ref([]);
+                const treeRef = Vue.ref(null);
+
+                function getTargetTaxonPath() {
                     const formData = new FormData();
-                    formData.append('tid', this.selectedTid);
+                    formData.append('tid', selectedTid.value);
                     formData.append('action', 'getTaxonomicTreeTaxonPath');
                     fetch(taxonomyApiUrl, {
                         method: 'POST',
@@ -120,12 +109,13 @@ header('X-Frame-Options: SAMEORIGIN');
                     })
                     .then((response) => {
                         response.json().then((resObj) => {
-                            this.targetTaxonPathArr = resObj;
-                            this.processTargetTaxonPath();
+                            targetTaxonPathArr.value = resObj;
+                            processTargetTaxonPath();
                         });
                     });
-                },
-                getTaxonChildren({ key, done }){
+                }
+
+                function getTaxonChildren({ key, done }) {
                     const formData = new FormData();
                     formData.append('tid', key);
                     formData.append('action', 'getTaxonomicTreeChildNodes');
@@ -136,62 +126,67 @@ header('X-Frame-Options: SAMEORIGIN');
                     .then((response) => {
                         response.json().then((resObj) => {
                             done(resObj);
-                            this.processTargetTaxonPath();
+                            processTargetTaxonPath();
                         });
                     });
-                },
-                initializeGetTargetTaxon(){
-                    if(this.selectedTid){
-                        this.loading = true;
-                        this.targetFound = false;
-                        const openNodes = this.treeRef.getExpandedNodes();
+                }
+
+                function initializeGetTargetTaxon() {
+                    if(selectedTid.value){
+                        loading.value = true;
+                        targetFound.value = false;
+                        const openNodes = treeRef.value.getExpandedNodes();
                         if(openNodes.length > 0){
-                            this.treeRef.collapseAll();
+                            treeRef.value.collapseAll();
                         }
                         else{
-                            this.getTargetTaxonPath();
+                            getTargetTaxonPath();
                         }
                     }
-                },
-                processClick(tid){
-                    this.selectedTid = this.targetTaxon ? this.targetTaxon.tid : null;
+                }
+
+                function processClick(tid) {
+                    selectedTid.value = targetTaxon.value ? targetTaxon.value.tid : null;
                     if(!tid){
-                        tid = this.selectedTid;
+                        tid = selectedTid.value;
                     }
                     if(tid){
                         let url;
-                        if(this.isEditor){
-                            url = CLIENT_ROOT + '/taxa/taxonomy/taxonomyeditor.php?tid=' + tid;
+                        if(isEditor.value){
+                            url = clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + tid;
                         }
                         else{
-                            url = CLIENT_ROOT + '/taxa/index.php?taxon=' + tid;
+                            url = clientRoot + '/taxa/index.php?taxon=' + tid;
                         }
                         window.open(url, '_blank');
                     }
-                },
-                processClose(){
-                    if(this.loading){
-                        const openNodes = this.treeRef.getExpandedNodes();
+                }
+
+                function processClose() {
+                    if(loading.value){
+                        const openNodes = treeRef.value.getExpandedNodes();
                         if(openNodes.length === 0){
-                            this.getTargetTaxonPath();
+                            getTargetTaxonPath();
                         }
                     }
-                },
-                processTargetTaxonPath(){
-                    if(this.targetTaxonPathArr.length > 0 && this.treeRef.getNodeByKey(this.targetTaxonPathArr[0]['tid'])){
-                        this.treeRef.setExpanded(this.targetTaxonPathArr[0]['tid'],true);
-                        this.targetTaxonPathArr.splice(0, 1);
+                }
+
+                function processTargetTaxonPath() {
+                    if(targetTaxonPathArr.value.length > 0 && treeRef.value.getNodeByKey(targetTaxonPathArr.value[0]['tid'])){
+                        treeRef.value.setExpanded(targetTaxonPathArr.value[0]['tid'],true);
+                        targetTaxonPathArr.value.splice(0, 1);
                     }
-                    else if(this.selectedTid && this.targetNodeRef && !this.targetFound){
-                        this.targetNodeRef.scrollIntoView();
-                        this.targetFound = true;
-                        this.loading = false;
+                    else if(selectedTid.value && targetNodeRef.value && !targetFound.value){
+                        targetNodeRef.value.scrollIntoView();
+                        targetFound.value = true;
+                        loading.value = false;
                     }
                     else{
-                        this.loading = false;
+                        loading.value = false;
                     }
-                },
-                setEditor(){
+                }
+
+                function setEditor() {
                     const formData = new FormData();
                     formData.append('permission', 'Taxonomy');
                     formData.append('action', 'validatePermission');
@@ -201,11 +196,12 @@ header('X-Frame-Options: SAMEORIGIN');
                     })
                     .then((response) => {
                         response.text().then((res) => {
-                            this.isEditor = Number(res) === 1;
+                            isEditor.value = Number(res) === 1;
                         });
                     });
-                },
-                setKingdomNodes(){
+                }
+
+                function setKingdomNodes() {
                     const formData = new FormData();
                     formData.append('action', 'getTaxonomicTreeKingdomNodes');
                     fetch(taxonomyApiUrl, {
@@ -214,14 +210,36 @@ header('X-Frame-Options: SAMEORIGIN');
                     })
                     .then((response) => {
                         response.json().then((resObj) => {
-                            this.taxaNodes = resObj;
+                            taxaNodes.value = resObj;
                         });
                     });
-                },
-                updateTargetTaxon(taxonObj) {
-                    this.targetTaxonPathArr = [];
-                    this.targetTaxon = taxonObj;
-                    this.selectedTid = taxonObj ? taxonObj['tid'] : null;
+                }
+
+                function updateTargetTaxon(taxonObj) {
+                    targetTaxonPathArr.value = [];
+                    targetTaxon.value = taxonObj;
+                    selectedTid.value = taxonObj ? taxonObj['tid'] : null;
+                }
+
+                Vue.onMounted(() => {
+                    setEditor();
+                    setKingdomNodes();
+                });
+                
+                return {
+                    displayAuthors,
+                    loading,
+                    selectedTid,
+                    targetNodeRef,
+                    targetTaxon,
+                    taxaNodes,
+                    treeRef,
+                    getTaxonChildren,
+                    initializeGetTargetTaxon,
+                    processClick,
+                    processClose,
+                    processTargetTaxonPath,
+                    updateTargetTaxon
                 }
             }
         });

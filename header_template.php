@@ -75,35 +75,38 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
         document.addEventListener("DOMContentLoaded", () => {
             const dropDownNavBar = Vue.createApp({
                 setup() {
+                    const store = useBaseStore();
+                    const storeRefs = Pinia.storeToRefs(store);
+                    const clientRoot = store.getClientRoot;
                     const navBarData = Vue.ref([
-                        {url: CLIENT_ROOT + '/index.php', label: 'Home'},
-                        {url: CLIENT_ROOT + '/collections/index.php', label: 'Search Collections'},
-                        {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true},
-                        {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
-                        {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'},
+                        {url: clientRoot + '/index.php', label: 'Home'},
+                        {url: clientRoot + '/collections/index.php', label: 'Search Collections'},
+                        {url: clientRoot + '/spatial/index.php', label: 'Spatial Module', newTab: true},
+                        {url: clientRoot + '/imagelib/search.php', label: 'Image Search'},
+                        {url: clientRoot + '/imagelib/index.php', label: 'Browse Images'},
                         {
-                            url: CLIENT_ROOT + '/projects/index.php',
+                            url: clientRoot + '/projects/index.php',
                             label: 'Inventories',
                             subItems: [
-                                {url: CLIENT_ROOT + '/projects/index.php?pid=1', label: 'Project 1'},
-                                {url: CLIENT_ROOT + '/projects/index.php?pid=2', label: 'Project 2'},
-                                {url: CLIENT_ROOT + '/projects/index.php?pid=3', label: 'Project 3'},
-                                {url: CLIENT_ROOT + '/projects/index.php?pid=4', label: 'Project 4'}
+                                {url: clientRoot + '/projects/index.php?pid=1', label: 'Project 1'},
+                                {url: clientRoot + '/projects/index.php?pid=2', label: 'Project 2'},
+                                {url: clientRoot + '/projects/index.php?pid=3', label: 'Project 3'},
+                                {url: clientRoot + '/projects/index.php?pid=4', label: 'Project 4'}
                             ]
                         },
                         {
                             label: 'Interactive Tools',
                             subItems: [
-                                {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=1', label: 'Dynamic Checklist 1'},
-                                {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=2', label: 'Dynamic Checklist 2'},
-                                {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=3', label: 'Dynamic Checklist 3'},
-                                {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist&tid=4', label: 'Dynamic Checklist 4'}
+                                {url: clientRoot + '/checklists/dynamicmap.php?interface=checklist&tid=1', label: 'Dynamic Checklist 1'},
+                                {url: clientRoot + '/checklists/dynamicmap.php?interface=checklist&tid=2', label: 'Dynamic Checklist 2'},
+                                {url: clientRoot + '/checklists/dynamicmap.php?interface=checklist&tid=3', label: 'Dynamic Checklist 3'},
+                                {url: clientRoot + '/checklists/dynamicmap.php?interface=checklist&tid=4', label: 'Dynamic Checklist 4'}
                             ]
                         }
                     ]);
                     let navBarTimeout = null;
                     const navBarToggle = Vue.ref({});
-                    const userDisplayName = USER_DISPLAY_NAME;
+                    const userDisplayName = storeRefs.getUserDisplayName;
                     const windowWidth = Vue.ref(0);
 
                     function  handleResize() {
@@ -114,7 +117,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                         const url = profileApiUrl + '?action=logout';
                         fetch(url)
                         .then(() => {
-                            window.location.href = CLIENT_ROOT + '/index.php';
+                            window.location.href = clientRoot + '/index.php';
                         })
                     }
 
@@ -164,6 +167,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                 }
             });
             dropDownNavBar.use(Quasar, { config: {} });
+            dropDownNavBar.use(Pinia.createPinia());
             dropDownNavBar.mount('#topNavigation');
         });
     </script>

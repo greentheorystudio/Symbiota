@@ -1,7 +1,10 @@
 const taxaProfileTaxonMap = {
-    props: [
-        'taxon'
-    ],
+    props: {
+        taxon: {
+            type: Object,
+            default: {}
+        }
+    },
     template: `
         <div class="map-thumb-frame">
             <q-card class="taxon-profile-taxon-map-card">
@@ -20,17 +23,24 @@ const taxaProfileTaxonMap = {
             </q-card>
         </div>
     `,
-    methods: {
-        openMapPopup(clustering){
+    setup(props) {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
+        function openMapPopup(clustering) {
             let taxonType;
-            if(Number(this.taxon['rankId']) < 140){
+            if(Number(props.taxon['rankId']) < 140){
                 taxonType = 4;
             }
             else{
                 taxonType = 1;
             }
-            const url = CLIENT_ROOT + '/spatial/index.php?starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
+            const url = clientRoot + '/spatial/index.php?starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + props.taxon['sciName'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
             window.open(url, '_blank');
+        }
+
+        return {
+            openMapPopup
         }
     }
 };

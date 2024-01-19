@@ -3,6 +3,10 @@ const viewProfileOccurrenceModule = {
         accountInfo: {
             type: Object,
             default: null
+        },
+        uid: {
+            type: Number,
+            default: null
         }
     },
     template: `
@@ -30,22 +34,17 @@ const viewProfileOccurrenceModule = {
             </q-card-section>
         </q-card>
     `,
-    data() {
-        return {
-            clientRoot: Vue.ref(CLIENT_ROOT),
-            collectionArr: Vue.ref([])
-        }
-    },
     components: {
         'collection-cotrol-panel-menus': collectionControlPanelMenus
     },
-    mounted() {
-        this.setAccountCollections();
-    },
-    methods: {
-        setAccountCollections(){
+    setup(props) {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+        const collectionArr = Vue.ref([]);
+
+        function setAccountCollections() {
             const formData = new FormData();
-            formData.append('uid', this.uid);
+            formData.append('uid', props.uid);
             formData.append('action', 'getAccountCollections');
             fetch(profileApiUrl, {
                 method: 'POST',
@@ -53,9 +52,18 @@ const viewProfileOccurrenceModule = {
             })
             .then((response) => {
                 response.json().then((resObj) => {
-                    this.collectionArr = resObj;
+                    collectionArr.value = resObj;
                 });
             });
+        }
+
+        Vue.onMounted(() => {
+            setAccountCollections();
+        });
+
+        return {
+            clientRoot,
+            collectionArr
         }
     }
 };
