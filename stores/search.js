@@ -11,7 +11,11 @@ const useSearchStore = Pinia.defineStore('search', {
             surveyonly: false
         },
         selections: [],
-        selectionsIds: []
+        selectionsIds: [],
+        solrFields: 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tid,scientificNameAuthorship,identifiedBy,' +
+            'dateIdentified,typeStatus,recordedBy,recordNumber,eventDate,displayDate,coll_year,coll_month,coll_day,habitat,associatedTaxa,' +
+            'cultivationStatus,country,StateProvince,county,municipality,locality,localitySecurity,localitySecurityReason,geo,minimumElevationInMeters,' +
+            'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily'
     }),
     getters: {
         getDateId(state) {
@@ -144,6 +148,9 @@ const useSearchStore = Pinia.defineStore('search', {
         getSelectionsIds(state) {
             return state.selectionsIds;
         },
+        getSOLRFields(state) {
+            return state.solrFields;
+        },
         getTimestringIdentifier() {
             return Date.now().toString();
         }
@@ -271,24 +278,42 @@ const useSearchStore = Pinia.defineStore('search', {
                 });
             }
         },
-        processGetQueryRecCnt(callback){
+        processGetQueryRecCnt(solrMode, callback){
             this.queryRecCnt = 0;
             const formData = new FormData();
             formData.append('starr', this.getSearchTermsJson);
-            formData.append('action', 'getQueryRecCnt');
-            fetch(searchApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                this.queryRecCnt = Number(res);
-                callback();
-            });
+            if(solrMode){
+                formData.append('rows', '0');
+                formData.append('start', '0');
+                formData.append('wt', 'json');
+                fetch(solrConnectorUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    this.queryRecCnt = Number(data['response']['numFound']);
+                    callback();
+                });
+            }
+            else{
+                formData.append('action', 'getQueryRecCnt');
+                fetch(searchApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    this.queryRecCnt = Number(res);
+                    callback();
+                });
+            }
         },
-        processGetQueryResultsGeoJson(index, finalIndex, callback){
+        processGetQueryResultsGeoJson(solrMode, index, finalIndex, callback){
             let startindex = 0;
             if(index > 0) {
                 startindex = index * this.lazyLoadCnt;
@@ -297,17 +322,33 @@ const useSearchStore = Pinia.defineStore('search', {
             formData.append('starr', this.getSearchTermsJson);
             formData.append('rows', this.lazyLoadCnt.toString());
             formData.append('start', startindex.toString());
-            formData.append('action', 'getQueryResultsGeoJson');
-            fetch(searchApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                callback(res, index, finalIndex);
-            });
+            if(solrMode){
+                formData.append('fl', this.getSOLRFields);
+                formData.append('wt', 'geojson');
+                fetch(solrConnectorUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    callback(res, index, finalIndex);
+                });
+            }
+            else{
+                formData.append('action', 'getQueryResultsGeoJson');
+                fetch(searchApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    callback(res, index, finalIndex);
+                });
+            }
         },
         processGetQueryResultsRecordData(index){
             this.searchRecordData = [];

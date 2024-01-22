@@ -62,7 +62,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         let tabIndex = <?php echo $tabIndex; ?>;
 
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index-old.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }

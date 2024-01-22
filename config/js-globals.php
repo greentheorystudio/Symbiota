@@ -11,9 +11,15 @@
 
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 
-    const SPATIAL_INITIAL_ZOOM = <?php echo $GLOBALS['SPATIAL_INITIAL_ZOOM']; ?>;
+    const SPATIAL_INITIAL_BASE_LAYER = '<?php echo $GLOBALS['SPATIAL_INITIAL_BASE_LAYER']; ?>';
     const SPATIAL_INITIAL_CENTER = <?php echo $GLOBALS['SPATIAL_INITIAL_CENTER']; ?>;
+    const SPATIAL_INITIAL_ZOOM = <?php echo $GLOBALS['SPATIAL_INITIAL_ZOOM']; ?>;
+    const SPATIAL_POINT_CLUSTER = <?php echo ($GLOBALS['SPATIAL_POINT_CLUSTER'] ? 'true' : 'false'); ?>;
+    const SPATIAL_POINT_CLUSTER_DISTANCE = <?php echo $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE']; ?>;
+    const SPATIAL_POINT_DISPLAY_HEAT_MAP = <?php echo ($GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'] ? 'true' : 'false'); ?>;
     const SPATIAL_POINT_FILL_COLOR = '<?php echo $GLOBALS['SPATIAL_POINT_FILL_COLOR']; ?>';
+    const SPATIAL_POINT_HEAT_MAP_BLUR = <?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR']; ?>;
+    const SPATIAL_POINT_HEAT_MAP_RADIUS = <?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS']; ?>;
     const SPATIAL_POINT_BORDER_COLOR = '<?php echo $GLOBALS['SPATIAL_POINT_BORDER_COLOR']; ?>';
     const SPATIAL_POINT_BORDER_WIDTH = <?php echo $GLOBALS['SPATIAL_POINT_BORDER_WIDTH']; ?>;
     const SPATIAL_POINT_POINT_RADIUS = <?php echo $GLOBALS['SPATIAL_POINT_POINT_RADIUS']; ?>;
@@ -37,15 +43,18 @@
 
     const http = new XMLHttpRequest();
     let abortController;
-    const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
-    const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
-    const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
-    const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
-    const taxonomyApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
-    const taxaProfileApiUrl = CLIENT_ROOT + '/api/taxa/taxaProfileController.php';
-    const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
-    const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
+    const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
+    const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
+    const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
+    const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
+    const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
+    const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';
+    const searchApiUrl = CLIENT_ROOT + '/api/search/searchController.php';
+    const solrConnectorUrl = CLIENT_ROOT + '/api/search/SOLRConnector.php';
+    const spatialApiUrl = CLIENT_ROOT + '/api/spatial/spatialController.php';
+    const taxaProfileApiUrl = CLIENT_ROOT + '/api/taxa/taxaProfileController.php';
+    const taxonomyApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
 </script>
