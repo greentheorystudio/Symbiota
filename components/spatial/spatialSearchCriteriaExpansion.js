@@ -22,7 +22,6 @@ const spatialSearchCriteriaExpansion = {
         'spatial-search-criteria-tab': spatialSearchCriteriaTab
     },
     setup() {
-        const searchStore = Vue.inject('searchStore');
         const mapSettings = Vue.inject('mapSettings');
 
         const updateMapSettings = Vue.inject('updateMapSettings');
