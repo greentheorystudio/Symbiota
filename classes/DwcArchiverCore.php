@@ -301,6 +301,15 @@ class DwcArchiverCore extends Manager{
             if(strpos($this->conditionSql,'MATCH(f.recordedby)') || strpos($this->conditionSql,'MATCH(f.locality)')){
                 $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
             }
+            if(stripos($this->conditionSql,'(i.') || stripos($this->conditionSql,'(it.') || stripos($this->conditionSql,'(ik.')){
+                $sql .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
+                if(stripos($this->conditionSql,'(it.')){
+                    $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
+                }
+                if(stripos($this->conditionSql,'(ik.')){
+                    $sql .= 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
+                }
+            }
             if(stripos($this->conditionSql,'a.stateid')){
                 $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid ';
             }
@@ -332,7 +341,7 @@ class DwcArchiverCore extends Manager{
             unset($fieldArr['collId']);
         }
         if(!$this->collArr){
-            $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences o ';
+            $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid ';
             if($this->conditionSql){
                 $sql1 .= $this->getTableJoins().$this->conditionSql;
             }
@@ -1224,7 +1233,7 @@ class DwcArchiverCore extends Manager{
             }
             $this->writeOutRecord($fh,$fieldOutArr);
             if(!$this->collArr){
-                $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences AS o ';
+                $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid ';
                 if($this->conditionSql){
                     $sql1 .= $this->getTableJoins().$this->conditionSql;
                 }
