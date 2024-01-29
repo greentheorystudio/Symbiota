@@ -49,6 +49,7 @@
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
     const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
     const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
+    const occurrenceApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceController.php';
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
     const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';

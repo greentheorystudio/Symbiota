@@ -20,7 +20,7 @@ class CollectionManager {
     public function getCollectionInfoArr($collId): array
     {
         $retArr = array();
-        $sql = 'SELECT collectionname, icon, institutioncode, collectioncode, colltype, managementtype '.
+        $sql = 'SELECT collectionname, icon, institutioncode, collectioncode, colltype, managementtype, datarecordingmethod '.
             'FROM omcollections WHERE collid = '.(int)$collId.' ';
         //echo $sql;
         $rs = $this->conn->query($sql);
@@ -31,6 +31,7 @@ class CollectionManager {
             $retArr['collectioncode'] = $r->collectioncode;
             $retArr['colltype'] = $r->colltype;
             $retArr['managementtype'] = $r->managementtype;
+            $retArr['datarecordingmethod'] = $r->datarecordingmethod;
         }
         $rs->free();
         return $retArr;

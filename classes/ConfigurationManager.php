@@ -9,81 +9,82 @@ class ConfigurationManager{
     private $conn;
 
     public $coreConfigurations = array(
-        'DEFAULT_LANG',
-        'DEFAULTCATID',
-        'DEFAULT_TITLE',
+        'ACTIVATE_CHECKLIST_FG_EXPORT',
+        'ACTIVATE_EXSICCATI',
         'ADMIN_EMAIL',
-        'MAX_UPLOAD_FILESIZE',
-        'PORTAL_GUID',
-        'SECURITY_KEY',
         'CLIENT_ROOT',
-        'SERVER_ROOT',
-        'TEMP_DIR_ROOT',
-        'LOG_PATH',
-        'PORTAL_EMAIL_ADDRESS',
+        'CSS_VERSION',
+        'CSS_VERSION_LOCAL',
+        'DEFAULT_LANG',
+        'DEFAULT_TITLE',
+        'DEFAULTCATID',
+        'DISPLAY_COMMON_NAMES',
+        'DYN_CHECKLIST_RADIUS',
         'EMAIL_CONFIGURED',
-        'SMTP_HOST',
-        'SMTP_PORT',
+        'GOOGLE_ANALYTICS_KEY',
+        'GBIF_ORG_KEY',
+        'GBIF_PASSWORD',
+        'GBIF_USERNAME',
+        'IMAGE_ROOT_PATH',
+        'IMAGE_ROOT_URL',
+        'IMG_LG_WIDTH',
+        'IMG_TN_WIDTH',
+        'IMG_WEB_WIDTH',
+        'IS_ADMIN',
+        'KEY_MOD_IS_ACTIVE',
+        'LOG_PATH',
+        'MAX_UPLOAD_FILESIZE',
+        'PARAMS_ARR',
+        'PORTAL_EMAIL_ADDRESS',
+        'PORTAL_GUID',
+        'PROCESSING_STATUS_OPTIONS',
+        'RIGHTS_TERMS',
+        'RIGHTS_TERMS_DEFS',
+        'SECURITY_KEY',
+        'SERVER_ROOT',
         'SMTP_ENCRYPTION',
         'SMTP_ENCRYPTION_MECHANISM',
-        'SMTP_USERNAME',
+        'SMTP_HOST',
         'SMTP_PASSWORD',
-        'IMAGE_ROOT_URL',
-        'IMAGE_ROOT_PATH',
-        'IMG_WEB_WIDTH',
-        'IMG_TN_WIDTH',
-        'IMG_LG_WIDTH',
-        'SOLR_URL',
+        'SMTP_PORT',
+        'SMTP_USERNAME',
         'SOLR_FULL_IMPORT_INTERVAL',
-        'GBIF_USERNAME',
-        'GBIF_PASSWORD',
-        'GBIF_ORG_KEY',
+        'SOLR_URL',
+        'SPATIAL_DRAGDROP_BORDER_COLOR',
+        'SPATIAL_DRAGDROP_BORDER_WIDTH',
+        'SPATIAL_DRAGDROP_FILL_COLOR',
+        'SPATIAL_DRAGDROP_OPACITY',
+        'SPATIAL_DRAGDROP_POINT_RADIUS',
+        'SPATIAL_DRAGDROP_RASTER_COLOR_SCALE',
+        'SPATIAL_INITIAL_BASE_LAYER',
         'SPATIAL_INITIAL_CENTER',
         'SPATIAL_INITIAL_ZOOM',
-        'SPATIAL_INITIAL_BASE_LAYER',
+        'SPATIAL_POINT_BORDER_COLOR',
+        'SPATIAL_POINT_BORDER_WIDTH',
         'SPATIAL_POINT_CLUSTER',
         'SPATIAL_POINT_CLUSTER_DISTANCE',
         'SPATIAL_POINT_DISPLAY_HEAT_MAP',
-        'SPATIAL_POINT_HEAT_MAP_RADIUS',
-        'SPATIAL_POINT_HEAT_MAP_BLUR',
         'SPATIAL_POINT_FILL_COLOR',
-        'SPATIAL_POINT_BORDER_COLOR',
-        'SPATIAL_POINT_BORDER_WIDTH',
+        'SPATIAL_POINT_HEAT_MAP_BLUR',
+        'SPATIAL_POINT_HEAT_MAP_RADIUS',
         'SPATIAL_POINT_POINT_RADIUS',
         'SPATIAL_POINT_SELECTIONS_BORDER_COLOR',
         'SPATIAL_POINT_SELECTIONS_BORDER_WIDTH',
         'SPATIAL_SHAPES_FILL_COLOR',
         'SPATIAL_SHAPES_BORDER_COLOR',
         'SPATIAL_SHAPES_BORDER_WIDTH',
-        'SPATIAL_SHAPES_POINT_RADIUS',
         'SPATIAL_SHAPES_OPACITY',
+        'SPATIAL_SHAPES_POINT_RADIUS',
         'SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR',
-        'SPATIAL_SHAPES_SELECTIONS_FILL_COLOR',
         'SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH',
+        'SPATIAL_SHAPES_SELECTIONS_FILL_COLOR',
         'SPATIAL_SHAPES_SELECTIONS_OPACITY',
-        'SPATIAL_DRAGDROP_FILL_COLOR',
-        'SPATIAL_DRAGDROP_BORDER_COLOR',
-        'SPATIAL_DRAGDROP_BORDER_WIDTH',
-        'SPATIAL_DRAGDROP_POINT_RADIUS',
-        'SPATIAL_DRAGDROP_OPACITY',
-        'SPATIAL_DRAGDROP_RASTER_COLOR_SCALE',
-        'GOOGLE_ANALYTICS_KEY',
-        'RIGHTS_TERMS',
-        'CSS_VERSION_LOCAL',
-        'KEY_MOD_IS_ACTIVE',
-        'DYN_CHECKLIST_RADIUS',
-        'DISPLAY_COMMON_NAMES',
-        'ACTIVATE_EXSICCATI',
-        'ACTIVATE_CHECKLIST_FG_EXPORT',
-        'PARAMS_ARR',
-        'USER_RIGHTS',
-        'CSS_VERSION',
-        'USER_DISPLAY_NAME',
-        'USERNAME',
         'SYMB_UID',
-        'IS_ADMIN',
         'TAXONOMIC_RANKS',
-        'RIGHTS_TERMS_DEFS'
+        'TEMP_DIR_ROOT',
+        'USER_DISPLAY_NAME',
+        'USER_RIGHTS',
+        'USERNAME'
     );
 
     public $baseDirectories = array(
@@ -219,11 +220,60 @@ class ConfigurationManager{
 
     public function validateGlobalArr(): void
     {
+        if(!isset($GLOBALS['ADMIN_EMAIL'])){
+            $GLOBALS['ADMIN_EMAIL'] = '';
+        }
+        if(isset($GLOBALS['CLIENT_ROOT']) && substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
+            $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
+        }
+        if(!isset($GLOBALS['CLIENT_ROOT'])){
+            $GLOBALS['CLIENT_ROOT'] = '';
+        }
+        if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
+            $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
+        }
         if(!isset($GLOBALS['DEFAULT_LANG']) || $GLOBALS['DEFAULT_LANG'] !== 'en'){
             $GLOBALS['DEFAULT_LANG'] = 'en';
         }
+        if(!isset($GLOBALS['DYN_CHECKLIST_RADIUS']) || !$GLOBALS['DYN_CHECKLIST_RADIUS']){
+            $GLOBALS['DYN_CHECKLIST_RADIUS'] = '100';
+        }
+        if(!isset($GLOBALS['IMAGE_ROOT_PATH']) || $GLOBALS['IMAGE_ROOT_PATH'] === ''){
+            $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
+            $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
+        }
+        if(!isset($GLOBALS['IMAGE_ROOT_URL'])){
+            $GLOBALS['IMAGE_ROOT_URL'] = '';
+        }
+        if(!isset($GLOBALS['IMG_LG_WIDTH']) || $GLOBALS['IMG_LG_WIDTH'] === ''){
+            $GLOBALS['IMG_LG_WIDTH'] = 3200;
+        }
+        if(!isset($GLOBALS['IMG_TN_WIDTH']) || $GLOBALS['IMG_TN_WIDTH'] === ''){
+            $GLOBALS['IMG_TN_WIDTH'] = 200;
+        }
+        if(!isset($GLOBALS['IMG_WEB_WIDTH']) || $GLOBALS['IMG_WEB_WIDTH'] === ''){
+            $GLOBALS['IMG_WEB_WIDTH'] = 1400;
+        }
+        if(!isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
+            $GLOBALS['KEY_MOD_IS_ACTIVE'] = false;
+        }
+        if(!isset($GLOBALS['LOG_PATH']) || $GLOBALS['LOG_PATH'] === ''){
+            $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
+        }
         if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE']) || !(int)$GLOBALS['MAX_UPLOAD_FILESIZE'] || (int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > $this->getServerMaxFilesize()){
             $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
+        }
+        if((!isset($GLOBALS['PORTAL_EMAIL_ADDRESS']) || !$GLOBALS['PORTAL_EMAIL_ADDRESS']) && isset($GLOBALS['ADMIN_EMAIL'])){
+            $GLOBALS['PORTAL_EMAIL_ADDRESS'] = $GLOBALS['ADMIN_EMAIL'];
+        }
+        if(!isset($GLOBALS['PORTAL_GUID']) || $GLOBALS['PORTAL_GUID'] === ''){
+            $GLOBALS['PORTAL_GUID'] = $this->getGUID();
+        }
+        if(!isset($GLOBALS['PROCESSING_STATUS_OPTIONS'])){
+            $GLOBALS['PROCESSING_STATUS_OPTIONS'] = array('Unprocessed','Stage 1','Stage 2','Stage 3','Pending Review','Expert Required','Reviewed','Closed');
+        }
+        if(!isset($GLOBALS['SECURITY_KEY']) || $GLOBALS['SECURITY_KEY'] === ''){
+            $GLOBALS['SECURITY_KEY'] = $this->getGUID();
         }
         if(!isset($GLOBALS['SERVER_ROOT']) || $GLOBALS['SERVER_ROOT'] === ''){
             $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
@@ -233,52 +283,6 @@ class ConfigurationManager{
         if(isset($GLOBALS['SERVER_ROOT']) && substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
             $GLOBALS['SERVER_ROOT'] = substr($GLOBALS['SERVER_ROOT'],0, -1);
         }
-        if(isset($GLOBALS['CLIENT_ROOT']) && substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
-            $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
-        }
-        if(!isset($GLOBALS['CLIENT_ROOT'])){
-            $GLOBALS['CLIENT_ROOT'] = '';
-        }
-        if(!isset($GLOBALS['ADMIN_EMAIL'])){
-            $GLOBALS['ADMIN_EMAIL'] = '';
-        }
-        if(!isset($GLOBALS['TAXONOMIC_RANKS']) || $GLOBALS['TAXONOMIC_RANKS'] === ''){
-            $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
-        }
-        if(!isset($GLOBALS['IMG_WEB_WIDTH']) || $GLOBALS['IMG_WEB_WIDTH'] === ''){
-            $GLOBALS['IMG_WEB_WIDTH'] = 1400;
-        }
-        if(!isset($GLOBALS['IMG_TN_WIDTH']) || $GLOBALS['IMG_TN_WIDTH'] === ''){
-            $GLOBALS['IMG_TN_WIDTH'] = 200;
-        }
-        if(!isset($GLOBALS['IMG_LG_WIDTH']) || $GLOBALS['IMG_LG_WIDTH'] === ''){
-            $GLOBALS['IMG_LG_WIDTH'] = 3200;
-        }
-        if(!isset($GLOBALS['TEMP_DIR_ROOT']) || $GLOBALS['TEMP_DIR_ROOT'] === ''){
-            $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
-        }
-        if(!isset($GLOBALS['LOG_PATH']) || $GLOBALS['LOG_PATH'] === ''){
-            $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
-        }
-        if(!isset($GLOBALS['IMAGE_ROOT_PATH']) || $GLOBALS['IMAGE_ROOT_PATH'] === ''){
-            $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
-            $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
-        }
-        if(!isset($GLOBALS['IMAGE_ROOT_URL'])){
-            $GLOBALS['IMAGE_ROOT_URL'] = '';
-        }
-        if(!isset($GLOBALS['PORTAL_GUID']) || $GLOBALS['PORTAL_GUID'] === ''){
-            $GLOBALS['PORTAL_GUID'] = $this->getGUID();
-        }
-        if(!isset($GLOBALS['SECURITY_KEY']) || $GLOBALS['SECURITY_KEY'] === ''){
-            $GLOBALS['SECURITY_KEY'] = $this->getGUID();
-        }
-        if(!isset($GLOBALS['SOLR_URL']) || $GLOBALS['SOLR_URL'] === ''){
-            $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 0;
-        }
-        if((!isset($GLOBALS['PORTAL_EMAIL_ADDRESS']) || !$GLOBALS['PORTAL_EMAIL_ADDRESS']) && isset($GLOBALS['ADMIN_EMAIL'])){
-            $GLOBALS['PORTAL_EMAIL_ADDRESS'] = $GLOBALS['ADMIN_EMAIL'];
-        }
         if((!isset($GLOBALS['SMTP_USERNAME']) || $GLOBALS['SMTP_USERNAME'] === '') && (!isset($GLOBALS['SMTP_PASSWORD']) || $GLOBALS['SMTP_PASSWORD'] === '')){
             $GLOBALS['SMTP_USERNAME'] = '';
             $GLOBALS['SMTP_PASSWORD'] = '';
@@ -287,14 +291,41 @@ class ConfigurationManager{
             $GLOBALS['SMTP_ENCRYPTION'] = '';
             $GLOBALS['SMTP_ENCRYPTION_MECHANISM'] = '';
         }
+        if(!isset($GLOBALS['SOLR_URL']) || $GLOBALS['SOLR_URL'] === ''){
+            $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 0;
+        }
+        if(!isset($GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']) || $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] === ''){
+            $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
+        }
+        if(!isset($GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH']) || $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] === ''){
+            $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
+        }
+        if(!isset($GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR']) || $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR'] === ''){
+            $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR'] = '#AAAAAA';
+        }
+        if(!isset($GLOBALS['SPATIAL_DRAGDROP_OPACITY']) || $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] === ''){
+            $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
+        }
+        if(!isset($GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']) || $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] === ''){
+            $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] = '5';
+        }
+        if(!isset($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']) || $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === ''){
+            $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
+        }
+        if(!isset($GLOBALS['SPATIAL_INITIAL_BASE_LAYER']) || $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] === ''){
+            $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
+        }
         if(!isset($GLOBALS['SPATIAL_INITIAL_CENTER']) || $GLOBALS['SPATIAL_INITIAL_CENTER'] === ''){
             $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
         }
         if(!isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) || $GLOBALS['SPATIAL_INITIAL_ZOOM'] === ''){
             $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
         }
-        if(!isset($GLOBALS['SPATIAL_INITIAL_BASE_LAYER']) || $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] === ''){
-            $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
+        if(!isset($GLOBALS['SPATIAL_POINT_BORDER_COLOR']) || $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] === ''){
+            $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] = '#000000';
+        }
+        if(!isset($GLOBALS['SPATIAL_POINT_BORDER_WIDTH']) || $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] === ''){
+            $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] = '1';
         }
         if(!isset($GLOBALS['SPATIAL_POINT_CLUSTER'])){
             $GLOBALS['SPATIAL_POINT_CLUSTER'] = true;
@@ -305,20 +336,14 @@ class ConfigurationManager{
         if(!isset($GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'])){
             $GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = false;
         }
-        if(!isset($GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS']) || $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] === ''){
-            $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '5';
+        if(!isset($GLOBALS['SPATIAL_POINT_FILL_COLOR']) || $GLOBALS['SPATIAL_POINT_FILL_COLOR'] === ''){
+            $GLOBALS['SPATIAL_POINT_FILL_COLOR'] = '#E69E67';
         }
         if(!isset($GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR']) || $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] === ''){
             $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] = '15';
         }
-        if(!isset($GLOBALS['SPATIAL_POINT_FILL_COLOR']) || $GLOBALS['SPATIAL_POINT_FILL_COLOR'] === ''){
-            $GLOBALS['SPATIAL_POINT_FILL_COLOR'] = '#E69E67';
-        }
-        if(!isset($GLOBALS['SPATIAL_POINT_BORDER_COLOR']) || $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] === ''){
-            $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] = '#000000';
-        }
-        if(!isset($GLOBALS['SPATIAL_POINT_BORDER_WIDTH']) || $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] === ''){
-            $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] = '1';
+        if(!isset($GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS']) || $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] === ''){
+            $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '5';
         }
         if(!isset($GLOBALS['SPATIAL_POINT_POINT_RADIUS']) || $GLOBALS['SPATIAL_POINT_POINT_RADIUS'] === ''){
             $GLOBALS['SPATIAL_POINT_POINT_RADIUS'] = '7';
@@ -332,56 +357,35 @@ class ConfigurationManager{
         if(!isset($GLOBALS['SPATIAL_SHAPES_BORDER_COLOR']) || $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR'] === ''){
             $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR'] = '#3399CC';
         }
-        if(!isset($GLOBALS['SPATIAL_SHAPES_FILL_COLOR']) || $GLOBALS['SPATIAL_SHAPES_FILL_COLOR'] === ''){
-            $GLOBALS['SPATIAL_SHAPES_FILL_COLOR'] = '#FFFFFF';
-        }
         if(!isset($GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH']) || $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH'] === ''){
             $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH'] = '2';
         }
-        if(!isset($GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']) || $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS'] === ''){
-            $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS'] = '5';
+        if(!isset($GLOBALS['SPATIAL_SHAPES_FILL_COLOR']) || $GLOBALS['SPATIAL_SHAPES_FILL_COLOR'] === ''){
+            $GLOBALS['SPATIAL_SHAPES_FILL_COLOR'] = '#FFFFFF';
         }
         if(!isset($GLOBALS['SPATIAL_SHAPES_OPACITY']) || $GLOBALS['SPATIAL_SHAPES_OPACITY'] === ''){
             $GLOBALS['SPATIAL_SHAPES_OPACITY'] = '0.4';
         }
+        if(!isset($GLOBALS['SPATIAL_SHAPES_POINT_RADIUS']) || $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS'] === ''){
+            $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS'] = '5';
+        }
         if(!isset($GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR']) || $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR'] === ''){
             $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR'] = '#0099FF';
-        }
-        if(!isset($GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR']) || $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] === ''){
-            $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] = '#FFFFFF';
         }
         if(!isset($GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH']) || $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH'] === ''){
             $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH'] = '5';
         }
+        if(!isset($GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR']) || $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] === ''){
+            $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] = '#FFFFFF';
+        }
         if(!isset($GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY']) || $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY'] === ''){
             $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY'] = '0.5';
         }
-        if(!isset($GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']) || $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] === ''){
-            $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
+        if(!isset($GLOBALS['TAXONOMIC_RANKS']) || $GLOBALS['TAXONOMIC_RANKS'] === ''){
+            $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
         }
-        if(!isset($GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR']) || $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR'] === ''){
-            $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR'] = '#AAAAAA';
-        }
-        if(!isset($GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH']) || $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] === ''){
-            $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
-        }
-        if(!isset($GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS']) || $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] === ''){
-            $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] = '5';
-        }
-        if(!isset($GLOBALS['SPATIAL_DRAGDROP_OPACITY']) || $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] === ''){
-            $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
-        }
-        if(!isset($GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE']) || $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] === ''){
-            $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
-        }
-        if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
-            $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
-        }
-        if(!isset($GLOBALS['DYN_CHECKLIST_RADIUS']) || !$GLOBALS['DYN_CHECKLIST_RADIUS']){
-            $GLOBALS['DYN_CHECKLIST_RADIUS'] = '100';
-        }
-        if(!isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
-            $GLOBALS['KEY_MOD_IS_ACTIVE'] = false;
+        if(!isset($GLOBALS['TEMP_DIR_ROOT']) || $GLOBALS['TEMP_DIR_ROOT'] === ''){
+            $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
         }
         $GLOBALS['EMAIL_CONFIGURED'] = (
             isset($GLOBALS['PORTAL_EMAIL_ADDRESS'], $GLOBALS['SMTP_USERNAME'], $GLOBALS['SMTP_PASSWORD'], $GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) &&
@@ -395,55 +399,51 @@ class ConfigurationManager{
 
     public function setGlobalArrFromDefaults(): void
     {
-        $GLOBALS['DEFAULT_LANG'] = 'en';
-        $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
-        $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
         $GLOBALS['CLIENT_ROOT'] = $this->getClientRootPath();
-        $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
-        $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
+        $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
+        $GLOBALS['DEFAULT_LANG'] = 'en';
         $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
         $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
-        $GLOBALS['PORTAL_GUID'] = $this->getGUID();
-        $GLOBALS['SECURITY_KEY'] = $this->getGUID();
-        $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
-        $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
-        $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
-        $GLOBALS['IMG_WEB_WIDTH'] = 1400;
-        $GLOBALS['IMG_TN_WIDTH'] = 200;
         $GLOBALS['IMG_LG_WIDTH'] = 3200;
-        $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
+        $GLOBALS['IMG_TN_WIDTH'] = 200;
+        $GLOBALS['IMG_WEB_WIDTH'] = 1400;
+        $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
+        $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
+        $GLOBALS['PORTAL_GUID'] = $this->getGUID();
+        $GLOBALS['PROCESSING_STATUS_OPTIONS'] = $this->getGUID();
+        $GLOBALS['SECURITY_KEY'] = $this->getGUID();
+        $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
+        $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
+        $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
+        $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR'] = '#AAAAAA';
+        $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
+        $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] = '5';
+        $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
         $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
+        $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
+        $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
+        $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] = '#000000';
+        $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] = '1';
         $GLOBALS['SPATIAL_POINT_CLUSTER'] = true;
         $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] = '50';
         $GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = false;
-        $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '5';
-        $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] = '15';
         $GLOBALS['SPATIAL_POINT_FILL_COLOR'] = '#E69E67';
-        $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] = '#000000';
-        $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] = '1';
+        $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] = '15';
+        $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '5';
         $GLOBALS['SPATIAL_POINT_POINT_RADIUS'] = '7';
         $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_COLOR'] = '#10D8E6';
         $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_WIDTH'] = '2';
         $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR'] = '#3399CC';
-        $GLOBALS['SPATIAL_SHAPES_FILL_COLOR'] = '#FFFFFF';
         $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH'] = '2';
-        $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS'] = '5';
+        $GLOBALS['SPATIAL_SHAPES_FILL_COLOR'] = '#FFFFFF';
         $GLOBALS['SPATIAL_SHAPES_OPACITY'] = '0.4';
+        $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS'] = '5';
         $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR'] = '#0099FF';
-        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] = '#FFFFFF';
         $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH'] = '5';
+        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] = '#FFFFFF';
         $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY'] = '0.5';
-        $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
-        $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR'] = '#AAAAAA';
-        $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
-        $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] = '5';
-        $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
-        $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
-    }
-
-    public function getCoreConfigurationsArr(): array
-    {
-        return $this->coreConfigurations;
+        $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
+        $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
     }
 
     public function getServerMaxUploadFilesize(): int

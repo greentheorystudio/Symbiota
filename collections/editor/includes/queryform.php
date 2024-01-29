@@ -101,13 +101,7 @@ if($qryArr){
 	$qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'');
 }
 
-$processingStatusArr = array();
-if(isset($PROCESSINGSTATUS) && $PROCESSINGSTATUS){
-	$processingStatusArr = $PROCESSINGSTATUS;
-}
-else{
-	$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending review-nfn','pending review','expert required','reviewed','closed');
-}
+$processingStatusArr = $GLOBALS['PROCESSING_STATUS_OPTIONS'];
 ?>
 <div id="querydiv" style="clear:both;width:830px;display:<?php echo ($displayQuery?'block':'none'); ?>;">
 	<form name="queryform" id="queryform" action="<?php echo Sanitizer::getCleanedRequestPath(); ?>" method="post" onsubmit="return verifyQueryForm()">
