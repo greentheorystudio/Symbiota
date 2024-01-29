@@ -80,6 +80,9 @@ class DwcArchiverDetermination{
                 'INNER JOIN guidoccurdeterminations AS g ON d.detid = g.detid '.
                 'INNER JOIN guidoccurrences AS og ON o.occid = og.occid '.
                 'LEFT JOIN taxa AS t ON d.tid = t.tid ';
+            if(stripos($conditionSql,' te.')){
+                $sql .= 'LEFT JOIN taxaenumtree AS te ON d.tid = te.tid ';
+            }
             if(strpos($conditionSql,'v.clid')){
                 $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             }
