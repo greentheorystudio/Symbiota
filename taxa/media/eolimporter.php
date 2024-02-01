@@ -150,7 +150,7 @@ if(!$GLOBALS['SYMB_UID']) {
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/singleLanguageAutoComplete.js?ver=20230627" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=20230627" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230624" type="text/javascript"></script>
-        <script>
+        <script type="text/javascript">
             const eolMediaImporterModule = Vue.createApp({
                 components: {
                     'single-language-auto-complete': singleLanguageAutoComplete,

@@ -107,7 +107,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
         include(__DIR__ . '/../footer.php');
         include_once(__DIR__ . '/../config/footer-includes.php');
         ?>
-        <script>
+        <script type="text/javascript">
             const loginModule = Vue.createApp({
                 setup() {
                     const { showNotification } = useCore();

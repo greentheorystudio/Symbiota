@@ -78,7 +78,7 @@ if(!$GLOBALS['SYMB_UID']) {
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=20230624" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusMaintenanceModule.js?ver=20230624" type="text/javascript"></script>
-        <script>
+        <script type="text/javascript">
             const taxonomicThesaurusManagerModule = Vue.createApp({
                 components: {
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,

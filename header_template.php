@@ -61,17 +61,18 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
             <q-space></q-space>
             <template v-if="userDisplayName">
                 <q-breadcrumbs-el class="header-username-text">Welcome {{ userDisplayName }}!</q-breadcrumbs-el>
-                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php" label="My Profile" stretch flat no-wrap></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/viewprofile.php'" label="My Profile" stretch flat no-wrap></q-btn>
                 <q-btn class="horizontalDropDownButton text-capitalize" @click="logout();" label="Logout" stretch flat no-wrap></q-btn>
             </template>
             <template v-else>
-                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>" label="Log In" stretch flat no-wrap></q-btn>
-                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php" label="New Account" stretch flat no-wrap></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/index.php?refurl=' + requestPath" label="Log In" stretch flat no-wrap></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/newprofile.php'" label="New Account" stretch flat no-wrap></q-btn>
             </template>
-            <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" label="Sitemap" stretch flat no-wrap></q-btn>
+            <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/sitemap.php'" label="Sitemap" stretch flat no-wrap></q-btn>
         </q-toolbar>
     </div>
     <script>
+        const REQUEST_PATH = "<?php echo Sanitizer::getCleanedRequestPath(true); ?>";
         document.addEventListener("DOMContentLoaded", () => {
             const dropDownNavBar = Vue.createApp({
                 setup() {
@@ -106,6 +107,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                     ]);
                     let navBarTimeout = null;
                     const navBarToggle = Vue.ref({});
+                    const requestPath = REQUEST_PATH;
                     const userDisplayName = storeRefs.getUserDisplayName;
                     const windowWidth = Vue.ref(0);
 
@@ -153,9 +155,11 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                     });
 
                     return {
+                        clientRoot,
                         navBarData,
                         navBarToggle,
                         navBarTimeout,
+                        requestPath,
                         userDisplayName,
                         windowWidth,
                         navbarToggleOff,

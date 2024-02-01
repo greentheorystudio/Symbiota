@@ -210,10 +210,8 @@ echo '</a> &gt;&gt; ';
 								</select>
 							</div>
 							<div style='margin-top:3px;'>
-								<?php 
-									if($GLOBALS['DISPLAY_COMMON_NAMES']){
-										echo '<input id="showcommon" name="showcommon" type="checkbox" value="1" '.($showCommon? 'checked' : '').' onchange="document.getElementById(\'taxonfilterform\').submit();"/> Display Common Names'."\n";
-									}
+								<?php
+                                echo '<input id="showcommon" name="showcommon" type="checkbox" value="1" '.($showCommon? 'checked' : '').' onchange="document.getElementById(\'taxonfilterform\').submit();"/> Display Common Names'."\n";
 								?>
 							</div>
 						</fieldset>

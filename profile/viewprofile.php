@@ -60,7 +60,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountChecklistProjectList.js?ver=20230709" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionControlPanelMenus.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileOccurrenceModule.js" type="text/javascript"></script>
-        <script>
+        <script type="text/javascript">
             const viewProfileModule = Vue.createApp({
                 components: {
                     'view-profile-account-module': viewProfileAccountModule,

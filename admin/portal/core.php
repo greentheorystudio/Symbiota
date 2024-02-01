@@ -114,12 +114,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             </span>
         </div>
         <div class="field-block">
-            <span class="field-label">Display Common Names:</span>
-            <span class="field-elem">
-                <input type="checkbox" id="DISPLAY_COMMON_NAMES" value="1" onchange="processCheckConfigurationChange('DISPLAY_COMMON_NAMES');" <?php echo (array_key_exists('DISPLAY_COMMON_NAMES',$coreConfArr) && $coreConfArr['DISPLAY_COMMON_NAMES']?'CHECKED':''); ?> />
-            </span>
-        </div>
-        <div class="field-block">
             <span class="field-label">Dynamic Checklist Radius:</span>
             <span class="field-elem">
                 <input type="text" id="DYN_CHECKLIST_RADIUS" value="<?php echo (array_key_exists('DYN_CHECKLIST_RADIUS',$coreConfArr)?$coreConfArr['DYN_CHECKLIST_RADIUS']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('DYN_CHECKLIST_RADIUS','<?php echo (array_key_exists('DYN_CHECKLIST_RADIUS',$coreConfArr)?$coreConfArr['DYN_CHECKLIST_RADIUS']:''); ?>',true);" />

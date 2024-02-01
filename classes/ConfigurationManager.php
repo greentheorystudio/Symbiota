@@ -18,7 +18,6 @@ class ConfigurationManager{
         'DEFAULT_LANG',
         'DEFAULT_TITLE',
         'DEFAULTCATID',
-        'DISPLAY_COMMON_NAMES',
         'DYN_CHECKLIST_RADIUS',
         'EMAIL_CONFIGURED',
         'GOOGLE_ANALYTICS_KEY',

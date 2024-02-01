@@ -300,7 +300,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
         ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaKingdomSelector.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js" type="text/javascript"></script>
-        <script>
+        <script type="text/javascript">
             const occurrenceTaxonomyManagementModule = Vue.createApp({
                 components: {
                     'taxa-kingdom-selector': taxaKingdomSelector,

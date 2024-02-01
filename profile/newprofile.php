@@ -69,7 +69,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/pwdInput.js?ver=20230702" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=20230707" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/humanValidator.js?ver=20230702" type="text/javascript"></script>
-        <script>
+        <script type="text/javascript">
             const createAccountModule = Vue.createApp({
                 components: {
                     'account-information-form': accountInformationForm,

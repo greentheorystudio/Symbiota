@@ -14,7 +14,7 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230817" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230718" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=20230720" type="text/javascript"></script>
-<script>
+<script type="text/javascript">
     const taxonProfilePage = Vue.createApp({
         template: `
             <template v-if="loading">
@@ -202,7 +202,7 @@
 
             function setTaxon() {
                 const formData = new FormData();
-                formData.append('taxonStr', taxonValue.value);
+                formData.append('taxonStr', taxonValue);
                 formData.append('clid', clValue);
                 formData.append('action', 'setTaxon');
                 fetch(taxaProfileApiUrl, {

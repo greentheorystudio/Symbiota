@@ -81,7 +81,7 @@ include_once(__DIR__ . '/../config/footer-includes.php');
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerElement.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/recordInfoWindowPopup.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js" type="text/javascript"></script>
-<script>
+<script type="text/javascript">
     const spatialModule = Vue.createApp({
         components: {
             'spatial-analysis-module': spatialAnalysisModule

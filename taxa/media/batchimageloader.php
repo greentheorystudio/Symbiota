@@ -145,7 +145,7 @@ if(!$GLOBALS['SYMB_UID']) {
         include_once(__DIR__ . '/../../config/footer-includes.php');
         ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=20230627" type="text/javascript"></script>
-        <script>
+        <script type="text/javascript">
             const mediaScientificNameAutoComplete = {
                 props: {
                     acceptedTaxaOnly: {
