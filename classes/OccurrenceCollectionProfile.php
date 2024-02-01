@@ -39,7 +39,7 @@ class OccurrenceCollectionProfile {
 	{
 		$retArr = array();
         $sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, '.
-			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, '.
+			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, c.datarecordingmethod, '.
 			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.publicedits, '.
 			'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, s.uploaddate '.
 			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid ';
@@ -67,6 +67,7 @@ class OccurrenceCollectionProfile {
 			$retArr[$row->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
 			$retArr[$row->collid]['colltype'] = $row->colltype;
 			$retArr[$row->collid]['managementtype'] = $row->managementtype;
+            $retArr[$row->collid]['datarecordingmethod'] = $row->datarecordingmethod;
 			$retArr[$row->collid]['publicedits'] = $row->publicedits;
 			$retArr[$row->collid]['guidtarget'] = $row->guidtarget;
 			$retArr[$row->collid]['rights'] = $row->rights;
@@ -263,6 +264,7 @@ class OccurrenceCollectionProfile {
 			$homepage = Sanitizer::cleanInStr($this->conn,$postArr['homepage']);
 			$contact = Sanitizer::cleanInStr($this->conn,$postArr['contact']);
 			$email = Sanitizer::cleanInStr($this->conn,$postArr['email']);
+            $dataRecordingMethod = Sanitizer::cleanInStr($this->conn,$postArr['datarecordingmethod']);
 			$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
 			$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:'NULL');
             $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:'NULL');
@@ -288,7 +290,8 @@ class OccurrenceCollectionProfile {
 				'contact = '.($contact?'"'.$contact.'"':'NULL').','.
 				'email = '.($email?'"'.$email.'"':'NULL').','.
 				'latitudedecimal = '.($postArr['latitudedecimal']?:'NULL').','.
-				'longitudedecimal = '.($postArr['longitudedecimal']?:'NULL').',';
+				'longitudedecimal = '.($postArr['longitudedecimal']?:'NULL').','.
+                'datarecordingmethod = "'.$dataRecordingMethod.'",';
             if(array_key_exists('publishToGbif',$postArr)){
                 $sql .= 'publishToGbif = '.$gbifPublish.',';
             }
@@ -356,6 +359,7 @@ class OccurrenceCollectionProfile {
 			$icon = array_key_exists('iconurl',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['iconurl']):'';
 		}
 		$managementType = array_key_exists('managementtype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['managementtype']):'';
+        $dataRecordingMethod = array_key_exists('datarecordingmethod',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['datarecordingmethod']):'';
 		$collType = array_key_exists('colltype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['colltype']):'';
 		$guid = array_key_exists('collectionguid',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['collectionguid']):'';
 		if(!$guid) {
@@ -368,7 +372,7 @@ class OccurrenceCollectionProfile {
 			'contact,email,latitudedecimal,longitudedecimal,publicedits,publishToGbif,'.
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
             'guidtarget,rights,rightsholder,accessrights,icon,'.
-			'managementtype,colltype,collectionguid,individualurl,sortseq) '.
+			'managementtype,datarecordingmethod,colltype,collectionguid,individualurl,sortseq) '.
 			'VALUES ('.($instCode?'"'.$instCode.'"':'NULL').',"'.
 			($collCode?'"'.$collCode.'"':'NULL').',"'.
 			$coleName.'",'.
@@ -385,7 +389,8 @@ class OccurrenceCollectionProfile {
 			($rightsHolder?'"'.$rightsHolder.'"':'NULL').','.
 			($accessRights?'"'.$accessRights.'"':'NULL').','.
 			($icon?'"'.$icon.'"':'NULL').','.
-			($managementType?'"'.$managementType.'"':'Snapshot').','.
+			($managementType?'"'.$managementType.'"':'"Snapshot"').','.
+            ($dataRecordingMethod?'"'.$dataRecordingMethod.'"':'"specimen"').','.
 			($collType?'"'.$collType.'"':'PreservedSpecimen').',"'.
 			$guid.'",'.($indUrl?'"'.$indUrl.'"':'NULL').','.
 			($sortSeq?:'NULL').') ';

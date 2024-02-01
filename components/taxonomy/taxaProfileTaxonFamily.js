@@ -1,7 +1,10 @@
 const taxaProfileTaxonFamily = {
-    props: [
-        'taxon'
-    ],
+    props: {
+        taxon: {
+            type: Object,
+            default: {}
+        }
+    },
     template: `
         <template v-if="taxon.rankId > 140 && taxon.family">
             <div id="family">

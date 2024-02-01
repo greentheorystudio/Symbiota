@@ -1,8 +1,14 @@
 const taxaProfileScinameHeader = {
-    props: [
-        'taxon',
-        'style-class'
-    ],
+    props: {
+        styleClass: {
+            type: String,
+            default: ''
+        },
+        taxon: {
+            type: Object,
+            default: {}
+        }
+    },
     template: `
         <div id="scinamecontainer">
             <span id="sciname" :class="styleClass">{{ taxon.sciName }}</span> <span id="sciname-author">{{ taxon.author }}</span>
@@ -14,9 +20,12 @@ const taxaProfileScinameHeader = {
             </template>
         </div>
     `,
-    data() {
+    setup() {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            clientRoot
         }
     }
 };

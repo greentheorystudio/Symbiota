@@ -550,13 +550,13 @@ class OccurrenceManager{
         }
         if(array_key_exists('imagetype',$this->searchTermsArr) && $this->searchTermsArr['imagetype']){
             if($this->searchTermsArr['imagetype'] === 'specimenonly'){
-                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (c.colltype = "PreservedSpecimen") ';
+                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%specimen%") ';
             }
             elseif($this->searchTermsArr['imagetype'] === 'observationonly'){
-                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (c.colltype != "PreservedSpecimen") ';
+                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%observation%") ';
             }
             elseif($this->searchTermsArr['imagetype'] === 'fieldonly'){
-                $sqlWhere .= 'AND (ISNULL(i.occid)) ';
+                $sqlWhere .= 'AND (i.imgid IS NOT NULL AND (ISNULL(i.occid) OR o.basisofrecord LIKE "%observation%")) ';
             }
         }
         if($sqlWhere){

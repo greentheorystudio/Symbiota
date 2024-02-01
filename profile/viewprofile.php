@@ -41,10 +41,10 @@ header('X-Frame-Options: SAMEORIGIN');
                             <account-checklist-project-list :checklist-arr="checklistArr" :project-arr="projectArr"></account-checklist-project-list>
                         </q-tab-panel>
                         <q-tab-panel name="occurrence">
-                            <view-profile-occurrence-module :account-info="accountInfo"></view-profile-occurrence-module>
+                            <view-profile-occurrence-module :account-info="accountInfo" :uid="uid"></view-profile-occurrence-module>
                         </q-tab-panel>
                         <q-tab-panel name="account">
-                            <view-profile-account-module :account-info="accountInfo" :checklist-arr="checklistArr" :project-arr="projectArr" :uid="uid"  @update:account-information="updateAccountObj"></view-profile-account-module>
+                            <view-profile-account-module :account-info="accountInfo" :checklist-arr="checklistArr" :project-arr="projectArr" :uid="uid" @update:account-information="updateAccountObj"></view-profile-account-module>
                         </q-tab-panel>
                     </q-tab-panels>
                 </q-card>
@@ -60,44 +60,26 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountChecklistProjectList.js?ver=20230709" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionControlPanelMenus.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileOccurrenceModule.js" type="text/javascript"></script>
-        <script>
+        <script type="text/javascript">
             const viewProfileModule = Vue.createApp({
-                data() {
-                    return {
-                        accountInfo: Vue.ref(null),
-                        checklistArr: Vue.ref([]),
-                        clientRoot: Vue.ref(CLIENT_ROOT),
-                        projectArr: Vue.ref([]),
-                        solrMode: Vue.ref(SOLR_MODE),
-                        uid: Vue.ref(SYMB_UID)
-                    }
-                },
                 components: {
                     'view-profile-account-module': viewProfileAccountModule,
                     'account-checklist-project-list': accountChecklistProjectList,
                     'view-profile-occurrence-module': viewProfileOccurrenceModule
                 },
-                setup () {
-                    const validUser = Vue.ref(VALID_USER);
-                    const tab = validUser ? Vue.ref('checklists') : Vue.ref('account');
-                    return {
-                        validUser,
-                        tab
-                    }
-                },
-                mounted() {
-                    if(Number(this.uid) > 0){
-                        this.setAccountInfo();
-                        this.setAccountChecklistsProjects();
-                    }
-                    else{
-                        window.location.href = CLIENT_ROOT + '/index.php';
-                    }
-                },
-                methods: {
-                    setAccountChecklistsProjects(){
+                setup() {
+                    const store = useBaseStore();
+                    const accountInfo = Vue.ref(null);
+                    const checklistArr = Vue.ref([]);
+                    const clientRoot = store.getClientRoot;
+                    const projectArr = Vue.ref([]);
+                    const tab = Vue.ref('account');
+                    const uid = store.getSymbUid;
+                    const validUser = store.getValidUser;
+
+                    function setAccountChecklistsProjects() {
                         const formData = new FormData();
-                        formData.append('uid', this.uid);
+                        formData.append('uid', uid);
                         formData.append('action', 'getChecklistsProjectsByUid');
                         fetch(checklistApiUrl, {
                             method: 'POST',
@@ -106,17 +88,18 @@ header('X-Frame-Options: SAMEORIGIN');
                         .then((response) => {
                             response.json().then((resObj) => {
                                 if(resObj.hasOwnProperty('cl')){
-                                    this.checklistArr = resObj['cl'];
+                                    checklistArr.value = resObj['cl'];
                                 }
                                 if(resObj.hasOwnProperty('proj')){
-                                    this.projectArr = resObj['proj'];
+                                    projectArr.value = resObj['proj'];
                                 }
                             });
                         });
-                    },
-                    setAccountInfo(){
+                    }
+
+                    function setAccountInfo() {
                         const formData = new FormData();
-                        formData.append('uid', this.uid);
+                        formData.append('uid', uid);
                         formData.append('action', 'getAccountInfoByUid');
                         fetch(profileApiUrl, {
                             method: 'POST',
@@ -124,16 +107,41 @@ header('X-Frame-Options: SAMEORIGIN');
                         })
                         .then((response) => {
                             response.json().then((resObj) => {
-                                this.accountInfo = resObj;
+                                accountInfo.value = resObj;
                             });
                         });
-                    },
-                    updateAccountObj(obj) {
-                        this.accountInfo = Object.assign({}, obj);
+                    }
+
+                    function updateAccountObj(obj) {
+                        accountInfo.value = Object.assign({}, obj);
+                    }
+
+                    Vue.onMounted(() => {
+                        if(validUser){
+                            tab.value = 'checklists';
+                        }
+                        if(Number(uid) > 0){
+                            setAccountInfo();
+                            setAccountChecklistsProjects();
+                        }
+                        else{
+                            window.location.href = clientRoot + '/index.php';
+                        }
+                    });
+
+                    return {
+                        accountInfo,
+                        checklistArr,
+                        projectArr,
+                        tab,
+                        uid,
+                        validUser,
+                        updateAccountObj
                     }
                 }
             });
             viewProfileModule.use(Quasar, { config: {} });
+            viewProfileModule.use(Pinia.createPinia());
             viewProfileModule.mount('#innertext');
         </script>
     </body>

@@ -642,6 +642,7 @@ CREATE TABLE `omcollections` (
     `icon` varchar(250) DEFAULT NULL,
     `CollType` varchar(45) NOT NULL DEFAULT 'PreservedSpecimen' COMMENT 'PreservedSpecimen, HumanObservation, FossilSpecimen, LivingSpecimen, MaterialSample',
     `ManagementType` varchar(45) DEFAULT 'Snapshot' COMMENT 'Snapshot, Live Data',
+    `DataRecordingMethod` varchar(45) NULL DEFAULT 'specimen',
     `PublicEdits` int(1) unsigned NOT NULL DEFAULT '1',
     `collectionguid` varchar(45) DEFAULT NULL,
     `securitykey` varchar(45) DEFAULT NULL,

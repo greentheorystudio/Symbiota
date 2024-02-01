@@ -1,7 +1,10 @@
 const taxaProfileTaxonImageLink = {
-    props: [
-        'taxon'
-    ],
+    props: {
+        taxon: {
+            type: Object,
+            default: {}
+        }
+    },
     template: `
         <div class="all-images-link-frame">
             <q-card class="taxon-profile-image-link-card">
@@ -11,17 +14,24 @@ const taxaProfileTaxonImageLink = {
             </q-card>
         </div>
     `,
-    methods: {
-        openImageSearch(){
+    setup(props) {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
+        function openImageSearch() {
             let taxonType;
-            if(Number(this.taxon['rankId']) < 140){
+            if(Number(props.taxon['rankId']) < 140){
                 taxonType = 4;
             }
             else{
                 taxonType = 2;
             }
-            const url = CLIENT_ROOT + '/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'].replaceAll("'",'%squot;') + '"}';
+            const url = clientRoot + '/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"' + taxonType + '","taxa":"' + props.taxon['sciName'].replaceAll("'",'%squot;') + '"}';
             window.open(url, '_blank');
+        }
+
+        return {
+            openImageSearch
         }
     }
 };

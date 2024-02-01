@@ -8,4 +8,8 @@
 <?php
 include_once(__DIR__ . '/js-globals.php');
 ?>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/base.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/spatial.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/search.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/hooks/core.js" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=20230214" type="text/javascript"></script>

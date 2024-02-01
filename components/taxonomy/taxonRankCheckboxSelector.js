@@ -1,16 +1,8 @@
 const taxonRankCheckboxSelector = {
     props: {
-        selectedRanks: {
-            type: Array,
-            default: []
-        },
-        requiredRanks: {
-            type: Array,
-            default: []
-        },
-        linkLabel: {
-            type: String,
-            default: 'Select Taxonomic Ranks'
+        disable: {
+            type: Boolean,
+            default: false
         },
         innerLabel: {
             type: String,
@@ -20,17 +12,17 @@ const taxonRankCheckboxSelector = {
             type: Number,
             default: null
         },
-        disable: {
-            type: Boolean,
-            default: false
-        }
-    },
-    watch: {
-        kingdomId: function(){
-            this.setRankOptions();
+        linkLabel: {
+            type: String,
+            default: 'Select Taxonomic Ranks'
         },
-        selectedRanks: function(){
-            this.setSelectAll();
+        requiredRanks: {
+            type: Array,
+            default: []
+        },
+        selectedRanks: {
+            type: Array,
+            default: []
         }
     },
     template: `
@@ -55,52 +47,58 @@ const taxonRankCheckboxSelector = {
             </q-card>
         </q-dialog>
     `,
-    data() {
-        return {
-            rankSelectDialog: Vue.ref(false),
-            rankOptions: Vue.ref([]),
-            rankArr: Vue.ref([]),
-            selectAll: Vue.ref(false)
-        };
-    },
-    mounted() {
-        this.setRankOptions();
-    },
-    methods: {
-        processChange(selectedArr) {
-            this.requiredRanks.forEach((rank) => {
+    setup(props, context) {
+        const propsRefs = Vue.toRefs(props);
+        const rankSelectDialog = Vue.ref(false);
+        const rankOptions = Vue.ref({});
+        const rankArr = Vue.ref([]);
+        const selectAll = Vue.ref(false);
+
+        Vue.watch(propsRefs.kingdomId, () => {
+            setRankOptions();
+        });
+
+        Vue.watch(propsRefs.selectedRanks, () => {
+            setSelectAll();
+        });
+
+        function processChange(selectedArr) {
+            props.requiredRanks.forEach((rank) => {
                 if(!selectedArr.includes(rank)){
                     selectedArr.push(rank);
                 }
             });
-            this.$emit('update:selected-ranks', selectedArr);
-        },
-        selectAllChange(val) {
+            context.emit('update:selected-ranks', selectedArr);
+        }
+
+        function selectAllChange(val) {
             if(val){
-                this.$emit('update:selected-ranks', this.rankArr);
+                context.emit('update:selected-ranks', rankArr.value);
             }
             else{
-                this.$emit('update:selected-ranks', this.requiredRanks);
+                context.emit('update:selected-ranks', props.requiredRanks);
             }
-        },
-        setRankArray() {
-            this.rankArr = [];
-            const stringKeys = Object.keys(this.rankOptions);
+        }
+
+        function setRankArray() {
+            rankArr.value = [];
+            const stringKeys = Object.keys(rankOptions);
             stringKeys.forEach((key) => {
-                this.rankArr.push(Number(key));
+                rankArr.value.push(Number(key));
             });
-            const selectedArr = this.selectedRanks.slice();
+            const selectedArr = props.selectedRanks.slice();
             selectedArr.forEach((rank) => {
-                if(!this.rankArr.includes(Number(rank))){
+                if(!rankArr.value.includes(Number(rank))){
                     const index = selectedArr.indexOf(rank);
                     selectedArr.splice(index,1);
                 }
             });
-            this.$emit('update:selected-ranks', selectedArr);
-            this.setSelectAll();
-        },
-        setRankOptions() {
-            const url = taxonomyApiUrl + '?action=getRankArr&kingdomid=' + this.kingdomId;
+            context.emit('update:selected-ranks', selectedArr);
+            setSelectAll();
+        }
+
+        function setRankOptions() {
+            const url = taxonomyApiUrl + '?action=getRankArr&kingdomid=' + props.kingdomId;
             fetch(url)
             .then((response) => {
                 if(response.ok){
@@ -108,20 +106,33 @@ const taxonRankCheckboxSelector = {
                 }
             })
             .then((data) => {
-                this.rankOptions = data;
-                this.setRankArray();
+                rankOptions.value = data;
+                setRankArray();
             });
-        },
-        setSelectAll() {
-            if(this.selectedRanks.length === 0){
-                this.selectAll = false;
+        }
+
+        function setSelectAll() {
+            if(props.selectedRanks.length === 0){
+                selectAll.value = false;
             }
-            else if(this.selectedRanks.length === this.rankArr.length){
-                this.selectAll = true;
+            else if(props.selectedRanks.length === rankArr.value.length){
+                selectAll.value = true;
             }
             else{
-                this.selectAll = 'some';
+                selectAll.value = 'some';
             }
+        }
+
+        Vue.onMounted(() => {
+            setRankOptions();
+        });
+        
+        return {
+            rankSelectDialog,
+            rankOptions,
+            selectAll,
+            processChange,
+            selectAllChange
         }
     }
 };
