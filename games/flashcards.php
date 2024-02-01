@@ -154,13 +154,13 @@ echo '</a> &gt;&gt; ';
 	?>
 	<div id='innertext'>
 		<div style="width:420px;margin-left:auto;margin-right:auto;">
-			<div style="width:420px;height:420px;text-align:center;">
-				<div>
-					<a id="imageanchor" href="">
-						<img id="activeimage" src="" style="height:97%;max-width:450px" />
-					</a>
-				</div>
-			</div>
+            <div style="width:420px;height:420px;text-align:center;">
+                <div>
+                    <a id="imageanchor" href="">
+                        <img id="activeimage" src="" style="max-height:420px" />
+                    </a>
+                </div>
+            </div>
 			<div style="width:450px;text-align:center;">
 				<div style="width:100%;">
 					<div style="float:left;cursor:pointer;text-align:center;" onclick="insertNewImage()">
