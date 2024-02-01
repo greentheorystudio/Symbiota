@@ -157,7 +157,7 @@ echo '</a> &gt;&gt; ';
 			<div style="width:420px;height:420px;text-align:center;">
 				<div>
 					<a id="imageanchor" href="">
-						<img id="activeimage" src="" style="height:97%;max-width:450px" />
+						<img id="activeimage" src="" style="max-height:420px" />
 					</a>
 				</div>
 			</div>
