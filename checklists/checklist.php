@@ -28,6 +28,7 @@ $printMode = array_key_exists('printmode',$_REQUEST)?(int)$_REQUEST['printmode']
 $statusStr='';
 $locStr = '';
 $isEditor = false;
+$taxaArray = array();
 
 if($action !== 'Rebuild List' && $action !== 'Download List') {
     $searchSynonyms = 1;
@@ -164,7 +165,6 @@ if($clArray){
             $statusStr = $clAdmin->addNewSpecies($dataArr,$setRareSpp);
         }
     }
-    $taxaArray = array();
     if($clValue || $dynClid){
         $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
         if($GLOBALS['CHECKLIST_FG_EXPORT']){
@@ -244,7 +244,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             openPopup(url);
         }
     </script>
-    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20230103"></script>
+    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20240131"></script>
     <?php
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>
@@ -257,17 +257,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
     }
     ?>
     <style>
-        #sddm{margin:0;padding:0;z-index:30;}
-        #sddm:hover {background-color:#EAEBD8;}
-        #sddm img{padding:3px;}
-        #sddm:hover img{background-color:#EAEBD8;}
-        #sddm li{margin:0;padding: 0;list-style: none;float: left;font: bold 11px arial}
-        #sddm li a{display: block;margin: 0 1px 0 0;padding: 4px 10px;width: 60px;background: #5970B2;color: #FFF;text-align: center;text-decoration: none}
-        #sddm li a:hover{background: #49A3FF}
-        #sddm div{position: absolute;visibility:hidden;margin:0;padding:0;background:#EAEBD8;border:1px solid #5970B2}
-        #sddm div a	{position: relative;display:block;margin:0;padding:5px 10px;width:auto;white-space:nowrap;text-align:left;text-decoration:none;background:#EAEBD8;color:#2875DE;font-weight:bold;}
-        #sddm div a:hover{background:#49A3FF;color:#FFF}
-
         a.boxclose{
             float:right;
             width:36px;
@@ -353,20 +342,10 @@ if(!$printMode){
         if(!$printMode && $taxaArray){
             ?>
             <div>
-                <span onmouseover="mopen('m1')" onmouseout="mclosetime()">
-                    <i class="fas fa-gamepad"></i>
-                </span>
-                <ul id="sddm">
-                    <li>
-                        <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
-                            <?php
-                            $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon. '&thesfilter=' .$thesFilter. '&showsynonyms=' .$showSynonyms;
-                            ?>
-                            <a href="../games/namegame.php<?php echo $varStr; ?>">Name Game</a>
-                            <a href="../games/flashcards.php<?php echo $varStr; ?>">Flash Card Quiz</a>
-                        </div>
-                    </li>
-                </ul>
+                <?php
+                $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon. '&thesfilter=' .$thesFilter. '&showsynonyms=' .$showSynonyms;
+                ?>
+                <a href="../games/flashcards.php<?php echo $varStr; ?>"><i class="fas fa-gamepad"></i></a>
             </div>
             <?php
         }
