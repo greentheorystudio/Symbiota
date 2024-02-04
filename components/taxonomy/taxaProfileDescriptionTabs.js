@@ -87,7 +87,7 @@ const taxaProfileDescriptionTabs = {
         });
 
         return {
-
+            selectedDescTab
         }
     }
 };
