@@ -115,7 +115,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js"></script>
     <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.georef.batchgeoreftool.js?ver=20230103"></script>
+    <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.georef.batchgeoreftool.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");

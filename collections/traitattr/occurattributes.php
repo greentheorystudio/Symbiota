@@ -230,7 +230,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             f.submit();
         }
     </script>
-    <script src="../../js/collections.traitattr.js?ver=20230103" type="text/javascript"></script>
+    <script src="../../js/collections.traitattr.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
     <?php

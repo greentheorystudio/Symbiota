@@ -85,7 +85,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             openPopup(url);
         }
     </script>
-	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20230103"></script>
+	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 	<style>
 		li{margin:5px;}
 	</style>

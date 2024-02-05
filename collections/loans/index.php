@@ -103,7 +103,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script type="text/javascript">
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script type="text/javascript" src="../../js/collections.loans.js?ver=20230103"></script>
+	<script type="text/javascript" src="../../js/collections.loans.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 </head>
 <body>
 	<?php

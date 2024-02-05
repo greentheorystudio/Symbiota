@@ -3,7 +3,7 @@
 /** @var string $status */
 /** @var array $tRankArr */
 ?>
-<script src="../../js/taxa.taxonomyloader.js?ver=20230103"></script>
+<script src="../../js/taxa.taxonomyloader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 <div>
     <?php
     if($status){

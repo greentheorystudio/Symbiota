@@ -73,8 +73,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script src="../../js/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
-	<script src="../../js/collections.observationsubmit.js?ver=20230103" type="text/javascript"></script>
+    <script src="../../js/collections.coordinateValidation.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+	<script src="../../js/collections.observationsubmit.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
