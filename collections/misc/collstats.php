@@ -242,7 +242,7 @@ if($action !== 'Update Statistics'){
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="../../js/external/jquery.js"></script>
         <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-        <script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
+        <script type="text/javascript" src="../../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
         <script type="text/javascript">
             document.addEventListener("DOMContentLoaded", function() {
                 $("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
@@ -917,7 +917,8 @@ if($action !== 'Update Statistics'){
                                         echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
                                         echo '<td>';
                                         if(count($resultsTemp) === 1){
-                                            echo '<a href="../list.php?db[]='.$collId.'&reset=1&taxa='.$name.'" target="_blank">';
+                                            $starrStr = '{"db":"'.$collid.'","usethes":true,"taxa":"'.$name.'"}';
+                                            echo "<a href='../list.php?starr=".$starrStr."' target='_blank'>";
                                         }
                                         echo number_format($data['SpecimensPerFamily']);
                                         if(count($resultsTemp) === 1){
@@ -954,7 +955,8 @@ if($action !== 'Update Statistics'){
                                         echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
                                         echo '<td>';
                                         if(count($resultsTemp) === 1){
-                                            echo '<a href="../list.php?db[]='.$collId.'&reset=1&country='.$name.'" target="_blank">';
+                                            $starrStr = '{"db":"'.$collid.'","country":"'.$name.'"}';
+                                            echo "<a href='../list.php?starr=".$starrStr."' target='_blank'>";
                                         }
                                         echo number_format($data['CountryCount']);
                                         if(count($resultsTemp) === 1){

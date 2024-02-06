@@ -19,7 +19,7 @@ $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $fileName = '';
 $citationFormat = $GLOBALS['DEFAULT_TITLE'].'. '.date('Y').'. '; 
-$citationFormat .= 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php. ';
+$citationFormat .= 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/index.php. ';
 $citationFormat .= 'Accessed on '.date('F d').'. ';
 
 $phpWord = new PhpWord();
@@ -68,9 +68,6 @@ if($exportType === 'translation'){
 				$serverDomain = 'https://';
 			}
 			$serverDomain .= $_SERVER['HTTP_HOST'];
-			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-				$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
-			}
 			$textrun->addImage($serverDomain.$GLOBALS['CLIENT_ROOT'].'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
 			$textrun->addTextBreak();
 		}
@@ -202,9 +199,6 @@ elseif($exportType === 'singlelanguage'){
 				$serverDomain = 'https://';
 			}
 			$serverDomain .= $_SERVER['HTTP_HOST'];
-			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-				$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
-			}
 			$textrun->addImage($serverDomain.$GLOBALS['CLIENT_ROOT'].'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
 			$textrun->addTextBreak();
 		}
@@ -225,13 +219,8 @@ elseif($exportType === 'singlelanguage'){
 				$table = $section->addTable('exportTable');
 				foreach($imageArr as $img => $imgArr){
 					$imgSrc = $imgArr['url'];
-					if(strncmp($imgSrc, '/', 1) === 0){
-						if(isset($GLOBALS['IMAGE_DOMAIN'])){
-							$imgSrc = $GLOBALS['IMAGE_DOMAIN'].$imgSrc;
-						}
-						else{
-							$imgSrc = 'http://'.$_SERVER['HTTP_HOST'].$imgSrc;
-						}
+					if($imgSrc && strncmp($imgSrc, '/', 1) === 0){
+                        $imgSrc = 'http://'.$_SERVER['HTTP_HOST'].$imgSrc;
 					}
 					$table->addRow();
 					$cell = $table->addCell(4125,$imageCellStyle);

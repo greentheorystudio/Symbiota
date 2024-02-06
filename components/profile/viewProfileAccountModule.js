@@ -42,7 +42,7 @@ const viewProfileAccountModule = {
                     </div>
                     <account-information-form ref="accountInformationFormRef" :user="accountInfo" @update:account-information="updateAccountObj"></account-information-form>
                     <div class="row justify-end q-gutter-md q-mt-xs">
-                        <q-btn color="secondary" @click="editeAccount();" label="Save Edits" dense />
+                        <q-btn color="secondary" @click="editAccount();" label="Save Edits" dense />
                     </div>
                 </q-card-section>
             </q-card>
@@ -106,47 +106,26 @@ const viewProfileAccountModule = {
             </q-card>
         </q-dialog>
     `,
-    data() {
-        return {
-            deleteConfirmation: Vue.ref(false),
-            newPassword: Vue.ref(null)
-        }
-    },
     components: {
         'account-information-form': accountInformationForm,
         'password-input': passwordInput
     },
-    setup () {
-        const $q = useQuasar();
-        const passwordInputRef = Vue.ref(null);
+    setup(props, context) {
+        const { showNotification } = useCore();
+        const store = useBaseStore();
+        const accessTokenCnt = Vue.ref(0);
         const accountInformationFormRef = Vue.ref(null);
-        return {
-            passwordInputRef,
-            accountInformationFormRef,
-            showNotification(type, text){
-                $q.notify({
-                    type: type,
-                    icon: null,
-                    message: text,
-                    multiLine: true,
-                    position: 'top',
-                    timeout: 5000
-                });
-            }
-        }
-    },
-    mounted() {
-        if(Number(this.uid) > 0){
-            this.setAccessTokenCnt();
-        }
-    },
-    methods: {
-        changePassword(){
-            this.$refs.passwordInputRef.validateForm();
-            if(!this.$refs.passwordInputRef.formHasErrors()) {
+        const clientRoot = store.getClientRoot;
+        const deleteConfirmation = Vue.ref(false);
+        const newPassword = Vue.ref(null);
+        const passwordInputRef = Vue.ref(null);
+
+        function changePassword() {
+            passwordInputRef.value.validateForm();
+            if(!passwordInputRef.value.formHasErrors()) {
                 const formData = new FormData();
-                formData.append('uid', this.uid);
-                formData.append('pwd', this.newPassword);
+                formData.append('uid', props.uid);
+                formData.append('pwd', newPassword.value);
                 formData.append('action', 'changePassword');
                 fetch(profileApiUrl, {
                     method: 'POST',
@@ -155,21 +134,22 @@ const viewProfileAccountModule = {
                 .then((response) => {
                     response.text().then((res) => {
                         if(Number(res) === 1){
-                            this.showNotification('positive','Your password has been changed.');
+                            showNotification('positive','Your password has been changed.');
                         }
                         else{
-                            this.showNotification('negative','An error occurred changing your password.');
+                            showNotification('negative','An error occurred changing your password.');
                         }
                     });
                 });
             }
             else{
-                this.showNotification('negative','Please correct the errors noted in red to change your password.');
+                showNotification('negative','Please correct the errors noted in red to change your password.');
             }
-        },
-        clearAccessTokens(){
+        }
+
+        function clearAccessTokens() {
             const formData = new FormData();
-            formData.append('uid', this.uid);
+            formData.append('uid', props.uid);
             formData.append('action', 'clearAccessTokens');
             fetch(profileApiUrl, {
                 method: 'POST',
@@ -178,17 +158,18 @@ const viewProfileAccountModule = {
             .then((response) => {
                 response.text().then((res) => {
                     if(Number(res) === 1){
-                        this.showNotification('positive','Your access tokens have been cleared and you have been logged out of all devices.');
+                        showNotification('positive','Your access tokens have been cleared and you have been logged out of all devices.');
                     }
                     else{
-                        this.showNotification('negative','An error occurred clearing your access tokens.');
+                        showNotification('negative','An error occurred clearing your access tokens.');
                     }
                 });
             });
-        },
-        deleteAccount(){
+        }
+
+        function deleteAccount() {
             const formData = new FormData();
-            formData.append('uid', this.uid);
+            formData.append('uid', props.uid);
             formData.append('action', 'deleteAccount');
             fetch(profileApiUrl, {
                 method: 'POST',
@@ -197,18 +178,19 @@ const viewProfileAccountModule = {
             .then((response) => {
                 response.text().then((res) => {
                     if(Number(res) === 1){
-                        window.location.href = CLIENT_ROOT + '/index.php';
+                        window.location.href = clientRoot + '/index.php';
                     }
                     else{
-                        this.showNotification('negative','An error occurred deleting your account.');
+                        showNotification('negative','An error occurred deleting your account.');
                     }
                 });
             });
-        },
-        editeAccount(){
-            if(!this.$refs.accountInformationFormRef.formHasErrors()) {
+        }
+
+        function editAccount() {
+            if(!accountInformationFormRef.value.formHasErrors()) {
                 const formData = new FormData();
-                formData.append('user', JSON.stringify(this.accountInfo));
+                formData.append('user', JSON.stringify(props.accountInfo));
                 formData.append('action', 'editAccount');
                 fetch(profileApiUrl, {
                     method: 'POST',
@@ -217,21 +199,22 @@ const viewProfileAccountModule = {
                 .then((response) => {
                     response.text().then((res) => {
                         if(Number(res) === 1){
-                            this.showNotification('positive','The edits to your account have been saved.');
+                            showNotification('positive','The edits to your account have been saved.');
                         }
                         else{
-                            this.showNotification('negative','An error occurred saving the edits to your account.');
+                            showNotification('negative','An error occurred saving the edits to your account.');
                         }
                     });
                 });
             }
             else{
-                this.showNotification('negative','Please correct the errors noted in red to save the edits to your account.');
+                showNotification('negative','Please correct the errors noted in red to save the edits to your account.');
             }
-        },
-        resendConfirmationEmail(){
+        }
+
+        function resendConfirmationEmail() {
             const formData = new FormData();
-            formData.append('uid', this.uid);
+            formData.append('uid', props.uid);
             formData.append('action', 'sendConfirmationEmail');
             fetch(profileApiUrl, {
                 method: 'POST',
@@ -240,33 +223,57 @@ const viewProfileAccountModule = {
             .then((response) => {
                 response.text().then((res) => {
                     if(Number(res) === 1){
-                        this.showNotification('positive','Your confirmation email has been sent.');
+                        showNotification('positive','Your confirmation email has been sent.');
                     }
                     else{
-                        this.showNotification('negative','There was an error sending your confirmation email.');
+                        showNotification('negative','There was an error sending your confirmation email.');
                     }
                 });
             });
-        },
-        setAccessTokenCnt(){
+        }
+
+        function setAccessTokenCnt() {
             const formData = new FormData();
-            formData.append('uid', this.uid);
+            formData.append('uid', props.uid);
             formData.append('action', 'getAccessTokenCnt');
             fetch(profileApiUrl, {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    response.text().then((res) => {
-                        this.accessTokenCnt = Number(res);
-                    });
+            .then((response) => {
+                response.text().then((res) => {
+                    accessTokenCnt.value = Number(res);
                 });
-        },
-        updatePassword(val) {
-            this.newPassword = val;
-        },
-        updateAccountObj(obj) {
-            this.$emit('update:account-information', obj);
+            });
+        }
+
+        function updatePassword(val) {
+            newPassword.value = val;
+        }
+
+        function updateAccountObj(obj) {
+            context.emit('update:account-information', obj);
+        }
+
+        Vue.onMounted(() => {
+            if(Number(props.uid) > 0){
+                setAccessTokenCnt();
+            }
+        });
+        
+        return {
+            accessTokenCnt,
+            accountInformationFormRef,
+            deleteConfirmation,
+            newPassword,
+            passwordInputRef,
+            changePassword,
+            clearAccessTokens,
+            deleteAccount,
+            editAccount,
+            resendConfirmationEmail,
+            updatePassword,
+            updateAccountObj
         }
     }
 };

@@ -103,17 +103,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         const imgLgArr = [];
 
         <?php
-        $imgDomain = $GLOBALS['IMAGE_DOMAIN'];
-        if(!$imgDomain){
-            $imgDomain = 'http://';
-            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                $imgDomain = 'https://';
-            }
-            $imgDomain .= $_SERVER['HTTP_HOST'];
-            if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-                $imgDomain .= ':' . $_SERVER['SERVER_PORT'];
-            }
+        $imgDomain = 'http://';
+        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+            $imgDomain = 'https://';
         }
+        $imgDomain .= $_SERVER['HTTP_HOST'];
         foreach($imgArr as $cnt => $iArr){
             $url = $iArr['web'];
             if(strncmp($url, '/', 1) === 0) {
@@ -236,7 +230,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             f.submit();
         }
     </script>
-    <script src="../../js/collections.traitattr.js?ver=20230103" type="text/javascript"></script>
+    <script src="../../js/collections.traitattr.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
     <?php

@@ -1,16 +1,21 @@
 function addVoucherToCl(occidIn,clidIn,tidIn){
-    $.ajax({
-        type: "POST",
-        url: "../api/checklists/addvoucher.php",
-        data: { occid: occidIn, clid: clidIn, tid: tidIn }
-    }).done(function( msg ) {
-        if(msg === "1"){
-            alert("Success! Voucher added to checklist.");
+    const http = new XMLHttpRequest();
+    const url = "../api/checklists/addvoucher.php";
+    const params = 'occid='+occidIn+'&clid='+clidIn+'&tid='+tidIn;
+    //console.log(url+'?'+params);
+    http.open("POST", url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    http.onreadystatechange = function() {
+        if(http.readyState === 4 && http.status === 200) {
+            if(Number(http.responseText) !== 1) {
+                alert(http.responseText);
+            }
+            else{
+                alert("Success! Voucher added to checklist.");
+            }
         }
-        else{
-            alert(msg);
-        }
-    });
+    };
+    http.send(params);
 }
 
 function openIndPU(occId,clid){

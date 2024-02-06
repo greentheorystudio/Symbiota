@@ -56,7 +56,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/glossary.index.js?ver=20230103"></script>
+    <script type="text/javascript" src="../js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 </head>
 <body style="overflow-x:hidden;overflow-y:auto;width:700px;margin-left:auto;margin-right:auto;">
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
@@ -206,21 +206,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
 						<?php
 						foreach($termImgArr as $imgId => $imgArr){
 							$imgUrl = $imgArr['url'];
-							if(strncmp($imgUrl, '/', 1) === 0){
-								if(isset($GLOBALS['IMAGE_DOMAIN'])){
-									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-								}
-								else{
-									$urlPrefix = 'http://';
-									if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                                        $urlPrefix = 'https://';
-                                    }
-									$urlPrefix .= $_SERVER['HTTP_HOST'];
-									if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-                                        $urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-                                    }
-									$imgUrl = $urlPrefix.$imgUrl;
-								}
+							if($imgUrl && strncmp($imgUrl, '/', 1) === 0){
+                                $urlPrefix = 'http://';
+                                if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                                    $urlPrefix = 'https://';
+                                }
+                                $urlPrefix .= $_SERVER['HTTP_HOST'];
+                                $imgUrl = $urlPrefix.$imgUrl;
 							}
 							?>
 							<fieldset style='clear:both;border:0;padding:0;margin-top:10px;'>

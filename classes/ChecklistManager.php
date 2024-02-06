@@ -281,15 +281,14 @@ class ChecklistManager {
 			$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images AS i INNER JOIN '.
 				'(SELECT t.tidaccepted AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
 				'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
-				'WHERE i.sortsequence < 500 '.
-				'AND t.tidaccepted IN('.implode(',',$tidReturn).') '.
+				'WHERE i.sortsequence < 500 AND t.tidaccepted IN('.implode(',',$tidReturn).') '.
 				'GROUP BY t.tidaccepted) AS i2 ON i.imgid = i2.imgid';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			$matchedArr = array();
 			while($row = $rs->fetch_object()){
-				$this->taxaList[$row->tid]['url'] = $row->url;
-				$this->taxaList[$row->tid]['tnurl'] = $row->thumbnailurl;
+				$this->taxaList[$row->tid]['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+				$this->taxaList[$row->tid]['tnurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
 				$matchedArr[] = $row->tid;
 			}
 			$rs->free();
@@ -298,14 +297,13 @@ class ChecklistManager {
 				$sql2 = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images AS i INNER JOIN '.
 					'(SELECT t.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
 					'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
-					'WHERE i.sortsequence < 500 '.
-					'AND t.parenttid IN('.implode(',',$missingArr).') '.
+					'WHERE i.sortsequence < 500 AND t.parenttid IN('.implode(',',$missingArr).') '.
 					'GROUP BY t.tid) AS i2 ON i.imgid = i2.imgid';
 				//echo $sql;
 				$rs2 = $this->conn->query($sql2);
 				while($row2 = $rs2->fetch_object()){
-					$this->taxaList[$row2->tid]['url'] = $row2->url;
-					$this->taxaList[$row2->tid]['tnurl'] = $row2->thumbnailurl;
+					$this->taxaList[$row2->tid]['url'] = ($row2->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row2->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row2->url) : $row2->url;
+					$this->taxaList[$row2->tid]['tnurl'] = ($row2->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row2->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row2->thumbnailurl) : $row2->thumbnailurl;
 				}
 				$rs2->free();
 			}
@@ -334,10 +332,10 @@ class ChecklistManager {
     {
         if($this->taxaList){
             $tempArr = array();
-            $sql = 'SELECT t.tid, t2.sciname, t2.author '.
-                'FROM taxa AS t INNER JOIN taxa AS t2 ON t.tidaccepted = t2.tid '.
-                'WHERE t.tid IN('.implode(',',array_keys($this->taxaList)).') AND t.tid <> t2.tid '.
-                'ORDER BY t2.sciname';
+            $sql = 'SELECT t2.tid, t.sciname, t.author '.
+                'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.tid '.
+                'WHERE t2.tid IN('.implode(',',array_keys($this->taxaList)).') AND t.tid <> t2.tid '.
+                'ORDER BY t.sciname';
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){

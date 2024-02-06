@@ -42,17 +42,17 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery.mobile-1.4.0.min.css?ver=20221204" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui_accordian.css?ver=20221204" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver20240115" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20230606" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20230929" rel="stylesheet" type="text/css" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/shp.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
@@ -62,13 +62,17 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20230103" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=20221110" type="text/javascript"></script>
-    <?php include_once(__DIR__ . '/includes/spatialvars.php'); ?>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript">
         const WINDOWMODE = '<?php echo $windowType; ?>';
         const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
         const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
+        let clusterPoints = <?php echo ($GLOBALS['SPATIAL_POINT_CLUSTER']?'true':'false'); ?>;
+        let clusterDistance = <?php echo $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE']; ?>;
+        let showHeatMap = <?php echo ($GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP']?'true':'false'); ?>;
+        let heatMapRadius = <?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS']; ?>;
+        let heatMapBlur = <?php echo $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR']; ?>;
     </script>
     <?php include_once(__DIR__ . '/includes/spatialinitialize.php'); ?>
 </head>
@@ -198,20 +202,20 @@ include_once(__DIR__ . '/../config/header-includes.php');
         },
         style: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_FILL_COLOR),SPATIAL_SHAPES_SELECTIONS_OPACITY)
+                color: getRgbaStrFromHexOpacity((SPATIAL_SHAPES_SELECTIONS_FILL_COLOR),SPATIAL_SHAPES_SELECTIONS_OPACITY)
             }),
             stroke: new ol.style.Stroke({
-                color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
+                color: getRgbaStrFromHexOpacity((SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
                 width: SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH
             }),
             image: new ol.style.Circle({
                 radius: SPATIAL_SHAPES_POINT_RADIUS,
                 stroke: new ol.style.Stroke({
-                    color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
+                    color: getRgbaStrFromHexOpacity((SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
                     width: (SPATIAL_SHAPES_BORDER_WIDTH + 2)
                 }),
                 fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1)
+                    color: getRgbaStrFromHexOpacity((SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1)
                 })
             })
         }),
@@ -328,7 +332,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     infoArr['fileType'] = fileType;
                     infoArr['layerName'] = filename;
                     infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                    infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
+                        infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
                     infoArr['borderColor'] = SPATIAL_DRAGDROP_BORDER_COLOR;
                     infoArr['borderWidth'] = SPATIAL_DRAGDROP_BORDER_WIDTH;
                     infoArr['pointRadius'] = SPATIAL_DRAGDROP_POINT_RADIUS;
@@ -362,7 +366,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                             infoArr['fileType'] = 'zip';
                             infoArr['layerName'] = filename;
                             infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                            infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
+                                infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
                             infoArr['borderColor'] = SPATIAL_DRAGDROP_BORDER_COLOR;
                             infoArr['borderWidth'] = SPATIAL_DRAGDROP_BORDER_WIDTH;
                             infoArr['pointRadius'] = SPATIAL_DRAGDROP_POINT_RADIUS;
@@ -398,7 +402,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                         infoArr['fileType'] = 'tif';
                         infoArr['layerName'] = filename;
                         infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                        infoArr['removable'] = true;
+                            infoArr['removable'] = true;
                         infoArr['sortable'] = true;
                         infoArr['symbology'] = true;
                         infoArr['query'] = false;
@@ -491,15 +495,14 @@ include_once(__DIR__ . '/../config/header-includes.php');
     });
 
     const map = new ol.Map({
-        interactions: ol.interaction.defaults().extend([rasterAnalysisInteraction, rasterAnalysisTranslate]),
         view: mapView,
         target: 'map',
-        controls: ol.control.defaults().extend([
-            new ol.control.FullScreen()
-        ]),
         layers: layersArr,
         overlays: [popupoverlay,finderpopupoverlay]
     });
+    map.addInteraction(rasterAnalysisInteraction);
+    map.addInteraction(rasterAnalysisTranslate);
+    map.addControl(new ol.control.FullScreen());
 
     changeBaseMap();
 
@@ -667,7 +670,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     infoArr['fileType'] = 'vector';
                     infoArr['layerName'] = 'Shapes';
                     infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
-                    infoArr['fillColor'] = SPATIAL_SHAPES_FILL_COLOR;
+                        infoArr['fillColor'] = SPATIAL_SHAPES_FILL_COLOR;
                     infoArr['borderColor'] = SPATIAL_SHAPES_BORDER_COLOR;
                     infoArr['borderWidth'] = SPATIAL_SHAPES_BORDER_WIDTH;
                     infoArr['pointRadius'] = SPATIAL_SHAPES_POINT_RADIUS;

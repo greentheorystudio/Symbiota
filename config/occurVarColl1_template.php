@@ -1,7 +1,4 @@
 <?php
-//Enter one to many custom java script files
-//const $PROCESSINGSTATUS = array('unprocessed','Unprocessed/NLP','Stage 1','Stage 2','Stage 3','Pending Duplicate','Pending Review-NfN','Pending Review','Expert Required','Reviewed','Closed');
-
 //Uncomment to turns catalogNumber duplicate search check on/off (on by default)
 //define('CATNUMDUPECHECK',false); 
 

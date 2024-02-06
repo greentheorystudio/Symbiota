@@ -139,9 +139,9 @@ class OccurrenceMaintenance {
 		$rs2->free();
 		
 		if($sensitiveArr){
-			$sql2 = 'UPDATE omoccurrences '.
-				'SET localitySecurity = 1 '.
-				'WHERE (ISNULL(localitySecurity) OR localitySecurity = 0) AND ISNULL(localitySecurityReason) AND tid IN('.implode(',',$sensitiveArr).') ';
+			$sql2 = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+				'SET o.localitySecurity = 1 '.
+				'WHERE ISNULL(o.localitySecurityReason) AND t.tidaccepted IN('.implode(',',$sensitiveArr).') ';
 			if(!$this->conn->query($sql2)){
 				$errStr = 'WARNING: unable to protect globally rare species.';
 				$this->errorArr[] = $errStr;
@@ -163,7 +163,7 @@ class OccurrenceMaintenance {
 		$sql = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
 			'INNER JOIN fmchecklists AS c ON o.stateprovince = c.locality '.
 			'INNER JOIN fmchklsttaxalink AS cl ON c.clid = cl.clid AND t.tidaccepted = cl.tid '.
-			'WHERE (ISNULL(o.localitysecurity) OR o.localitysecurity = 0) AND ISNULL(o.localitySecurityReason) AND c.type = "rarespp" ';
+			'WHERE ISNULL(o.localitySecurityReason) AND c.type = "rarespp" ';
 		if($collid) {
 			$sql .= ' AND o.collid IN(' . $collid . ') ';
 		}

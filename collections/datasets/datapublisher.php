@@ -98,7 +98,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=20221025"></script>
+	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <script type="text/javascript">
 		function verifyDwcaAdminForm(){
             const dbElements = document.getElementsByName("coll[]");
@@ -203,9 +203,9 @@ include(__DIR__ . '/../../header.php');
 	<div style="margin:20px;">
 		<b>RSS Feed:</b>
 		<?php
-		$urlPrefix = $dwcaManager->getServerDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
+		$urlPrefix = $dwcaManager->getServerDomain().$GLOBALS['CLIENT_ROOT'];
 		if(file_exists('../../webservices/dwc/rss.xml')){
-			$feedLink = $urlPrefix.'webservices/dwc/rss.xml';
+			$feedLink = $urlPrefix.'/webservices/dwc/rss.xml';
 			echo '<a href="'.$feedLink.'" target="_blank">'.$feedLink.'</a>';
 		}
 		else{

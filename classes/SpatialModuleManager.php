@@ -33,9 +33,11 @@ class SpatialModuleManager{
 
     public function getLayersConfigJSON(): string
     {
-        $returnStr = '';
         if(file_exists($GLOBALS['SERVER_ROOT'].'/content/json/spatiallayerconfig.json')){
             $returnStr = file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/spatiallayerconfig.json');
+        }
+        else{
+            $returnStr = '{}';
         }
         return $returnStr;
     }

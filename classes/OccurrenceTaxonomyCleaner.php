@@ -113,14 +113,37 @@ class OccurrenceTaxonomyCleaner extends Manager{
     public function updateOccTaxonomicThesaurusLinkages($kingdomId): int
     {
         $retCnt = 0;
+        $rankIdArr = array();
         if($this->collid && $kingdomId){
+            $sql = 'SELECT DISTINCT rankid FROM taxonunits WHERE kingdomid = '.$kingdomId.' AND rankid < 180 AND rankid > 20 ORDER BY rankid DESC ';
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $rankIdArr[] = $r->rankid;
+            }
             $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName '.
                 'SET o.tid = t.tid '.
-                'WHERE o.collid = '.$this->collid.' AND ISNULL(o.tid) AND t.kingdomId = ' . (int)$kingdomId . ' ';
+                'WHERE o.collid = '.$this->collid.' AND ISNULL(o.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid >= 180 ';
             //echo $sql;
             if($this->conn->query($sql)){
-                $retCnt = $this->conn->affected_rows;
-
+                $retCnt += $this->conn->affected_rows;
+            }
+            foreach($rankIdArr as $id){
+                $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName '.
+                    'SET o.tid = t.tid '.
+                    'WHERE o.collid = '.$this->collid.' AND ISNULL(o.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid = '.$id.' ';
+                //echo $sql;
+                if($this->conn->query($sql)){
+                    $retCnt += $this->conn->affected_rows;
+                }
+            }
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName '.
+                'SET o.tid = t.tid '.
+                'WHERE o.collid = '.$this->collid.' AND ISNULL(o.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid <= 20 ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt += $this->conn->affected_rows;
+            }
+            if($retCnt > 0){
                 $sql = 'UPDATE omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
                     'SET i.tid = o.tid '.
                     'WHERE o.collid = '.$this->collid.' AND i.imgid IS NOT NULL ';
@@ -140,14 +163,38 @@ class OccurrenceTaxonomyCleaner extends Manager{
     public function updateDetTaxonomicThesaurusLinkages($kingdomId): int
     {
         $retCnt = 0;
+        $rankIdArr = array();
         if($this->collid && $kingdomId){
+            $sql = 'SELECT DISTINCT rankid FROM taxonunits WHERE kingdomid = '.$kingdomId.' AND rankid < 180 AND rankid > 20 ORDER BY rankid DESC ';
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $rankIdArr[] = $r->rankid;
+            }
             $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
                 'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
                 'SET d.tid = t.tid '.
-                'WHERE o.collid = '.$this->collid.' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' ';
+                'WHERE o.collid = '.$this->collid.' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid >= 180 ';
             //echo $sql;
             if($this->conn->query($sql)){
-                $retCnt = $this->conn->affected_rows;
+                $retCnt += $this->conn->affected_rows;
+            }
+            foreach($rankIdArr as $id){
+                $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
+                    'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
+                    'SET d.tid = t.tid '.
+                    'WHERE o.collid = '.$this->collid.' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid = '.$id.' ';
+                //echo $sql;
+                if($this->conn->query($sql)){
+                    $retCnt += $this->conn->affected_rows;
+                }
+            }
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
+                'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
+                'SET d.tid = t.tid '.
+                'WHERE o.collid = '.$this->collid.' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid <= 20 ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt += $this->conn->affected_rows;
             }
         }
         return $retCnt;
@@ -481,21 +528,21 @@ class OccurrenceTaxonomyCleaner extends Manager{
         $sensitiveArr = (new TaxonomyUtilities)->getSensitiveTaxa();
 
         if($sensitiveArr){
-            $sql = 'UPDATE omoccurrences '.
-                'SET localitySecurity = 1 '.
-                'WHERE (ISNULL(localitySecurity) OR localitySecurity = 0) AND ISNULL(localitySecurityReason) AND tid IN('.implode(',',$sensitiveArr).') ';
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+                'SET o.localitySecurity = 1 '.
+                'WHERE ISNULL(o.localitySecurityReason) AND t.tidaccepted IN('.implode(',',$sensitiveArr).') ';
             if($collid) {
-                $sql .= 'AND collid = ' . $collid . ' ';
+                $sql .= 'AND o.collid = ' . $collid . ' ';
             }
             if($this->conn->query($sql)){
                 $status += $this->conn->affected_rows;
             }
         }
-        $sql2 = 'UPDATE omoccurrences '.
-            'SET localitySecurity = 0 '.
-            'WHERE localitySecurity = 1 AND ISNULL(localitySecurityReason) AND tid NOT IN('.implode(',',$sensitiveArr).') ';
+        $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+            'SET o.localitySecurity = 0 '.
+            'WHERE ISNULL(o.localitySecurityReason) AND t.tidaccepted NOT IN('.implode(',',$sensitiveArr).') ';
         if($collid) {
-            $sql2 .= 'AND collid = ' . $collid . ' ';
+            $sql2 .= 'AND o.collid = ' . $collid . ' ';
         }
         if($this->conn->query($sql2)){
             $status += $this->conn->affected_rows;

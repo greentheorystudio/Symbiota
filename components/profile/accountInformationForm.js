@@ -67,11 +67,7 @@ const accountInformationForm = {
             <q-input outlined v-model="user.biography" label="Biography" bg-color="white" class="col-grow" dense autogrow @update:model-value="processChange"></q-input>
         </div>
     `,
-    setup (props) {
-        const firstnameRef = Vue.ref(null);
-        const lastnameRef = Vue.ref(null);
-        const emailRef = Vue.ref(null);
-        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    setup(props, context) {
         const emailExists = (val) => {
             return new Promise((resolve) => {
                 const formData = new FormData();
@@ -88,35 +84,44 @@ const accountInformationForm = {
                 });
             });
         };
+        const emailRef = Vue.ref(null);
+        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const firstnameRef = Vue.ref(null);
+        const lastnameRef = Vue.ref(null);
+
+        function formHasErrors() {
+            return (
+                firstnameRef.value.hasError ||
+                lastnameRef.value.hasError ||
+                emailRef.value.hasError
+            );
+        }
+
+        function processChange() {
+            context.emit('update:account-information', props.user);
+        }
+
+        function validateForm() {
+            firstnameRef.value.validate();
+            lastnameRef.value.validate();
+            emailRef.value.validate();
+        }
+
         return {
-            firstnameRef,
-            lastnameRef,
             emailRef,
-            requiredRules: [
-                val => (val !== null && val !== '') || 'Required'
-            ],
             emailRules: [
                 val => (val !== null && val !== '') || 'Required',
                 val => emailRegex.test(val) || 'Please enter a valid email address',
                 val => emailExists(val)
-            ]
-        }
-    },
-    methods: {
-        formHasErrors() {
-            return (
-                this.firstnameRef.hasError ||
-                this.lastnameRef.hasError ||
-                this.emailRef.hasError
-            );
-        },
-        processChange() {
-            this.$emit('update:account-information', this.user);
-        },
-        validateForm() {
-            this.firstnameRef.validate();
-            this.lastnameRef.validate();
-            this.emailRef.validate();
+            ],
+            firstnameRef,
+            lastnameRef,
+            requiredRules: [
+                val => (val !== null && val !== '') || 'Required'
+            ],
+            formHasErrors,
+            processChange,
+            validateForm
         }
     }
 };

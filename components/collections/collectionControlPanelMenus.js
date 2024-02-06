@@ -182,14 +182,12 @@ const collectionControlPanelMenus = {
             </template>
         </div>
     `,
-    data() {
-        return {
-            clientRoot: Vue.ref(CLIENT_ROOT),
-            solrMode: Vue.ref(SOLR_MODE)
-        }
-    },
-    methods: {
-        downloadPersonalOccurrences(collid){
+    setup() {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+        const solrMode = store.getSolrMode;
+
+        function downloadPersonalOccurrences(collid) {
             const formData = new FormData();
             formData.append('collid', collid);
             formData.append('action', 'getPersonalOccurrencesCsvData');
@@ -220,6 +218,12 @@ const collectionControlPanelMenus = {
                     document.body.removeChild(elem);
                 });
             });
+        }
+
+        return {
+            clientRoot,
+            solrMode,
+            downloadPersonalOccurrences
         }
     }
 };

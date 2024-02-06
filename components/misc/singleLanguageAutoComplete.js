@@ -1,7 +1,8 @@
 const singleLanguageAutoComplete = {
     props: {
         language: {
-            type: Object
+            type: Object,
+            default: null
         },
         label: {
             type: String,
@@ -15,36 +16,45 @@ const singleLanguageAutoComplete = {
     template: `
         <q-select v-model="language" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
     `,
-    data() {
-        return {
-            inputAllowed: Vue.ref(true),
-            clearInput: Vue.ref(false),
-            autocompleteOptions: Vue.ref([])
+    setup(props, context) {
+        const { showNotification } = useCore();
+        const store = useBaseStore();
+        const autocompleteOptions = Vue.ref([]);
+        const clearInput = Vue.ref(false);
+        const defaultLanguage = store.getDefaultLanguage;
+        const inputAllowed = Vue.ref(true);
+
+        function blurAction(val) {
+            if(props.language === null && val.target.value && !clearInput.value){
+                const optionObj = autocompleteOptions.value.find(option => option['name'].toLowerCase() === val.target.value.toLowerCase());
+                if(optionObj){
+                    processChange(optionObj);
+                }
+                else{
+                    showNotification('negative','That language was not found in the database.');
+                }
+            }
+            clearInput.value = false;
         }
-    },
-    setup() {
-        const $q = useQuasar();
-        return {
-            showNotification(type, text){
-                $q.notify({
-                    type: type,
-                    icon: null,
-                    message: text,
-                    multiLine: true,
-                    position: 'top',
-                    timeout: 5000
-                });
+
+        function clearAction() {
+            clearInput.value = true;
+            inputAllowed.value = true;
+        }
+
+        function createValue(val, done) {
+            if(val.length > 0) {
+                const optionObj = autocompleteOptions.value.find(option => option['name'].toLowerCase() === val.toLowerCase());
+                if(optionObj){
+                    done(optionObj, 'add');
+                }
+                else{
+                    showNotification('negative','That language was not found in the database.');
+                }
             }
         }
-    },
-    methods: {
-        processChange(languageObj) {
-            if(languageObj){
-                this.inputAllowed = false;
-            }
-            this.$emit('update:language', languageObj);
-        },
-        getOptions(val, update) {
+
+        function getOptions(val, update) {
             update(() => {
                 if(val.length > 1) {
                     const formData = new FormData();
@@ -56,51 +66,32 @@ const singleLanguageAutoComplete = {
                     })
                     .then((response) => response.json())
                     .then((result) => {
-                        this.autocompleteOptions = result;
+                        autocompleteOptions.value = result;
                     });
                 }
                 else{
-                    this.autocompleteOptions = [];
+                    autocompleteOptions.value = [];
                 }
             });
-        },
-        blurAction(val) {
-            if(this.language === null && val.target.value && !this.clearInput){
-                const optionObj = this.autocompleteOptions.find(option => option['name'].toLowerCase() === val.target.value.toLowerCase());
-                if(optionObj){
-                    this.processChange(optionObj);
-                }
-                else{
-                    this.showNotification('negative','That language was not found in the database.');
-                }
+        }
+
+        function processChange(languageObj) {
+            if(languageObj){
+                inputAllowed.value = false;
             }
-            this.clearInput = false;
-        },
-        clearAction() {
-            this.clearInput = true;
-            this.inputAllowed = true;
-        },
-        createValue(val, done) {
-            if(val.length > 0) {
-                const optionObj = this.autocompleteOptions.find(option => option['name'].toLowerCase() === val.toLowerCase());
-                if(optionObj){
-                    done(optionObj, 'add');
-                }
-                else{
-                    this.showNotification('negative','That language was not found in the database.');
-                }
-            }
-        },
-        setLanguage() {
+            context.emit('update:language', languageObj);
+        }
+
+        function setLanguage() {
             let url;
-            if(this.language && (!this.language.hasOwnProperty('iso') || !this.language['iso']) && this.language.hasOwnProperty('name') && this.language['name']){
-                url = languageApiUrl + '?action=getLanguageByName&name=' + this.language['name'];
+            if(props.language && (!props.language.hasOwnProperty('iso') || !props.language['iso']) && props.language.hasOwnProperty('name') && props.language['name']){
+                url = languageApiUrl + '?action=getLanguageByName&name=' + props.language['name'];
             }
-            else if(this.language && (!this.language.hasOwnProperty('name') || !this.language['name']) && this.language.hasOwnProperty('iso') && this.language['iso']){
-                url = languageApiUrl + '?action=getLanguageByIso&iso=' + this.language['iso'];
+            else if(props.language && (!props.language.hasOwnProperty('name') || !props.language['name']) && props.language.hasOwnProperty('iso') && props.language['iso']){
+                url = languageApiUrl + '?action=getLanguageByIso&iso=' + props.language['iso'];
             }
             else{
-                url = languageApiUrl + '?action=getLanguageByIso&iso=' + DEFAULT_LANG;
+                url = languageApiUrl + '?action=getLanguageByIso&iso=' + defaultLanguage;
             }
             fetch(url)
             .then((response) => {
@@ -109,11 +100,22 @@ const singleLanguageAutoComplete = {
                 }
             })
             .then((data) => {
-                this.$emit('update:language', data);
+                context.emit('update:language', data);
             });
         }
-    },
-    mounted() {
-        this.setLanguage();
+
+        Vue.onMounted(() => {
+            setLanguage();
+        });
+
+        return {
+            autocompleteOptions,
+            inputAllowed,
+            blurAction,
+            clearAction,
+            createValue,
+            getOptions,
+            processChange
+        }
     }
 };

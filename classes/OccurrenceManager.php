@@ -84,7 +84,7 @@ class OccurrenceManager{
         if(array_key_exists('taxa',$this->searchTermsArr) && $this->searchTermsArr['taxa']){
             $sqlWhereTaxa = '';
             $useThes = (array_key_exists('usethes',$this->searchTermsArr)?$this->searchTermsArr['usethes']:0);
-            $this->taxaSearchType = (int)$this->searchTermsArr['taxontype'];
+            $this->taxaSearchType = (isset($this->searchTermsArr['taxontype']) && (int)$this->searchTermsArr['taxontype'] > 0) ? (int)$this->searchTermsArr['taxontype'] : 1;
             $taxaArr = explode(';',trim($this->searchTermsArr['taxa']));
             foreach($taxaArr as $sName){
                 $trimmedName = trim($sName);
@@ -495,7 +495,7 @@ class OccurrenceManager{
         if(array_key_exists('targetclid',$this->searchTermsArr) && $this->searchTermsArr['targetclid']){
             $clid = $this->searchTermsArr['targetclid'];
             if(is_numeric($clid)){
-                $voucherManager = new ChecklistVoucherAdmin($this->conn);
+                $voucherManager = new ChecklistVoucherAdmin();
                 $voucherManager->setClid($clid);
                 $voucherManager->setCollectionVariables();
                 $this->clName = $voucherManager->getClName();
@@ -550,13 +550,13 @@ class OccurrenceManager{
         }
         if(array_key_exists('imagetype',$this->searchTermsArr) && $this->searchTermsArr['imagetype']){
             if($this->searchTermsArr['imagetype'] === 'specimenonly'){
-                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (c.colltype = "PreservedSpecimen") ';
+                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%specimen%") ';
             }
             elseif($this->searchTermsArr['imagetype'] === 'observationonly'){
-                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (c.colltype != "PreservedSpecimen") ';
+                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%observation%") ';
             }
             elseif($this->searchTermsArr['imagetype'] === 'fieldonly'){
-                $sqlWhere .= 'AND (ISNULL(i.occid)) ';
+                $sqlWhere .= 'AND (i.imgid IS NOT NULL AND (ISNULL(i.occid) OR o.basisofrecord LIKE "%observation%")) ';
             }
         }
         if($sqlWhere){
@@ -675,13 +675,13 @@ class OccurrenceManager{
                     $collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
                     $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
                     $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
-                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
                 }
                 else{
                     $collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
                     $collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
                     $collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
-                    $collArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
+                    $collArr[$collType]['coll'][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
                 }
             }
         }
@@ -957,7 +957,7 @@ class OccurrenceManager{
             $retArr[$r->collid]['instcode'] = $r->institutioncode;
             $retArr[$r->collid]['collcode'] = $r->collectioncode;
             $retArr[$r->collid]['name'] = $r->collectionname;
-            $retArr[$r->collid]['icon'] = $r->icon;
+            $retArr[$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
             $retArr[$r->collid]['category'] = $r->category;
         }
         $rs->free();
@@ -1111,7 +1111,7 @@ class OccurrenceManager{
 
     protected function cleanOutStr($str): string
     {
-        return htmlspecialchars($str);
+        return $str ? htmlspecialchars($str) : '';
     }
 
     protected function cleanInputStr($str): string

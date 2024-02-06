@@ -104,7 +104,7 @@ function generateRandColor(){
 	return hexColor;
 }
 
-function getErrorResponseText(status,statusText){
+function getErrorResponseText(status, statusText){
 	let text;
 	if(status === 0){
 		text = 'Cancelled';

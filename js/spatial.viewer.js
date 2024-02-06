@@ -105,13 +105,11 @@ const mapView = new ol.View({
 const map = new ol.Map({
     view: mapView,
     target: 'map',
-    controls: ol.control.defaults().extend([
-        new ol.control.FullScreen()
-    ]),
     layers: layersArr,
     overlays: [popupoverlay],
     renderer: 'canvas'
 });
+map.addControl(new ol.control.FullScreen());
 
 changeBaseMap();
 

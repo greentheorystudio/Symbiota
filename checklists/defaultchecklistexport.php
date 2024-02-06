@@ -186,7 +186,7 @@ if($showImages){
         if($imageCnt % 4 === 1) {
             $table->addRow();
         }
-        if($imgSrc && !isset($GLOBALS['IMAGE_DOMAIN']) && $imgSrc[0] === '/'){
+        if($imgSrc && $imgSrc[0] === '/'){
             $cell = $table->addCell(null,$imageCellStyle);
             $textrun = $cell->addTextRun('imagePara');
             $textrun->addImage(($GLOBALS['SERVER_ROOT'] . $imgSrc),array('width'=>160,'height'=>160));

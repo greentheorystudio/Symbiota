@@ -140,9 +140,6 @@ class ImageProcessor {
                         $catalogNumber = (isset($fieldMap['catalognumber'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['catalognumber']]):'');
                         $originalUrl = (isset($fieldMap['originalurl'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['originalurl']]):'');
                         $url = (isset($fieldMap['url'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['url']]):'');
-                        if(!$url) {
-                            $url = 'empty';
-                        }
                         $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['thumbnailurl']]):'');
                         if($catalogNumber && $originalUrl){
                             echo '<li>Processing catalogNumber: '.$catalogNumber.'</li>';

@@ -58,7 +58,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/references.index.js?ver=20230103"></script>
+    <script type="text/javascript" src="../js/references.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 	<script type="text/javascript">
 		let refid = <?php echo $refId; ?>;
 	</script>

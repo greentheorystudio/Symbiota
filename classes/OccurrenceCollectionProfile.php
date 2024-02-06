@@ -39,7 +39,7 @@ class OccurrenceCollectionProfile {
 	{
 		$retArr = array();
         $sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, '.
-			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, '.
+			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, c.datarecordingmethod, '.
 			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.publicedits, '.
 			'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, s.uploaddate '.
 			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid ';
@@ -64,9 +64,10 @@ class OccurrenceCollectionProfile {
 			$retArr[$row->collid]['email'] = $row->email;
 			$retArr[$row->collid]['latitudedecimal'] = $row->latitudedecimal;
 			$retArr[$row->collid]['longitudedecimal'] = $row->longitudedecimal;
-			$retArr[$row->collid]['icon'] = $row->icon;
+			$retArr[$row->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
 			$retArr[$row->collid]['colltype'] = $row->colltype;
 			$retArr[$row->collid]['managementtype'] = $row->managementtype;
+            $retArr[$row->collid]['datarecordingmethod'] = $row->datarecordingmethod;
 			$retArr[$row->collid]['publicedits'] = $row->publicedits;
 			$retArr[$row->collid]['guidtarget'] = $row->guidtarget;
 			$retArr[$row->collid]['rights'] = $row->rights;
@@ -263,6 +264,7 @@ class OccurrenceCollectionProfile {
 			$homepage = Sanitizer::cleanInStr($this->conn,$postArr['homepage']);
 			$contact = Sanitizer::cleanInStr($this->conn,$postArr['contact']);
 			$email = Sanitizer::cleanInStr($this->conn,$postArr['email']);
+            $dataRecordingMethod = Sanitizer::cleanInStr($this->conn,$postArr['datarecordingmethod']);
 			$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
 			$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:'NULL');
             $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:'NULL');
@@ -288,7 +290,8 @@ class OccurrenceCollectionProfile {
 				'contact = '.($contact?'"'.$contact.'"':'NULL').','.
 				'email = '.($email?'"'.$email.'"':'NULL').','.
 				'latitudedecimal = '.($postArr['latitudedecimal']?:'NULL').','.
-				'longitudedecimal = '.($postArr['longitudedecimal']?:'NULL').',';
+				'longitudedecimal = '.($postArr['longitudedecimal']?:'NULL').','.
+                'datarecordingmethod = "'.$dataRecordingMethod.'",';
             if(array_key_exists('publishToGbif',$postArr)){
                 $sql .= 'publishToGbif = '.$gbifPublish.',';
             }
@@ -356,6 +359,7 @@ class OccurrenceCollectionProfile {
 			$icon = array_key_exists('iconurl',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['iconurl']):'';
 		}
 		$managementType = array_key_exists('managementtype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['managementtype']):'';
+        $dataRecordingMethod = array_key_exists('datarecordingmethod',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['datarecordingmethod']):'';
 		$collType = array_key_exists('colltype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['colltype']):'';
 		$guid = array_key_exists('collectionguid',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['collectionguid']):'';
 		if(!$guid) {
@@ -368,7 +372,7 @@ class OccurrenceCollectionProfile {
 			'contact,email,latitudedecimal,longitudedecimal,publicedits,publishToGbif,'.
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
             'guidtarget,rights,rightsholder,accessrights,icon,'.
-			'managementtype,colltype,collectionguid,individualurl,sortseq) '.
+			'managementtype,datarecordingmethod,colltype,collectionguid,individualurl,sortseq) '.
 			'VALUES ('.($instCode?'"'.$instCode.'"':'NULL').',"'.
 			($collCode?'"'.$collCode.'"':'NULL').',"'.
 			$coleName.'",'.
@@ -385,7 +389,8 @@ class OccurrenceCollectionProfile {
 			($rightsHolder?'"'.$rightsHolder.'"':'NULL').','.
 			($accessRights?'"'.$accessRights.'"':'NULL').','.
 			($icon?'"'.$icon.'"':'NULL').','.
-			($managementType?'"'.$managementType.'"':'Snapshot').','.
+			($managementType?'"'.$managementType.'"':'"Snapshot"').','.
+            ($dataRecordingMethod?'"'.$dataRecordingMethod.'"':'"specimen"').','.
 			($collType?'"'.$collType.'"':'PreservedSpecimen').',"'.
 			$guid.'",'.($indUrl?'"'.$indUrl.'"':'NULL').','.
 			($sortSeq?:'NULL').') ';
@@ -414,16 +419,6 @@ class OccurrenceCollectionProfile {
 	{
 		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
 		$urlBase = '/content/collicon/';
-		$urlPrefix = 'http://';
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-			$urlPrefix = 'https://';
-		}
-		$urlPrefix .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-			$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-		}
-		$urlBase = $urlPrefix.$urlBase;
-
 		$fileName = basename($_FILES['iconfile']['name']);
 		$imgExt = '';
 		if($p = strrpos($fileName, '.')) {
@@ -794,13 +789,13 @@ class OccurrenceCollectionProfile {
 					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
 					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
 					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
+					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
 				}
 				else{
 					$collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
 					$collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
 					$collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
-					$collArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
+					$collArr[$collType]['coll'][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
 				}
 			}
 		}

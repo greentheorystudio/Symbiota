@@ -77,7 +77,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		let tid = <?php echo $taxonEditorObj->getTid(); ?>;
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-    <script src="../../js/taxa.taxonomyeditor.js?ver=20230103"></script>
+    <script src="../../js/taxa.taxonomyeditor.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 </head>
 <body>
 <?php

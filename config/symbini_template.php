@@ -18,7 +18,6 @@ $GLOBALS['SMTP_ENCRYPTION_MECHANISM'] = 'STARTTLS';        //SMTP encryption mec
 $GLOBALS['SMTP_USERNAME'] = '';                            //SMTP Username
 $GLOBALS['SMTP_PASSWORD'] = '';                            //SMTP Password
 
-$GLOBALS['IMAGE_DOMAIN'] = '';				//Domain path to images, if different from portal
 $GLOBALS['IMAGE_ROOT_URL'] = '/content/imglib';				//URL path to images
 $GLOBALS['IMAGE_ROOT_PATH'] = $GLOBALS['SERVER_ROOT'].'/content/imglib';			//Writable path to images, especially needed for downloading images
 
@@ -46,7 +45,6 @@ $GLOBALS['GOOGLE_TAG_MANAGER_ID'] = '';			//Needed for setting up Google Tag Man
 $GLOBALS['EOL_KEY'] = '';						//Not required, but good to add a key if you plan to do a lot of EOL mapping
 $GLOBALS['PORTAL_TAXA_DESC'] = '';				//Preferred taxa descriptions for the portal.
 $GLOBALS['DYN_CHECKLIST_RADIUS'] = 10;			//Controls size of concentric rings that are sampled when building Dynamic Checklist
-$GLOBALS['DISPLAY_COMMON_NAMES'] = 1;			//Display common names in species profile page and checklists displays
 $GLOBALS['ACTIVATE_EXSICCATI'] = 0;			//Activates exsiccati fields within data entry pages; adding link to exsiccati search tools to portal menu is recommended
 $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT'] = 0;			//Activates checklist fieldguide export tool
 $GLOBALS['GENBANK_SUB_TOOL_PATH'] = '';	//Path to GenBank Submission tool installation

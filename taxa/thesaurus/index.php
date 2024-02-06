@@ -72,26 +72,14 @@ if(!$GLOBALS['SYMB_UID']) {
         include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/multipleLanguageAutoComplete.js?ver=20230627" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=20230627" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230624" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=20230624" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusMaintenanceModule.js?ver=20230624" type="text/javascript"></script>
-        <script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/multipleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusMaintenanceModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script type="text/javascript">
             const taxonomicThesaurusManagerModule = Vue.createApp({
-                data() {
-                    return {
-                        isEditor: Vue.ref(false),
-                        kingdomId: Vue.ref(null),
-                        loading: Vue.ref(false),
-                        requiredRanks: Vue.ref([10]),
-                        selectedRanks: Vue.ref([]),
-                        selectedRanksHigh: Vue.ref(0),
-                        taxonomicGroup: Vue.ref(null),
-                        taxonomicGroupTid: Vue.ref(null)
-                    }
-                },
                 components: {
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
                     'taxon-rank-checkbox-selector': taxonRankCheckboxSelector,
@@ -99,17 +87,18 @@ if(!$GLOBALS['SYMB_UID']) {
                     'taxonomy-data-source-import-update-module': taxonomyDataSourceImportUpdateModule
                 },
                 setup() {
-                    return {
-                        tab: Vue.ref('importer')
-                    }
-                },
-                mounted() {
-                    this.setEditor();
-                    this.selectedRanks = TAXONOMIC_RANKS;
-                    this.setRankHigh();
-                },
-                methods: {
-                    setEditor(){
+                    const store = useBaseStore();
+                    const isEditor = Vue.ref(false);
+                    const kingdomId = Vue.ref(null);
+                    const loading = Vue.ref(false);
+                    const requiredRanks = Vue.ref([10]);
+                    const selectedRanks = Vue.ref([]);
+                    const selectedRanksHigh = Vue.ref(0);
+                    const tab = Vue.ref('importer');
+                    const taxonomicGroup = Vue.ref(null);
+                    const taxonomicGroupTid = Vue.ref(null);
+
+                    function setEditor() {
                         const formData = new FormData();
                         formData.append('permission', 'Taxonomy');
                         formData.append('action', 'validatePermission');
@@ -119,33 +108,59 @@ if(!$GLOBALS['SYMB_UID']) {
                         })
                         .then((response) => {
                             response.text().then((res) => {
-                                this.isEditor = Number(res) === 1;
+                                isEditor.value = Number(res) === 1;
                             });
                         });
-                    },
-                    setRankHigh() {
-                        this.selectedRanksHigh = 0;
-                        this.selectedRanks.forEach((rank) => {
-                            if(rank > this.selectedRanksHigh){
-                                this.selectedRanksHigh = rank;
+                    }
+
+                    function setRankHigh() {
+                        selectedRanksHigh.value = 0;
+                        selectedRanks.value.forEach((rank) => {
+                            if(rank > selectedRanksHigh.value){
+                                selectedRanksHigh.value = rank;
                             }
                         });
-                    },
-                    updateLoading(value) {
-                        this.loading = value;
-                    },
-                    updateSelectedRanks(selectedArr) {
-                        this.selectedRanks = selectedArr;
-                        this.setRankHigh();
-                    },
-                    updateTaxonomicGroup(taxonObj) {
-                        this.taxonomicGroup = taxonObj;
-                        this.taxonomicGroupTid = taxonObj ? taxonObj.tid : null;
-                        this.kingdomId = taxonObj ? taxonObj.kingdomid : null;
+                    }
+
+                    function updateLoading(value) {
+                        loading.value = value;
+                    }
+
+                    function updateSelectedRanks(selectedArr) {
+                        selectedRanks.value = selectedArr;
+                        setRankHigh();
+                    }
+
+                    function updateTaxonomicGroup(taxonObj) {
+                        taxonomicGroup.value = taxonObj;
+                        taxonomicGroupTid.value = taxonObj ? taxonObj.tid : null;
+                        kingdomId.value = taxonObj ? taxonObj.kingdomid : null;
+                    }
+
+                    Vue.onMounted(() => {
+                        setEditor();
+                        selectedRanks.value = store.getTaxonomicRanks;
+                        setRankHigh();
+                    });
+                    
+                    return {
+                        isEditor,
+                        kingdomId,
+                        loading,
+                        requiredRanks,
+                        selectedRanks,
+                        selectedRanksHigh,
+                        tab,
+                        taxonomicGroup,
+                        taxonomicGroupTid,
+                        updateLoading,
+                        updateSelectedRanks,
+                        updateTaxonomicGroup
                     }
                 }
             });
             taxonomicThesaurusManagerModule.use(Quasar, { config: {} });
+            taxonomicThesaurusManagerModule.use(Pinia.createPinia());
             taxonomicThesaurusManagerModule.mount('#innertext');
         </script>
     </body>

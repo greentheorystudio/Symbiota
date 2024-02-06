@@ -222,10 +222,6 @@ $occMediaArr = $occManager->getMediaMap();
 							<?php
 							$medUrl = $medArr['accessuri'];
                             $medFormat = $medArr['format'];
-							if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($medUrl, '/', 1) === 0) {
-                                $medUrl = $GLOBALS['IMAGE_DOMAIN'].$medUrl;
-                            }
-
 							if(strncmp($medFormat, 'video/', 6) === 0){
                                 echo '<video width="300" controls>';
                                 echo '<source src="'.$medUrl.'" type="'.$medFormat.'">';

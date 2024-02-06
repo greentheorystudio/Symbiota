@@ -105,7 +105,6 @@ else{
 		}
 		$dlManager->setSchemaType($schema);
 		$dlManager->setExtended($extended);
-		$dlManager->setCharSetOut($cSet);
 		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
 		$dlManager->addCondition('decimalLatitude','NOTNULL');
@@ -126,7 +125,6 @@ else{
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
 		$dlManager->setSchemaType($schema);
-		$dlManager->setCharSetOut($cSet);
 		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
 		$dlManager->downloadData();

@@ -166,8 +166,8 @@ class GlossaryManager{
 			while($r = $rs->fetch_object()){
 				$retArr[$r->glimgid]['glimgid'] = $r->glimgid;
 				$retArr[$r->glimgid]['glossid'] = $r->glossid;
-				$retArr[$r->glimgid]['url'] = $r->url;
-				$retArr[$r->glimgid]['thumbnailurl'] = $r->thumbnailurl;
+				$retArr[$r->glimgid]['url'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->url) : $r->url;
+				$retArr[$r->glimgid]['thumbnailurl'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->thumbnailurl) : $r->thumbnailurl;
 				$retArr[$r->glimgid]['structures'] = $r->structures;
 				$retArr[$r->glimgid]['notes'] = $r->notes;
 				$retArr[$r->glimgid]['createdBy'] = $r->createdBy;
@@ -857,10 +857,7 @@ class GlossaryManager{
 		$exists = false;
 		$localUrl = '';
 		if(strncmp($url, '/', 1) === 0){
-			if(isset($GLOBALS['IMAGE_DOMAIN'])){
-				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
-			}
-			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){
+			if($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){
 				$localUrl = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$url);
 			}
 			else{
@@ -964,9 +961,6 @@ class GlossaryManager{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if(isset($GLOBALS['IMAGE_DOMAIN'])){
-			$urlBase = $this->getServerDomain().$urlBase;
-    	}
 		return $urlBase;
 	}
 	
@@ -1000,8 +994,8 @@ class GlossaryManager{
 		if(!file_exists($this->imageRootPath . 'glossimg/' . $folderName) && !mkdir($concurrentDirectory = $this->imageRootPath . 'glossimg/' . $folderName, 0775) && !is_dir($concurrentDirectory)) {
 			throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
 		}
-		$path = $this->imageRootPath. 'glossimg/' .$folderName. '/';
-		$url = $this->imageRootUrl. 'glossimg/' .$folderName. '/';
+		$path = $this->imageRootPath. '/glossimg/' .$folderName. '/';
+		$url = $this->imageRootUrl. '/glossimg/' .$folderName. '/';
 		
 		$this->targetPath = $path;
 		$this->urlBase = $url;
@@ -1128,7 +1122,7 @@ class GlossaryManager{
 					}
 				}
 				if(isset($retArr[$targetId]) && $r2->url && !isset($retArr[$targetId]['images'])) {
-					$retArr[$targetId]['images'][$r2->glimgid]['url'] = $r2->url;
+					$retArr[$targetId]['images'][$r2->glimgid]['url'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r2->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r2->url) : $r2->url;
 					$retArr[$targetId]['images'][$r2->glimgid]['createdBy'] = $r2->createdBy;
 					$retArr[$targetId]['images'][$r2->glimgid]['structures'] = $r2->structures;
 					$retArr[$targetId]['images'][$r2->glimgid]['notes'] = $r2->notes;
@@ -1414,9 +1408,6 @@ class GlossaryManager{
 			$domain = 'https://';
 		}
 		$domain .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-			$domain .= ':' . $_SERVER['SERVER_PORT'];
-		}
 		return $domain;
 	}
 }

@@ -430,7 +430,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 								</span>
                             </div>
                             <?php
-                            if($GLOBALS['IS_ADMIN']){
+                            if($isEditor){
                                 ?>
                                 <div class="field-block">
                                     <span class="field-label">Dataset Type:</span>
@@ -467,6 +467,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             within the portal is only a periodically updated snapshot of the central database.
                                             A Live dataset is when the data is managed directly within the portal and the central database is the portal data.
                                         </span>
+                                    </span>
+                                </div>
+                                <div class="field-block">
+                                    <span class="field-label">Data Recording Method:</span>
+                                    <span class="field-elem">
+                                        <select name="datarecordingmethod">
+                                            <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'specimen'?'SELECTED':''); ?>>Specimen Based</option>
+                                            <option value="lot" <?php echo ($collid && $collData['datarecordingmethod'] === 'lot'?'SELECTED':''); ?>>Lot Based</option>
+                                        </select>
                                     </span>
                                 </div>
                                 <?php

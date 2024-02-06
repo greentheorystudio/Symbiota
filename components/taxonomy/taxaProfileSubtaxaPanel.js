@@ -5,16 +5,20 @@ const taxaProfileSubtaxaPanel = {
             default: true
         },
         isEditor: {
-            type: Boolean
+            type: Boolean,
+            default: false
         },
         subtaxaArr: {
-            type: Array
+            type: Array,
+            default: []
         },
         subtaxaExpansionLabel: {
-            type: String
+            type: String,
+            default: ''
         },
         subtaxaLabel: {
-            type: String
+            type: String,
+            default: ''
         }
     },
     template: `
@@ -114,9 +118,12 @@ const taxaProfileSubtaxaPanel = {
             </div>
         </template>
     `,
-    data() {
+    setup() {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            clientRoot
         }
     }
 };

@@ -53,8 +53,8 @@ class OccurrenceDuplicate {
                     $retArr[$r->duplicateid]['o'][$r->occid] = array('instcode' => $r->institutioncode, 'collcode' => $r->collectioncode,
                         'collname' => $r->collectionname, 'catnum' => $r->catalognumber, 'occurrenceid' => $r->occurrenceid, 'sciname' => $r->sciname,
                         'identifiedby' => $r->identifiedby, 'dateidentified' => $r->dateidentified, 'recordedby' => $r->recordedby,
-                        'recordnumber' => $r->recordnumber, 'eventdate' => $r->eventdate, 'notes' => $r->notes, 'tnurl' => $r->thumbnailurl,
-                        'url' => $r->url);
+                        'recordnumber' => $r->recordnumber, 'eventdate' => $r->eventdate, 'notes' => $r->notes, 'tnurl' => (($r->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->thumbnailurl) : $r->thumbnailurl),
+                        'url' => (($r->url && $GLOBALS['CLIENT_ROOT'] && strncmp($r->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->url) : $r->url));
                 }
                 $rs->free();
             }
@@ -781,7 +781,7 @@ class OccurrenceDuplicate {
                 $returnArr['institutioncode'] = $row->institutioncode;
                 $returnArr['collectioncode'] = $row->collectioncode;
                 $returnArr['collectionname'] = $row->collectionname;
-                $returnArr['icon'] = $row->icon;
+                $returnArr['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
                 $returnArr['colltype'] = $row->colltype;
                 $returnArr['managementtype'] = $row->managementtype;
             }

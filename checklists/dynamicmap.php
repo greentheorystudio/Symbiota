@@ -22,7 +22,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20230105" rel="stylesheet" type="text/css" />
     <style>
         .map {
@@ -36,9 +36,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
             display: none;
         }
     </style>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20230103" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
             $( "#taxa" ).autocomplete({
@@ -126,20 +126,20 @@ include_once(__DIR__ . '/../config/footer-includes.php');
         },
         style: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_FILL_COLOR),SPATIAL_SHAPES_SELECTIONS_OPACITY)
+                color: getRgbaStrFromHexOpacity((SPATIAL_SHAPES_SELECTIONS_FILL_COLOR),SPATIAL_SHAPES_SELECTIONS_OPACITY)
             }),
             stroke: new ol.style.Stroke({
-                color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
+                color: getRgbaStrFromHexOpacity((SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
                 width: SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH
             }),
             image: new ol.style.Circle({
                 radius: SPATIAL_SHAPES_POINT_RADIUS,
                 stroke: new ol.style.Stroke({
-                    color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
+                    color: getRgbaStrFromHexOpacity((SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1),
                     width: (SPATIAL_SHAPES_BORDER_WIDTH + 2)
                 }),
                 fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1)
+                    color: getRgbaStrFromHexOpacity((SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR),1)
                 })
             })
         }),

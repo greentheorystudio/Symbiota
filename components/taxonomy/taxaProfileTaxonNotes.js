@@ -1,7 +1,10 @@
 const taxaProfileTaxonNotes = {
-    props: [
-        'taxon'
-    ],
+    props: {
+        taxon: {
+            type: Object,
+            default: {}
+        }
+    },
     template: `
         <template v-if="taxon.taxonNotes">
             <div id="taxonnotes">

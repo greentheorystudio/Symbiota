@@ -43,15 +43,6 @@ if($imgArr){
 	$imgUrl = $imgArr['url'];
 	$origUrl = $imgArr['originalurl'];
 	$metaUrl = $imgArr['url'];
-	if(isset($GLOBALS['IMAGE_DOMAIN'])){
-		if(strncmp($imgUrl, '/', 1) === 0){
-			$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-			$metaUrl = $GLOBALS['IMAGE_DOMAIN'].$metaUrl;
-		}
-		if($origUrl && strncmp($origUrl, '/', 1) === 0){
-			$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
-		}
-	}
 	if(strncmp($metaUrl, '/', 1) === 0){
 		$metaUrl = 'http://'.$_SERVER['HTTP_HOST'].$metaUrl;
 	}
@@ -71,7 +62,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../js/imagelib.imgdetails.js?ver=20230316" type="text/javascript"></script>
+	<script src="../js/imagelib.imgdetails.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
 	<?php

@@ -151,10 +151,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <?php
     if($displayMap){
         ?>
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20230105" rel="stylesheet" type="text/css" />
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20230103" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -290,8 +290,11 @@ if($fullWindow){
                 <div style="float:left;margin:15px 0;text-align:center;font-weight:bold;width:120px;">
                     <?php
                     if($collMetadata['icon']){
+                        if($GLOBALS['CLIENT_ROOT'] && strncmp($collMetadata['icon'], '/', 1) === 0){
+                            $collMetadata['icon'] = $GLOBALS['CLIENT_ROOT'] . $collMetadata['icon'];
+                        }
                         ?>
-                        <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo (strncmp($collMetadata['icon'], 'images', 6) === 0 ?'../../':'').$collMetadata['icon']; ?>'/><br/>
+                        <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo $collMetadata['icon']; ?>'/><br/>
                         <?php
                     }
                     $collCode = '';
@@ -784,10 +787,6 @@ if($fullWindow){
                                                     <?php
                                                     $medUrl = $medArr['accessuri'];
                                                     $medFormat = $medArr['format'];
-                                                    if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($medUrl, '/', 1) === 0) {
-                                                        $medUrl = $GLOBALS['IMAGE_DOMAIN'].$medUrl;
-                                                    }
-
                                                     if(strncmp($medFormat, 'video/', 6) === 0){
                                                         echo '<video width="250" controls>';
                                                         echo '<source src="'.$medUrl.'" type="'.$medFormat.'">';
@@ -1066,14 +1065,6 @@ if($fullWindow){
                                         $tnUrl = $dupArr['tnurl'];
                                         if(!$tnUrl) {
                                             $tnUrl = $url;
-                                        }
-                                        if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                                            if(strncmp($url, '/', 1) === 0) {
-                                                $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
-                                            }
-                                            if(strncmp($tnUrl, '/', 1) === 0) {
-                                                $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
-                                            }
                                         }
                                         echo '<div style="float:left;margin:10px;">';
                                         echo '<a href="'.$url.'">';

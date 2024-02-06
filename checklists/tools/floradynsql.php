@@ -36,7 +36,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Flora Linkage Builder </title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<script>
+    <script type="text/javascript">
 		function updateSql(){
             const country = document.getElementById("countryinput").value;
             const state = document.getElementById("stateinput").value;

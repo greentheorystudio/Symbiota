@@ -1,7 +1,10 @@
 const taxaProfileEditButton = {
-    props: [
-        'tid'
-    ],
+    props: {
+        tid: {
+            type: Number,
+            default: 0
+        }
+    },
     template: `
         <div>
             <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + tid)" title="Edit Taxon Data">
@@ -9,9 +12,12 @@ const taxaProfileEditButton = {
             </a>
         </div>
     `,
-    data() {
+    setup() {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            clientRoot
         }
     }
 };

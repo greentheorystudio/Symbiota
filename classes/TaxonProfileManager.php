@@ -65,13 +65,11 @@ class TaxonProfileManager {
             if($clId){
                 $this->setClName($clId);
             }
-            if($this->taxon['submittedTid'] === $this->taxon['tid']){
-                $this->setVernaculars();
-                $this->setSynonyms();
-                $this->setTaxaImageCount();
-                $this->taxon['sppArr'] = array();
-                $this->setSppData($clId);
-            }
+            $this->setVernaculars();
+            $this->setSynonyms();
+            $this->setTaxaImageCount();
+            $this->taxon['sppArr'] = array();
+            $this->setSppData($clId);
         }
 
         return $this->taxon;
@@ -115,13 +113,8 @@ class TaxonProfileManager {
                 $sciName = $row->sciname;
                 if($row->url && array_key_exists($sciName,$this->taxon['sppArr'])){
                     $imgUrl = $row->thumbnailurl ?: $row->url;
-                    if(strncmp($imgUrl, '/', 1) === 0) {
-                        if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                            $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
-                        }
-                        else{
-                            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
-                        }
+                    if($imgUrl && $GLOBALS['CLIENT_ROOT'] && strncmp($imgUrl, '/', 1) === 0) {
+                        $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
                     }
                     $this->taxon['sppArr'][$sciName]['url'] = $imgUrl;
                     $this->taxon['sppArr'][$sciName]['caption'] = $row->caption;
@@ -142,13 +135,8 @@ class TaxonProfileManager {
                 $sciName = $row->sciname;
                 if($row->url && array_key_exists($sciName,$this->taxon['sppArr']) && !array_key_exists('url',$this->taxon['sppArr'][$sciName])){
                     $imgUrl = $row->thumbnailurl ?: $row->url;
-                    if(strncmp($imgUrl, '/', 1) === 0) {
-                        if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                            $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
-                        }
-                        else{
-                            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
-                        }
+                    if($imgUrl && strncmp($imgUrl, '/', 1) === 0) {
+                        $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
                     }
                     $this->taxon['sppArr'][$sciName]['url'] = $imgUrl;
                     $this->taxon['sppArr'][$sciName]['caption'] = $row->caption;
@@ -262,14 +250,8 @@ class TaxonProfileManager {
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
                 $imageArr = array();
-                $imgUrl = $row->url;
-                $imgThumbnail = $row->thumbnailurl;
-                if($imgUrl && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) {
-                    $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
-                }
-                if($imgThumbnail && isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgThumbnail, '/', 1) === 0) {
-                    $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
-                }
+                $imgUrl = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+                $imgThumbnail = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
                 $imageArr['id'] = $row->imgid;
                 $imageArr['url'] = $imgUrl;
                 $imageArr['thumbnailurl'] = $imgThumbnail ?: $imgUrl;
@@ -306,7 +288,7 @@ class TaxonProfileManager {
                 while($row = $result->fetch_object()){
                     $mediaArr = array();
                     $mediaArr['id'] = $row->mediaid;
-                    $mediaArr['accessuri'] = $row->accessuri;
+                    $mediaArr['accessuri'] = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
                     $mediaArr['title'] = $row->title;
                     $mediaArr['creator'] = $row->creator;
                     $mediaArr['type'] = $row->type;
@@ -334,10 +316,7 @@ class TaxonProfileManager {
             //echo $sql;
             $result = $this->conn->query($sql);
             if($row = $result->fetch_object()){
-                $map = $row->url;
-                if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($map, '/', 1) === 0){
-                    $map = $GLOBALS['IMAGE_DOMAIN'] . $map;
-                }
+                $map = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
             }
             $result->close();
         }

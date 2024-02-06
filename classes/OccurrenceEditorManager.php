@@ -1723,9 +1723,9 @@ class OccurrenceEditorManager {
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
                 $imgId = $row->imgid;
-                $imageMap[$imgId]['url'] = $row->url;
-                $imageMap[$imgId]['tnurl'] = $row->thumbnailurl;
-                $imageMap[$imgId]['origurl'] = $row->originalurl;
+                $imageMap[$imgId]['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+                $imageMap[$imgId]['tnurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+                $imageMap[$imgId]['origurl'] = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
                 $imageMap[$imgId]['caption'] = Sanitizer::cleanOutStr($row->caption);
                 $imageMap[$imgId]['photographer'] = Sanitizer::cleanOutStr($row->photographer);
                 $imageMap[$imgId]['photographeruid'] = $row->photographeruid;
@@ -1735,7 +1735,7 @@ class OccurrenceEditorManager {
                 $imageMap[$imgId]['occid'] = $row->occid;
                 $imageMap[$imgId]['username'] = Sanitizer::cleanOutStr($row->username);
                 $imageMap[$imgId]['sortseq'] = $row->sortsequence;
-                if(strpos($row->originalurl, 'api.idigbio.org') && strtotime($row->initialtimestamp) > strtotime('-2 days')) {
+                if($row->originalurl && strpos($row->originalurl, 'api.idigbio.org') && strtotime($row->initialtimestamp) > strtotime('-2 days')) {
                     $headerArr = get_headers($row->originalurl,1);
                     if($headerArr && $headerArr['Content-Type'] === 'image/svg+xml') {
                         $imageMap[$imgId]['error'] = 'NOTICE: iDigBio image derivatives not yet available, it may take upto 24 hours before image processing is complete';
@@ -1759,7 +1759,7 @@ class OccurrenceEditorManager {
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
                 $medId = $row->mediaid;
-                $mediaMap[$medId]['accessuri'] = $row->accessuri;
+                $mediaMap[$medId]['accessuri'] = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
                 $mediaMap[$medId]['title'] = Sanitizer::cleanOutStr($row->title);
                 $mediaMap[$medId]['creatoruid'] = $row->creatoruid;
                 $mediaMap[$medId]['creator'] = Sanitizer::cleanOutStr($row->creator);
