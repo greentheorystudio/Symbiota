@@ -143,7 +143,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		}
 
 	</script>
-	<script src="../js/glossary.index.js?ver=20230103" type="text/javascript"></script>
+	<script src="../js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
 	<?php
