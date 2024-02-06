@@ -20,7 +20,7 @@ services:
       - 80:80
 
   php:
-    image: devilbox/php-fpm:8.1-work
+    image: devilbox/php-fpm:8.2-work
     container_name: php
     environment:
       - NEW_UID=1000
