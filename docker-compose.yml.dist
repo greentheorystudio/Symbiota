@@ -2,11 +2,16 @@ version: '3'
 
 services:
   nginx:
-    image: devilbox/nginx-stable
+    image: devilbox/nginx-stable:alpine
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile.alpine
     container_name: nginx
     environment:
-      PHP_FPM_ENABLE: 1
-      PHP_FPM_SERVER_ADDR: php
+      - NEW_UID=1000
+      - NEW_GID=1000
+      - MAIN_VHOST_BACKEND=conf:phpfpm:tcp:php:9000
+      - MASS_VHOST_BACKEND_TIMEOUT=7200
     volumes:
       - ./:/var/www/default/htdocs
     networks:
@@ -17,6 +22,9 @@ services:
   php:
     image: devilbox/php-fpm:8.1-work
     container_name: php
+    environment:
+      - NEW_UID=1000
+      - NEW_GID=1000
     volumes:
       - ./:/var/www/default/htdocs
       - ./docker/php-fpm/php-ini-overrides.ini:/etc/php-custom.d/php-ini-overrides.ini
