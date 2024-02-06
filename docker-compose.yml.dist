@@ -28,6 +28,7 @@ services:
     volumes:
       - ./:/var/www/default/htdocs
       - ./docker/php-fpm/php-ini-overrides.ini:/etc/php-custom.d/php-ini-overrides.ini
+      - ./docker/php-fpm/php-fpm-overrides.conf:/etc/php-fpm-custom.d/php-fpm-overrides.conf
     networks:
       - symbiota
 

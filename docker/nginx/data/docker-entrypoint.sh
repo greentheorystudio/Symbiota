@@ -125,7 +125,7 @@ env_var_export "MAIN_VHOST_TEMPLATE_DIR" "cfg"
 env_var_export "MAIN_VHOST_ALIASES_ALLOW" ""
 env_var_export "MAIN_VHOST_ALIASES_DENY" '/\.git, /\.ht.*'
 env_var_export "MAIN_VHOST_BACKEND"
-env_var_export "MAIN_VHOST_BACKEND_TIMEOUT" "180"
+env_var_export "MAIN_VHOST_BACKEND_TIMEOUT" "7200"
 env_var_export "MAIN_VHOST_SSL_TYPE" "plain"
 env_var_export "MAIN_VHOST_SSL_CN" "localhost"
 env_var_export "MAIN_VHOST_STATUS_ENABLE" "0"
@@ -139,7 +139,7 @@ env_var_export "MASS_VHOST_ALIASES_ALLOW" ""
 env_var_export "MASS_VHOST_ALIASES_DENY" '/\.git, /\.ht.*'
 env_var_export "MASS_VHOST_BACKEND"
 env_var_export "MASS_VHOST_BACKEND_REWRITE"
-env_var_export "MASS_VHOST_BACKEND_TIMEOUT" "180"
+env_var_export "MASS_VHOST_BACKEND_TIMEOUT" "7200"
 env_var_export "MASS_VHOST_SSL_TYPE" "plain"
 env_var_export "MASS_VHOST_TLD_SUFFIX" ".loc"
 
