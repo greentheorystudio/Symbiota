@@ -94,7 +94,7 @@ class IRLManager {
     public function getTotalTaxaWithDesc(): int
     {
         $total = 0;
-        $sql = 'SELECT COUNT(TID) AS cnt FROM taxa WHERE TID IN(SELECT tid FROM taxadescrblock) ';
+        $sql = 'SELECT COUNT(TID) AS cnt FROM taxa WHERE TID IN(SELECT tid FROM taxadescrblock) AND TID = tidaccepted ';
         //echo $sql;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
