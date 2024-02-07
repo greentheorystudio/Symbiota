@@ -301,9 +301,7 @@ class OccurrenceDuplicate {
         $retArr = array();
         $lastName = $this->parseLastName($collName);
         if($lastName){
-            $sql = 'SELECT o.occid FROM omoccurrences o ';
-            $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid '.
-                'WHERE f.recordedby LIKE "%'.$lastName.'%" ';
+            $sql = 'SELECT o.occid FROM omoccurrences AS o WHERE o.recordedby LIKE "%'.$lastName.'%" ';
             $sql .= 'AND (o.processingstatus IS NULL OR o.processingstatus != "unprocessed" OR o.locality IS NOT NULL) AND (o.occid != '.$skipOccid.') ';
 
             $runQry = true;
@@ -399,7 +397,7 @@ class OccurrenceDuplicate {
             $result = $this->conn->query($sql);
             while($row = $result->fetch_assoc()) {
                 foreach($row as $k => $v){
-                    $vStr = trim($v);
+                    $vStr = $v ? trim($v) : '';
                     $retArr[$row['occid']][$k] = $vStr;
                     if($vStr) {
                         $relArr[$k] = '';

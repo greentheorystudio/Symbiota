@@ -801,9 +801,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 }
                                                 ?>
                                                 <div id="dupeMsgDiv">
-                                                    <div id="dupesearch">Searching for Dupes...</div>
-                                                    <div id="dupenone" style="display:none;color:red;">No Dupes Found</div>
-                                                    <div id="dupedisplay" style="display:none;color:green;">Displaying Dupes</div>
+                                                    <div id="dupesearch">Searching for Duplicates...</div>
+                                                    <div id="dupenone" style="display:none;color:red;">No Duplicates Found</div>
+                                                    <div id="dupedisplay" style="display:none;color:green;">Displaying Duplicates</div>
                                                 </div>
                                             </div>
                                             <div id="dateextradiv">
