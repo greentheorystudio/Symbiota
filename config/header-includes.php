@@ -9,7 +9,8 @@
 include_once(__DIR__ . '/js-globals.php');
 ?>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/base.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/spatial.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/occurrence.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/search.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/spatial.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/hooks/core.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/shared.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>

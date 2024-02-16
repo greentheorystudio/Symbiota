@@ -29,17 +29,51 @@ class OccurrenceManager{
         }
     }
 
-    public function getSearchTerms(): array
+    public function addOccurrencesToDataset($datasetID,$mapWhere): bool
     {
-        return $this->searchTermsArr;
+        if(is_numeric($datasetID)) {
+            $sql = 'INSERT IGNORE INTO omoccurdatasetlink(occid,datasetid) SELECT DISTINCT o.occid, '.$datasetID.' ';
+            $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.$this->setTableJoins($mapWhere).$mapWhere;
+            if(!$this->conn->query($sql)){
+                return false;
+            }
+        }
+        return true;
     }
 
-    public function getSearchTerm($k){
-        if(array_key_exists($k,$this->searchTermsArr)){
-            return $this->searchTermsArr[$k];
-        }
+    protected function cleanInputStr($str): string
+    {
+        $newStr = str_replace(array('"', "'"), array('', '%apos;'), $str);
+        $newStr = strip_tags($newStr);
+        return $newStr;
+    }
 
-        return '';
+    protected function cleanOutStr($str): string
+    {
+        return $str ? htmlspecialchars($str) : '';
+    }
+
+    public function getClName(){
+        return $this->clName;
+    }
+
+    public function getCollectionList($collIdArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, cat.category '.
+            'FROM omcollections c LEFT JOIN omcollcatlink l ON c.collid = l.collid '.
+            'LEFT JOIN omcollcategories cat ON l.ccpk = cat.ccpk '.
+            'WHERE c.collid IN('.implode(',',$collIdArr).') ';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $retArr[$r->collid]['instcode'] = $r->institutioncode;
+            $retArr[$r->collid]['collcode'] = $r->collectioncode;
+            $retArr[$r->collid]['name'] = $r->collectionname;
+            $retArr[$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
+            $retArr[$r->collid]['category'] = $r->category;
+        }
+        $rs->free();
+        return $retArr;
     }
 
     public function getDatasetArr(): array
@@ -56,16 +90,177 @@ class OccurrenceManager{
         return $retArr;
     }
 
-    public function addOccurrencesToDataset($datasetID,$mapWhere): bool
+    public function getDatasetSearchStr(){
+        $retStr = '';
+        if(!array_key_exists('db',$this->searchTermsArr) || $this->searchTermsArr['db'] === 'all'){
+            $retStr = 'All Collections';
+        }
+        elseif($this->searchTermsArr['db'] === 'allspec'){
+            $retStr = 'All Occurrence Collections';
+        }
+        elseif($this->searchTermsArr['db'] === 'allobs'){
+            $retStr = 'All Observation Projects';
+        }
+        else{
+            $cArr = explode(';',$this->searchTermsArr['db']);
+            if($cArr){
+                $sql = 'SELECT collid, collectionname, CONCAT_WS("-",institutioncode,collectioncode) as instcode '.
+                    'FROM omcollections WHERE collid IN('.$cArr[0].') ORDER BY institutioncode,collectioncode';
+                $rs = $this->conn->query($sql);
+                while($r = $rs->fetch_object()){
+                    if($r->instcode){
+                        $retStr .= '; '.$r->instcode;
+                    }
+                    else{
+                        $retStr .= '; '.$r->collectionname;
+                    }
+                }
+                $rs->free();
+            }
+            $retStr = substr($retStr,2);
+        }
+        return $retStr;
+    }
+
+    public function getFullCollectionList(): array
     {
-        if(is_numeric($datasetID)) {
-            $sql = 'INSERT IGNORE INTO omoccurdatasetlink(occid,datasetid) SELECT DISTINCT o.occid, '.$datasetID.' ';
-            $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.$this->setTableJoins($mapWhere).$mapWhere;
-            if(!$this->conn->query($sql)){
-                return false;
+        $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
+            'cat.category, cat.icon AS caticon, cat.acronym '.
+            'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
+            'LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
+            'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
+            'WHERE (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1) '.
+            'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
+        //echo "<div>SQL: ".$sql."</div>";
+        $result = $this->conn->query($sql);
+        $collArr = array();
+        while($r = $result->fetch_object()){
+            $collType = '';
+            if(stripos($r->colltype, 'observation') !== false) {
+                $collType = 'obs';
+            }
+            if(stripos($r->colltype, 'specimen')) {
+                $collType = 'spec';
+            }
+            if($collType){
+                if($r->ccpk){
+                    if(!isset($collArr[$collType]['cat'][$r->ccpk]['name'])){
+                        $collArr[$collType]['cat'][$r->ccpk]['name'] = $r->category;
+                        $collArr[$collType]['cat'][$r->ccpk]['icon'] = $r->caticon;
+                        $collArr[$collType]['cat'][$r->ccpk]['acronym'] = $r->acronym;
+                    }
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
+                }
+                else{
+                    $collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
+                    $collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
+                    $collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
+                    $collArr[$collType]['coll'][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
+                }
             }
         }
-        return true;
+        $result->free();
+
+        $retArr = array();
+        if(isset($GLOBALS['DEFAULTCATID'])){
+            if(isset($collArr['spec']['cat'][$GLOBALS['DEFAULTCATID']])){
+                $retArr['spec']['cat'][$GLOBALS['DEFAULTCATID']] = $collArr['spec']['cat'][$GLOBALS['DEFAULTCATID']];
+                unset($collArr['spec']['cat'][$GLOBALS['DEFAULTCATID']]);
+            }
+            elseif(isset($collArr['obs']['cat'][$GLOBALS['DEFAULTCATID']])){
+                $retArr['obs']['cat'][$GLOBALS['DEFAULTCATID']] = $collArr['obs']['cat'][$GLOBALS['DEFAULTCATID']];
+                unset($collArr['obs']['cat'][$GLOBALS['DEFAULTCATID']]);
+            }
+        }
+        foreach($collArr as $t => $tArr){
+            foreach($tArr as $g => $gArr){
+                foreach($gArr as $id => $idArr){
+                    $retArr[$t][$g][$id] = $idArr;
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getLocalSearchStr(): string
+    {
+        return implode('; ', $this->localSearchArr);
+    }
+
+    public function getOccurrenceData($occid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT p2.pid AS parentpid, p2.projname as catname, p1.pid, p1.projname, '.
+            'c.clid, c.name as clname '.
+            'FROM fmprojects p1 INNER JOIN fmprojects p2 ON p1.parentpid = p2.pid '.
+            'INNER JOIN fmchklstprojlink cl ON p1.pid = cl.pid '.
+            'INNER JOIN fmchecklists c ON cl.clid = c.clid '.
+            'WHERE p2.occurrencesearch = 1 AND p1.ispublic = 1 ';
+        //echo "<div>$sql</div>";
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            if(!isset($titleArr['cat'][$r->parentpid])) {
+                $titleArr['cat'][$r->parentpid] = $r->catname;
+            }
+            if(!isset($titleArr['proj'][$r->pid])) {
+                $titleArr[$r->parentpid]['proj'][$r->pid] = $r->projname;
+            }
+            $retArr[$r->pid][$r->clid] = $r->clname;
+        }
+        $rs->free();
+        if($titleArr) {
+            $retArr['titles'] = $titleArr;
+        }
+        return $retArr;
+    }
+
+    public function getOccurVoucherProjects(): array
+    {
+        $retArr = array();
+        $titleArr = array();
+        $sql = 'SELECT p2.pid AS parentpid, p2.projname as catname, p1.pid, p1.projname, '.
+            'c.clid, c.name as clname '.
+            'FROM fmprojects p1 INNER JOIN fmprojects p2 ON p1.parentpid = p2.pid '.
+            'INNER JOIN fmchklstprojlink cl ON p1.pid = cl.pid '.
+            'INNER JOIN fmchecklists c ON cl.clid = c.clid '.
+            'WHERE p2.occurrencesearch = 1 AND p1.ispublic = 1 ';
+        //echo "<div>$sql</div>";
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            if(!isset($titleArr['cat'][$r->parentpid])) {
+                $titleArr['cat'][$r->parentpid] = $r->catname;
+            }
+            if(!isset($titleArr['proj'][$r->pid])) {
+                $titleArr[$r->parentpid]['proj'][$r->pid] = $r->projname;
+            }
+            $retArr[$r->pid][$r->clid] = $r->clname;
+        }
+        $rs->free();
+        if($titleArr) {
+            $retArr['titles'] = $titleArr;
+        }
+        return $retArr;
+    }
+
+    public function getSearchTerm($k){
+        if(array_key_exists($k,$this->searchTermsArr)){
+            return $this->searchTermsArr[$k];
+        }
+
+        return '';
+    }
+
+    public function getSearchTerms(): array
+    {
+        return $this->searchTermsArr;
+    }
+
+    public function getSearchTermsArr(): array
+    {
+        return $this->searchTermsArr;
     }
 
     public function getSqlWhere($image = null): string
@@ -566,146 +761,59 @@ class OccurrenceManager{
         return $retStr;
     }
 
-    private function queryRecordID($idArr): array
+    public function getSynonyms($searchTarget): void
     {
-        $retArr = array();
-        if($idArr){
-            $sql = 'SELECT occid FROM guidoccurrences WHERE guid IN("'.implode('","', $idArr).'")';
-            $rs = $this->conn->query($sql);
-            while($r = $rs->fetch_object()){
-                $retArr[] = $r->occid;
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
-    protected function setTableJoins($sqlWhere): string
-    {
-        $sqlJoin = '';
-        if(array_key_exists('taxontype',$this->searchTermsArr) && ((int)$this->searchTermsArr['taxontype'] === 4 || (int)$this->searchTermsArr['taxontype'] === 5)) {
-            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
-        }
-        if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(array_key_exists('assochost',$this->searchTermsArr)) {
-            $sqlJoin .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
-        }
-        if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-            $sqlJoin .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
-        if(array_key_exists('phuid',$this->searchTermsArr) || array_key_exists('imagetag',$this->searchTermsArr) || array_key_exists('imagekeyword',$this->searchTermsArr) || array_key_exists('uploaddate1',$this->searchTermsArr) || array_key_exists('imagetype',$this->searchTermsArr)) {
-            $sqlJoin .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
-            $sqlJoin .= array_key_exists('phuid',$this->searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' :'';
-            $sqlJoin .= array_key_exists('imagetag',$this->searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' :'';
-            $sqlJoin .= array_key_exists('imagekeyword',$this->searchTermsArr) ? 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ' :'';
-        }
-        return $sqlJoin;
-    }
-
-    protected function setSciNamesByVerns(): void
-    {
-        $sql = 'SELECT DISTINCT t.tid, t.sciname ' .
-            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.TID = v.TID ';
-        $whereStr = '';
-        foreach($this->vernacularArr as $name){
-            $whereStr .= "OR v.VernacularName = '".Sanitizer::cleanInStr($this->conn,$name)."' ";
-        }
-        $sql .= 'WHERE ' .substr($whereStr,3). ' ';
-        //echo "<div>sql: ".$sql."</div>";
-        if($result = $this->conn->query($sql)){
-            while($row = $result->fetch_object()){
-                $this->taxaArr[$row->sciname] = $row->tid;
-            }
-        }
-        $result->free();
-    }
-
-    protected function setSearchTids(): void
-    {
-        foreach($this->taxaArr as $name => $tid){
-            $cleanName = Sanitizer::cleanInStr($this->conn,$name);
-            $sql = 'SELECT DISTINCT TID, SciName FROM taxa '.
-                "WHERE SciName = '".$cleanName."' OR SciName LIKE '".$cleanName." %' ";
-            $rs = $this->conn->query($sql);
-            while($r = $rs->fetch_object()){
-                $this->taxaArr[$r->SciName] = $r->TID;
-            }
-        }
-    }
-
-    protected function setSynonyms(): void
-    {
-        foreach($this->taxaArr as $key => $tid){
-            $this->getSynonyms($key);
-        }
-    }
-
-    public function getFullCollectionList(): array
-    {
-        $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
-            'cat.category, cat.icon AS caticon, cat.acronym '.
-            'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
-            'LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
-            'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
-            'WHERE (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1) '.
-            'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
-        //echo "<div>SQL: ".$sql."</div>";
-        $result = $this->conn->query($sql);
-        $collArr = array();
-        while($r = $result->fetch_object()){
-            $collType = '';
-            if(stripos($r->colltype, 'observation') !== false) {
-                $collType = 'obs';
-            }
-            if(stripos($r->colltype, 'specimen')) {
-                $collType = 'spec';
-            }
-            if($collType){
-                if($r->ccpk){
-                    if(!isset($collArr[$collType]['cat'][$r->ccpk]['name'])){
-                        $collArr[$collType]['cat'][$r->ccpk]['name'] = $r->category;
-                        $collArr[$collType]['cat'][$r->ccpk]['icon'] = $r->caticon;
-                        $collArr[$collType]['cat'][$r->ccpk]['acronym'] = $r->acronym;
-                    }
-                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
-                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
-                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
-                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
+        $targetTidArr = array();
+        if($searchTarget){
+            $sql1 = 'SELECT tid, tidaccepted FROM taxa '.
+                'WHERE sciname IN("'.$searchTarget.'") ';
+            $rs1 = $this->conn->query($sql1);
+            while($r1 = $rs1->fetch_object()){
+                if($r1->tid && !in_array($r1->tid, $targetTidArr, true)){
+                    $targetTidArr[] = $r1->tid;
                 }
-                else{
-                    $collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
-                    $collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
-                    $collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
-                    $collArr[$collType]['coll'][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
+                if($r1->tidaccepted && !in_array($r1->tidaccepted, $targetTidArr, true)){
+                    $targetTidArr[] = $r1->tidaccepted;
                 }
             }
+            $rs1->free();
         }
-        $result->free();
 
-        $retArr = array();
-        if(isset($GLOBALS['DEFAULTCATID'])){
-            if(isset($collArr['spec']['cat'][$GLOBALS['DEFAULTCATID']])){
-                $retArr['spec']['cat'][$GLOBALS['DEFAULTCATID']] = $collArr['spec']['cat'][$GLOBALS['DEFAULTCATID']];
-                unset($collArr['spec']['cat'][$GLOBALS['DEFAULTCATID']]);
-            }
-            elseif(isset($collArr['obs']['cat'][$GLOBALS['DEFAULTCATID']])){
-                $retArr['obs']['cat'][$GLOBALS['DEFAULTCATID']] = $collArr['obs']['cat'][$GLOBALS['DEFAULTCATID']];
-                unset($collArr['obs']['cat'][$GLOBALS['DEFAULTCATID']]);
-            }
-        }
-        foreach($collArr as $t => $tArr){
-            foreach($tArr as $g => $gArr){
-                foreach($gArr as $id => $idArr){
-                    $retArr[$t][$g][$id] = $idArr;
+        if($targetTidArr){
+            $parentTidArr = array();
+            $rankId = 0;
+            $sql2 = 'SELECT DISTINCT tid, sciname, rankid FROM taxa '.
+                'WHERE (tid IN('.implode(',',$targetTidArr).') OR tidaccepted IN('.implode(',',$targetTidArr).')) ';
+            $rs2 = $this->conn->query($sql2);
+            while($r2 = $rs2->fetch_object()){
+                $this->taxaArr[$r2->sciname] = $r2->tid;
+                if((int)$r2->rankid === 220){
+                    $parentTidArr[] = $r2->tid;
                 }
             }
+            $rs2->free();
+
+            if($parentTidArr) {
+                $sql4 = 'SELECT DISTINCT t.tid, t.sciname ' .
+                    'FROM taxa AS t LEFT JOIN taxaenumtree AS te ON t.tid = te.tid ' .
+                    'WHERE te.parenttid IN(' . implode('', $parentTidArr) . ') AND t.tidaccepted = t.tid ';
+                $rs4 = $this->conn->query($sql4);
+                while ($r4 = $rs4->fetch_object()) {
+                    $this->taxaArr[$r4->sciname] = $r4->tid;
+                }
+                $rs4->free();
+            }
         }
-        return $retArr;
+    }
+
+    public function getTaxaArr(): array
+    {
+        return $this->taxaArr;
+    }
+
+    public function getTaxaSearchStr(): string
+    {
+        return implode(', ', $this->taxaSearchStrArr);
     }
 
     public function outputFullCollArr($occArr, $expanded): void{
@@ -945,151 +1053,36 @@ class OccurrenceManager{
         $this->collArrIndex++;
     }
 
-    public function getCollectionList($collIdArr): array
+    private function queryRecordID($idArr): array
     {
         $retArr = array();
-        $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, cat.category '.
-            'FROM omcollections c LEFT JOIN omcollcatlink l ON c.collid = l.collid '.
-            'LEFT JOIN omcollcategories cat ON l.ccpk = cat.ccpk '.
-            'WHERE c.collid IN('.implode(',',$collIdArr).') ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $retArr[$r->collid]['instcode'] = $r->institutioncode;
-            $retArr[$r->collid]['collcode'] = $r->collectioncode;
-            $retArr[$r->collid]['name'] = $r->collectionname;
-            $retArr[$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
-            $retArr[$r->collid]['category'] = $r->category;
-        }
-        $rs->free();
-        return $retArr;
-    }
-
-    public function getOccurVoucherProjects(): array
-    {
-        $retArr = array();
-        $titleArr = array();
-        $sql = 'SELECT p2.pid AS parentpid, p2.projname as catname, p1.pid, p1.projname, '.
-            'c.clid, c.name as clname '.
-            'FROM fmprojects p1 INNER JOIN fmprojects p2 ON p1.parentpid = p2.pid '.
-            'INNER JOIN fmchklstprojlink cl ON p1.pid = cl.pid '.
-            'INNER JOIN fmchecklists c ON cl.clid = c.clid '.
-            'WHERE p2.occurrencesearch = 1 AND p1.ispublic = 1 ';
-        //echo "<div>$sql</div>";
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            if(!isset($titleArr['cat'][$r->parentpid])) {
-                $titleArr['cat'][$r->parentpid] = $r->catname;
+        if($idArr){
+            $sql = 'SELECT occid FROM guidoccurrences WHERE guid IN("'.implode('","', $idArr).'")';
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $retArr[] = $r->occid;
             }
-            if(!isset($titleArr['proj'][$r->pid])) {
-                $titleArr[$r->parentpid]['proj'][$r->pid] = $r->projname;
-            }
-            $retArr[$r->pid][$r->clid] = $r->clname;
-        }
-        $rs->free();
-        if($titleArr) {
-            $retArr['titles'] = $titleArr;
+            $rs->free();
         }
         return $retArr;
     }
 
-    public function getDatasetSearchStr(){
-        $retStr = '';
-        if(!array_key_exists('db',$this->searchTermsArr) || $this->searchTermsArr['db'] === 'all'){
-            $retStr = 'All Collections';
-        }
-        elseif($this->searchTermsArr['db'] === 'allspec'){
-            $retStr = 'All Occurrence Collections';
-        }
-        elseif($this->searchTermsArr['db'] === 'allobs'){
-            $retStr = 'All Observation Projects';
-        }
-        else{
-            $cArr = explode(';',$this->searchTermsArr['db']);
-            if($cArr){
-                $sql = 'SELECT collid, collectionname, CONCAT_WS("-",institutioncode,collectioncode) as instcode '.
-                    'FROM omcollections WHERE collid IN('.$cArr[0].') ORDER BY institutioncode,collectioncode';
-                $rs = $this->conn->query($sql);
-                while($r = $rs->fetch_object()){
-                    if($r->instcode){
-                        $retStr .= '; '.$r->instcode;
-                    }
-                    else{
-                        $retStr .= '; '.$r->collectionname;
-                    }
-                }
-                $rs->free();
-            }
-            $retStr = substr($retStr,2);
-        }
-        return $retStr;
-    }
-
-    public function getTaxaSearchStr(): string
+    protected function setSciNamesByVerns(): void
     {
-        return implode(', ', $this->taxaSearchStrArr);
-    }
-
-    public function getLocalSearchStr(): string
-    {
-        return implode('; ', $this->localSearchArr);
-    }
-
-    public function getSynonyms($searchTarget): void
-    {
-        $targetTidArr = array();
-        if($searchTarget){
-            $sql1 = 'SELECT tid, tidaccepted FROM taxa '.
-                'WHERE sciname IN("'.$searchTarget.'") ';
-            $rs1 = $this->conn->query($sql1);
-            while($r1 = $rs1->fetch_object()){
-                if($r1->tid && !in_array($r1->tid, $targetTidArr, true)){
-                    $targetTidArr[] = $r1->tid;
-                }
-                if($r1->tidaccepted && !in_array($r1->tidaccepted, $targetTidArr, true)){
-                    $targetTidArr[] = $r1->tidaccepted;
-                }
-            }
-            $rs1->free();
+        $sql = 'SELECT DISTINCT t.tid, t.sciname ' .
+            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.TID = v.TID ';
+        $whereStr = '';
+        foreach($this->vernacularArr as $name){
+            $whereStr .= "OR v.VernacularName = '".Sanitizer::cleanInStr($this->conn,$name)."' ";
         }
-
-        if($targetTidArr){
-            $parentTidArr = array();
-            $rankId = 0;
-            $sql2 = 'SELECT DISTINCT tid, sciname, rankid FROM taxa '.
-                'WHERE (tid IN('.implode(',',$targetTidArr).') OR tidaccepted IN('.implode(',',$targetTidArr).')) ';
-            $rs2 = $this->conn->query($sql2);
-            while($r2 = $rs2->fetch_object()){
-                $this->taxaArr[$r2->sciname] = $r2->tid;
-                if((int)$r2->rankid === 220){
-                    $parentTidArr[] = $r2->tid;
-                }
-            }
-            $rs2->free();
-
-            if($parentTidArr) {
-                $sql4 = 'SELECT DISTINCT t.tid, t.sciname ' .
-                    'FROM taxa AS t LEFT JOIN taxaenumtree AS te ON t.tid = te.tid ' .
-                    'WHERE te.parenttid IN(' . implode('', $parentTidArr) . ') AND t.tidaccepted = t.tid ';
-                $rs4 = $this->conn->query($sql4);
-                while ($r4 = $rs4->fetch_object()) {
-                    $this->taxaArr[$r4->sciname] = $r4->tid;
-                }
-                $rs4->free();
+        $sql .= 'WHERE ' .substr($whereStr,3). ' ';
+        //echo "<div>sql: ".$sql."</div>";
+        if($result = $this->conn->query($sql)){
+            while($row = $result->fetch_object()){
+                $this->taxaArr[$row->sciname] = $row->tid;
             }
         }
-    }
-
-    public function getClName(){
-        return $this->clName;
-    }
-
-    public function setTaxon($taxon): void
-    {
-        if($taxon){
-            $this->searchTermsArr['taxontype'] = 2;
-            $this->searchTermsArr['usethes'] = 1;
-            $this->searchTermsArr['taxa'] = $taxon;
-        }
+        $result->free();
     }
 
     public function setSearchTermsArr($stArr): void
@@ -1099,26 +1092,60 @@ class OccurrenceManager{
         }
     }
 
-    public function getSearchTermsArr(): array
+    protected function setSearchTids(): void
     {
-        return $this->searchTermsArr;
+        foreach($this->taxaArr as $name => $tid){
+            $cleanName = Sanitizer::cleanInStr($this->conn,$name);
+            $sql = 'SELECT DISTINCT TID, SciName FROM taxa '.
+                "WHERE SciName = '".$cleanName."' OR SciName LIKE '".$cleanName." %' ";
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $this->taxaArr[$r->SciName] = $r->TID;
+            }
+        }
     }
 
-    public function getTaxaArr(): array
+    protected function setSynonyms(): void
     {
-        return $this->taxaArr;
+        foreach($this->taxaArr as $key => $tid){
+            $this->getSynonyms($key);
+        }
     }
 
-    protected function cleanOutStr($str): string
+    protected function setTableJoins($sqlWhere): string
     {
-        return $str ? htmlspecialchars($str) : '';
+        $sqlJoin = '';
+        if(array_key_exists('taxontype',$this->searchTermsArr) && ((int)$this->searchTermsArr['taxontype'] === 4 || (int)$this->searchTermsArr['taxontype'] === 5)) {
+            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
+        }
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(array_key_exists('assochost',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
+        }
+        if(array_key_exists('polyArr',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
+        }
+        if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
+            $sqlJoin .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
+        if(array_key_exists('phuid',$this->searchTermsArr) || array_key_exists('imagetag',$this->searchTermsArr) || array_key_exists('imagekeyword',$this->searchTermsArr) || array_key_exists('uploaddate1',$this->searchTermsArr) || array_key_exists('imagetype',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
+            $sqlJoin .= array_key_exists('phuid',$this->searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' :'';
+            $sqlJoin .= array_key_exists('imagetag',$this->searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' :'';
+            $sqlJoin .= array_key_exists('imagekeyword',$this->searchTermsArr) ? 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ' :'';
+        }
+        return $sqlJoin;
     }
 
-    protected function cleanInputStr($str): string
+    public function setTaxon($taxon): void
     {
-        $newStr = str_replace(array('"', "'"), array('', '%apos;'), $str);
-        $newStr = strip_tags($newStr);
-        return $newStr;
+        if($taxon){
+            $this->searchTermsArr['taxontype'] = 2;
+            $this->searchTermsArr['usethes'] = 1;
+            $this->searchTermsArr['taxa'] = $taxon;
+        }
     }
 
     public function validateSearchTermsArr($stArr): bool

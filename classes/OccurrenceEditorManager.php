@@ -692,7 +692,7 @@ class OccurrenceEditorManager {
             $sql .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
         }
         if($this->occid){
-            $sql .= 'WHERE (o.occid = '.$this->occid.')';
+            $sql .= 'WHERE o.occid = '.$this->occid.' ';
         }
         elseif($this->sqlWhere){
             $sql .= 'INNER JOIN (SELECT o2.occid FROM omoccurrences AS o2 ';
@@ -1844,7 +1844,7 @@ class OccurrenceEditorManager {
     public function getLock(): bool
     {
         $isLocked = false;
-        $delSql = 'DELETE FROM omoccureditlocks WHERE (ts < '.(time()-900).') OR (uid = '.$GLOBALS['SYMB_UID'].')';
+        $delSql = 'DELETE FROM omoccureditlocks WHERE ts < '.(time()-900).' OR uid = '.$GLOBALS['SYMB_UID'].' ';
         if(!$this->conn->query($delSql)) {
             return false;
         }

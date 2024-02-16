@@ -658,10 +658,12 @@ CREATE TABLE `omcollections` (
     `accessrights` varchar(1000) DEFAULT NULL,
     `dynamicProperties` text,
     `SortSeq` int(10) unsigned DEFAULT NULL,
+    `isPublic` smallint(1) NOT NULL DEFAULT 1,
     `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`CollID`),
     UNIQUE KEY `Index_inst` (`InstitutionCode`,`CollectionCode`),
     KEY `FK_collid_iid_idx` (`iid`),
+    KEY `isPublic` (`isPublic`),
     CONSTRAINT `FK_collid_iid` FOREIGN KEY (`iid`) REFERENCES `institutions` (`iid`) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -1208,7 +1210,7 @@ CREATE TABLE `omoccurrences` (
     `substrate` varchar(500) DEFAULT NULL,
     `fieldNotes` text,
     `fieldnumber` varchar(45) DEFAULT NULL,
-    `eventID` varchar(45) DEFAULT NULL,
+    `eventID` int(11) UNSIGNED NULL DEFAULT NULL,
     `occurrenceRemarks` text COMMENT 'General Notes',
     `informationWithheld` varchar(250) DEFAULT NULL,
     `dataGeneralizations` varchar(250) DEFAULT NULL,
@@ -1226,7 +1228,7 @@ CREATE TABLE `omoccurrences` (
     `samplingProtocol` varchar(100) DEFAULT NULL,
     `samplingEffort` varchar(200) DEFAULT NULL,
     `preparations` varchar(100) DEFAULT NULL,
-    `locationID` varchar(100) DEFAULT NULL,
+    `locationID` int(11) UNSIGNED NULL DEFAULT NULL,
     `waterBody` varchar(255) DEFAULT NULL,
     `country` varchar(64) DEFAULT NULL,
     `stateProvince` varchar(255) DEFAULT NULL,
@@ -1268,6 +1270,7 @@ CREATE TABLE `omoccurrences` (
     `duplicateQuantity` int(10) unsigned DEFAULT NULL,
     `labelProject` varchar(250) DEFAULT NULL,
     `dynamicFields` text,
+    `isPublic` smallint(1) NOT NULL DEFAULT 1,
     `dateEntered` datetime DEFAULT NULL,
     `dateLastModified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`occid`),
@@ -1300,14 +1303,15 @@ CREATE TABLE `omoccurrences` (
     KEY `Index_latestDateCollected` (`latestDateCollected`),
     KEY `Index_occurrenceRemarks` (`occurrenceRemarks`(100)),
     KEY `Index_locationID` (`locationID`),
-    KEY `Index_eventID` (`eventID`),
     KEY `Index_occur_localitySecurity` (`localitySecurity`),
     KEY `Index_latlng` (`decimalLatitude`,`decimalLongitude`),
     KEY `Index_ labelProject` (`labelProject`),
     KEY `Index_verbatimScientificName` (`verbatimScientificName`),
+    KEY `isPublic` (`isPublic`),
     CONSTRAINT `FK_omoccurrences_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `FK_omoccurrences_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurrences_uid` FOREIGN KEY (`observeruid`) REFERENCES `users` (`uid`)
+    CONSTRAINT `FK_omoccurrences_uid` FOREIGN KEY (`observeruid`) REFERENCES `users` (`uid`),
+    CONSTRAINT `FK_eventID` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`) ON DELETE RESTRICT ON UPDATE NO ACTION
 );
 
 CREATE TABLE `omoccurrencesfulltext` (

@@ -34,6 +34,9 @@ class CollectionManager {
             $retArr['datarecordingmethod'] = $r->datarecordingmethod;
         }
         $rs->free();
+        if(file_exists($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collId . 'occurrencedatafields.json')) {
+            $retArr['additionalDataFields'] = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/collection'.$collId.'occurrencedatafields.json'), true);
+        }
         return $retArr;
     }
 }

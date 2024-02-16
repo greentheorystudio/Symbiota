@@ -330,7 +330,7 @@ function searchDupesCatalogNumber(f,verbose){
 		formData.append('catnum', cnValue);
 		formData.append('collid', f.collid.value);
 		formData.append('occid', f.occid.value);
-		fetch('/api/occurrenceduplicates/dupequerycatnum.php', {
+		fetch((CLIENT_ROOT + '/api/occurrenceduplicates/dupequerycatnum.php'), {
 			method: 'POST',
 			body: formData
 		})
@@ -382,7 +382,7 @@ function searchDupesOtherCatalogNumbers(f){
 		formData.append('othercatnum', ocnValue);
 		formData.append('collid', f.collid.value);
 		formData.append('occid', f.occid.value);
-		fetch('/api/occurrenceduplicates/dupequeryothercatnum.php', {
+		fetch((CLIENT_ROOT + '/api/occurrenceduplicates/dupequeryothercatnum.php'), {
 			method: 'POST',
 			body: formData
 		})
@@ -447,7 +447,7 @@ function searchDupes(f,silent){
 	formData.append('ometid', ometidIn);
 	formData.append('exsnumber', exsNumberIn);
 	formData.append('curoccid', currOccidIn);
-	fetch('/api/occurrenceduplicates/dupequery.php', {
+	fetch((CLIENT_ROOT + '/api/occurrenceduplicates/dupequery.php'), {
 		method: 'POST',
 		body: formData
 	})

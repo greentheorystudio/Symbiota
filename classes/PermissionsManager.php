@@ -382,13 +382,20 @@ class PermissionsManager{
         return $retVal;
     }
 
-    public function validatePermission($permission, $key): int
+    public function validatePermission($permissions, $key): int
     {
         $returnVal = 0;
         if($GLOBALS['IS_ADMIN']){
             $returnVal = 1;
         }
-        else if(array_key_exists($permission,$GLOBALS['USER_RIGHTS']) && (!$key || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permission], true))){
+        elseif(is_array($permissions)){
+            foreach($permissions as $permission){
+                if(array_key_exists($permission, $GLOBALS['USER_RIGHTS']) && (!$key || !is_array($GLOBALS['USER_RIGHTS'][$permission]) || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permission], true))){
+                    $returnVal = 1;
+                }
+            }
+        }
+        elseif(array_key_exists($permissions, $GLOBALS['USER_RIGHTS']) && (!$key || !is_array($GLOBALS['USER_RIGHTS'][$permissions]) || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permissions], true))){
             $returnVal = 1;
         }
         return $returnVal;

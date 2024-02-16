@@ -491,7 +491,12 @@ class ProfileManager{
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
-                $userrights[$r->role][] = (int)$r->tablepk;
+                if($r->tablepk){
+                    $userrights[$r->role][] = (int)$r->tablepk;
+                }
+                else{
+                    $userrights[$r->role] = true;
+                }
             }
             $rs->free();
             $_SESSION['USER_RIGHTS'] = $userrights;
