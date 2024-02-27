@@ -545,11 +545,6 @@ class GlossaryUpload{
 							"\xe2\x80\xa6"
 		);
 		$fixedwordchars=array("'", "'", '"', '"', '-', '...');
-		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
-		
-		if($inStr && mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
-            $retStr = utf8_encode($inStr);
-        }
-		return $retStr;
+		return str_replace($badwordchars, $fixedwordchars, $inStr);
 	}
 }

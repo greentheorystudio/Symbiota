@@ -373,9 +373,9 @@ class OccurrenceCollectionProfile {
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
             'guidtarget,rights,rightsholder,accessrights,icon,'.
 			'managementtype,datarecordingmethod,colltype,collectionguid,individualurl,sortseq) '.
-			'VALUES ('.($instCode?'"'.$instCode.'"':'NULL').',"'.
-			($collCode?'"'.$collCode.'"':'NULL').',"'.
-			$coleName.'",'.
+			'VALUES ('.($instCode?'"'.$instCode.'"':'NULL').','.
+			($collCode?'"'.$collCode.'"':'NULL').','.
+            '"'.$coleName.'",'.
 			($fullDesc?'"'.$fullDesc.'"':'NULL').','.
             ($collGUID?'"'.$collGUID.'"':'NULL').','.
 			($homepage?'"'.$homepage.'"':'NULL').','.

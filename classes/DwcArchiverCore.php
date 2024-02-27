@@ -1783,11 +1783,6 @@ class DwcArchiverCore extends Manager{
                 if(is_array($v)){
                     $retArr[$k] = $this->utf8EncodeArr($v);
                 }
-                elseif(is_string($v)){
-                    if(mb_detect_encoding($v,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-                        $retArr[$k] = utf8_encode($v);
-                    }
-                }
                 else{
                     $retArr[$k] = $v;
                 }
@@ -1807,20 +1802,7 @@ class DwcArchiverCore extends Manager{
 
     private function encodeStr($inStr): string
     {
-        $retStr = $inStr;
-        if($inStr && $this->charSetSource){
-            if($this->charSetOut === 'UTF-8' && $this->charSetSource === 'ISO-8859-1'){
-                if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-                    $retStr = utf8_encode($inStr);
-                }
-            }
-            elseif($this->charSetOut === 'ISO-8859-1' && $this->charSetSource === 'UTF-8'){
-                if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-                    $retStr = utf8_decode($inStr);
-                }
-            }
-        }
-        return $retStr;
+        return $inStr;
     }
 
     private function addcslashesArr(&$arr): void

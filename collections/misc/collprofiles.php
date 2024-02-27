@@ -411,12 +411,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             }
 						}
 						?>
-						<li><?php echo number_format($statsArr['familycnt']);?> families</li>
-						<li><?php echo number_format($statsArr['genuscnt']);?> genera</li>
-						<li><?php echo number_format($statsArr['speciescnt']);?> species</li>
+						<li><?php echo (int)$statsArr['familycnt'];?> families</li>
+						<li><?php echo (int)$statsArr['genuscnt'];?> genera</li>
+						<li><?php echo (int)$statsArr['speciescnt'];?> species</li>
 						<?php
 						if($extrastatsArr&&$extrastatsArr['TotalTaxaCount']) {
-                            echo '<li>' . number_format($extrastatsArr['TotalTaxaCount']) . ' total taxa (including subsp. and var.)</li>';
+                            echo '<li>' . (int)$extrastatsArr['TotalTaxaCount'] . ' total taxa (including subsp. and var.)</li>';
                         }
 						?>
 					</ul>

@@ -91,10 +91,15 @@ class OccurrenceDataManager{
         $isLocked = 0;
         $delSql = 'DELETE FROM omoccureditlocks WHERE ts < '.(time()-900).' OR uid = '.$GLOBALS['SYMB_UID'].' ';
         if($this->conn->query($delSql)) {
-            $sql = 'INSERT INTO omoccureditlocks(occid,uid,ts) '.
-                'VALUES ('.$occid.','.$GLOBALS['SYMB_UID'].','.time().')';
-            if(!$this->conn->query($sql)){
-                $isLocked = 1;
+            $sqlFind = 'SELECT * FROM omoccureditlocks WHERE occid = ' . $occid . ' ';
+            $frs = $this->conn->query($sqlFind);
+            if(!$frs->num_rows){
+                $sql = 'INSERT INTO omoccureditlocks(occid,uid,ts) '.
+                    'VALUES ('.$occid.','.$GLOBALS['SYMB_UID'].','.time().')';
+                $this->conn->query($sql);
+            }
+            else{
+                $isLocked = true;
             }
         }
         return $isLocked;
@@ -130,7 +135,7 @@ class OccurrenceDataManager{
             'o.identifiedBy, o.dateIdentified, o.identificationReferences, o.identificationRemarks, o.identificationQualifier, o.typeStatus, o.recordedBy, o.recordNumber, o.recordedbyid, o.associatedCollectors, o.eventDate, '.
             'o.latestDateCollected, o.year, o.month, o.day, o.startDayOfYear, o.endDayOfYear, o.verbatimEventDate, o.habitat, o.substrate, o.fieldNotes, o.fieldnumber, '.
             'o.eventID, o.occurrenceRemarks, o.informationWithheld, o.dataGeneralizations, o.associatedOccurrences, o.associatedTaxa, o.dynamicProperties, o.verbatimAttributes, o.behavior, o.reproductiveCondition, o.cultivationStatus, '.
-            'o.establishmentMeans, o.lifeStage, o.sex, o.individualCount, o.samplingProtocol, o.samplingEffort, o.preparations, o.locationID, o.waterBody, o.country, o.stateProvince, '.
+            'o.establishmentMeans, o.lifeStage, o.sex, o.individualCount, o.samplingProtocol, o.samplingEffort, o.repCount, o.preparations, o.locationID, o.waterBody, o.country, o.stateProvince, '.
             'o.county, o.municipality, o.locality, o.localitySecurity, o.localitySecurityReason, o.decimalLatitude, o.decimalLongitude, o.geodeticDatum, o.coordinateUncertaintyInMeters, o.footprintWKT, o.coordinatePrecision, '.
             'o.locationRemarks, o.verbatimCoordinates, o.verbatimCoordinateSystem, o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, '.
             'o.minimumDepthInMeters, o.maximumDepthInMeters, o.verbatimDepth, o.previousIdentifications, o.disposition, o.storageLocation, o.modified, o.language, o.observeruid, o.processingstatus, o.recordEnteredBy, '.
