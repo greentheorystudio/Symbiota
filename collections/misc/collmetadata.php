@@ -150,13 +150,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 				alert("Rights field (e.g. Creative Commons license) must have a selection");
 				return false;
 			}
-			try{
-				if(isNaN(f.sortseq.value)){
-					alert("Sort sequence must be numeric only");
-					return false;
-				}
-			}
-			catch(ex){}
+			else if(Number(f.sortseq.value) > 0){
+                alert("Sort sequence must be a number greater than zero");
+                return false;
+            }
 			return true;
 		}
 
@@ -193,7 +190,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		function verifyIconImage(){
             const iconImageFile = document.getElementById("iconfile").value;
             if(iconImageFile){
-                let iconExt = iconImageFile.substr(iconImageFile.length - 4);
+                let iconExt = iconImageFile.substring(iconImageFile.length - 4);
                 iconExt = iconExt.toLowerCase();
 				if((iconExt !== '.jpg') && (iconExt !== 'jpeg') && (iconExt !== '.png') && (iconExt !== '.gif')){
 					document.getElementById("iconfile").value = '';
@@ -219,11 +216,22 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		
 		function verifyIconURL(){
             const iconImageFile = document.getElementById("iconurl").value;
-            if((iconImageFile.substr(iconImageFile.length-4) !== '.jpg') && (iconImageFile.substr(iconImageFile.length-4) !== '.png') && (iconImageFile.substr(iconImageFile.length-4) !== '.gif')){
+            if((iconImageFile.substring(iconImageFile.length-4) !== '.jpg') && (iconImageFile.substring(iconImageFile.length-4) !== '.png') && (iconImageFile.substring(iconImageFile.length-4) !== '.gif')){
 				document.getElementById("iconurl").value = '';
 				alert("The url you have entered is not for a supported image file. Please enter a url for a jpg, png, or gif file.");
 			}
 		}
+
+        function processDataCollectionMethodChange(){
+            const selectedValue = document.getElementById("datarecordingmethod").value;
+            if(selectedValue === 'benthic'){
+                document.getElementById('defaultRepCountBlock').style.display = "block";
+            }
+            else{
+                document.getElementById('defaultRepCountBlock').style.display = "none";
+                document.getElementById("defaultRepCount").value = '';
+            }
+        }
     </script>
 </head>
 <body>
@@ -429,58 +437,59 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 									</span>
 								</span>
                             </div>
-                            <?php
-                            if($isEditor){
-                                ?>
-                                <div class="field-block">
-                                    <span class="field-label">Dataset Type:</span>
-                                    <span class="field-elem">
-                                        <select name="colltype">
-                                            <option value="PreservedSpecimen" <?php echo ($collid && ($collData['colltype'] === 'PreservedSpecimen')?'SELECTED':''); ?>>Preserved Specimens</option>
-                                            <option value="HumanObservation" <?php echo ($collid && ($collData['colltype'] === 'HumanObservation')?'SELECTED':''); ?>>Observations</option>
-                                            <option value="FossilSpecimen" <?php echo ($collid && $collData['colltype'] === 'FossilSpecimen'?'SELECTED':''); ?>>Fossil Specimens</option>
-                                            <option value="LivingSpecimen" <?php echo ($collid && $collData['colltype'] === 'LivingSpecimen'?'SELECTED':''); ?>>Living Specimens</option>
-                                            <option value="MaterialSample" <?php echo ($collid && $collData['colltype'] === 'MaterialSample'?'SELECTED':''); ?>>Material Samples</option>
-                                        </select>
-                                        <a id="colltypeinfo" href="#" onclick="return false" title="More information about Collection Type">
-                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                        </a>
-                                        <span id="colltypeinfodialog">
-                                            Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts.
-                                            Observations are collections where records are not based on a physical specimens.
-                                        </span>
+                            <div class="field-block">
+                                <span class="field-label">Dataset Type:</span>
+                                <span class="field-elem">
+                                    <select name="colltype">
+                                        <option value="PreservedSpecimen" <?php echo ($collid && ($collData['colltype'] === 'PreservedSpecimen')?'SELECTED':''); ?>>Preserved Specimens</option>
+                                        <option value="HumanObservation" <?php echo ($collid && ($collData['colltype'] === 'HumanObservation')?'SELECTED':''); ?>>Observations</option>
+                                        <option value="FossilSpecimen" <?php echo ($collid && $collData['colltype'] === 'FossilSpecimen'?'SELECTED':''); ?>>Fossil Specimens</option>
+                                        <option value="LivingSpecimen" <?php echo ($collid && $collData['colltype'] === 'LivingSpecimen'?'SELECTED':''); ?>>Living Specimens</option>
+                                        <option value="MaterialSample" <?php echo ($collid && $collData['colltype'] === 'MaterialSample'?'SELECTED':''); ?>>Material Samples</option>
+                                    </select>
+                                    <a id="colltypeinfo" href="#" onclick="return false" title="More information about Collection Type">
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
+                                    </a>
+                                    <span id="colltypeinfodialog">
+                                        Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts.
+                                        Observations are collections where records are not based on a physical specimens.
                                     </span>
-                                </div>
-                                <div class="field-block">
-                                    <span class="field-label">Management:</span>
-                                    <span class="field-elem">
-                                        <select name="managementtype" onchange="mtypeguidChanged(this.form)">
-                                            <option>Snapshot</option>
-                                            <option <?php echo ($collid && $collData['managementtype'] === 'Live Data'?'SELECTED':''); ?>>Live Data</option>
-                                            <option <?php echo ($collid && $collData['managementtype'] === 'Aggregate'?'SELECTED':''); ?>>Aggregate</option>
-                                        </select>
-                                        <a id="managementinfo" href="#" onclick="return false" title="More information about Management Type">
-                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                        </a>
-                                        <span id="managementinfodialog">
-                                            Use Snapshot when there is a separate in-house database maintained in the collection and the dataset
-                                            within the portal is only a periodically updated snapshot of the central database.
-                                            A Live dataset is when the data is managed directly within the portal and the central database is the portal data.
-                                        </span>
+                                </span>
+                            </div>
+                            <div class="field-block">
+                                <span class="field-label">Management:</span>
+                                <span class="field-elem">
+                                    <select name="managementtype" onchange="mtypeguidChanged(this.form)">
+                                        <option>Snapshot</option>
+                                        <option <?php echo ($collid && $collData['managementtype'] === 'Live Data'?'SELECTED':''); ?>>Live Data</option>
+                                        <option <?php echo ($collid && $collData['managementtype'] === 'Aggregate'?'SELECTED':''); ?>>Aggregate</option>
+                                    </select>
+                                    <a id="managementinfo" href="#" onclick="return false" title="More information about Management Type">
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
+                                    </a>
+                                    <span id="managementinfodialog">
+                                        Use Snapshot when there is a separate in-house database maintained in the collection and the dataset
+                                        within the portal is only a periodically updated snapshot of the central database.
+                                        A Live dataset is when the data is managed directly within the portal and the central database is the portal data.
                                     </span>
-                                </div>
-                                <div class="field-block">
-                                    <span class="field-label">Data Recording Method:</span>
-                                    <span class="field-elem">
-                                        <select name="datarecordingmethod">
-                                            <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'specimen'?'SELECTED':''); ?>>Specimen Based</option>
-                                            <option value="lot" <?php echo ($collid && $collData['datarecordingmethod'] === 'lot'?'SELECTED':''); ?>>Lot Based</option>
-                                        </select>
-                                    </span>
-                                </div>
-                                <?php
-                            }
-                            ?>
+                                </span>
+                            </div>
+                            <div class="field-block">
+                                <span class="field-label">Data Recording Method:</span>
+                                <span class="field-elem">
+                                    <select name="datarecordingmethod" id="datarecordingmethod" onchange="processDataCollectionMethodChange();">
+                                        <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'specimen'?'SELECTED':''); ?>>Specimen</option>
+                                        <option value="lot" <?php echo ($collid && $collData['datarecordingmethod'] === 'lot'?'SELECTED':''); ?>>Lot</option>
+                                        <option value="benthic" <?php echo ($collid && $collData['datarecordingmethod'] === 'benthic'?'SELECTED':''); ?>>Benthic</option>
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="field-block" id="defaultRepCountBlock" style="display:<?php echo (($collid && $collData['datarecordingmethod'] === 'benthic')?'block':'none'); ?>;">
+                                <span class="field-label">Default Rep Count:</span>
+                                <span class="field-elem">
+                                    <input type="text" name="defaultRepCount" id="defaultRepCount" value="<?php echo ($collid?$collData['defaultRepCount']:'');?>" />
+                                </span>
+                            </div>
                             <div class="field-block">
                                 <span class="field-label" title="Source of Global Unique Identifier">GUID source:</span>
                                 <span class="field-elem">
@@ -590,10 +599,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <span id="collectionidinfodialog">
-                                        If your collection already has a previously assigned GUID, that identifier should be represented here.
+                                        If your collection already has a previously assigned GUID, that identifier should be entered here.
 										For physical specimens, the recommended best practice is to use an identifier from a collections registry such as the
 										Global Registry of Biodiversity Repositories (<a href="http://grbio.org" target="_blank">http://grbio.org</a>).
                                     </span>
+                                </span>
+                            </div>
+                            <div class="field-block">
+                                <span class="field-label">Is Public:</span>
+                                <span class="field-elem">
+									<input type="checkbox" name="isPublic" value="1" <?php echo ((!$collid || (int)$collData['isPublic'] === 1)?'CHECKED':''); ?> />
                                 </span>
                             </div>
                             <?php

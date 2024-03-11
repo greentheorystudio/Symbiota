@@ -486,6 +486,7 @@ class ProfileManager{
     public function setUserRights($uId): void
     {
         if($uId){
+            $permittedCollections = array();
             $userrights = array();
             $sql = 'SELECT role, tablepk FROM userroles WHERE uid = '.$uId.' ';
             //echo $sql;
@@ -493,6 +494,9 @@ class ProfileManager{
             while($r = $rs->fetch_object()){
                 if($r->tablepk){
                     $userrights[$r->role][] = (int)$r->tablepk;
+                    if(($r->role === 'CollAdmin' || $r->role === 'CollEditor' || $r->role === 'CollTaxon') && !in_array((int)$r->tablepk, $permittedCollections)){
+                        $permittedCollections[] = (int)$r->tablepk;
+                    }
                 }
                 else{
                     $userrights[$r->role] = true;
@@ -501,6 +505,7 @@ class ProfileManager{
             $rs->free();
             $_SESSION['USER_RIGHTS'] = $userrights;
             $GLOBALS['USER_RIGHTS'] = $userrights;
+            $GLOBALS['PERMITTED_COLLECTIONS'] = $permittedCollections;
         }
     }
 

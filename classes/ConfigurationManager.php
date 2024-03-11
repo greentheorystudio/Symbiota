@@ -395,6 +395,9 @@ class ConfigurationManager{
             $GLOBALS['SMTP_HOST'] &&
             $GLOBALS['SMTP_PORT']
         );
+        if(!isset($GLOBALS['PERMITTED_COLLECTIONS'])){
+            $GLOBALS['PERMITTED_COLLECTIONS'] = array();
+        }
     }
 
     public function setGlobalArrFromDefaults(): void

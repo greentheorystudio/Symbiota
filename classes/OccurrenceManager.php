@@ -126,11 +126,19 @@ class OccurrenceManager{
     {
         $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
             'cat.category, cat.icon AS caticon, cat.acronym '.
-            'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
-            'LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
-            'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
-            'WHERE (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1) '.
-            'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
+            'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid '.
+            'LEFT JOIN omcollcatlink AS ccl ON c.collid = ccl.collid '.
+            'LEFT JOIN omcollcategories AS cat ON ccl.ccpk = cat.ccpk '.
+            'WHERE ';
+        if(!$GLOBALS['IS_ADMIN']){
+            $sql .= '(c.isPublic = 1';
+            if($GLOBALS['PERMITTED_COLLECTIONS']){
+                $sql .= ' OR c.collid IN('.implode(',', $GLOBALS['PERMITTED_COLLECTIONS']).')';
+            }
+            $sql .= ') AND ';
+        }
+        $sql .= '(ISNULL(cat.inclusive) OR cat.inclusive = 1 OR cat.ccpk = 1) ';
+        $sql .= 'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
         //echo "<div>SQL: ".$sql."</div>";
         $result = $this->conn->query($sql);
         $collArr = array();
@@ -263,6 +271,19 @@ class OccurrenceManager{
         return $this->searchTermsArr;
     }
 
+    public function getPublicCollections(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT collid FROM omcollections WHERE isPublic = 1 ';
+        //echo "<div>$sql</div>";
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $retArr[] = (int)$r->collid;
+        }
+        $rs->free();
+        return $retArr;
+    }
+
     public function getSqlWhere($image = null): string
     {
         $sqlWhere = '';
@@ -274,7 +295,28 @@ class OccurrenceManager{
             $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM omoccurdatasetlink WHERE datasetid = ' .$this->searchTermsArr['dsid']. ')) ';
         }
         if(array_key_exists('db', $this->searchTermsArr) && $this->searchTermsArr['db'] && $this->searchTermsArr['db'] !== 'all') {
-            $sqlWhere .= 'AND (o.collid IN(' .Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['db']). ')) ';
+            if(!$GLOBALS['IS_ADMIN']){
+                $searchCollections = array();
+                $publicCollections = $this->getPublicCollections();
+                $selectedCollections = explode(',', Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['db']));
+                foreach($selectedCollections as $id){
+                    if(in_array((int)$id, $publicCollections, true) || in_array((int)$id, $GLOBALS['PERMITTED_COLLECTIONS'], true)){
+                        $searchCollections[] = (int)$id;
+                    }
+                }
+                $collIdStr = implode(',', $searchCollections);
+            }
+            else{
+                $collIdStr = Sanitizer::cleanInStr($this->conn,$this->searchTermsArr['db']);
+            }
+            $sqlWhere .= 'AND (o.collid IN(' .$collIdStr. ')) ';
+        }
+        elseif(!$GLOBALS['IS_ADMIN']){
+            $sqlWhere .= 'AND (c.isPublic = 1';
+            if($GLOBALS['PERMITTED_COLLECTIONS']){
+                $sqlWhere .= ' OR o.collid IN('.implode(',', $GLOBALS['PERMITTED_COLLECTIONS']).')';
+            }
+            $sqlWhere .= ') ';
         }
         if(array_key_exists('taxa',$this->searchTermsArr) && $this->searchTermsArr['taxa']){
             $sqlWhereTaxa = '';

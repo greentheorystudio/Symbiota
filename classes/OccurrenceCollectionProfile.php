@@ -39,12 +39,12 @@ class OccurrenceCollectionProfile {
 	{
 		$retArr = array();
         $sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, '.
-			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, c.datarecordingmethod, '.
-			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.publicedits, '.
+			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, c.datarecordingmethod, c.defaultRepCount, '.
+			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.publicedits, c.isPublic, '.
 			'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, s.uploaddate '.
-			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid ';
+			'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid ';
 		if($this->collid){
-			$sql .= 'WHERE (c.collid = '.$this->collid.') ';
+			$sql .= 'WHERE c.collid = '.$this->collid.' ';
 		}
 		else{
 			$sql .= 'ORDER BY c.SortSeq, c.CollectionName';
@@ -68,6 +68,7 @@ class OccurrenceCollectionProfile {
 			$retArr[$row->collid]['colltype'] = $row->colltype;
 			$retArr[$row->collid]['managementtype'] = $row->managementtype;
             $retArr[$row->collid]['datarecordingmethod'] = $row->datarecordingmethod;
+            $retArr[$row->collid]['defaultRepCount'] = $row->defaultRepCount;
 			$retArr[$row->collid]['publicedits'] = $row->publicedits;
 			$retArr[$row->collid]['guidtarget'] = $row->guidtarget;
 			$retArr[$row->collid]['rights'] = $row->rights;
@@ -77,6 +78,7 @@ class OccurrenceCollectionProfile {
 			$retArr[$row->collid]['sortseq'] = $row->sortseq;
 			$retArr[$row->collid]['skey'] = $row->securitykey;
 			$retArr[$row->collid]['guid'] = $row->collectionguid;
+            $retArr[$row->collid]['isPublic'] = $row->isPublic;
 			$uDate = '';
 			if($row->uploaddate){
 				$uDate = $row->uploaddate;
@@ -265,6 +267,7 @@ class OccurrenceCollectionProfile {
 			$contact = Sanitizer::cleanInStr($this->conn,$postArr['contact']);
 			$email = Sanitizer::cleanInStr($this->conn,$postArr['email']);
             $dataRecordingMethod = Sanitizer::cleanInStr($this->conn,$postArr['datarecordingmethod']);
+            $defaultRepCount = (array_key_exists('defaultRepCount',$postArr) && (int)$postArr['defaultRepCount'] > 0)?$postArr['defaultRepCount']:'0';
 			$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
 			$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:'NULL');
             $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:'NULL');
@@ -272,6 +275,7 @@ class OccurrenceCollectionProfile {
 			$rights = Sanitizer::cleanInStr($this->conn,$postArr['rights']);
 			$rightsHolder = Sanitizer::cleanInStr($this->conn,$postArr['rightsholder']);
 			$accessRights = Sanitizer::cleanInStr($this->conn,$postArr['accessrights']);
+            $isPublic = ((array_key_exists('isPublic',$postArr) && (int)$postArr['isPublic'] === 1)?'1':'0');
 			if($_FILES['iconfile']['name']){
 				$icon = $this->addIconImageFile();
 			}
@@ -291,7 +295,8 @@ class OccurrenceCollectionProfile {
 				'email = '.($email?'"'.$email.'"':'NULL').','.
 				'latitudedecimal = '.($postArr['latitudedecimal']?:'NULL').','.
 				'longitudedecimal = '.($postArr['longitudedecimal']?:'NULL').','.
-                'datarecordingmethod = "'.$dataRecordingMethod.'",';
+                'datarecordingmethod = "'.$dataRecordingMethod.'",'.
+                'defaultRepCount = "'.$defaultRepCount.'",';
             if(array_key_exists('publishToGbif',$postArr)){
                 $sql .= 'publishToGbif = '.$gbifPublish.',';
             }
@@ -299,6 +304,7 @@ class OccurrenceCollectionProfile {
                 $sql .= 'publishToIdigbio = '.$idigPublish.',';
             }
             $sql .= 'publicedits = '.$publicEdits.','.
+                'isPublic = '.$isPublic.','.
                 'guidtarget = '.($guidTarget?'"'.$guidTarget.'"':'NULL').','.
 				'rights = '.($rights?'"'.$rights.'"':'NULL').','.
 				'rightsholder = '.($rightsHolder?'"'.$rightsHolder.'"':'NULL').','.
@@ -360,6 +366,7 @@ class OccurrenceCollectionProfile {
 		}
 		$managementType = array_key_exists('managementtype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['managementtype']):'';
         $dataRecordingMethod = array_key_exists('datarecordingmethod',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['datarecordingmethod']):'';
+        $defaultRepCount = (array_key_exists('defaultRepCount',$postArr) && (int)$postArr['defaultRepCount'] > 0)?$postArr['defaultRepCount']:'0';
 		$collType = array_key_exists('colltype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['colltype']):'';
 		$guid = array_key_exists('collectionguid',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['collectionguid']):'';
 		if(!$guid) {
@@ -367,12 +374,13 @@ class OccurrenceCollectionProfile {
 		}
 		$indUrl = array_key_exists('individualurl',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['individualurl']):'';
 		$sortSeq = array_key_exists('sortseq',$postArr)?$postArr['sortseq']:'';
+        $isPublic = ((array_key_exists('isPublic',$postArr) && (int)$postArr['isPublic'] === 1)?'1':'0');
 
 		$sql = 'INSERT INTO omcollections(institutioncode,collectioncode,collectionname,fulldescription,collectionid,homepage,'.
 			'contact,email,latitudedecimal,longitudedecimal,publicedits,publishToGbif,'.
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
             'guidtarget,rights,rightsholder,accessrights,icon,'.
-			'managementtype,datarecordingmethod,colltype,collectionguid,individualurl,sortseq) '.
+			'managementtype,datarecordingmethod,defaultRepCount,colltype,collectionguid,isPublic,individualurl,sortseq) '.
 			'VALUES ('.($instCode?'"'.$instCode.'"':'NULL').','.
 			($collCode?'"'.$collCode.'"':'NULL').','.
             '"'.$coleName.'",'.
@@ -382,7 +390,9 @@ class OccurrenceCollectionProfile {
 			($contact?'"'.$contact.'"':'NULL').','.
 			($email?'"'.$email.'"':'NULL').','.
 			($postArr['latitudedecimal']?:'NULL').','.
-			($postArr['longitudedecimal']?:'NULL').','.$publicEdits.','.$gbifPublish.','.
+			($postArr['longitudedecimal']?:'NULL').','.
+            $publicEdits.','.
+            $gbifPublish.','.
             (array_key_exists('publishToIdigbio',$postArr)?$idigPublish.',':'').
 			($guidTarget?'"'.$guidTarget.'"':'NULL').','.
 			($rights?'"'.$rights.'"':'NULL').','.
@@ -391,8 +401,11 @@ class OccurrenceCollectionProfile {
 			($icon?'"'.$icon.'"':'NULL').','.
 			($managementType?'"'.$managementType.'"':'"Snapshot"').','.
             ($dataRecordingMethod?'"'.$dataRecordingMethod.'"':'"specimen"').','.
-			($collType?'"'.$collType.'"':'PreservedSpecimen').',"'.
-			$guid.'",'.($indUrl?'"'.$indUrl.'"':'NULL').','.
+            ($defaultRepCount?'"'.$defaultRepCount.'"':'NULL').','.
+			($collType?'"'.$collType.'"':'PreservedSpecimen').','.
+			'"'.$guid.'",'.
+            $isPublic.','.
+            ($indUrl?'"'.$indUrl.'"':'NULL').','.
 			($sortSeq?:'NULL').') ';
 		//echo "<div>$sql</div>";
 		if($this->conn->query($sql)){
