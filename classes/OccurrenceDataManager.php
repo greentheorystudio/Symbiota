@@ -135,11 +135,11 @@ class OccurrenceDataManager{
             'o.identifiedBy, o.dateIdentified, o.identificationReferences, o.identificationRemarks, o.identificationQualifier, o.typeStatus, o.recordedBy, o.recordNumber, o.recordedbyid, o.associatedCollectors, o.eventDate, '.
             'o.latestDateCollected, o.year, o.month, o.day, o.startDayOfYear, o.endDayOfYear, o.verbatimEventDate, o.habitat, o.substrate, o.fieldNotes, o.fieldnumber, '.
             'o.eventID, o.occurrenceRemarks, o.informationWithheld, o.dataGeneralizations, o.associatedOccurrences, o.associatedTaxa, o.dynamicProperties, o.verbatimAttributes, o.behavior, o.reproductiveCondition, o.cultivationStatus, '.
-            'o.establishmentMeans, o.lifeStage, o.sex, o.individualCount, o.samplingProtocol, o.samplingEffort, o.repCount, o.preparations, o.locationID, o.waterBody, o.country, o.stateProvince, '.
+            'o.establishmentMeans, o.lifeStage, o.sex, o.individualCount, o.samplingProtocol, o.samplingEffort, o.preparations, o.locationID, o.waterBody, o.country, o.stateProvince, '.
             'o.county, o.municipality, o.locality, o.localitySecurity, o.localitySecurityReason, o.decimalLatitude, o.decimalLongitude, o.geodeticDatum, o.coordinateUncertaintyInMeters, o.footprintWKT, o.coordinatePrecision, '.
             'o.locationRemarks, o.verbatimCoordinates, o.verbatimCoordinateSystem, o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, '.
             'o.minimumDepthInMeters, o.maximumDepthInMeters, o.verbatimDepth, o.previousIdentifications, o.disposition, o.storageLocation, o.modified, o.language, o.observeruid, o.processingstatus, o.recordEnteredBy, '.
-            'o.duplicateQuantity, o.labelProject, o.isPublic, o.dateEntered, o.dateLastModified '.
+            'o.duplicateQuantity, o.labelProject, o.dateEntered, o.dateLastModified '.
             'FROM omoccurrences AS o '.
             'WHERE o.occid = ' . $occid . ' ';
         //echo '<div>'.$sql.'</div>';

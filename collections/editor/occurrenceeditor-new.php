@@ -162,7 +162,7 @@ $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?(int)$_REQUEST['csmode']
 
                     Vue.onMounted(() => {
                         if(Number(collId) > 0){
-                            occurrenceStore.setCollection(collId);
+                            //occurrenceStore.setCollection(collId);
                         }
                     });
 
