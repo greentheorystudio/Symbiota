@@ -35,6 +35,7 @@ class CollectionManager {
             $retArr['datarecordingmethod'] = $r->datarecordingmethod;
             $retArr['defaultRepCount'] = $r->defaultRepCount;
             $retArr['isPublic'] = $r->isPublic;
+            $retArr['additionalDataFields'] = null;
         }
         $rs->free();
         if(file_exists($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collId . 'occurrencedatafields.json')) {

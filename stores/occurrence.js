@@ -1,9 +1,187 @@
 const useOccurrenceStore = Pinia.defineStore('occurrence', {
     state: () => ({
         additionalData: {},
+        additionalDataFields: [],
+        blankEventRecord: {
+            locationID: 0,
+            eventType: null,
+            fieldNotes: null,
+            fieldnumber: null,
+            recordedBy: null,
+            recordNumber: null,
+            recordedbyid: null,
+            associatedCollectors: null,
+            eventDate: null,
+            latestDateCollected: null,
+            eventTime: null,
+            year: null,
+            month: null,
+            day: null,
+            startDayOfYear: null,
+            endDayOfYear: null,
+            verbatimEventDate: null,
+            habitat: null,
+            substrate: null,
+            localitySecurity: null,
+            localitySecurityReason: null,
+            decimalLatitude: null,
+            decimalLongitude: null,
+            geodeticDatum: null,
+            coordinateUncertaintyInMeters: null,
+            footprintWKT: null,
+            eventRemarks: null,
+            georeferencedBy: null,
+            georeferenceProtocol: null,
+            georeferenceSources: null,
+            georeferenceVerificationStatus: null,
+            georeferenceRemarks: null,
+            minimumDepthInMeters: null,
+            maximumDepthInMeters: null,
+            verbatimDepth: null,
+            samplingProtocol: null,
+            samplingEffort: null,
+            repCount: null,
+            labelProject: null
+        },
+        blankLocationRecord: {
+            collid: 0,
+            locationName: null,
+            locationCode: null,
+            waterBody: null,
+            country: null,
+            stateProvince: null,
+            county: null,
+            municipality: null,
+            locality: null,
+            localitySecurity: null,
+            localitySecurityReason: null,
+            decimalLatitude: null,
+            decimalLongitude: null,
+            geodeticDatum: null,
+            coordinateUncertaintyInMeters: null,
+            footprintWKT: null,
+            coordinatePrecision: null,
+            locationRemarks: null,
+            verbatimCoordinates: null,
+            verbatimCoordinateSystem: null,
+            georeferencedBy: null,
+            georeferenceProtocol: null,
+            georeferenceSources: null,
+            georeferenceVerificationStatus: null,
+            georeferenceRemarks: null,
+            minimumElevationInMeters: null,
+            maximumElevationInMeters: null,
+            verbatimElevation: null
+        },
+        blankOccurrenceRecord: {
+            occid: 0,
+            collid: 0,
+            dbpk: null,
+            basisOfRecord: null,
+            occurrenceID: null,
+            catalogNumber: null,
+            otherCatalogNumbers: null,
+            ownerInstitutionCode: null,
+            institutionID: null,
+            collectionID: null,
+            datasetID: null,
+            institutionCode: null,
+            collectionCode: null,
+            family: null,
+            verbatimScientificName: null,
+            sciname: null,
+            tid: null,
+            genus: null,
+            specificEpithet: null,
+            taxonRank: null,
+            infraspecificEpithet: null,
+            scientificNameAuthorship: null,
+            taxonRemarks: null,
+            identifiedBy: null,
+            dateIdentified: null,
+            identificationReferences: null,
+            identificationRemarks: null,
+            identificationQualifier: null,
+            typeStatus: null,
+            recordedBy: null,
+            recordNumber: null,
+            recordedbyid: null,
+            associatedCollectors: null,
+            eventDate: null,
+            latestDateCollected: null,
+            eventTime: null,
+            year: null,
+            month: null,
+            day: null,
+            startDayOfYear: null,
+            endDayOfYear: null,
+            verbatimEventDate: null,
+            habitat: null,
+            substrate: null,
+            fieldNotes: null,
+            fieldnumber: null,
+            eventID: null,
+            eventRemarks: null,
+            occurrenceRemarks: null,
+            informationWithheld: null,
+            dataGeneralizations: null,
+            associatedOccurrences: null,
+            associatedTaxa: null,
+            dynamicProperties: null,
+            verbatimAttributes: null,
+            behavior: null,
+            reproductiveCondition: null,
+            cultivationStatus: null,
+            establishmentMeans: null,
+            lifeStage: null,
+            sex: null,
+            individualCount: null,
+            samplingProtocol: null,
+            samplingEffort: null,
+            rep: null,
+            preparations: null,
+            locationID: null,
+            waterBody: null,
+            country: null,
+            stateProvince: null,
+            county: null,
+            municipality: null,
+            locality: null,
+            localitySecurity: null,
+            localitySecurityReason: null,
+            decimalLatitude: null,
+            decimalLongitude: null,
+            geodeticDatum: null,
+            coordinateUncertaintyInMeters: null,
+            footprintWKT: null,
+            coordinatePrecision: null,
+            locationRemarks: null,
+            verbatimCoordinates: null,
+            verbatimCoordinateSystem: null,
+            georeferencedBy: null,
+            georeferenceProtocol: null,
+            georeferenceSources: null,
+            georeferenceVerificationStatus: null,
+            georeferenceRemarks: null,
+            minimumElevationInMeters: null,
+            maximumElevationInMeters: null,
+            verbatimElevation: null,
+            minimumDepthInMeters: null,
+            maximumDepthInMeters: null,
+            verbatimDepth: null,
+            previousIdentifications: null,
+            disposition: null,
+            storageLocation: null,
+            language: null,
+            observeruid: null,
+            processingstatus: null,
+            duplicateQuantity: null,
+            labelProject: null
+        },
         checklistArr: [],
         collectingEventData: {},
         collectionData: {},
+        collId: 0,
         crowdSourceQueryFieldOptions: [
             {field: 'family', label: 'Family'},
             {field: 'sciname', label: 'Scientific Name'},
@@ -16,9 +194,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             {field: 'recordnumber', label: 'Collector Number'},
             {field: 'eventdate', label: 'Collection Date'}
         ],
-        currentCollid: 0,
-        currentOccid: 0,
         determinationArr: [],
+        displayMode: 1,
         duplicateArr: [],
         editorQueryFieldOptions: [
             {field: 'associatedCollectors', label: 'Associated Collectors'},
@@ -100,18 +277,26 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             {field: 'verbatimElevation', label: 'Verbatim Elevation'},
             {field: '`year`', label: 'Year'}
         ],
+        eventData: {},
+        eventId: 0,
         geneticLinkArr: [],
         imageArr: [],
         isEditor: false,
         isLocked: false,
         locationData: {},
+        locationId: 0,
         mediaArr: [],
+        occId: 0,
         occidArr: [],
-        occurrenceData: {}
+        occurrenceData: {},
+        occurrenceEntryFormat: 'specimen'
     }),
     getters: {
         getAdditionalData(state) {
             return state.additionalData;
+        },
+        getAdditionalDataFields(state) {
+            return state.additionalDataFields;
         },
         getChecklistArr(state) {
             return state.checklistArr;
@@ -126,23 +311,26 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getCollectionData(state) {
             return state.collectionData;
         },
+        getCollId(state) {
+            return state.collId;
+        },
         getCrowdSourceQueryFieldOptions(state) {
             return state.crowdSourceQueryFieldOptions;
         },
         getCurrentRecordIndex(state) {
-            return state.occidArr.length > 0 ? (state.occidArr.indexOf(state.currentOccid) + 1) : 1;
+            return (state.occidArr.indexOf(state.occId) + 1);
         },
         getDeterminationArr(state) {
             return state.determinationArr;
+        },
+        getDisplayMode(state) {
+            return state.displayMode;
         },
         getDuplicateArr(state) {
             return state.duplicateArr;
         },
         getEditorQueryFieldOptions(state) {
             return state.editorQueryFieldOptions;
-        },
-        getFirstRecord(state) {
-            return state.occidArr[0];
         },
         getGeneticLinkArr(state) {
             return state.geneticLinkArr;
@@ -159,49 +347,161 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getIsLocked(state) {
             return state.isLocked;
         },
-        getLastRecord(state) {
-            return state.occidArr[(state.occidArr.length - 1)];
-        },
         getLocationData(state) {
             return state.locationData;
         },
         getMediaArr(state) {
             return state.mediaArr;
         },
-        getNextRecord(state) {
-            return state.occidArr[this.getCurrentRecordIndex];
-        },
-        getPreviousRecord(state) {
-            return state.occidArr[(this.getCurrentRecordIndex - 2)];
-        },
         getRecordCount(state) {
-            return state.occidArr.length > 0 ? state.occidArr.length : 1;
+            return state.occidArr.length;
+        },
+        getOccId(state) {
+            return state.occId;
         },
         getOccurrenceData(state) {
             return state.occurrenceData;
+        },
+        getOccurrenceEntryFormat(state) {
+            return state.occurrenceEntryFormat;
         }
     },
     actions: {
         clearCollectionData() {
             this.isEditor = false;
             this.collectionData = Object.assign({}, {});
+            this.additionalDataFields.length = 0;
         },
         clearOccurrenceData() {
-            this.occurrenceData = Object.assign({}, {});
+            this.occurrenceData = Object.assign({}, this.blankOccurrenceRecord);
             this.isLocked = false;
-            this.locationData = Object.assign({}, {});
-            this.collectingEventData = Object.assign({}, {});
             this.determinationArr.length = 0;
             this.imageArr.length = 0;
             this.mediaArr.length = 0;
             this.checklistArr.length = 0;
             this.duplicateArr.length = 0;
             this.geneticLinkArr.length = 0;
-            this.additionalData = Object.assign({}, {});
+        },
+        goToFirstRecord() {
+            this.setOccurrenceData(this.occidArr[0]);
+        },
+        goToLastRecord() {
+            this.setOccurrenceData(this.occidArr[(this.occidArr.length - 1)]);
+        },
+        goToNextRecord() {
+            this.setOccurrenceData(this.occidArr[this.getCurrentRecordIndex]);
+        },
+        goToNewOccurrenceRecord(carryLocation = false, carryEvent = false) {
+            this.setOccurrenceData(0);
+            if(carryLocation){
+                this.mergeLocationOccurrenceData();
+            }
+            else{
+                this.locationId = 0;
+                this.locationData = Object.assign({}, this.blankLocationRecord);
+            }
+            if(carryEvent){
+                this.mergeEventOccurrenceData();
+            }
+            else{
+                this.eventId = 0;
+                this.eventData = Object.assign({}, this.blankEventRecord);
+            }
+        },
+        goToPreviousRecord() {
+            this.setOccurrenceData(this.occidArr[(this.getCurrentRecordIndex - 2)]);
+        },
+        mergeEventOccurrenceData() {
+            this.occurrenceData['eventID'] = this.eventId;
+            this.occurrenceData['fieldNotes'] = this.eventData['fieldNotes'];
+            this.occurrenceData['fieldnumber'] = this.eventData['fieldnumber'];
+            this.occurrenceData['recordedBy'] = this.eventData['recordedBy'];
+            this.occurrenceData['recordNumber'] = this.eventData['recordNumber'];
+            this.occurrenceData['recordedbyid'] = this.eventData['recordedbyid'];
+            this.occurrenceData['associatedCollectors'] = this.eventData['associatedCollectors'];
+            this.occurrenceData['eventDate'] = this.eventData['eventDate'];
+            this.occurrenceData['latestDateCollected'] = this.eventData['latestDateCollected'];
+            this.occurrenceData['eventTime'] = this.eventData['eventTime'];
+            this.occurrenceData['year'] = this.eventData['year'];
+            this.occurrenceData['month'] = this.eventData['month'];
+            this.occurrenceData['day'] = this.eventData['day'];
+            this.occurrenceData['startDayOfYear'] = this.eventData['startDayOfYear'];
+            this.occurrenceData['endDayOfYear'] = this.eventData['endDayOfYear'];
+            this.occurrenceData['verbatimEventDate'] = this.eventData['verbatimEventDate'];
+            this.occurrenceData['habitat'] = this.eventData['habitat'];
+            this.occurrenceData['substrate'] = this.eventData['substrate'];
+            if(Number(this.occurrenceData['localitySecurity']) !== 1 && Number(this.eventData['localitySecurity']) === 1){
+                this.occurrenceData['localitySecurity'] = this.eventData['localitySecurity'];
+                this.occurrenceData['localitySecurityReason'] = this.eventData['localitySecurityReason'];
+            }
+            if(this.eventData['decimalLatitude']){
+                this.occurrenceData['decimalLatitude'] = this.eventData['decimalLatitude'];
+            }
+            if(this.eventData['decimalLongitude']){
+                this.occurrenceData['decimalLongitude'] = this.eventData['decimalLongitude'];
+            }
+            if(this.eventData['geodeticDatum']){
+                this.occurrenceData['geodeticDatum'] = this.eventData['geodeticDatum'];
+            }
+            if(this.eventData['coordinateUncertaintyInMeters']){
+                this.occurrenceData['coordinateUncertaintyInMeters'] = this.eventData['coordinateUncertaintyInMeters'];
+            }
+            if(this.eventData['footprintWKT']){
+                this.occurrenceData['footprintWKT'] = this.eventData['footprintWKT'];
+            }
+            if(this.eventData['georeferencedBy']){
+                this.occurrenceData['georeferencedBy'] = this.eventData['georeferencedBy'];
+            }
+            if(this.eventData['georeferenceProtocol']){
+                this.occurrenceData['georeferenceProtocol'] = this.eventData['georeferenceProtocol'];
+            }
+            if(this.eventData['georeferenceSources']){
+                this.occurrenceData['georeferenceSources'] = this.eventData['georeferenceSources'];
+            }
+            if(this.eventData['georeferenceVerificationStatus']){
+                this.occurrenceData['georeferenceVerificationStatus'] = this.eventData['georeferenceVerificationStatus'];
+            }
+            if(this.eventData['georeferenceRemarks']){
+                this.occurrenceData['georeferenceRemarks'] = this.eventData['georeferenceRemarks'];
+            }
+            this.occurrenceData['minimumDepthInMeters'] = this.eventData['minimumDepthInMeters'];
+            this.occurrenceData['maximumDepthInMeters'] = this.eventData['maximumDepthInMeters'];
+            this.occurrenceData['verbatimDepth'] = this.eventData['verbatimDepth'];
+            this.occurrenceData['samplingProtocol'] = this.eventData['samplingProtocol'];
+            this.occurrenceData['samplingEffort'] = this.eventData['samplingEffort'];
+            this.occurrenceData['labelProject'] = this.eventData['labelProject'];
+        },
+        mergeLocationOccurrenceData() {
+            this.occurrenceData['locationID'] = this.locationId;
+            this.occurrenceData['waterBody'] = this.locationData['waterBody'];
+            this.occurrenceData['country'] = this.locationData['country'];
+            this.occurrenceData['stateProvince'] = this.locationData['stateProvince'];
+            this.occurrenceData['county'] = this.locationData['county'];
+            this.occurrenceData['municipality'] = this.locationData['municipality'];
+            this.occurrenceData['locality'] = this.locationData['locality'];
+            this.occurrenceData['localitySecurity'] = this.locationData['localitySecurity'];
+            this.occurrenceData['localitySecurityReason'] = this.locationData['localitySecurityReason'];
+            this.occurrenceData['decimalLatitude'] = this.locationData['decimalLatitude'];
+            this.occurrenceData['decimalLongitude'] = this.locationData['decimalLongitude'];
+            this.occurrenceData['geodeticDatum'] = this.locationData['geodeticDatum'];
+            this.occurrenceData['coordinateUncertaintyInMeters'] = this.locationData['coordinateUncertaintyInMeters'];
+            this.occurrenceData['footprintWKT'] = this.locationData['footprintWKT'];
+            this.occurrenceData['coordinatePrecision'] = this.locationData['coordinatePrecision'];
+            this.occurrenceData['locationRemarks'] = this.locationData['locationRemarks'];
+            this.occurrenceData['verbatimCoordinates'] = this.locationData['verbatimCoordinates'];
+            this.occurrenceData['verbatimCoordinateSystem'] = this.locationData['verbatimCoordinateSystem'];
+            this.occurrenceData['georeferencedBy'] = this.locationData['georeferencedBy'];
+            this.occurrenceData['georeferenceProtocol'] = this.locationData['georeferenceProtocol'];
+            this.occurrenceData['georeferenceSources'] = this.locationData['georeferenceSources'];
+            this.occurrenceData['georeferenceVerificationStatus'] = this.locationData['georeferenceVerificationStatus'];
+            this.occurrenceData['georeferenceRemarks'] = this.locationData['georeferenceRemarks'];
+            this.occurrenceData['minimumElevationInMeters'] = this.locationData['minimumElevationInMeters'];
+            this.occurrenceData['maximumElevationInMeters'] = this.locationData['maximumElevationInMeters'];
+            this.occurrenceData['verbatimElevation'] = this.locationData['verbatimElevation'];
         },
         setAdditionalData() {
             const formData = new FormData();
-            formData.append('eventid', this.occurrenceData['eventID'].toString());
+            formData.append('eventid', this.eventId.toString());
             formData.append('action', 'getAdditionalDataArr');
             fetch(occurrenceApiUrl, {
                 method: 'POST',
@@ -216,7 +516,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         setChecklistArr() {
             const formData = new FormData();
-            formData.append('occid', this.currentOccid.toString());
+            formData.append('occid', this.occId.toString());
             formData.append('action', 'getOccurrenceChecklistArr');
             fetch(occurrenceApiUrl, {
                 method: 'POST',
@@ -230,7 +530,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             });
         },
         setCollection(collid) {
-            if(Number(this.currentCollid) !== Number(collid)){
+            if(this.collId !== Number(collid)){
                 this.clearCollectionData();
                 const formData = new FormData();
                 formData.append('permission[]', '["CollAdmin","CollEditor"]');
@@ -244,7 +544,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     response.text().then((res) => {
                         this.isEditor = Number(res) === 1;
                         if(this.isEditor){
-                            this.currentCollid = collid;
+                            this.collId = Number(collid);
                             this.setCollectionInfo();
                         }
                         else{
@@ -254,24 +554,36 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 });
             }
         },
-        setCollectionEventData() {
-            const formData = new FormData();
-            formData.append('eventid', this.occurrenceData['eventID'].toString());
-            formData.append('action', 'getCollectionEventDataArr');
-            fetch(occurrenceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.collectingEventData = Object.assign({}, data);
-            });
+        setCollectionEventData(eventid) {
+            if(eventid && Number(eventid) > 0){
+                if(this.eventId !== Number(eventid)){
+                    this.eventId = Number(eventid);
+                    this.additionalData = Object.assign({}, {});
+                    const formData = new FormData();
+                    formData.append('eventid', eventid.toString());
+                    formData.append('action', 'getCollectionEventDataArr');
+                    fetch(occurrenceApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then((data) => {
+                        this.collectingEventData = Object.assign({}, data);
+                        this.setAdditionalData();
+                    });
+                }
+            }
+            else{
+                this.eventId = 0;
+                this.collectingEventData = Object.assign({}, {});
+                this.additionalData = Object.assign({}, {});
+            }
         },
         setCollectionInfo() {
             const formData = new FormData();
-            formData.append('collid', this.currentCollid.toString());
+            formData.append('collid', this.collId.toString());
             formData.append('action', 'getCollectionInfoArr');
             fetch(collectionApiUrl, {
                 method: 'POST',
@@ -280,12 +592,16 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             .then((response) => {
                 response.json().then((resObj) => {
                     this.collectionData = Object.assign({}, resObj);
+                    this.occurrenceEntryFormat = this.collectionData['datarecordingmethod'];
+                    if(this.collectionData['additionalDataFields'] && this.collectionData['additionalDataFields'].hasOwnProperty('dataFields') && this.collectionData['additionalDataFields']['dataFields'].length > 0){
+                        this.additionalDataFields = this.collectionData['additionalDataFields']['dataFields'];
+                    }
                 });
             });
         },
         setDeterminationArr() {
             const formData = new FormData();
-            formData.append('occid', this.currentOccid.toString());
+            formData.append('occid', this.occId.toString());
             formData.append('action', 'getOccurrenceDeterminationArr');
             fetch(occurrenceApiUrl, {
                 method: 'POST',
@@ -298,9 +614,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 this.determinationArr = data;
             });
         },
+        setDisplayMode(value) {
+            this.displayMode = Number(value);
+        },
         setDuplicateArr() {
             const formData = new FormData();
-            formData.append('occid', this.currentOccid.toString());
+            formData.append('occid', this.occId.toString());
             formData.append('action', 'getOccurrenceDuplicateArr');
             fetch(occurrenceApiUrl, {
                 method: 'POST',
@@ -315,7 +634,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         setGeneticLinkArr() {
             const formData = new FormData();
-            formData.append('occid', this.currentOccid.toString());
+            formData.append('occid', this.occId.toString());
             formData.append('action', 'getOccurrenceGeneticLinkArr');
             fetch(occurrenceApiUrl, {
                 method: 'POST',
@@ -330,7 +649,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         setImageArr() {
             const formData = new FormData();
-            formData.append('occid', this.currentOccid.toString());
+            formData.append('occid', this.occId.toString());
             formData.append('action', 'getOccurrenceImageArr');
             fetch(occurrenceApiUrl, {
                 method: 'POST',
@@ -343,24 +662,33 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 this.imageArr = data;
             });
         },
-        setLocationData() {
-            const formData = new FormData();
-            formData.append('locationid', this.occurrenceData['locationID'].toString());
-            formData.append('action', 'getLocationDataArr');
-            fetch(occurrenceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.locationData = Object.assign({}, data);
-            });
+        setLocationData(locationid) {
+            if(locationid && Number(locationid) > 0){
+                if(this.locationId !== Number(locationid)){
+                    this.locationId = Number(locationid);
+                    const formData = new FormData();
+                    formData.append('locationid', locationid.toString());
+                    formData.append('action', 'getLocationDataArr');
+                    fetch(occurrenceApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then((data) => {
+                        this.locationData = Object.assign({}, data);
+                    });
+                }
+            }
+            else{
+                this.locationId = 0;
+                this.locationData = Object.assign({}, {});
+            }
         },
         setMediaArr() {
             const formData = new FormData();
-            formData.append('occid', this.currentOccid.toString());
+            formData.append('occid', this.occId.toString());
             formData.append('action', 'getOccurrenceMediaArr');
             fetch(occurrenceApiUrl, {
                 method: 'POST',
@@ -374,50 +702,53 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             });
         },
         setOccurrenceData(occid) {
-            this.currentOccid = occid;
+            this.occId = Number(occid);
+            if(!this.occidArr.includes(this.occId)){
+                this.occidArr.push(this.occId);
+            }
             this.clearOccurrenceData();
-            const formData = new FormData();
-            formData.append('occid', this.currentOccid.toString());
-            formData.append('action', 'getOccurrenceDataLock');
-            fetch(occurrenceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                this.isLocked = Number(res) === 1;
-                if(!this.isLocked){
-                    const formData = new FormData();
-                    formData.append('occid', this.currentOccid.toString());
-                    formData.append('action', 'getOccurrenceDataArr');
-                    fetch(occurrenceApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        return response.ok ? response.json() : null;
-                    })
-                    .then((data) => {
-                        this.occurrenceData = Object.assign({}, data);
-                        this.setCollection(this.occurrenceData.collid);
-                        this.setDeterminationArr();
-                        this.setImageArr();
-                        this.setMediaArr();
-                        this.setChecklistArr();
-                        this.setDuplicateArr();
-                        this.setGeneticLinkArr();
-                        if(this.occurrenceData['locationID'] && Number(this.occurrenceData['locationID']) > 0){
-                            this.setLocationData();
-                        }
-                        if(this.occurrenceData['eventID'] && Number(this.occurrenceData['eventID']) > 0){
-                            this.setCollectionEventData();
-                            this.setAdditionalData();
-                        }
-                    });
-                }
-            });
+            if(this.occId > 0){
+                const formData = new FormData();
+                formData.append('occid', this.occId.toString());
+                formData.append('action', 'getOccurrenceDataLock');
+                fetch(occurrenceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    this.isLocked = Number(res) === 1;
+                    if(!this.isLocked){
+                        const formData = new FormData();
+                        formData.append('occid', this.occId.toString());
+                        formData.append('action', 'getOccurrenceDataArr');
+                        fetch(occurrenceApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((data) => {
+                            this.occurrenceData = Object.assign({}, data);
+                            this.setCollection(this.occurrenceData.collid);
+                            this.setDeterminationArr();
+                            this.setImageArr();
+                            this.setMediaArr();
+                            this.setChecklistArr();
+                            this.setDuplicateArr();
+                            this.setGeneticLinkArr();
+                            this.setLocationData(this.occurrenceData['locationID']);
+                            this.setCollectionEventData(this.occurrenceData['eventID']);
+                        });
+                    }
+                });
+            }
+        },
+        setOccurrenceEntryFormat(value) {
+            this.occurrenceEntryFormat = value;
         }
     }
 });

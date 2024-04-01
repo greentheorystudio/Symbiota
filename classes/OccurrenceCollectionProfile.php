@@ -47,47 +47,55 @@ class OccurrenceCollectionProfile {
 			$sql .= 'WHERE c.collid = '.$this->collid.' ';
 		}
 		else{
-			$sql .= 'ORDER BY c.SortSeq, c.CollectionName';
+            if(!$GLOBALS['IS_ADMIN']){
+                $sql .= 'WHERE c.isPublic = 1 ';
+                if($GLOBALS['PERMITTED_COLLECTIONS']){
+                    $sql .= 'OR c.collid IN('.implode(',', $GLOBALS['PERMITTED_COLLECTIONS']).') ';
+                }
+            }
+            $sql .= 'ORDER BY c.SortSeq, c.CollectionName';
 		}
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			$retArr[$row->collid]['collid'] = $row->collid;
-			$retArr[$row->collid]['institutioncode'] = $row->institutioncode;
-			$retArr[$row->collid]['collectioncode'] = $row->CollectionCode;
-			$retArr[$row->collid]['collectionname'] = $row->CollectionName;
-            $retArr[$row->collid]['collectionid'] = $row->collectionid;
-			$retArr[$row->collid]['fulldescription'] = $row->FullDescription;
-			$retArr[$row->collid]['homepage'] = $row->Homepage;
-			$retArr[$row->collid]['individualurl'] = $row->individualurl;
-			$retArr[$row->collid]['contact'] = $row->Contact;
-			$retArr[$row->collid]['email'] = $row->email;
-			$retArr[$row->collid]['latitudedecimal'] = $row->latitudedecimal;
-			$retArr[$row->collid]['longitudedecimal'] = $row->longitudedecimal;
-			$retArr[$row->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
-			$retArr[$row->collid]['colltype'] = $row->colltype;
-			$retArr[$row->collid]['managementtype'] = $row->managementtype;
-            $retArr[$row->collid]['datarecordingmethod'] = $row->datarecordingmethod;
-            $retArr[$row->collid]['defaultRepCount'] = $row->defaultRepCount;
-			$retArr[$row->collid]['publicedits'] = $row->publicedits;
-			$retArr[$row->collid]['guidtarget'] = $row->guidtarget;
-			$retArr[$row->collid]['rights'] = $row->rights;
-			$retArr[$row->collid]['rightsholder'] = $row->rightsholder;
-			$retArr[$row->collid]['accessrights'] = $row->accessrights;
-			$retArr[$row->collid]['dwcaurl'] = $row->dwcaurl;
-			$retArr[$row->collid]['sortseq'] = $row->sortseq;
-			$retArr[$row->collid]['skey'] = $row->securitykey;
-			$retArr[$row->collid]['guid'] = $row->collectionguid;
-            $retArr[$row->collid]['isPublic'] = $row->isPublic;
-			$uDate = '';
-			if($row->uploaddate){
-				$uDate = $row->uploaddate;
-				$month = substr($uDate,5,2);
-				$day = substr($uDate,8,2);
-				$year = substr($uDate,0,4);
-				$uDate = date('j F Y',mktime(0,0,0,$month,$day,$year));
-			}
-			$retArr[$row->collid]['uploaddate'] = $uDate;
+			if(!$this->collid || $GLOBALS['IS_ADMIN'] || (int)$row->isPublic === 1 || in_array((int)$this->collid, $GLOBALS['PERMITTED_COLLECTIONS'], true)){
+                $retArr[$row->collid]['collid'] = $row->collid;
+                $retArr[$row->collid]['institutioncode'] = $row->institutioncode;
+                $retArr[$row->collid]['collectioncode'] = $row->CollectionCode;
+                $retArr[$row->collid]['collectionname'] = $row->CollectionName;
+                $retArr[$row->collid]['collectionid'] = $row->collectionid;
+                $retArr[$row->collid]['fulldescription'] = $row->FullDescription;
+                $retArr[$row->collid]['homepage'] = $row->Homepage;
+                $retArr[$row->collid]['individualurl'] = $row->individualurl;
+                $retArr[$row->collid]['contact'] = $row->Contact;
+                $retArr[$row->collid]['email'] = $row->email;
+                $retArr[$row->collid]['latitudedecimal'] = $row->latitudedecimal;
+                $retArr[$row->collid]['longitudedecimal'] = $row->longitudedecimal;
+                $retArr[$row->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
+                $retArr[$row->collid]['colltype'] = $row->colltype;
+                $retArr[$row->collid]['managementtype'] = $row->managementtype;
+                $retArr[$row->collid]['datarecordingmethod'] = $row->datarecordingmethod;
+                $retArr[$row->collid]['defaultRepCount'] = $row->defaultRepCount;
+                $retArr[$row->collid]['publicedits'] = $row->publicedits;
+                $retArr[$row->collid]['guidtarget'] = $row->guidtarget;
+                $retArr[$row->collid]['rights'] = $row->rights;
+                $retArr[$row->collid]['rightsholder'] = $row->rightsholder;
+                $retArr[$row->collid]['accessrights'] = $row->accessrights;
+                $retArr[$row->collid]['dwcaurl'] = $row->dwcaurl;
+                $retArr[$row->collid]['sortseq'] = $row->sortseq;
+                $retArr[$row->collid]['skey'] = $row->securitykey;
+                $retArr[$row->collid]['guid'] = $row->collectionguid;
+                $retArr[$row->collid]['isPublic'] = $row->isPublic;
+                $uDate = '';
+                if($row->uploaddate){
+                    $uDate = $row->uploaddate;
+                    $month = substr($uDate,5,2);
+                    $day = substr($uDate,8,2);
+                    $year = substr($uDate,0,4);
+                    $uDate = date('j F Y',mktime(0,0,0,$month,$day,$year));
+                }
+                $retArr[$row->collid]['uploaddate'] = $uDate;
+            }
 		}
 		$rs->free();
 		if($this->collid){

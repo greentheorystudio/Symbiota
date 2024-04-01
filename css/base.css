@@ -779,12 +779,12 @@ body.processing .loadingModal {
 	background-color: #3c668d;
 	color: white;
 }
-.sm-map-popup {
+.sm-popup {
 	width: 45%;
 	border: 1px solid black;
 	min-width: 325px;
 }
-.lg-map-popup {
+.lg-popup {
 	max-width: 90% !important;
 	width: 90% !important;
 	height: 85% !important;
@@ -808,7 +808,7 @@ body.processing .loadingModal {
 .black-border {
 	border: 1px solid black;
 }
-.map-popup-header {
+.map-sm-popup {
 	background-color: #BDBDBD;
 }
 .map-popup {
