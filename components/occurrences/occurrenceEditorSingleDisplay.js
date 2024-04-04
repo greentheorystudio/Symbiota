@@ -71,23 +71,27 @@ const occurrenceEditorSingleDisplay = {
                         </div>
                     </div>
                     <q-card flat bordered class="q-mt-sm black-border">
-                        <q-card-section class="q-pa-none">
-                            <template v-if="Number(occId) > 0">
+                        <template v-if="Number(occId) > 0">
+                            <q-card-section class="q-pa-none">
                                 <occurrence-editor-tab-module></occurrence-editor-tab-module>
-                            </template>
-                            <template v-else-if="occurrenceEntryFormat === 'observation'">
-                                <occurrence-entry-observation-form-module></occurrence-entry-observation-form-module>
-                            </template>
-                            <template v-else-if="occurrenceEntryFormat === 'image'">
-                                <occurrence-entry-image-form-module></occurrence-entry-image-form-module>
-                            </template>
-                            <template v-else-if="occurrenceEntryFormat === 'skeletal'">
-                                <occurrence-entry-skeletal-form-module></occurrence-entry-skeletal-form-module>
-                            </template>
-                            <template v-else>
-                                <occurrence-editor-occurrence-data-module></occurrence-editor-occurrence-data-module>
-                            </template>
-                        </q-card-section>
+                            </q-card-section>
+                        </template>
+                        <template v-else-if="Number(occId) === 0">
+                            <q-card-section class="q-pa-sm">
+                                <template v-if="occurrenceEntryFormat === 'observation'">
+                                    <occurrence-entry-observation-form-module></occurrence-entry-observation-form-module>
+                                </template>
+                                <template v-else-if="occurrenceEntryFormat === 'image'">
+                                    <occurrence-entry-image-form-module></occurrence-entry-image-form-module>
+                                </template>
+                                <template v-else-if="occurrenceEntryFormat === 'skeletal'">
+                                    <occurrence-entry-skeletal-form-module></occurrence-entry-skeletal-form-module>
+                                </template>
+                                <template v-else>
+                                    <occurrence-editor-occurrence-data-module></occurrence-editor-occurrence-data-module>
+                                </template>
+                            </q-card-section>
+                        </template>
                     </q-card>
                 </q-card-section>
             </q-card>

@@ -20,7 +20,7 @@ class OccurrenceDataManager{
     public function getAdditionalData($eventid): array
     {
         $retArr = array();
-        $sql = 'SELECT a.adddataID, a.field, a.datavalue, a.initialtimestamp '.
+        $sql = 'SELECT a.adddataid, a.field, a.datavalue, a.initialtimestamp '.
             'FROM omoccuradditionaldata AS a '.
             'WHERE a.eventID = ' . $eventid . ' ';
         //echo '<div>'.$sql.'</div>';
@@ -40,12 +40,12 @@ class OccurrenceDataManager{
     public function getCollectionEventData($eventid): array
     {
         $retArr = array();
-        $sql = 'SELECT e.locationID, e.eventType, e.fieldNotes, e.fieldnumber, e.eventDate, e.latestDateCollected, e.eventTime, '.
-            'e.`year`, e.`month`, e.`day`, e.startDayOfYear, e.endDayOfYear, e.verbatimEventDate, e.habitat, e.localitySecurity, '.
-            'e.localitySecurityReason, e.decimalLatitude, e.decimalLongitude, e.geodeticDatum, e.coordinateUncertaintyInMeters, '.
-            'e.footprintWKT, e.eventRemarks, e.georeferencedBy, e.georeferenceProtocol, e.georeferenceSources, e.georeferenceVerificationStatus, '.
-            'e.georeferenceRemarks, e.minimumDepthInMeters, e.maximumDepthInMeters, e.verbatimDepth, e.samplingProtocol, '.
-            'e.samplingEffort, e.initialtimestamp '.
+        $sql = 'SELECT e.locationid, e.eventtype, e.fieldnotes, e.fieldnumber, e.eventdate, e.latestdatecollected, e.eventtime, '.
+            'e.`year`, e.`month`, e.`day`, e.startdayofyear, e.enddayofyear, e.verbatimeventdate, e.habitat, e.localitysecurity, '.
+            'e.localitysecurityreason, e.decimallatitude, e.decimallongitude, e.geodeticdatum, e.coordinateuncertaintyinmeters, '.
+            'e.footprintwkt, e.eventremarks, e.georeferencedby, e.georeferenceprotocol, e.georeferencesources, e.georeferenceverificationstatus, '.
+            'e.georeferenceremarks, e.minimumdepthinmeters, e.maximumdepthinmeters, e.verbatimdepth, e.samplingprotocol, '.
+            'e.samplingeffort, e.initialtimestamp '.
             'FROM omoccurcollectingevents AS e '.
             'WHERE e.eventID = ' . $eventid . ' ';
         //echo '<div>'.$sql.'</div>';
@@ -65,11 +65,11 @@ class OccurrenceDataManager{
     public function getLocationData($locationid): array
     {
         $retArr = array();
-        $sql = 'SELECT l.locationName, l.locationCode, l.waterBody, l.country, l.stateProvince, l.county, l.municipality, l.locality, '.
-            'l.localitySecurity, l.localitySecurityReason, l.decimalLatitude, l.decimalLongitude, l.geodeticDatum, l.coordinateUncertaintyInMeters, '.
-            'l.footprintWKT, l.coordinatePrecision, l.locationRemarks, l.verbatimCoordinates, l.verbatimCoordinateSystem, l.georeferencedBy, '.
-            'l.georeferenceProtocol, l.georeferenceSources, l.georeferenceVerificationStatus, l.georeferenceRemarks, '.
-            'l.minimumElevationInMeters, l.maximumElevationInMeters, l.verbatimElevation, l.initialtimestamp '.
+        $sql = 'SELECT l.locationname, l.locationcode, l.waterbody, l.country, l.stateprovince, l.county, l.municipality, l.locality, '.
+            'l.localitysecurity, l.localitysecurityreason, l.decimallatitude, l.decimallongitude, l.geodeticdatum, l.coordinateuncertaintyinmeters, '.
+            'l.footprintwkt, l.coordinateprecision, l.locationremarks, l.verbatimcoordinates, l.verbatimcoordinatesystem, l.georeferencedby, '.
+            'l.georeferenceprotocol, l.georeferencesources, l.georeferenceverificationstatus, l.georeferenceremarks, '.
+            'l.minimumelevationinmeters, l.maximumelevationinmeters, l.verbatimelevation, l.initialtimestamp '.
             'FROM omoccurlocations AS l '.
             'WHERE l.locationID = ' . $locationid . ' ';
         //echo '<div>'.$sql.'</div>';
@@ -130,16 +130,16 @@ class OccurrenceDataManager{
     public function getOccurrenceData($occid): array
     {
         $retArr = array();
-        $sql = 'SELECT o.collid, o.dbpk, o.basisOfRecord, o.occurrenceID, o.catalogNumber, o.otherCatalogNumbers, o.ownerInstitutionCode, o.institutionID, o.collectionID, o.datasetID, o.institutionCode, '.
-            'o.collectionCode, o.family, o.verbatimScientificName, o.sciname, o.tid, o.genus, o.specificEpithet, o.taxonRank, o.infraspecificEpithet, o.scientificNameAuthorship, o.taxonRemarks, '.
-            'o.identifiedBy, o.dateIdentified, o.identificationReferences, o.identificationRemarks, o.identificationQualifier, o.typeStatus, o.recordedBy, o.recordNumber, o.recordedbyid, o.associatedCollectors, o.eventDate, '.
-            'o.latestDateCollected, o.year, o.month, o.day, o.startDayOfYear, o.endDayOfYear, o.verbatimEventDate, o.habitat, o.substrate, o.fieldNotes, o.fieldnumber, '.
-            'o.eventID, o.occurrenceRemarks, o.informationWithheld, o.dataGeneralizations, o.associatedOccurrences, o.associatedTaxa, o.dynamicProperties, o.verbatimAttributes, o.behavior, o.reproductiveCondition, o.cultivationStatus, '.
-            'o.establishmentMeans, o.lifeStage, o.sex, o.individualCount, o.samplingProtocol, o.samplingEffort, o.preparations, o.locationID, o.waterBody, o.country, o.stateProvince, '.
-            'o.county, o.municipality, o.locality, o.localitySecurity, o.localitySecurityReason, o.decimalLatitude, o.decimalLongitude, o.geodeticDatum, o.coordinateUncertaintyInMeters, o.footprintWKT, o.coordinatePrecision, '.
-            'o.locationRemarks, o.verbatimCoordinates, o.verbatimCoordinateSystem, o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, '.
-            'o.minimumDepthInMeters, o.maximumDepthInMeters, o.verbatimDepth, o.previousIdentifications, o.disposition, o.storageLocation, o.modified, o.language, o.observeruid, o.processingstatus, o.recordEnteredBy, '.
-            'o.duplicateQuantity, o.labelProject, o.dateEntered, o.dateLastModified '.
+        $sql = 'SELECT o.collid, o.dbpk, o.basisofrecord, o.occurrenceid, o.catalognumber, o.othercatalognumbers, o.ownerinstitutioncode, o.institutionid, o.collectionid, o.datasetid, o.institutioncode, '.
+            'o.collectioncode, o.family, o.verbatimscientificname, o.sciname, o.tid, o.genus, o.specificepithet, o.taxonrank, o.infraspecificepithet, o.scientificnameauthorship, o.taxonremarks, '.
+            'o.identifiedby, o.dateidentified, o.identificationreferences, o.identificationremarks, o.identificationqualifier, o.typestatus, o.recordedby, o.recordnumber, o.recordedbyid, o.associatedcollectors, o.eventdate, '.
+            'o.latestdatecollected, o.`year`, o.`month`, o.`day`, o.startdayofyear, o.enddayofyear, o.verbatimeventdate, o.habitat, o.substrate, o.fieldnotes, o.fieldnumber, '.
+            'o.eventid, o.occurrenceremarks, o.informationwithheld, o.datageneralizations, o.associatedoccurrences, o.associatedtaxa, o.dynamicproperties, o.verbatimattributes, o.behavior, o.reproductivecondition, o.cultivationstatus, '.
+            'o.establishmentmeans, o.lifestage, o.sex, o.individualcount, o.samplingprotocol, o.samplingeffort, o.preparations, o.locationid, o.waterbody, o.country, o.stateprovince, '.
+            'o.county, o.municipality, o.locality, o.localitysecurity, o.localitysecurityreason, o.decimallatitude, o.decimallongitude, o.geodeticdatum, o.coordinateuncertaintyinmeters, o.footprintwkt, o.coordinateprecision, '.
+            'o.locationremarks, o.verbatimcoordinates, o.verbatimcoordinatesystem, o.georeferencedby, o.georeferenceprotocol, o.georeferencesources, o.georeferenceverificationstatus, o.georeferenceremarks, o.minimumelevationinmeters, o.maximumelevationinmeters, o.verbatimelevation, '.
+            'o.minimumdepthinmeters, o.maximumdepthinmeters, o.verbatimdepth, o.previousidentifications, o.disposition, o.storagelocation, o.modified, o.language, o.observeruid, o.processingstatus, o.recordenteredby, '.
+            'o.duplicatequantity, o.labelproject, o.dateentered, o.datelastmodified '.
             'FROM omoccurrences AS o '.
             'WHERE o.occid = ' . $occid . ' ';
         //echo '<div>'.$sql.'</div>';
@@ -162,8 +162,8 @@ class OccurrenceDataManager{
     public function getOccurrenceDeterminationData($occid): array
     {
         $retArr = array();
-        $sql = 'SELECT d.detid, d.identifiedBy, d.dateIdentified, d.sciname, d.verbatimscientificname, d.tid, d.scientificNameAuthorship, ' .
-            'd.identificationQualifier, d.iscurrent, d.appliedstatus, d.identificationReferences, d.identificationRemarks, d.sortsequence '.
+        $sql = 'SELECT d.detid, d.identifiedby, d.dateidentified, d.sciname, d.verbatimscientificname, d.tid, d.scientificnameauthorship, ' .
+            'd.identificationqualifier, d.iscurrent, d.appliedstatus, d.identificationreferences, d.identificationremarks, d.sortsequence '.
             'FROM omoccurdeterminations AS d '.
             'WHERE d.occid = ' . $occid . ' ORDER BY d.iscurrent DESC, d.sortsequence ';
         //echo '<div>'.$sql.'</div>';
@@ -278,8 +278,8 @@ class OccurrenceDataManager{
     public function getTaxonData($tid): array
     {
         $retArr = array();
-        $sql = 'SELECT t.kingdomId, t.RankId, t.SciName, t.UnitInd1, UnitName1, t.UnitInd2, UnitName2, t.UnitInd3, UnitName3, '.
-            't.Author, t.tidaccepted, t.parenttid, t.family, t.Source, t.Notes, t.Hybrid, t.SecurityStatus '.
+        $sql = 'SELECT t.kingdomId, t.rankid, t.sciname, t.unitind1, unitname1, t.unitind2, unitname2, t.unitind3, unitname3, '.
+            't.author, t.tidaccepted, t.parenttid, t.family, t.source, t.notes, t.hybrid, t.securitystatus '.
             'FROM taxa AS t '.
             'WHERE t.tid = ' . $tid . ' ';
         //echo '<div>'.$sql.'</div>';
