@@ -1,43 +1,27 @@
 const occurrenceEditorOccurrenceDataModule = {
     template: `
         <div class="column q-gutter-sm">
-            <q-card flat bordered>
-                <q-card-section class="q-pa-sm row justify-between">
-                    <div>
-                        <template v-if="Number(occId) === 0">
-                            <occurrence-entry-follow-up-action-selector :selected-action="entryFollowUpAction" @change-occurrence-entry-follow-up-action="changeEntryFollowUpAction"></occurrence-entry-follow-up-action-selector>
-                        </template>
-                    </div>
-                    <div class="row justify-end">
-                        <template v-if="Number(occId) === 0">
-                            <q-btn color="secondary" @click="createOccurrenceRecord();" label="Add Record" />
-                        </template>
-                        <template v-else>
-                            <template v-if="!editingActivated">
-                                <q-btn color="green" @click="editingActivated = true" label="Edit Record" />
-                            </template>
-                            <template v-else>
-                                <q-btn color="red" @click="editingActivated = false" label="Stop Editing" />
-                            </template>
-                        </template>
-                    </div>
-                </q-card-section>
-            </q-card>
             <template v-if="additionalDataFields.length > 0 || occurrenceEntryFormat === 'benthic'">
                 <occurrence-editor-location-module></occurrence-editor-location-module>
                 <occurrence-editor-collecting-event-module></occurrence-editor-collecting-event-module>
                 <template v-if="occurrenceEntryFormat !== 'benthic' || occId > 0">
-                    <occurrence-editor-form-latest-identification-element></occurrence-editor-form-latest-identification-element>
-                    <occurrence-editor-form-misc-element></occurrence-editor-form-misc-element>
-                    <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
+                    <div class="rounded-borders black-border q-pa-sm column q-gutter-sm">
+                        <occurrence-editor-occurrence-data-controls :editing-activated="editingActivated"></occurrence-editor-occurrence-data-controls>
+                        <occurrence-editor-form-latest-identification-element></occurrence-editor-form-latest-identification-element>
+                        <occurrence-editor-form-misc-element></occurrence-editor-form-misc-element>
+                        <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
+                    </div>
                 </template>
             </template>
             <template v-else>
-                <occurrence-editor-form-collecting-event-element></occurrence-editor-form-collecting-event-element>
-                <occurrence-editor-form-latest-identification-element></occurrence-editor-form-latest-identification-element>
-                <occurrence-editor-form-location-element></occurrence-editor-form-location-element>
-                <occurrence-editor-form-misc-element></occurrence-editor-form-misc-element>
-                <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
+                <div class="rounded-borders black-border q-px-sm q-pb-sm column q-gutter-sm">
+                    <occurrence-editor-occurrence-data-controls :editing-activated="editingActivated"></occurrence-editor-occurrence-data-controls>
+                    <occurrence-editor-form-collecting-event-element></occurrence-editor-form-collecting-event-element>
+                    <occurrence-editor-form-latest-identification-element></occurrence-editor-form-latest-identification-element>
+                    <occurrence-editor-form-location-element :editing-activated="editingActivated"></occurrence-editor-form-location-element>
+                    <occurrence-editor-form-misc-element></occurrence-editor-form-misc-element>
+                    <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
+                </div>
             </template>
         </div>
     `,
@@ -49,7 +33,7 @@ const occurrenceEditorOccurrenceDataModule = {
         'occurrence-editor-form-misc-element': occurrenceEditorFormMiscElement,
         'occurrence-editor-collecting-event-module': occurrenceEditorCollectingEventModule,
         'occurrence-editor-location-module': occurrenceEditorLocationModule,
-        'occurrence-entry-follow-up-action-selector': occurrenceEntryFollowUpActionSelector
+        'occurrence-editor-occurrence-data-controls': occurrenceEditorOccurrenceDataControls
     },
     setup() {
         const occurrenceStore = Vue.inject('occurrenceStore');
@@ -66,32 +50,18 @@ const occurrenceEditorOccurrenceDataModule = {
             }
         });
 
-        function changeEntryFollowUpAction(value) {
-            occurrenceStore.setEntryFollowUpAction(value);
+        function setEditingActivated(value) {
+            editingActivated.value = value;
         }
 
-        Vue.onMounted(() => {
-            if(occId.value){
-                if(Number(occId.value) > 0){
-                    if(entryFollowUpAction.value === 'remain'){
-                        editingActivated.value = true;
-                    }
-                    occurrenceStore.setEntryFollowUpAction('none');
-                }
-                else{
-                    editingActivated.value = true;
-                    occurrenceStore.setEntryFollowUpAction('remain');
-                }
-            }
-        });
+        Vue.provide('setEditingActivated', setEditingActivated);
 
         return {
             additionalDataFields,
             editingActivated,
             entryFollowUpAction,
             occId,
-            occurrenceEntryFormat,
-            changeEntryFollowUpAction
+            occurrenceEntryFormat
         }
     }
 };

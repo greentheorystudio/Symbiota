@@ -12,26 +12,6 @@ function openAssocSppAid(){
 	}
 }
 
-function geoCloneTool(){
-	const f = document.fullform;
-	if(f.locality.value){
-		let url = "../georef/georefclone.php?";
-		url = url + "locality=" + f.locality.value;
-		url = url + "&country=" + f.country.value;
-		url = url + "&state=" + f.stateprovince.value;
-		url = url + "&county=" + f.county.value;
-		url = url + "&collid=" + f.collid.value;
-		cloneWindow=open(url,"geoclonetool","resizable=1,scrollbars=1,toolbar=1,width=1000,height=600,left=20,top=20");
-		if(cloneWindow.opener == null) {
-			cloneWindow.opener = self;
-		}
-	}
-	else{
-		alert("Locality field must have a value to use this function");
-		return false;
-	}
-}
-
 function toggleCoordDiv(){
 	let coordObj = document.getElementById("coordAidDiv");
 	if(coordObj.style.display === "block"){
@@ -50,7 +30,7 @@ function toggleCsMode(modeId){
 		document.getElementById("shorttagspan").style.display = "none";
 	}
 	else{
-		document.getElementById("editorCssLink").href = "../../css/occureditor.css?ver=20221204";
+		document.getElementById("editorCssLink").href = "../../css/occureditor.css?ver=20240405";
 		document.getElementById("longtagspan").style.display = "none";
 		document.getElementById("shorttagspan").style.display = "block";
 	}

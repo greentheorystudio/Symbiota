@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function() {
 function toggleStyle(){
 	const cssObj = document.getElementById('editorCssLink');
 	if(cssObj.href === "../../css/occureditorcrowdsource.css?ver=20221204"){
-		cssObj.href = "../../css/occureditor.css?ver=20221204";
+		cssObj.href = "../../css/occureditor.css?ver=20240405";
 	}
 	else{
 		cssObj.href = "../../css/occureditorcrowdsource.css?ver=20221204";
@@ -275,19 +275,6 @@ function localitySecurityCheck(){
 			}
 		};
 		http.send(params);
-	}
-}
-
-function localAutoChanged(cbObj){
-	if(cbObj.checked == true){
-		$( "#fflocality" ).autocomplete( "option", "disabled", true );
-		$( "#fflocality" ).attr('autocomplete','on');
-		document.cookie = "localauto=1";
-	}
-	else{
-		$( "#fflocality" ).autocomplete( "option", "disabled", false );
-		$( "#fflocality" ).attr('autocomplete','off');
-		document.cookie = "localauto=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 	}
 }
 
