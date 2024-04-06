@@ -10,7 +10,7 @@ const occurrenceEditorTabModule = {
         </template>
         <template v-else>
             <div class="rounded-borders overflow-hidden">
-                <q-tabs v-model="selectedTab" active-bg-color="grey-4" align="left" class="bg-grey-3">
+                <q-tabs v-model="selectedTab" active-bg-color="grey-4" align="left" class="bg-grey-3" :style="tabPanelStyle">
                     <q-tab name="data" class="bg-grey-3" label="Occurrence Data" no-caps />
                     <template v-if="additionalDataFields.length > 0">
                         <q-tab name="additional" class="bg-grey-3" label="Additional Data" no-caps />
@@ -64,17 +64,32 @@ const occurrenceEditorTabModule = {
 
         const additionalDataFields = Vue.computed(() => occurrenceStore.getAdditionalDataFields);
         const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
+        const containerWidth = Vue.inject('containerWidth');
         const isLocked = Vue.computed(() => occurrenceStore.getIsLocked);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const selectedTab = Vue.ref('data');
+        const tabPanelStyle = Vue.ref('');
+
+        Vue.watch(containerWidth, () => {
+            setTabModuleWidth();
+        });
+
+        function setTabModuleWidth() {
+            tabPanelStyle.value = 'width: ' + (containerWidth.value - 34) + 'px;';
+        }
+
+        Vue.onMounted(() => {
+            setTabModuleWidth();
+        });
 
         return {
             additionalDataFields,
             collInfo,
             isLocked,
             occurrenceData,
-            selectedTab
+            selectedTab,
+            tabPanelStyle
         }
     }
 };
