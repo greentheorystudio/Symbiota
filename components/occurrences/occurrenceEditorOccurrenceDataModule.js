@@ -1,12 +1,12 @@
 const occurrenceEditorOccurrenceDataModule = {
     template: `
-        <div class="column q-gutter-sm">
+        <div class="column q-gutter-y-sm">
             <template v-if="additionalDataFields.length > 0 || occurrenceEntryFormat === 'benthic'">
                 <occurrence-editor-location-module></occurrence-editor-location-module>
                 <occurrence-editor-collecting-event-module></occurrence-editor-collecting-event-module>
                 <template v-if="occurrenceEntryFormat !== 'benthic' || occId > 0">
-                    <div class="rounded-borders black-border q-pa-sm column q-gutter-sm">
-                        <occurrence-editor-occurrence-data-controls :editing-activated="editingActivated"></occurrence-editor-occurrence-data-controls>
+                    <div class="rounded-borders black-border q-pa-sm column q-gutter-y-sm">
+                        <occurrence-editor-occurrence-data-controls></occurrence-editor-occurrence-data-controls>
                         <occurrence-editor-form-latest-identification-element></occurrence-editor-form-latest-identification-element>
                         <occurrence-editor-form-misc-element></occurrence-editor-form-misc-element>
                         <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
@@ -14,11 +14,11 @@ const occurrenceEditorOccurrenceDataModule = {
                 </template>
             </template>
             <template v-else>
-                <div class="rounded-borders black-border q-px-sm q-pb-sm column q-gutter-sm">
-                    <occurrence-editor-occurrence-data-controls :editing-activated="editingActivated"></occurrence-editor-occurrence-data-controls>
+                <div class="rounded-borders black-border q-px-sm q-pb-sm column q-gutter-y-sm">
+                    <occurrence-editor-occurrence-data-controls></occurrence-editor-occurrence-data-controls>
                     <occurrence-editor-form-collecting-event-element></occurrence-editor-form-collecting-event-element>
                     <occurrence-editor-form-latest-identification-element></occurrence-editor-form-latest-identification-element>
-                    <occurrence-editor-form-location-element :editing-activated="editingActivated"></occurrence-editor-form-location-element>
+                    <occurrence-editor-form-location-element></occurrence-editor-form-location-element>
                     <occurrence-editor-form-misc-element></occurrence-editor-form-misc-element>
                     <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
                 </div>
@@ -39,26 +39,12 @@ const occurrenceEditorOccurrenceDataModule = {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const additionalDataFields = Vue.computed(() => occurrenceStore.getAdditionalDataFields);
-        const editingActivated = Vue.ref(false);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
 
-        Vue.watch(occId, () => {
-            if(entryFollowUpAction.value !== 'remain' && Number(occId.value) > 0){
-                editingActivated.value = false;
-            }
-        });
-
-        function setEditingActivated(value) {
-            editingActivated.value = value;
-        }
-
-        Vue.provide('setEditingActivated', setEditingActivated);
-
         return {
             additionalDataFields,
-            editingActivated,
             entryFollowUpAction,
             occId,
             occurrenceEntryFormat

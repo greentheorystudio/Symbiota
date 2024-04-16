@@ -33,8 +33,8 @@ class CollectionManager {
             $retArr['colltype'] = $r->colltype;
             $retArr['managementtype'] = $r->managementtype;
             $retArr['datarecordingmethod'] = $r->datarecordingmethod;
-            $retArr['defaultRepCount'] = $r->defaultRepCount;
-            $retArr['isPublic'] = $r->isPublic;
+            $retArr['defaultrepcount'] = $r->defaultRepCount;
+            $retArr['ispublic'] = $r->isPublic;
             $retArr['additionalDataFields'] = null;
         }
         $rs->free();

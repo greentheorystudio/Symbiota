@@ -43,6 +43,7 @@
 
     const http = new XMLHttpRequest();
     let abortController;
+    const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
@@ -50,6 +51,8 @@
     const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
     const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
     const occurrenceApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceController.php';
+    const occurrenceCollectingEventApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceCollectingEventController.php';
+    const occurrenceLocationApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceLocationController.php';
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
     const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';

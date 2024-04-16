@@ -123,6 +123,8 @@ const occurrenceEditorSingleDisplay = {
         const moduleContainerRef = Vue.ref(null);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
+        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const recordCount = Vue.computed(() => occurrenceStore.getRecordCount);
 
         const changeBatchUpdatePopupDisplay = Vue.inject('changeBatchUpdatePopupDisplay');
@@ -162,10 +164,13 @@ const occurrenceEditorSingleDisplay = {
 
         Vue.provide('changeImageTranscriberPopupDisplay', changeImageTranscriberPopupDisplay);
         Vue.provide('containerWidth', containerWidth);
+        Vue.provide('occurrenceFields', occurrenceFields);
+        Vue.provide('occurrenceFieldDefinitions', occurrenceFieldDefinitions);
 
         Vue.onMounted(() => {
             setContainerWidth();
             window.addEventListener('resize', setContainerWidth);
+            occurrenceStore.setOccurrenceFields();
         });
 
         return {

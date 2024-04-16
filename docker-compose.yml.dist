@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   nginx:
     image: devilbox/nginx-stable:alpine

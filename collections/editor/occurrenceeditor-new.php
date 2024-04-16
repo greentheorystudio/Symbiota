@@ -67,8 +67,9 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEntryFormatSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEntryFollowUpActionSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceEntryFormatSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceEntryFollowUpActionSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorOccurrenceDataControls.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorFormLocationElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -103,8 +104,10 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                     'occurrence-editor-table-display': occurrenceEditorTableDisplay
                 },
                 setup() {
+                    const baseStore = useBaseStore();
                     const occurrenceStore = useOccurrenceStore();
 
+                    const clientRoot = baseStore.getClientRoot;
                     const displayBatchUpdateButton = Vue.ref(true);
                     const displayBatchUpdatePopup = Vue.ref(false);
                     const displayQueryPopup = Vue.ref(false);
@@ -129,16 +132,21 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                     Vue.provide('occurrenceStore', occurrenceStore);
 
                     Vue.onMounted(() => {
-                        if(Number(initialCollId) > 0){
-                            occurrenceStore.setCollection(initialCollId);
+                        if(Number(initialCollId) > 0 || Number(initialOccId) > 0){
+                            if(Number(initialCollId) > 0){
+                                occurrenceStore.setCollection(initialCollId);
+                            }
+                            if(Number(initialDisplayMode) > 1){
+                                occurrenceStore.setDisplayMode(initialDisplayMode);
+                            }
+                            occurrenceStore.setCurrentOccurrenceRecord(initialOccId);
+                            if(Number(initialOccId) > 0){
+                                displayBatchUpdateButton.value = true;
+                                displayQueryPopupButton.value = true;
+                            }
                         }
-                        if(Number(initialDisplayMode) > 1){
-                            occurrenceStore.setDisplayMode(initialDisplayMode);
-                        }
-                        occurrenceStore.setOccurrenceData(initialOccId);
-                        if(Number(initialOccId) > 0){
-                            displayBatchUpdateButton.value = true;
-                            displayQueryPopupButton.value = true;
+                        else{
+                            window.location.href = clientRoot + '/index.php';
                         }
                     });
 

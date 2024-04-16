@@ -45,33 +45,6 @@ class Sanitizer {
         return $newArray;
     }
 
-    public static function validateRequestPath(): void
-    {
-        $requestPath = '';
-        $fullRequestPath = $_SERVER['REQUEST_URI'];
-        if(strpos($fullRequestPath, '?') !== false){
-            $fullRequestPathParts = explode('?', $fullRequestPath);
-            if($fullRequestPathParts){
-                $requestPath = htmlspecialchars($fullRequestPathParts[0]);
-            }
-        }
-        else{
-            $requestPath = htmlspecialchars($fullRequestPath);
-        }
-        if(substr($requestPath,-4) !== '.php' && substr($requestPath,-5) !== '.html'){
-            $clientRoot = $GLOBALS['CLIENT_ROOT'] ?? '';
-            $fixedPath = $clientRoot . '/index.php';
-            if(strpos($requestPath, '.php') !== false){
-                $requestPathParts = explode('.php', $requestPath);
-                if($requestPathParts){
-                    $fixedPath = $clientRoot . $requestPathParts[0] . '.php';
-                }
-
-            }
-            header('Location: ' . $fixedPath);
-        }
-    }
-
     public static function getCleanedRequestPath($includeArgs = null): string
     {
         $returnPath = '';
@@ -113,6 +86,21 @@ class Sanitizer {
         return $returnPath;
     }
 
+    public static function getSqlValueString($conn, $value, $dataType): string
+    {
+        $returnStr = 'NULL';
+        if($dataType !== 'number'){
+            $cleanedVal = self::cleanInStr($conn, $value);
+            if($cleanedVal !== ''){
+                $returnStr = '"' . str_replace('"', '""', $cleanedVal) . '"';
+            }
+        }
+        elseif((string)$value !== '' && is_numeric($value)){
+            $returnStr = (string)$value;
+        }
+        return $returnStr;
+    }
+
     public static function validateInternalRequest(): bool
     {
         $valid = false;
@@ -128,5 +116,32 @@ class Sanitizer {
             }
         }
         return $valid;
+    }
+
+    public static function validateRequestPath(): void
+    {
+        $requestPath = '';
+        $fullRequestPath = $_SERVER['REQUEST_URI'];
+        if(strpos($fullRequestPath, '?') !== false){
+            $fullRequestPathParts = explode('?', $fullRequestPath);
+            if($fullRequestPathParts){
+                $requestPath = htmlspecialchars($fullRequestPathParts[0]);
+            }
+        }
+        else{
+            $requestPath = htmlspecialchars($fullRequestPath);
+        }
+        if(substr($requestPath,-4) !== '.php' && substr($requestPath,-5) !== '.html'){
+            $clientRoot = $GLOBALS['CLIENT_ROOT'] ?? '';
+            $fixedPath = $clientRoot . '/index.php';
+            if(strpos($requestPath, '.php') !== false){
+                $requestPathParts = explode('.php', $requestPath);
+                if($requestPathParts){
+                    $fixedPath = $clientRoot . $requestPathParts[0] . '.php';
+                }
+
+            }
+            header('Location: ' . $fixedPath);
+        }
     }
 }

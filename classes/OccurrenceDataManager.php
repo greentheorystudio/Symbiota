@@ -1,10 +1,116 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/UuidFactory.php');
 
 class OccurrenceDataManager{
 
 	private $conn;
+
+    private $fields = array(
+        "occid" => array("dataType" => "number", "length" => 10),
+        "collid" => array("dataType" => "number", "length" => 10),
+        "dbpk" => array("dataType" => "string", "length" => 150),
+        "basisofrecord" => array("dataType" => "string", "length" => 32),
+        "occurrenceid" => array("dataType" => "string", "length" => 255),
+        "catalognumber" => array("dataType" => "string", "length" => 32),
+        "othercatalognumbers" => array("dataType" => "string", "length" => 255),
+        "ownerinstitutioncode" => array("dataType" => "string", "length" => 32),
+        "institutionid" => array("dataType" => "string", "length" => 255),
+        "collectionid" => array("dataType" => "string", "length" => 255),
+        "datasetid" => array("dataType" => "string", "length" => 255),
+        "institutioncode" => array("dataType" => "string", "length" => 64),
+        "collectioncode" => array("dataType" => "string", "length" => 64),
+        "family" => array("dataType" => "string", "length" => 255),
+        "verbatimscientificname" => array("dataType" => "string", "length" => 255),
+        "sciname" => array("dataType" => "string", "length" => 255),
+        "tid" => array("dataType" => "number", "length" => 10),
+        "genus" => array("dataType" => "string", "length" => 255),
+        "specificepithet" => array("dataType" => "string", "length" => 255),
+        "taxonrank" => array("dataType" => "string", "length" => 32),
+        "infraspecificepithet" => array("dataType" => "string", "length" => 255),
+        "scientificnameauthorship" => array("dataType" => "string", "length" => 255),
+        "taxonremarks" => array("dataType" => "text", "length" => 0),
+        "identifiedby" => array("dataType" => "string", "length" => 255),
+        "dateidentified" => array("dataType" => "string", "length" => 45),
+        "identificationreferences" => array("dataType" => "text", "length" => 0),
+        "identificationremarks" => array("dataType" => "text", "length" => 0),
+        "identificationqualifier" => array("dataType" => "string", "length" => 255),
+        "typestatus" => array("dataType" => "string", "length" => 255),
+        "recordedby" => array("dataType" => "string", "length" => 255),
+        "recordnumber" => array("dataType" => "string", "length" => 45),
+        "recordedbyid" => array("dataType" => "number", "length" => 20),
+        "associatedcollectors" => array("dataType" => "string", "length" => 255),
+        "eventdate" => array("dataType" => "date", "length" => 0),
+        "latestdatecollected" => array("dataType" => "date", "length" => 0),
+        "eventtime" => array("dataType" => "time", "length" => 0),
+        "year" => array("dataType" => "number", "length" => 10),
+        "month" => array("dataType" => "number", "length" => 10),
+        "day" => array("dataType" => "number", "length" => 10),
+        "startdayofyear" => array("dataType" => "number", "length" => 10),
+        "enddayofyear" => array("dataType" => "number", "length" => 10),
+        "verbatimeventdate" => array("dataType" => "string", "length" => 255),
+        "habitat" => array("dataType" => "text", "length" => 0),
+        "substrate" => array("dataType" => "string", "length" => 500),
+        "fieldnotes" => array("dataType" => "text", "length" => 0),
+        "fieldnumber" => array("dataType" => "string", "length" => 45),
+        "eventid" => array("dataType" => "number", "length" => 11),
+        "eventremarks" => array("dataType" => "text", "length" => 0),
+        "occurrenceremarks" => array("dataType" => "text", "length" => 0),
+        "informationwithheld" => array("dataType" => "string", "length" => 250),
+        "datageneralizations" => array("dataType" => "string", "length" => 250),
+        "associatedoccurrences" => array("dataType" => "text", "length" => 0),
+        "associatedtaxa" => array("dataType" => "text", "length" => 0),
+        "dynamicproperties" => array("dataType" => "text", "length" => 0),
+        "verbatimattributes" => array("dataType" => "text", "length" => 0),
+        "behavior" => array("dataType" => "string", "length" => 500),
+        "reproductivecondition" => array("dataType" => "string", "length" => 255),
+        "cultivationstatus" => array("dataType" => "number", "length" => 10),
+        "establishmentmeans" => array("dataType" => "string", "length" => 150),
+        "lifestage" => array("dataType" => "string", "length" => 45),
+        "sex" => array("dataType" => "string", "length" => 45),
+        "individualcount" => array("dataType" => "string", "length" => 45),
+        "samplingprotocol" => array("dataType" => "string", "length" => 100),
+        "samplingeffort" => array("dataType" => "string", "length" => 200),
+        "rep" => array("dataType" => "number", "length" => 10),
+        "preparations" => array("dataType" => "string", "length" => 100),
+        "locationid" => array("dataType" => "number", "length" => 11),
+        "waterbody" => array("dataType" => "string", "length" => 255),
+        "country" => array("dataType" => "string", "length" => 64),
+        "stateprovince" => array("dataType" => "string", "length" => 255),
+        "county" => array("dataType" => "string", "length" => 255),
+        "municipality" => array("dataType" => "string", "length" => 255),
+        "locality" => array("dataType" => "text", "length" => 0),
+        "localitysecurity" => array("dataType" => "number", "length" => 10),
+        "localitysecurityreason" => array("dataType" => "string", "length" => 100),
+        "decimallatitude" => array("dataType" => "number", "length" => 0),
+        "decimallongitude" => array("dataType" => "number", "length" => 0),
+        "geodeticdatum" => array("dataType" => "string", "length" => 255),
+        "coordinateuncertaintyinmeters" => array("dataType" => "number", "length" => 10),
+        "footprintwkt" => array("dataType" => "text", "length" => 0),
+        "coordinateprecision" => array("dataType" => "number", "length" => 0),
+        "locationremarks" => array("dataType" => "text", "length" => 0),
+        "verbatimcoordinates" => array("dataType" => "string", "length" => 255),
+        "verbatimcoordinatesystem" => array("dataType" => "string", "length" => 255),
+        "georeferencedby" => array("dataType" => "string", "length" => 255),
+        "georeferenceprotocol" => array("dataType" => "string", "length" => 255),
+        "georeferencesources" => array("dataType" => "string", "length" => 255),
+        "georeferenceverificationstatus" => array("dataType" => "string", "length" => 32),
+        "georeferenceremarks" => array("dataType" => "string", "length" => 500),
+        "minimumelevationinmeters" => array("dataType" => "number", "length" => 6),
+        "maximumelevationinmeters" => array("dataType" => "number", "length" => 6),
+        "verbatimelevation" => array("dataType" => "string", "length" => 255),
+        "minimumdepthinmeters" => array("dataType" => "number", "length" => 0),
+        "maximumdepthinmeters" => array("dataType" => "number", "length" => 0),
+        "verbatimdepth" => array("dataType" => "string", "length" => 50),
+        "previousidentifications" => array("dataType" => "text", "length" => 0),
+        "disposition" => array("dataType" => "string", "length" => 250),
+        "storagelocation" => array("dataType" => "string", "length" => 100),
+        "language" => array("dataType" => "string", "length" => 20),
+        "processingstatus" => array("dataType" => "string", "length" => 45),
+        "duplicatequantity" => array("dataType" => "number", "length" => 10),
+        "labelproject" => array("dataType" => "string", "length" => 250)
+    );
 
     public function __construct(){
         $connection = new DbConnection();
@@ -17,73 +123,40 @@ class OccurrenceDataManager{
         }
 	}
 
-    public function getAdditionalData($eventid): array
+    public function createOccurrenceRecord($data): int
     {
-        $retArr = array();
-        $sql = 'SELECT a.adddataid, a.field, a.datavalue, a.initialtimestamp '.
-            'FROM omoccuradditionaldata AS a '.
-            'WHERE a.eventID = ' . $eventid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $retArr[$name] = $r->$name;
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        $collId = array_key_exists('collid',$data) ? (int)$data['collid'] : 0;
+        $sciname = array_key_exists('sciname',$data) ? Sanitizer::cleanInStr($this->conn, $data['sciname']) : '';
+        if($collId && $sciname){
+            foreach($this->fields as $field => $fieldArr){
+                if(array_key_exists($field, $data)){
+                    if($field === 'year' || $field === 'month' || $field === 'day'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                    $fieldValueArr[] = Sanitizer::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
-    public function getCollectionEventData($eventid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT e.locationid, e.eventtype, e.fieldnotes, e.fieldnumber, e.eventdate, e.latestdatecollected, e.eventtime, '.
-            'e.`year`, e.`month`, e.`day`, e.startdayofyear, e.enddayofyear, e.verbatimeventdate, e.habitat, e.localitysecurity, '.
-            'e.localitysecurityreason, e.decimallatitude, e.decimallongitude, e.geodeticdatum, e.coordinateuncertaintyinmeters, '.
-            'e.footprintwkt, e.eventremarks, e.georeferencedby, e.georeferenceprotocol, e.georeferencesources, e.georeferenceverificationstatus, '.
-            'e.georeferenceremarks, e.minimumdepthinmeters, e.maximumdepthinmeters, e.verbatimdepth, e.samplingprotocol, '.
-            'e.samplingeffort, e.initialtimestamp '.
-            'FROM omoccurcollectingevents AS e '.
-            'WHERE e.eventID = ' . $eventid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $retArr[$name] = $r->$name;
-                }
+            $fieldNameArr[] = 'dateentered';
+            $fieldValueArr[] = date('Y-m-d H:i:s');
+            $fieldNameArr[] = 'recordenteredby';
+            $fieldValueArr[] = $GLOBALS['USERNAME'];
+            $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+                $guid = UuidFactory::getUuidV4();
+                $this->conn->query('UPDATE omcollectionstats SET recordcnt = recordcnt + 1 WHERE collid = ' . $collId);
+                $this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("' . $guid . '",' . $newID . ')');
             }
-            $rs->free();
         }
-        return $retArr;
-    }
-
-    public function getLocationData($locationid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT l.locationname, l.locationcode, l.waterbody, l.country, l.stateprovince, l.county, l.municipality, l.locality, '.
-            'l.localitysecurity, l.localitysecurityreason, l.decimallatitude, l.decimallongitude, l.geodeticdatum, l.coordinateuncertaintyinmeters, '.
-            'l.footprintwkt, l.coordinateprecision, l.locationremarks, l.verbatimcoordinates, l.verbatimcoordinatesystem, l.georeferencedby, '.
-            'l.georeferenceprotocol, l.georeferencesources, l.georeferenceverificationstatus, l.georeferenceremarks, '.
-            'l.minimumelevationinmeters, l.maximumelevationinmeters, l.verbatimelevation, l.initialtimestamp '.
-            'FROM omoccurlocations AS l '.
-            'WHERE l.locationID = ' . $locationid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $retArr[$name] = $r->$name;
-                }
-            }
-            $rs->free();
-        }
-        return $retArr;
+        return $newID;
     }
 
     public function getLock($occid): int
@@ -130,18 +203,17 @@ class OccurrenceDataManager{
     public function getOccurrenceData($occid): array
     {
         $retArr = array();
-        $sql = 'SELECT o.collid, o.dbpk, o.basisofrecord, o.occurrenceid, o.catalognumber, o.othercatalognumbers, o.ownerinstitutioncode, o.institutionid, o.collectionid, o.datasetid, o.institutioncode, '.
-            'o.collectioncode, o.family, o.verbatimscientificname, o.sciname, o.tid, o.genus, o.specificepithet, o.taxonrank, o.infraspecificepithet, o.scientificnameauthorship, o.taxonremarks, '.
-            'o.identifiedby, o.dateidentified, o.identificationreferences, o.identificationremarks, o.identificationqualifier, o.typestatus, o.recordedby, o.recordnumber, o.recordedbyid, o.associatedcollectors, o.eventdate, '.
-            'o.latestdatecollected, o.`year`, o.`month`, o.`day`, o.startdayofyear, o.enddayofyear, o.verbatimeventdate, o.habitat, o.substrate, o.fieldnotes, o.fieldnumber, '.
-            'o.eventid, o.occurrenceremarks, o.informationwithheld, o.datageneralizations, o.associatedoccurrences, o.associatedtaxa, o.dynamicproperties, o.verbatimattributes, o.behavior, o.reproductivecondition, o.cultivationstatus, '.
-            'o.establishmentmeans, o.lifestage, o.sex, o.individualcount, o.samplingprotocol, o.samplingeffort, o.preparations, o.locationid, o.waterbody, o.country, o.stateprovince, '.
-            'o.county, o.municipality, o.locality, o.localitysecurity, o.localitysecurityreason, o.decimallatitude, o.decimallongitude, o.geodeticdatum, o.coordinateuncertaintyinmeters, o.footprintwkt, o.coordinateprecision, '.
-            'o.locationremarks, o.verbatimcoordinates, o.verbatimcoordinatesystem, o.georeferencedby, o.georeferenceprotocol, o.georeferencesources, o.georeferenceverificationstatus, o.georeferenceremarks, o.minimumelevationinmeters, o.maximumelevationinmeters, o.verbatimelevation, '.
-            'o.minimumdepthinmeters, o.maximumdepthinmeters, o.verbatimdepth, o.previousidentifications, o.disposition, o.storagelocation, o.modified, o.language, o.observeruid, o.processingstatus, o.recordenteredby, '.
-            'o.duplicatequantity, o.labelproject, o.dateentered, o.datelastmodified '.
-            'FROM omoccurrences AS o '.
-            'WHERE o.occid = ' . $occid . ' ';
+        $fieldNameArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field === 'year' || $field === 'month' || $field === 'day'){
+                $fieldNameArr[] = '`' . $field . '`';
+            }
+            else{
+                $fieldNameArr[] = $field;
+            }
+        }
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM omoccurrences WHERE occid = ' . $occid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -205,6 +277,11 @@ class OccurrenceDataManager{
             $rs->free();
         }
         return $retArr;
+    }
+
+    public function getOccurrenceFields(): array
+    {
+        return $this->fields;
     }
 
     public function getOccurrenceGeneticLinkData($occid): array
@@ -294,5 +371,51 @@ class OccurrenceDataManager{
             $rs->free();
         }
         return $retArr;
+    }
+
+    public function updateOccurrenceRecord($occId, $editData): int
+    {
+        $retVal = 0;
+        $fieldNameArr = array();
+        $sqlPartArr = array();
+        if($occId && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if(array_key_exists($field, $editData)){
+                    $fieldStr = '';
+                    if($field === 'year' || $field === 'month' || $field === 'day'){
+                        $fieldStr = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldStr = $field;
+                    }
+                    $fieldNameArr[] = $fieldStr;
+                    $sqlPartArr[] = $fieldStr . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'SELECT ' . implode(', ', $fieldNameArr) .
+                ' FROM omoccurrences WHERE occid = ' . $occId . ' ';
+            //echo $sql;
+            $rs = $this->conn->query($sql);
+            if($oldData = $rs->fetch_assoc()){
+                $sqlEditsBase = 'INSERT INTO omoccuredits(occid, reviewstatus, appliedstatus, uid, fieldname, fieldvaluenew, fieldvalueold) '.
+                    'VALUES (' . $occId . ', 1, 1, ' . $GLOBALS['SYMB_UID'] . ', ';
+                foreach($fieldNameArr as $fieldName){
+                    $cleanedFieldName = str_replace('`','',$fieldName);
+                    $oldValue = Sanitizer::getSqlValueString($this->conn, $oldData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']);
+                    $newValue = Sanitizer::getSqlValueString($this->conn, $editData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']);
+                    $sqlEdit = $sqlEditsBase . '"' . $cleanedFieldName . '",' . $newValue . ',' . $oldValue . ')';
+                    //echo '<div>'.$sqlEdit.'</div>';
+                    $this->conn->query($sqlEdit);
+                }
+            }
+            $rs->free();
+            $sql = 'UPDATE omoccurrences SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE occid = ' . $occId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 }

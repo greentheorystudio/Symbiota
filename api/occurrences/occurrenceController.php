@@ -4,12 +4,35 @@ include_once(__DIR__ . '/../../classes/Sanitizer.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataManager.php');
 
 $occid = array_key_exists('occid',$_REQUEST) ? (int)$_REQUEST['occid'] : 0;
+$collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
+
+$isEditor = false;
+if($GLOBALS['IS_ADMIN']){
+    $isEditor = true;
+}
+elseif($collid){
+    if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+        $isEditor = true;
+    }
+    elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+        $isEditor = true;
+    }
+}
 
 if($action && Sanitizer::validateInternalRequest()){
     $occManager = new OccurrenceDataManager();
-    if($action === 'getOccurrenceDataLock' && $occid){
+    if($action === 'getOccurrenceDataLock' && $isEditor && $occid){
         echo json_encode($occManager->getLock($occid));
+    }
+    elseif($action === 'createOccurrenceRecord' && $isEditor){
+        echo $occManager->createOccurrenceRecord(json_decode($_POST['occurrence'], true));
+    }
+    elseif($action === 'updateOccurrenceRecord' && $occid && $isEditor){
+        echo $occManager->updateOccurrenceRecord($occid, json_decode($_POST['occurrenceData'], true));
+    }
+    elseif($action === 'getOccurrenceFields'){
+        echo json_encode($occManager->getOccurrenceFields());
     }
     elseif($action === 'getOccurrenceDataArr' && $occid){
         echo json_encode($occManager->getOccurrenceData($occid));
@@ -31,14 +54,5 @@ if($action && Sanitizer::validateInternalRequest()){
     }
     elseif($action === 'getOccurrenceGeneticLinkArr' && $occid){
         echo json_encode($occManager->getOccurrenceGeneticLinkData($occid));
-    }
-    elseif($action === 'getLocationDataArr' && array_key_exists('locationid', $_POST)){
-        echo json_encode($occManager->getLocationData((int)$_POST['locationid']));
-    }
-    elseif($action === 'getCollectionEventDataArr' && array_key_exists('eventid', $_POST)){
-        echo json_encode($occManager->getCollectionEventData((int)$_POST['eventid']));
-    }
-    elseif($action === 'getAdditionalDataArr' && array_key_exists('eventid', $_POST)){
-        echo json_encode($occManager->getAdditionalData((int)$_POST['eventid']));
     }
 }
