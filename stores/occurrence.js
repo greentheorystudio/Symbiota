@@ -279,7 +279,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             {field: 'verbatimelevation', label: 'Verbatim Elevation'},
             {field: '`year`', label: 'Year'}
         ],
-        entryFollowUpAction: 'none',
+        entryFollowUpAction: 'remain',
         eventData: {},
         eventId: 0,
         geneticLinkArr: [],

@@ -57,17 +57,6 @@ const occurrenceEditorOccurrenceDataControls = {
             });
         }
 
-        Vue.onMounted(() => {
-            if(occId.value){
-                if(Number(occId.value) > 0){
-                    occurrenceStore.setEntryFollowUpAction('none');
-                }
-                else{
-                    occurrenceStore.setEntryFollowUpAction('remain');
-                }
-            }
-        });
-
         return {
             editsExist,
             entryFollowUpAction,
