@@ -401,8 +401,8 @@ class OccurrenceDataManager{
                     'VALUES (' . $occId . ', 1, 1, ' . $GLOBALS['SYMB_UID'] . ', ';
                 foreach($fieldNameArr as $fieldName){
                     $cleanedFieldName = str_replace('`','',$fieldName);
-                    $oldValue = Sanitizer::getSqlValueString($this->conn, $oldData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']);
-                    $newValue = Sanitizer::getSqlValueString($this->conn, $editData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']);
+                    $oldValue = $oldData[$cleanedFieldName] ? Sanitizer::getSqlValueString($this->conn, $oldData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']) : '""';
+                    $newValue = $editData[$cleanedFieldName] ? Sanitizer::getSqlValueString($this->conn, $editData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']) : '""';
                     $sqlEdit = $sqlEditsBase . '"' . $cleanedFieldName . '",' . $newValue . ',' . $oldValue . ')';
                     //echo '<div>'.$sqlEdit.'</div>';
                     $this->conn->query($sqlEdit);
