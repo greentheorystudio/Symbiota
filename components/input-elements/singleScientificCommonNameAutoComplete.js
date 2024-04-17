@@ -50,7 +50,7 @@ const singleScientificCommonNameAutoComplete = {
         }
     },
     template: `
-        <q-select v-model="sciname" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="tid" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
+        <q-select v-model="sciname" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="tid" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
     `,
     setup(props, context) {
         const { showNotification } = useCore();

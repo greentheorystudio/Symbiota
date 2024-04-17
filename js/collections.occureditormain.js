@@ -111,6 +111,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	if(localityAutoLookup){
 		$("#fflocality").autocomplete({ 
 			source: function( request, response ) {
+				console.log('here');
 				$.getJSON( "../../api/occurrenceduplicates/getlocality.php", { recordedby: $( "input[name=recordedby]" ).val(), eventdate: $( "input[name=eventdate]" ).val(), locality: request.term }, response );
 			},
 			minLength: 4,

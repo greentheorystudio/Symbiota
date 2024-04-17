@@ -46,6 +46,7 @@
     const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
+    const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
     const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';

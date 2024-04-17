@@ -1,4 +1,4 @@
-const textFieldInputElement = {
+const singleCountyAutoComplete = {
     props: {
         definition: {
             type: Object,
@@ -10,7 +10,7 @@ const textFieldInputElement = {
         },
         label: {
             type: String,
-            default: ''
+            default: 'County'
         },
         maxlength: {
             type: Number,
@@ -20,6 +20,10 @@ const textFieldInputElement = {
             type: Boolean,
             default: true
         },
+        stateProvince: {
+            type: String,
+            default: null
+        },
         value: {
             type: String,
             default: null
@@ -27,7 +31,7 @@ const textFieldInputElement = {
     },
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-            <q-input outlined v-model="value" :label="label" :counter="showCounter" :maxlength="maxlength" @update:model-value="processValueChange" dense>
+            <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon input-debounce="0" @blur="blurAction" :options="autocompleteOptions" option-label="name" @filter="getOptions" @update:model-value="processValueChange" :counter="showCounter" :maxlength="maxlength" :label="label" :disable="disabled">
                 <template v-if="definition" v-slot:append>
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);"></q-icon>
                     <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();"></q-icon>
@@ -35,10 +39,10 @@ const textFieldInputElement = {
                 <template v-else v-slot:append>
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);"></q-icon>
                 </template>
-            </q-input>
+            </q-select>
         </template>
         <template v-else>
-            <q-input outlined v-model="value" :label="label" @update:model-value="processValueChange" :readonly="disabled" dense>
+            <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon input-debounce="0" @blur="blurAction" :options="autocompleteOptions" option-label="name" @filter="getOptions" @update:model-value="processValueChange" :counter="showCounter" :maxlength="maxlength" :label="label" :disable="disabled">
                 <template v-if="!disabled && definition" v-slot:append>
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);"></q-icon>
                     <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();"></q-icon>
@@ -46,7 +50,7 @@ const textFieldInputElement = {
                 <template v-else-if="!disabled" v-slot:append>
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);"></q-icon>
                 </template>
-            </q-input>
+            </q-select>
         </template>
         <template v-if="definition">
             <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
@@ -83,19 +87,49 @@ const textFieldInputElement = {
             </q-dialog>
         </template>
     `,
-    setup(_, context) {
+    setup(props, context) {
+        const autocompleteOptions = Vue.ref([]);
         const displayDefinitionPopup = Vue.ref(false);
+
+        function blurAction(val) {
+            context.emit('update:value', ((val.target.value.length > 0) ? val.target.value : null));
+        }
+
+        function getOptions(val, update) {
+            update(() => {
+                if(val.length > 2) {
+                    const formData = new FormData();
+                    formData.append('action', 'getAutocompleteCountyList');
+                    formData.append('stateprovince', props.stateProvince);
+                    formData.append('term', val);
+                    fetch(geographyApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => response.json())
+                    .then((result) => {
+                        autocompleteOptions.value = result;
+                    });
+                }
+                else{
+                    autocompleteOptions.value = [];
+                }
+            });
+        }
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
         }
 
-        function processValueChange(val) {
-            context.emit('update:value', val);
+        function processValueChange(selectedObj) {
+            context.emit('update:value', (selectedObj ? selectedObj.name : null));
         }
 
         return {
+            autocompleteOptions,
             displayDefinitionPopup,
+            blurAction,
+            getOptions,
             openDefinitionPopup,
             processValueChange
         }
