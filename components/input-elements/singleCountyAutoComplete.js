@@ -92,7 +92,9 @@ const singleCountyAutoComplete = {
         const displayDefinitionPopup = Vue.ref(false);
 
         function blurAction(val) {
-            context.emit('update:value', ((val.target.value.length > 0) ? val.target.value : null));
+            if(val.target.value){
+                context.emit('update:value', ((val.target.value.length > 0) ? val.target.value : null));
+            }
         }
 
         function getOptions(val, update) {
