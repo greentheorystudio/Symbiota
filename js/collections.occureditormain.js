@@ -108,62 +108,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	}
 
-	if(localityAutoLookup){
-		$("#fflocality").autocomplete({ 
-			source: function( request, response ) {
-				console.log('here');
-				$.getJSON( "../../api/occurrenceduplicates/getlocality.php", { recordedby: $( "input[name=recordedby]" ).val(), eventdate: $( "input[name=eventdate]" ).val(), locality: request.term }, response );
-			},
-			minLength: 4,
-			select: function( event, ui ) {
-				$.each(ui.item, function(k, v) {
-					if($( "input[name="+k+"]" ).val() === ""){
-						$( "input[name="+k+"]" ).val(v);
-						$( "input[name="+k+"]" ).css("backgroundColor","lightblue");
-						fieldChanged(k);
-					}
-				});
-			}
-		});
-		if($( "input[name=localautodeactivated]" ).is(':checked')){
-			$( "#fflocality" ).autocomplete( "option", "disabled", true );
-			$( "#fflocality" ).attr('autocomplete','on');
-		}
-	}
-
-	$("#ffcountry").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupCountry.php", { term: request.term }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		select: function(){
-			fieldChanged("country");
-		}
-	});
-
-	$("#ffstate").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupState.php", { term: request.term, "country": document.fullform.country.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		select: function(){
-			fieldChanged("stateprovince");
-		}
-	});
-
-	$("#ffcounty").autocomplete({ 
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupCounty.php", { term: request.term, "state": document.fullform.stateprovince.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		select: function(){
-			fieldChanged("county");
-		}
-	});
-
 	$("textarea[name=associatedtaxa]").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "../../api/taxa/getassocspp.php", { term: request.term.split( /,\s*/ ).pop() }, response );
@@ -187,12 +131,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	},{autoFocus: true});
 
 
-	$("#catalognumber").keydown(function(event){
-		if ((event.keyCode == 13)) {
-			return false;
-		}
-	});
-	
 	const apstatus = getCookie("autopstatus");
 	if(getCookie("autopstatus")) {
 		document.fullform.autoprocessingstatus.value = apstatus;

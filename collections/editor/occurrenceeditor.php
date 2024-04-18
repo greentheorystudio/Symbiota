@@ -503,7 +503,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         let tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
         const imgArr = [];
         const imgLgArr = [];
-        const localityAutoLookup = 1;
         <?php
         if($imgArr){
             foreach($imgArr as $iCnt => $iArr){
@@ -512,9 +511,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     echo 'imgLgArr[' . $iCnt . '] = "' . $iArr['lg'] . '";' . "\n";
                 }
             }
-        }
-        if(defined('LOCALITYAUTOLOOKUP') && !LOCALITYAUTOLOOKUP){
-            echo 'localityAutoLookup = 0';
         }
         ?>
 

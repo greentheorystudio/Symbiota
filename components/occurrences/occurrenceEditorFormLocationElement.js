@@ -1,7 +1,7 @@
 const occurrenceEditorFormLocationElement = {
     template: `
         <q-card flat bordered>
-            <q-card-section class="q-pa-sm column">
+            <q-card-section class="q-pa-sm column q-col-gutter-xs">
                 <div class="row justify-between q-col-gutter-xs">
                     <div class="col-12 col-sm-6 col-md-3">
                         <single-country-auto-complete :definition="occurrenceFieldDefinitions['country']" label="Country" :maxlength="occurrenceFields['country'] ? occurrenceFields['country']['length'] : 0" :value="occurrenceData.country" @update:value="(value) => updateOccurrenceData('country', value)" :show-counter="false"></single-country-auto-complete>
@@ -14,6 +14,11 @@ const occurrenceEditorFormLocationElement = {
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['municipality']" label="Municipality" :maxlength="occurrenceFields['municipality'] ? occurrenceFields['municipality']['length'] : 0" :value="occurrenceData.municipality" @update:value="(value) => updateOccurrenceData('municipality', value)" :show-counter="false"></text-field-input-element>
+                    </div>
+                </div>
+                <div class="row justify-between q-col-gutter-xs">
+                    <div class="col-grow">
+                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['locality']" label="Locality" :value="occurrenceData.locality" @update:value="(value) => updateOccurrenceData('locality', value)"></text-field-input-element>
                     </div>
                 </div>
             </q-card-section>

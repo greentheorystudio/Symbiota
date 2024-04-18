@@ -478,45 +478,6 @@ class OccurrenceDuplicate {
         return $retArr;
     }
 
-    public function getDupeLocality($recordedBy, $collDate, $localFrag): array
-    {
-        $retArr = array();
-        if($recordedBy && $collDate && $localFrag){
-            $locArr = Array('associatedcollectors','verbatimeventdate','country','stateprovince','county','municipality','locality',
-                'decimallatitude','decimallongitude','verbatimcoordinates','coordinateuncertaintyinmeters','geodeticdatum','minimumelevationinmeters',
-                'maximumelevationinmeters','verbatimelevation','verbatimcoordinates','georeferencedby','georeferenceprotocol','georeferencesources',
-                'georeferenceverificationstatus','georeferenceremarks','habitat','substrate','associatedtaxa');
-            $collStr = Sanitizer::cleanInStr($this->conn,$recordedBy);
-            $sql = 'SELECT DISTINCT o.'.implode(',o.',$locArr).' FROM omoccurrences o ';
-            if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
-                $sql .= 'WHERE (o.recordedby LIKE "%'.$collStr.'%") ';
-            }
-            else{
-                $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$collStr.'")) ';
-            }
-            $sql .= 'AND (o.eventdate = "'.Sanitizer::cleanInStr($this->conn,$collDate).'") AND (o.locality LIKE "'.Sanitizer::cleanInStr($this->conn,$localFrag).'%") ';
-
-            //echo $sql;
-            $rs = $this->conn->query($sql);
-            $cnt = 0;
-            while($r = $rs->fetch_assoc()){
-                foreach($locArr as $field){
-                    if($r[$field]) {
-                        $retArr[$cnt][$field] = $r[$field];
-                    }
-                }
-                $loc = $r['locality'];
-                if($r['decimallatitude']) {
-                    $loc .= '; ' . $r['decimallatitude'] . ' ' . $r['decimallongitude'];
-                }
-                $retArr[$cnt]['value'] = $loc;
-                $cnt++;
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
     public function mergeRecords($targetOccid,$sourceOccid): bool
     {
         $status = true;

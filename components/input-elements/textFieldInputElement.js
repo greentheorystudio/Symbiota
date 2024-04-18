@@ -1,5 +1,9 @@
 const textFieldInputElement = {
     props: {
+        dataType: {
+            type: String,
+            default: 'text'
+        },
         definition: {
             type: Object,
             default: null
@@ -27,7 +31,7 @@ const textFieldInputElement = {
     },
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-            <q-input outlined v-model="value" :label="label" :counter="showCounter" :maxlength="maxlength" @update:model-value="processValueChange" dense>
+            <q-input outlined v-model="value" :type="inputType" :label="label" :counter="showCounter" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="inputType === 'textarea'" dense>
                 <template v-if="definition" v-slot:append>
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);"></q-icon>
                     <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();"></q-icon>
@@ -38,7 +42,7 @@ const textFieldInputElement = {
             </q-input>
         </template>
         <template v-else>
-            <q-input outlined v-model="value" :label="label" @update:model-value="processValueChange" :readonly="disabled" dense>
+            <q-input outlined v-model="value" :type="inputType" :label="label" @update:model-value="processValueChange" :readonly="disabled" :autogrow="inputType === 'textarea'" dense>
                 <template v-if="!disabled && definition" v-slot:append>
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);"></q-icon>
                     <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();"></q-icon>
@@ -83,8 +87,9 @@ const textFieldInputElement = {
             </q-dialog>
         </template>
     `,
-    setup(_, context) {
+    setup(props, context) {
         const displayDefinitionPopup = Vue.ref(false);
+        const inputType = Vue.ref('text');
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
@@ -94,8 +99,18 @@ const textFieldInputElement = {
             context.emit('update:value', val);
         }
 
+        Vue.onMounted(() => {
+            if(props.dataType === 'int'){
+                inputType.value = 'number';
+            }
+            if(props.dataType !== 'text' && props.dataType !== 'number'){
+                inputType.value = props.dataType;
+            }
+        });
+
         return {
             displayDefinitionPopup,
+            inputType,
             openDefinitionPopup,
             processValueChange
         }

@@ -23,7 +23,7 @@ class GeographyManager {
         $sql = 'SELECT DISTINCT countryid, countryname FROM lkupcountry ';
         $sql .= 'WHERE countryname LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
         $rs = $this->conn->query($sql);
-        while ($r = $rs->fetch_object()){
+        while($r = $rs->fetch_object()){
             $dataArr = array();
             $dataArr['id'] = $r->countryid;
             $dataArr['name'] = $r->countryname;
@@ -46,7 +46,7 @@ class GeographyManager {
         }
         $sql .= 'ORDER BY c.countyname';
         $rs = $this->conn->query($sql);
-        while ($r = $rs->fetch_object()){
+        while($r = $rs->fetch_object()){
             $dataArr = array();
             $dataArr['id'] = $r->countyid;
             $dataArr['name'] = $r->countyname;
@@ -69,7 +69,7 @@ class GeographyManager {
         }
         $sql .= 'ORDER BY s.statename';
         $rs = $this->conn->query($sql);
-        while ($r = $rs->fetch_object()){
+        while($r = $rs->fetch_object()){
             $dataArr = array();
             $dataArr['id'] = $r->stateid;
             $dataArr['name'] = $r->statename;

@@ -747,6 +747,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     this.locationId = Number(locationid);
                     const formData = new FormData();
                     formData.append('locationid', locationid.toString());
+                    formData.append('collid', this.collId.toString());
                     formData.append('action', 'getLocationDataArr');
                     fetch(occurrenceLocationApiUrl, {
                         method: 'POST',

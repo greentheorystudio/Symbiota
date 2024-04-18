@@ -398,12 +398,12 @@ class OccurrenceDataManager{
             $rs = $this->conn->query($sql);
             if($oldData = $rs->fetch_assoc()){
                 $sqlEditsBase = 'INSERT INTO omoccuredits(occid, reviewstatus, appliedstatus, uid, fieldname, fieldvaluenew, fieldvalueold) '.
-                    'VALUES (' . $occId . ', 1, 1, ' . $GLOBALS['SYMB_UID'] . ', ';
+                    'VALUES(' . $occId . ', 1, 1, ' . $GLOBALS['SYMB_UID'] . ', ';
                 foreach($fieldNameArr as $fieldName){
                     $cleanedFieldName = str_replace('`','',$fieldName);
                     $oldValue = $oldData[$cleanedFieldName] ? Sanitizer::getSqlValueString($this->conn, $oldData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']) : '""';
                     $newValue = $editData[$cleanedFieldName] ? Sanitizer::getSqlValueString($this->conn, $editData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']) : '""';
-                    $sqlEdit = $sqlEditsBase . '"' . $cleanedFieldName . '",' . $newValue . ',' . $oldValue . ')';
+                    $sqlEdit = $sqlEditsBase . '"' . $cleanedFieldName . '",' . $newValue . ',' . $oldValue . ') ';
                     //echo '<div>'.$sqlEdit.'</div>';
                     $this->conn->query($sqlEdit);
                 }

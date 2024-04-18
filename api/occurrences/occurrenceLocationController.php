@@ -22,7 +22,7 @@ elseif($collid){
 
 if($action && Sanitizer::validateInternalRequest()){
     $locManager = new OccurrenceLocationManager();
-    if($action === 'getLocationDataArr' && $locationid){
+    if($action === 'getLocationDataArr' && $isEditor && $locationid){
         echo json_encode($locManager->getLocationData($locationid));
     }
 }
