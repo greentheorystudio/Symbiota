@@ -2,6 +2,14 @@ const occurrenceEditorFormLocationElement = {
     template: `
         <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-xs">
+                <div class="row justify-between q-col-gutter-md">
+                    <div>
+                        <checkbox-input-element :definition="occurrenceFieldDefinitions['localitysecurity']" label="Locality Security" :value="occurrenceData.localitysecurity" @update:value="updateLocalitySecuritySetting"></checkbox-input-element>
+                    </div>
+                    <div v-if="Number(occurrenceData.localitysecurity) === 1" class="col-12 col-sm-grow col-md-grow">
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['localitysecurityreason']" label="Locality Security Reason" :maxlength="occurrenceFields['localitysecurityreason'] ? occurrenceFields['localitysecurityreason']['length'] : 0" :value="occurrenceData.localitysecurityreason" @update:value="(value) => updateOccurrenceData('localitysecurityreason', value)"></text-field-input-element>
+                    </div>
+                </div>
                 <div class="row justify-between q-col-gutter-xs">
                     <div class="col-12 col-sm-6 col-md-3">
                         <single-country-auto-complete :definition="occurrenceFieldDefinitions['country']" label="Country" :maxlength="occurrenceFields['country'] ? occurrenceFields['country']['length'] : 0" :value="occurrenceData.country" @update:value="(value) => updateOccurrenceData('country', value)" :show-counter="false"></single-country-auto-complete>
@@ -25,6 +33,7 @@ const occurrenceEditorFormLocationElement = {
         </q-card>
     `,
     components: {
+        'checkbox-input-element': checkboxInputElement,
         'single-country-auto-complete': singleCountryAutoComplete,
         'single-county-auto-complete': singleCountyAutoComplete,
         'single-state-province-auto-complete': singleStateProvinceAutoComplete,
@@ -37,6 +46,16 @@ const occurrenceEditorFormLocationElement = {
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
 
+        function updateLocalitySecuritySetting(value) {
+            if(Number(value) === 1){
+                occurrenceStore.updateOccurrenceEditData('localitysecurity', value);
+            }
+            else{
+                occurrenceStore.updateOccurrenceEditData('localitysecurity', value);
+                occurrenceStore.updateOccurrenceEditData('localitysecurityreason', value);
+            }
+        }
+
         function updateOccurrenceData(key, value) {
             occurrenceStore.updateOccurrenceEditData(key, value);
         }
@@ -45,6 +64,7 @@ const occurrenceEditorFormLocationElement = {
             occurrenceData,
             occurrenceFields,
             occurrenceFieldDefinitions,
+            updateLocalitySecuritySetting,
             updateOccurrenceData
         }
     }
