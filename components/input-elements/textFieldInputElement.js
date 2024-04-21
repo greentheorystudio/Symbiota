@@ -16,7 +16,15 @@ const textFieldInputElement = {
             type: String,
             default: ''
         },
+        minValue: {
+            type: Number,
+            default: null
+        },
         maxlength: {
+            type: Number,
+            default: null
+        },
+        maxValue: {
             type: Number,
             default: null
         },
@@ -88,6 +96,7 @@ const textFieldInputElement = {
         </template>
     `,
     setup(props, context) {
+        const { showNotification } = useCore();
         const displayDefinitionPopup = Vue.ref(false);
         const inputType = Vue.ref('text');
 

@@ -51,7 +51,7 @@ const occurrenceEditorFormLocationElement = {
                 occurrenceStore.updateOccurrenceEditData('localitysecurity', value);
             }
             else{
-                occurrenceStore.updateOccurrenceEditData('localitysecurity', value);
+                occurrenceStore.updateOccurrenceEditData('localitysecurity', '0');
                 occurrenceStore.updateOccurrenceEditData('localitysecurityreason', value);
             }
         }

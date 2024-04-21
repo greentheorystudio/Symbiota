@@ -46,6 +46,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver20240115" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20230929" rel="stylesheet" type="text/css" />
+    <style>
+        .ol-scale-line-inner {
+            border: 1px solid white;
+            border-top: none;
+            color: white;
+        }
+    </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
@@ -331,8 +338,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     infoArr['type'] = 'userLayer';
                     infoArr['fileType'] = fileType;
                     infoArr['layerName'] = filename;
-                    infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                        infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
+                    infoArr['layerDescription'] = "This layer is from a file that was added to the map.";
+                    infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
                     infoArr['borderColor'] = SPATIAL_DRAGDROP_BORDER_COLOR;
                     infoArr['borderWidth'] = SPATIAL_DRAGDROP_BORDER_WIDTH;
                     infoArr['pointRadius'] = SPATIAL_DRAGDROP_POINT_RADIUS;
@@ -365,8 +372,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
                             infoArr['type'] = 'userLayer';
                             infoArr['fileType'] = 'zip';
                             infoArr['layerName'] = filename;
-                            infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                                infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
+                            infoArr['layerDescription'] = "This layer is from a file that was added to the map.";
+                            infoArr['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
                             infoArr['borderColor'] = SPATIAL_DRAGDROP_BORDER_COLOR;
                             infoArr['borderWidth'] = SPATIAL_DRAGDROP_BORDER_WIDTH;
                             infoArr['pointRadius'] = SPATIAL_DRAGDROP_POINT_RADIUS;
@@ -401,8 +408,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
                         infoArr['type'] = 'userLayer';
                         infoArr['fileType'] = 'tif';
                         infoArr['layerName'] = filename;
-                        infoArr['layerDescription'] = "This layer is from a file that was added to the map.",
-                            infoArr['removable'] = true;
+                        infoArr['layerDescription'] = "This layer is from a file that was added to the map.";
+                        infoArr['removable'] = true;
                         infoArr['sortable'] = true;
                         infoArr['symbology'] = true;
                         infoArr['query'] = false;
@@ -669,8 +676,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     infoArr['type'] = 'userLayer';
                     infoArr['fileType'] = 'vector';
                     infoArr['layerName'] = 'Shapes';
-                    infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
-                        infoArr['fillColor'] = SPATIAL_SHAPES_FILL_COLOR;
+                    infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.";
+                    infoArr['fillColor'] = SPATIAL_SHAPES_FILL_COLOR;
                     infoArr['borderColor'] = SPATIAL_SHAPES_BORDER_COLOR;
                     infoArr['borderWidth'] = SPATIAL_SHAPES_BORDER_WIDTH;
                     infoArr['pointRadius'] = SPATIAL_SHAPES_POINT_RADIUS;

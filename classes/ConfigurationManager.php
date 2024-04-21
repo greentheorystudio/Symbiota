@@ -92,9 +92,11 @@ class ConfigurationManager{
         'checklists',
         'classes',
         'collections',
+        'components',
         'config',
         'games',
         'glossary',
+        'hooks',
         'ident',
         'imagelib',
         'misc',
@@ -102,6 +104,7 @@ class ConfigurationManager{
         'projects',
         'references',
         'spatial',
+        'stores',
         'taxa',
         'tutorial',
         'webservices'
@@ -147,7 +150,7 @@ class ConfigurationManager{
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
         $GLOBALS['CSS_VERSION'] = '20240321';
-        $GLOBALS['JS_VERSION'] = '2024040511234455566778889999';
+        $GLOBALS['JS_VERSION'] = '20240405112344555667788899999';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
