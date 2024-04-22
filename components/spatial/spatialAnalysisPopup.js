@@ -198,7 +198,7 @@ const spatialAnalysisPopup = {
                     openerRadius = props.pointRadiusMeters;
                 }
                 if(openerRadius > 0){
-                    spatialModuleRef.value.updateMapSettings('inputPointUncertainty', openerRadius);
+                    spatialModuleRef.value.updateMapSettings('uncertaintyRadiusValue', openerRadius);
                     const pointRadius = {};
                     pointRadius.pointlat = Number(props.decimalLatitude);
                     pointRadius.pointlong = Number(props.decimalLongitude);

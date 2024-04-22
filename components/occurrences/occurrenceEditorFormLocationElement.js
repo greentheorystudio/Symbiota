@@ -70,16 +70,11 @@ const occurrenceEditorFormLocationElement = {
         </q-card>
         <template v-if="showSpatialPopup">
             <spatial-analysis-popup
-                    :bottom-lat="bottomLatValue"
-                    :circle-arr="circleArrValue"
-                    :left-long="leftLongValue"
-                    :point-lat="pointLatValue"
-                    :point-long="pointLongValue"
-                    :poly-arr="polyArrValue"
-                    :radius="radiusValue"
-                    :right-long="rightLongValue"
+                    :coordinate-uncertainty-in-meters="coordinateUncertaintyInMetersValue"
+                    :decimal-latitude="decimalLatitudeValue"
+                    :decimal-longitude="decimalLongitudeValue"
+                    :footprint-wkt="footprintWktValue"
                     :show-popup="showSpatialPopup"
-                    :upper-lat="upperLatValue"
                     :window-type="popupWindowType"
                     @update:spatial-data="processSpatialData"
                     @close:popup="closePopup();"
@@ -97,15 +92,56 @@ const occurrenceEditorFormLocationElement = {
     setup() {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const coordinateUncertaintyInMetersValue = Vue.ref(null);
+        const decimalLatitudeValue = Vue.ref(null);
+        const decimalLongitudeValue = Vue.ref(null);
+        const footprintWktValue = Vue.ref(null);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const popupWindowType = Vue.ref(null);
         const showSpatialPopup = Vue.ref(false);
 
+        function clearSpatialInputValues() {
+            coordinateUncertaintyInMetersValue.value = null;
+            decimalLatitudeValue.value = null;
+            decimalLongitudeValue.value = null;
+            footprintWktValue.value = null;
+        }
+
+        function closePopup() {
+            popupWindowType.value = null;
+            showSpatialPopup.value = false;
+            clearSpatialInputValues();
+        }
+
         function openSpatialPopup(type) {
-            setInputValues();
+            setSpatialInputValues();
             popupWindowType.value = type;
             showSpatialPopup.value = true;
+        }
+
+        function processSpatialData(data) {
+            if(popupWindowType.value.includes('point') && data.hasOwnProperty('decimalLatitude') && data.hasOwnProperty('decimalLongitude')){
+                const latDecimalPlaces = occurrenceData.value['decimallatitude'].toString().split('.')[1].length;
+                const longDecimalPlaces = occurrenceData.value['decimallongitude'].toString().split('.')[1].length;
+                if(Number(occurrenceData.value['decimallatitude']) !== Number(Number(data['decimalLatitude']).toFixed(latDecimalPlaces))){
+                    occurrenceStore.updateOccurrenceEditData('decimallatitude', data['decimalLatitude']);
+                }
+                if(Number(occurrenceData.value['decimallongitude']) !== Number(Number(data['decimalLongitude']).toFixed(longDecimalPlaces))){
+                    occurrenceStore.updateOccurrenceEditData('decimallongitude', data['decimalLongitude']);
+                }
+                if(Number(data['coordinateUncertaintyInMeters']) > 0){
+                    occurrenceStore.updateOccurrenceEditData('coordinateuncertaintyinmeters', data['coordinateUncertaintyInMeters']);
+                }
+            }
+        }
+
+        function setSpatialInputValues() {
+            coordinateUncertaintyInMetersValue.value = occurrenceData.value['coordinateuncertaintyinmeters'];
+            decimalLatitudeValue.value = occurrenceData.value['decimallatitude'];
+            decimalLongitudeValue.value = occurrenceData.value['decimallongitude'];
+            footprintWktValue.value = occurrenceData.value['footprintwkt'];
         }
 
         function updateLocalitySecuritySetting(value) {
@@ -123,11 +159,18 @@ const occurrenceEditorFormLocationElement = {
         }
 
         return {
+            coordinateUncertaintyInMetersValue,
+            decimalLatitudeValue,
+            decimalLongitudeValue,
+            footprintWktValue,
             occurrenceData,
             occurrenceFields,
             occurrenceFieldDefinitions,
+            popupWindowType,
             showSpatialPopup,
+            closePopup,
             openSpatialPopup,
+            processSpatialData,
             updateLocalitySecuritySetting,
             updateOccurrenceData
         }

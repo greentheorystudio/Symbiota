@@ -225,11 +225,11 @@ const spatialAnalysisModule = {
                             mapSettings.selectedFeatures.push(evt.feature);
                             processInputSelections();
                             if(props.inputWindowToolsArr.includes('uncertainty') || props.inputWindowToolsArr.includes('radius')){
-                                if(mapSettings.inputPointUncertainty > 0){
+                                if(mapSettings.uncertaintyRadiusValue > 0){
                                     const pointRadius = {};
                                     pointRadius.pointlat = pointCoords[1];
                                     pointRadius.pointlong = pointCoords[0];
-                                    pointRadius.radius = mapSettings.inputPointUncertainty;
+                                    pointRadius.radius = mapSettings.uncertaintyRadiusValue;
                                     createUncertaintyCircleFromPointRadius(pointRadius);
                                 }
                             }
@@ -940,7 +940,7 @@ const spatialAnalysisModule = {
                             const pointRadius = {};
                             pointRadius.pointlat = pointCoords[1];
                             pointRadius.pointlong = pointCoords[0];
-                            pointRadius.radius = mapSettings.inputPointUncertainty;
+                            pointRadius.radius = mapSettings.uncertaintyRadiusValue;
                             createUncertaintyCircleFromPointRadius(pointRadius);
                         }
                     }
@@ -1079,6 +1079,11 @@ const spatialAnalysisModule = {
                 if(geoPointArr.value.length > 0){
                     submitReady = true;
                     inputResponseData.value['pointArr'] = geoPointArr.value;
+                    if(geoPointArr.value.length === 1){
+                        inputResponseData.value['decimalLatitude'] = geoPointArr.value[0]['decimalLatitude'];
+                        inputResponseData.value['decimalLongitude'] = geoPointArr.value[0]['decimalLongitude'];
+                        inputResponseData.value['coordinateUncertaintyInMeters'] = mapSettings.uncertaintyRadiusValue;
+                    }
                 }
             }
             updateMapSettings('submitButtonDisabled', !submitReady);
