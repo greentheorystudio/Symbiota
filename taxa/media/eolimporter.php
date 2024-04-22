@@ -187,7 +187,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     const procDisplayScrollAreaRef = Vue.ref(null);
                     const procDisplayScrollHeight = Vue.ref(0);
                     const processCancelling = Vue.ref(false);
-                    const processorDisplayArr = Vue.shallowReactive([]);
+                    const processorDisplayArr = Vue.reactive([]);
                     let processorDisplayDataArr = [];
                     const processorDisplayCurrentIndex = Vue.ref(0);
                     const processorDisplayIndex = Vue.ref(0);

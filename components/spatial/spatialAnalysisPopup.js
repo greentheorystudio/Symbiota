@@ -20,7 +20,7 @@ const spatialAnalysisPopup = {
             type: Number,
             default: null
         },
-        footprintWKT: {
+        footprintWkt: {
             type: String,
             default: null
         },
@@ -100,7 +100,7 @@ const spatialAnalysisPopup = {
             loadInputParentParams();
         });
 
-        Vue.watch(propsRefs.footprintWKT, () => {
+        Vue.watch(propsRefs.footprintWkt, () => {
             loadInputParentParams();
         });
 
@@ -166,7 +166,7 @@ const spatialAnalysisPopup = {
             if(props.decimalLatitude && props.decimalLongitude && inputWindowToolsArr.includes('point')){
                 processInputParentPointParams();
             }
-            if(props.footprintWKT && inputWindowToolsArr.includes('polygon') && inputWindowToolsArr.includes('wkt')){
+            if(props.footprintWkt && inputWindowToolsArr.includes('polygon') && inputWindowToolsArr.includes('wkt')){
                 processInputParentPolyWKTParams();
             }
         }
@@ -226,8 +226,8 @@ const spatialAnalysisPopup = {
         }
 
         function processInputParentPolyWKTParams() {
-            if(props.footprintWKT && (props.footprintWKT.startsWith("POLYGON") || props.footprintWKT.startsWith("MULTIPOLYGON"))){
-                spatialModuleRef.value.createPolysFromFootprintWKT(props.footprintWKT);
+            if(props.footprintWkt && (props.footprintWkt.startsWith("POLYGON") || props.footprintWkt.startsWith("MULTIPOLYGON"))){
+                spatialModuleRef.value.createPolysFromFootprintWKT(props.footprintWkt);
             }
         }
 

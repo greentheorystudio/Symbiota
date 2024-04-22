@@ -171,7 +171,7 @@ const taxonomyDataSourceImportUpdateModule = {
         const procDisplayScrollHeight = Vue.ref(0);
         const processCancelling = Vue.ref(false);
         const processingArr = Vue.ref([]);
-        const processorDisplayArr = Vue.shallowReactive([]);
+        const processorDisplayArr = Vue.reactive([]);
         let processorDisplayDataArr = [];
         const processorDisplayCurrentIndex = Vue.ref(0);
         const processorDisplayIndex = Vue.ref(0);
@@ -651,12 +651,17 @@ const taxonomyDataSourceImportUpdateModule = {
             .then((response) => {
                 if(response.status === 200){
                     response.json().then((res) => {
-                        processGetCOLTaxonByScinameResponse(res,callback);
+                        if(res.hasOwnProperty('total_number_of_results')){
+                            processGetCOLTaxonByScinameResponse(res,callback);
+                        }
+                        else{
+                            callback('Not found');
+                        }
                     });
                 }
                 else{
                     const text = getErrorResponseText(response.status,response.statusText);
-                    callback(text);
+                    callback(text ? text : 'Not found');
                 }
             });
         }
