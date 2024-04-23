@@ -281,7 +281,7 @@ const occurrenceCoordinateToolPopup = {
                     returnData['verbatimCoordinates'] += utmZoneValue.value + ' ' + utmEastingValue.value + 'E ' + utmNorthingValue.value + 'N';
                     if(!isNaN(utmZoneValue.value)){
                         const zNum = parseInt(utmZoneValue.value);
-                        const latLngData = utm2LatLng(zNum, utmEastingValue.value, utmNorthingValue.value, props.geodeticDatum);
+                        const latLngData = convertUtmToDecimalDegrees(zNum, utmEastingValue.value, utmNorthingValue.value, props.geodeticDatum);
                         if(latLngData){
                             const latFact = utmHemisphereValue.value === 'North' ? 1 : -1;
                             returnData['decimalLatitude'] = latFact * Math.round(latLngData['lat'] * 1000000) / 1000000;
