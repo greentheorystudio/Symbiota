@@ -48,7 +48,7 @@ const occurrenceEditorFormLocationElement = {
                             </q-btn>
                         </div>
                         <div class="self-center">
-                            <q-btn color="grey-4" class="black-border" size="sm" @click="changeQueryPopupDisplay(true);" dense>
+                            <q-btn color="grey-4" class="black-border" size="sm" @click="openGeolocatePopup();" dense>
                                 <q-avatar size="xs">
                                     <img src="../../images/geolocate.png">
                                 </q-avatar>
@@ -58,7 +58,7 @@ const occurrenceEditorFormLocationElement = {
                             </q-btn>
                         </div>
                         <div class="self-center">
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="changeQueryPopupDisplay(true);" icon="fas fa-tools" dense>
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="showCoordinateToolPopup = true" icon="fas fa-tools" dense>
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Tools for converting additional formats
                                 </q-tooltip>
@@ -77,12 +77,35 @@ const occurrenceEditorFormLocationElement = {
                     :show-popup="showSpatialPopup"
                     :window-type="popupWindowType"
                     @update:spatial-data="processSpatialData"
-                    @close:popup="closePopup();"
+                    @close:popup="closeSpatialPopup();"
             ></spatial-analysis-popup>
+        </template>
+        <template v-if="showGeoLocatePopup">
+            <geo-locate-popup
+                    :country="occurrenceData.country"
+                    :county="occurrenceData.county"
+                    :locality="occurrenceData.locality"
+                    :show-popup="showGeoLocatePopup"
+                    :state="occurrenceData.stateprovince"
+                    :verbatim-coordinates="occurrenceData.verbatimcoordinates"
+                    @update:geolocate-data="processGeolocateData"
+                    @close:popup="closeGeolocatePopup();"
+            ></geo-locate-popup>
+        </template>
+        <template v-if="showCoordinateToolPopup">
+            <occurrence-coordinate-tool-popup
+                    :geodetic-datum="occurrenceData.geodeticdatum"
+                    :show-popup="showCoordinateToolPopup"
+                    :verbatim-coordinates="occurrenceData.verbatimcoordinates"
+                    @update:coordinate-tool-data="processCoordinateToolData"
+                    @close:popup="closeCoordinateToolPopup();"
+            ></occurrence-coordinate-tool-popup>
         </template>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
+        'geo-locate-popup': geoLocatePopup,
+        'occurrence-coordinate-tool-popup': occurrenceCoordinateToolPopup,
         'single-country-auto-complete': singleCountryAutoComplete,
         'single-county-auto-complete': singleCountyAutoComplete,
         'single-state-province-auto-complete': singleStateProvinceAutoComplete,
@@ -90,6 +113,7 @@ const occurrenceEditorFormLocationElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup() {
+        const { showNotification } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const coordinateUncertaintyInMetersValue = Vue.ref(null);
@@ -100,6 +124,8 @@ const occurrenceEditorFormLocationElement = {
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
         const popupWindowType = Vue.ref(null);
+        const showCoordinateToolPopup = Vue.ref(false);
+        const showGeoLocatePopup = Vue.ref(false);
         const showSpatialPopup = Vue.ref(false);
 
         function clearSpatialInputValues() {
@@ -109,16 +135,62 @@ const occurrenceEditorFormLocationElement = {
             footprintWktValue.value = null;
         }
 
-        function closePopup() {
+        function closeCoordinateToolPopup() {
+            showCoordinateToolPopup.value = false;
+        }
+
+        function closeGeolocatePopup() {
+            showGeoLocatePopup.value = false;
+        }
+
+        function closeSpatialPopup() {
             popupWindowType.value = null;
             showSpatialPopup.value = false;
             clearSpatialInputValues();
+        }
+
+        function openGeolocatePopup() {
+            if(!occurrenceData.value.country){
+                showNotification('negative', 'Country is a required field for GeoLocate.');
+            }
+            else{
+                showGeoLocatePopup.value = true;
+            }
         }
 
         function openSpatialPopup(type) {
             setSpatialInputValues();
             popupWindowType.value = type;
             showSpatialPopup.value = true;
+        }
+
+        function processCoordinateToolData(data) {
+            if(data.decimalLatitude && data.decimalLongitude){
+                occurrenceStore.updateOccurrenceEditData('decimallatitude', data['decimalLatitude']);
+                occurrenceStore.updateOccurrenceEditData('decimallongitude', data['decimalLongitude']);
+            }
+            if(data.verbatimCoordinates){
+                occurrenceStore.updateOccurrenceEditData('verbatimcoordinates', data['verbatimCoordinates']);
+            }
+            closeCoordinateToolPopup();
+        }
+
+        function processGeolocateData(data) {
+            if(data.decimalLatitude && data.decimalLongitude){
+                occurrenceStore.updateOccurrenceEditData('decimallatitude', data['decimalLatitude']);
+                occurrenceStore.updateOccurrenceEditData('decimallongitude', data['decimalLongitude']);
+                if(data.coordinateUncertaintyInMeters){
+                    occurrenceStore.updateOccurrenceEditData('coordinateuncertaintyinmeters', data['coordinateUncertaintyInMeters']);
+                }
+            }
+            if(data.footprintWkt){
+                occurrenceStore.updateOccurrenceEditData('footprintwkt', data['footprintWkt']);
+            }
+            if((data.decimalLatitude && data.decimalLongitude) || data.footprintWkt){
+                occurrenceStore.updateOccurrenceEditData('georeferencesources', 'GeoLocate');
+                occurrenceStore.updateOccurrenceEditData('geodeticdatum', 'WGS84');
+            }
+            closeGeolocatePopup();
         }
 
         function processSpatialData(data) {
@@ -167,9 +239,16 @@ const occurrenceEditorFormLocationElement = {
             occurrenceFields,
             occurrenceFieldDefinitions,
             popupWindowType,
+            showCoordinateToolPopup,
+            showGeoLocatePopup,
             showSpatialPopup,
-            closePopup,
+            closeCoordinateToolPopup,
+            closeGeolocatePopup,
+            closeSpatialPopup,
+            openGeolocatePopup,
             openSpatialPopup,
+            processCoordinateToolData,
+            processGeolocateData,
             processSpatialData,
             updateLocalitySecuritySetting,
             updateOccurrenceData

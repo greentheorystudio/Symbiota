@@ -784,10 +784,24 @@ body.processing .loadingModal {
 	border: 1px solid black;
 	min-width: 325px;
 }
+.md-popup {
+	max-width: 75% !important;
+	width: 75% !important;
+	height: 70% !important;
+	border: 1px solid black;
+	min-width: 325px;
+}
 .lg-popup {
 	max-width: 90% !important;
 	width: 90% !important;
 	height: 85% !important;
+	border: 1px solid black;
+	min-width: 325px;
+}
+.xl-popup {
+	max-width: 98% !important;
+	width: 98% !important;
+	height: 95% !important;
 	border: 1px solid black;
 	min-width: 325px;
 }
