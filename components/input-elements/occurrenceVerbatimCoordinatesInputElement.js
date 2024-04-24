@@ -4,6 +4,10 @@ const occurrenceVerbatimCoordinatesInputElement = {
             type: Object,
             default: null
         },
+        decimalLatitude: {
+            type: Number,
+            default: null
+        },
         disabled: {
             type: Boolean,
             default: false
@@ -31,7 +35,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
     },
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-            <q-input outlined v-model="value" :label="label" :counter="showCounter" :maxlength="maxlength" @update:model-value="processValueChange" dense>
+            <q-input outlined v-model="value" :label="label" :maxlength="maxlength" @update:model-value="processValueChange" dense>
                 <template v-if="definition" v-slot:append>
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -140,7 +144,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
             displayDefinitionPopup.value = true;
         }
 
-        function parseDecimalCoordinates(){
+        function parseDecimalCoordinates(verbose = true){
             let lngDeg;
             let lngMin;
             let latDeg;
@@ -210,13 +214,19 @@ const occurrenceVerbatimCoordinatesInputElement = {
                         lngMin = parseInt(extractArr[6]);
                         const lngSec = parseFloat(extractArr[7]);
                         if(latDeg > 90){
-                            showNotification('negative', 'Latitude degrees cannot be greater than 90.');
+                            if(verbose){
+                                showNotification('negative', 'Latitude degrees cannot be greater than 90.');
+                            }
                         }
                         else if(lngDeg > 180){
-                            showNotification('negative', 'Longitude degrees cannot be greater than 180.');
+                            if(verbose){
+                                showNotification('negative', 'Longitude degrees cannot be greater than 180.');
+                            }
                         }
                         else if(latMin > 60 || latSec > 60 || lngMin > 60 || lngSec > 60){
-                            showNotification('negative', 'Minutes and seconds values for latitude and longitude cannot be greater than 60.');
+                            if(verbose){
+                                showNotification('negative', 'Minutes and seconds values for latitude and longitude cannot be greater than 60.');
+                            }
                         }
                         else{
                             latDec = latDeg + (latMin / 60) + (latSec / 3600);
@@ -236,13 +246,19 @@ const occurrenceVerbatimCoordinatesInputElement = {
                         lngDeg = parseInt(extractArr[4]);
                         lngMin = parseFloat(extractArr[5]);
                         if(latDeg > 90){
-                            showNotification('negative', 'Latitude degrees cannot be greater than 90.');
+                            if(verbose){
+                                showNotification('negative', 'Latitude degrees cannot be greater than 90.');
+                            }
                         }
                         else if(lngDeg > 180){
-                            showNotification('negative', 'Longitude degrees cannot be greater than 180.');
+                            if(verbose){
+                                showNotification('negative', 'Longitude degrees cannot be greater than 180.');
+                            }
                         }
                         else if(latMin > 60 || lngMin > 60){
-                            showNotification('negative', 'Minutes values for latitude and longitude cannot be greater than 60.');
+                            if(verbose){
+                                showNotification('negative', 'Minutes values for latitude and longitude cannot be greater than 60.');
+                            }
                         }
                         else{
                             latDec = latDeg + (latMin / 60);
@@ -263,13 +279,23 @@ const occurrenceVerbatimCoordinatesInputElement = {
                     });
                 }
                 else{
-                    showNotification('negative', 'Unable to calculate decimal coordinates.');
+                    if(verbose){
+                        showNotification('negative', 'Unable to calculate decimal coordinates.');
+                    }
+                }
+            }
+            else{
+                if(verbose){
+                    showNotification('negative', 'Verbatim Coordinates must have a value to recalculate.');
                 }
             }
         }
 
         function processValueChange(val) {
             context.emit('update:value', val);
+            if(val && !props.decimalLatitude){
+                parseDecimalCoordinates(false);
+            }
         }
 
         return {

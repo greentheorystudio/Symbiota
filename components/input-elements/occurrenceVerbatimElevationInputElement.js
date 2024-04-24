@@ -1,9 +1,5 @@
-const textFieldInputElement = {
+const occurrenceVerbatimElevationInputElement = {
     props: {
-        dataType: {
-            type: String,
-            default: 'text'
-        },
         definition: {
             type: Object,
             default: null
@@ -16,15 +12,11 @@ const textFieldInputElement = {
             type: String,
             default: ''
         },
-        minValue: {
-            type: Number,
-            default: null
-        },
         maxlength: {
             type: Number,
             default: null
         },
-        maxValue: {
+        minimumElevationInMeters: {
             type: Number,
             default: null
         },
@@ -39,11 +31,16 @@ const textFieldInputElement = {
     },
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-            <q-input outlined v-model="value" :type="inputType" :label="label" :counter="(showCounter && dataType !== 'int' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="inputType === 'textarea'" dense>
+            <q-input outlined v-model="value" :label="label" :maxlength="maxlength" @update:model-value="processValueChange" dense>
                 <template v-if="definition" v-slot:append>
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
+                        </q-tooltip>
+                    </q-icon>
+                    <q-icon name="calculate" class="cursor-pointer" @click="parseElevationValues();">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Recalculate decimal coordinates
                         </q-tooltip>
                     </q-icon>
                     <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();">
@@ -58,15 +55,25 @@ const textFieldInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
+                    <q-icon name="calculate" class="cursor-pointer" @click="parseElevationValues();">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Recalculate decimal coordinates
+                        </q-tooltip>
+                    </q-icon>
                 </template>
             </q-input>
         </template>
         <template v-else>
-            <q-input outlined v-model="value" :type="inputType" :label="label" @update:model-value="processValueChange" :readonly="disabled" :autogrow="inputType === 'textarea'" dense>
+            <q-input outlined v-model="value" :label="label" @update:model-value="processValueChange" :readonly="disabled" dense>
                 <template v-if="!disabled && definition" v-slot:append>
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
+                        </q-tooltip>
+                    </q-icon>
+                    <q-icon name="calculate" class="cursor-pointer" @click="parseElevationValues();">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Recalculate minimum and maximum elevation values
                         </q-tooltip>
                     </q-icon>
                     <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();">
@@ -79,6 +86,11 @@ const textFieldInputElement = {
                     <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
+                        </q-tooltip>
+                    </q-icon>
+                    <q-icon name="calculate" class="cursor-pointer" @click="parseElevationValues();">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Recalculate minimum and maximum elevation values
                         </q-tooltip>
                     </q-icon>
                 </template>
@@ -121,52 +133,73 @@ const textFieldInputElement = {
     `,
     setup(props, context) {
         const { showNotification } = useCore();
+
         const displayDefinitionPopup = Vue.ref(false);
-        const inputType = Vue.ref('text');
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
         }
 
-        function processValueChange(val) {
-            if(props.dataType === 'int' || props.dataType === 'number'){
-                if(val && isNaN(val)){
-                    showNotification('negative', (props.label + ' must be a number.'));
+        function parseElevationValues(verbose = true){
+            if(props.value){
+                const regEx1 = /(\d+)\s*-\s*(\d+)\s*[fte|']/i;
+                const regEx2 = /(\d+)\s*[fte|']/i;
+                const regEx3 = /(\d+)\s*-\s*(\d+)\s?m/i;
+                const regEx4 = /(\d+)\s?-\s?(\d+)\s?m/i;
+                const regEx5 = /(\d+)\s?m/i;
+                let min, max;
+                let extractArr = [];
+                let verbElevStr = props.value.replaceAll(/,/g ,"");
+                if(regEx1.exec(verbElevStr)){
+                    extractArr = regEx1.exec(verbElevStr);
+                    min = Math.round(extractArr[1] * .3048);
+                    max = Math.round(extractArr[2] * .3048);
                 }
-                else if(val && props.minValue && Number(props.minValue) > Number(val)){
-                    showNotification('negative', (props.label + ' cannot be less than ' + props.minValue + '.'));
-                    if(props.dataType === 'int'){
-                        context.emit('update:value', props.minValue);
+                else if(regEx2.exec(verbElevStr)){
+                    extractArr = regEx2.exec(verbElevStr);
+                    min = Math.round(extractArr[1] * .3048);
+                }
+                else if(regEx3.exec(verbElevStr)){
+                    extractArr = regEx3.exec(verbElevStr);
+                    min = extractArr[1];
+                    max = extractArr[2];
+                }
+                else if(regEx4.exec(verbElevStr)){
+                    extractArr = regEx4.exec(verbElevStr);
+                    min = extractArr[1];
+                    max = extractArr[2];
+                }
+                else if(regEx5.exec(verbElevStr)){
+                    extractArr = regEx5.exec(verbElevStr);
+                    min = extractArr[1];
+                }
+                if(min){
+                    const returnData = {};
+                    returnData['minimumElevationInMeters'] = min;
+                    if(max){
+                        returnData['maximumElevationInMeters'] = max;
                     }
-                }
-                else if(val && props.maxValue && Number(props.maxValue) < Number(val)){
-                    showNotification('negative', (props.label + ' cannot be greater than ' + props.maxValue + '.'));
-                    if(props.dataType === 'int'){
-                        context.emit('update:value', props.maxValue);
-                    }
-                }
-                else{
-                    context.emit('update:value', val);
+                    context.emit('update:elevation-values', returnData);
                 }
             }
             else{
-                context.emit('update:value', val);
+                if(verbose){
+                    showNotification('negative', 'Verbatim Elevation must have a value to recalculate.');
+                }
             }
         }
 
-        Vue.onMounted(() => {
-            if(props.dataType === 'int'){
-                inputType.value = 'number';
+        function processValueChange(val) {
+            context.emit('update:value', val);
+            if(val && !props.minimumElevationInMeters){
+                parseElevationValues(false);
             }
-            else if(props.dataType !== 'text' && props.dataType !== 'number'){
-                inputType.value = props.dataType;
-            }
-        });
+        }
 
         return {
             displayDefinitionPopup,
-            inputType,
             openDefinitionPopup,
+            parseElevationValues,
             processValueChange
         }
     }

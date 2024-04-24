@@ -24,7 +24,7 @@ const occurrenceEditorFormLocationElement = {
                         <text-field-input-element :definition="occurrenceFieldDefinitions['municipality']" label="Municipality" :maxlength="occurrenceFields['municipality'] ? occurrenceFields['municipality']['length'] : 0" :value="occurrenceData.municipality" @update:value="(value) => updateOccurrenceData('municipality', value)" :show-counter="false"></text-field-input-element>
                     </div>
                 </div>
-                <div class="row justify-between q-col-gutter-xs">
+                <div class="row q-col-gutter-xs">
                     <div class="col-grow">
                         <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['locality']" label="Locality" :value="occurrenceData.locality" @update:value="(value) => updateOccurrenceData('locality', value)"></text-field-input-element>
                     </div>
@@ -71,9 +71,75 @@ const occurrenceEditorFormLocationElement = {
                         <text-field-input-element :definition="occurrenceFieldDefinitions['geodeticdatum']" label="Datum" :maxlength="occurrenceFields['geodeticdatum'] ? occurrenceFields['geodeticdatum']['length'] : 0" :value="occurrenceData.geodeticdatum" @update:value="(value) => updateOccurrenceData('geodeticdatum', value)" :show-counter="false"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-10 col-md-9">
-                        <occurrence-verbatim-coordinates-input-element :definition="occurrenceFieldDefinitions['verbatimcoordinates']" label="Verbatim Coordinates" :maxlength="occurrenceFields['verbatimcoordinates'] ? occurrenceFields['verbatimcoordinates']['length'] : 0" :value="occurrenceData.verbatimcoordinates" :geodetic-datum="occurrenceData.geodeticdatum" @update:value="(value) => updateOccurrenceData('verbatimcoordinates', value)" @update:decimal-coordinates="processRecalculatedDecimalCoordinates"></occurrence-verbatim-coordinates-input-element>
+                        <occurrence-verbatim-coordinates-input-element :definition="occurrenceFieldDefinitions['verbatimcoordinates']" label="Verbatim Coordinates" :maxlength="occurrenceFields['verbatimcoordinates'] ? occurrenceFields['verbatimcoordinates']['length'] : 0" :value="occurrenceData.verbatimcoordinates" :geodetic-datum="occurrenceData.geodeticdatum" :decimal-latitude="occurrenceData.decimallatitude" @update:value="(value) => updateOccurrenceData('verbatimcoordinates', value)" @update:decimal-coordinates="processRecalculatedDecimalCoordinates"></occurrence-verbatim-coordinates-input-element>
                     </div>
                 </div>
+                <div class="row justify-between q-col-gutter-xs">
+                    <div class="col-12 col-sm-6 row justify-start q-col-gutter-md">
+                        <div class="col-12 col-sm-6">
+                            <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['minimumelevationinmeters']" label="Minimum Elevation (m)" :maxlength="occurrenceFields['minimumelevationinmeters'] ? occurrenceFields['minimumelevationinmeters']['length'] : 0" :value="occurrenceData.minimumelevationinmeters" @update:value="(value) => updateOccurrenceData('minimumelevationinmeters', value)"></text-field-input-element>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['maximumelevationinmeters']" label="Maximum Elevation (m)" :maxlength="occurrenceFields['maximumelevationinmeters'] ? occurrenceFields['maximumelevationinmeters']['length'] : 0" :value="occurrenceData.maximumelevationinmeters" @update:value="(value) => updateOccurrenceData('maximumelevationinmeters', value)"></text-field-input-element>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <occurrence-verbatim-elevation-input-element :definition="occurrenceFieldDefinitions['verbatimelevation']" label="Verbatim Elevation" :maxlength="occurrenceFields['verbatimelevation'] ? occurrenceFields['verbatimelevation']['length'] : 0" :value="occurrenceData.verbatimelevation" :minimum-elevation-in-meters="occurrenceData.minimumelevationinmeters" @update:value="(value) => updateOccurrenceData('verbatimelevation', value)" @update:elevation-values="processRecalculatedElevationValues"></occurrence-verbatim-elevation-input-element>
+                    </div>
+                </div>
+                <div class="row justify-between q-col-gutter-xs">
+                    <div class="col-12 col-sm-6 row justify-start q-col-gutter-md">
+                        <div class="col-12 col-sm-6">
+                            <text-field-input-element data-type="number" :definition="occurrenceFieldDefinitions['minimumdepthinmeters']" label="Minimum Depth (m)" :maxlength="occurrenceFields['minimumdepthinmeters'] ? occurrenceFields['minimumdepthinmeters']['length'] : 0" :value="occurrenceData.minimumdepthinmeters" @update:value="(value) => updateOccurrenceData('minimumdepthinmeters', value)"></text-field-input-element>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <text-field-input-element data-type="number" :definition="occurrenceFieldDefinitions['maximumdepthinmeters']" label="Maximum Depth (m)" :maxlength="occurrenceFields['maximumdepthinmeters'] ? occurrenceFields['maximumdepthinmeters']['length'] : 0" :value="occurrenceData.maximumdepthinmeters" @update:value="(value) => updateOccurrenceData('maximumdepthinmeters', value)"></text-field-input-element>
+                        </div>
+                    </div>
+                    <div class="col-6 row justify-between">
+                        <div class="col-10">
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['verbatimdepth']" label="Verbatim Depth" :maxlength="occurrenceFields['verbatimdepth'] ? occurrenceFields['verbatimdepth']['length'] : 0" :value="occurrenceData.verbatimdepth" @update:value="(value) => updateOccurrenceData('verbatimdepth', value)" :show-counter="false"></text-field-input-element>
+                        </div>
+                        <div class="self-center">
+                            <div>
+                                <template v-if="showExtendedForm">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showExtendedForm = false" icon="fas fa-minus" dense></q-btn>
+                                </template>
+                                <template v-else>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showExtendedForm = true" icon="fas fa-plus" dense></q-btn>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <template v-if="showExtendedForm">
+                    <div class="row justify-between q-col-gutter-xs">
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferencedby']" label="Georeferenced By" :maxlength="occurrenceFields['georeferencedby'] ? occurrenceFields['georeferencedby']['length'] : 0" :value="occurrenceData.georeferencedby" @update:value="(value) => updateOccurrenceData('georeferencedby', value)" :show-counter="false"></text-field-input-element>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferenceprotocol']" label="Georeference Protocol" :maxlength="occurrenceFields['georeferenceprotocol'] ? occurrenceFields['georeferenceprotocol']['length'] : 0" :value="occurrenceData.georeferenceprotocol" @update:value="(value) => updateOccurrenceData('georeferenceprotocol', value)" :show-counter="false"></text-field-input-element>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferenceverificationstatus']" label="Georeference Verification Status" :maxlength="occurrenceFields['georeferenceverificationstatus'] ? occurrenceFields['georeferenceverificationstatus']['length'] : 0" :value="occurrenceData.georeferenceverificationstatus" @update:value="(value) => updateOccurrenceData('georeferenceverificationstatus', value)" :show-counter="false"></text-field-input-element>
+                        </div>
+                    </div>
+                    <div class="row q-col-gutter-xs">
+                        <div class="col-grow">
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferencesources']" label="Georeference Sources" :maxlength="occurrenceFields['georeferencesources'] ? occurrenceFields['georeferencesources']['length'] : 0" :value="occurrenceData.georeferencesources" @update:value="(value) => updateOccurrenceData('georeferencesources', value)" :show-counter="false"></text-field-input-element>
+                        </div>
+                    </div>
+                    <div class="row q-col-gutter-xs">
+                        <div class="col-grow">
+                            <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['georeferenceremarks']" label="Georeference Remarks" :maxlength="occurrenceFields['georeferenceremarks'] ? occurrenceFields['georeferenceremarks']['length'] : 0" :value="occurrenceData.georeferenceremarks" @update:value="(value) => updateOccurrenceData('georeferenceremarks', value)" :show-counter="false"></text-field-input-element>
+                        </div>
+                    </div>
+                    <div class="row q-col-gutter-xs">
+                        <div class="col-grow">
+                            <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['locationremarks']" label="Location Remarks" :value="occurrenceData.locationremarks" @update:value="(value) => updateOccurrenceData('locationremarks', value)"></text-field-input-element>
+                        </div>
+                    </div>
+                </template>
             </q-card-section>
         </q-card>
         <template v-if="showSpatialPopup">
@@ -115,6 +181,7 @@ const occurrenceEditorFormLocationElement = {
         'geo-locate-popup': geoLocatePopup,
         'occurrence-coordinate-tool-popup': occurrenceCoordinateToolPopup,
         'occurrence-verbatim-coordinates-input-element': occurrenceVerbatimCoordinatesInputElement,
+        'occurrence-verbatim-elevation-input-element': occurrenceVerbatimElevationInputElement,
         'single-country-auto-complete': singleCountryAutoComplete,
         'single-county-auto-complete': singleCountyAutoComplete,
         'single-state-province-auto-complete': singleStateProvinceAutoComplete,
@@ -122,7 +189,7 @@ const occurrenceEditorFormLocationElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup() {
-        const { showNotification } = useCore();
+        const { getCoordinateVerificationData, showAlert, showNotification } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const coordinateUncertaintyInMetersValue = Vue.ref(null);
@@ -134,8 +201,13 @@ const occurrenceEditorFormLocationElement = {
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
         const popupWindowType = Vue.ref(null);
         const showCoordinateToolPopup = Vue.ref(false);
+        const showExtendedForm = Vue.ref(false);
         const showGeoLocatePopup = Vue.ref(false);
         const showSpatialPopup = Vue.ref(false);
+
+        Vue.watch(occurrenceData, () => {
+            setExtendedView();
+        });
 
         function clearSpatialInputValues() {
             coordinateUncertaintyInMetersValue.value = null;
@@ -174,38 +246,47 @@ const occurrenceEditorFormLocationElement = {
         }
 
         function processCoordinateToolData(data) {
-            if(data.decimalLatitude && data.decimalLongitude && !occurrenceData.value.decimallatitude && !occurrenceData.value.decimallongitude){
-                occurrenceStore.updateOccurrenceEditData('decimallatitude', data['decimalLatitude']);
-                occurrenceStore.updateOccurrenceEditData('decimallongitude', data['decimalLongitude']);
+            if(data.decimalLatitude && data.decimalLongitude){
+                updateOccurrenceData('decimallatitude', data['decimalLatitude']);
+                updateOccurrenceData('decimallongitude', data['decimalLongitude']);
             }
             if(data.verbatimCoordinates){
-                occurrenceStore.updateOccurrenceEditData('verbatimcoordinates', data['verbatimCoordinates']);
+                updateOccurrenceData('verbatimcoordinates', data['verbatimCoordinates']);
             }
             closeCoordinateToolPopup();
         }
 
         function processGeolocateData(data) {
             if(data.decimalLatitude && data.decimalLongitude){
-                occurrenceStore.updateOccurrenceEditData('decimallatitude', data['decimalLatitude']);
-                occurrenceStore.updateOccurrenceEditData('decimallongitude', data['decimalLongitude']);
+                updateOccurrenceData('decimallatitude', data['decimalLatitude']);
+                updateOccurrenceData('decimallongitude', data['decimalLongitude']);
                 if(data.coordinateUncertaintyInMeters){
-                    occurrenceStore.updateOccurrenceEditData('coordinateuncertaintyinmeters', data['coordinateUncertaintyInMeters']);
+                    updateOccurrenceData('coordinateuncertaintyinmeters', data['coordinateUncertaintyInMeters']);
                 }
             }
             if(data.footprintWkt){
-                occurrenceStore.updateOccurrenceEditData('footprintwkt', data['footprintWkt']);
+                updateOccurrenceData('footprintwkt', data['footprintWkt']);
             }
             if((data.decimalLatitude && data.decimalLongitude) || data.footprintWkt){
-                occurrenceStore.updateOccurrenceEditData('georeferencesources', 'GeoLocate');
-                occurrenceStore.updateOccurrenceEditData('geodeticdatum', 'WGS84');
+                updateOccurrenceData('georeferencesources', 'GeoLocate');
+                updateOccurrenceData('geodeticdatum', 'WGS84');
             }
             closeGeolocatePopup();
         }
 
         function processRecalculatedDecimalCoordinates(data) {
             if(data.decimalLatitude && data.decimalLongitude){
-                occurrenceStore.updateOccurrenceEditData('decimallatitude', data['decimalLatitude']);
-                occurrenceStore.updateOccurrenceEditData('decimallongitude', data['decimalLongitude']);
+                updateOccurrenceData('decimallatitude', data['decimalLatitude']);
+                updateOccurrenceData('decimallongitude', data['decimalLongitude']);
+            }
+        }
+
+        function processRecalculatedElevationValues(data) {
+            if(data.minimumElevationInMeters){
+                updateOccurrenceData('minimumelevationinmeters', data['minimumElevationInMeters']);
+                if(data.maximumElevationInMeters){
+                    updateOccurrenceData('maximumelevationinmeters', data['maximumElevationInMeters']);
+                }
             }
         }
 
@@ -214,14 +295,27 @@ const occurrenceEditorFormLocationElement = {
                 const latDecimalPlaces = occurrenceData.value['decimallatitude'].toString().split('.')[1].length;
                 const longDecimalPlaces = occurrenceData.value['decimallongitude'].toString().split('.')[1].length;
                 if(Number(occurrenceData.value['decimallatitude']) !== Number(Number(data['decimalLatitude']).toFixed(latDecimalPlaces))){
-                    occurrenceStore.updateOccurrenceEditData('decimallatitude', data['decimalLatitude']);
+                    updateOccurrenceData('decimallatitude', data['decimalLatitude']);
                 }
                 if(Number(occurrenceData.value['decimallongitude']) !== Number(Number(data['decimalLongitude']).toFixed(longDecimalPlaces))){
-                    occurrenceStore.updateOccurrenceEditData('decimallongitude', data['decimalLongitude']);
+                    updateOccurrenceData('decimallongitude', data['decimalLongitude']);
                 }
                 if(Number(data['coordinateUncertaintyInMeters']) > 0){
-                    occurrenceStore.updateOccurrenceEditData('coordinateuncertaintyinmeters', data['coordinateUncertaintyInMeters']);
+                    updateOccurrenceData('coordinateuncertaintyinmeters', data['coordinateUncertaintyInMeters']);
                 }
+            }
+        }
+
+        function setExtendedView() {
+            if(occurrenceData.value.footprintwkt ||
+                occurrenceData.value.georeferencedby ||
+                occurrenceData.value.georeferenceprotocol ||
+                occurrenceData.value.georeferenceremarks ||
+                occurrenceData.value.georeferencesources ||
+                occurrenceData.value.georeferenceverificationstatus ||
+                occurrenceData.value.locationremarks
+            ){
+                showExtendedForm.value = true;
             }
         }
 
@@ -234,17 +328,73 @@ const occurrenceEditorFormLocationElement = {
 
         function updateLocalitySecuritySetting(value) {
             if(Number(value) === 1){
-                occurrenceStore.updateOccurrenceEditData('localitysecurity', value);
+                updateOccurrenceData('localitysecurity', value);
             }
             else{
-                occurrenceStore.updateOccurrenceEditData('localitysecurity', '0');
-                occurrenceStore.updateOccurrenceEditData('localitysecurityreason', value);
+                updateOccurrenceData('localitysecurity', '0');
+                updateOccurrenceData('localitysecurityreason', value);
             }
         }
 
         function updateOccurrenceData(key, value) {
             occurrenceStore.updateOccurrenceEditData(key, value);
+            if(key === 'decimallongitude' && occurrenceData.value['decimallatitude']){
+                validateCoordinates();
+            }
         }
+
+        function validateCoordinates() {
+            getCoordinateVerificationData(occurrenceData.value['decimallatitude'], occurrenceData.value['decimallongitude'], (data) => {
+                if(data.hasOwnProperty('address')){
+                    const addressArr = data.address;
+                    let coordCountry = addressArr.country;
+                    let coordState = addressArr.state;
+                    let coordCounty = addressArr.county;
+                    let coordValid = true;
+                    if((!occurrenceData.value['country'] || occurrenceData.value['country'] === '') && coordCountry && coordCountry !== ''){
+                        updateOccurrenceData('country', coordCountry);
+                    }
+                    if(occurrenceData.value['country'] && coordCountry && occurrenceData.value['country'] !== '' && occurrenceData.value['country'].toLowerCase() !== coordCountry.toLowerCase()){
+                        if(occurrenceData.value['country'].toLowerCase() !== 'usa' && occurrenceData.value['country'].toLowerCase() !== 'united states of america' && coordCountry.toLowerCase() !== 'united states'){
+                            coordValid = false;
+                        }
+                    }
+                    if(coordState && coordState !== ''){
+                        if(occurrenceData.value['stateprovince'] && occurrenceData.value['stateprovince'] !== '' && occurrenceData.value['stateprovince'].toLowerCase() !== coordState.toLowerCase()){
+                            coordValid = false;
+                        }
+                        else{
+                            updateOccurrenceData('stateprovince', coordState);
+                        }
+                    }
+                    if(coordCounty && coordCounty !== ''){
+                        let coordCountyIn = coordCounty.replace(' County', '');
+                        coordCountyIn = coordCountyIn.replace(' Parish', '');
+                        if(occurrenceData.value['county'] && occurrenceData.value['county'] !== '' && occurrenceData.value['county'].toLowerCase() !== coordCountyIn.toLowerCase()){
+                            coordValid = false;
+                        }
+                        else{
+                            updateOccurrenceData('county', coordCountyIn);
+                        }
+                    }
+                    if(!coordValid){
+                        let alertText = 'Are those coordinates accurate? They currently map to: ' + coordCountry + ', ' + coordState;
+                        if(coordCounty) {
+                            alertText += ', ' + coordCounty;
+                        }
+                        alertText += ', which differs from what you have entered.';
+                        showAlert(alertText, false);
+                    }
+                }
+                else{
+                    showNotification('negative', 'Unable to identify a country from the coordinates entered. Are they accurate?');
+                }
+            });
+        }
+
+        Vue.onMounted(() => {
+            setExtendedView();
+        });
 
         return {
             coordinateUncertaintyInMetersValue,
@@ -256,6 +406,7 @@ const occurrenceEditorFormLocationElement = {
             occurrenceFieldDefinitions,
             popupWindowType,
             showCoordinateToolPopup,
+            showExtendedForm,
             showGeoLocatePopup,
             showSpatialPopup,
             closeCoordinateToolPopup,
@@ -266,6 +417,7 @@ const occurrenceEditorFormLocationElement = {
             processCoordinateToolData,
             processGeolocateData,
             processRecalculatedDecimalCoordinates,
+            processRecalculatedElevationValues,
             processSpatialData,
             updateLocalitySecuritySetting,
             updateOccurrenceData

@@ -136,6 +136,19 @@ function useCore() {
         });
     }
 
+    function getCoordinateVerificationData(decimalLat, decimalLong, callback) {
+        if(decimalLat && decimalLong){
+            const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + decimalLat.toString() + '&lon=' + decimalLong.toString() + '&format=json';
+            fetch(url)
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
+        }
+    }
+
     function getErrorResponseText(status, statusText){
         let text;
         if(status === 0){
@@ -173,14 +186,30 @@ function useCore() {
         window.open(url, '_blank');
     }
 
-    function showNotification(type, text) {
+    function showAlert(text, confirmation, callback = null) {
+        $q.dialog({
+            message: text,
+            cancel: confirmation,
+            persistent: true
+        }).onOk(() => {
+            if(callback){
+                callback(true);
+            }
+        }).onCancel(() => {
+            if(callback){
+                callback(false);
+            }
+        })
+    }
+
+    function showNotification(type, text, duration = 5000) {
         $q.notify({
             type: type,
             icon: null,
             message: text,
             multiLine: true,
             position: 'top',
-            timeout: 5000
+            timeout: duration
         });
     }
 
@@ -243,11 +272,13 @@ function useCore() {
         convertUtmToDecimalDegrees,
         generateRandHexColor,
         getArrayBuffer,
+        getCoordinateVerificationData,
         getErrorResponseText,
         getRgbaStrFromHexOpacity,
         hexToRgb,
         hideWorking,
         openTutorialWindow,
+        showAlert,
         showNotification,
         showWorking,
         writeMySQLWktString
