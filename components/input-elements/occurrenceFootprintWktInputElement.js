@@ -22,7 +22,7 @@ const occurrenceFootprintWktInputElement = {
             <div class="col-grow">
                 <q-input outlined v-model="value" type="textarea" :label="label" @update:model-value="processValueChange" :readonly="disabled" autogrow dense>
                     <template v-if="!disabled && definition" v-slot:append>
-                        <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                        <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Clear value
                             </q-tooltip>
@@ -39,7 +39,7 @@ const occurrenceFootprintWktInputElement = {
                         </q-icon>
                     </template>
                     <template v-else-if="!disabled" v-slot:append>
-                        <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                        <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Clear value
                             </q-tooltip>
