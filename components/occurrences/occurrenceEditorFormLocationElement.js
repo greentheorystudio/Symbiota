@@ -124,20 +124,23 @@ const occurrenceEditorFormLocationElement = {
                             <text-field-input-element :definition="occurrenceFieldDefinitions['georeferenceverificationstatus']" label="Georeference Verification Status" :maxlength="occurrenceFields['georeferenceverificationstatus'] ? occurrenceFields['georeferenceverificationstatus']['length'] : 0" :value="occurrenceData.georeferenceverificationstatus" @update:value="(value) => updateOccurrenceData('georeferenceverificationstatus', value)" :show-counter="false"></text-field-input-element>
                         </div>
                     </div>
-                    <div class="row q-col-gutter-xs">
+                    <div class="row">
                         <div class="col-grow">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['georeferencesources']" label="Georeference Sources" :maxlength="occurrenceFields['georeferencesources'] ? occurrenceFields['georeferencesources']['length'] : 0" :value="occurrenceData.georeferencesources" @update:value="(value) => updateOccurrenceData('georeferencesources', value)" :show-counter="false"></text-field-input-element>
                         </div>
                     </div>
-                    <div class="row q-col-gutter-xs">
+                    <div class="row">
                         <div class="col-grow">
                             <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['georeferenceremarks']" label="Georeference Remarks" :maxlength="occurrenceFields['georeferenceremarks'] ? occurrenceFields['georeferenceremarks']['length'] : 0" :value="occurrenceData.georeferenceremarks" @update:value="(value) => updateOccurrenceData('georeferenceremarks', value)" :show-counter="false"></text-field-input-element>
                         </div>
                     </div>
-                    <div class="row q-col-gutter-xs">
+                    <div class="row">
                         <div class="col-grow">
                             <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['locationremarks']" label="Location Remarks" :value="occurrenceData.locationremarks" @update:value="(value) => updateOccurrenceData('locationremarks', value)"></text-field-input-element>
                         </div>
+                    </div>
+                    <div class="row q-gutter-sm">
+                        <occurrence-footprint-wkt-input-element :definition="occurrenceFieldDefinitions['footprintwkt']" label="Footprint WKT" :value="occurrenceData.footprintwkt" @update:value="(value) => updateOccurrenceData('footprintwkt', value)"></occurrence-footprint-wkt-input-element>
                     </div>
                 </template>
             </q-card-section>
@@ -180,6 +183,7 @@ const occurrenceEditorFormLocationElement = {
         'checkbox-input-element': checkboxInputElement,
         'geo-locate-popup': geoLocatePopup,
         'occurrence-coordinate-tool-popup': occurrenceCoordinateToolPopup,
+        'occurrence-footprint-wkt-input-element': occurrenceFootprintWktInputElement,
         'occurrence-verbatim-coordinates-input-element': occurrenceVerbatimCoordinatesInputElement,
         'occurrence-verbatim-elevation-input-element': occurrenceVerbatimElevationInputElement,
         'single-country-auto-complete': singleCountryAutoComplete,
@@ -304,6 +308,9 @@ const occurrenceEditorFormLocationElement = {
                     updateOccurrenceData('coordinateuncertaintyinmeters', data['coordinateUncertaintyInMeters']);
                 }
             }
+            else if(popupWindowType.value.includes('wkt') && data.hasOwnProperty('footprintWKT')){
+                updateOccurrenceData('footprintwkt', data['footprintWKT']);
+            }
         }
 
         function setExtendedView() {
@@ -391,6 +398,8 @@ const occurrenceEditorFormLocationElement = {
                 }
             });
         }
+
+        Vue.provide('openSpatialPopup', openSpatialPopup);
 
         Vue.onMounted(() => {
             setExtendedView();

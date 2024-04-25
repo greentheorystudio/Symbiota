@@ -1066,7 +1066,12 @@ const spatialAnalysisModule = {
             if(props.inputWindowMode && ((props.inputWindowToolsArr.length === 0) || (props.inputWindowToolsArr.length > 0 && selectInteraction.value.getFeatures().getLength() === 1))){
                 if(geoPolyArr.value.length > 0){
                     submitReady = true;
-                    inputResponseData.value['polyArr'] = geoPolyArr.value;
+                    if(props.inputWindowToolsArr.includes('wkt')){
+                        inputResponseData.value['footprintWKT'] = geoPolyArr.value[0];
+                    }
+                    else{
+                        inputResponseData.value['polyArr'] = geoPolyArr.value;
+                    }
                 }
                 if(geoCircleArr.value.length > 0){
                     submitReady = true;
