@@ -32,7 +32,7 @@ const occurrenceVerbatimElevationInputElement = {
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
             <q-input outlined v-model="value" :label="label" :maxlength="maxlength" @update:model-value="processValueChange" dense>
-                <template v-if="definition" v-slot:append>
+                <template v-if="value || definition" v-slot:append>
                     <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
@@ -43,21 +43,9 @@ const occurrenceVerbatimElevationInputElement = {
                             Recalculate decimal coordinates
                         </q-tooltip>
                     </q-icon>
-                    <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                    <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
-                        </q-tooltip>
-                    </q-icon>
-                </template>
-                <template v-else-if="value" v-slot:append>
-                    <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);">
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Clear value
-                        </q-tooltip>
-                    </q-icon>
-                    <q-icon name="calculate" class="cursor-pointer" @click="parseElevationValues();">
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Recalculate decimal coordinates
                         </q-tooltip>
                     </q-icon>
                 </template>
@@ -65,7 +53,7 @@ const occurrenceVerbatimElevationInputElement = {
         </template>
         <template v-else>
             <q-input outlined v-model="value" :label="label" @update:model-value="processValueChange" :readonly="disabled" dense>
-                <template v-if="!disabled && definition" v-slot:append>
+                <template v-if="!disabled && (value || definition)" v-slot:append>
                     <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
@@ -76,21 +64,9 @@ const occurrenceVerbatimElevationInputElement = {
                             Recalculate minimum and maximum elevation values
                         </q-tooltip>
                     </q-icon>
-                    <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                    <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
-                        </q-tooltip>
-                    </q-icon>
-                </template>
-                <template v-else-if="!disabled && value" v-slot:append>
-                    <q-icon name="cancel" class="cursor-pointer" @click="processValueChange(null);">
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Clear value
-                        </q-tooltip>
-                    </q-icon>
-                    <q-icon name="calculate" class="cursor-pointer" @click="parseElevationValues();">
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Recalculate minimum and maximum elevation values
                         </q-tooltip>
                     </q-icon>
                 </template>

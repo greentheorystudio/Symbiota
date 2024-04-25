@@ -21,7 +21,7 @@ const occurrenceFootprintWktInputElement = {
         <template v-if="showFootprintWktText">
             <div class="col-grow">
                 <q-input outlined v-model="value" type="textarea" :label="label" @update:model-value="processValueChange" :readonly="disabled" autogrow dense>
-                    <template v-if="!disabled && definition" v-slot:append>
+                    <template v-if="!disabled" v-slot:append>
                         <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Clear value
@@ -32,21 +32,9 @@ const occurrenceFootprintWktInputElement = {
                                 Hide text display
                             </q-tooltip>
                         </q-icon>
-                        <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                        <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 See field definition
-                            </q-tooltip>
-                        </q-icon>
-                    </template>
-                    <template v-else-if="!disabled" v-slot:append>
-                        <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
-                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                Clear value
-                            </q-tooltip>
-                        </q-icon>
-                        <q-icon name="keyboard_off" class="cursor-pointer" @click="showFootprintWktText = false">
-                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                Hide text display
                             </q-tooltip>
                         </q-icon>
                     </template>
@@ -57,10 +45,10 @@ const occurrenceFootprintWktInputElement = {
             <div class="q-ml-md text-bold self-center">
                 <div>
                     <template v-if="value">
-                        Footprint WKT saved
+                        <span class="text-green-9">Footprint WKT saved</span>
                     </template>
                     <template v-else>
-                        No Footprint WKT saved
+                        <span class="text-red-9">No Footprint WKT saved</span>
                     </template>
                 </div>
             </div>

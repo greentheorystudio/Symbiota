@@ -110,7 +110,6 @@ const occurrenceEditorSingleDisplay = {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const clientRoot = baseStore.getClientRoot;
-        const collectionEventAutoSearch = Vue.ref(false);
         const collId = Vue.computed(() => occurrenceStore.getCollId);
         const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
         const containerWidth = Vue.ref(0);
@@ -159,20 +158,14 @@ const occurrenceEditorSingleDisplay = {
             occurrenceStore.goToPreviousRecord();
         }
 
-        function setCollectionEventAutoSearch(value) {
-            collectionEventAutoSearch.value = value;
-        }
-
         function setContainerWidth() {
             containerWidth.value = moduleContainerRef.value.clientWidth;
         }
 
         Vue.provide('changeImageTranscriberPopupDisplay', changeImageTranscriberPopupDisplay);
-        Vue.provide('collectionEventAutoSearch', collectionEventAutoSearch);
         Vue.provide('containerWidth', containerWidth);
         Vue.provide('occurrenceFields', occurrenceFields);
         Vue.provide('occurrenceFieldDefinitions', occurrenceFieldDefinitions);
-        Vue.provide('setCollectionEventAutoSearch', setCollectionEventAutoSearch);
 
         Vue.onMounted(() => {
             setContainerWidth();

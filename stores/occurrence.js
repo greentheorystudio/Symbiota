@@ -183,6 +183,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         checklistArr: [],
         collectingEventData: {},
         collectionData: {},
+        collectionEventAutoSearch: false,
         collId: 0,
         crowdSourceQueryFieldOptions: [
             {field: 'family', label: 'Family'},
@@ -317,6 +318,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getCollectionData(state) {
             return state.collectionData;
+        },
+        getCollectionEventAutoSearch(state) {
+            return state.collectionEventAutoSearch;
         },
         getCollId(state) {
             return state.collId;
@@ -608,6 +612,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     }
                 });
             });
+        },
+        setCollectionEventAutoSearch(value) {
+            this.collectionEventAutoSearch = value;
         },
         setCollectionEventData(eventid) {
             if(eventid && Number(eventid) > 0){

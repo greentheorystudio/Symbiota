@@ -32,14 +32,12 @@ const occurrenceEditorOccurrenceDataControls = {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const additionalDataFields = Vue.computed(() => occurrenceStore.getAdditionalDataFields);
-        const collectionEventAutoSearch = Vue.inject('collectionEventAutoSearch');
+        const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectionEventAutoSearch);
         const editsExist = Vue.computed(() => occurrenceStore.getOccurrenceEditsExist);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceValid = Vue.computed(() => occurrenceStore.getOccurrenceValid);
-
-        const setCollectionEventAutoSearch = Vue.inject('setCollectionEventAutoSearch');
 
         function changeEntryFollowUpAction(value) {
             occurrenceStore.setEntryFollowUpAction(value);
@@ -65,6 +63,10 @@ const occurrenceEditorOccurrenceDataControls = {
                     showNotification('negative', 'There was an error saving the occurrence edits.');
                 }
             });
+        }
+
+        function setCollectionEventAutoSearch(value) {
+            occurrenceStore.setCollectionEventAutoSearch(value);
         }
 
         return {
