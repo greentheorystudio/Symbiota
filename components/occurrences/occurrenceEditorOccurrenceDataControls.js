@@ -3,7 +3,12 @@ const occurrenceEditorOccurrenceDataControls = {
         <div class="row justify-between">
             <div>
                 <template v-if="Number(occId) === 0">
-                    <occurrence-entry-follow-up-action-selector :selected-action="entryFollowUpAction" @change-occurrence-entry-follow-up-action="changeEntryFollowUpAction"></occurrence-entry-follow-up-action-selector>
+                    <div class="row q-gutter-sm">
+                        <occurrence-entry-follow-up-action-selector :selected-action="entryFollowUpAction" @change-occurrence-entry-follow-up-action="changeEntryFollowUpAction"></occurrence-entry-follow-up-action-selector>
+                        <div v-if="additionalDataFields.length === 0 && occurrenceEntryFormat !== 'benthic'">
+                            <q-toggle v-model="collectionEventAutoSearch" checked-icon="check" color="green" unchecked-icon="clear" label="Event Auto Search" @update:model-value="setCollectionEventAutoSearch"></q-toggle>
+                        </div>
+                    </div>
                 </template>
                 <template v-else-if="editsExist">
                     <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
@@ -26,10 +31,15 @@ const occurrenceEditorOccurrenceDataControls = {
         const { showNotification } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const additionalDataFields = Vue.computed(() => occurrenceStore.getAdditionalDataFields);
+        const collectionEventAutoSearch = Vue.inject('collectionEventAutoSearch');
         const editsExist = Vue.computed(() => occurrenceStore.getOccurrenceEditsExist);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
+        const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceValid = Vue.computed(() => occurrenceStore.getOccurrenceValid);
+
+        const setCollectionEventAutoSearch = Vue.inject('setCollectionEventAutoSearch');
 
         function changeEntryFollowUpAction(value) {
             occurrenceStore.setEntryFollowUpAction(value);
@@ -58,13 +68,17 @@ const occurrenceEditorOccurrenceDataControls = {
         }
 
         return {
+            additionalDataFields,
+            collectionEventAutoSearch,
             editsExist,
             entryFollowUpAction,
             occId,
+            occurrenceEntryFormat,
             occurrenceValid,
             changeEntryFollowUpAction,
             createOccurrenceRecord,
-            saveOccurrenceEdits
+            saveOccurrenceEdits,
+            setCollectionEventAutoSearch
         }
     }
 };

@@ -377,9 +377,7 @@ const spatialAnalysisModule = {
             const selectextent = mapSettings.selectSource.getExtent();
             map.getView().fit(selectextent, map.getSize());
             let fittedZoom = map.getView().getZoom();
-            if(fittedZoom > 10){
-                map.getView().setZoom(fittedZoom - 8);
-            }
+            map.getView().setZoom(fittedZoom - 2);
         }
 
         function createPolygonFromBoundingBox(bbox, selected) {
@@ -415,9 +413,7 @@ const spatialAnalysisModule = {
             const selectextent = mapSettings.selectSource.getExtent();
             map.getView().fit(selectextent, map.getSize());
             let fittedZoom = map.getView().getZoom();
-            if(fittedZoom > 10){
-                map.getView().setZoom(fittedZoom - 8);
-            }
+            map.getView().setZoom(fittedZoom - 2);
         }
 
         function createPolysFromPolyArr(polyArr, selected) {
