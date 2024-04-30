@@ -440,6 +440,33 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 });
             });
         },
+        getCollectingEvents(callback) {
+            const formData = new FormData();
+            console.log(this.collId.toString());
+            console.log(this.occId.toString());
+            console.log(this.occurrenceEditData['recordedby']);
+            console.log(this.occurrenceEditData['recordnumber']);
+            console.log(this.occurrenceEditData['eventdate']);
+            console.log(this.parseRecordedByLastName(this.occurrenceEditData['recordedby']));
+            console.log('getCollectingEventArr');
+            formData.append('collid', this.collId.toString());
+            formData.append('occid', this.occId.toString());
+            formData.append('recordedby', this.occurrenceEditData['recordedby']);
+            formData.append('recordnumber', this.occurrenceEditData['recordnumber']);
+            formData.append('eventdate', this.occurrenceEditData['eventdate']);
+            formData.append('lastname', this.parseRecordedByLastName(this.occurrenceEditData['recordedby']));
+            formData.append('action', 'getCollectingEventArr');
+            fetch(occurrenceCollectingEventApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
+        },
         goToFirstRecord() {
             this.setCurrentOccurrenceRecord(this.occidArr[0]);
         },
@@ -470,92 +497,123 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.setCurrentOccurrenceRecord(this.occidArr[(this.getCurrentRecordIndex - 2)]);
         },
         mergeEventOccurrenceData() {
-            this.occurrenceData['eventID'] = this.eventId;
-            this.occurrenceData['fieldNotes'] = this.eventData['fieldNotes'];
-            this.occurrenceData['fieldnumber'] = this.eventData['fieldnumber'];
-            this.occurrenceData['recordedBy'] = this.eventData['recordedBy'];
-            this.occurrenceData['recordNumber'] = this.eventData['recordNumber'];
-            this.occurrenceData['recordedbyid'] = this.eventData['recordedbyid'];
-            this.occurrenceData['associatedCollectors'] = this.eventData['associatedCollectors'];
-            this.occurrenceData['eventDate'] = this.eventData['eventDate'];
-            this.occurrenceData['latestDateCollected'] = this.eventData['latestDateCollected'];
-            this.occurrenceData['eventTime'] = this.eventData['eventTime'];
-            this.occurrenceData['year'] = this.eventData['year'];
-            this.occurrenceData['month'] = this.eventData['month'];
-            this.occurrenceData['day'] = this.eventData['day'];
-            this.occurrenceData['startDayOfYear'] = this.eventData['startDayOfYear'];
-            this.occurrenceData['endDayOfYear'] = this.eventData['endDayOfYear'];
-            this.occurrenceData['verbatimEventDate'] = this.eventData['verbatimEventDate'];
-            this.occurrenceData['habitat'] = this.eventData['habitat'];
-            this.occurrenceData['substrate'] = this.eventData['substrate'];
-            if(Number(this.occurrenceData['localitySecurity']) !== 1 && Number(this.eventData['localitySecurity']) === 1){
-                this.occurrenceData['localitySecurity'] = this.eventData['localitySecurity'];
-                this.occurrenceData['localitySecurityReason'] = this.eventData['localitySecurityReason'];
+            this.occurrenceEditData['eventid'] = this.eventId;
+            this.occurrenceEditData['fieldnotes'] = this.eventData['fieldnotes'];
+            this.occurrenceEditData['fieldnumber'] = this.eventData['fieldnumber'];
+            this.occurrenceEditData['recordedby'] = this.eventData['recordedby'];
+            this.occurrenceEditData['recordnumber'] = this.eventData['recordnumber'];
+            this.occurrenceEditData['recordedbyid'] = this.eventData['recordedbyid'];
+            this.occurrenceEditData['associatedcollectors'] = this.eventData['associatedcollectors'];
+            this.occurrenceEditData['eventdate'] = this.eventData['eventdate'];
+            this.occurrenceEditData['latestdatecollected'] = this.eventData['latestdatecollected'];
+            this.occurrenceEditData['eventtime'] = this.eventData['eventtime'];
+            this.occurrenceEditData['year'] = this.eventData['year'];
+            this.occurrenceEditData['month'] = this.eventData['month'];
+            this.occurrenceEditData['day'] = this.eventData['day'];
+            this.occurrenceEditData['startdayofyear'] = this.eventData['startdayofyear'];
+            this.occurrenceEditData['enddayofyear'] = this.eventData['enddayofyear'];
+            this.occurrenceEditData['verbatimeventdate'] = this.eventData['verbatimeventdate'];
+            this.occurrenceEditData['habitat'] = this.eventData['habitat'];
+            this.occurrenceEditData['substrate'] = this.eventData['substrate'];
+            if(Number(this.occurrenceEditData['localitysecurity']) !== 1 && Number(this.eventData['localitysecurity']) === 1){
+                this.occurrenceEditData['localitysecurity'] = this.eventData['localitysecurity'];
+                this.occurrenceEditData['localitysecurityreason'] = this.eventData['localitysecurityreason'];
             }
-            if(this.eventData['decimalLatitude']){
-                this.occurrenceData['decimalLatitude'] = this.eventData['decimalLatitude'];
+            if(this.eventData['decimallatitude']){
+                this.occurrenceEditData['decimallatitude'] = this.eventData['decimallatitude'];
             }
-            if(this.eventData['decimalLongitude']){
-                this.occurrenceData['decimalLongitude'] = this.eventData['decimalLongitude'];
+            if(this.eventData['decimallongitude']){
+                this.occurrenceEditData['decimallongitude'] = this.eventData['decimallongitude'];
             }
-            if(this.eventData['geodeticDatum']){
-                this.occurrenceData['geodeticDatum'] = this.eventData['geodeticDatum'];
+            if(this.eventData['geodeticdatum']){
+                this.occurrenceEditData['geodeticdatum'] = this.eventData['geodeticdatum'];
             }
-            if(this.eventData['coordinateUncertaintyInMeters']){
-                this.occurrenceData['coordinateUncertaintyInMeters'] = this.eventData['coordinateUncertaintyInMeters'];
+            if(this.eventData['coordinateuncertaintyinmeters']){
+                this.occurrenceEditData['coordinateuncertaintyinmeters'] = this.eventData['coordinateuncertaintyinmeters'];
             }
-            if(this.eventData['footprintWKT']){
-                this.occurrenceData['footprintWKT'] = this.eventData['footprintWKT'];
+            if(this.eventData['footprintwkt']){
+                this.occurrenceEditData['footprintwkt'] = this.eventData['footprintwkt'];
             }
-            if(this.eventData['georeferencedBy']){
-                this.occurrenceData['georeferencedBy'] = this.eventData['georeferencedBy'];
+            if(this.eventData['georeferencedby']){
+                this.occurrenceEditData['georeferencedby'] = this.eventData['georeferencedby'];
             }
-            if(this.eventData['georeferenceProtocol']){
-                this.occurrenceData['georeferenceProtocol'] = this.eventData['georeferenceProtocol'];
+            if(this.eventData['georeferenceprotocol']){
+                this.occurrenceEditData['georeferenceprotocol'] = this.eventData['georeferenceprotocol'];
             }
-            if(this.eventData['georeferenceSources']){
-                this.occurrenceData['georeferenceSources'] = this.eventData['georeferenceSources'];
+            if(this.eventData['georeferencesources']){
+                this.occurrenceEditData['georeferencesources'] = this.eventData['georeferencesources'];
             }
-            if(this.eventData['georeferenceVerificationStatus']){
-                this.occurrenceData['georeferenceVerificationStatus'] = this.eventData['georeferenceVerificationStatus'];
+            if(this.eventData['georeferenceverificationstatus']){
+                this.occurrenceEditData['georeferenceverificationstatus'] = this.eventData['georeferenceverificationstatus'];
             }
-            if(this.eventData['georeferenceRemarks']){
-                this.occurrenceData['georeferenceRemarks'] = this.eventData['georeferenceRemarks'];
+            if(this.eventData['georeferenceremarks']){
+                this.occurrenceEditData['georeferenceremarks'] = this.eventData['georeferenceremarks'];
             }
-            this.occurrenceData['minimumDepthInMeters'] = this.eventData['minimumDepthInMeters'];
-            this.occurrenceData['maximumDepthInMeters'] = this.eventData['maximumDepthInMeters'];
-            this.occurrenceData['verbatimDepth'] = this.eventData['verbatimDepth'];
-            this.occurrenceData['samplingProtocol'] = this.eventData['samplingProtocol'];
-            this.occurrenceData['samplingEffort'] = this.eventData['samplingEffort'];
-            this.occurrenceData['labelProject'] = this.eventData['labelProject'];
+            this.occurrenceEditData['minimumdepthinmeters'] = this.eventData['minimumdepthinmeters'];
+            this.occurrenceEditData['maximumdepthinmeters'] = this.eventData['maximumdepthinmeters'];
+            this.occurrenceEditData['verbatimdepth'] = this.eventData['verbatimdepth'];
+            this.occurrenceEditData['samplingprotocol'] = this.eventData['samplingprotocol'];
+            this.occurrenceEditData['samplingeffort'] = this.eventData['samplingeffort'];
+            this.occurrenceEditData['labelproject'] = this.eventData['labelproject'];
         },
         mergeLocationOccurrenceData() {
-            this.occurrenceData['locationID'] = this.locationId;
-            this.occurrenceData['waterBody'] = this.locationData['waterBody'];
-            this.occurrenceData['country'] = this.locationData['country'];
-            this.occurrenceData['stateProvince'] = this.locationData['stateProvince'];
-            this.occurrenceData['county'] = this.locationData['county'];
-            this.occurrenceData['municipality'] = this.locationData['municipality'];
-            this.occurrenceData['locality'] = this.locationData['locality'];
-            this.occurrenceData['localitySecurity'] = this.locationData['localitySecurity'];
-            this.occurrenceData['localitySecurityReason'] = this.locationData['localitySecurityReason'];
-            this.occurrenceData['decimalLatitude'] = this.locationData['decimalLatitude'];
-            this.occurrenceData['decimalLongitude'] = this.locationData['decimalLongitude'];
-            this.occurrenceData['geodeticDatum'] = this.locationData['geodeticDatum'];
-            this.occurrenceData['coordinateUncertaintyInMeters'] = this.locationData['coordinateUncertaintyInMeters'];
-            this.occurrenceData['footprintWKT'] = this.locationData['footprintWKT'];
-            this.occurrenceData['coordinatePrecision'] = this.locationData['coordinatePrecision'];
-            this.occurrenceData['locationRemarks'] = this.locationData['locationRemarks'];
-            this.occurrenceData['verbatimCoordinates'] = this.locationData['verbatimCoordinates'];
-            this.occurrenceData['verbatimCoordinateSystem'] = this.locationData['verbatimCoordinateSystem'];
-            this.occurrenceData['georeferencedBy'] = this.locationData['georeferencedBy'];
-            this.occurrenceData['georeferenceProtocol'] = this.locationData['georeferenceProtocol'];
-            this.occurrenceData['georeferenceSources'] = this.locationData['georeferenceSources'];
-            this.occurrenceData['georeferenceVerificationStatus'] = this.locationData['georeferenceVerificationStatus'];
-            this.occurrenceData['georeferenceRemarks'] = this.locationData['georeferenceRemarks'];
-            this.occurrenceData['minimumElevationInMeters'] = this.locationData['minimumElevationInMeters'];
-            this.occurrenceData['maximumElevationInMeters'] = this.locationData['maximumElevationInMeters'];
-            this.occurrenceData['verbatimElevation'] = this.locationData['verbatimElevation'];
+            this.occurrenceEditData['locationid'] = this.locationId;
+            this.occurrenceEditData['waterbody'] = this.locationData['waterbody'];
+            this.occurrenceEditData['country'] = this.locationData['country'];
+            this.occurrenceEditData['stateprovince'] = this.locationData['stateprovince'];
+            this.occurrenceEditData['county'] = this.locationData['county'];
+            this.occurrenceEditData['municipality'] = this.locationData['municipality'];
+            this.occurrenceEditData['locality'] = this.locationData['locality'];
+            this.occurrenceEditData['localitysecurity'] = this.locationData['localitysecurity'];
+            this.occurrenceEditData['localitysecurityreason'] = this.locationData['localitysecurityreason'];
+            this.occurrenceEditData['decimallatitude'] = this.locationData['decimallatitude'];
+            this.occurrenceEditData['decimallongitude'] = this.locationData['decimallongitude'];
+            this.occurrenceEditData['geodeticdatum'] = this.locationData['geodeticdatum'];
+            this.occurrenceEditData['coordinateuncertaintyinmeters'] = this.locationData['coordinateuncertaintyinmeters'];
+            this.occurrenceEditData['footprintwkt'] = this.locationData['footprintwkt'];
+            this.occurrenceEditData['coordinateprecision'] = this.locationData['coordinateprecision'];
+            this.occurrenceEditData['locationremarks'] = this.locationData['locationremarks'];
+            this.occurrenceEditData['verbatimcoordinates'] = this.locationData['verbatimcoordinates'];
+            this.occurrenceEditData['verbatimcoordinatesystem'] = this.locationData['verbatimcoordinatesystem'];
+            this.occurrenceEditData['georeferencedby'] = this.locationData['georeferencedby'];
+            this.occurrenceEditData['georeferenceprotocol'] = this.locationData['georeferenceprotocol'];
+            this.occurrenceEditData['georeferencesources'] = this.locationData['georeferencesources'];
+            this.occurrenceEditData['georeferenceverificationstatus'] = this.locationData['georeferenceverificationstatus'];
+            this.occurrenceEditData['georeferenceremarks'] = this.locationData['georeferenceremarks'];
+            this.occurrenceEditData['minimumelevationinmeters'] = this.locationData['minimumelevationinmeters'];
+            this.occurrenceEditData['maximumelevationinmeters'] = this.locationData['maximumelevationinmeters'];
+            this.occurrenceEditData['verbatimelevation'] = this.locationData['verbatimelevation'];
+        },
+        parseRecordedByLastName(nameStr) {
+            let lastName = null;
+            const trimmedName = nameStr ? nameStr.trim() : null;
+            if(trimmedName){
+                let lastNameArr = [];
+                let primaryArr = trimmedName.split(';');
+                if(primaryArr.length > 0){
+                    primaryArr = primaryArr[0].split('&');
+                }
+                if(primaryArr.length > 0){
+                    primaryArr = primaryArr[0].split(' and ');
+                }
+                if(primaryArr.length > 0){
+                    lastNameArr = primaryArr[0].split(',');
+                }
+                if(lastNameArr.length > 0 && lastNameArr[0]){
+                    if(lastNameArr.length > 1){
+                        lastName = lastNameArr[0];
+                    }
+                    else{
+                        let tempArr = lastNameArr[0].split(' ');
+                        lastName = tempArr.pop();
+                        do{
+                            lastName = tempArr.pop();
+                        }
+                        while(tempArr.length > 0 && (lastName.includes('.') || lastName === 'III' || lastName.length < 3));
+                    }
+                }
+            }
+            return lastName;
         },
         setAdditionalData() {
             const formData = new FormData();

@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceDataManager.php');
 include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceCollectingEventManager{
@@ -66,7 +67,7 @@ class OccurrenceCollectingEventManager{
         $retArr = array();
         $sql = 'SELECT a.adddataid, a.field, a.datavalue, a.initialtimestamp '.
             'FROM omoccuradditionaldata AS a '.
-            'WHERE a.eventID = ' . $eventid . ' ';
+            'WHERE a.eventID = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -75,6 +76,89 @@ class OccurrenceCollectingEventManager{
                     $name = $val->name;
                     $retArr[$name] = $r->$name;
                 }
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getCollectingEventArr($collid, $occid, $vars): array
+    {
+        $retArr = array();
+        $fieldNameArr = array();
+        $sqlWhereArr = array();
+        $occFields = (new OccurrenceDataManager)->getOccurrenceFields();
+        $recordedby = $vars['recordedby'] ? Sanitizer::cleanInStr($this->conn, $vars['recordedby']) : null;
+        $lastname = $vars['lastname'] ? Sanitizer::cleanInStr($this->conn, $vars['lastname']) : null;
+        $recordnumber = $vars['recordnumber'] ? Sanitizer::cleanInStr($this->conn, $vars['recordnumber']) : null;
+        $eventdate = $vars['eventdate'] ? Sanitizer::cleanInStr($this->conn, $vars['eventdate']) : null;
+        foreach($occFields as $field => $fieldArr){
+            if($field === 'year' || $field === 'month' || $field === 'day'){
+                $fieldNameArr[] = 'o.`' . $field . '`';
+            }
+            else{
+                $fieldNameArr[] = 'o.' . $field;
+            }
+        }
+        if((int)$vars['locationid'] > 0){
+            $sqlWhereArr[] = 'o.locationid = ' . (int)$vars['locationid'];
+        }
+        else{
+            if($recordedby || $lastname){
+                $collWhereArr = array();
+                if($recordedby){
+                    $collWhereArr[] = 'o.recordedby = "' . $recordedby . '"';
+                }
+                if($lastname){
+                    if(strlen($vars['lastname']) < 4){
+                        $collWhereArr[] = 'o.recordedby LIKE "%'.$lastname.'%"';
+                    }
+                    else{
+                        $collWhereArr[] = 'MATCH(f.recordedby) AGAINST("'.$lastname.'")';
+                    }
+                }
+                $sqlWhereArr[] = '(' . implode(' OR ', $collWhereArr) . ')';
+            }
+            if($recordnumber){
+                if(is_numeric($recordnumber)){
+                    $nStart = (int)$recordnumber - 4;
+                    if($nStart < 1){
+                        $nStart = 1;
+                    }
+                    $nEnd = (int)$recordnumber + 4;
+                    $sqlWhereArr[] = '(o.recordnumber BETWEEN ' . $nStart . ' AND ' . $nEnd . ')';
+                }
+                elseif(preg_match('/^(\d+)-?[a-zA-Z]{1,2}$/', $recordnumber, $m)){
+                    $cNum = (int)$m[1];
+                    $nStart = $cNum - 4;
+                    if($nStart < 1){
+                        $nStart = 1;
+                    }
+                    $nEnd = $cNum + 4;
+                    $sqlWhereArr[] = '(CAST(o.recordnumber AS SIGNED) BETWEEN '.$nStart.' AND '.$nEnd.')';
+                }
+            }
+            if($eventdate){
+                $sqlWhereArr[] = 'o.eventdate = "' . $eventdate . '"';
+            }
+        }
+        if((int)$occid > 0){
+            $sqlWhereArr[] = 'o.occid <> ' . (int)$occid;
+        }
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM omoccurrences AS o LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
+            'ORDER BY o.recordnumber ';
+        echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $r->$name;
+                }
+                $retArr[] = $nodeArr;
             }
             $rs->free();
         }
@@ -91,7 +175,7 @@ class OccurrenceCollectingEventManager{
             'e.georeferenceremarks, e.minimumdepthinmeters, e.maximumdepthinmeters, e.verbatimdepth, e.samplingprotocol, '.
             'e.samplingeffort, e.initialtimestamp '.
             'FROM omoccurcollectingevents AS e '.
-            'WHERE e.eventID = ' . $eventid . ' ';
+            'WHERE e.eventID = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);

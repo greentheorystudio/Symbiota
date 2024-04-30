@@ -164,11 +164,11 @@ class OccurrenceDataManager{
         $isLocked = 0;
         $delSql = 'DELETE FROM omoccureditlocks WHERE ts < '.(time()-900).' OR uid = '.$GLOBALS['SYMB_UID'].' ';
         if($this->conn->query($delSql)) {
-            $sqlFind = 'SELECT * FROM omoccureditlocks WHERE occid = ' . $occid . ' ';
+            $sqlFind = 'SELECT * FROM omoccureditlocks WHERE occid = ' . (int)$occid . ' ';
             $frs = $this->conn->query($sqlFind);
             if(!$frs->num_rows){
                 $sql = 'INSERT INTO omoccureditlocks(occid,uid,ts) '.
-                    'VALUES ('.$occid.','.$GLOBALS['SYMB_UID'].','.time().')';
+                    'VALUES ('.(int)$occid.','.$GLOBALS['SYMB_UID'].','.time().')';
                 $this->conn->query($sql);
             }
             else{
@@ -183,7 +183,7 @@ class OccurrenceDataManager{
         $retArr = array();
         $sql = 'SELECT c.clid, c.name '.
             'FROM fmchecklists AS c LEFT JOIN fmvouchers AS v ON c.clid = v.clid '.
-            'WHERE v.occid = ' . $occid . ' ORDER BY c.name ';
+            'WHERE v.occid = ' . (int)$occid . ' ORDER BY c.name ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -213,7 +213,7 @@ class OccurrenceDataManager{
             }
         }
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM omoccurrences WHERE occid = ' . $occid . ' ';
+            'FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -237,7 +237,7 @@ class OccurrenceDataManager{
         $sql = 'SELECT d.detid, d.identifiedby, d.dateidentified, d.sciname, d.verbatimscientificname, d.tid, d.scientificnameauthorship, ' .
             'd.identificationqualifier, d.iscurrent, d.appliedstatus, d.identificationreferences, d.identificationremarks, d.sortsequence '.
             'FROM omoccurdeterminations AS d '.
-            'WHERE d.occid = ' . $occid . ' ORDER BY d.iscurrent DESC, d.sortsequence ';
+            'WHERE d.occid = ' . (int)$occid . ' ORDER BY d.iscurrent DESC, d.sortsequence ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);

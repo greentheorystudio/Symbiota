@@ -186,6 +186,82 @@ function useCore() {
         window.open(url, '_blank');
     }
 
+    function parseDate(dateStr){
+        const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+        const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/;
+        const validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/;
+        const validformat3 = /^\d{1,2} \D+ \d{2,4}$/;
+        const returnData = {
+            date: null,
+            year: null,
+            month: null,
+            day: null,
+            startDayOfYear: null,
+            endDayOfYear: null
+        }
+        if(dateStr){
+            const dateObj = new Date(dateStr);
+            let dateTokens;
+            try {
+                if(validformat1.test(dateStr)){
+                    dateTokens = dateStr.split('-');
+                    if(dateTokens[0].length === 4){
+                        returnData['year'] = Number(dateTokens[0]);
+                        returnData['month'] = (Number(dateTokens[1]) >= 1 && Number(dateTokens[1]) <= 12) ? Number(dateTokens[1]) : null;
+                        returnData['day'] = (returnData['month'] && (Number(dateTokens[2]) >= 1 && Number(dateTokens[2]) <= 31)) ? Number(dateTokens[2]) : null;
+                    }
+                }
+                else if(validformat2.test(dateStr)){
+                    dateTokens = dateStr.split('/');
+                    if(dateTokens[2].length === 4){
+                        returnData['year'] = Number(dateTokens[2]);
+                        returnData['month'] = (Number(dateTokens[0]) >= 1 && Number(dateTokens[0]) <= 12) ? Number(dateTokens[0]) : null;
+                        returnData['day'] = (returnData['month'] && (Number(dateTokens[1]) >= 1 && Number(dateTokens[1]) <= 31)) ? Number(dateTokens[1]) : null;
+                    }
+                }
+                else if(validformat3.test(dateStr)){
+                    dateTokens = dateStr.split(' ');
+                    if(dateTokens[2].length === 4){
+                        returnData['year'] = Number(dateTokens[2]);
+                        let monthStr = dateTokens[1];
+                        monthStr = monthStr.substring(0, 3);
+                        monthStr = monthStr.toLowerCase();
+                        returnData['month'] = (monthNames.indexOf(monthStr) > -1) ? (monthNames.indexOf(monthStr) + 1) : null;
+                        returnData['day'] = (returnData['month'] && (Number(dateTokens[0]) >= 1 && Number(dateTokens[0]) <= 31)) ? Number(dateTokens[0]) : null;
+                    }
+                }
+                else if(dateObj instanceof Date){
+                    returnData['year'] = Number(dateObj.getFullYear());
+                    returnData['month'] = (dateObj.getMonth() + 1);
+                    returnData['day'] = Number(dateObj.getDate());
+                }
+            } catch (ex) {}
+        }
+        if(returnData['year']){
+            let dateMonthStr = returnData['month'] ? returnData['month'].toString() : '00';
+            if(dateMonthStr.length === 1){
+                dateMonthStr = '0' + dateMonthStr;
+            }
+            let dateDayStr = returnData['day'] ? returnData['day'].toString() : '00';
+            if(dateDayStr.length === 1){
+                dateDayStr = '0' + dateDayStr;
+            }
+            returnData['date'] = returnData['year'].toString() + '-' + dateMonthStr + '-' + dateDayStr;
+            if(returnData['month'] && returnData['day']){
+                let startTestDate = new Date(returnData['year'], (returnData['month'] - 1), returnData['day']);
+                if(startTestDate instanceof Date){
+                    const janFirst = new Date(returnData['year'], 0, 1);
+                    returnData['startDayOfYear'] = Math.ceil((startTestDate - janFirst) / 86400000) + 1;
+                    let endTestDate = new Date(returnData['year'], 11, 31);
+                    if(endTestDate instanceof Date){
+                        returnData['endDayOfYear'] = Math.ceil((endTestDate - janFirst) / 86400000) + 1;
+                    }
+                }
+            }
+        }
+        return returnData;
+    }
+
     function showAlert(text, confirmation, callback = null) {
         $q.dialog({
             message: text,
@@ -278,6 +354,7 @@ function useCore() {
         hexToRgb,
         hideWorking,
         openTutorialWindow,
+        parseDate,
         showAlert,
         showNotification,
         showWorking,

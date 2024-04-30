@@ -20,12 +20,22 @@ elseif($collid){
     }
 }
 
-if($action && Sanitizer::validateInternalRequest()){
+if($action){
     $evtManager = new OccurrenceCollectingEventManager();
     if($action === 'getCollectionEventDataArr' && $eventid){
         echo json_encode($evtManager->getCollectionEventData($eventid));
     }
     elseif($action === 'getAdditionalDataArr' && $eventid){
         echo json_encode($evtManager->getAdditionalData($eventid));
+    }
+    elseif($action === 'getCollectingEventArr' && $collid){
+        $occid = $_POST['occid'] ?? null;
+        $varsArr = array();
+        $varsArr['recordedby'] = $_POST['recordedby'] ?? null;
+        $varsArr['recordnumber'] = $_POST['recordnumber'] ?? null;
+        $varsArr['eventdate'] = $_POST['eventdate'] ?? null;
+        $varsArr['lastname'] = $_POST['lastname'] ?? null;
+        $varsArr['locationid'] = $_POST['locationid'] ?? null;
+        echo json_encode($evtManager->getCollectingEventArr($collid, $occid, $varsArr));
     }
 }

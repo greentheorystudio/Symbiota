@@ -83,22 +83,9 @@ const occurrenceEditorFormLocationElement = {
                             <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['maximumelevationinmeters']" label="Maximum Elevation (m)" :maxlength="occurrenceFields['maximumelevationinmeters'] ? occurrenceFields['maximumelevationinmeters']['length'] : 0" :value="occurrenceData.maximumelevationinmeters" @update:value="(value) => updateOccurrenceData('maximumelevationinmeters', value)"></text-field-input-element>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6">
-                        <occurrence-verbatim-elevation-input-element :definition="occurrenceFieldDefinitions['verbatimelevation']" label="Verbatim Elevation" :maxlength="occurrenceFields['verbatimelevation'] ? occurrenceFields['verbatimelevation']['length'] : 0" :value="occurrenceData.verbatimelevation" :minimum-elevation-in-meters="occurrenceData.minimumelevationinmeters" @update:value="(value) => updateOccurrenceData('verbatimelevation', value)" @update:elevation-values="processRecalculatedElevationValues"></occurrence-verbatim-elevation-input-element>
-                    </div>
-                </div>
-                <div class="row justify-between q-col-gutter-xs">
-                    <div class="col-12 col-sm-6 row justify-start q-col-gutter-md">
-                        <div class="col-12 col-sm-6">
-                            <text-field-input-element data-type="number" :definition="occurrenceFieldDefinitions['minimumdepthinmeters']" label="Minimum Depth (m)" :maxlength="occurrenceFields['minimumdepthinmeters'] ? occurrenceFields['minimumdepthinmeters']['length'] : 0" :value="occurrenceData.minimumdepthinmeters" @update:value="(value) => updateOccurrenceData('minimumdepthinmeters', value)"></text-field-input-element>
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <text-field-input-element data-type="number" :definition="occurrenceFieldDefinitions['maximumdepthinmeters']" label="Maximum Depth (m)" :maxlength="occurrenceFields['maximumdepthinmeters'] ? occurrenceFields['maximumdepthinmeters']['length'] : 0" :value="occurrenceData.maximumdepthinmeters" @update:value="(value) => updateOccurrenceData('maximumdepthinmeters', value)"></text-field-input-element>
-                        </div>
-                    </div>
                     <div class="col-6 row justify-between">
                         <div class="col-10">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['verbatimdepth']" label="Verbatim Depth" :maxlength="occurrenceFields['verbatimdepth'] ? occurrenceFields['verbatimdepth']['length'] : 0" :value="occurrenceData.verbatimdepth" @update:value="(value) => updateOccurrenceData('verbatimdepth', value)" :show-counter="false"></text-field-input-element>
+                            <occurrence-verbatim-elevation-input-element :definition="occurrenceFieldDefinitions['verbatimelevation']" label="Verbatim Elevation" :maxlength="occurrenceFields['verbatimelevation'] ? occurrenceFields['verbatimelevation']['length'] : 0" :value="occurrenceData.verbatimelevation" :minimum-elevation-in-meters="occurrenceData.minimumelevationinmeters" @update:value="(value) => updateOccurrenceData('verbatimelevation', value)" @update:elevation-values="processRecalculatedElevationValues"></occurrence-verbatim-elevation-input-element>
                         </div>
                         <div class="self-center">
                             <div>
@@ -114,13 +101,16 @@ const occurrenceEditorFormLocationElement = {
                 </div>
                 <template v-if="showExtendedForm">
                     <div class="row justify-between q-col-gutter-xs">
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['waterbody']" label="Water Body" :maxlength="occurrenceFields['waterbody'] ? occurrenceFields['waterbody']['length'] : 0" :value="occurrenceData.waterbody" @update:value="(value) => updateOccurrenceData('waterbody', value)" :show-counter="false"></text-field-input-element>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['georeferencedby']" label="Georeferenced By" :maxlength="occurrenceFields['georeferencedby'] ? occurrenceFields['georeferencedby']['length'] : 0" :value="occurrenceData.georeferencedby" @update:value="(value) => updateOccurrenceData('georeferencedby', value)" :show-counter="false"></text-field-input-element>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-md-3">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['georeferenceprotocol']" label="Georeference Protocol" :maxlength="occurrenceFields['georeferenceprotocol'] ? occurrenceFields['georeferenceprotocol']['length'] : 0" :value="occurrenceData.georeferenceprotocol" @update:value="(value) => updateOccurrenceData('georeferenceprotocol', value)" :show-counter="false"></text-field-input-element>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-md-3">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['georeferenceverificationstatus']" label="Georeference Verification Status" :maxlength="occurrenceFields['georeferenceverificationstatus'] ? occurrenceFields['georeferenceverificationstatus']['length'] : 0" :value="occurrenceData.georeferenceverificationstatus" @update:value="(value) => updateOccurrenceData('georeferenceverificationstatus', value)" :show-counter="false"></text-field-input-element>
                         </div>
                     </div>
@@ -315,6 +305,7 @@ const occurrenceEditorFormLocationElement = {
 
         function setExtendedView() {
             if(occurrenceData.value.footprintwkt ||
+                occurrenceData.value.waterbody ||
                 occurrenceData.value.georeferencedby ||
                 occurrenceData.value.georeferenceprotocol ||
                 occurrenceData.value.georeferenceremarks ||
