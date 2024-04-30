@@ -374,7 +374,13 @@ const spatialAnalysisModule = {
             mapSettings.selectSource.addFeature(pointFeature);
             mapSettings.selectedFeatures.push(pointFeature);
             processInputSelections();
-            const selectextent = mapSettings.selectSource.getExtent();
+            let selectextent;
+            if(mapSettings.uncertaintyCircleSource.getFeatures().length > 0){
+                selectextent = mapSettings.uncertaintyCircleSource.getExtent();
+            }
+            else{
+                selectextent = mapSettings.selectSource.getExtent();
+            }
             map.getView().fit(selectextent, map.getSize());
             let fittedZoom = map.getView().getZoom();
             map.getView().setZoom(fittedZoom - 2);

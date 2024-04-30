@@ -20,7 +20,7 @@ elseif($collid){
     }
 }
 
-if($action){
+if($action && Sanitizer::validateInternalRequest()){
     $evtManager = new OccurrenceCollectingEventManager();
     if($action === 'getCollectionEventDataArr' && $eventid){
         echo json_encode($evtManager->getCollectionEventData($eventid));

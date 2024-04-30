@@ -442,13 +442,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getCollectingEvents(callback) {
             const formData = new FormData();
-            console.log(this.collId.toString());
-            console.log(this.occId.toString());
-            console.log(this.occurrenceEditData['recordedby']);
-            console.log(this.occurrenceEditData['recordnumber']);
-            console.log(this.occurrenceEditData['eventdate']);
-            console.log(this.parseRecordedByLastName(this.occurrenceEditData['recordedby']));
-            console.log('getCollectingEventArr');
             formData.append('collid', this.collId.toString());
             formData.append('occid', this.occId.toString());
             formData.append('recordedby', this.occurrenceEditData['recordedby']);
@@ -583,6 +576,14 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['minimumelevationinmeters'] = this.locationData['minimumelevationinmeters'];
             this.occurrenceEditData['maximumelevationinmeters'] = this.locationData['maximumelevationinmeters'];
             this.occurrenceEditData['verbatimelevation'] = this.locationData['verbatimelevation'];
+        },
+        mergeSelectedEventOccurrenceData(data, overwrite) {
+            const dataProps = Object.keys(data);
+            dataProps.forEach((prop) => {
+                if(data[prop] && (!this.occurrenceEditData[prop] || overwrite)){
+                    this.occurrenceEditData[prop] = data[prop];
+                }
+            });
         },
         parseRecordedByLastName(nameStr) {
             let lastName = null;

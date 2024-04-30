@@ -1,6 +1,5 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/OccurrenceDataManager.php');
 include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceCollectingEventManager{
@@ -87,35 +86,37 @@ class OccurrenceCollectingEventManager{
         $retArr = array();
         $fieldNameArr = array();
         $sqlWhereArr = array();
-        $occFields = (new OccurrenceDataManager)->getOccurrenceFields();
         $recordedby = $vars['recordedby'] ? Sanitizer::cleanInStr($this->conn, $vars['recordedby']) : null;
         $lastname = $vars['lastname'] ? Sanitizer::cleanInStr($this->conn, $vars['lastname']) : null;
         $recordnumber = $vars['recordnumber'] ? Sanitizer::cleanInStr($this->conn, $vars['recordnumber']) : null;
         $eventdate = $vars['eventdate'] ? Sanitizer::cleanInStr($this->conn, $vars['eventdate']) : null;
-        foreach($occFields as $field => $fieldArr){
-            if($field === 'year' || $field === 'month' || $field === 'day'){
-                $fieldNameArr[] = 'o.`' . $field . '`';
-            }
-            else{
-                $fieldNameArr[] = 'o.' . $field;
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'eventtype' && $field !== 'eventremarks' && $field !== 'repcount'){
+                if($field === 'year' || $field === 'month' || $field === 'day'){
+                    $fieldNameArr[] = 'o.`' . $field . '`';
+                }
+                else{
+                    $fieldNameArr[] = 'o.' . $field;
+                }
             }
         }
+        $fieldNameArr = array_merge($fieldNameArr, array('ce.eventtype', 'ce.eventremarks', 'ce.repcount'));
         if((int)$vars['locationid'] > 0){
             $sqlWhereArr[] = 'o.locationid = ' . (int)$vars['locationid'];
+            $sqlWhereArr[] = 'o.eventid IS NOT NULL';
         }
         else{
+            $locationFields = array('o.waterbody', 'o.country', 'o.stateprovince', 'o.county', 'o.municipality', 'o.locality',
+                'o.coordinateprecision', 'o.locationremarks', 'o.verbatimcoordinates', 'o.verbatimcoordinatesystem', 'o.minimumelevationinmeters',
+                'o.maximumelevationinmeters', 'o.verbatimelevation');
+            $fieldNameArr = array_merge($fieldNameArr, $locationFields);
             if($recordedby || $lastname){
                 $collWhereArr = array();
                 if($recordedby){
                     $collWhereArr[] = 'o.recordedby = "' . $recordedby . '"';
                 }
                 if($lastname){
-                    if(strlen($vars['lastname']) < 4){
-                        $collWhereArr[] = 'o.recordedby LIKE "%'.$lastname.'%"';
-                    }
-                    else{
-                        $collWhereArr[] = 'MATCH(f.recordedby) AGAINST("'.$lastname.'")';
-                    }
+                    $collWhereArr[] = 'o.recordedby LIKE "%'.$lastname.'%"';
                 }
                 $sqlWhereArr[] = '(' . implode(' OR ', $collWhereArr) . ')';
             }
@@ -145,11 +146,11 @@ class OccurrenceCollectingEventManager{
         if((int)$occid > 0){
             $sqlWhereArr[] = 'o.occid <> ' . (int)$occid;
         }
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM omoccurrences AS o LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid '.
+        $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences AS o '.
+            'LEFT JOIN omoccurcollectingevents AS ce ON o.eventid = ce.eventid '.
             'WHERE o.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
-            'ORDER BY o.recordnumber ';
-        echo '<div>'.$sql.'</div>';
+            'ORDER BY o.eventdate, o.recordnumber ';
+        //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
             while($r = $rs->fetch_object()){
