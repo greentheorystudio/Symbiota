@@ -872,9 +872,15 @@ class TaxonomyUtilities {
     public function addTaxonIdentifier($tid, $idName, $id): bool
     {
         if($tid && $idName && $id){
+            $identifierName = Sanitizer::cleanInStr($this->conn,$idName);
+            $identifier = Sanitizer::cleanInStr($this->conn,$id);
             $sql = 'INSERT IGNORE INTO taxaidentifiers(tid,`name`,identifier) VALUES('.
-                $tid.',"'.Sanitizer::cleanInStr($this->conn,$idName).'","'.Sanitizer::cleanInStr($this->conn,$id).'")';
-            return $this->conn->query($sql);
+                $tid.',"'.$identifierName.'","'.$identifier.'")';
+            if(!$this->conn->query($sql)){
+                $sql = 'UPDATE taxaidentifiers SET identifier = "'.$identifier.'" WHERE tid = ' . $tid . ' AND `name` = "' . $identifierName . '" ';
+                return $this->conn->query($sql);
+            }
+            return true;
         }
         return false;
     }
