@@ -18,7 +18,7 @@ const singleCountyAutoComplete = {
         },
         showCounter: {
             type: Boolean,
-            default: true
+            default: false
         },
         stateProvince: {
             type: String,
@@ -31,7 +31,7 @@ const singleCountyAutoComplete = {
     },
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-            <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon input-debounce="0" @blur="blurAction" :options="autocompleteOptions" option-label="name" @filter="getOptions" @update:model-value="processValueChange" :counter="showCounter" :maxlength="maxlength" :label="label" :disable="disabled">
+            <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" input-debounce="0" @blur="blurAction" :options="autocompleteOptions" option-label="name" @filter="getOptions" @update:model-value="processValueChange" :counter="showCounter" :maxlength="maxlength" :label="label" :disable="disabled">
                 <template v-if="value || definition" v-slot:append>
                     <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">

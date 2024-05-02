@@ -7,21 +7,21 @@ const occurrenceEditorFormLocationElement = {
                         <checkbox-input-element :definition="occurrenceFieldDefinitions['localitysecurity']" label="Locality Security" :value="occurrenceData.localitysecurity" @update:value="updateLocalitySecuritySetting"></checkbox-input-element>
                     </div>
                     <div v-if="Number(occurrenceData.localitysecurity) === 1" class="col-12 col-sm-grow col-md-grow">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['localitysecurityreason']" label="Locality Security Reason" :maxlength="occurrenceFields['localitysecurityreason'] ? occurrenceFields['localitysecurityreason']['length'] : 0" :value="occurrenceData.localitysecurityreason" @update:value="(value) => updateOccurrenceData('localitysecurityreason', value)"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['localitysecurityreason']" label="Locality Security Reason" :maxlength="occurrenceFields['localitysecurityreason'] ? occurrenceFields['localitysecurityreason']['length'] : 0" :value="occurrenceData.localitysecurityreason" @update:value="(value) => updateOccurrenceData('localitysecurityreason', value)" :show-counter="true"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-xs">
                     <div class="col-12 col-sm-6 col-md-3">
-                        <single-country-auto-complete :definition="occurrenceFieldDefinitions['country']" label="Country" :maxlength="occurrenceFields['country'] ? occurrenceFields['country']['length'] : 0" :value="occurrenceData.country" @update:value="(value) => updateOccurrenceData('country', value)" :show-counter="false"></single-country-auto-complete>
+                        <single-country-auto-complete :definition="occurrenceFieldDefinitions['country']" label="Country" :maxlength="occurrenceFields['country'] ? occurrenceFields['country']['length'] : 0" :value="occurrenceData.country" @update:value="(value) => updateOccurrenceData('country', value)"></single-country-auto-complete>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <single-state-province-auto-complete :definition="occurrenceFieldDefinitions['stateprovince']" label="State/Province" :maxlength="occurrenceFields['stateprovince'] ? occurrenceFields['stateprovince']['length'] : 0" :value="occurrenceData.stateprovince" @update:value="(value) => updateOccurrenceData('stateprovince', value)" :show-counter="false" :country="occurrenceData.country"></single-state-province-auto-complete>
+                        <single-state-province-auto-complete :definition="occurrenceFieldDefinitions['stateprovince']" label="State/Province" :maxlength="occurrenceFields['stateprovince'] ? occurrenceFields['stateprovince']['length'] : 0" :value="occurrenceData.stateprovince" @update:value="(value) => updateOccurrenceData('stateprovince', value)" :country="occurrenceData.country"></single-state-province-auto-complete>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <single-county-auto-complete :definition="occurrenceFieldDefinitions['county']" label="County" :maxlength="occurrenceFields['county'] ? occurrenceFields['county']['length'] : 0" :value="occurrenceData.county" @update:value="(value) => updateOccurrenceData('county', value)" :show-counter="false" :state-province="occurrenceData.stateprovince"></single-county-auto-complete>
+                        <single-county-auto-complete :definition="occurrenceFieldDefinitions['county']" label="County" :maxlength="occurrenceFields['county'] ? occurrenceFields['county']['length'] : 0" :value="occurrenceData.county" @update:value="(value) => updateOccurrenceData('county', value)" :state-province="occurrenceData.stateprovince"></single-county-auto-complete>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['municipality']" label="Municipality" :maxlength="occurrenceFields['municipality'] ? occurrenceFields['municipality']['length'] : 0" :value="occurrenceData.municipality" @update:value="(value) => updateOccurrenceData('municipality', value)" :show-counter="false"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['municipality']" label="Municipality" :maxlength="occurrenceFields['municipality'] ? occurrenceFields['municipality']['length'] : 0" :value="occurrenceData.municipality" @update:value="(value) => updateOccurrenceData('municipality', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row q-col-gutter-xs">
@@ -37,7 +37,7 @@ const occurrenceEditorFormLocationElement = {
                         <text-field-input-element data-type="number" label="Longitude" :value="occurrenceData.decimallongitude" min-value="-180" max-value="180" @update:value="(value) => updateOccurrenceData('decimallongitude', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['coordinateuncertaintyinmeters']" label="Uncertainty" :value="occurrenceData.coordinateuncertaintyinmeters" min-value="0" @update:value="(value) => updateOccurrenceData('coordinateuncertaintyinmeters', value)" :show-counter="false" :state-province="occurrenceData.stateprovince"></text-field-input-element>
+                        <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['coordinateuncertaintyinmeters']" label="Uncertainty" :value="occurrenceData.coordinateuncertaintyinmeters" min-value="0" @update:value="(value) => updateOccurrenceData('coordinateuncertaintyinmeters', value)" :state-province="occurrenceData.stateprovince"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3 row justify-end q-gutter-sm">
                         <div class="self-center">
@@ -68,7 +68,7 @@ const occurrenceEditorFormLocationElement = {
                 </div>
                 <div class="row justify-between q-col-gutter-xs">
                     <div class="col-12 col-sm-2 col-md-3">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['geodeticdatum']" label="Datum" :maxlength="occurrenceFields['geodeticdatum'] ? occurrenceFields['geodeticdatum']['length'] : 0" :value="occurrenceData.geodeticdatum" @update:value="(value) => updateOccurrenceData('geodeticdatum', value)" :show-counter="false"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['geodeticdatum']" label="Datum" :maxlength="occurrenceFields['geodeticdatum'] ? occurrenceFields['geodeticdatum']['length'] : 0" :value="occurrenceData.geodeticdatum" @update:value="(value) => updateOccurrenceData('geodeticdatum', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-10 col-md-9">
                         <occurrence-verbatim-coordinates-input-element :definition="occurrenceFieldDefinitions['verbatimcoordinates']" label="Verbatim Coordinates" :maxlength="occurrenceFields['verbatimcoordinates'] ? occurrenceFields['verbatimcoordinates']['length'] : 0" :value="occurrenceData.verbatimcoordinates" :geodetic-datum="occurrenceData.geodeticdatum" :decimal-latitude="occurrenceData.decimallatitude" @update:value="(value) => updateOccurrenceData('verbatimcoordinates', value)" @update:decimal-coordinates="processRecalculatedDecimalCoordinates"></occurrence-verbatim-coordinates-input-element>
@@ -102,26 +102,26 @@ const occurrenceEditorFormLocationElement = {
                 <template v-if="showExtendedForm">
                     <div class="row justify-between q-col-gutter-xs">
                         <div class="col-12 col-sm-6 col-md-3">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['waterbody']" label="Water Body" :maxlength="occurrenceFields['waterbody'] ? occurrenceFields['waterbody']['length'] : 0" :value="occurrenceData.waterbody" @update:value="(value) => updateOccurrenceData('waterbody', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['waterbody']" label="Water Body" :maxlength="occurrenceFields['waterbody'] ? occurrenceFields['waterbody']['length'] : 0" :value="occurrenceData.waterbody" @update:value="(value) => updateOccurrenceData('waterbody', value)"></text-field-input-element>
                         </div>
                         <div class="col-12 col-sm-6 col-md-3">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferencedby']" label="Georeferenced By" :maxlength="occurrenceFields['georeferencedby'] ? occurrenceFields['georeferencedby']['length'] : 0" :value="occurrenceData.georeferencedby" @update:value="(value) => updateOccurrenceData('georeferencedby', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferencedby']" label="Georeferenced By" :maxlength="occurrenceFields['georeferencedby'] ? occurrenceFields['georeferencedby']['length'] : 0" :value="occurrenceData.georeferencedby" @update:value="(value) => updateOccurrenceData('georeferencedby', value)"></text-field-input-element>
                         </div>
                         <div class="col-12 col-sm-6 col-md-3">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferenceprotocol']" label="Georeference Protocol" :maxlength="occurrenceFields['georeferenceprotocol'] ? occurrenceFields['georeferenceprotocol']['length'] : 0" :value="occurrenceData.georeferenceprotocol" @update:value="(value) => updateOccurrenceData('georeferenceprotocol', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferenceprotocol']" label="Georeference Protocol" :maxlength="occurrenceFields['georeferenceprotocol'] ? occurrenceFields['georeferenceprotocol']['length'] : 0" :value="occurrenceData.georeferenceprotocol" @update:value="(value) => updateOccurrenceData('georeferenceprotocol', value)"></text-field-input-element>
                         </div>
                         <div class="col-12 col-sm-6 col-md-3">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferenceverificationstatus']" label="Georeference Verification Status" :maxlength="occurrenceFields['georeferenceverificationstatus'] ? occurrenceFields['georeferenceverificationstatus']['length'] : 0" :value="occurrenceData.georeferenceverificationstatus" @update:value="(value) => updateOccurrenceData('georeferenceverificationstatus', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferenceverificationstatus']" label="Georeference Verification Status" :maxlength="occurrenceFields['georeferenceverificationstatus'] ? occurrenceFields['georeferenceverificationstatus']['length'] : 0" :value="occurrenceData.georeferenceverificationstatus" @update:value="(value) => updateOccurrenceData('georeferenceverificationstatus', value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-grow">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferencesources']" label="Georeference Sources" :maxlength="occurrenceFields['georeferencesources'] ? occurrenceFields['georeferencesources']['length'] : 0" :value="occurrenceData.georeferencesources" @update:value="(value) => updateOccurrenceData('georeferencesources', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['georeferencesources']" label="Georeference Sources" :maxlength="occurrenceFields['georeferencesources'] ? occurrenceFields['georeferencesources']['length'] : 0" :value="occurrenceData.georeferencesources" @update:value="(value) => updateOccurrenceData('georeferencesources', value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-grow">
-                            <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['georeferenceremarks']" label="Georeference Remarks" :maxlength="occurrenceFields['georeferenceremarks'] ? occurrenceFields['georeferenceremarks']['length'] : 0" :value="occurrenceData.georeferenceremarks" @update:value="(value) => updateOccurrenceData('georeferenceremarks', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['georeferenceremarks']" label="Georeference Remarks" :maxlength="occurrenceFields['georeferenceremarks'] ? occurrenceFields['georeferenceremarks']['length'] : 0" :value="occurrenceData.georeferenceremarks" @update:value="(value) => updateOccurrenceData('georeferenceremarks', value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="row">

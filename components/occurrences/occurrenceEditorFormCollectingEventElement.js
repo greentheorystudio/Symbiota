@@ -4,10 +4,10 @@ const occurrenceEditorFormCollectingEventElement = {
             <q-card-section class="q-pa-sm column q-col-gutter-xs">
                 <div class="row justify-between q-col-gutter-xs">
                     <div class="col-12 col-sm-6 col-md-grow">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['recordedby']" label="Collector/Observer" :maxlength="occurrenceFields['recordedby'] ? occurrenceFields['recordedby']['length'] : 0" :value="occurrenceData.recordedby" @update:value="(value) => updateOccurrenceData('recordedby', value)" :show-counter="false"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['recordedby']" label="Collector/Observer" :maxlength="occurrenceFields['recordedby'] ? occurrenceFields['recordedby']['length'] : 0" :value="occurrenceData.recordedby" @update:value="(value) => updateOccurrenceData('recordedby', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-6 col-md-2">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['recordnumber']" label="Number" :maxlength="occurrenceFields['recordnumber'] ? occurrenceFields['recordnumber']['length'] : 0" :value="occurrenceData.recordnumber" @update:value="(value) => updateOccurrenceData('recordnumber', value)" :show-counter="false"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['recordnumber']" label="Number" :maxlength="occurrenceFields['recordnumber'] ? occurrenceFields['recordnumber']['length'] : 0" :value="occurrenceData.recordnumber" @update:value="(value) => updateOccurrenceData('recordnumber', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-6 col-md-2">
                         <date-input-element :definition="occurrenceFieldDefinitions['eventdate']" label="Date" :value="occurrenceData.eventdate" @update:value="updateOccurrenceDateData"></date-input-element>
@@ -23,10 +23,10 @@ const occurrenceEditorFormCollectingEventElement = {
                 </div>
                 <div class="row justify-between q-col-gutter-xs">
                     <div class="col-12 col-sm-7">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['associatedcollectors']" label="Associated Collectors" :maxlength="occurrenceFields['associatedcollectors'] ? occurrenceFields['associatedcollectors']['length'] : 0" :value="occurrenceData.associatedcollectors" @update:value="(value) => updateOccurrenceData('associatedcollectors', value)" :show-counter="false"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['associatedcollectors']" label="Associated Collectors" :maxlength="occurrenceFields['associatedcollectors'] ? occurrenceFields['associatedcollectors']['length'] : 0" :value="occurrenceData.associatedcollectors" @update:value="(value) => updateOccurrenceData('associatedcollectors', value)"></text-field-input-element>
                     </div>
                     <div class="col-11 col-sm-4">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['verbatimeventdate']" label="Verbatim Date" :maxlength="occurrenceFields['verbatimeventdate'] ? occurrenceFields['verbatimeventdate']['length'] : 0" :value="occurrenceData.verbatimeventdate" @update:value="(value) => updateOccurrenceData('verbatimeventdate', value)" :show-counter="false"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['verbatimeventdate']" label="Verbatim Date" :maxlength="occurrenceFields['verbatimeventdate'] ? occurrenceFields['verbatimeventdate']['length'] : 0" :value="occurrenceData.verbatimeventdate" @update:value="(value) => updateOccurrenceData('verbatimeventdate', value)"></text-field-input-element>
                     </div>
                     <div class="col-1 row justify-end self-center">
                         <div>
@@ -50,7 +50,7 @@ const occurrenceEditorFormCollectingEventElement = {
                             </div>
                         </div>
                         <div class="col-12 col-sm-6">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['verbatimdepth']" label="Verbatim Depth" :maxlength="occurrenceFields['verbatimdepth'] ? occurrenceFields['verbatimdepth']['length'] : 0" :value="occurrenceData.verbatimdepth" @update:value="(value) => updateOccurrenceData('verbatimdepth', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['verbatimdepth']" label="Verbatim Depth" :maxlength="occurrenceFields['verbatimdepth'] ? occurrenceFields['verbatimdepth']['length'] : 0" :value="occurrenceData.verbatimdepth" @update:value="(value) => updateOccurrenceData('verbatimdepth', value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="row">
@@ -65,13 +65,13 @@ const occurrenceEditorFormCollectingEventElement = {
                     </div>
                     <div class="row justify-between q-col-gutter-xs">
                         <div class="col-12 col-sm-6 col-md-4">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['fieldnumber']" label="Field Number" :maxlength="occurrenceFields['fieldnumber'] ? occurrenceFields['fieldnumber']['length'] : 0" :value="occurrenceData.fieldnumber" @update:value="(value) => updateOccurrenceData('fieldnumber', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['fieldnumber']" label="Field Number" :maxlength="occurrenceFields['fieldnumber'] ? occurrenceFields['fieldnumber']['length'] : 0" :value="occurrenceData.fieldnumber" @update:value="(value) => updateOccurrenceData('fieldnumber', value)"></text-field-input-element>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['samplingprotocol']" label="Sampling Protocol" :maxlength="occurrenceFields['samplingprotocol'] ? occurrenceFields['samplingprotocol']['length'] : 0" :value="occurrenceData.samplingprotocol" @update:value="(value) => updateOccurrenceData('samplingprotocol', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['samplingprotocol']" label="Sampling Protocol" :maxlength="occurrenceFields['samplingprotocol'] ? occurrenceFields['samplingprotocol']['length'] : 0" :value="occurrenceData.samplingprotocol" @update:value="(value) => updateOccurrenceData('samplingprotocol', value)"></text-field-input-element>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['samplingeffort']" label="Sampling Effort" :maxlength="occurrenceFields['samplingeffort'] ? occurrenceFields['samplingeffort']['length'] : 0" :value="occurrenceData.samplingeffort" @update:value="(value) => updateOccurrenceData('samplingeffort', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['samplingeffort']" label="Sampling Effort" :maxlength="occurrenceFields['samplingeffort'] ? occurrenceFields['samplingeffort']['length'] : 0" :value="occurrenceData.samplingeffort" @update:value="(value) => updateOccurrenceData('samplingeffort', value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="row">
@@ -81,7 +81,7 @@ const occurrenceEditorFormCollectingEventElement = {
                     </div>
                     <div class="row">
                         <div class="col-grow">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['labelproject']" label="Label Project" :maxlength="occurrenceFields['labelproject'] ? occurrenceFields['labelproject']['length'] : 0" :value="occurrenceData.labelproject" @update:value="(value) => updateOccurrenceData('labelproject', value)" :show-counter="false"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['labelproject']" label="Label Project" :maxlength="occurrenceFields['labelproject'] ? occurrenceFields['labelproject']['length'] : 0" :value="occurrenceData.labelproject" @update:value="(value) => updateOccurrenceData('labelproject', value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="row justify-between q-col-gutter-xs">

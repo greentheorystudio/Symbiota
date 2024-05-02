@@ -11,6 +11,7 @@ const occurrenceEditorOccurrenceDataModule = {
                         <occurrence-editor-form-latest-identification-element></occurrence-editor-form-latest-identification-element>
                         <occurrence-editor-form-misc-element></occurrence-editor-form-misc-element>
                         <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
+                        <occurrence-editor-record-footer-element></occurrence-editor-record-footer-element>
                     </div>
                 </template>
             </template>
@@ -23,6 +24,7 @@ const occurrenceEditorOccurrenceDataModule = {
                     <occurrence-editor-form-location-element></occurrence-editor-form-location-element>
                     <occurrence-editor-form-misc-element></occurrence-editor-form-misc-element>
                     <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
+                    <occurrence-editor-record-footer-element></occurrence-editor-record-footer-element>
                 </div>
             </template>
         </div>
@@ -36,7 +38,8 @@ const occurrenceEditorOccurrenceDataModule = {
         'occurrence-editor-form-misc-element': occurrenceEditorFormMiscElement,
         'occurrence-editor-collecting-event-module': occurrenceEditorCollectingEventModule,
         'occurrence-editor-location-module': occurrenceEditorLocationModule,
-        'occurrence-editor-occurrence-data-controls': occurrenceEditorOccurrenceDataControls
+        'occurrence-editor-occurrence-data-controls': occurrenceEditorOccurrenceDataControls,
+        'occurrence-editor-record-footer-element': occurrenceEditorRecordFooterElement
     },
     setup() {
         const occurrenceStore = Vue.inject('occurrenceStore');

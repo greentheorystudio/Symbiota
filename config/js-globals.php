@@ -8,6 +8,7 @@
     const VALID_USER = <?php echo ($GLOBALS['VALID_USER'] ? 'true' : 'false'); ?>;
     const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;
     const USER_DISPLAY_NAME = '<?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>';
+    const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');
 
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 

@@ -17,7 +17,7 @@ const taxonomyDataSourceImportUpdateModule = {
             default: 0
         },
         taxonomicGroup: {
-            type: Object,
+            type: String,
             default: null
         },
         taxonomicGroupTid: {
@@ -1706,7 +1706,7 @@ const taxonomyDataSourceImportUpdateModule = {
             const resultArr = resObj['scientificNames'];
             if(resultArr && resultArr.length > 0 && resultArr[0]){
                 resultArr.forEach((taxResult) => {
-                    if(taxResult['combinedName'] === props.taxonomicGroup.name && (taxResult['kingdom'].toLowerCase() === kingdomName.value.toLowerCase() || taxResult['combinedName'].toLowerCase() === kingdomName.value.toLowerCase())){
+                    if(taxResult['combinedName'] === props.taxonomicGroup && (taxResult['kingdom'].toLowerCase() === kingdomName.value.toLowerCase() || taxResult['combinedName'].toLowerCase() === kingdomName.value.toLowerCase())){
                         const resultObj = {};
                         resultObj['id'] = taxResult['tsn'];
                         resultObj['sciname'] = taxResult['combinedName'];
@@ -2027,7 +2027,7 @@ const taxonomyDataSourceImportUpdateModule = {
                                         });
                                     }
                                     else{
-                                        findExternalTaxonBySciname(props.taxonomicGroup.name,(errorText = null) => {
+                                        findExternalTaxonBySciname(props.taxonomicGroup,(errorText = null) => {
                                             if(errorText){
                                                 processErrorResponse(errorText);
                                                 adjustUIEnd();
@@ -2043,7 +2043,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         else if(dataSource.value === 'itis'){
                             const resultObj = {};
                             resultObj['id'] = targetTaxonIdentifier.value;
-                            resultObj['sciname'] = props.taxonomicGroup.name;
+                            resultObj['sciname'] = props.taxonomicGroup;
                             taxonSearchResults.value.push(resultObj);
                             getITISNameSearchResultsRecord((errorText = null) => {
                                 if(errorText){
@@ -2068,7 +2068,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         }
                     }
                     else{
-                        findExternalTaxonBySciname(props.taxonomicGroup.name,(errorText = null) => {
+                        findExternalTaxonBySciname(props.taxonomicGroup,(errorText = null) => {
                             if(errorText){
                                 processErrorResponse(errorText);
                                 adjustUIEnd();

@@ -14,7 +14,7 @@ const singleLanguageAutoComplete = {
         }
     },
     template: `
-        <q-select v-model="language" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
+        <q-select v-model="language" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input popup-content-class="z-max" input-debounce="0" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
     `,
     setup(props, context) {
         const { showNotification } = useCore();

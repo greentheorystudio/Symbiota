@@ -30,7 +30,7 @@ const textFieldInputElement = {
         },
         showCounter: {
             type: Boolean,
-            default: true
+            default: false
         },
         value: {
             type: String,

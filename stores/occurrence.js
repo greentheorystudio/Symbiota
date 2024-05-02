@@ -983,6 +983,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         updateOccurrenceEditData(key, value) {
             this.occurrenceEditData[key] = value;
         },
+        updateOccurrenceEditDataTaxon(taxon) {
+            this.occurrenceEditData['sciname'] = taxon ? taxon.sciname : null;
+            this.occurrenceEditData['tid'] = taxon ? taxon.tid : null;
+            this.occurrenceEditData['family'] = taxon ? taxon.family : null;
+            this.occurrenceEditData['scientificnameauthorship'] = taxon ? taxon.author : null;
+            this.occurrenceEditData['taxonData'] = taxon ? Object.assign({}, taxon) : null;
+        },
         updateOccurrenceRecord(callback) {
             const formData = new FormData();
             formData.append('collid', this.collId.toString());

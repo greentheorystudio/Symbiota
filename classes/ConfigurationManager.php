@@ -150,7 +150,7 @@ class ConfigurationManager{
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
         $GLOBALS['CSS_VERSION'] = '20240416';
-        $GLOBALS['JS_VERSION'] = '20240410';
+        $GLOBALS['JS_VERSION'] = '20240411';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();

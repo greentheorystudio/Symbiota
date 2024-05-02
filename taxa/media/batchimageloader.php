@@ -98,7 +98,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                 {{ file.name }}
                                             </q-item-label>
                                             <q-item-label class="full-width">
-                                                <media-scientific-name-auto-complete :sciname="file.scientificname ? {tid: file.tid, label: file.scientificname, name: file.scientificname} : null" label="Scientific Name" :filename="file.name" limit-to-thesaurus="true" accepted-taxa-only="true" @update:mediataxon="updateMediaScientificName"></media-scientific-name-auto-complete>
+                                                <media-scientific-name-auto-complete :sciname="file.scientificname ? file.scientificname : null" label="Scientific Name" :filename="file.name" limit-to-thesaurus="true" accepted-taxa-only="true" @update:mediataxon="updateMediaScientificName"></media-scientific-name-auto-complete>
                                             </q-item-label>
                                             <q-item-label v-if="file.errorMessage" class="full-width text-bold text-red">
                                                 {{ file.errorMessage }}
@@ -165,7 +165,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         default: false
                     },
                     sciname: {
-                        type: Object,
+                        type: String,
                         default: null
                     }
                 },
@@ -179,7 +179,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     function updateMediaTaxon(taxonObj) {
                         const resObj = {};
                         resObj['filename'] = props.filename;
-                        resObj['sciname'] = taxonObj ? taxonObj.name : null;
+                        resObj['sciname'] = taxonObj ? taxonObj.sciname : null;
                         resObj['tid'] = taxonObj ? taxonObj.tid : null;
                         context.emit('update:mediataxon', resObj);
                     }

@@ -488,40 +488,44 @@ class TaxonomyUtilities {
     public function getAutocompleteSciNameList($queryString): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT kingdomId, SciName, Author, TID FROM taxa ';
-        $sql .= 'WHERE SciName LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        $sql = 'SELECT DISTINCT tid, kingdomId, rankid, sciname, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
+            'author, tidaccepted, parenttid, family, source, notes, hybrid, securitystatus  '.
+            'FROM taxa WHERE sciname LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
         if($this->rankLimit){
-            $sql .= 'AND RankId = '.$this->rankLimit.' ';
+            $sql .= 'AND rankid = '.$this->rankLimit.' ';
         }
         else{
             if($this->rankLow){
-                $sql .= 'AND RankId >= '.$this->rankLow.' ';
+                $sql .= 'AND rankid >= '.$this->rankLow.' ';
             }
             if($this->rankHigh){
-                $sql .= 'AND RankId <= '.$this->rankHigh.' ';
+                $sql .= 'AND rankid <= '.$this->rankHigh.' ';
             }
         }
         if($this->hideProtected){
-            $sql .= 'AND SecurityStatus <> 1 ';
+            $sql .= 'AND securitystatus <> 1 ';
         }
         if($this->acceptedOnly){
-            $sql .= 'AND TID = tidaccepted ';
+            $sql .= 'AND tid = tidaccepted ';
         }
-        $sql .= 'ORDER BY SciName ';
+        $sql .= 'ORDER BY sciname ';
         if($this->limit){
             $sql .= 'LIMIT '.$this->limit.' ';
         }
-        $rs = $this->conn->query($sql);
-        while ($r = $rs->fetch_object()){
-            $label = $r->SciName.($this->hideAuth?'':' '.$r->Author);
-            $scinameArr = array();
-            $scinameArr['tid'] = $r->TID;
-            $scinameArr['label'] = $label;
-            $scinameArr['name'] = $r->SciName;
-            $scinameArr['kingdomid'] = $r->kingdomId;
-            $retArr[] = $scinameArr;
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            while($r = $rs->fetch_object()){
+                $scinameArr = array();
+                $label = $r->sciname . ($this->hideAuth ? '' : (' ' . $r->author));
+                $scinameArr['label'] = $label;
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $scinameArr[$name] = $r->$name;
+                }
+                $retArr[] = $scinameArr;
+            }
+            $rs->free();
         }
-
         return $retArr;
     }
 

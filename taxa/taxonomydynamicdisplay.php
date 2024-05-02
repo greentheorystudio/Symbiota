@@ -49,7 +49,7 @@ header('X-Frame-Options: SAMEORIGIN');
             <q-card class="target-taxon-card">
                 <q-card-section>
                     <div class="q-my-sm">
-                        <single-scientific-common-name-auto-complete :sciname="targetTaxon" :disable="loading" label="Find a taxon" limit-to-thesaurus="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
+                        <single-scientific-common-name-auto-complete :sciname="(targetTaxon ? targetTaxon.sciname : null)" :disabled="loading" label="Find a taxon" limit-to-thesaurus="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
                     </div>
                     <div class="button-div">
                         <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense />

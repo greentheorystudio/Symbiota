@@ -109,7 +109,10 @@ class OccurrenceDataManager{
         "language" => array("dataType" => "string", "length" => 20),
         "processingstatus" => array("dataType" => "string", "length" => 45),
         "duplicatequantity" => array("dataType" => "number", "length" => 10),
-        "labelproject" => array("dataType" => "string", "length" => 250)
+        "labelproject" => array("dataType" => "string", "length" => 250),
+        "recordenteredby" => array("dataType" => "string", "length" => 250),
+        "dateentered" => array("dataType" => "date", "length" => 0),
+        "datelastmodified" => array("dataType" => "timestamp", "length" => 0)
     );
 
     public function __construct(){
@@ -355,7 +358,7 @@ class OccurrenceDataManager{
     public function getTaxonData($tid): array
     {
         $retArr = array();
-        $sql = 'SELECT t.kingdomId, t.rankid, t.sciname, t.unitind1, unitname1, t.unitind2, unitname2, t.unitind3, unitname3, '.
+        $sql = 'SELECT t.kingdomId, t.rankid, t.sciname, t.unitind1, t.unitname1, t.unitind2, t.unitname2, t.unitind3, t.unitname3, '.
             't.author, t.tidaccepted, t.parenttid, t.family, t.source, t.notes, t.hybrid, t.securitystatus '.
             'FROM taxa AS t '.
             'WHERE t.tid = ' . $tid . ' ';
