@@ -1,10 +1,10 @@
 const occurrenceEditorOccurrenceDataModule = {
     template: `
         <div class="column q-gutter-y-sm">
-            <template v-if="additionalDataFields.length > 0 || occurrenceEntryFormat === 'benthic'">
+            <template v-if="occurrenceEntryFormat === 'benthic' || occurrenceEntryFormat === 'lot'">
                 <occurrence-editor-location-module></occurrence-editor-location-module>
                 <occurrence-editor-collecting-event-module></occurrence-editor-collecting-event-module>
-                <template v-if="occurrenceEntryFormat !== 'benthic' || occId > 0">
+                <template v-if="occurrenceEntryFormat === 'lot' || occId > 0">
                     <div class="rounded-borders black-border q-pa-sm column q-gutter-y-sm">
                         <occurrence-editor-occurrence-data-controls></occurrence-editor-occurrence-data-controls>
                         <occurrence-editor-form-latest-identifier-element></occurrence-editor-form-latest-identifier-element>

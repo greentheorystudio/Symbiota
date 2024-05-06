@@ -48,7 +48,6 @@ class Sanitizer {
     public static function getCleanedRequestPath($includeArgs = null): string
     {
         $returnPath = '';
-        $requestArgs = '';
         $fullRequestPathParts = array();
         $fullRequestPath = $_SERVER['REQUEST_URI'];
         if(strpos($fullRequestPath, '?') !== false){

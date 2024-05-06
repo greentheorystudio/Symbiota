@@ -25,4 +25,10 @@ if($action && Sanitizer::validateInternalRequest()){
     if($action === 'getLocationDataArr' && $isEditor && $locationid){
         echo json_encode($locManager->getLocationData($locationid));
     }
+    elseif($action === 'createLocationRecord' && $isEditor){
+        echo $locManager->createLocationRecord(json_decode($_POST['location'], true));
+    }
+    elseif($action === 'updateLocationRecord' && $locationid && $isEditor){
+        echo $locManager->updateLocationRecord($locationid, json_decode($_POST['locationData'], true));
+    }
 }

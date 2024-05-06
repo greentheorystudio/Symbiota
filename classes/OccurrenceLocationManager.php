@@ -49,6 +49,34 @@ class OccurrenceLocationManager{
         }
 	}
 
+    public function createLocationRecord($data): int
+    {
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        $collId = array_key_exists('collid',$data) ? (int)$data['collid'] : 0;
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(array_key_exists($field, $data)){
+                    if($field === 'year' || $field === 'month' || $field === 'day'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                    $fieldValueArr[] = Sanitizer::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'INSERT INTO omoccurlocations(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+            }
+        }
+        return $newID;
+    }
+
     public function getLocationData($locationid): array
     {
         $retArr = array();
@@ -76,5 +104,31 @@ class OccurrenceLocationManager{
     public function getLocationFields(): array
     {
         return $this->fields;
+    }
+
+    public function updateLocationRecord($locationId, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($locationId && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if(array_key_exists($field, $editData)){
+                    if($field === 'year' || $field === 'month' || $field === 'day'){
+                        $fieldStr = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldStr = $field;
+                    }
+                    $sqlPartArr[] = $fieldStr . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'UPDATE omoccurlocations SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE locationid = ' . $locationId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 }

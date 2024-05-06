@@ -220,7 +220,7 @@ const occurrenceCollectingEventListPopup = {
         }
 
         function processEventSelection(eventid) {
-            occurrenceStore.setCollectionEventData(eventid);
+            occurrenceStore.setCurrentCollectingEventRecord(eventid);
             context.emit('close:popup');
         }
 

@@ -22,8 +22,14 @@ elseif($collid){
 
 if($action && Sanitizer::validateInternalRequest()){
     $evtManager = new OccurrenceCollectingEventManager();
-    if($action === 'getCollectionEventDataArr' && $eventid){
-        echo json_encode($evtManager->getCollectionEventData($eventid));
+    if($action === 'getCollectingEventDataArr' && $eventid){
+        echo json_encode($evtManager->getCollectingEventData($eventid));
+    }
+    elseif($action === 'createCollectingEventRecord' && $isEditor){
+        echo $evtManager->createCollectingEventRecord(json_decode($_POST['event'], true));
+    }
+    elseif($action === 'updateCollectingEventRecord' && $eventid && $isEditor){
+        echo $evtManager->updateCollectingEventRecord($eventid, json_decode($_POST['eventData'], true));
     }
     elseif($action === 'getAdditionalDataArr' && $eventid){
         echo json_encode($evtManager->getAdditionalData($eventid));

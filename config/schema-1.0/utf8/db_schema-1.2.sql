@@ -869,7 +869,6 @@ CREATE TABLE `omoccurassociations` (
 CREATE TABLE `omoccurcollectingevents` (
     `eventID` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `collid` int(10) unsigned DEFAULT NULL,
-    `locationID` int(11) unsigned NOT NULL,
     `eventType` varchar(255) DEFAULT NULL,
     `fieldNotes` text,
     `fieldnumber` varchar(45) DEFAULT NULL,
@@ -910,7 +909,6 @@ CREATE TABLE `omoccurcollectingevents` (
     `labelProject` varchar(250) DEFAULT NULL,
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`eventID`),
-    KEY `locationID` (`locationID`),
     KEY `eventType` (`eventType`),
     KEY `eventDate` (`eventDate`),
     KEY `eventTime` (`eventTime`),

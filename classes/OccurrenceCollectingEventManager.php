@@ -9,7 +9,6 @@ class OccurrenceCollectingEventManager{
     private $fields = array(
         "eventid" => array("dataType" => "number", "length" => 11),
         "collid" => array("dataType" => "number", "length" => 10),
-        "locationid" => array("dataType" => "number", "length" => 11),
         "eventtype" => array("dataType" => "string", "length" => 255),
         "fieldnotes" => array("dataType" => "text", "length" => 0),
         "fieldnumber" => array("dataType" => "string", "length" => 45),
@@ -60,6 +59,34 @@ class OccurrenceCollectingEventManager{
             $this->conn->close();
         }
 	}
+
+    public function createCollectingEventRecord($data): int
+    {
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        $collId = array_key_exists('collid',$data) ? (int)$data['collid'] : 0;
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(array_key_exists($field, $data)){
+                    if($field === 'year' || $field === 'month' || $field === 'day'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                    $fieldValueArr[] = Sanitizer::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'INSERT INTO omoccurcollectingevents(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+            }
+        }
+        return $newID;
+    }
 
     public function getAdditionalData($eventid): array
     {
@@ -166,7 +193,7 @@ class OccurrenceCollectingEventManager{
         return $retArr;
     }
 
-    public function getCollectionEventData($eventid): array
+    public function getCollectingEventData($eventid): array
     {
         $retArr = array();
         $sql = 'SELECT e.locationid, e.eventtype, e.fieldnotes, e.fieldnumber, e.eventdate, e.latestdatecollected, e.eventtime, '.
@@ -191,8 +218,34 @@ class OccurrenceCollectingEventManager{
         return $retArr;
     }
 
-    public function getCollectionEventFields(): array
+    public function getCollectingEventFields(): array
     {
         return $this->fields;
+    }
+
+    public function updateCollectingEventRecord($eventId, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($eventId && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if(array_key_exists($field, $editData)){
+                    if($field === 'year' || $field === 'month' || $field === 'day'){
+                        $fieldStr = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldStr = $field;
+                    }
+                    $sqlPartArr[] = $fieldStr . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'UPDATE omoccurcollectingevents SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE eventid = ' . $eventId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 }
