@@ -30,7 +30,7 @@
                             <taxa-profile-taxon-synonyms :synonyms="taxon.synonyms"></taxa-profile-taxon-synonyms>
                         </div>
                         <template v-if="isEditor">
-                            <taxa-profile-edit-button :edit-link="editLink"></taxa-profile-edit-button>
+                            <taxa-profile-edit-button :tid="taxon.tid"></taxa-profile-edit-button>
                         </template>
                     </div>
                     <div class="profile-split-row">
