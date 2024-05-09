@@ -20,7 +20,7 @@ const occurrenceEditorLocationModule = {
                             <q-btn color="secondary" @click="createLocationRecord();" label="Create Location Record" :disabled="!locationValid" />
                         </template>
                         <template v-else>
-                            <q-btn color="secondary" @click="saveOccurrenceEdits();" label="Edit Location" />
+                            <q-btn color="secondary" @click="showLocationEditorPopup = true" label="Edit Location" />
                         </template>
                     </div>
                 </div>
@@ -50,11 +50,18 @@ const occurrenceEditorLocationModule = {
                     @close:popup="closeLocationListPopup();"
             ></occurrence-location-list-popup>
         </template>
+        <template v-if="showLocationEditorPopup">
+            <occurrence-location-editor-popup
+                    :show-popup="showLocationEditorPopup"
+                    @close:popup="closeLocationEditorPopup();"
+            ></occurrence-location-editor-popup>
+        </template>
     `,
     components: {
         'location-field-module': locationFieldModule,
         'location-name-code-auto-complete': locationNameCodeAutoComplete,
         'occurrence-collecting-event-list-popup': occurrenceCollectingEventListPopup,
+        'occurrence-location-editor-popup': occurrenceLocationEditorPopup,
         'occurrence-location-list-popup': occurrenceLocationListPopup,
         'text-field-input-element': textFieldInputElement
     },
@@ -71,10 +78,15 @@ const occurrenceEditorLocationModule = {
         const nearbyLocationArr = Vue.ref([]);
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
         const showCollectingEventListPopup = Vue.ref(false);
+        const showLocationEditorPopup = Vue.ref(false);
         const showLocationListPopup = Vue.ref(false);
 
         function closeCollectingEventListPopup() {
             showCollectingEventListPopup.value = false;
+        }
+
+        function closeLocationEditorPopup() {
+            showLocationEditorPopup.value = false;
         }
 
         function closeLocationListPopup() {
@@ -132,8 +144,10 @@ const occurrenceEditorLocationModule = {
             nearbyLocationArr,
             occurrenceFieldDefinitions,
             showCollectingEventListPopup,
+            showLocationEditorPopup,
             showLocationListPopup,
             closeCollectingEventListPopup,
+            closeLocationEditorPopup,
             closeLocationListPopup,
             createLocationRecord,
             findNearbyLocations,

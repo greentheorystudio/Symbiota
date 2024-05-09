@@ -133,7 +133,7 @@ const spatialLayerQuerySelectorPopup = {
         }
 
         function runQuerySelectorQuery() {
-            showWorking();
+            showWorking('Loading...');
             const addFeatures = [];
             const layerFeatures = layersObj[props.layerId].getSource().getFeatures();
             layerFeatures.forEach((feature) => {

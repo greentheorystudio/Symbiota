@@ -289,13 +289,13 @@ function useCore() {
         });
     }
 
-    function showWorking() {
+    function showWorking(text = null) {
         $q.loading.show({
             spinner: QSpinnerHourglass,
             spinnerColor: 'primary',
             spinnerSize: 140,
             backgroundColor: 'grey',
-            message: 'Loading...',
+            message: text,
             messageColor: 'primary',
             customClass: 'text-h4'
         })

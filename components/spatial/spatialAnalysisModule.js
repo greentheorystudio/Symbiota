@@ -780,7 +780,7 @@ const spatialAnalysisModule = {
                         delete symbologyArr[key];
                     }
                     searchStore.clearSelections();
-                    showWorking();
+                    showWorking('Loading...');
                     searchStore.processGetQueryRecCnt(solrMode, () => {
                         if(Number(searchStore.getQueryRecCnt) > 0){
                             loadPointsLayer();
@@ -1441,7 +1441,7 @@ const spatialAnalysisModule = {
                 }
             });
             map.getViewport().addEventListener('drop', () => {
-                showWorking();
+                showWorking('Loading...');
             });
             map.on('singleclick', (evt) => {
                 let infoHTML;
@@ -1704,12 +1704,12 @@ const spatialAnalysisModule = {
             });
             layersObj['pointv'].on('prerender', () => {
                 if(mapSettings.loadPointsEvent){
-                    showWorking();
+                    showWorking('Loading...');
                 }
             });
             layersObj['heat'].on('prerender', () => {
                 if(mapSettings.loadPointsEvent){
-                    showWorking();
+                    showWorking('Loading...');
                 }
             });
             layersObj['pointv'].on('postrender', () => {
