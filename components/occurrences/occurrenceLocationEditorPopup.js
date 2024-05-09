@@ -15,15 +15,15 @@ const occurrenceLocationEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <div class="q-px-sm q-pb-sm column q-gutter-y-sm">
+                        <div class="q-pa-sm column q-gutter-y-sm">
                             <div class="row justify-between">
                                 <div>
-                                    <template v-else-if="editsExist">
+                                    <template v-if="editsExist">
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !occurrenceValid" />
+                                    <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !locationValid" />
                                 </div>
                             </div>
                             <div class="q-mb-xs row justify-between q-col-gutter-xs">
@@ -46,9 +46,11 @@ const occurrenceLocationEditorPopup = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { showNotification } = useCore();
+        const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const contentRef = Vue.ref(null);
+        const contentStyle = Vue.ref(null);
         const editsExist = Vue.computed(() => occurrenceStore.getLocationEditsExist);
         const locationData = Vue.computed(() => occurrenceStore.getLocationData);
         const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
@@ -56,12 +58,18 @@ const occurrenceLocationEditorPopup = {
         const locationValid = Vue.computed(() => occurrenceStore.getLocationValid);
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
 
+        Vue.watch(contentRef, () => {
+            setcontentStyle();
+        });
+
         function closePopup() {
             context.emit('close:popup');
         }
 
         function saveLocationEdits() {
+            showWorking();
             occurrenceStore.updateLocationRecord((res) => {
+                hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
                 }
@@ -72,15 +80,25 @@ const occurrenceLocationEditorPopup = {
             });
         }
 
+        function setcontentStyle() {
+            contentStyle.value = null;
+            if(contentRef.value){
+                contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
+            }
+        }
+
         function updateLocationData(key, value) {
             occurrenceStore.updateLocationEditData(key, value);
         }
 
         Vue.onMounted(() => {
+            setcontentStyle();
             occurrenceStore.setLocationFields();
         });
 
         return {
+            contentRef,
+            contentStyle,
             editsExist,
             locationData,
             locationId,
