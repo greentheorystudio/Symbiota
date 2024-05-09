@@ -31,6 +31,9 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'updateCollectingEventRecord' && $eventid && $isEditor){
         echo $evtManager->updateCollectingEventRecord($eventid, json_decode($_POST['eventData'], true));
     }
+    elseif($action === 'getCollectingEventFields'){
+        echo json_encode($evtManager->getCollectingEventFields());
+    }
     elseif($action === 'getAdditionalDataArr' && $eventid){
         echo json_encode($evtManager->getAdditionalData($eventid));
     }

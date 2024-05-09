@@ -31,4 +31,13 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'updateLocationRecord' && $locationid && $isEditor){
         echo $locManager->updateLocationRecord($locationid, json_decode($_POST['locationData'], true));
     }
+    elseif($action === 'getLocationFields'){
+        echo json_encode($locManager->getLocationFields());
+    }
+    else if($action === 'getNameCodeAutocompleteLocationList'){
+        echo json_encode($locManager->getAutocompleteLocationList($collid, $_POST['key'], $_POST['term']));
+    }
+    else if($action === 'getNearbyLocationArr' && array_key_exists('decimallatitude',$_POST) && array_key_exists('decimallongitude',$_POST)){
+        echo json_encode($locManager->getNearbyLocationArr($collid, $locationid, $_POST['decimallatitude'], $_POST['decimallongitude']));
+    }
 }

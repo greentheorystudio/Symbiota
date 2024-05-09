@@ -6,7 +6,7 @@ const occurrenceEditorOccurrenceDataControls = {
                     <div class="row q-gutter-sm">
                         <occurrence-entry-follow-up-action-selector :selected-action="entryFollowUpAction" @change-occurrence-entry-follow-up-action="changeEntryFollowUpAction"></occurrence-entry-follow-up-action-selector>
                         <div v-if="additionalDataFields.length === 0 && occurrenceEntryFormat !== 'benthic'">
-                            <q-toggle v-model="collectionEventAutoSearch" checked-icon="check" color="green" unchecked-icon="clear" label="Event Auto Search" @update:model-value="setCollectionEventAutoSearch"></q-toggle>
+                            <q-toggle v-model="collectionEventAutoSearch" checked-icon="check" color="green" unchecked-icon="clear" label="Event Auto Search" @update:model-value="setCollectingEventAutoSearch"></q-toggle>
                         </div>
                     </div>
                 </template>
@@ -65,8 +65,8 @@ const occurrenceEditorOccurrenceDataControls = {
             });
         }
 
-        function setCollectionEventAutoSearch(value) {
-            occurrenceStore.setCollectionEventAutoSearch(value);
+        function setCollectingEventAutoSearch(value) {
+            occurrenceStore.setCollectingEventAutoSearch(value);
         }
 
         return {
@@ -80,7 +80,7 @@ const occurrenceEditorOccurrenceDataControls = {
             changeEntryFollowUpAction,
             createOccurrenceRecord,
             saveOccurrenceEdits,
-            setCollectionEventAutoSearch
+            setCollectingEventAutoSearch
         }
     }
 };

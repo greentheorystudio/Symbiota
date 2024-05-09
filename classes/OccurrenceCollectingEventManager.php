@@ -196,14 +196,17 @@ class OccurrenceCollectingEventManager{
     public function getCollectingEventData($eventid): array
     {
         $retArr = array();
-        $sql = 'SELECT e.locationid, e.eventtype, e.fieldnotes, e.fieldnumber, e.eventdate, e.latestdatecollected, e.eventtime, '.
-            'e.`year`, e.`month`, e.`day`, e.startdayofyear, e.enddayofyear, e.verbatimeventdate, e.habitat, e.localitysecurity, '.
-            'e.localitysecurityreason, e.decimallatitude, e.decimallongitude, e.geodeticdatum, e.coordinateuncertaintyinmeters, '.
-            'e.footprintwkt, e.eventremarks, e.georeferencedby, e.georeferenceprotocol, e.georeferencesources, e.georeferenceverificationstatus, '.
-            'e.georeferenceremarks, e.minimumdepthinmeters, e.maximumdepthinmeters, e.verbatimdepth, e.samplingprotocol, '.
-            'e.samplingeffort, e.initialtimestamp '.
-            'FROM omoccurcollectingevents AS e '.
-            'WHERE e.eventID = ' . (int)$eventid . ' ';
+        $fieldNameArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field === 'year' || $field === 'month' || $field === 'day'){
+                $fieldNameArr[] = '`' . $field . '`';
+            }
+            else{
+                $fieldNameArr[] = $field;
+            }
+        }
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM omoccurcollectingevents WHERE eventID = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);

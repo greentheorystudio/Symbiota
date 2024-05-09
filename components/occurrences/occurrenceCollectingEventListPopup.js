@@ -225,7 +225,6 @@ const occurrenceCollectingEventListPopup = {
         }
 
         function processMergeEventData(data, missingOnly = true) {
-            console.log(data);
             occurrenceStore.mergeSelectedEventOccurrenceData(data, !missingOnly);
             context.emit('close:popup');
         }
