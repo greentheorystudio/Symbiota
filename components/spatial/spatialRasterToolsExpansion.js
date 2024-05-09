@@ -191,7 +191,7 @@ const spatialRasterToolsExpansion = {
                 showNotification('negative','Please enter high and low numbers for the value range.');
             }
             else{
-                showWorking();
+                showWorking('Loading...');
                 setTimeout(() => {
                     selectInteraction.value.getFeatures().forEach((feature) => {
                         selectedClone = feature.clone();
@@ -246,7 +246,7 @@ const spatialRasterToolsExpansion = {
                 showNotification('negative','Please enter high and low numbers for the value range.');
             }
             else{
-                showWorking();
+                showWorking('Loading...');
                 setTimeout(() => {
                     rasterAnalysisInteraction.value.getFeatures().forEach((feature) => {
                         selectedClone = feature.clone();

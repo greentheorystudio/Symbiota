@@ -297,7 +297,7 @@
             }
 
             Vue.onMounted(() => {
-                showWorking();
+                showWorking('Loading...');
                 setTaxon();
             });
 

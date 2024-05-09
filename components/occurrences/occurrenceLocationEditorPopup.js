@@ -67,7 +67,7 @@ const occurrenceLocationEditorPopup = {
         }
 
         function saveLocationEdits() {
-            showWorking();
+            showWorking('Saving edits...');
             occurrenceStore.updateLocationRecord((res) => {
                 hideWorking();
                 if(res === 1){

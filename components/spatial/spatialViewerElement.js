@@ -292,7 +292,7 @@ const spatialViewerElement = {
             });
             map.addControl(new ol.control.FullScreen());
             map.getViewport().addEventListener('drop', () => {
-                showWorking();
+                showWorking('Loading...');
             });
             map.on('singleclick', (evt) => {
                 let infoHTML;

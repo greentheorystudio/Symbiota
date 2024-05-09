@@ -255,7 +255,7 @@ const spatialLayerControllerLayerElement = {
         }
 
         function loadServerLayer(id, name, file){
-            showWorking();
+            showWorking('Loading...');
             const zIndex = layerOrderArr.length + 1;
             const filenameParts = file.split('.');
             const fileType = filenameParts.pop();
