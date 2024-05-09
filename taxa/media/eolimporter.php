@@ -34,7 +34,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         <q-card class="processor-control-card">
                             <q-card-section>
                                 <div class="q-my-sm">
-                                    <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disable="loading" label="Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                                    <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                                 </div>
                                 <q-card class="q-my-sm" flat bordered>
                                     <q-card-section>
@@ -147,9 +147,9 @@ if(!$GLOBALS['SYMB_UID']) {
         include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/singleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const eolMediaImporterModule = Vue.createApp({
                 components: {
@@ -187,7 +187,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     const procDisplayScrollAreaRef = Vue.ref(null);
                     const procDisplayScrollHeight = Vue.ref(0);
                     const processCancelling = Vue.ref(false);
-                    const processorDisplayArr = Vue.shallowReactive([]);
+                    const processorDisplayArr = Vue.reactive([]);
                     let processorDisplayDataArr = [];
                     const processorDisplayCurrentIndex = Vue.ref(0);
                     const processorDisplayIndex = Vue.ref(0);
@@ -386,7 +386,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                     }
                                     if(resObj.length < 50000){
                                         processSuccessResponse(true,'Complete');
-                                        const text = 'Getting taxa and ' + selectedMediaType.value + ' counts for taxa within ' + taxonomicGroup.value.name;
+                                        const text = 'Getting taxa and ' + selectedMediaType.value + ' counts for taxa within ' + taxonomicGroup.value;
                                         addProcessToProcessorDisplay(getNewProcessObject('setTaxaMediaArr','single',text));
                                         getTaxaMediaCounts();
                                     }
@@ -452,7 +452,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     function initializeEOLImport() {
                         if(taxonomicGroupTid.value){
                             adjustUIStart();
-                            const text = 'Getting stored Encyclopedia of Life identifiers for taxa within ' + taxonomicGroup.value.name;
+                            const text = 'Getting stored Encyclopedia of Life identifiers for taxa within ' + taxonomicGroup.value;
                             addProcessToProcessorDisplay(getNewProcessObject('setIdentifierArr','single',text));
                             getStoredIdentifiers();
                         }
@@ -910,7 +910,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     }
 
                     function updateTaxonomicGroup(taxonObj) {
-                        taxonomicGroup.value = taxonObj;
+                        taxonomicGroup.value = taxonObj.sciname;
                         taxonomicGroupTid.value = taxonObj ? taxonObj.tid : null;
                         kingdomId.value = taxonObj ? taxonObj.kingdomid : null;
                     }

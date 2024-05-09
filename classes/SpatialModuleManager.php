@@ -95,7 +95,7 @@ class SpatialModuleManager{
             'o.decimalLatitude, o.decimalLongitude, c.CollectionName, c.CollType, t.family AS accFamily, '.
             'c.InstitutionCode, o.catalogNumber, o.recordedBy, o.recordNumber, o.eventDate AS displayDate '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'INNER JOIN taxa AS t ON o.tid = t.TID ';
+            'LEFT JOIN taxa AS t ON o.tid = t.TID ';
         $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
@@ -117,22 +117,22 @@ class SpatialModuleManager{
             $geoArr['type'] = 'Feature';
             $geoArr['geometry']['type'] = 'Point';
             $geoArr['geometry']['coordinates'] = [$row->decimalLongitude, $row->decimalLatitude];
-            $geoArr['properties']['CollType'] = utf8_encode($row->CollType);
-            $geoArr['properties']['collid'] = utf8_encode($row->collid);
-            $geoArr['properties']['coll_year'] = utf8_encode($row->year);
-            $geoArr['properties']['tid'] = utf8_encode($row->tid);
-            $geoArr['properties']['coll_day'] = utf8_encode($row->day);
-            $geoArr['properties']['id'] = utf8_encode($row->occid);
-            $geoArr['properties']['CollectionName'] = utf8_encode($row->CollectionName);
-            $geoArr['properties']['sciname'] = utf8_encode($row->sciname);
-            $geoArr['properties']['family'] = utf8_encode($row->family);
-            $geoArr['properties']['accFamily'] = utf8_encode($row->accFamily);
-            $geoArr['properties']['coll_month'] = utf8_encode($row->month);
-            $geoArr['properties']['InstitutionCode'] = utf8_encode($row->InstitutionCode);
-            $geoArr['properties']['catalogNumber'] = utf8_encode($row->catalogNumber);
-            $geoArr['properties']['recordedBy'] = utf8_encode($row->recordedBy);
-            $geoArr['properties']['recordNumber'] = utf8_encode($row->recordNumber);
-            $geoArr['properties']['displayDate'] = utf8_encode($row->displayDate);
+            $geoArr['properties']['CollType'] = $row->CollType;
+            $geoArr['properties']['collid'] = $row->collid;
+            $geoArr['properties']['coll_year'] = $row->year;
+            $geoArr['properties']['tid'] = $row->tid;
+            $geoArr['properties']['coll_day'] = $row->day;
+            $geoArr['properties']['id'] = $row->occid;
+            $geoArr['properties']['CollectionName'] = $row->CollectionName;
+            $geoArr['properties']['sciname'] = $row->sciname;
+            $geoArr['properties']['family'] = $row->family;
+            $geoArr['properties']['accFamily'] = $row->accFamily;
+            $geoArr['properties']['coll_month'] = $row->month;
+            $geoArr['properties']['InstitutionCode'] = $row->InstitutionCode;
+            $geoArr['properties']['catalogNumber'] = $row->catalogNumber;
+            $geoArr['properties']['recordedBy'] = $row->recordedBy;
+            $geoArr['properties']['recordNumber'] = $row->recordNumber;
+            $geoArr['properties']['displayDate'] = $row->displayDate;
             $featuresArr[] = $geoArr;
         }
         $result->close();
@@ -157,7 +157,7 @@ class SpatialModuleManager{
             'c.InstitutionCode, c.CollectionCode, c.CollectionName, IFNULL(t.family,o.family) AS family, o.fieldnumber, '.
             'o.occurrenceRemarks, o.dynamicProperties, o.reproductiveCondition, o.lifeStage, o.sex, o.individualCount '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'INNER JOIN taxa AS t ON o.tid = t.TID ';
+            'LEFT JOIN taxa AS t ON o.tid = t.TID ';
         $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
@@ -181,50 +181,134 @@ class SpatialModuleManager{
             $geoArr['type'] = 'Feature';
             $geoArr['geometry']['type'] = 'Point';
             $geoArr['geometry']['coordinates'] = [$row->decimalLongitude, $row->decimalLatitude];
-            $geoArr['properties']['id'] = utf8_encode($row->occid);
-            $geoArr['properties']['collid'] = utf8_encode($row->collid);
-            $geoArr['properties']['basisOfRecord'] = utf8_encode($row->basisOfRecord);
-            $geoArr['properties']['occurrenceID'] = utf8_encode($row->occurrenceID);
-            $geoArr['properties']['catalogNumber'] = utf8_encode($row->catalogNumber);
-            $geoArr['properties']['otherCatalogNumbers'] = utf8_encode($row->otherCatalogNumbers);
-            $geoArr['properties']['InstitutionCode'] = utf8_encode($row->InstitutionCode);
-            $geoArr['properties']['CollectionCode'] = utf8_encode($row->CollectionCode);
-            $geoArr['properties']['CollectionName'] = utf8_encode($row->CollectionName);
-            $geoArr['properties']['family'] = utf8_encode($row->family);
-            $geoArr['properties']['sciname'] = utf8_encode($row->sciname);
-            $geoArr['properties']['scientificNameAuthorship'] = utf8_encode($row->scientificNameAuthorship);
-            $geoArr['properties']['identifiedBy'] = utf8_encode($row->identifiedBy);
-            $geoArr['properties']['dateIdentified'] = utf8_encode($row->dateIdentified);
-            $geoArr['properties']['identificationQualifier'] = utf8_encode($row->identificationQualifier);
-            $geoArr['properties']['typeStatus'] = utf8_encode($row->typeStatus);
-            $geoArr['properties']['recordedBy'] = utf8_encode($row->recordedBy);
-            $geoArr['properties']['recordNumber'] = utf8_encode($row->recordNumber);
-            $geoArr['properties']['associatedCollectors'] = utf8_encode($row->associatedCollectors);
-            $geoArr['properties']['eventdate'] = utf8_encode($row->eventdate);
-            $geoArr['properties']['year'] = utf8_encode($row->year);
-            $geoArr['properties']['month'] = utf8_encode($row->month);
-            $geoArr['properties']['day'] = utf8_encode($row->day);
-            $geoArr['properties']['habitat'] = utf8_encode($row->habitat);
-            $geoArr['properties']['substrate'] = utf8_encode($row->substrate);
-            $geoArr['properties']['fieldnumber'] = utf8_encode($row->fieldnumber);
-            $geoArr['properties']['occurrenceRemarks'] = utf8_encode($row->occurrenceRemarks);
-            $geoArr['properties']['associatedTaxa'] = utf8_encode($row->associatedTaxa);
-            $geoArr['properties']['dynamicProperties'] = utf8_encode($row->dynamicProperties);
-            $geoArr['properties']['reproductiveCondition'] = utf8_encode($row->reproductiveCondition);
-            $geoArr['properties']['lifeStage'] = utf8_encode($row->lifeStage);
-            $geoArr['properties']['sex'] = utf8_encode($row->sex);
-            $geoArr['properties']['individualCount'] = utf8_encode($row->individualCount);
-            $geoArr['properties']['country'] = utf8_encode($row->country);
-            $geoArr['properties']['stateProvince'] = utf8_encode($row->stateProvince);
-            $geoArr['properties']['county'] = utf8_encode($row->county);
-            $geoArr['properties']['municipality'] = utf8_encode($row->municipality);
-            $geoArr['properties']['locality'] = utf8_encode($row->locality);
-            $geoArr['properties']['geodeticDatum'] = utf8_encode($row->geodeticDatum);
-            $geoArr['properties']['coordinateUncertaintyInMeters'] = utf8_encode($row->coordinateUncertaintyInMeters);
-            $geoArr['properties']['minimumElevationInMeters'] = utf8_encode($row->minimumElevationInMeters);
-            $geoArr['properties']['maximumElevationInMeters'] = utf8_encode($row->maximumElevationInMeters);
-            $geoArr['properties']['minimumDepthInMeters'] = utf8_encode($row->minimumDepthInMeters);
-            $geoArr['properties']['maximumDepthInMeters'] = utf8_encode($row->maximumDepthInMeters);
+            $geoArr['properties']['id'] = $row->occid;
+            $geoArr['properties']['collid'] = $row->collid;
+            if($row->basisOfRecord){
+                $geoArr['properties']['basisOfRecord'] = $row->basisOfRecord;
+            }
+            if($row->occurrenceID){
+                $geoArr['properties']['occurrenceID'] = $row->occurrenceID;
+            }
+            if($row->catalogNumber){
+                $geoArr['properties']['catalogNumber'] = $row->catalogNumber;
+            }
+            if($row->otherCatalogNumbers){
+                $geoArr['properties']['otherCatalogNumbers'] = $row->otherCatalogNumbers;
+            }
+            if($row->InstitutionCode){
+                $geoArr['properties']['InstitutionCode'] = $row->InstitutionCode;
+            }
+            if($row->CollectionCode){
+                $geoArr['properties']['CollectionCode'] = $row->CollectionCode;
+            }
+            if($row->CollectionName){
+                $geoArr['properties']['CollectionName'] = $row->CollectionName;
+            }
+            if($row->family){
+                $geoArr['properties']['family'] = $row->family;
+            }
+            if($row->sciname){
+                $geoArr['properties']['sciname'] = $row->sciname;
+            }
+            if($row->scientificNameAuthorship){
+                $geoArr['properties']['scientificNameAuthorship'] = $row->scientificNameAuthorship;
+            }
+            if($row->identifiedBy){
+                $geoArr['properties']['identifiedBy'] = $row->identifiedBy;
+            }
+            if($row->dateIdentified){
+                $geoArr['properties']['dateIdentified'] = $row->dateIdentified;
+            }
+            if($row->identificationQualifier){
+                $geoArr['properties']['identificationQualifier'] = $row->identificationQualifier;
+            }
+            if($row->typeStatus){
+                $geoArr['properties']['typeStatus'] = $row->typeStatus;
+            }
+            if($row->recordedBy){
+                $geoArr['properties']['recordedBy'] = $row->recordedBy;
+            }
+            if($row->recordNumber){
+                $geoArr['properties']['recordNumber'] = $row->recordNumber;
+            }
+            if($row->associatedCollectors){
+                $geoArr['properties']['associatedCollectors'] = $row->associatedCollectors;
+            }
+            if($row->eventdate){
+                $geoArr['properties']['eventdate'] = $row->eventdate;
+            }
+            if($row->year){
+                $geoArr['properties']['year'] = $row->year;
+            }
+            if($row->month){
+                $geoArr['properties']['month'] = $row->month;
+            }
+            if($row->day){
+                $geoArr['properties']['day'] = $row->day;
+            }
+            if($row->habitat){
+                $geoArr['properties']['habitat'] = $row->habitat;
+            }
+            if($row->substrate){
+                $geoArr['properties']['substrate'] = $row->substrate;
+            }
+            if($row->fieldnumber){
+                $geoArr['properties']['fieldnumber'] = $row->fieldnumber;
+            }
+            if($row->occurrenceRemarks){
+                $geoArr['properties']['occurrenceRemarks'] = $row->occurrenceRemarks;
+            }
+            if($row->associatedTaxa){
+                $geoArr['properties']['associatedTaxa'] = $row->associatedTaxa;
+            }
+            if($row->dynamicProperties){
+                $geoArr['properties']['dynamicProperties'] = $row->dynamicProperties;
+            }
+            if($row->reproductiveCondition){
+                $geoArr['properties']['reproductiveCondition'] = $row->reproductiveCondition;
+            }
+            if($row->lifeStage){
+                $geoArr['properties']['lifeStage'] = $row->lifeStage;
+            }
+            if($row->sex){
+                $geoArr['properties']['sex'] = $row->sex;
+            }
+            if($row->individualCount){
+                $geoArr['properties']['individualCount'] = $row->individualCount;
+            }
+            if($row->country){
+                $geoArr['properties']['country'] = $row->country;
+            }
+            if($row->stateProvince){
+                $geoArr['properties']['stateProvince'] = $row->stateProvince;
+            }
+            if($row->county){
+                $geoArr['properties']['county'] = $row->county;
+            }
+            if($row->municipality){
+                $geoArr['properties']['municipality'] = $row->municipality;
+            }
+            if($row->locality){
+                $geoArr['properties']['locality'] = $row->locality;
+            }
+            if($row->geodeticDatum){
+                $geoArr['properties']['geodeticDatum'] = $row->geodeticDatum;
+            }
+            if($row->coordinateUncertaintyInMeters){
+                $geoArr['properties']['coordinateUncertaintyInMeters'] = $row->coordinateUncertaintyInMeters;
+            }
+            if($row->minimumElevationInMeters){
+                $geoArr['properties']['minimumElevationInMeters'] = $row->minimumElevationInMeters;
+            }
+            if($row->maximumElevationInMeters){
+                $geoArr['properties']['maximumElevationInMeters'] = $row->maximumElevationInMeters;
+            }
+            if($row->minimumDepthInMeters){
+                $geoArr['properties']['minimumDepthInMeters'] = $row->minimumDepthInMeters;
+            }
+            if($row->maximumDepthInMeters){
+                $geoArr['properties']['maximumDepthInMeters'] = $row->maximumDepthInMeters;
+            }
             $featuresArr[] = $geoArr;
         }
         $result->close();
@@ -240,7 +324,7 @@ class SpatialModuleManager{
     public function setRecordCnt(): void
     {
         if($this->sqlWhere){
-            $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.TID ';
+            $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID ';
             $sql .= $this->setTableJoins();
             $sql .= $this->sqlWhere;
             if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
@@ -267,7 +351,7 @@ class SpatialModuleManager{
             'o.eventdate, o.family, o.sciname, o.tid, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'INNER JOIN taxa AS t ON o.tid = t.TID ';
+            'LEFT JOIN taxa AS t ON o.tid = t.TID ';
         $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){

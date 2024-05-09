@@ -1,4 +1,4 @@
-const occurrenceEditorModule = {
+const occurrenceEditorCollectingEventModule = {
     template: `
         
     `,

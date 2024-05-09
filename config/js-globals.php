@@ -8,6 +8,7 @@
     const VALID_USER = <?php echo ($GLOBALS['VALID_USER'] ? 'true' : 'false'); ?>;
     const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;
     const USER_DISPLAY_NAME = '<?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>';
+    const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');
 
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 
@@ -43,13 +44,17 @@
 
     const http = new XMLHttpRequest();
     let abortController;
+    const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
+    const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
     const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
     const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
     const occurrenceApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceController.php';
+    const occurrenceCollectingEventApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceCollectingEventController.php';
+    const occurrenceLocationApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceLocationController.php';
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
     const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';

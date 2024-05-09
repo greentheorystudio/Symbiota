@@ -273,7 +273,7 @@ class OccurrenceMaintenance {
 				'GROUP BY o.family ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$family = str_replace(array('"',"'"), '',$r->family);
+				$family = $r->family ? str_replace(array('"',"'"), '',$r->family) : '';
 				if($family){
 					$statsArr['families'][$family]['SpecimensPerFamily'] = $r->SpecimensPerFamily;
 					$statsArr['families'][$family]['GeorefSpecimensPerFamily'] = $r->GeorefSpecimensPerFamily;
@@ -294,7 +294,7 @@ class OccurrenceMaintenance {
 				'GROUP BY o.country ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$country = str_replace(array('"',"'"), '',$r->country);
+				$country = $r->country ? str_replace(array('"',"'"), '',$r->country) : '';
 				if($country){
 					$statsArr['countries'][$country]['CountryCount'] = $r->CountryCount;
 					$statsArr['countries'][$country]['GeorefSpecimensPerCountry'] = $r->GeorefSpecimensPerCountry;

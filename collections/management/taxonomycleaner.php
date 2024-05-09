@@ -298,8 +298,8 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
         include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const occurrenceTaxonomyManagementModule = Vue.createApp({
                 components: {
@@ -330,7 +330,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     let processingArr = [];
                     const processingLimit = Vue.ref(null);
                     const processingStartIndex = Vue.ref(null);
-                    const processorDisplayArr = Vue.shallowReactive([]);
+                    const processorDisplayArr = Vue.reactive([]);
                     let processorDisplayDataArr = [];
                     const processorDisplayCurrentIndex = Vue.ref(0);
                     const processorDisplayIndex = Vue.ref(0);
@@ -1172,75 +1172,50 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     }
 
                     function processGetCOLTaxonByScinameResponse(resObj) {
-                        if(resObj['total_number_of_results'] > 0){
+                        if(resObj['total'] > 0){
                             const resultArr = resObj['result'];
                             resultArr.forEach((taxResult) => {
-                                const status = taxResult['name_status'];
-                                if(status !== 'common name'){
-                                    const resultObj = {};
-                                    resultObj['id'] = taxResult['id'];
-                                    resultObj['author'] = taxResult.hasOwnProperty('author') ? taxResult['author'] : '';
-                                    let rankName = taxResult['rank'].toLowerCase();
-                                    if(rankName === 'infraspecies'){
-                                        resultObj['sciname'] = taxResult['genus'] + ' ' + taxResult['species'] + ' ' + ((taxResult['infraspeciesMarker'] && taxResult['infraspeciesMarker'] !== 'undefined') ? (taxResult['infraspeciesMarker'] + ' ') : '') + taxResult['infraspecies'];
-                                        if(taxResult['infraspeciesMarker'] === 'var.'){
-                                            rankName = 'variety';
+                                const usageData = taxResult.hasOwnProperty('usage') ? taxResult['usage'] : null;
+                                if(usageData){
+                                    const status = usageData['status'];
+                                    if(status !== 'common name' && usageData.hasOwnProperty('name')){
+                                        const resultObj = {};
+                                        resultObj['id'] = taxResult['id'];
+                                        resultObj['author'] = usageData['name'].hasOwnProperty('authorship') ? usageData['name']['authorship'] : '';
+                                        resultObj['sciname'] = usageData['name']['scientificName'];
+                                        resultObj['rankname'] = usageData['name']['rank'].toLowerCase();
+                                        resultObj['rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
+                                        if(status === 'accepted'){
+                                            resultObj['accepted'] = true;
                                         }
-                                        else if(taxResult['infraspeciesMarker'] === 'subsp.'){
-                                            rankName = 'subspecies';
-                                        }
-                                        else if(taxResult['infraspeciesMarker'] === 'f.'){
-                                            rankName = 'form';
-                                        }
-                                    }
-                                    else{
-                                        resultObj['sciname'] = taxResult['name'];
-                                    }
-                                    resultObj['rankname'] = rankName;
-                                    resultObj['rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
-                                    if(status === 'accepted name'){
-                                        resultObj['accepted'] = true;
-                                    }
-                                    else if(status === 'synonym'){
-                                        const hierarchyArr = [];
-                                        const resultHObj = {};
-                                        const acceptedObj = taxResult['accepted_name'];
-                                        resultObj['accepted'] = false;
-                                        resultObj['accepted_id'] = acceptedObj['id'];
-                                        resultHObj['id'] = acceptedObj['id'];
-                                        resultHObj['author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
-                                        let rankName = acceptedObj['rank'].toLowerCase();
-                                        if(rankName === 'infraspecies'){
-                                            resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + ((acceptedObj['infraspeciesMarker'] && acceptedObj['infraspeciesMarker'] !== 'undefined') ? (acceptedObj['infraspeciesMarker'] + ' ') : '') + acceptedObj['infraspecies'];
-                                            if(acceptedObj['infraspeciesMarker'] === 'var.'){
-                                                rankName = 'variety';
+                                        else if(status === 'synonym'){
+                                            const hierarchyArr = [];
+                                            const resultHObj = {};
+                                            const acceptedObj = usageData['accepted'];
+                                            if(acceptedObj.hasOwnProperty('name')){
+                                                resultObj['accepted'] = false;
+                                                resultObj['accepted_id'] = acceptedObj['id'];
+                                                resultHObj['id'] = acceptedObj['id'];
+                                                resultHObj['author'] = acceptedObj['name'].hasOwnProperty('authorship') ? acceptedObj['name']['authorship'] : '';
+                                                resultHObj['sciname'] = acceptedObj['name']['scientificName'];
+                                                resultObj['accepted_sciname'] = resultHObj['sciname'];
+                                                resultHObj['rankname'] = acceptedObj['name']['rank'].toLowerCase();
+                                                resultHObj['rankid'] = rankArr.hasOwnProperty(resultHObj['rankname']) ? rankArr[resultHObj['rankname']] : null;
+                                                hierarchyArr.push(resultHObj);
+                                                resultObj['hierarchy'] = hierarchyArr;
                                             }
-                                            else if(acceptedObj['infraspeciesMarker'] === 'subsp.'){
-                                                rankName = 'subspecies';
-                                            }
-                                            else if(acceptedObj['infraspeciesMarker'] === 'f.'){
-                                                rankName = 'form';
+                                        }
+                                        const existingObj = colInitialSearchResults.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
+                                        if(existingObj){
+                                            if(Number(existingObj['rankid']) < Number(resultObj['rankid'])){
+                                                const index = colInitialSearchResults.indexOf(existingObj);
+                                                colInitialSearchResults.splice(index, 1);
+                                                colInitialSearchResults.push(resultObj);
                                             }
                                         }
                                         else{
-                                            resultHObj['sciname'] = acceptedObj['name'];
-                                        }
-                                        resultObj['accepted_sciname'] = resultHObj['sciname'];
-                                        resultHObj['rankname'] = rankName;
-                                        resultHObj['rankid'] = rankArr.hasOwnProperty(resultHObj['rankname']) ? rankArr[resultHObj['rankname']] : null;
-                                        hierarchyArr.push(resultHObj);
-                                        resultObj['hierarchy'] = hierarchyArr;
-                                    }
-                                    const existingObj = colInitialSearchResults.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
-                                    if(existingObj){
-                                        if(Number(existingObj['rankid']) < Number(resultObj['rankid'])){
-                                            const index = colInitialSearchResults.indexOf(existingObj);
-                                            colInitialSearchResults.splice(index, 1);
                                             colInitialSearchResults.push(resultObj);
                                         }
-                                    }
-                                    else{
-                                        colInitialSearchResults.push(resultObj);
                                     }
                                 }
                             });
@@ -1474,7 +1449,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 colInitialSearchResults.length = 0;
                                 const text = 'Searching the Catalogue of Life (COL) for ' + currentSciname.value;
                                 addProcessToProcessorDisplay(getNewProcessObject(currentSciname.value, 'multi', text));
-                                const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + currentSciname.value;
+                                const url = 'https://api.checklistbank.org/dataset/3/nameusage/search?content=SCIENTIFIC_NAME&q=' + currentSciname.value + '&offset=0&limit=100';
                                 const formData = new FormData();
                                 formData.append('url', url);
                                 formData.append('action', 'get');
@@ -1918,7 +1893,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             else{
                                 id = taxon['accepted_id'];
                             }
-                            const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/classification';
+                            const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + id + '/classification';
                             const formData = new FormData();
                             formData.append('url', url);
                             formData.append('action', 'get');

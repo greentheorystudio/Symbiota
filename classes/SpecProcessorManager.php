@@ -249,7 +249,8 @@ class SpecProcessorManager {
 				'WHERE collid = '.$this->collid.' GROUP BY processingstatus';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$psArr[strtolower($r->processingstatus)] = $r->cnt;
+				$key = $r->processingstatus ? strtolower($r->processingstatus) : 'no-status';
+                $psArr[$key] = $r->cnt;
 			}
 			$rs->free();
 			$statusArr = array('unprocessed','stage 1','stage 2','stage 3','pending duplicate','pending review-nfn','pending review','expert required','reviewed','closed','empty status');

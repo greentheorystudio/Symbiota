@@ -82,7 +82,7 @@ const taxonRankCheckboxSelector = {
 
         function setRankArray() {
             rankArr.value = [];
-            const stringKeys = Object.keys(rankOptions);
+            const stringKeys = Object.keys(rankOptions.value);
             stringKeys.forEach((key) => {
                 rankArr.value.push(Number(key));
             });

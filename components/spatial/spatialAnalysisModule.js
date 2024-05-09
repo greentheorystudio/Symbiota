@@ -225,11 +225,11 @@ const spatialAnalysisModule = {
                             mapSettings.selectedFeatures.push(evt.feature);
                             processInputSelections();
                             if(props.inputWindowToolsArr.includes('uncertainty') || props.inputWindowToolsArr.includes('radius')){
-                                if(mapSettings.inputPointUncertainty > 0){
+                                if(mapSettings.uncertaintyRadiusValue > 0){
                                     const pointRadius = {};
                                     pointRadius.pointlat = pointCoords[1];
                                     pointRadius.pointlong = pointCoords[0];
-                                    pointRadius.radius = mapSettings.inputPointUncertainty;
+                                    pointRadius.radius = mapSettings.uncertaintyRadiusValue;
                                     createUncertaintyCircleFromPointRadius(pointRadius);
                                 }
                             }
@@ -374,12 +374,16 @@ const spatialAnalysisModule = {
             mapSettings.selectSource.addFeature(pointFeature);
             mapSettings.selectedFeatures.push(pointFeature);
             processInputSelections();
-            const selectextent = mapSettings.selectSource.getExtent();
+            let selectextent;
+            if(mapSettings.uncertaintyCircleSource.getFeatures().length > 0){
+                selectextent = mapSettings.uncertaintyCircleSource.getExtent();
+            }
+            else{
+                selectextent = mapSettings.selectSource.getExtent();
+            }
             map.getView().fit(selectextent, map.getSize());
             let fittedZoom = map.getView().getZoom();
-            if(fittedZoom > 10){
-                map.getView().setZoom(fittedZoom - 8);
-            }
+            map.getView().setZoom(fittedZoom - 2);
         }
 
         function createPolygonFromBoundingBox(bbox, selected) {
@@ -415,9 +419,7 @@ const spatialAnalysisModule = {
             const selectextent = mapSettings.selectSource.getExtent();
             map.getView().fit(selectextent, map.getSize());
             let fittedZoom = map.getView().getZoom();
-            if(fittedZoom > 10){
-                map.getView().setZoom(fittedZoom - 8);
-            }
+            map.getView().setZoom(fittedZoom - 2);
         }
 
         function createPolysFromPolyArr(polyArr, selected) {
@@ -940,7 +942,7 @@ const spatialAnalysisModule = {
                             const pointRadius = {};
                             pointRadius.pointlat = pointCoords[1];
                             pointRadius.pointlong = pointCoords[0];
-                            pointRadius.radius = mapSettings.inputPointUncertainty;
+                            pointRadius.radius = mapSettings.uncertaintyRadiusValue;
                             createUncertaintyCircleFromPointRadius(pointRadius);
                         }
                     }
@@ -1066,7 +1068,12 @@ const spatialAnalysisModule = {
             if(props.inputWindowMode && ((props.inputWindowToolsArr.length === 0) || (props.inputWindowToolsArr.length > 0 && selectInteraction.value.getFeatures().getLength() === 1))){
                 if(geoPolyArr.value.length > 0){
                     submitReady = true;
-                    inputResponseData.value['polyArr'] = geoPolyArr.value;
+                    if(props.inputWindowToolsArr.includes('wkt')){
+                        inputResponseData.value['footprintWKT'] = geoPolyArr.value[0];
+                    }
+                    else{
+                        inputResponseData.value['polyArr'] = geoPolyArr.value;
+                    }
                 }
                 if(geoCircleArr.value.length > 0){
                     submitReady = true;
@@ -1079,6 +1086,11 @@ const spatialAnalysisModule = {
                 if(geoPointArr.value.length > 0){
                     submitReady = true;
                     inputResponseData.value['pointArr'] = geoPointArr.value;
+                    if(geoPointArr.value.length === 1){
+                        inputResponseData.value['decimalLatitude'] = geoPointArr.value[0]['decimalLatitude'];
+                        inputResponseData.value['decimalLongitude'] = geoPointArr.value[0]['decimalLongitude'];
+                        inputResponseData.value['coordinateUncertaintyInMeters'] = mapSettings.uncertaintyRadiusValue;
+                    }
                 }
             }
             updateMapSettings('submitButtonDisabled', !submitReady);

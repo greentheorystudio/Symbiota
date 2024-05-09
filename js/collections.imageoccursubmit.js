@@ -19,37 +19,6 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		}
 	});
-
-	$("#country").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupCountry.php", { term: request.term }, response );
-		},
-		minLength: 2,
-		autoFocus: true
-	});
-
-	$("#state").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupState.php", { term: request.term, "country": document.imgoccurform.country.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true
-	});
-
-	$("#county").autocomplete({ 
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupCounty.php", { term: request.term, "state": document.imgoccurform.stateprovince.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true
-	});
-
-	$("#catalognumber").keydown(function(event){
-		const evt = (event) ? event : ((event) ? event : null);
-		if ((evt.keyCode == 13)) {
-			return false;
-		}
-	});
 });
 
 function verifySciName(){

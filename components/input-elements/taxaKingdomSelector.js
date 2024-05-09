@@ -14,7 +14,7 @@ const taxaKingdomSelector = {
         }
     },
     template: `
-        <q-select outlined v-model="selectedKingdom" :options="kingdomOpts" option-value="id" option-label="name" :label="label" @update:model-value="processChange" :readonly="disable" dense options-dense />
+        <q-select outlined v-model="selectedKingdom" popup-content-class="z-max" :options="kingdomOpts" option-value="id" option-label="name" :label="label" @update:model-value="processChange" :readonly="disable" dense options-dense />
     `,
     setup(props, context) {
         const kingdomOpts = Vue.ref([]);

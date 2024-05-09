@@ -1,0 +1,413 @@
+{
+    "occurrence": {
+        "blank": {
+            "source": "",
+            "definition": "",
+            "comments": "",
+            "examples": ""
+        },
+        "associatedoccurrences": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:associatedOccurrences",
+            "definition": "A list (concatenated and separated) of identifiers of other dwc:Occurrence records and their associations to this dwc:Occurrence.",
+            "comments": "This term can be used to provide a list of associations to other dwc:Occurrences. Note that the dwc:ResourceRelationship class is an alternative means of representing associations, and with more detail. Recommended best practice is to separate the values in a list with space vertical bar space ( | )."
+        },
+        "associatedtaxa": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:associatedTaxa",
+            "definition": "A list (concatenated and separated) of identifiers or names of dwc:Taxon records and the associations of this dwc:Occurrence to each of them.",
+            "comments": "This term can be used to provide a list of associations to dwc:Taxon records other than the one defined in the dwc:Occurrence. Note that the dwc:ResourceRelationship class is an alternative means of representing associations, and with more detail. This term is not apt for establishing relationships between dwc:Taxon records, only between specific dwc:Occurrences of a dwc:Organism with other dwc:Taxon records. Recommended best practice is to separate the values in a list with space vertical bar space ( | )."
+        },
+        "basisofrecord": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:basisOfRecord",
+            "definition": "The specific nature of the data record.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the set of local names of the identifiers for classes in Darwin Core.",
+            "examples": "PreservedSpecimen | HumanObservation | FossilSpecimen | LivingSpecimen | MaterialSample"
+        },
+        "behavior": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:behavior",
+            "definition": "The behavior shown by the subject at the time the dwc:Occurrence was recorded.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "roosting | foraging | running"
+        },
+        "catalognumber": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:catalogNumber",
+            "definition": "An identifier (preferably unique) for the record within the data set or collection.",
+            "examples": "145732 | 145732a | 2008.1334 | R-4313"
+        },
+        "collectioncode": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:collectionCode",
+            "definition": "The name, acronym, coden, or initialism identifying the collection or data set from which the record was derived.",
+            "examples": "Mammals | Hildebrandt | EBIRD | VP"
+        },
+        "collectionid": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:collectionID",
+            "definition": "An identifier for the collection or dataset from which the record was derived.",
+            "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the Global Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
+            "examples": "https://www.gbif.org/grscicoll/collection/fbd3ed74-5a21-4e01-b86a-33d36f032d9c"
+        },
+        "coordinateprecision": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:coordinatePrecision",
+            "definition": "A decimal representation of the precision of the coordinates given in the dwc:decimalLatitude and dwc:decimalLongitude.",
+            "examples": "0.00001 (normal GPS limit for decimal degrees) | 0.000278 (nearest second) | 0.01667 (nearest minute) | 1.0 (nearest degree)"
+        },
+        "coordinateuncertaintyinmeters": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters",
+            "definition": "The horizontal distance (in meters) from the given dwc:decimalLatitude and dwc:decimalLongitude describing the smallest circle containing the whole of the dcterms:Location. Leave the value empty if the uncertainty is unknown, cannot be estimated, or is not applicable (because there are no coordinates). Zero is not a valid value for this term.",
+            "examples": "30 (reasonable lower limit on or after 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 100 (reasonable lower limit before 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 71 (uncertainty for a UTM coordinate having 100 meter precision and a known spatial reference system)"
+        },
+        "country": {
+            "source": "https://dwc.tdwg.org/terms/#country",
+            "definition": "The name of the country or major administrative unit in which the dcterms:Location occurs.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "Denmark | Colombia | España"
+        },
+        "county": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:county",
+            "definition": "The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.) in which the dcterms:Location occurs.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "Missoula | Los Lagos | Mataró"
+        },
+        "datageneralizations": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:dataGeneralizations",
+            "definition": "Actions taken to make the shared data less specific or complete than in its original form. Suggests that alternative data of higher quality may be available on request.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "Coordinates generalized from original GPS coordinates to the nearest half degree grid cell."
+        },
+        "datasetid": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:datasetID",
+            "definition": "An identifier for the set of data. May be a global unique identifier or an identifier specific to a collection or institution.",
+            "examples": "b15d4952-7d20-46f1-8a3e-556a512b04c5"
+        },
+        "dateidentified": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:dateIdentified",
+            "definition": "The date on which the subject was determined as representing the dwc:Taxon.",
+            "comments": "Recommended best practice is to use a date that conforms to ISO 8601-1:2019.",
+            "examples": "1809-02-12 (some time during 12 February 1809) | 1906-06 (some time in June 1906) | 1971 (some time in the year 1971) | 1900/1909 (some time during the interval between the beginning of the year 1900 and the end of the year 1909) | 2007-11-13/15 (some time in the interval between 13 November 2007 and 15 November 2007)"
+        },
+        "day": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:day",
+            "definition": "The integer day of the month on which the dwc:Event occurred.",
+            "examples": "9 | 28"
+        },
+        "decimallatitude": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:decimalLatitude",
+            "definition": "The geographic latitude (in decimal degrees, using the spatial reference system given in dwc:geodeticDatum) of the geographic center of a dcterms:Location. Positive values are north of the Equator, negative values are south of it. Legal values lie between -90 and 90, inclusive.",
+            "examples": "-41.0983423"
+        },
+        "decimallongitude": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:decimalLongitude",
+            "definition": "The geographic longitude (in decimal degrees, using the spatial reference system given in dwc:geodeticDatum) of the geographic center of a dcterms:Location. Positive values are east of the Greenwich Meridian, negative values are west of it. Legal values lie between -180 and 180, inclusive.",
+            "examples": "-121.1761111"
+        },
+        "disposition": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:disposition",
+            "definition": "The current state of a dwc:MaterialEntity with respect to a collection.",
+            "comments": "Recommended best practice is to use a controlled vocabulary. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "in collection | missing | on loan | used up | destroyed | deaccessioned"
+        },
+        "dynamicproperties": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:dynamicProperties",
+            "definition": "A list of additional measurements, facts, characteristics, or assertions about the record. Meant to provide a mechanism for structured content.",
+            "comments": "Recommended best practice is to use a key:value encoding schema for a data interchange format such as JSON."
+        },
+        "enddayofyear": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:endDayOfYear",
+            "definition": "The latest integer day of the year on which the dwc:Event occurred (1 for January 1, 365 for December 31, except in a leap year, in which case it is 366).",
+            "examples": "1 (1 January) | 32 (1 February) | 366 (31 December) | 365 (30 December in a leap year, 31 December in a non-leap year)"
+        },
+        "establishmentmeans": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:establishmentMeans",
+            "definition": "Statement about whether a dwc:Organism has been introduced to a given place and time through the direct or indirect activity of modern humans.",
+            "comments": "Recommended best practice is to use controlled value strings from the controlled vocabulary designated for use with this term, listed at http://rs.tdwg.org/dwc/doc/em/. For details, refer to https://doi.org/10.3897/biss.3.38084. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "native | nativeReintroduced | introduced | introducedAssistedColonisation | vagrant | uncertain"
+        },
+        "eventdate": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:eventDate",
+            "definition": "The date-time or interval during which a dwc:Event occurred. For occurrences, this is the date-time when the dwc:Event was recorded. Not suitable for a time in a geological context.",
+            "comments": "Recommended best practice is to use a date that conforms to ISO 8601-1:2019.",
+            "examples": "1809-02-12 (some time during 12 February 1809) | 1906-06 (some time in June 1906) | 1971 (some time in the year 1971)"
+        },
+        "eventremarks": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:eventRemarks",
+            "definition": "Comments or notes about the dwc:Event.",
+            "examples": "After the recent rains the river is nearly at flood stage."
+        },
+        "eventtime": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:eventTime",
+            "definition": "The time or interval during which a dwc:Event occurred.",
+            "comments": "Recommended best practice is to use a time of day that conforms to ISO 8601-1:2019."
+        },
+        "fieldnotes": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:fieldNotes",
+            "definition": "One of a) an indicator of the existence of, b) a reference to (publication, URI), or c) the text of notes taken in the field about the dwc:Event.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "Notes available in the Grinnell-Miller Library."
+        },
+        "fieldnumber": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:fieldNumber",
+            "definition": "An identifier given to the dwc:Event in the field. Often serves as a link between field notes and the dwc:Event.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "RV Sol 87-03-08"
+        },
+        "footprintwkt": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:footprintWKT",
+            "definition": "A Well-Known Text (WKT) representation of the shape (footprint, geometry) that defines the dcterms:Location. A dcterms:Location may have both a point-radius representation (see dwc:decimalLatitude) and a footprint representation, and they may differ from each other.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value."
+        },
+        "geodeticdatum": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:geodeticDatum",
+            "definition": "The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which the geographic coordinates given in dwc:decimalLatitude and dwc:decimalLongitude are based.",
+            "comments": "Recommended best practice is to use the EPSG code of the SRS, if known. Otherwise use a controlled vocabulary for the name or code of the geodetic datum, if known. Otherwise use a controlled vocabulary for the name or code of the ellipsoid, if known. If none of these is known, use the value unknown. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "EPSG:4326 | WGS84 | NAD27 | Campo Inchauspe | European 1950 | Clarke 1866"
+        },
+        "georeferencedby": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:georeferencedBy",
+            "definition": "A list (concatenated and separated) of names of people, groups, or organizations who determined the georeference (spatial representation) for the dcterms:Location.",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "Brad Millen (ROM) | Kristina Yamamoto | Janet Fang"
+        },
+        "georeferenceprotocol": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceProtocol",
+            "definition": "A description or reference to the methods used to determine the spatial footprint, coordinates, and uncertainties.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "Georeferencing Quick Reference Guide (Zermoglio et al. 2020, https://doi.org/10.35035/e09p-h128)"
+        },
+        "georeferenceremarks": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceRemarks",
+            "definition": "Notes or comments about the spatial description determination, explaining assumptions made in addition or opposition to the those formalized in the method referred to in dwc:georeferenceProtocol.",
+            "examples": "Assumed distance by road (Hwy. 101)"
+        },
+        "georeferencesources": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceSources",
+            "definition": "A list (concatenated and separated) of maps, gazetteers, or other resources used to georeference the dcterms:Location, described specifically enough to allow anyone in the future to use the same resources.",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "https://www.geonames.org/ | USGS 1:24000 Florence Montana Quad 1967 | Terrametrics 2008 on Google Earth | GeoLocate"
+        },
+        "habitat": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:habitat",
+            "definition": "A category or description of the habitat in which the dwc:Event occurred.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "oak savanna | pre-cordilleran steppe"
+        },
+        "identificationqualifier": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:identificationQualifier",
+            "definition": "A brief phrase or a standard term (cf., aff.) to express the determiner's doubts about the dwc:Identification.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "aff. agrifolia var. oxyadenia (for Quercus aff. agrifolia var. oxyadenia with accompanying values Quercus in genus, agrifolia in specificEpithet, oxyadenia in infraspecificEpithet, and var. in taxonRank) | cf. var. oxyadenia (for Quercus agrifolia cf. var. oxyadenia with accompanying values Quercus in genus, agrifolia in specificEpithet, oxyadenia in infraspecificEpithet, and var. in taxonRank)"
+        },
+        "identificationreferences": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:identificationReferences",
+            "definition": "A list (concatenated and separated) of references (publication, global unique identifier, URI) used in the dwc:Identification.",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ).",
+            "examples": "Aves del Noroeste Patagonico. Christie et al. 2004. | Stebbins, R. Field Guide to Western Reptiles and Amphibians. 3rd Edition. 2003. | Irschick, D.J. and Shaffer, H.B. (1997). The polytypic species revisited: Morphological differentiation among tiger salamanders (Ambystoma tigrinum) (Amphibia: Caudata). Herpetologica, 53(1), 30-49."
+        },
+        "identificationremarks": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:identificationRemarks",
+            "definition": "Comments or notes about the dwc:Identification.",
+            "examples": "Distinguished between Anthus correndera and Anthus hellmayri based on the comparative lengths of the uñas."
+        },
+        "identifiedby": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:identifiedBy",
+            "definition": "A list (concatenated and separated) of names of people, groups, or organizations who assigned the dwc:Taxon to the subject.",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "James L. Patton | Theodore Pappenfuss | Robert Macey"
+        },
+        "individualcount": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:individualCount",
+            "definition": "The number of individuals present at the time of the dwc:Occurrence.",
+            "examples": "1 | 25"
+        },
+        "informationwithheld": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:informationWithheld",
+            "definition": "Additional information that exists, but that has not been shared in the given record.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "location information not given for endangered species | collector identities withheld | ask about tissue samples"
+        },
+        "institutioncode": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:institutionCode",
+            "definition": "The name (or acronym) in use by the institution having custody of the object(s) or information referred to in the record.",
+            "examples": "MVZ | FMNH | CLO | UCMP"
+        },
+        "institutionid": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:institutionID",
+            "definition": "An identifier for the institution having custody of the object(s) or information referred to in the record.",
+            "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the Research Organization Registry (ROR) or the Global Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
+            "examples": "https://ror.org/015hz7p22 | http://grscicoll.org/institution/museum-southwestern-biology | https://www.gbif.org/grscicoll/institution/e3d4dcc4-81e2-444c-8a5c-41d1044b5381"
+        },
+        "language": {
+            "source": "https://dwc.tdwg.org/terms/#dc:language",
+            "definition": "A language of the resource.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as RFC 5646.",
+            "examples": "en (for English) | es (for Spanish)"
+        },
+        "lifestage": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:lifeStage",
+            "definition": "The age class or life stage of the dwc:Organism(s) at the time the dwc:Occurrence was recorded.",
+            "comments": "Recommended best practice is to use a controlled vocabulary. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "zygote | larva | juvenile | adult | seedling | flowering | fruiting"
+        },
+        "locality": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:locality",
+            "definition": "The specific description of the place.",
+            "comments": "Less specific geographic information can be provided in other geographic terms (dwc:higherGeography, dwc:continent, dwc:country, dwc:stateProvince, dwc:county, dwc:municipality, dwc:waterBody, dwc:island, dwc:islandGroup). This term may contain information modified from the original to correct perceived errors or standardize the description.",
+            "examples": "Bariloche, 25 km NNE via Ruta Nacional 40 (=Ruta 237) | Queets Rainforest, Olympic National Park"
+        },
+        "locationremarks": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:locationRemarks",
+            "definition": "Comments or notes about the dcterms:Location.",
+            "examples": "under water since 2005"
+        },
+        "maximumdepthinmeters": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:maximumDepthInMeters",
+            "definition": "The greater depth of a range of depth below the local surface, in meters.",
+            "examples": "200"
+        },
+        "maximumelevationinmeters": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:maximumElevationInMeters",
+            "definition": "The upper limit of the range of elevation (altitude, usually above sea level), in meters.",
+            "examples": "1236"
+        },
+        "minimumdepthinmeters": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:minimumDepthInMeters",
+            "definition": "The lesser depth of a range of depth below the local surface, in meters.",
+            "examples": "0 | 100"
+        },
+        "minimumelevationinmeters": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:minimumElevationInMeters",
+            "definition": "The lower limit of the range of elevation (altitude, usually above sea level), in meters.",
+            "examples": "-100 | 802"
+        },
+        "month": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:month",
+            "definition": "The integer month in which the dwc:Event occurred.",
+            "examples": "1 (January) | 10 (October)"
+        },
+        "municipality": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:municipality",
+            "definition": "The full, unabbreviated name of the next smaller administrative region than county (city, municipality, etc.) in which the dcterms:Location occurs. Do not use this term for a nearby named place that does not contain the actual dcterms:Location.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "Holzminden | Araçatuba | Ga-Segonyana"
+        },
+        "occurrenceid": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:occurrenceID",
+            "definition": "An identifier for the dwc:Occurrence (as opposed to a particular digital record of the dwc:Occurrence). In the absence of a persistent global unique identifier, construct one from a combination of identifiers in the record that will most closely make the dwc:occurrenceID globally unique.",
+            "comments": "Recommended best practice is to use a persistent, globally unique identifier.",
+            "examples": "http://arctos.database.museum/guid/MSB:Mamm:233627 | 000866d2-c177-4648-a200-ead4007051b9 | urn:catalog:UWBM:Bird:89776"
+        },
+        "occurrenceremarks": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:occurrenceRemarks",
+            "definition": "Comments or notes about the dwc:Occurrence.",
+            "examples": "found dead on road"
+        },
+        "othercatalognumbers": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:otherCatalogNumbers",
+            "definition": "A list (concatenated and separated) of previous or alternate fully qualified catalog numbers or other human-used identifiers for the same dwc:Occurrence, whether in the current or any other data set or collection.",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ).",
+            "examples": "FMNH:Mammal:1234 | NPS YELLO6778 | MBG 33424"
+        },
+        "ownerinstitutioncode": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:ownerInstitutionCode",
+            "definition": "The name (or acronym) in use by the institution having ownership of the object(s) or information referred to in the record.",
+            "examples": "NPS | APN | InBio"
+        },
+        "preparations": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:preparations",
+            "definition": "A list (concatenated and separated) of preparations and preservation methods for a dwc:MaterialEntity.",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "fossil | cast | photograph | DNA extract | skin | skull | skeleton | whole animal (ETOH) | tissue (EDTA)"
+        },
+        "recordedby": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:recordedBy",
+            "definition": "A list (concatenated and separated) of names of people, groups, or organizations responsible for recording the original dwc:Occurrence. The primary collector or observer, especially one who applies a personal identifier (dwc:recordNumber), should be listed first.",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "José E. Crespo | Oliver P. Pearson | Anita K. Pearson"
+        },
+        "recordnumber": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:recordNumber",
+            "definition": "An identifier given to the dwc:Occurrence at the time it was recorded. Often serves as a link between field notes and a dwc:Occurrence record, such as a specimen collector's number.",
+            "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "OPP 7101"
+        },
+        "reproductivecondition": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:reproductiveCondition",
+            "definition": "The reproductive condition of the biological individual(s) represented in the dwc:Occurrence.",
+            "comments": "Recommended best practice is to use a controlled vocabulary. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "non-reproductive | pregnant | in bloom | fruit-bearing"
+        },
+        "samplingeffort": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:samplingEffort",
+            "definition": "The amount of effort expended during a dwc:Event.",
+            "examples": "40 trap-nights | 10 observer-hours | 10 km by foot | 30 km by car"
+        },
+        "samplingprotocol": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:samplingProtocol",
+            "definition": "The names of, references to, or descriptions of the methods or protocols used during a dwc:Event.",
+            "comments": "Recommended best practice is describe a dwc:Event with no more than one sampling protocol. In the case of a summary Event with multiple protocols, in which a specific protocol can not be attributed to specific dwc:Occurrences, the recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "UV light trap | mist net | bottom trawl | ad hoc observation | point count | Penguins from space: faecal stains reveal the location of emperor penguin colonies, https://doi.org/10.1111/j.1466-8238.2009.00467.x"
+        },
+        "sex": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:sex",
+            "definition": "The sex of the biological individual(s) represented in the dwc:Occurrence.",
+            "comments": "Recommended best practice is to use a controlled vocabulary. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "female | male | hermaphrodite"
+        },
+        "startdayofyear": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:startDayOfYear",
+            "definition": "The earliest integer day of the year on which the dwc:Event occurred (1 for January 1, 365 for December 31, except in a leap year, in which case it is 366).",
+            "examples": "1 (1 January) | 366 (31 December) | 365 (30 December in a leap year, 31 December in a non-leap year)"
+        },
+        "stateprovince": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:stateProvince",
+            "definition": "The name of the next smaller administrative region than country (state, province, canton, department, region, etc.) in which the dcterms:Location occurs.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "Montana | Minas Gerais | Córdoba"
+        },
+        "taxonremarks": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:taxonRemarks",
+            "definition": "Comments or notes about the taxon or name.",
+            "examples": "this name is a misspelling in common use"
+        },
+        "typestatus": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:typeStatus",
+            "definition": "A list (concatenated and separated) of nomenclatural types (type status, typified scientific name, publication) applied to the subject.",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "holotype of Ctenomys sociabilis. Pearson O. P., and M. I. Christie. 1985. Historia Natural, 5(37):388 | holotype of Pinus abies | holotype of Picea abies"
+        },
+        "verbatimcoordinates": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:verbatimCoordinates",
+            "definition": "The verbatim original spatial coordinates of the dcterms:Location. The coordinate ellipsoid, geodeticDatum, or full Spatial Reference System (SRS) for these coordinates should be stored in dwc:verbatimSRS and the coordinate system should be stored in dwc:verbatimCoordinateSystem.",
+            "examples": "41 05 54S 121 05 34W | 17T 630000 4833400"
+        },
+        "verbatimcoordinatesystem": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:verbatimCoordinateSystem",
+            "definition": "The coordinate format for the dwc:verbatimLatitude and dwc:verbatimLongitude or the dwc:verbatimCoordinates of the dcterms:Location.",
+            "comments": "Recommended best practice is to use a controlled vocabulary. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "decimal degrees | degrees decimal minutes | degrees minutes seconds | UTM"
+        },
+        "verbatimdepth": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:verbatimDepth",
+            "definition": "The original description of the depth below the local surface.",
+            "examples": "100-200 m"
+        },
+        "verbatimelevation": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:verbatimElevation",
+            "definition": "The original description of the elevation (altitude, usually above sea level) of the Location.",
+            "examples": "100-200 m"
+        },
+        "verbatimeventdate": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:verbatimEventDate",
+            "definition": "The verbatim original representation of the date and time information for a dwc:Event.",
+            "examples": "spring 1910 | Marzo 2002 | 1999-03-XX | 17IV1934"
+        },
+        "waterbody": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:waterBody",
+            "definition": "The name of the water body in which the dcterms:Location occurs.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.",
+            "examples": "Indian Ocean | Baltic Sea | Hudson River | Lago Nahuel Huapi"
+        },
+        "year": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:year",
+            "definition": "The four-digit year in which the dwc:Event occurred, according to the Common Era Calendar.",
+            "examples": "1160 | 2008"
+        }
+    }
+}

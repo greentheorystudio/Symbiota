@@ -24,10 +24,13 @@ if(!$collManager->setCollid($collid)) {
 $collData = $collManager->getCollectionMetadata();
 
 $collPubArr = array();
+$permitCollidEntry = false;
 $publishGBIF = false;
 $publishIDIGBIO = false;
 $idigbioKey = '';
 $datasetKey = '';
+$editCode = 0;
+
 if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && $collid){
     $collPubArr = $collManager->getCollPubArr($collid);
     if($collPubArr[$collid]['publishToGbif']){
@@ -48,7 +51,6 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
     }
 }
 
-$editCode = 0;
 if($GLOBALS['SYMB_UID']){
     if($GLOBALS['IS_ADMIN']){
         $editCode = 3;
@@ -61,6 +63,10 @@ if($GLOBALS['SYMB_UID']){
             $editCode = 1;
         }
     }
+}
+
+if($collid && ((int)$collData[$collid]['isPublic'] === 1 || $GLOBALS['IS_ADMIN'] || in_array((int)$collid, $GLOBALS['PERMITTED_COLLECTIONS'], true))) {
+    $permitCollidEntry = true;
 }
 ?>
 <!DOCTYPE html>
@@ -123,7 +129,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 			</div>
 			<?php
 		}
-		if($collid){
+		if($collid && $permitCollidEntry){
 			$collData = $collData[$collid];
 			$codeStr = '';
             if($collData['institutioncode']){
@@ -411,12 +417,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             }
 						}
 						?>
-						<li><?php echo number_format($statsArr['familycnt']);?> families</li>
-						<li><?php echo number_format($statsArr['genuscnt']);?> genera</li>
-						<li><?php echo number_format($statsArr['speciescnt']);?> species</li>
+						<li><?php echo (int)$statsArr['familycnt'];?> families</li>
+						<li><?php echo (int)$statsArr['genuscnt'];?> genera</li>
+						<li><?php echo (int)$statsArr['speciescnt'];?> species</li>
 						<?php
 						if($extrastatsArr&&$extrastatsArr['TotalTaxaCount']) {
-                            echo '<li>' . number_format($extrastatsArr['TotalTaxaCount']) . ' total taxa (including subsp. and var.)</li>';
+                            echo '<li>' . (int)$extrastatsArr['TotalTaxaCount'] . ' total taxa (including subsp. and var.)</li>';
                         }
 						?>
 					</ul>

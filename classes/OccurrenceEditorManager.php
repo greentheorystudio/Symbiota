@@ -692,7 +692,7 @@ class OccurrenceEditorManager {
             $sql .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
         }
         if($this->occid){
-            $sql .= 'WHERE (o.occid = '.$this->occid.')';
+            $sql .= 'WHERE o.occid = '.$this->occid.' ';
         }
         elseif($this->sqlWhere){
             $sql .= 'INNER JOIN (SELECT o2.occid FROM omoccurrences AS o2 ';
@@ -1844,13 +1844,18 @@ class OccurrenceEditorManager {
     public function getLock(): bool
     {
         $isLocked = false;
-        $delSql = 'DELETE FROM omoccureditlocks WHERE (ts < '.(time()-900).') OR (uid = '.$GLOBALS['SYMB_UID'].')';
+        $delSql = 'DELETE FROM omoccureditlocks WHERE ts < '.(time()-900).' OR uid = '.$GLOBALS['SYMB_UID'].' ';
         if(!$this->conn->query($delSql)) {
             return false;
         }
-        $sql = 'INSERT INTO omoccureditlocks(occid,uid,ts) '.
-            'VALUES ('.$this->occid.','.$GLOBALS['SYMB_UID'].','.time().')';
-        if(!$this->conn->query($sql)){
+        $sqlFind = 'SELECT * FROM omoccureditlocks WHERE occid = ' . $this->occid . ' ';
+        $frs = $this->conn->query($sqlFind);
+        if(!$frs->num_rows){
+            $sql = 'INSERT INTO omoccureditlocks(occid,uid,ts) '.
+                'VALUES ('.$this->occid.','.$GLOBALS['SYMB_UID'].','.time().')';
+            $this->conn->query($sql);
+        }
+        else{
             $isLocked = true;
         }
         return $isLocked;
@@ -2022,34 +2027,14 @@ class OccurrenceEditorManager {
 
     private function encodeStrTargeted($inStr,$inCharset,$outCharset): string
     {
-        if($inCharset === $outCharset) {
-            return $inStr;
-        }
-        $retStr = $inStr;
-        if($inCharset === 'latin' && $outCharset === 'utf8'){
-            if(mb_detect_encoding($retStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-                $retStr = utf8_encode($retStr);
-            }
-        }
-        elseif($inCharset === 'utf8' && $outCharset === 'latin'){
-            if(mb_detect_encoding($retStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-                $retStr = utf8_decode($retStr);
-            }
-        }
-        return $retStr;
+        return $inStr;
     }
 
     protected function encodeStr($inStr): string
     {
-        $retStr = $inStr;
         $search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
         $replace = array("'","'",'"','"','*','-','-');
-        $inStr= str_replace($search, $replace, $inStr);
-
-        if($inStr && mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
-            $retStr = utf8_encode($inStr);
-        }
-        return $retStr;
+        return str_replace($search, $replace, $inStr);
     }
 
     private function cleanRawFragment($str): string

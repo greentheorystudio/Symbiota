@@ -17,28 +17,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	});
 
-	$("#fcountry").autocomplete({
-		source: "../../api/geography/lookupCountry.php",
-		minLength: 2,
-		autoFocus: true
-	});
-
-	$("#fstateprovince").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupState.php", { term: request.term, country: document.defaultform.country.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true
-	});
-
-	$("#fcounty").autocomplete({ 
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupCounty.php", { term: request.term, "state": document.defaultform.stateprovince.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true
-	});
-
 	setInterval( function(){
 		$("#seconds").html(pad(++sec%60));
 		$("#minutes").html(pad(sec/60,10));

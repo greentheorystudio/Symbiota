@@ -20,7 +20,8 @@ class CollectionManager {
     public function getCollectionInfoArr($collId): array
     {
         $retArr = array();
-        $sql = 'SELECT collectionname, icon, institutioncode, collectioncode, colltype, managementtype, datarecordingmethod '.
+        $sql = 'SELECT collectionname, icon, institutioncode, collectioncode, colltype, managementtype, datarecordingmethod, '.
+            'defaultRepCount, isPublic '.
             'FROM omcollections WHERE collid = '.(int)$collId.' ';
         //echo $sql;
         $rs = $this->conn->query($sql);
@@ -32,8 +33,14 @@ class CollectionManager {
             $retArr['colltype'] = $r->colltype;
             $retArr['managementtype'] = $r->managementtype;
             $retArr['datarecordingmethod'] = $r->datarecordingmethod;
+            $retArr['defaultrepcount'] = $r->defaultRepCount;
+            $retArr['ispublic'] = $r->isPublic;
+            $retArr['additionalDataFields'] = null;
         }
         $rs->free();
+        if(file_exists($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collId . 'occurrencedatafields.json')) {
+            $retArr['additionalDataFields'] = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/collection'.$collId.'occurrencedatafields.json'), true);
+        }
         return $retArr;
     }
 }

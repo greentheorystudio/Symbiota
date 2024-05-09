@@ -8,7 +8,13 @@ const useSearchStore = Pinia.defineStore('search', {
         recordsPageNumber: 1,
         searchRecordData: [],
         searchTerms: {
-            surveyonly: false
+            othercatnum: true,
+            typestatus: false,
+            hasaudio: false,
+            hasimages: false,
+            hasvideo: false,
+            hasmedia: false,
+            hasgenetic: false
         },
         selections: [],
         selectionsIds: [],
@@ -91,7 +97,7 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchRecordDataIdArr(state) {
             const returnArr = [];
             state.searchRecordData.forEach((record) => {
-                returnArr.push(Number(record.siteid));
+                returnArr.push(Number(record.occid));
             });
             return returnArr;
         },
@@ -108,35 +114,37 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getSearchTermsValid(state) {
             let populated = false;
-            if(state.searchTerms.hasOwnProperty('surveyonly') ||
-                state.searchTerms.hasOwnProperty('springid') ||
-                state.searchTerms.hasOwnProperty('springname') ||
-                state.searchTerms.hasOwnProperty('LandManagerID') ||
-                state.searchTerms.hasOwnProperty('LCC') ||
-                state.searchTerms.hasOwnProperty('AKA') ||
-                state.searchTerms.hasOwnProperty('project') ||
-                state.searchTerms.hasOwnProperty('datepicker1') ||
-                state.searchTerms.hasOwnProperty('datepicker2') ||
-                state.searchTerms.hasOwnProperty('springtype') ||
-                state.searchTerms.hasOwnProperty('Country') ||
-                state.searchTerms.hasOwnProperty('StateProvince') ||
+            if(state.searchTerms.hasOwnProperty('db') ||
+                state.searchTerms.hasOwnProperty('clid') ||
+                state.searchTerms.hasOwnProperty('taxa') ||
+                state.searchTerms.hasOwnProperty('country') ||
+                state.searchTerms.hasOwnProperty('state') ||
                 state.searchTerms.hasOwnProperty('county') ||
-                state.searchTerms.hasOwnProperty('TreatmentAreaID') ||
-                state.searchTerms.hasOwnProperty('LandUnit') ||
-                state.searchTerms.hasOwnProperty('ProclaimedNF') ||
-                state.searchTerms.hasOwnProperty('landunitdetail') ||
-                state.searchTerms.hasOwnProperty('quad') ||
-                state.searchTerms.hasOwnProperty('huc') ||
-                state.searchTerms.hasOwnProperty('distFromMe') ||
+                state.searchTerms.hasOwnProperty('local') ||
+                state.searchTerms.hasOwnProperty('elevlow') ||
+                state.searchTerms.hasOwnProperty('elevhigh') ||
+                state.searchTerms.hasOwnProperty('collector') ||
+                state.searchTerms.hasOwnProperty('collnum') ||
+                state.searchTerms.hasOwnProperty('eventdate1') ||
+                state.searchTerms.hasOwnProperty('eventdate2') ||
+                state.searchTerms.hasOwnProperty('occurrenceRemarks') ||
+                state.searchTerms.hasOwnProperty('catnum') ||
+                state.searchTerms.hasOwnProperty('othercatnum') ||
+                state.searchTerms.hasOwnProperty('typestatus') ||
+                state.searchTerms.hasOwnProperty('hasaudio') ||
+                state.searchTerms.hasOwnProperty('hasimages') ||
+                state.searchTerms.hasOwnProperty('hasvideo') ||
+                state.searchTerms.hasOwnProperty('hasmedia') ||
+                state.searchTerms.hasOwnProperty('hasgenetic') ||
                 state.searchTerms.hasOwnProperty('upperlat') ||
                 state.searchTerms.hasOwnProperty('pointlat') ||
                 state.searchTerms.hasOwnProperty('circleArr') ||
-                state.searchTerms.hasOwnProperty('polyArr') ||
-                state.searchTerms.hasOwnProperty('distFromMeRadiusTemp') ||
-                state.searchTerms.hasOwnProperty('distFromMeRadius') ||
-                state.searchTerms.hasOwnProperty('distFromMeGroundRadius') ||
-                state.searchTerms.hasOwnProperty('distFromMeLat') ||
-                state.searchTerms.hasOwnProperty('distFromMeLong')
+                state.searchTerms.hasOwnProperty('phuid') ||
+                state.searchTerms.hasOwnProperty('imagetag') ||
+                state.searchTerms.hasOwnProperty('imagekeyword') ||
+                state.searchTerms.hasOwnProperty('uploaddate1') ||
+                state.searchTerms.hasOwnProperty('uploaddate2') ||
+                state.searchTerms.hasOwnProperty('polyArr')
             ){
                 populated = true;
             }
@@ -158,8 +166,8 @@ const useSearchStore = Pinia.defineStore('search', {
     actions: {
         addRecordToSelections(record) {
             this.selections.push(record);
-            this.selectionsIds.push(Number(record.siteid));
-            const currentRecord = this.searchRecordData.find(obj => Number(obj['siteid']) === Number(record.siteid));
+            this.selectionsIds.push(Number(record.occid));
+            const currentRecord = this.searchRecordData.find(obj => Number(obj['occid']) === Number(record.occid));
             if(currentRecord){
                 currentRecord.selected = true;
             }
@@ -171,7 +179,13 @@ const useSearchStore = Pinia.defineStore('search', {
             for(const key in this.searchTerms){
                 delete this.searchTerms[key];
             }
-            this.searchTerms['surveyonly'] = false;
+            this.searchTerms['othercatnum'] = true;
+            this.searchTerms['typestatus'] = false;
+            this.searchTerms['hasaudio'] = false;
+            this.searchTerms['hasimages'] = false;
+            this.searchTerms['hasvideo'] = false;
+            this.searchTerms['hasmedia'] = false;
+            this.searchTerms['hasgenetic'] = false;
             this.updateLocalStorageSearchTerms();
         },
         clearSelections() {
@@ -190,8 +204,8 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         deselectAllCurrentRecords() {
             this.searchRecordData.forEach((record) => {
-                if(this.selectionsIds.indexOf(Number(record.siteid)) > -1){
-                    this.removeRecordFromSelections(Number(record.siteid));
+                if(this.selectionsIds.indexOf(Number(record.occid)) > -1){
+                    this.removeRecordFromSelections(Number(record.occid));
                 }
             });
         },
@@ -374,19 +388,19 @@ const useSearchStore = Pinia.defineStore('search', {
             window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId;
         },
         removeRecordFromSelections(id) {
-            const selObj = this.selections.find(obj => Number(obj['siteid']) === Number(id));
+            const selObj = this.selections.find(obj => Number(obj['occid']) === Number(id));
             const selObjIndex = this.selections.indexOf(selObj);
             this.selections.splice(selObjIndex, 1);
             const selObjIdIndex = this.selectionsIds.indexOf(Number(id));
             this.selectionsIds.splice(selObjIdIndex, 1);
-            const currentRecord = this.searchRecordData.find(obj => Number(obj['siteid']) === Number(id));
+            const currentRecord = this.searchRecordData.find(obj => Number(obj['occid']) === Number(id));
             if(currentRecord){
                 currentRecord.selected = false;
             }
         },
         selectAllCurrentRecords() {
             this.searchRecordData.forEach((record) => {
-                if(this.selectionsIds.indexOf(Number(record.siteid)) < 0){
+                if(this.selectionsIds.indexOf(Number(record.occid)) < 0){
                     this.addRecordToSelections(record);
                 }
             });
@@ -406,7 +420,7 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         setSelectedRecords(recordArr) {
             recordArr.forEach((record) => {
-                record.selected = (this.selectionsIds.indexOf(Number(record.siteid)) > -1);
+                record.selected = (this.selectionsIds.indexOf(Number(record.occid)) > -1);
             });
             return recordArr;
         },

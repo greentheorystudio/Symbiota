@@ -92,9 +92,11 @@ class ConfigurationManager{
         'checklists',
         'classes',
         'collections',
+        'components',
         'config',
         'games',
         'glossary',
+        'hooks',
         'ident',
         'imagelib',
         'misc',
@@ -102,6 +104,7 @@ class ConfigurationManager{
         'projects',
         'references',
         'spatial',
+        'stores',
         'taxa',
         'tutorial',
         'webservices'
@@ -146,8 +149,8 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20240115';
-        $GLOBALS['JS_VERSION'] = '20240205';
+        $GLOBALS['CSS_VERSION'] = '20240416';
+        $GLOBALS['JS_VERSION'] = '20240413111112222223333333';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -395,6 +398,9 @@ class ConfigurationManager{
             $GLOBALS['SMTP_HOST'] &&
             $GLOBALS['SMTP_PORT']
         );
+        if(!isset($GLOBALS['PERMITTED_COLLECTIONS'])){
+            $GLOBALS['PERMITTED_COLLECTIONS'] = array();
+        }
     }
 
     public function setGlobalArrFromDefaults(): void

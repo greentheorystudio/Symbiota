@@ -67,9 +67,7 @@ body{
 	clear: both;
 	padding:10px;
 	margin:5px;
-	border:1px solid gray;
 	display:none;
-	height:20px;
 }
 
 #idrefToggleDiv{
@@ -140,7 +138,6 @@ body{
 }
 
 #ymdDiv {
-	float:	left;
 	margin-left: 5px;
 }
 

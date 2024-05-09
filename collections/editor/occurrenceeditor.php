@@ -489,7 +489,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     }
     else{
         ?>
-        <link href="../../css/occureditor.css?ver=20221204" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditor.css?ver=20240405" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
     }
     ?>
@@ -503,7 +503,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         let tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
         const imgArr = [];
         const imgLgArr = [];
-        const localityAutoLookup = 1;
         <?php
         if($imgArr){
             foreach($imgArr as $iCnt => $iArr){
@@ -512,9 +511,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     echo 'imgLgArr[' . $iCnt . '] = "' . $iArr['lg'] . '";' . "\n";
                 }
             }
-        }
-        if(defined('LOCALITYAUTOLOOKUP') && !LOCALITYAUTOLOOKUP){
-            echo 'localityAutoLookup = 0';
         }
         ?>
 
@@ -801,9 +797,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 }
                                                 ?>
                                                 <div id="dupeMsgDiv">
-                                                    <div id="dupesearch">Searching for Dupes...</div>
-                                                    <div id="dupenone" style="display:none;color:red;">No Dupes Found</div>
-                                                    <div id="dupedisplay" style="display:none;color:green;">Displaying Dupes</div>
+                                                    <div id="dupesearch">Searching for Duplicates...</div>
+                                                    <div id="dupenone" style="display:none;color:red;">No Duplicates Found</div>
+                                                    <div id="dupedisplay" style="display:none;color:green;">Displaying Duplicates</div>
                                                 </div>
                                             </div>
                                             <div id="dateextradiv">
@@ -986,11 +982,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 </div>
                                             </div>
                                             <?php
-                                            if(!defined('LOCALITYAUTOLOOKUP') || LOCALITYAUTOLOOKUP){
-                                                echo '<div id="localAutoDeactivatedDiv">';
-                                                echo '<input name="localautodeactivated" type="checkbox" value="1" onchange="localAutoChanged(this)" '.(defined('LOCALITYAUTOLOOKUP') && LOCALITYAUTOLOOKUP === 2?'checked':'').' /> ';
-                                                echo 'Deactivate Locality Lookup</div>';
-                                            }
                                             $lsHasValue = array_key_exists('localitysecurity',$occArr)&&$occArr['localitysecurity']?1:0;
                                             $lsrValue = array_key_exists('localitysecurityreason',$occArr)?$occArr['localitysecurityreason']:'';
                                             ?>
@@ -1042,9 +1033,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 </div>
                                                 <div id="geoLocateDiv" title="GeoLocate locality">
                                                     <a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png"/></a>
-                                                </div>
-                                                <div id="coordCloningDiv" title="Coordinate cloning tool" >
-                                                    <input type="button" value="C" onclick="geoCloneTool()" />
                                                 </div>
                                                 <div id="geoToolsDiv" title="Tools for converting additional formats" >
                                                     <input type="button" value="F" onclick="toggleCoordDiv()" />

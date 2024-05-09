@@ -5,6 +5,7 @@ const useBaseStore = Pinia.defineStore('base', {
         defaultLanguage: DEFAULT_LANG,
         emailConfigured: EMAIL_CONFIGURED,
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
+        occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         solrMode: SOLR_MODE,
         symbUid: SYMB_UID,
         taxonomicRanks: TAXONOMIC_RANKS,
@@ -26,6 +27,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getMaxUploadFilesize(state) {
             return state.maxUploadFilesize;
+        },
+        getOccurrenceProcessingStatusOptions(state) {
+            return state.occurrenceProcessingStatusOptions;
         },
         getSolrMode(state) {
             return state.solrMode;
