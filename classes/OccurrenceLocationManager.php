@@ -216,7 +216,7 @@ class OccurrenceLocationManager{
             if($this->conn->query($sql)){
                 $retVal = 1;
                 foreach($this->fields as $field => $fieldArr){
-                    if(array_key_exists($field, $editData)){
+                    if($field !== 'locationname' && $field !== 'locationcode' && array_key_exists($field, $editData)){
                         if(in_array($field, $this->collectingEventOverlapFields)){
                             $sqlOcc = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
                                 'SET o.' . $field . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.

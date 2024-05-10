@@ -230,6 +230,7 @@ class OccurrenceCollectingEventManager{
     {
         $retVal = 0;
         $sqlPartArr = array();
+        $occSqlPartArr = array();
         if($eventId && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
@@ -247,6 +248,22 @@ class OccurrenceCollectingEventManager{
             //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
+                foreach($this->fields as $field => $fieldArr){
+                    if($field !== 'repcount' && array_key_exists($field, $editData)){
+                        if($field === 'year' || $field === 'month' || $field === 'day'){
+                            $fieldStr = '`' . $field . '`';
+                        }
+                        else{
+                            $fieldStr = $field;
+                        }
+                        $occSqlPartArr[] = $fieldStr . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                        $occSql = 'UPDATE omoccurrences SET ' . implode(', ', $occSqlPartArr) . ' '.
+                            'WHERE eventid = ' . $eventId . ' ';
+                        if(!$this->conn->query($occSql)){
+                            $retVal = 0;
+                        }
+                    }
+                }
             }
         }
         return $retVal;

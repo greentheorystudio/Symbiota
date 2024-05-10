@@ -4,16 +4,14 @@ const occurrenceEditorLocationModule = {
             <q-card-section class="q-px-sm q-pb-sm column q-gutter-y-sm">
                 <div class="row justify-between">
                     <div>
-                        <template v-if="locationId > 0">
-                            <div class="row q-gutter-sm">
-                                <template v-if="collectingEventArr.length > 0">
-                                    <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Events" />
-                                </template>
-                                <template v-if="locationData.decimallatitude && locationData.decimallongitude">
-                                    <q-btn color="secondary" @click="findNearbyLocations();" label="Find Nearby Locations" />
-                                </template>
-                            </div>
-                        </template>
+                        <div class="row q-gutter-sm">
+                            <template v-if="locationId > 0 && collectingEventArr.length > 0">
+                                <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Events" />
+                            </template>
+                            <template v-if="locationData.decimallatitude && locationData.decimallongitude">
+                                <q-btn color="secondary" @click="findNearbyLocations();" label="Find Nearby Locations" />
+                            </template>
+                        </div>
                     </div>
                     <div class="row justify-end">
                         <template v-if="Number(locationId) === 0">

@@ -32,7 +32,7 @@ const occurrenceEditorOccurrenceDataControls = {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const additionalDataFields = Vue.computed(() => occurrenceStore.getAdditionalDataFields);
-        const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectionEventAutoSearch);
+        const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectingEventAutoSearch);
         const editsExist = Vue.computed(() => occurrenceStore.getOccurrenceEditsExist);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
