@@ -1,4 +1,4 @@
-const occurrenceLocationEditorPopup = {
+const occurrenceCollectingEventEditorPopup = {
     props: {
         showPopup: {
             type: Boolean,
@@ -23,18 +23,18 @@ const occurrenceLocationEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !locationValid" />
+                                    <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" />
                                 </div>
                             </div>
-                            <div class="q-mb-xs row justify-between q-col-gutter-xs">
-                                <div class="col-12 col-sm-6 col-md-4">
-                                    <text-field-input-element :definition="occurrenceFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFields['locationcode'] ? locationFields['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => updateLocationData('locationcode', value)"></text-field-input-element>
+                            <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
+                            <div class="row justify-between q-col-gutter-xs">
+                                <div class="col-12 col-sm-6 col-md-9">
+                                    <text-field-input-element :definition="occurrenceFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFields['eventremarks'] ? eventFields['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
                                 </div>
-                                <div class="col-12 col-sm-6 col-md-6">
-                                    <text-field-input-element :definition="occurrenceFieldDefinitions['locationname']" label="Location Name" :maxlength="locationFields['locationname'] ? locationFields['locationname']['length'] : 0" :value="locationData.locationname" @update:value="(value) => updateLocationData('locationname', value)"></text-field-input-element>
+                                <div class="col-12 col-sm-6 col-md-3">
+                                    <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['repcount']" label="Rep Count" :maxlength="eventFields['repcount'] ? eventFields['repcount']['length'] : 0" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <location-field-module :data="locationData" :fields="locationFields" :field-definitions="occurrenceFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
                         </div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ const occurrenceLocationEditorPopup = {
         </q-dialog>
     `,
     components: {
-        'location-field-module': locationFieldModule,
+        'collecting-event-field-module': collectingEventFieldModule,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
@@ -51,10 +51,10 @@ const occurrenceLocationEditorPopup = {
 
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const editsExist = Vue.computed(() => occurrenceStore.getLocationEditsExist);
-        const locationData = Vue.computed(() => occurrenceStore.getLocationData);
-        const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
-        const locationValid = Vue.computed(() => occurrenceStore.getLocationValid);
+        const editsExist = Vue.computed(() => occurrenceStore.getCollectingEventEditsExist);
+        const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
+        const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
+        const eventValid = Vue.computed(() => occurrenceStore.getCollectingEventValid);
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
 
         Vue.watch(contentRef, () => {
@@ -65,15 +65,15 @@ const occurrenceLocationEditorPopup = {
             context.emit('close:popup');
         }
 
-        function saveLocationEdits() {
+        function saveEventEdits() {
             showWorking('Saving edits...');
-            occurrenceStore.updateLocationRecord((res) => {
+            occurrenceStore.updateCollectingEventRecord((res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
                 }
                 else{
-                    showNotification('negative', 'There was an error saving the location edits.');
+                    showNotification('negative', 'There was an error saving the event edits.');
                 }
                 context.emit('close:popup');
             });
@@ -86,26 +86,26 @@ const occurrenceLocationEditorPopup = {
             }
         }
 
-        function updateLocationData(key, value) {
-            occurrenceStore.updateLocationEditData(key, value);
+        function updateCollectingEventData(key, value) {
+            occurrenceStore.updateCollectingEventEditData(key, value);
         }
 
         Vue.onMounted(() => {
             setcontentStyle();
-            occurrenceStore.setLocationFields();
+            occurrenceStore.setCollectingEventFields();
         });
 
         return {
             contentRef,
             contentStyle,
             editsExist,
-            locationData,
-            locationFields,
-            locationValid,
+            eventData,
+            eventFields,
+            eventValid,
             occurrenceFieldDefinitions,
             closePopup,
-            saveLocationEdits,
-            updateLocationData
+            saveEventEdits,
+            updateCollectingEventData
         }
     }
 };

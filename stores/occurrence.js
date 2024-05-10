@@ -181,13 +181,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             labelproject: null
         },
         checklistArr: [],
+        collectingEventAutoSearch: false,
         collectingEventData: {},
         collectingEventEditData: {},
         collectingEventFields: {},
         collectingEventId: 0,
         collectingEventUpdateData: {},
         collectionData: {},
-        collectionEventAutoSearch: false,
         collId: 0,
         crowdSourceQueryFieldOptions: [
             {field: 'family', label: 'Family'},
@@ -319,6 +319,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             const store = useBaseStore();
             return store.getClientRoot;
         },
+        getCollectingEventAutoSearch(state) {
+            return state.collectingEventAutoSearch;
+        },
         getCollectingEventData(state) {
             return state.collectingEventEditData;
         },
@@ -336,11 +339,14 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getCollectingEventFields(state) {
             return state.collectingEventFields;
         },
+        getCollectingEventID(state) {
+            return state.collectingEventId;
+        },
+        getCollectingEventValid(state) {
+            return (!!state.collectingEventEditData['eventdate']);
+        },
         getCollectionData(state) {
             return state.collectionData;
-        },
-        getCollectionEventAutoSearch(state) {
-            return state.collectionEventAutoSearch;
         },
         getCollId(state) {
             return state.collId;
@@ -368,9 +374,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getEntryFollowUpAction(state) {
             return state.entryFollowUpAction;
-        },
-        getEventID(state) {
-            return state.collectingEventId;
         },
         getEventRecordFields(state) {
             return Object.keys(state.blankEventRecord);
@@ -414,9 +417,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             return state.locationId;
         },
         getLocationValid(state) {
-            return (state.locationEditData['country']
-                && state.locationEditData['stateprovince']
-            );
+            return (state.locationEditData['country'] && state.locationEditData['stateprovince']);
         },
         getMediaArr(state) {
             return state.mediaArr;
@@ -597,8 +598,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 this.mergeEventOccurrenceData();
             }
             else{
-                this.collectingEventId = 0;
-                this.collectingEventData = Object.assign({}, this.blankEventRecord);
+                this.setCurrentCollectingEventRecord(0);
             }
         },
         goToPreviousRecord() {
@@ -762,7 +762,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             });
         },
         setCollectingEventAutoSearch(value) {
-            this.collectionEventAutoSearch = value;
+            this.collectingEventAutoSearch = value;
         },
         setCollectingEventData() {
             const formData = new FormData();
@@ -834,6 +834,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             .then((response) => {
                 response.json().then((resObj) => {
                     this.collectionData = Object.assign({}, resObj);
+                    if(this.collectingEventId === 0){
+                        this.collectingEventEditData['repcount'] = this.collectionData['defaultrepcount'] ? Number(this.collectionData['defaultrepcount']) : 0;
+                    }
                     this.occurrenceEntryFormat = this.collectionData['datarecordingmethod'];
                     if(this.collectionData['additionalDataFields'] && this.collectionData['additionalDataFields'].hasOwnProperty('dataFields') && this.collectionData['additionalDataFields']['dataFields'].length > 0){
                         this.additionalDataFields = this.collectionData['additionalDataFields']['dataFields'];
@@ -852,6 +855,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             }
             else{
                 this.collectingEventId = 0;
+                this.collectingEventData['repcount'] = this.collectionData['defaultrepcount'] ? Number(this.collectionData['defaultrepcount']) : 0;
                 this.collectingEventEditData = Object.assign({}, this.collectingEventData);
             }
         },

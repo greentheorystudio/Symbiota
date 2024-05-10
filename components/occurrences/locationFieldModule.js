@@ -246,7 +246,7 @@ const locationFieldModule = {
         const showSpatialPopup = Vue.ref(false);
 
         Vue.watch(propsRefs.data, () => {
-            if(!props.eventMode){
+            if(!props.disabled && !props.eventMode){
                 setExtendedView();
             }
         });
@@ -441,7 +441,7 @@ const locationFieldModule = {
         Vue.provide('openSpatialPopup', openSpatialPopup);
 
         Vue.onMounted(() => {
-            if(!props.eventMode){
+            if(!props.disabled && !props.eventMode){
                 setExtendedView();
             }
         });
