@@ -56,7 +56,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
         </script>
     </head>
     <body>
-        <div id="occurrence-editor-container">
+        <div id="occurrence-editor-container" class="q-mt-lg">
             <template v-if="displayMode !== 3">
                 <occurrence-editor-single-display></occurrence-editor-single-display>
             </template>
