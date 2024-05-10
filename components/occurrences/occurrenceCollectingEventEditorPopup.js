@@ -26,7 +26,7 @@ const occurrenceCollectingEventEditorPopup = {
                                     <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" />
                                 </div>
                             </div>
-                            <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
+                            <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
                             <div class="row justify-between q-col-gutter-xs">
                                 <div class="col-12 col-sm-6 col-md-9">
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFields['eventremarks'] ? eventFields['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
@@ -62,6 +62,9 @@ const occurrenceCollectingEventEditorPopup = {
         });
 
         function closePopup() {
+            if(editsExist.value){
+                occurrenceStore.revertCollectingEventEditData();
+            }
             context.emit('close:popup');
         }
 

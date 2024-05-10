@@ -69,7 +69,7 @@ const locationFieldModule = {
                         </q-tooltip>
                     </q-btn>
                 </div>
-                <div class="self-center">
+                <div v-if="!eventMode" class="self-center">
                     <q-btn color="grey-4" class="black-border" size="sm" @click="openGeolocatePopup();" dense>
                         <q-avatar size="xs">
                             <img src="../../images/geolocate.png">

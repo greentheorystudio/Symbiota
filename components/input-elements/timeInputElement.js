@@ -18,10 +18,10 @@ const timeInputElement = {
         }
     },
     template: `
-        <q-input outlined v-model="value" mask="time" :label="label" @update:model-value="processValueChange" :readonly="disabled" dense>
+        <q-input outlined v-model="value" mask="time" :label="label" debounce="700" @update:model-value="processValueChange" :readonly="disabled" dense>
             <template v-if="!disabled" v-slot:append>
                 <q-icon name="access_time" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">
                         <q-time v-model="value" @update:model-value="processValueChange" format24h>
                             <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="Close" color="primary" flat></q-btn>

@@ -784,26 +784,33 @@ body.processing .loadingModal {
 	border: 1px solid black;
 	min-width: 325px;
 }
+.md-square-popup {
+	width: 60%;
+	height: 60%;
+	border: 1px solid black;
+	min-width: 500px;
+	min-height: 500px;
+}
 .md-popup {
 	max-width: 75% !important;
 	width: 75% !important;
 	height: 70% !important;
 	border: 1px solid black;
-	min-width: 325px;
+	min-width: 500px;
 }
 .lg-popup {
 	max-width: 90% !important;
 	width: 90% !important;
 	height: 85% !important;
 	border: 1px solid black;
-	min-width: 325px;
+	min-width: 700px;
 }
 .xl-popup {
 	max-width: 98% !important;
 	width: 98% !important;
 	height: 95% !important;
 	border: 1px solid black;
-	min-width: 325px;
+	min-width: 700px;
 }
 .layer-controller-element {
 	width: 95%;

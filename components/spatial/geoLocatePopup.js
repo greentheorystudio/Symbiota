@@ -27,13 +27,13 @@ const geoLocatePopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
-            <q-card class="xl-popup">
+            <q-card class="xl-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
                     </div>
                 </div>
-                <div ref="iframeRef" class="fit">
+                <div ref="iframeRef" class="fit overflow-auto">
                     <template v-if="geolocateUrl && iframeStyle">
                         <iframe :src="geolocateUrl" :style="iframeStyle"></iframe>
                     </template>

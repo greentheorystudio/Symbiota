@@ -18,7 +18,7 @@ const dateInputElement = {
         }
     },
     template: `
-        <q-input outlined v-model="value" :label="label" @update:model-value="processValueChange" :readonly="disabled" dense>
+        <q-input outlined v-model="value" :label="label" debounce="700" @update:model-value="processValueChange" :readonly="disabled" dense>
             <template v-if="!disabled" v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">

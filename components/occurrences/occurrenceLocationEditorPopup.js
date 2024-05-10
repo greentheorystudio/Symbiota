@@ -62,6 +62,9 @@ const occurrenceLocationEditorPopup = {
         });
 
         function closePopup() {
+            if(editsExist.value){
+                occurrenceStore.revertLocationEditData();
+            }
             context.emit('close:popup');
         }
 

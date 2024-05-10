@@ -15,16 +15,17 @@ const occurrenceCoordinateToolPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
-            <q-card class="md-popup">
+            <q-card class="md-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
                     </div>
                 </div>
-                <div class="q-px-sm q-mt-xl row items-center justify-between q-col-gutter-sm">
-                    <div class="col-5">
+                <div class="fit q-px-sm row items-center justify-between q-col-gutter-sm">
+                    <div class="col-5 column q-gutter-sm">
                         <q-card flat bordered class="black-border">
                             <q-card-section class="q-pa-sm column q-col-gutter-xs">
+                                <div class="text-subtitle1">Degrees, Minutes, Seconds</div>
                                 <div class="row justify-between q-col-gutter-xs">
                                     <div class="self-center text-bold">
                                         Lat:
@@ -60,7 +61,43 @@ const occurrenceCoordinateToolPopup = {
                                     </div>
                                 </div>
                                 <div class="q-mt-md row justify-end">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeDMSData();" label="Insert Lat/Long Values" dense></q-btn>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeDMSData();" label="Process DMS Values" dense></q-btn>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                        <q-card flat bordered class="black-border">
+                            <q-card-section class="q-pa-sm column q-col-gutter-xs">
+                                <div class="text-subtitle1">Degrees, Decimal Minutes</div>
+                                <div class="row justify-between q-col-gutter-xs">
+                                    <div class="self-center text-bold">
+                                        Lat:
+                                    </div>
+                                    <div class="col self-center">
+                                        <q-input outlined v-model="latDDMDegreeValue" label="Degrees" dense>
+                                    </div>
+                                    <div class="col self-center">
+                                        <q-input outlined v-model="latDDMMinuteValue" label="Decimal Minutes" dense>
+                                    </div>
+                                    <div class="self-center">
+                                        <q-select bg-color="white" outlined v-model="latDDMNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" dense options-dense />
+                                    </div>
+                                </div>
+                                <div class="row justify-between q-col-gutter-xs">
+                                    <div class="self-center text-bold">
+                                        Long:
+                                    </div>
+                                    <div class="col self-center">
+                                        <q-input outlined v-model="longDDMDegreeValue" label="Degrees" dense>
+                                    </div>
+                                    <div class="col self-center">
+                                        <q-input outlined v-model="longDDMMinuteValue" label="Decimal Minutes" dense>
+                                    </div>
+                                    <div class="self-center">
+                                        <q-select bg-color="white" outlined v-model="longDDMWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" dense options-dense />
+                                    </div>
+                                </div>
+                                <div class="q-mt-md row justify-end">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeDDMData();" label="Process DDM Values" dense></q-btn>
                                 </div>
                             </q-card-section>
                         </q-card>
@@ -68,6 +105,7 @@ const occurrenceCoordinateToolPopup = {
                     <div class="col-3">
                         <q-card flat bordered class="black-border">
                             <q-card-section class="q-pa-sm column q-col-gutter-xs">
+                                <div class="text-subtitle1">UTM</div>
                                 <div>
                                     <q-input outlined v-model="utmZoneValue" label="UTM Zone" dense>
                                 </div>
@@ -81,7 +119,7 @@ const occurrenceCoordinateToolPopup = {
                                     <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-max" dense options-dense />
                                 </div>
                                 <div class="q-mt-md row justify-end">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeUTMData();" label="Insert UTM Values" dense></q-btn>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeUTMData();" label="Process UTM Values" dense></q-btn>
                                 </div>
                             </q-card-section>
                         </q-card>
@@ -89,6 +127,7 @@ const occurrenceCoordinateToolPopup = {
                     <div class="col-4">
                         <q-card flat bordered class="black-border">
                             <q-card-section class="q-pa-sm column q-col-gutter-xs">
+                                <div class="text-subtitle1">Township, Range, Section</div>
                                 <div class="row justify-between q-col-gutter-xs">
                                     <div class="col">
                                         <q-input outlined v-model="trsTownshipValue" label="Township" dense>
@@ -117,7 +156,7 @@ const occurrenceCoordinateToolPopup = {
                                     </div>
                                 </div>
                                 <div class="q-mt-md row justify-end">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeTRSData();" label="Insert TRS Values" dense></q-btn>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeTRSData();" label="Process TRS Values" dense></q-btn>
                                 </div>
                             </q-card-section>
                         </q-card>
@@ -129,10 +168,16 @@ const occurrenceCoordinateToolPopup = {
     setup(props, context) {
         const { convertUtmToDecimalDegrees, showNotification } = useCore();
 
+        const latDDMDegreeValue = Vue.ref(null);
+        const latDDMMinuteValue = Vue.ref(null);
+        const latDDMNorthSouthValue = Vue.ref('N');
         const latDegreeValue = Vue.ref(null);
         const latMinuteValue = Vue.ref(null);
         const latSecondValue = Vue.ref(null);
         const latNorthSouthValue = Vue.ref('N');
+        const longDDMDegreeValue = Vue.ref(null);
+        const longDDMMinuteValue = Vue.ref(null);
+        const longDDMWestEastValue = Vue.ref('W');
         const longDegreeValue = Vue.ref(null);
         const longMinuteValue = Vue.ref(null);
         const longSecondValue = Vue.ref(null);
@@ -194,6 +239,48 @@ const occurrenceCoordinateToolPopup = {
             context.emit('close:popup');
         }
 
+        function transcribeDDMData() {
+            if(latDDMDegreeValue.value && latDDMMinuteValue.value && longDDMDegreeValue.value && longDDMMinuteValue.value){
+                if(!isNaN(latDDMDegreeValue.value) && !isNaN(latDDMMinuteValue.value) && !isNaN(longDDMDegreeValue.value) && !isNaN(longDDMMinuteValue.value)){
+                    if(Number(latDDMDegreeValue.value) < 0 || Number(latDDMDegreeValue.value) > 90){
+                        showNotification('negative', 'Lat degrees must be between 0 and 90.');
+                    }
+                    else if(Number(longDDMDegreeValue.value) < 0 || Number(longDDMDegreeValue.value) > 180){
+                        showNotification('negative', 'Long degrees must be between 0 and 180.');
+                    }
+                    else if(Number(latDDMMinuteValue.value) < 0 || Number(latDDMMinuteValue.value) > 60 || Number(longDDMMinuteValue.value) < 0 || Number(longDDMMinuteValue.value) > 60){
+                        showNotification('negative', 'Minute values can only be between 0 and 60.');
+                    }
+                    else{
+                        returnData['verbatimCoordinates'] = '';
+                        if(props.verbatimCoordinates && props.verbatimCoordinates !== ''){
+                            returnData['verbatimCoordinates'] += props.verbatimCoordinates + '; ';
+                        }
+                        returnData['verbatimCoordinates'] += latDDMDegreeValue.value + '\u00B0 ' + latDDMMinuteValue.value + "' ";
+                        returnData['verbatimCoordinates'] += latDDMNorthSouthValue.value + ',  ' + longDDMDegreeValue.value + '\u00B0 ' + longDDMMinuteValue.value + "' ";
+                        returnData['verbatimCoordinates'] += longDDMWestEastValue.value;
+                        let decimalLat = parseInt(latDDMDegreeValue.value) + (parseFloat(latDDMMinuteValue.value) / 60);
+                        let decimalLong = parseInt(longDDMDegreeValue.value) + (parseFloat(longDDMMinuteValue.value) / 60);
+                        if(latDDMNorthSouthValue.value === 'S') {
+                            decimalLat = decimalLat * -1;
+                        }
+                        if(longDDMWestEastValue.value === 'W') {
+                            decimalLong = decimalLong * -1;
+                        }
+                        returnData['decimalLatitude'] = decimalLat;
+                        returnData['decimalLongitude'] = decimalLong;
+                        context.emit('update:coordinate-tool-data', returnData);
+                    }
+                }
+                else{
+                    showNotification('negative', 'Degree and decimal minute values must all be numeric.');
+                }
+            }
+            else{
+                showNotification('negative', 'There must be degrees and decimal minutes values for both Lat and Long.');
+            }
+        }
+
         function transcribeDMSData() {
             if(latDegreeValue.value && latMinuteValue.value && longDegreeValue.value && longMinuteValue.value){
                 if(!isNaN(latDegreeValue.value) && !isNaN(latMinuteValue.value) && !isNaN(latSecondValue.value) && !isNaN(longDegreeValue.value) && !isNaN(longMinuteValue.value) && !isNaN(longSecondValue.value)){
@@ -204,7 +291,7 @@ const occurrenceCoordinateToolPopup = {
                         showNotification('negative', 'Long degrees must be between 0 and 180.');
                     }
                     else if(Number(latMinuteValue.value) < 0 || Number(latMinuteValue.value) > 60 || Number(latSecondValue.value) < 0 || Number(latSecondValue.value) > 60 || Number(longMinuteValue.value) < 0 || Number(longMinuteValue.value) > 60 || Number(longSecondValue.value) < 0 || Number(longSecondValue.value) > 60){
-                        showNotification('negative', 'Minutes and seconds values can only be between 0 and 60.');
+                        showNotification('negative', 'Minute and second values can only be between 0 and 60.');
                     }
                     else{
                         returnData['verbatimCoordinates'] = '';
@@ -215,7 +302,7 @@ const occurrenceCoordinateToolPopup = {
                         if(latSecondValue.value){
                             returnData['verbatimCoordinates'] += latSecondValue.value + '" ';
                         }
-                        returnData['verbatimCoordinates'] += latNorthSouthValue.value + '  ' + longDegreeValue.value + '\u00B0 ' + longMinuteValue.value + "' ";
+                        returnData['verbatimCoordinates'] += latNorthSouthValue.value + ',  ' + longDegreeValue.value + '\u00B0 ' + longMinuteValue.value + "' ";
                         if(longSecondValue.value){
                             returnData['verbatimCoordinates'] += longSecondValue.value + '" ';
                         }
@@ -228,17 +315,17 @@ const occurrenceCoordinateToolPopup = {
                         if(longWestEastValue.value === 'W') {
                             decimalLong = decimalLong * -1;
                         }
-                        returnData['decimalLatitude'] = Math.round(decimalLat * 1000000) / 1000000;
-                        returnData['decimalLongitude'] = Math.round(decimalLong * 1000000) / 1000000;
+                        returnData['decimalLatitude'] = decimalLat;
+                        returnData['decimalLongitude'] = decimalLong;
                         context.emit('update:coordinate-tool-data', returnData);
                     }
                 }
                 else{
-                    showNotification('negative', 'Degrees, minutes, and seconds values must all be numeric.');
+                    showNotification('negative', 'Degree, minute, and second values must all be numeric.');
                 }
             }
             else{
-                showNotification('negative', 'There must be degrees and minutes values for both Lat and Long.');
+                showNotification('negative', 'There must be degree and minute values for both Lat and Long.');
             }
         }
 
@@ -300,10 +387,16 @@ const occurrenceCoordinateToolPopup = {
         }
 
         return {
+            latDDMDegreeValue,
+            latDDMMinuteValue,
+            latDDMNorthSouthValue,
             latDegreeValue,
             latMinuteValue,
             latSecondValue,
             latNorthSouthValue,
+            longDDMDegreeValue,
+            longDDMMinuteValue,
+            longDDMWestEastValue,
             longDegreeValue,
             longMinuteValue,
             longSecondValue,
@@ -324,6 +417,7 @@ const occurrenceCoordinateToolPopup = {
             utmHemisphereValue,
             weSelectorOptions,
             closePopup,
+            transcribeDDMData,
             transcribeDMSData,
             transcribeTRSData,
             transcribeUTMData

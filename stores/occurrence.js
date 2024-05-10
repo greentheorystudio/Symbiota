@@ -731,6 +731,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             }
             return lastName;
         },
+        revertCollectingEventEditData() {
+            this.collectingEventEditData = Object.assign({}, this.collectingEventData);
+        },
+        revertLocationEditData() {
+            this.locationEditData = Object.assign({}, this.locationData);
+        },
         setAdditionalData() {
             const formData = new FormData();
             formData.append('eventid', this.collectingEventId.toString());
