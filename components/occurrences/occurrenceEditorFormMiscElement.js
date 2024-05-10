@@ -17,13 +17,18 @@ const occurrenceEditorFormMiscElement = {
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-xs">
-                    <div class="col-12 col-sm-6 col-md-4">
+                    <div class="col-12 col-sm-6 col-md-grow">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :maxlength="occurrenceFields['lifestage'] ? occurrenceFields['lifestage']['length'] : 0" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)"></text-field-input-element>
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4">
+                    <div class="col-12 col-sm-6 col-md-grow">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['sex']" label="Sex" :maxlength="occurrenceFields['sex'] ? occurrenceFields['sex']['length'] : 0" :value="occurrenceData.sex" @update:value="(value) => updateOccurrenceData('sex', value)"></text-field-input-element>
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4">
+                    <template v-if="occurrenceEntryFormat === 'benthic'">
+                        <div class="col-12 col-sm-6 col-md-grow">
+                            <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['rep']" label="Rep" :maxlength="occurrenceFields['rep'] ? occurrenceFields['rep']['length'] : 0" min-value="1" :max-value="eventData.repcount" :value="occurrenceData.rep" @update:value="(value) => updateOccurrenceData('rep', value)"></text-field-input-element>
+                        </div>
+                    </template>
+                    <div class="col-12 col-sm-6 col-md-grow">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['individualcount']" label="Individual Count" :maxlength="occurrenceFields['individualcount'] ? occurrenceFields['individualcount']['length'] : 0" :value="occurrenceData.individualcount" @update:value="(value) => updateOccurrenceData('individualcount', value)"></text-field-input-element>
                     </div>
                 </div>
@@ -92,7 +97,9 @@ const occurrenceEditorFormMiscElement = {
     setup() {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
+        const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
         const showAssociatedTaxaToolPopup = Vue.ref(false);
@@ -116,7 +123,9 @@ const occurrenceEditorFormMiscElement = {
         }
 
         return {
+            eventData,
             occurrenceData,
+            occurrenceEntryFormat,
             occurrenceFields,
             occurrenceFieldDefinitions,
             showAssociatedTaxaToolPopup,
