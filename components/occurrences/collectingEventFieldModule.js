@@ -46,13 +46,13 @@ const collectingEventFieldModule = {
             </div>
         </div>
         <div class="row justify-between q-col-gutter-xs">
-            <div class="col-12 col-sm-7">
+            <div class="col-12 col-sm-grow">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['associatedcollectors']" label="Associated Collectors" :maxlength="fields['associatedcollectors'] ? fields['associatedcollectors']['length'] : 0" :value="data.associatedcollectors" @update:value="(value) => updateData('associatedcollectors', value)"></text-field-input-element>
             </div>
-            <div class="col-11 col-sm-4">
+            <div class="col-10 col-sm-3">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimeventdate']" label="Verbatim Date" :maxlength="fields['verbatimeventdate'] ? fields['verbatimeventdate']['length'] : 0" :value="data.verbatimeventdate" @update:value="(value) => updateData('verbatimeventdate', value)"></text-field-input-element>
             </div>
-            <div class="col-1 row justify-end q-gutter-sm">
+            <div class="col-2 row justify-end q-col-gutter-xs self-center">
                 <div v-if="eventMode">
                     <template v-if="showLocationForm">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showLocationForm = false" icon="fas fa-globe" icon-right="fas fa-minus" dense></q-btn>

@@ -1,7 +1,7 @@
 const occurrenceEditorCollectingEventModule = {
     template: `
         <q-card flat bordered class="black-border">
-            <q-card-section class="q-px-sm q-pb-sm column q-gutter-y-sm">
+            <q-card-section class="q-px-sm q-pb-sm column q-col-gutter-xs">
                 <div class="row justify-between">
                     <div>
                         <div v-if="Number(eventId) > 0" class="row q-gutter-sm">
