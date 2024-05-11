@@ -42,25 +42,25 @@ const occurrenceEditorSingleDisplay = {
                         </template>
                         <template v-if="displayQueryPopupButton">
                             <div class="self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeQueryPopupDisplay(true);" icon="fas fa-search" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeQueryPopupDisplay(true);" icon="filter_alt" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                        Search and filter records
+                                        Filter records
                                     </q-tooltip>
                                 </q-btn>
                             </div>
                         </template>
                         <template v-if="displayBatchUpdateButton">
                             <div class="self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeBatchUpdatePopupDisplay(true);" icon="fas fa-exchange-alt" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeBatchUpdatePopupDisplay(true);" icon="find_replace" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                        Batch Update Tool
+                                        Search and Replace Tool
                                     </q-tooltip>
                                 </q-btn>
                             </div>
                         </template>
                         <template v-if="imageCount > 0">
                             <div class="self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeImageTranscriberPopupDisplay(true);" icon="fas fa-camera" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeImageTranscriberPopupDisplay(true);" icon="image_search" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Display image transcription window
                                     </q-tooltip>

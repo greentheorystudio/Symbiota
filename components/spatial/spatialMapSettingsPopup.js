@@ -31,6 +31,8 @@ const spatialMapSettingsPopup = {
         </q-dialog>
     `,
     setup() {
+        const { getPlatformProperty } = useCore();
+
         const layersObj = Vue.inject('layersObj');
         const mapSettings = Vue.inject('mapSettings');
         const windowWidth = Vue.inject('windowWidth');
@@ -66,7 +68,7 @@ const spatialMapSettingsPopup = {
             }
             else{
                 updateMapSettings('drawToolFreehandMode', val);
-                if(val === false && windowWidth < 1220){
+                if(val === false && getPlatformProperty('has.touch')){
                     showNotification('negative','WARNING: Draw Tool must be set to Freehand Mode when being used on touch screens.');
                 }
             }

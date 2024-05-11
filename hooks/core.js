@@ -160,6 +160,26 @@ function useCore() {
         return text;
     }
 
+    function getPlatformProperty(prop){
+        let value = null;
+        if(prop === 'userAgent'){
+            value = $q.platform.userAgent;
+        }
+        else{
+            let propArr = prop.split('.');
+            if(propArr[0] === 'is'){
+                value = $q.platform.is[propArr[1]];
+            }
+            else if(propArr[0] === 'has'){
+                value = $q.platform.has[propArr[1]];
+            }
+            else if(propArr[0] === 'within'){
+                value = $q.platform.within[propArr[1]];
+            }
+        }
+        return value;
+    }
+
     function getRgbaStrFromHexOpacity(hex, opacity) {
         const rgbArr = hexToRgb(hex);
         let retStr = '';
@@ -350,6 +370,7 @@ function useCore() {
         getArrayBuffer,
         getCoordinateVerificationData,
         getErrorResponseText,
+        getPlatformProperty,
         getRgbaStrFromHexOpacity,
         hexToRgb,
         hideWorking,
