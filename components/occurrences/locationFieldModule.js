@@ -205,7 +205,7 @@ const locationFieldModule = {
                     :state="data.stateprovince"
                     :verbatim-coordinates="data.verbatimcoordinates"
                     @update:geolocate-data="processGeolocateData"
-                    @close:popup="closeGeolocatePopup();"
+                    @close:popup="showGeoLocatePopup = false"
             ></geo-locate-popup>
         </template>
         <template v-if="showCoordinateToolPopup">
@@ -214,12 +214,14 @@ const locationFieldModule = {
                     :show-popup="showCoordinateToolPopup"
                     :verbatim-coordinates="data.verbatimcoordinates"
                     @update:coordinate-tool-data="processCoordinateToolData"
-                    @close:popup="closeCoordinateToolPopup();"
+                    @close:popup="showCoordinateToolPopup = false"
             ></occurrence-coordinate-tool-popup>
         </template>
+        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
+        'confirmation-popup': confirmationPopup,
         'geo-locate-popup': geoLocatePopup,
         'occurrence-coordinate-tool-popup': occurrenceCoordinateToolPopup,
         'occurrence-footprint-wkt-input-element': occurrenceFootprintWktInputElement,
@@ -232,8 +234,9 @@ const locationFieldModule = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { getCoordinateVerificationData, showAlert, showNotification } = useCore();
-        
+        const { getCoordinateVerificationData, showNotification } = useCore();
+
+        const confirmationPopupRef = Vue.ref(null);
         const coordinateUncertaintyInMetersValue = Vue.ref(null);
         const decimalLatitudeValue = Vue.ref(null);
         const decimalLongitudeValue = Vue.ref(null);
@@ -256,14 +259,6 @@ const locationFieldModule = {
             decimalLatitudeValue.value = null;
             decimalLongitudeValue.value = null;
             footprintWktValue.value = null;
-        }
-
-        function closeCoordinateToolPopup() {
-            showCoordinateToolPopup.value = false;
-        }
-
-        function closeGeolocatePopup() {
-            showGeoLocatePopup.value = false;
         }
 
         function closeSpatialPopup() {
@@ -295,7 +290,7 @@ const locationFieldModule = {
             if(data.verbatimCoordinates){
                 updateData('verbatimcoordinates', data['verbatimCoordinates']);
             }
-            closeCoordinateToolPopup();
+            showCoordinateToolPopup.value = false;
         }
 
         function processGeolocateData(data) {
@@ -313,7 +308,7 @@ const locationFieldModule = {
                 updateData('georeferencesources', 'GeoLocate');
                 updateData('geodeticdatum', 'WGS84');
             }
-            closeGeolocatePopup();
+            showGeoLocatePopup.value = false;
         }
 
         function processRecalculatedDecimalCoordinates(data) {
@@ -429,7 +424,7 @@ const locationFieldModule = {
                             alertText += ', ' + coordCounty;
                         }
                         alertText += ', which differs from what you have entered.';
-                        showAlert(alertText, false);
+                        confirmationPopupRef.value.openPopup(alertText);
                     }
                 }
                 else{
@@ -447,6 +442,7 @@ const locationFieldModule = {
         });
 
         return {
+            confirmationPopupRef,
             coordinateUncertaintyInMetersValue,
             decimalLatitudeValue,
             decimalLongitudeValue,
@@ -456,8 +452,6 @@ const locationFieldModule = {
             showExtendedForm,
             showGeoLocatePopup,
             showSpatialPopup,
-            closeCoordinateToolPopup,
-            closeGeolocatePopup,
             closeSpatialPopup,
             openGeolocatePopup,
             openSpatialPopup,

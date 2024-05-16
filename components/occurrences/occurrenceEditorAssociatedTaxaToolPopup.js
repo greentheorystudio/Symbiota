@@ -66,7 +66,7 @@ const occurrenceEditorAssociatedTaxaToolPopup = {
         });
 
         Vue.watch(contentRef, () => {
-            setcontentStyle();
+            setContentStyle();
         });
 
         function addTaxon() {
@@ -89,7 +89,7 @@ const occurrenceEditorAssociatedTaxaToolPopup = {
             occurrenceStore.updateOccurrenceEditData('associatedtaxa', value);
         }
 
-        function setcontentStyle() {
+        function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
@@ -106,7 +106,7 @@ const occurrenceEditorAssociatedTaxaToolPopup = {
         }
 
         Vue.onMounted(() => {
-            setcontentStyle();
+            setContentStyle();
             associatedTaxaStr.value = props.associatedTaxaValue;
         });
 

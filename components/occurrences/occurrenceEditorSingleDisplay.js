@@ -24,7 +24,7 @@ const occurrenceEditorSingleDisplay = {
                         <div class="self-center text-bold q-mr-xs">Record {{ currentRecordIndex }} of {{ recordCount }}</div>
                         <q-btn v-if="currentRecordIndex !== recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord"></q-btn>
                         <q-btn v-if="recordCount > 1 && currentRecordIndex !== recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord"></q-btn>
-                        <q-btn v-if="recordCount > 1 && occId > 0" icon="note_add" color="grey-8" round dense flat @click="goToNewRecord"></q-btn>
+                        <q-btn v-if="occurrenceEntryFormat !== 'benthic' && recordCount > 1 && occId > 0" icon="note_add" color="grey-8" round dense flat @click="goToNewRecord"></q-btn>
                     </div>
                 </div>
                 <div class="row justify-between">

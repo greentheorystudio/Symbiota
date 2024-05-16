@@ -5,12 +5,14 @@ const occurrenceEditorCollectingEventModule = {
                 <div class="row justify-between">
                     <div>
                         <div v-if="Number(eventId) > 0" class="row q-gutter-sm">
-                            <template v-if="occurrenceEntryFormat === 'benthic'">
-                                <q-btn color="secondary" @click="" label="View Taxa" />
-                                <q-btn color="secondary" @click="" label="Add Taxon" />
+                            <template v-if="occurrenceEntryFormat === 'benthic' && Number(eventData.repcount) > 0">
+                                <template v-if="collectingEventBenthicTaxaCnt > 0">
+                                    <q-btn color="secondary" @click="showBenthicTaxaListPopup = true" label="View Taxa" />
+                                </template>
+                                <q-btn color="secondary" @click="showBenthicTaxaEditorPopup = true" label="Add/Edit Taxa" />
                             </template>
-                            <template v-else>
-                                <q-btn color="secondary" @click="" label="View Collections" />
+                            <template v-else-if="collectingEventCollectionArr.length > 0">
+                                <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" />
                             </template>
                             <template v-if="additionalDataFields.length > 0 && Number(occId) === 0">
                                 <q-btn color="secondary" @click="" label="Additional Data" />
@@ -37,16 +39,38 @@ const occurrenceEditorCollectingEventModule = {
                 </div>
             </q-card-section>
         </q-card>
+        <template v-if="showCollectionListPopup">
+            <occurrence-collection-list-popup
+                    :collection-arr="collectingEventCollectionArr"
+                    :show-popup="showCollectionListPopup"
+                    @close:popup="showCollectionListPopup = false"
+            ></occurrence-collection-list-popup>
+        </template>
+        <template v-if="showBenthicTaxaListPopup">
+            <occurrence-collecting-event-benthic-taxa-list-popup
+                    :show-popup="showBenthicTaxaListPopup"
+                    @close:popup="showBenthicTaxaListPopup = false"
+            ></occurrence-collecting-event-benthic-taxa-list-popup>
+        </template>
+        <template v-if="showBenthicTaxaEditorPopup">
+            <occurrence-collecting-event-benthic-taxa-editor-popup
+                    :show-popup="showBenthicTaxaEditorPopup"
+                    @close:popup="showBenthicTaxaEditorPopup = false"
+            ></occurrence-collecting-event-benthic-taxa-list-popup>
+        </template>
         <template v-if="showEventEditorPopup">
             <occurrence-collecting-event-editor-popup
                     :show-popup="showEventEditorPopup"
-                    @close:popup="closeEventEditorPopup();"
+                    @close:popup="showEventEditorPopup = false"
             ></occurrence-collecting-event-editor-popup>
         </template>
     `,
     components: {
         'collecting-event-field-module': collectingEventFieldModule,
+        'occurrence-collecting-event-benthic-taxa-editor-popup': occurrenceCollectingEventBenthicTaxaEditorPopup,
+        'occurrence-collecting-event-benthic-taxa-list-popup': occurrenceCollectingEventBenthicTaxaListPopup,
         'occurrence-collecting-event-editor-popup': occurrenceCollectingEventEditorPopup,
+        'occurrence-collection-list-popup': occurrenceCollectionListPopup,
         'text-field-input-element': textFieldInputElement
     },
     setup() {
@@ -54,6 +78,9 @@ const occurrenceEditorCollectingEventModule = {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const additionalDataFields = Vue.computed(() => occurrenceStore.getAdditionalDataFields);
+        const collectingEventBenthicData = Vue.computed(() => occurrenceStore.getCollectingEventBenthicData);
+        const collectingEventBenthicTaxaCnt = Vue.computed(() => occurrenceStore.getCollectingEventBenthicTaxaCnt);
+        const collectingEventCollectionArr = Vue.computed(() => occurrenceStore.getCollectingEventCollectionArr);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
@@ -61,11 +88,10 @@ const occurrenceEditorCollectingEventModule = {
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const showBenthicTaxaEditorPopup = Vue.ref(false);
+        const showBenthicTaxaListPopup = Vue.ref(false);
+        const showCollectionListPopup = Vue.ref(false);
         const showEventEditorPopup = Vue.ref(false);
-
-        function closeEventEditorPopup() {
-            showEventEditorPopup.value = false;
-        }
 
         function createCollectingEventRecord() {
             occurrenceStore.createCollectingEventRecord((newEventId) => {
@@ -88,6 +114,9 @@ const occurrenceEditorCollectingEventModule = {
 
         return {
             additionalDataFields,
+            collectingEventBenthicData,
+            collectingEventBenthicTaxaCnt,
+            collectingEventCollectionArr,
             eventData,
             eventFields,
             eventId,
@@ -95,8 +124,10 @@ const occurrenceEditorCollectingEventModule = {
             occId,
             occurrenceEntryFormat,
             occurrenceFieldDefinitions,
+            showBenthicTaxaEditorPopup,
+            showBenthicTaxaListPopup,
+            showCollectionListPopup,
             showEventEditorPopup,
-            closeEventEditorPopup,
             createCollectingEventRecord,
             updateCollectingEventData
         }

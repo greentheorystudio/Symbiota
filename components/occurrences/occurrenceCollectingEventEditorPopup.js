@@ -58,7 +58,7 @@ const occurrenceCollectingEventEditorPopup = {
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
 
         Vue.watch(contentRef, () => {
-            setcontentStyle();
+            setContentStyle();
         });
 
         function closePopup() {
@@ -82,7 +82,7 @@ const occurrenceCollectingEventEditorPopup = {
             });
         }
 
-        function setcontentStyle() {
+        function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
@@ -94,7 +94,7 @@ const occurrenceCollectingEventEditorPopup = {
         }
 
         Vue.onMounted(() => {
-            setcontentStyle();
+            setContentStyle();
             occurrenceStore.setCollectingEventFields();
         });
 

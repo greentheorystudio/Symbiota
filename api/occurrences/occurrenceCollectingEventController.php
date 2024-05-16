@@ -47,4 +47,10 @@ if($action && Sanitizer::validateInternalRequest()){
         $varsArr['locationid'] = $_POST['locationid'] ?? null;
         echo json_encode($evtManager->getCollectingEventArr($collid, $occid, $varsArr));
     }
+    elseif($action === 'getCollectingEventBenthicData' && $eventid){
+        echo json_encode($evtManager->getCollectingEventBenthicData($eventid));
+    }
+    elseif($action === 'getCollectingEventCollectionsArr' && $eventid){
+        echo json_encode($evtManager->getCollectingEventCollectionsArr($eventid));
+    }
 }

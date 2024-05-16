@@ -282,22 +282,6 @@ function useCore() {
         return returnData;
     }
 
-    function showAlert(text, confirmation, callback = null) {
-        $q.dialog({
-            message: text,
-            cancel: confirmation,
-            persistent: true
-        }).onOk(() => {
-            if(callback){
-                callback(true);
-            }
-        }).onCancel(() => {
-            if(callback){
-                callback(false);
-            }
-        })
-    }
-
     function showNotification(type, text, duration = 5000) {
         $q.notify({
             type: type,
@@ -376,7 +360,6 @@ function useCore() {
         hideWorking,
         openTutorialWindow,
         parseDate,
-        showAlert,
         showNotification,
         showWorking,
         writeMySQLWktString

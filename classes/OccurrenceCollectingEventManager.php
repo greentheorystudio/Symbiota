@@ -97,7 +97,7 @@ class OccurrenceCollectingEventManager{
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
+            while($r = $rs->fetch_object()){
                 foreach($fields as $val){
                     $name = $val->name;
                     $retArr[$name] = $r->$name;
@@ -177,6 +177,55 @@ class OccurrenceCollectingEventManager{
             'LEFT JOIN omoccurcollectingevents AS ce ON o.eventid = ce.eventid '.
             'WHERE o.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
             'ORDER BY o.eventdate, o.recordnumber ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $r->$name;
+                }
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getCollectingEventBenthicData($eventid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT occid, sciname, identificationremarks, identificationqualifier, rep, individualcount '.
+            'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' '.
+            'ORDER BY sciname, identificationqualifier, identificationremarks, rep ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                if($r->rep && $r->individualcount && (int)$r->individualcount > 0){
+                    $key = $r->sciname . ($r->identificationqualifier ? '-' . $r->identificationqualifier : '') . ($r->identificationremarks ? '-' . $r->identificationremarks : '');
+                    $repLabel = 'rep' . (int)$r->rep;
+                    if(!array_key_exists($key, $retArr)){
+                        $retArr[$key] = array();
+                        $retArr[$key]['sciname'] = $r->sciname;
+                        $retArr[$key]['identificationqualifier'] = $r->identificationqualifier;
+                        $retArr[$key]['identificationremarks'] = $r->identificationremarks;
+                    }
+                    $retArr[$key][$repLabel]['occid'] = $r->occid;
+                    $retArr[$key][$repLabel]['cnt'] = $r->individualcount;
+                }
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getCollectingEventCollectionsArr($eventid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT occid, sciname, identificationremarks, identificationqualifier, family, associatedtaxa, individualcount, '.
+            'lifestage, sex, occurrenceremarks, typestatus, reproductivecondition, establishmentmeans, dynamicproperties '.
+            'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);

@@ -38,7 +38,7 @@ const occurrenceEditorLocationModule = {
                     popup-type="location"
                     :event-arr="collectingEventArr"
                     :show-popup="showCollectingEventListPopup"
-                    @close:popup="closeCollectingEventListPopup();"
+                    @close:popup="showCollectingEventListPopup = false"
             ></occurrence-collecting-event-list-popup>
         </template>
         <template v-if="showLocationListPopup">
@@ -51,7 +51,7 @@ const occurrenceEditorLocationModule = {
         <template v-if="showLocationEditorPopup">
             <occurrence-location-editor-popup
                     :show-popup="showLocationEditorPopup"
-                    @close:popup="closeLocationEditorPopup();"
+                    @close:popup="showLocationEditorPopup = false"
             ></occurrence-location-editor-popup>
         </template>
     `,
@@ -78,14 +78,6 @@ const occurrenceEditorLocationModule = {
         const showCollectingEventListPopup = Vue.ref(false);
         const showLocationEditorPopup = Vue.ref(false);
         const showLocationListPopup = Vue.ref(false);
-
-        function closeCollectingEventListPopup() {
-            showCollectingEventListPopup.value = false;
-        }
-
-        function closeLocationEditorPopup() {
-            showLocationEditorPopup.value = false;
-        }
 
         function closeLocationListPopup() {
             showLocationListPopup.value = false;
@@ -144,8 +136,6 @@ const occurrenceEditorLocationModule = {
             showCollectingEventListPopup,
             showLocationEditorPopup,
             showLocationListPopup,
-            closeCollectingEventListPopup,
-            closeLocationEditorPopup,
             closeLocationListPopup,
             createLocationRecord,
             findNearbyLocations,

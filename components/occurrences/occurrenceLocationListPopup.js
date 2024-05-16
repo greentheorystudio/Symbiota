@@ -116,7 +116,7 @@ const occurrenceLocationListPopup = {
         const contentStyle = Vue.ref(null);
         
         Vue.watch(contentRef, () => {
-            setcontentStyle();
+            setContentStyle();
         });
 
         function closePopup() {
@@ -128,7 +128,7 @@ const occurrenceLocationListPopup = {
             context.emit('close:popup');
         }
 
-        function setcontentStyle() {
+        function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
@@ -136,7 +136,7 @@ const occurrenceLocationListPopup = {
         }
 
         Vue.onMounted(() => {
-            setcontentStyle();
+            setContentStyle();
         });
 
         return {
