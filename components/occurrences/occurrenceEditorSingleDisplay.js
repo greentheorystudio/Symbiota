@@ -53,7 +53,7 @@ const occurrenceEditorSingleDisplay = {
                                 </q-btn>
                             </div>
                         </template>
-                        <template v-if="displayBatchUpdateButton">
+                        <template v-if="displayBatchUpdateButton && recordCount > 1">
                             <div class="self-center">
                                 <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeBatchUpdatePopupDisplay(true);" icon="find_replace" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
