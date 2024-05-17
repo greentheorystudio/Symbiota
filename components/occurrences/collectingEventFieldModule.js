@@ -39,7 +39,7 @@ const collectingEventFieldModule = {
             <div class="col-12 col-sm-6 col-md-2">
                 <time-input-element :disabled="disabled" :definition="fieldDefinitions['eventtime']" label="Time" :value="data.eventtime" @update:value="(value) => updateData('eventtime', value)"></time-input-element>
             </div>
-            <div v-if="!eventMode && !collectionEventAutoSearch" class="row justify-end self-center">
+            <div v-if="!eventMode && !autoSearch" class="row justify-end self-center">
                 <div>
                     <q-btn color="secondary" size="md" @click="processCollectingEventSearch(false);" label="Search for Event" dense/>
                 </div>

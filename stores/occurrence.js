@@ -433,6 +433,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getMediaArr(state) {
             return state.mediaArr;
         },
+        getNewRecordExisting(state) {
+            return state.occidArr.includes(0);
+        },
         getRecordCount(state) {
             return state.occidArr.length;
         },
