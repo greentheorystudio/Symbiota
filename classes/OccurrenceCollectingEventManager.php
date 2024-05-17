@@ -88,26 +88,6 @@ class OccurrenceCollectingEventManager{
         return $newID;
     }
 
-    public function getAdditionalData($eventid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT a.adddataid, a.field, a.datavalue, a.initialtimestamp '.
-            'FROM omoccuradditionaldata AS a '.
-            'WHERE a.eventID = ' . (int)$eventid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $retArr[$name] = $r->$name;
-                }
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
     public function getCollectingEventArr($collid, $occid, $vars): array
     {
         $retArr = array();
@@ -273,6 +253,26 @@ class OccurrenceCollectingEventManager{
     public function getCollectingEventFields(): array
     {
         return $this->fields;
+    }
+
+    public function getConfiguredFieldData($eventid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT a.adddataid, a.field, a.datavalue, a.initialtimestamp '.
+            'FROM omoccuradditionaldata AS a '.
+            'WHERE a.eventID = ' . (int)$eventid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            while($r = $rs->fetch_object()){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $r->$name;
+                }
+            }
+            $rs->free();
+        }
+        return $retArr;
     }
 
     public function updateCollectingEventRecord($eventId, $editData): int

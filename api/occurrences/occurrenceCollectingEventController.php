@@ -34,8 +34,8 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'getCollectingEventFields'){
         echo json_encode($evtManager->getCollectingEventFields());
     }
-    elseif($action === 'getAdditionalDataArr' && $eventid){
-        echo json_encode($evtManager->getAdditionalData($eventid));
+    elseif($action === 'getConfiguredFieldDataArr' && $eventid){
+        echo json_encode($evtManager->getConfiguredFieldData($eventid));
     }
     elseif($action === 'getCollectingEventArr' && $collid){
         $occid = $_POST['occid'] ?? null;

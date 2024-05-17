@@ -1,4 +1,4 @@
-const occurrenceEditorAdditionalDataTab = {
+const occurrenceEditorConfiguredDataTab = {
     template: `
         
     `,

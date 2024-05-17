@@ -52,7 +52,6 @@ const occurrenceEditorOccurrenceDataModule = {
     setup() {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
-        const additionalDataFields = Vue.computed(() => occurrenceStore.getAdditionalDataFields);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
@@ -60,7 +59,6 @@ const occurrenceEditorOccurrenceDataModule = {
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
 
         return {
-            additionalDataFields,
             entryFollowUpAction,
             eventId,
             locationId,

@@ -35,11 +35,11 @@ class CollectionManager {
             $retArr['datarecordingmethod'] = $r->datarecordingmethod;
             $retArr['defaultrepcount'] = $r->defaultRepCount;
             $retArr['ispublic'] = $r->isPublic;
-            $retArr['additionalDataFields'] = null;
+            $retArr['configuredDataFields'] = null;
         }
         $rs->free();
         if(file_exists($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collId . 'occurrencedatafields.json')) {
-            $retArr['additionalDataFields'] = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/collection'.$collId.'occurrencedatafields.json'), true);
+            $retArr['configuredDataFields'] = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/collection'.$collId.'occurrencedatafields.json'), true);
         }
         return $retArr;
     }

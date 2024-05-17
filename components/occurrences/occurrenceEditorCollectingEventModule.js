@@ -14,8 +14,8 @@ const occurrenceEditorCollectingEventModule = {
                             <template v-else-if="collectingEventCollectionArr.length > 0">
                                 <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" />
                             </template>
-                            <template v-if="additionalDataFields.length > 0 && Number(occId) === 0">
-                                <q-btn color="secondary" @click="" label="Additional Data" />
+                            <template v-if="configuredDataFields.length > 0 && Number(occId) === 0">
+                                <q-btn color="secondary" @click="" label="Configured Data" />
                             </template>
                         </div>
                     </div>
@@ -77,10 +77,10 @@ const occurrenceEditorCollectingEventModule = {
         const { showNotification } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
-        const additionalDataFields = Vue.computed(() => occurrenceStore.getAdditionalDataFields);
         const collectingEventBenthicData = Vue.computed(() => occurrenceStore.getCollectingEventBenthicData);
         const collectingEventBenthicTaxaCnt = Vue.computed(() => occurrenceStore.getCollectingEventBenthicTaxaCnt);
         const collectingEventCollectionArr = Vue.computed(() => occurrenceStore.getCollectingEventCollectionArr);
+        const configuredDataFields = Vue.computed(() => occurrenceStore.getConfiguredDataFields);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
@@ -113,10 +113,10 @@ const occurrenceEditorCollectingEventModule = {
         });
 
         return {
-            additionalDataFields,
             collectingEventBenthicData,
             collectingEventBenthicTaxaCnt,
             collectingEventCollectionArr,
+            configuredDataFields,
             eventData,
             eventFields,
             eventId,
