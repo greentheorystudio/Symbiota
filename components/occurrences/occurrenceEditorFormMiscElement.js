@@ -44,7 +44,7 @@ const occurrenceEditorFormMiscElement = {
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-4">
-                        <occurrence-basis-of-record-selector :definition="occurrenceFieldDefinitions['basisofrecord']" label="Basis of Record" :value="occurrenceData.basisofrecord" @update:value="(value) => updateOccurrenceData('basisofrecord', value)"></occurrence-basis-of-record-selector>
+                        <selector-input-element :definition="occurrenceFieldDefinitions['basisofrecord']" label="Basis of Record" :options="basisOfRecordOptions" :value="occurrenceData.basisofrecord" @update:value="(value) => updateOccurrenceData('basisofrecord', value)"></selector-input-element>
                     </div>
                     <div class="col-11 col-sm-7">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['typestatus']" label="Type Status" :maxlength="occurrenceFields['typestatus'] ? occurrenceFields['typestatus']['length'] : 0" :value="occurrenceData.typestatus" @update:value="(value) => updateOccurrenceData('typestatus', value)"></text-field-input-element>
@@ -97,14 +97,15 @@ const occurrenceEditorFormMiscElement = {
     components: {
         'checkbox-input-element': checkboxInputElement,
         'confirmation-popup': confirmationPopup,
-        'occurrence-basis-of-record-selector': occurrenceBasisOfRecordSelector,
         'occurrence-editor-associated-taxa-tool-popup': occurrenceEditorAssociatedTaxaToolPopup,
+        'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
     },
     setup() {
         const { showNotification } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const basisOfRecordOptions = Vue.computed(() => occurrenceStore.getBasisOfRecordOptions);
         const confirmationPopupRef = Vue.ref(null);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
@@ -155,6 +156,7 @@ const occurrenceEditorFormMiscElement = {
         }
 
         return {
+            basisOfRecordOptions,
             confirmationPopupRef,
             eventData,
             occurrenceData,

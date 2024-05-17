@@ -2,6 +2,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
     state: () => ({
         additionalData: {},
         additionalDataFields: [],
+        basisOfRecordOptions: [
+            {value: 'PreservedSpecimen', label: 'Preserved Specimen'},
+            {value: 'HumanObservation', label: 'Observation'},
+            {value: 'FossilSpecimen', label: 'Fossil Specimen'},
+            {value: 'LivingSpecimen', label: 'Living Specimen'},
+            {value: 'MaterialSample', label: 'Material Sample'}
+        ],
         blankEventRecord: {
             eventid: 0,
             collid: 0,
@@ -313,6 +320,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getAdditionalDataFields(state) {
             return state.additionalDataFields;
+        },
+        getBasisOfRecordOptions(state) {
+            return state.basisOfRecordOptions;
         },
         getChecklistArr(state) {
             return state.checklistArr;

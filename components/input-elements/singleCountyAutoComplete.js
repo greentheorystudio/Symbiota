@@ -33,14 +33,14 @@ const singleCountyAutoComplete = {
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
             <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" input-debounce="0" @blur="blurAction" :options="autocompleteOptions" option-label="name" @filter="getOptions" @update:model-value="processValueChange" :counter="showCounter" :maxlength="maxlength" :label="label" :disable="disabled">
                 <template v-if="value || definition" v-slot:append>
-                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Clear value
-                        </q-tooltip>
-                    </q-icon>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
+                        </q-tooltip>
+                    </q-icon>
+                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Clear value
                         </q-tooltip>
                     </q-icon>
                 </template>
@@ -49,14 +49,14 @@ const singleCountyAutoComplete = {
         <template v-else>
             <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon input-debounce="0" @blur="blurAction" :options="autocompleteOptions" option-label="name" @filter="getOptions" @update:model-value="processValueChange" :label="label" :disable="disabled">
                 <template v-if="!disabled && (value || definition)" v-slot:append>
-                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Clear value
-                        </q-tooltip>
-                    </q-icon>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
+                        </q-tooltip>
+                    </q-icon>
+                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Clear value
                         </q-tooltip>
                     </q-icon>
                 </template>

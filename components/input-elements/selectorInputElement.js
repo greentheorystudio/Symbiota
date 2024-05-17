@@ -1,5 +1,9 @@
-const occurrenceBasisOfRecordSelector = {
+const selectorInputElement = {
     props: {
+        clearable: {
+            type: Boolean,
+            default: false
+        },
         definition: {
             type: Object,
             default: null
@@ -10,7 +14,11 @@ const occurrenceBasisOfRecordSelector = {
         },
         label: {
             type: String,
-            default: 'Basis of Record'
+            default: ''
+        },
+        options: {
+            type: Array,
+            default: []
         },
         value: {
             type: String,
@@ -18,11 +26,16 @@ const occurrenceBasisOfRecordSelector = {
         }
     },
     template: `
-        <q-select v-model="value" outlined dense options-dense input-debounce="0" popup-content-class="z-max" :options="selectorOptions" option-value="value" option-label="label" @update:model-value="processValueChange" :label="label" :disable="disabled">
-            <template v-if="!disabled && definition" v-slot:after>
-                <q-icon name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+        <q-select ref="selectorRef" v-model="value" outlined dense options-dense input-debounce="500" popup-content-class="z-max" :options="selectorOptions" option-value="value" option-label="label" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :disable="disabled">
+            <template v-if="!disabled && definition" v-slot:append>
+                <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         See field definition
+                    </q-tooltip>
+                </q-icon>
+                <q-icon v-if="clearable && value" name="cancel" class="cursor-pointer" @click="clearValue();">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        Clear value
                     </q-tooltip>
                 </q-icon>
             </template>
@@ -63,20 +76,37 @@ const occurrenceBasisOfRecordSelector = {
         </template>
     `,
     setup(props, context) {
+        const clearing = Vue.ref(false);
         const displayDefinitionPopup = Vue.ref(false);
         const propsRefs = Vue.toRefs(props);
         const selectedOption = Vue.ref(null);
-        const selectorOptions = [
-            {value: 'PreservedSpecimen', label: 'Preserved Specimen'},
-            {value: 'HumanObservation', label: 'Observation'},
-            {value: 'FossilSpecimen', label: 'Fossil Specimen'},
-            {value: 'LivingSpecimen', label: 'Living Specimen'},
-            {value: 'MaterialSample', label: 'Material Sample'}
-        ];
+        const selectorOptions = Vue.shallowReactive([]);
 
         Vue.watch(propsRefs.value, () => {
             setSelectedOption();
         });
+
+        Vue.watch(propsRefs.options, () => {
+            setOptions();
+            setSelectedOption();
+        });
+
+        function checkFilter(input, proceed, abort) {
+            if(displayDefinitionPopup.value || clearing.value){
+                abort();
+            }
+            else{
+                proceed();
+            }
+        }
+
+        function clearValue() {
+            clearing.value = true;
+            processValueChange(null);
+            setTimeout(() => {
+                clearing.value = false;
+            }, 500);
+        }
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
@@ -86,11 +116,26 @@ const occurrenceBasisOfRecordSelector = {
             context.emit('update:value', (selectedObj ? selectedObj.value : null));
         }
 
+        function setOptions() {
+            selectorOptions.length = 0;
+            if(props.options.length > 0){
+                props.options.forEach(option => {
+                    if(typeof option === 'string' || typeof option === 'number'){
+                        selectorOptions.push({value: option.toString(), label: option.toString()});
+                    }
+                    else if(typeof option === 'object' && option.hasOwnProperty('value') && option.hasOwnProperty('label')){
+                        selectorOptions.push({value: option.value.toString(), label: option.label.toString()});
+                    }
+                });
+            }
+        }
+
         function setSelectedOption() {
             selectedOption.value = selectorOptions.find(opt => opt['value'] === props.value);
         }
 
         Vue.onMounted(() => {
+            setOptions();
             setSelectedOption();
         });
 
@@ -98,6 +143,8 @@ const occurrenceBasisOfRecordSelector = {
             displayDefinitionPopup,
             selectedOption,
             selectorOptions,
+            checkFilter,
+            clearValue,
             openDefinitionPopup,
             processValueChange
         }

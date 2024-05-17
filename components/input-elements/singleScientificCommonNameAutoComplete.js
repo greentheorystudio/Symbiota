@@ -56,14 +56,14 @@ const singleScientificCommonNameAutoComplete = {
     template: `
         <q-select v-model="sciname" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" input-debounce="0" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label" :disable="disabled">
             <template v-if="!disabled && (sciname || definition)" v-slot:append>
-                <q-icon v-if="sciname" name="cancel" class="cursor-pointer" @click="clearAction();">
-                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                        Clear value
-                    </q-tooltip>
-                </q-icon>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         See field definition
+                    </q-tooltip>
+                </q-icon>
+                <q-icon v-if="sciname" name="cancel" class="cursor-pointer" @click="clearAction();">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        Clear value
                     </q-tooltip>
                 </q-icon>
             </template>

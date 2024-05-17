@@ -10,7 +10,7 @@ const occurrenceEditorFormCurationElement = {
                         <text-field-input-element :definition="occurrenceFieldDefinitions['language']" label="Language" :maxlength="occurrenceFields['language'] ? occurrenceFields['language']['length'] : 0" :value="occurrenceData.language" @update:value="(value) => updateOccurrenceData('language', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <occurrence-processing-status-selector :definition="occurrenceFieldDefinitions['processingstatus']" label="Processing Status" :value="occurrenceData.processingstatus" @update:value="(value) => updateOccurrenceData('processingstatus', value)"></occurrence-processing-status-selector>
+                        <selector-input-element :definition="occurrenceFieldDefinitions['processingstatus']" label="Processing Status" :options="processingStatusOptions" :value="occurrenceData.processingstatus" @update:value="(value) => updateOccurrenceData('processingstatus', value)"></selector-input-element>
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
@@ -44,15 +44,17 @@ const occurrenceEditorFormCurationElement = {
         </q-card>
     `,
     components: {
-        'occurrence-processing-status-selector': occurrenceProcessingStatusSelector,
+        'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
     },
     setup() {
+        const baseStore = useBaseStore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const processingStatusOptions = Vue.computed(() => baseStore.getOccurrenceProcessingStatusOptions);
 
         function updateOccurrenceData(key, value) {
             occurrenceStore.updateOccurrenceEditData(key, value);
@@ -62,6 +64,7 @@ const occurrenceEditorFormCurationElement = {
             occurrenceData,
             occurrenceFields,
             occurrenceFieldDefinitions,
+            processingStatusOptions,
             updateOccurrenceData
         }
     }
