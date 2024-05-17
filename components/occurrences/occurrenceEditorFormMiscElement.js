@@ -1,8 +1,8 @@
 const occurrenceEditorFormMiscElement = {
     template: `
         <q-card flat bordered>
-            <q-card-section class="q-pa-sm column q-col-gutter-xs">
-                <div class="row justify-between q-col-gutter-xs">
+            <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-11">
                         <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></text-field-input-element>
                     </div>
@@ -16,7 +16,7 @@ const occurrenceEditorFormMiscElement = {
                         </div>
                     </div>
                 </div>
-                <div class="row justify-between q-col-gutter-xs">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-grow">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :maxlength="occurrenceFields['lifestage'] ? occurrenceFields['lifestage']['length'] : 0" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)"></text-field-input-element>
                     </div>
@@ -42,7 +42,7 @@ const occurrenceEditorFormMiscElement = {
                         <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['occurrenceremarks']" label="Occurrence Remarks" :value="occurrenceData.occurrenceremarks" @update:value="(value) => updateOccurrenceData('occurrenceremarks', value)"></text-field-input-element>
                     </div>
                 </div>
-                <div class="row justify-between q-col-gutter-xs">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-4">
                         <occurrence-basis-of-record-selector :definition="occurrenceFieldDefinitions['basisofrecord']" label="Basis of Record" :value="occurrenceData.basisofrecord" @update:value="(value) => updateOccurrenceData('basisofrecord', value)"></occurrence-basis-of-record-selector>
                     </div>
@@ -61,7 +61,7 @@ const occurrenceEditorFormMiscElement = {
                     </div>
                 </div>
                 <template v-if="showExtendedForm">
-                    <div class="row justify-between q-col-gutter-xs">
+                    <div class="row justify-between q-col-gutter-sm">
                         <div class="col-12 col-sm-6 col-md-5">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['reproductivecondition']" label="Reproductive Condition" :maxlength="occurrenceFields['reproductivecondition'] ? occurrenceFields['reproductivecondition']['length'] : 0" :value="occurrenceData.reproductivecondition" @update:value="(value) => updateOccurrenceData('reproductivecondition', value)"></text-field-input-element>
                         </div>

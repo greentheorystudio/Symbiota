@@ -26,7 +26,7 @@ const collectingEventFieldModule = {
         }
     },
     template: `
-        <div class="row justify-between q-col-gutter-xs">
+        <div class="row justify-between q-col-gutter-sm">
             <div class="col-12 col-sm-6 col-md-grow">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordedby']" label="Collector/Observer" :maxlength="fields['recordedby'] ? fields['recordedby']['length'] : 0" :value="data.recordedby" @update:value="(value) => updateData('recordedby', value)"></text-field-input-element>
             </div>
@@ -45,14 +45,14 @@ const collectingEventFieldModule = {
                 </div>
             </div>
         </div>
-        <div class="row justify-between q-col-gutter-xs">
+        <div class="row justify-between q-col-gutter-sm">
             <div class="col-12 col-sm-grow">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['associatedcollectors']" label="Associated Collectors" :maxlength="fields['associatedcollectors'] ? fields['associatedcollectors']['length'] : 0" :value="data.associatedcollectors" @update:value="(value) => updateData('associatedcollectors', value)"></text-field-input-element>
             </div>
             <div class="col-10 col-sm-3">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimeventdate']" label="Verbatim Date" :maxlength="fields['verbatimeventdate'] ? fields['verbatimeventdate']['length'] : 0" :value="data.verbatimeventdate" @update:value="(value) => updateData('verbatimeventdate', value)"></text-field-input-element>
             </div>
-            <div class="col-2 row justify-end q-col-gutter-xs self-center">
+            <div class="col-2 row justify-end q-col-gutter-sm self-center">
                 <div v-if="eventMode">
                     <template v-if="showLocationForm">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showLocationForm = false" icon="fas fa-globe" icon-right="fas fa-minus" dense></q-btn>
@@ -75,7 +75,7 @@ const collectingEventFieldModule = {
             <location-field-module :disabled="disabled" :event-mode="true" :data="data" :fields="fields" :field-definitions="fieldDefinitions" @update:location-data="(data) => updateData(data.key, data.value)"></location-field-module>
         </template>
         <template v-if="showExtendedForm">
-            <div class="row justify-between q-col-gutter-xs">
+            <div class="row justify-between q-col-gutter-sm">
                 <div class="col-12 col-sm-6 row justify-start q-col-gutter-md">
                     <div class="col-12 col-sm-6">
                         <text-field-input-element :disabled="disabled" data-type="number" :definition="fieldDefinitions['minimumdepthinmeters']" label="Minimum Depth (m)" :maxlength="fields['minimumdepthinmeters'] ? fields['minimumdepthinmeters']['length'] : 0" :value="data.minimumdepthinmeters" @update:value="(value) => updateData('minimumdepthinmeters', value)"></text-field-input-element>
@@ -98,7 +98,7 @@ const collectingEventFieldModule = {
                     <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['substrate']" label="Substrate" :value="data.substrate" @update:value="(value) => updateData('substrate', value)"></text-field-input-element>
                 </div>
             </div>
-            <div class="row justify-between q-col-gutter-xs">
+            <div class="row justify-between q-col-gutter-sm">
                 <div class="col-12 col-sm-6 col-md-4">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['fieldnumber']" label="Field Number" :maxlength="fields['fieldnumber'] ? fields['fieldnumber']['length'] : 0" :value="data.fieldnumber" @update:value="(value) => updateData('fieldnumber', value)"></text-field-input-element>
                 </div>
@@ -119,8 +119,8 @@ const collectingEventFieldModule = {
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['labelproject']" label="Label Project" :maxlength="fields['labelproject'] ? fields['labelproject']['length'] : 0" :value="data.labelproject" @update:value="(value) => updateData('labelproject', value)"></text-field-input-element>
                 </div>
             </div>
-            <div class="row justify-between q-col-gutter-xs">
-                <div class="col-6 row justify-start q-col-gutter-xs">
+            <div class="row justify-between q-col-gutter-sm">
+                <div class="col-6 row justify-start q-col-gutter-sm">
                     <div class="col-12 col-sm-4">
                         <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['year']" label="Year" :maxlength="fields['year'] ? fields['year']['length'] : 0" :value="data.year" @update:value="(value) => updateData('year', value)"></text-field-input-element>
                     </div>
@@ -131,7 +131,7 @@ const collectingEventFieldModule = {
                         <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['day']" label="Day" :maxlength="fields['day'] ? fields['day']['length'] : 0" :value="data.day" @update:value="(value) => updateData('day', value)"></text-field-input-element>
                     </div>
                 </div>
-                <div class="col-6 row justify-end q-col-gutter-xs">
+                <div class="col-6 row justify-end q-col-gutter-sm">
                     <div class="col-12 col-sm-5">
                         <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['startdayofyear']" label="Start Day of Year" :maxlength="fields['startdayofyear'] ? fields['startdayofyear']['length'] : 0" :value="data.startdayofyear" @update:value="(value) => updateData('startdayofyear', value)"></text-field-input-element>
                     </div>

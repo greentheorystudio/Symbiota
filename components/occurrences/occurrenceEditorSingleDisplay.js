@@ -1,6 +1,6 @@
 const occurrenceEditorSingleDisplay = {
     template: `
-        <div class="row justify-center q-py-sm">
+        <div class="row justify-center">
             <div ref="moduleContainerRef" class="editor-inner-container rounded-borders shadow-5 q-pa-md column q-gutter-y-sm self-center">
                 <div class="row justify-between">
                     <div class="row justify-start">
@@ -73,13 +73,15 @@ const occurrenceEditorSingleDisplay = {
                         </template>
                     </div>
                 </div>
-                <q-card flat bordered class="q-mt-sm black-border">
-                    <template v-if="Number(occId) > 0">
+                <template v-if="Number(occId) > 0">
+                    <q-card flat bordered class="q-mt-sm black-border">
                         <q-card-section class="q-pa-none">
                             <occurrence-editor-tab-module></occurrence-editor-tab-module>
                         </q-card-section>
-                    </template>
-                    <template v-else-if="Number(occId) === 0">
+                    </q-card>
+                </template>
+                <template v-else-if="Number(occId) === 0">
+                    <q-card flat>
                         <q-card-section class="q-pa-sm">
                             <template v-if="occurrenceEntryFormat === 'observation'">
                                 <occurrence-entry-observation-form-module></occurrence-entry-observation-form-module>
@@ -94,8 +96,8 @@ const occurrenceEditorSingleDisplay = {
                                 <occurrence-editor-occurrence-data-module></occurrence-editor-occurrence-data-module>
                             </template>
                         </q-card-section>
-                    </template>
-                </q-card>
+                    </q-card>
+                </template>
             </div>
             <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup"></occurrence-editor-image-transcriber-popup>
         </div>

@@ -15,15 +15,15 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <div class="q-pa-sm column justify-around q-col-gutter-xs fit">
+                        <div class="q-pa-sm column justify-around q-col-gutter-sm fit">
                             <div class="q-pa-md text-body1 full-width">
                                 Enter the Scientific Name for the taxon you would like to either add or edit. Rep counts for 
                                 previously entered taxa matching the Scientific Name, ID Qualifier, and ID Remarks will 
                                 automatically populate in the table. Once all of the Rep count data has been entered, click 
                                 the Apply button to process the data.
                             </div>
-                            <div class="column q-col-gutter-xs">
-                                <div class="row justify-between q-col-gutter-xs">
+                            <div class="column q-col-gutter-sm">
+                                <div class="row justify-between q-col-gutter-sm">
                                     <div class="col-12 col-sm-4">
                                         <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="taxonSciName" label="Scientific Name" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                                     </div>

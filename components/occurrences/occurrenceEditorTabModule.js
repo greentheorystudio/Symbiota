@@ -23,7 +23,7 @@ const occurrenceEditorTabModule = {
                 </q-tabs>
                 <q-separator></q-separator>
                 <q-tab-panels v-model="selectedTab">
-                    <q-tab-panel name="data">
+                    <q-tab-panel name="data" class="q-pa-none">
                         <occurrence-editor-occurrence-data-module></occurrence-editor-occurrence-data-module>
                     </q-tab-panel>
                     <template v-if="additionalDataFields.length > 0">

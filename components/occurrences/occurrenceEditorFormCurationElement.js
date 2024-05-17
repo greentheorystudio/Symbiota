@@ -1,8 +1,8 @@
 const occurrenceEditorFormCurationElement = {
     template: `
         <q-card flat bordered>
-            <q-card-section class="q-pa-sm column q-col-gutter-xs">
-                <div class="row justify-between q-col-gutter-xs">
+            <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-6">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['occurrenceid']" label="Occurrence ID" :maxlength="occurrenceFields['occurrenceid'] ? occurrenceFields['occurrenceid']['length'] : 0" :value="occurrenceData.occurrenceid" @update:value="(value) => updateOccurrenceData('occurrenceid', value)"></text-field-input-element>
                     </div>
@@ -13,7 +13,7 @@ const occurrenceEditorFormCurationElement = {
                         <occurrence-processing-status-selector :definition="occurrenceFieldDefinitions['processingstatus']" label="Processing Status" :value="occurrenceData.processingstatus" @update:value="(value) => updateOccurrenceData('processingstatus', value)"></occurrence-processing-status-selector>
                     </div>
                 </div>
-                <div class="row justify-between q-col-gutter-xs">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-5">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['preparations']" label="Preparations" :maxlength="occurrenceFields['preparations'] ? occurrenceFields['preparations']['length'] : 0" :value="occurrenceData.preparations" @update:value="(value) => updateOccurrenceData('preparations', value)"></text-field-input-element>
                     </div>
@@ -24,7 +24,7 @@ const occurrenceEditorFormCurationElement = {
                         <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['duplicatequantity']" label="Duplicate Quantity" :maxlength="occurrenceFields['duplicatequantity'] ? occurrenceFields['duplicatequantity']['length'] : 0" :value="occurrenceData.duplicatequantity" @update:value="(value) => updateOccurrenceData('duplicatequantity', value)"></text-field-input-element>
                     </div>
                 </div>
-                <div class="row justify-between q-col-gutter-xs">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-4">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['institutioncode']" label="Institution Code" :maxlength="occurrenceFields['institutioncode'] ? occurrenceFields['institutioncode']['length'] : 0" :value="occurrenceData.institutioncode" @update:value="(value) => updateOccurrenceData('institutioncode', value)"></text-field-input-element>
                     </div>

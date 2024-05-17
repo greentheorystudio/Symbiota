@@ -30,7 +30,7 @@ const locationFieldModule = {
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['localitysecurityreason']" label="Locality Security Reason" :maxlength="fields['localitysecurityreason'] ? fields['localitysecurityreason']['length'] : 0" :value="data.localitysecurityreason" @update:value="(value) => updateData('localitysecurityreason', value)" :show-counter="true"></text-field-input-element>
             </div>
         </div>
-        <div v-if="!eventMode" class="row justify-between q-col-gutter-xs">
+        <div v-if="!eventMode" class="row justify-between q-col-gutter-sm">
             <div class="col-12 col-sm-6 col-md-3">
                 <single-country-auto-complete :disabled="disabled" :definition="fieldDefinitions['country']" label="Country" :maxlength="fields['country'] ? fields['country']['length'] : 0" :value="data.country" @update:value="(value) => updateData('country', value)"></single-country-auto-complete>
             </div>
@@ -44,12 +44,12 @@ const locationFieldModule = {
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['municipality']" label="Municipality" :maxlength="fields['municipality'] ? fields['municipality']['length'] : 0" :value="data.municipality" @update:value="(value) => updateData('municipality', value)"></text-field-input-element>
             </div>
         </div>
-        <div v-if="!eventMode" class="row q-col-gutter-xs">
+        <div v-if="!eventMode" class="row q-col-gutter-sm">
             <div class="col-grow">
                 <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['locality']" label="Locality" :value="data.locality" @update:value="(value) => updateData('locality', value)"></text-field-input-element>
             </div>
         </div>
-        <div class="row justify-between q-col-gutter-xs">
+        <div class="row justify-between q-col-gutter-sm">
             <div class="col-12 col-sm-6 col-md-9 row q-gutter-xs">
                 <div class="col-12 col-sm-6 col-md-3">
                     <text-field-input-element :disabled="disabled" data-type="number" label="Latitude" :value="data.decimallatitude" min-value="-90" max-value="90" @update:value="(value) => updateData('decimallatitude', value)"></text-field-input-element>
@@ -88,7 +88,7 @@ const locationFieldModule = {
                 </div>
             </div>
         </div>
-        <div v-if="!eventMode" class="row justify-between q-col-gutter-xs">
+        <div v-if="!eventMode" class="row justify-between q-col-gutter-sm">
             <div class="col-12 col-sm-2 col-md-3">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['geodeticdatum']" label="Datum" :maxlength="fields['geodeticdatum'] ? fields['geodeticdatum']['length'] : 0" :value="data.geodeticdatum" @update:value="(value) => updateData('geodeticdatum', value)"></text-field-input-element>
             </div>
@@ -96,7 +96,7 @@ const locationFieldModule = {
                 <occurrence-verbatim-coordinates-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimcoordinates']" label="Verbatim Coordinates" :maxlength="fields['verbatimcoordinates'] ? fields['verbatimcoordinates']['length'] : 0" :value="data.verbatimcoordinates" :geodetic-datum="data.geodeticdatum" :decimal-latitude="data.decimallatitude" @update:value="(value) => updateData('verbatimcoordinates', value)" @update:decimal-coordinates="processRecalculatedDecimalCoordinates"></occurrence-verbatim-coordinates-input-element>
             </div>
         </div>
-        <div v-if="!eventMode" class="row justify-between q-col-gutter-xs">
+        <div v-if="!eventMode" class="row justify-between q-col-gutter-sm">
             <div class="col-12 col-sm-6 row justify-start q-col-gutter-md">
                 <div class="col-12 col-sm-6">
                     <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['minimumelevationinmeters']" label="Minimum Elevation (m)" :maxlength="fields['minimumelevationinmeters'] ? fields['minimumelevationinmeters']['length'] : 0" :value="data.minimumelevationinmeters" @update:value="(value) => updateData('minimumelevationinmeters', value)"></text-field-input-element>
@@ -122,7 +122,7 @@ const locationFieldModule = {
             </div>
         </div>
         <template v-if="!eventMode && showExtendedForm">
-            <div class="row justify-between q-col-gutter-xs">
+            <div class="row justify-between q-col-gutter-sm">
                 <div class="col-12 col-sm-6 col-md-3">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['waterbody']" label="Water Body" :maxlength="fields['waterbody'] ? fields['waterbody']['length'] : 0" :value="data.waterbody" @update:value="(value) => updateData('waterbody', value)"></text-field-input-element>
                 </div>
@@ -156,7 +156,7 @@ const locationFieldModule = {
             </div>
         </template>
         <template v-if="eventMode">
-            <div class="row justify-between q-col-gutter-xs">
+            <div class="row justify-between q-col-gutter-sm">
                 <div class="col-12 col-sm-6 col-md-3">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['geodeticdatum']" label="Datum" :maxlength="fields['geodeticdatum'] ? fields['geodeticdatum']['length'] : 0" :value="data.geodeticdatum" @update:value="(value) => updateData('geodeticdatum', value)"></text-field-input-element>
                 </div>

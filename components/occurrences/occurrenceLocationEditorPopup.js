@@ -26,7 +26,7 @@ const occurrenceLocationEditorPopup = {
                                     <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !locationValid" />
                                 </div>
                             </div>
-                            <div class="q-mb-xs row justify-between q-col-gutter-xs">
+                            <div class="q-mb-xs row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-4">
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFields['locationcode'] ? locationFields['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => updateLocationData('locationcode', value)"></text-field-input-element>
                                 </div>

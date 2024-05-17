@@ -27,7 +27,7 @@ const occurrenceCollectingEventEditorPopup = {
                                 </div>
                             </div>
                             <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
-                            <div class="row justify-between q-col-gutter-xs">
+                            <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-9">
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFields['eventremarks'] ? eventFields['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
                                 </div>

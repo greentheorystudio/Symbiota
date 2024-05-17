@@ -1,7 +1,7 @@
 const occurrenceEditorLocationModule = {
     template: `
         <q-card flat bordered class="black-border">
-            <q-card-section class="q-px-sm q-pb-sm column q-col-gutter-xs">
+            <q-card-section class="q-px-sm q-pb-sm column q-col-gutter-sm">
                 <div class="row justify-between">
                     <div>
                         <div class="row q-gutter-sm">
@@ -22,7 +22,7 @@ const occurrenceEditorLocationModule = {
                         </template>
                     </div>
                 </div>
-                <div class="q-mb-xs row justify-between q-col-gutter-xs">
+                <div class="q-mb-xs row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-4">
                         <location-name-code-auto-complete :disabled="(locationId > 0)" :collid="collId" key-value="code" :definition="occurrenceFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFields['locationcode'] ? locationFields['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => processLocationCodeNameSelection('locationcode', value)"></location-name-code-auto-complete>
                     </div>
