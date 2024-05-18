@@ -197,7 +197,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         collectionData: {},
         collId: 0,
         configuredData: {},
-        configuredDataFields: [],
+        configuredDataFields: {},
         configuredDataLabel: 'Additional Data',
         crowdSourceQueryFieldOptions: [
             {field: 'family', label: 'Family'},
@@ -487,7 +487,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         clearCollectionData() {
             this.isEditor = false;
             this.collectionData = Object.assign({}, {});
-            this.configuredDataFields.length = 0;
+            this.configuredDataFields = Object.assign({}, {});
+            this.configuredDataLabel = 'Additional Data';
         },
         clearCollectingEventData() {
             this.configuredData = Object.assign({}, {});
@@ -953,7 +954,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         this.collectingEventEditData['repcount'] = this.collectionData['defaultrepcount'] ? Number(this.collectionData['defaultrepcount']) : 0;
                     }
                     this.occurrenceEntryFormat = this.collectionData['datarecordingmethod'];
-                    if(this.collectionData['configuredData'] && this.collectionData['configuredData'].hasOwnProperty('dataFields') && this.collectionData['configuredData']['dataFields'].length > 0){
+                    if(this.collectionData['configuredData'] && this.collectionData['configuredData'].hasOwnProperty('dataFields') && Object.keys(this.collectionData['configuredData']['dataFields']).length > 0){
                         if(this.collectionData['configuredData'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['dataLabel']){
                             this.configuredDataLabel = this.collectionData['configuredData']['dataLabel'].toString();
                         }
@@ -974,8 +975,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    this.configuredDataFields.forEach(dataField => {
-                        this.configuredData[dataField.name] = (data && data.hasOwnProperty(dataField.name)) ? data[dataField.name] : null;
+                    const configuredFields = Object.keys(this.configuredDataFields);
+                    configuredFields.forEach(field => {
+                        this.configuredData[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
                     });
                 });
         },

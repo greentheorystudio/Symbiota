@@ -12,7 +12,7 @@ const occurrenceEditorTabModule = {
             <div class="rounded-borders overflow-hidden">
                 <q-tabs v-model="selectedTab" active-bg-color="grey-4" align="left" class="bg-grey-3" :style="tabPanelStyle">
                     <q-tab name="data" class="bg-grey-3" label="Occurrence Data" no-caps />
-                    <template v-if="configuredDataFields.length > 0">
+                    <template v-if="Object.keys(configuredDataFields).length > 0">
                         <q-tab name="configured" class="bg-grey-3" :label="configuredDataLabel" no-caps />
                     </template>
                     <q-tab name="determinations" class="bg-grey-3" label="Determination History" no-caps />
@@ -26,7 +26,7 @@ const occurrenceEditorTabModule = {
                     <q-tab-panel name="data" class="q-pa-none">
                         <occurrence-editor-occurrence-data-module></occurrence-editor-occurrence-data-module>
                     </q-tab-panel>
-                    <template v-if="configuredDataFields.length > 0">
+                    <template v-if="Object.keys(configuredDataFields).length > 0">
                         <q-tab-panel name="configured">
                             <configured-data-field-module></configured-data-field-module>
                         </q-tab-panel>

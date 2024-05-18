@@ -14,7 +14,7 @@ const occurrenceEditorCollectingEventModule = {
                             <template v-else-if="collectingEventCollectionArr.length > 0">
                                 <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" />
                             </template>
-                            <template v-if="configuredDataFields.length > 0 && Number(occId) === 0">
+                            <template v-if="Object.keys(configuredDataFields).length > 0 && Number(occId) === 0">
                                 <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
                             </template>
                         </div>

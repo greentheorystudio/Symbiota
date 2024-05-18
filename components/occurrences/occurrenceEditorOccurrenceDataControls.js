@@ -5,7 +5,7 @@ const occurrenceEditorOccurrenceDataControls = {
                 <template v-if="Number(occId) === 0">
                     <div class="row q-gutter-sm">
                         <occurrence-entry-follow-up-action-selector :selected-action="entryFollowUpAction" @change-occurrence-entry-follow-up-action="changeEntryFollowUpAction"></occurrence-entry-follow-up-action-selector>
-                        <div v-if="configuredDataFields.length === 0 && occurrenceEntryFormat !== 'benthic'">
+                        <div v-if="Object.keys(configuredDataFields).length === 0 && occurrenceEntryFormat !== 'benthic'">
                             <q-toggle v-model="collectionEventAutoSearch" checked-icon="check" color="green" unchecked-icon="clear" label="Event Auto Search" @update:model-value="setCollectingEventAutoSearch"></q-toggle>
                         </div>
                     </div>
