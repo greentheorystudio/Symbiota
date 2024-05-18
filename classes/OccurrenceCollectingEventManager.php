@@ -263,12 +263,8 @@ class OccurrenceCollectingEventManager{
             'WHERE a.eventID = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
             while($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $retArr[$name] = $r->$name;
-                }
+                $retArr[$r->field] = $r->datavalue;
             }
             $rs->free();
         }

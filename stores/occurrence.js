@@ -198,6 +198,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         collId: 0,
         configuredData: {},
         configuredDataFields: [],
+        configuredDataLabel: 'Additional Data',
         crowdSourceQueryFieldOptions: [
             {field: 'family', label: 'Family'},
             {field: 'sciname', label: 'Scientific Name'},
@@ -371,6 +372,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getConfiguredDataFields(state) {
             return state.configuredDataFields;
+        },
+        getConfiguredDataLabel(state) {
+            return state.configuredDataLabel;
         },
         getCrowdSourceQueryFieldOptions(state) {
             return state.crowdSourceQueryFieldOptions;
@@ -949,8 +953,11 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         this.collectingEventEditData['repcount'] = this.collectionData['defaultrepcount'] ? Number(this.collectionData['defaultrepcount']) : 0;
                     }
                     this.occurrenceEntryFormat = this.collectionData['datarecordingmethod'];
-                    if(this.collectionData['configuredDataFields'] && this.collectionData['configuredDataFields'].hasOwnProperty('dataFields') && this.collectionData['configuredDataFields']['dataFields'].length > 0){
-                        this.configuredDataFields = this.collectionData['configuredDataFields']['dataFields'];
+                    if(this.collectionData['configuredData'] && this.collectionData['configuredData'].hasOwnProperty('dataFields') && this.collectionData['configuredData']['dataFields'].length > 0){
+                        if(this.collectionData['configuredData'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['dataLabel']){
+                            this.configuredDataLabel = this.collectionData['configuredData']['dataLabel'].toString();
+                        }
+                        this.configuredDataFields = this.collectionData['configuredData']['dataFields'];
                     }
                 });
             });
@@ -967,7 +974,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    this.configuredData = Object.assign({}, data);
+                    this.configuredDataFields.forEach(dataField => {
+                        this.configuredData[dataField.name] = (data && data.hasOwnProperty(dataField.name)) ? data[dataField.name] : null;
+                    });
                 });
         },
         setCurrentCollectingEventRecord(eventid) {

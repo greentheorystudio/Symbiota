@@ -13,7 +13,7 @@ const occurrenceEditorTabModule = {
                 <q-tabs v-model="selectedTab" active-bg-color="grey-4" align="left" class="bg-grey-3" :style="tabPanelStyle">
                     <q-tab name="data" class="bg-grey-3" label="Occurrence Data" no-caps />
                     <template v-if="configuredDataFields.length > 0">
-                        <q-tab name="configured" class="bg-grey-3" label="Configured Data" no-caps />
+                        <q-tab name="configured" class="bg-grey-3" :label="configuredDataLabel" no-caps />
                     </template>
                     <q-tab name="determinations" class="bg-grey-3" label="Determination History" no-caps />
                     <q-tab name="images" class="bg-grey-3" label="Images" no-caps />
@@ -28,7 +28,7 @@ const occurrenceEditorTabModule = {
                     </q-tab-panel>
                     <template v-if="configuredDataFields.length > 0">
                         <q-tab-panel name="configured">
-                            <occurrence-editor-configured-data-tab></occurrence-editor-configured-data-tab>
+                            <configured-data-field-module></configured-data-field-module>
                         </q-tab-panel>
                     </template>
                     <q-tab-panel name="determinations">
@@ -51,8 +51,8 @@ const occurrenceEditorTabModule = {
         </template>
     `,
     components: {
+        'configured-data-field-module': configuredDataFieldModule,
         'occurrence-editor-admin-tab': occurrenceEditorAdminTab,
-        'occurrence-editor-configured-data-tab': occurrenceEditorConfiguredDataTab,
         'occurrence-editor-determinations-tab': occurrenceEditorDeterminationsTab,
         'occurrence-editor-images-tab': occurrenceEditorImagesTab,
         'occurrence-editor-media-tab': occurrenceEditorMediaTab,
@@ -64,6 +64,7 @@ const occurrenceEditorTabModule = {
 
         const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
         const configuredDataFields = Vue.computed(() => occurrenceStore.getConfiguredDataFields);
+        const configuredDataLabel = Vue.computed(() => occurrenceStore.getConfiguredDataLabel);
         const containerWidth = Vue.inject('containerWidth');
         const isLocked = Vue.computed(() => occurrenceStore.getIsLocked);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
@@ -85,6 +86,7 @@ const occurrenceEditorTabModule = {
         return {
             collInfo,
             configuredDataFields,
+            configuredDataLabel,
             isLocked,
             occurrenceData,
             selectedTab,

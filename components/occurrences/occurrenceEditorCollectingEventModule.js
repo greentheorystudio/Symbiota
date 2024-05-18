@@ -15,7 +15,7 @@ const occurrenceEditorCollectingEventModule = {
                                 <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" />
                             </template>
                             <template v-if="configuredDataFields.length > 0 && Number(occId) === 0">
-                                <q-btn color="secondary" @click="" label="Configured Data" />
+                                <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
                             </template>
                         </div>
                     </div>
@@ -64,8 +64,15 @@ const occurrenceEditorCollectingEventModule = {
                     @close:popup="showEventEditorPopup = false"
             ></occurrence-collecting-event-editor-popup>
         </template>
+        <template v-if="showConfiguredDataEditorPopup">
+            <configured-data-editor-popup
+                    :show-popup="showConfiguredDataEditorPopup"
+                    @close:popup="showConfiguredDataEditorPopup = false"
+            ></configured-data-editor-popup>
+        </template>
     `,
     components: {
+        'configured-data-editor-popup': configuredDataEditorPopup,
         'collecting-event-field-module': collectingEventFieldModule,
         'occurrence-collecting-event-benthic-taxa-editor-popup': occurrenceCollectingEventBenthicTaxaEditorPopup,
         'occurrence-collecting-event-benthic-taxa-list-popup': occurrenceCollectingEventBenthicTaxaListPopup,
@@ -81,6 +88,7 @@ const occurrenceEditorCollectingEventModule = {
         const collectingEventBenthicTaxaCnt = Vue.computed(() => occurrenceStore.getCollectingEventBenthicTaxaCnt);
         const collectingEventCollectionArr = Vue.computed(() => occurrenceStore.getCollectingEventCollectionArr);
         const configuredDataFields = Vue.computed(() => occurrenceStore.getConfiguredDataFields);
+        const configuredDataLabel = Vue.computed(() => occurrenceStore.getConfiguredDataLabel);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
@@ -91,6 +99,7 @@ const occurrenceEditorCollectingEventModule = {
         const showBenthicTaxaEditorPopup = Vue.ref(false);
         const showBenthicTaxaListPopup = Vue.ref(false);
         const showCollectionListPopup = Vue.ref(false);
+        const showConfiguredDataEditorPopup = Vue.ref(false);
         const showEventEditorPopup = Vue.ref(false);
 
         function createCollectingEventRecord() {
@@ -117,6 +126,7 @@ const occurrenceEditorCollectingEventModule = {
             collectingEventBenthicTaxaCnt,
             collectingEventCollectionArr,
             configuredDataFields,
+            configuredDataLabel,
             eventData,
             eventFields,
             eventId,
@@ -127,6 +137,7 @@ const occurrenceEditorCollectingEventModule = {
             showBenthicTaxaEditorPopup,
             showBenthicTaxaListPopup,
             showCollectionListPopup,
+            showConfiguredDataEditorPopup,
             showEventEditorPopup,
             createCollectingEventRecord,
             updateCollectingEventData
