@@ -9,6 +9,7 @@ class OccurrenceCollectingEventManager{
     private $fields = array(
         "eventid" => array("dataType" => "number", "length" => 11),
         "collid" => array("dataType" => "number", "length" => 10),
+        "locationid" => array("dataType" => "number", "length" => 11),
         "eventtype" => array("dataType" => "string", "length" => 255),
         "fieldnotes" => array("dataType" => "text", "length" => 0),
         "fieldnumber" => array("dataType" => "string", "length" => 45),
@@ -86,91 +87,6 @@ class OccurrenceCollectingEventManager{
             }
         }
         return $newID;
-    }
-
-    public function getCollectingEventArr($collid, $occid, $vars): array
-    {
-        $retArr = array();
-        $fieldNameArr = array();
-        $sqlWhereArr = array();
-        $recordedby = $vars['recordedby'] ? Sanitizer::cleanInStr($this->conn, $vars['recordedby']) : null;
-        $lastname = $vars['lastname'] ? Sanitizer::cleanInStr($this->conn, $vars['lastname']) : null;
-        $recordnumber = $vars['recordnumber'] ? Sanitizer::cleanInStr($this->conn, $vars['recordnumber']) : null;
-        $eventdate = $vars['eventdate'] ? Sanitizer::cleanInStr($this->conn, $vars['eventdate']) : null;
-        foreach($this->fields as $field => $fieldArr){
-            if($field !== 'eventtype' && $field !== 'eventremarks' && $field !== 'repcount'){
-                if($field === 'year' || $field === 'month' || $field === 'day'){
-                    $fieldNameArr[] = 'o.`' . $field . '`';
-                }
-                else{
-                    $fieldNameArr[] = 'o.' . $field;
-                }
-            }
-        }
-        $fieldNameArr = array_merge($fieldNameArr, array('ce.eventtype', 'ce.eventremarks', 'ce.repcount'));
-        if((int)$vars['locationid'] > 0){
-            $sqlWhereArr[] = 'o.locationid = ' . (int)$vars['locationid'];
-            $sqlWhereArr[] = 'o.eventid IS NOT NULL';
-        }
-        else{
-            $locationFields = array('o.waterbody', 'o.country', 'o.stateprovince', 'o.county', 'o.municipality', 'o.locality',
-                'o.coordinateprecision', 'o.locationremarks', 'o.verbatimcoordinates', 'o.verbatimcoordinatesystem', 'o.minimumelevationinmeters',
-                'o.maximumelevationinmeters', 'o.verbatimelevation');
-            $fieldNameArr = array_merge($fieldNameArr, $locationFields);
-            if($recordedby || $lastname){
-                $collWhereArr = array();
-                if($recordedby){
-                    $collWhereArr[] = 'o.recordedby = "' . $recordedby . '"';
-                }
-                if($lastname){
-                    $collWhereArr[] = 'o.recordedby LIKE "%'.$lastname.'%"';
-                }
-                $sqlWhereArr[] = '(' . implode(' OR ', $collWhereArr) . ')';
-            }
-            if($recordnumber){
-                if(is_numeric($recordnumber)){
-                    $nStart = (int)$recordnumber - 4;
-                    if($nStart < 1){
-                        $nStart = 1;
-                    }
-                    $nEnd = (int)$recordnumber + 4;
-                    $sqlWhereArr[] = '(o.recordnumber BETWEEN ' . $nStart . ' AND ' . $nEnd . ')';
-                }
-                elseif(preg_match('/^(\d+)-?[a-zA-Z]{1,2}$/', $recordnumber, $m)){
-                    $cNum = (int)$m[1];
-                    $nStart = $cNum - 4;
-                    if($nStart < 1){
-                        $nStart = 1;
-                    }
-                    $nEnd = $cNum + 4;
-                    $sqlWhereArr[] = '(CAST(o.recordnumber AS SIGNED) BETWEEN '.$nStart.' AND '.$nEnd.')';
-                }
-            }
-            if($eventdate){
-                $sqlWhereArr[] = 'o.eventdate = "' . $eventdate . '"';
-            }
-        }
-        if((int)$occid > 0){
-            $sqlWhereArr[] = 'o.occid <> ' . (int)$occid;
-        }
-        $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences AS o '.
-            'LEFT JOIN omoccurcollectingevents AS ce ON o.eventid = ce.eventid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
-            'ORDER BY o.eventdate, o.recordnumber ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
-                }
-                $retArr[] = $nodeArr;
-            }
-            $rs->free();
-        }
-        return $retArr;
     }
 
     public function getCollectingEventBenthicData($eventid): array
@@ -265,6 +181,123 @@ class OccurrenceCollectingEventManager{
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
                 $retArr[$r->field] = $r->datavalue;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getLocationCollectingEventArr($collid, $locationid): array
+    {
+        $retArr = array();
+        $fieldNameArr = array();
+        $sqlWhereArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field === 'year' || $field === 'month' || $field === 'day'){
+                $fieldNameArr[] = 'e.`' . $field . '`';
+            }
+            else{
+                $fieldNameArr[] = 'e.' . $field;
+            }
+        }
+        $locationFields = array('l.waterbody', 'l.country', 'l.stateprovince', 'l.county', 'l.municipality', 'l.locality',
+            'l.coordinateprecision', 'l.locationremarks', 'l.verbatimcoordinates', 'l.verbatimcoordinatesystem', 'l.minimumelevationinmeters',
+            'l.maximumelevationinmeters', 'l.verbatimelevation');
+        $fieldNameArr = array_merge($fieldNameArr, $locationFields);
+        $sqlWhereArr[] = 'e.locationid = ' . (int)$locationid;
+        $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' FROM omoccurcollectingevents AS e '.
+            'LEFT JOIN omoccurlocations AS l ON e.locationid = l.locationid '.
+            'WHERE e.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
+            'ORDER BY e.eventdate, e.recordnumber ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $r->$name;
+                }
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getOccurrenceCollectingEventArr($collid, $occid, $vars): array
+    {
+        $retArr = array();
+        $fieldNameArr = array();
+        $sqlWhereArr = array();
+        $recordedby = $vars['recordedby'] ? Sanitizer::cleanInStr($this->conn, $vars['recordedby']) : null;
+        $lastname = $vars['lastname'] ? Sanitizer::cleanInStr($this->conn, $vars['lastname']) : null;
+        $recordnumber = $vars['recordnumber'] ? Sanitizer::cleanInStr($this->conn, $vars['recordnumber']) : null;
+        $eventdate = $vars['eventdate'] ? Sanitizer::cleanInStr($this->conn, $vars['eventdate']) : null;
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'eventtype' && $field !== 'eventremarks' && $field !== 'repcount'){
+                if($field === 'year' || $field === 'month' || $field === 'day'){
+                    $fieldNameArr[] = 'o.`' . $field . '`';
+                }
+                else{
+                    $fieldNameArr[] = 'o.' . $field;
+                }
+            }
+        }
+        $fieldNameArr = array_merge($fieldNameArr, array('ce.eventtype', 'ce.eventremarks', 'ce.repcount'));
+        $locationFields = array('o.waterbody', 'o.country', 'o.stateprovince', 'o.county', 'o.municipality', 'o.locality',
+            'o.coordinateprecision', 'o.locationremarks', 'o.verbatimcoordinates', 'o.verbatimcoordinatesystem', 'o.minimumelevationinmeters',
+            'o.maximumelevationinmeters', 'o.verbatimelevation');
+        $fieldNameArr = array_merge($fieldNameArr, $locationFields);
+        if($recordedby || $lastname){
+            $collWhereArr = array();
+            if($recordedby){
+                $collWhereArr[] = 'o.recordedby = "' . $recordedby . '"';
+            }
+            if($lastname){
+                $collWhereArr[] = 'o.recordedby LIKE "%'.$lastname.'%"';
+            }
+            $sqlWhereArr[] = '(' . implode(' OR ', $collWhereArr) . ')';
+        }
+        if($recordnumber){
+            if(is_numeric($recordnumber)){
+                $nStart = (int)$recordnumber - 4;
+                if($nStart < 1){
+                    $nStart = 1;
+                }
+                $nEnd = (int)$recordnumber + 4;
+                $sqlWhereArr[] = '(o.recordnumber BETWEEN ' . $nStart . ' AND ' . $nEnd . ')';
+            }
+            elseif(preg_match('/^(\d+)-?[a-zA-Z]{1,2}$/', $recordnumber, $m)){
+                $cNum = (int)$m[1];
+                $nStart = $cNum - 4;
+                if($nStart < 1){
+                    $nStart = 1;
+                }
+                $nEnd = $cNum + 4;
+                $sqlWhereArr[] = '(CAST(o.recordnumber AS SIGNED) BETWEEN '.$nStart.' AND '.$nEnd.')';
+            }
+        }
+        if($eventdate){
+            $sqlWhereArr[] = 'o.eventdate = "' . $eventdate . '"';
+        }
+        if((int)$occid > 0){
+            $sqlWhereArr[] = 'o.occid <> ' . (int)$occid;
+        }
+        $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences AS o '.
+            'LEFT JOIN omoccurcollectingevents AS ce ON o.eventid = ce.eventid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
+            'ORDER BY o.eventdate, o.recordnumber ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $r->$name;
+                }
+                $retArr[] = $nodeArr;
             }
             $rs->free();
         }

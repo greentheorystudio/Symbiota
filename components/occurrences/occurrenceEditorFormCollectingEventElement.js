@@ -42,7 +42,7 @@ const occurrenceEditorFormCollectingEventElement = {
 
         function processCollectingEventSearch(silent = true) {
             if(occurrenceData.value.recordedby && ((occurrenceData.value.recordnumber && !isNaN(occurrenceData.value.recordnumber)) || occurrenceData.value.eventdate)){
-                occurrenceStore.getCollectingEvents('occurrence', (listArr) => {
+                occurrenceStore.getOccurrenceCollectingEvents((listArr) => {
                     if(listArr.length > 0){
                         collectingEventArr.value = listArr;
                         showCollectingEventListPopup.value = true;

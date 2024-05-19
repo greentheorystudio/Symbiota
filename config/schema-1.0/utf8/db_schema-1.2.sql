@@ -869,6 +869,7 @@ CREATE TABLE `omoccurassociations` (
 CREATE TABLE `omoccurcollectingevents` (
     `eventID` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `collid` int(10) unsigned DEFAULT NULL,
+    `locationID` int(11) DEFAULT NULL,
     `eventType` varchar(255) DEFAULT NULL,
     `fieldNotes` text,
     `fieldnumber` varchar(45) DEFAULT NULL,
@@ -916,6 +917,7 @@ CREATE TABLE `omoccurcollectingevents` (
     KEY `decimalLatitude` (`decimalLatitude`),
     KEY `decimalLongitude` (`decimalLongitude`),
     KEY `FK_eventcollid` (`collid`),
+    KEY `locationID` (`locationID`),
     CONSTRAINT `FK_eventcollid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
