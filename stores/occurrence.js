@@ -199,6 +199,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         collId: 0,
         configuredData: {},
         configuredDataFields: {},
+        configuredDataFieldsLayoutData: {},
         configuredDataLabel: 'Additional Data',
         crowdSourceQueryFieldOptions: [
             {field: 'family', label: 'Family'},
@@ -374,6 +375,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getConfiguredDataFields(state) {
             return state.configuredDataFields;
         },
+        getConfiguredDataFieldsLayoutData(state) {
+            return state.configuredDataFieldsLayoutData;
+        },
         getConfiguredDataLabel(state) {
             return state.configuredDataLabel;
         },
@@ -489,6 +493,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.isEditor = false;
             this.collectionData = Object.assign({}, {});
             this.configuredDataFields = Object.assign({}, {});
+            this.configuredDataFieldsLayoutData = Object.assign({}, {});
             this.configuredDataLabel = 'Additional Data';
         },
         clearCollectingEventData() {
@@ -970,10 +975,15 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     }
                     this.occurrenceEntryFormat = this.collectionData['datarecordingmethod'];
                     if(this.collectionData['configuredData'] && this.collectionData['configuredData'].hasOwnProperty('dataFields') && Object.keys(this.collectionData['configuredData']['dataFields']).length > 0){
-                        if(this.collectionData['configuredData'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['dataLabel']){
-                            this.configuredDataLabel = this.collectionData['configuredData']['dataLabel'].toString();
+                        if(this.collectionData['configuredData'].hasOwnProperty('dataFields') && this.collectionData['configuredData']['dataFields']){
+                            this.configuredDataFields = this.collectionData['configuredData']['dataFields'];
+                            if(this.collectionData['configuredData'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['dataLayout']){
+                                this.configuredDataFieldsLayoutData = this.collectionData['configuredData']['dataLayout'];
+                            }
+                            if(this.collectionData['configuredData'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['dataLabel']){
+                                this.configuredDataLabel = this.collectionData['configuredData']['dataLabel'].toString();
+                            }
                         }
-                        this.configuredDataFields = this.collectionData['configuredData']['dataFields'];
                     }
                 });
             });
