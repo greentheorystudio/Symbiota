@@ -324,7 +324,8 @@ class SpatialModuleManager{
     public function setRecordCnt(): void
     {
         if($this->sqlWhere){
-            $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID ';
+            $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                'LEFT JOIN taxa AS t ON o.tid = t.TID ';
             $sql .= $this->setTableJoins();
             $sql .= $this->sqlWhere;
             if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
