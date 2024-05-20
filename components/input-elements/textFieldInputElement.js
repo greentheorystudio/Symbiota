@@ -16,15 +16,15 @@ const textFieldInputElement = {
             type: String,
             default: ''
         },
-        minValue: {
-            type: Number,
-            default: null
-        },
         maxlength: {
             type: Number,
             default: null
         },
         maxValue: {
+            type: Number,
+            default: null
+        },
+        minValue: {
             type: Number,
             default: null
         },
