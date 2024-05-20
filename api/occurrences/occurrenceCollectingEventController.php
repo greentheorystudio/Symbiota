@@ -56,4 +56,13 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'getCollectingEventCollectionsArr' && $eventid){
         echo json_encode($evtManager->getCollectingEventCollectionsArr($eventid));
     }
+    elseif($action === 'addConfiguredDataValue' && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
+        echo $evtManager->addConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
+    }
+    elseif($action === 'deleteConfiguredDataValue' && $eventid && array_key_exists('datakey', $_POST)){
+        echo $evtManager->deleteConfiguredDataValue($eventid, $_POST['datakey']);
+    }
+    elseif($action === 'updateConfiguredDataValue' && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
+        echo $evtManager->updateConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
+    }
 }

@@ -489,6 +489,26 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         }
     },
     actions: {
+        addConfiguredDataValue(key, value, callback = null) {
+            const formData = new FormData();
+            formData.append('eventid', this.collectingEventId.toString());
+            formData.append('datakey', key);
+            formData.append('datavalue', value);
+            formData.append('action', 'addConfiguredDataValue');
+            fetch(occurrenceCollectingEventApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                this.setConfiguredData();
+                if(callback){
+                    callback(Number(res));
+                }
+            });
+        },
         clearCollectionData() {
             this.isEditor = false;
             this.collectionData = Object.assign({}, {});
@@ -582,6 +602,25 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         }
                     }
                 });
+            });
+        },
+        deleteConfiguredDataValue(key, callback = null) {
+            const formData = new FormData();
+            formData.append('eventid', this.collectingEventId.toString());
+            formData.append('datakey', key);
+            formData.append('action', 'deleteConfiguredDataValue');
+            fetch(occurrenceCollectingEventApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                this.setConfiguredData();
+                if(callback){
+                    callback(Number(res));
+                }
             });
         },
         deleteOccurrenceRecord(occid, callback) {
@@ -1367,6 +1406,26 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         this.collectingEventData = Object.assign({}, this.collectingEventEditData);
                     }
                 });
+            });
+        },
+        updateConfiguredDataValue(key, value, callback = null) {
+            const formData = new FormData();
+            formData.append('eventid', this.collectingEventId.toString());
+            formData.append('datakey', key);
+            formData.append('datavalue', value);
+            formData.append('action', 'updateConfiguredDataValue');
+            fetch(occurrenceCollectingEventApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                this.setConfiguredData();
+                if(callback){
+                    callback(Number(res));
+                }
             });
         },
         updateLocationRecord(callback) {

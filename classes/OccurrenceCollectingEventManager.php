@@ -61,6 +61,25 @@ class OccurrenceCollectingEventManager{
         }
 	}
 
+    public function addConfiguredDataValue($eventId, $dataKey, $dataValue): int
+    {
+        $returnVal = 0;
+        $key = Sanitizer::cleanInStr($this->conn, $dataKey);
+        $value = Sanitizer::cleanInStr($this->conn, $dataValue);
+        if($eventId && $key && $value){
+            $sql = 'INSERT INTO omoccuradditionaldata(eventid, field, datavalue) '.
+                'VALUES (' . (int)$eventId . ', '.
+                '"' . $key . '", '.
+                '"' . $value . '", '.
+                ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
     public function createCollectingEventRecord($data): int
     {
         $newID = 0;
@@ -87,6 +106,21 @@ class OccurrenceCollectingEventManager{
             }
         }
         return $newID;
+    }
+
+    public function deleteConfiguredDataValue($eventId, $dataKey): int
+    {
+        $returnVal = 0;
+        $key = Sanitizer::cleanInStr($this->conn, $dataKey);
+        if($eventId && $key){
+            $sql = 'DELETE FROM omoccuradditionaldata '.
+                'WHERE eventid = ' . (int)$eventId . ' AND field = "' . $key . '" ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
     }
 
     public function getCollectingEventBenthicData($eventid): array
@@ -345,5 +379,22 @@ class OccurrenceCollectingEventManager{
             }
         }
         return $retVal;
+    }
+
+    public function updateConfiguredDataValue($eventId, $dataKey, $dataValue): int
+    {
+        $returnVal = 0;
+        $key = Sanitizer::cleanInStr($this->conn, $dataKey);
+        $value = Sanitizer::cleanInStr($this->conn, $dataValue);
+        if($eventId && $key && $value){
+            $sql = 'UPDATE omoccuradditionaldata '.
+                'SET datavalue = "' . $value . '" '.
+                'WHERE eventid = ' . (int)$eventId . ' AND field = "' . $key . '" ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
     }
 }

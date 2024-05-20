@@ -23,6 +23,7 @@ const configuredDataFieldRow = {
                             :options="configuredDataFields[field.fieldName]['options']" 
                             :label="configuredDataFields[field.fieldName]['label']" 
                             :value="configuredEditData[field.fieldName]" 
+                            :clearable="true" 
                             @update:value="(value) => updateConfiguredEditData(field.fieldName, value)"
                         ></selector-input-element>
                     </template>

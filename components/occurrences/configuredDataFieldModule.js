@@ -28,6 +28,7 @@ const configuredDataFieldModule = {
         'configured-data-field-row-group': configuredDataFieldRowGroup
     },
     setup() {
+        const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const configuredData = Vue.computed(() => occurrenceStore.getConfiguredData);
@@ -53,7 +54,34 @@ const configuredDataFieldModule = {
         });
 
         function saveConfiguredEditDataEdits() {
-
+            const dataKeys = Object.keys(configuredUpdateData.value);
+            if(dataKeys.length > 0){
+                showWorking();
+                const callbackFunction = (res) => {
+                    if(Number(res) === 1){
+                        delete configuredUpdateData.value[dataKeys[0]];
+                        saveConfiguredEditDataEdits();
+                    }
+                    else{
+                        hideWorking();
+                        showNotification('negative', ('An error occurred while saving the ' + configuredDataFields.value[dataKeys[0]]['label'] + ' value.'));
+                    }
+                };
+                if(configuredEditData.value[dataKeys[0]] && !configuredData.value[dataKeys[0]]){
+                    occurrenceStore.addConfiguredDataValue(dataKeys[0], configuredUpdateData.value[dataKeys[0]], callbackFunction);
+                }
+                else if(!configuredEditData.value[dataKeys[0]] && configuredData.value[dataKeys[0]]){
+                    occurrenceStore.deleteConfiguredDataValue(dataKeys[0], callbackFunction);
+                }
+                else if(configuredEditData.value[dataKeys[0]] !== configuredData.value[dataKeys[0]]){
+                    occurrenceStore.updateConfiguredDataValue(dataKeys[0], configuredUpdateData.value[dataKeys[0]], callbackFunction);
+                }
+            }
+            else{
+                configuredData.value = Object.assign({}, configuredEditData.value);
+                hideWorking();
+                showNotification('positive','Edits saved.');
+            }
         }
 
         function setEditData() {
