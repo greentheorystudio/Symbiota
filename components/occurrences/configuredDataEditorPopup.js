@@ -15,7 +15,7 @@ const configuredDataEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <div class="q-pa-md column q-gutter-y-sm">
+                        <div>
                             <configured-data-field-module></configured-data-field-module>
                         </div>
                     </div>

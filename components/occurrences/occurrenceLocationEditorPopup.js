@@ -15,7 +15,7 @@ const occurrenceLocationEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <div class="q-pa-md column q-gutter-y-sm">
+                        <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div>
                                     <template v-if="editsExist">

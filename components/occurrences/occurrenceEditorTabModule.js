@@ -27,7 +27,7 @@ const occurrenceEditorTabModule = {
                         <occurrence-editor-occurrence-data-module></occurrence-editor-occurrence-data-module>
                     </q-tab-panel>
                     <template v-if="Object.keys(configuredDataFields).length > 0">
-                        <q-tab-panel name="configured">
+                        <q-tab-panel name="configured" class="q-pa-none">
                             <configured-data-field-module></configured-data-field-module>
                         </q-tab-panel>
                     </template>
