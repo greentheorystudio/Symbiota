@@ -59,7 +59,8 @@ const spatialAnalysisModule = {
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
-        const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
+        const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
+
         const activeLayerSelectorOptions = Vue.shallowReactive([
             {value: 'none', label: 'None'}
         ]);
@@ -755,9 +756,6 @@ const spatialAnalysisModule = {
         function handleWindowResize() {
             windowWidth.value = window.innerWidth;
             updateMapSettings('showControlPanelTop', ((windowWidth.value >= 875 && !propsRefs.inputWindowMode.value) || (windowWidth.value >= 600 && propsRefs.inputWindowMode.value)));
-            if(windowWidth.value < 1050){
-                updateMapSettings('drawToolFreehandMode', true);
-            }
         }
 
         function hideFeature(feature) {
@@ -2474,6 +2472,7 @@ const spatialAnalysisModule = {
                     loadPoints();
                 }
             }
+            updateMapSettings('drawToolFreehandMode', getPlatformProperty('has.touch'));
             changeDraw();
             controlPanelRef.value.changeBaseMap();
             spatialModuleInitialising.value = false;

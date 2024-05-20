@@ -22,6 +22,11 @@ const occurrenceFootprintWktInputElement = {
             <div class="col-grow">
                 <q-input outlined v-model="value" type="textarea" :label="label" @update:model-value="processValueChange" :readonly="disabled" autogrow dense>
                     <template v-if="!disabled" v-slot:append>
+                        <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                See field definition
+                            </q-tooltip>
+                        </q-icon>
                         <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Clear value
@@ -30,11 +35,6 @@ const occurrenceFootprintWktInputElement = {
                         <q-icon name="hide_source" class="cursor-pointer" @click="showFootprintWktText = false">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Hide text display
-                            </q-tooltip>
-                        </q-icon>
-                        <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
-                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                See field definition
                             </q-tooltip>
                         </q-icon>
                     </template>
@@ -53,17 +53,26 @@ const occurrenceFootprintWktInputElement = {
                 </div>
             </div>
             <div v-if="!disabled" class="row justify-start q-gutter-sm">
-                <div class="self-center">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-polygon,wkt');" icon="fas fa-globe" dense>
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Open Mapping Aid
-                        </q-tooltip>
-                    </q-btn>
-                </div>
+                <template v-if="definition">
+                    <div class="self-center">
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openDefinitionPopup();" icon="help" dense>
+                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                See field definition
+                            </q-tooltip>
+                        </q-btn>
+                    </div>
+                </template>
                 <div v-if="value" class="self-center">
                     <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="processValueChange(null);" icon="cancel" dense>
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
+                        </q-tooltip>
+                    </q-btn>
+                </div>
+                <div class="self-center">
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-polygon,wkt');" icon="fas fa-globe" dense>
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Open Mapping Aid
                         </q-tooltip>
                     </q-btn>
                 </div>
@@ -74,15 +83,6 @@ const occurrenceFootprintWktInputElement = {
                         </q-tooltip>
                     </q-btn>
                 </div>
-                <template v-if="definition">
-                    <div class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openDefinitionPopup();" icon="help" dense>
-                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                See field definition
-                            </q-tooltip>
-                        </q-btn>
-                    </div>
-                </template>
             </div>
         </template>
         <template v-if="definition">

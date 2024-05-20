@@ -1,8 +1,8 @@
 const occurrenceEditorFormIdentifierElement = {
     template: `
         <q-card flat bordered>
-            <q-card-section class="q-pa-sm column q-col-gutter-xs">
-                <div class="row justify-between q-col-gutter-xs">
+            <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-3">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['catalognumber']" label="Catalog Number" :maxlength="occurrenceFields['catalognumber'] ? occurrenceFields['catalognumber']['length'] : 0" :value="occurrenceData.catalognumber" @update:value="(value) => updateOccurrenceData('catalognumber', value)"></text-field-input-element>
                     </div>

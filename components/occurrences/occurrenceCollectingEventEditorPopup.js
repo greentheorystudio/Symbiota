@@ -15,7 +15,7 @@ const occurrenceCollectingEventEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <div class="q-pa-sm column q-gutter-y-sm">
+                        <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div>
                                     <template v-if="editsExist">
@@ -26,8 +26,8 @@ const occurrenceCollectingEventEditorPopup = {
                                     <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" />
                                 </div>
                             </div>
-                            <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
-                            <div class="row justify-between q-col-gutter-xs">
+                            <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
+                            <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-9">
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFields['eventremarks'] ? eventFields['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
                                 </div>
@@ -58,10 +58,13 @@ const occurrenceCollectingEventEditorPopup = {
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
 
         Vue.watch(contentRef, () => {
-            setcontentStyle();
+            setContentStyle();
         });
 
         function closePopup() {
+            if(editsExist.value){
+                occurrenceStore.revertCollectingEventEditData();
+            }
             context.emit('close:popup');
         }
 
@@ -79,7 +82,7 @@ const occurrenceCollectingEventEditorPopup = {
             });
         }
 
-        function setcontentStyle() {
+        function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
@@ -91,7 +94,7 @@ const occurrenceCollectingEventEditorPopup = {
         }
 
         Vue.onMounted(() => {
-            setcontentStyle();
+            setContentStyle();
             occurrenceStore.setCollectingEventFields();
         });
 

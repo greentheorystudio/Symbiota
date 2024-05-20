@@ -1,7 +1,7 @@
 const occurrenceEditorFormCollectingEventElement = {
     template: `
         <q-card flat bordered>
-            <q-card-section class="q-pa-sm column q-col-gutter-xs">
+            <q-card-section class="q-pa-sm column q-col-gutter-sm">
                 <collecting-event-field-module
                     :auto-search="collectionEventAutoSearch"
                     :data="occurrenceData"
@@ -42,7 +42,7 @@ const occurrenceEditorFormCollectingEventElement = {
 
         function processCollectingEventSearch(silent = true) {
             if(occurrenceData.value.recordedby && ((occurrenceData.value.recordnumber && !isNaN(occurrenceData.value.recordnumber)) || occurrenceData.value.eventdate)){
-                occurrenceStore.getCollectingEvents('occurrence', (listArr) => {
+                occurrenceStore.getOccurrenceCollectingEvents((listArr) => {
                     if(listArr.length > 0){
                         collectingEventArr.value = listArr;
                         showCollectingEventListPopup.value = true;

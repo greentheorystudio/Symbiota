@@ -18,8 +18,18 @@ const dateInputElement = {
         }
     },
     template: `
-        <q-input outlined v-model="value" :label="label" @update:model-value="processValueChange" :readonly="disabled" dense>
+        <q-input outlined v-model="value" :label="label" debounce="700" @update:model-value="processValueChange" :readonly="disabled" dense>
             <template v-if="!disabled" v-slot:append>
+                <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        See field definition
+                    </q-tooltip>
+                </q-icon>
+                <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        Clear value
+                    </q-tooltip>
+                </q-icon>
                 <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">
                         <q-date v-model="value" mask="YYYY-MM-DD" @update:model-value="processValueChange" minimal>
@@ -28,16 +38,6 @@ const dateInputElement = {
                             </div>
                         </q-date>
                     </q-popup-proxy>
-                </q-icon>
-                <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
-                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                        Clear value
-                    </q-tooltip>
-                </q-icon>
-                <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
-                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                        See field definition
-                    </q-tooltip>
                 </q-icon>
             </template>
         </q-input>

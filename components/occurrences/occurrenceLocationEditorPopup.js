@@ -15,7 +15,7 @@ const occurrenceLocationEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <div class="q-pa-sm column q-gutter-y-sm">
+                        <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div>
                                     <template v-if="editsExist">
@@ -26,7 +26,7 @@ const occurrenceLocationEditorPopup = {
                                     <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !locationValid" />
                                 </div>
                             </div>
-                            <div class="q-mb-xs row justify-between q-col-gutter-xs">
+                            <div class="q-mb-xs row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-4">
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFields['locationcode'] ? locationFields['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => updateLocationData('locationcode', value)"></text-field-input-element>
                                 </div>
@@ -58,10 +58,13 @@ const occurrenceLocationEditorPopup = {
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
 
         Vue.watch(contentRef, () => {
-            setcontentStyle();
+            setContentStyle();
         });
 
         function closePopup() {
+            if(editsExist.value){
+                occurrenceStore.revertLocationEditData();
+            }
             context.emit('close:popup');
         }
 
@@ -79,7 +82,7 @@ const occurrenceLocationEditorPopup = {
             });
         }
 
-        function setcontentStyle() {
+        function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
@@ -91,7 +94,7 @@ const occurrenceLocationEditorPopup = {
         }
 
         Vue.onMounted(() => {
-            setcontentStyle();
+            setContentStyle();
             occurrenceStore.setLocationFields();
         });
 

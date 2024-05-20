@@ -12,8 +12,8 @@ const occurrenceEditorTabModule = {
             <div class="rounded-borders overflow-hidden">
                 <q-tabs v-model="selectedTab" active-bg-color="grey-4" align="left" class="bg-grey-3" :style="tabPanelStyle">
                     <q-tab name="data" class="bg-grey-3" label="Occurrence Data" no-caps />
-                    <template v-if="additionalDataFields.length > 0">
-                        <q-tab name="additional" class="bg-grey-3" label="Additional Data" no-caps />
+                    <template v-if="Object.keys(configuredDataFields).length > 0">
+                        <q-tab name="configured" class="bg-grey-3" :label="configuredDataLabel" no-caps />
                     </template>
                     <q-tab name="determinations" class="bg-grey-3" label="Determination History" no-caps />
                     <q-tab name="images" class="bg-grey-3" label="Images" no-caps />
@@ -23,12 +23,12 @@ const occurrenceEditorTabModule = {
                 </q-tabs>
                 <q-separator></q-separator>
                 <q-tab-panels v-model="selectedTab">
-                    <q-tab-panel name="data">
+                    <q-tab-panel name="data" class="q-pa-none">
                         <occurrence-editor-occurrence-data-module></occurrence-editor-occurrence-data-module>
                     </q-tab-panel>
-                    <template v-if="additionalDataFields.length > 0">
-                        <q-tab-panel name="additional">
-                            <occurrence-editor-additional-data-tab></occurrence-editor-additional-data-tab>
+                    <template v-if="Object.keys(configuredDataFields).length > 0">
+                        <q-tab-panel name="configured" class="q-pa-none">
+                            <configured-data-field-module></configured-data-field-module>
                         </q-tab-panel>
                     </template>
                     <q-tab-panel name="determinations">
@@ -51,7 +51,7 @@ const occurrenceEditorTabModule = {
         </template>
     `,
     components: {
-        'occurrence-editor-additional-data-tab': occurrenceEditorAdditionalDataTab,
+        'configured-data-field-module': configuredDataFieldModule,
         'occurrence-editor-admin-tab': occurrenceEditorAdminTab,
         'occurrence-editor-determinations-tab': occurrenceEditorDeterminationsTab,
         'occurrence-editor-images-tab': occurrenceEditorImagesTab,
@@ -62,11 +62,11 @@ const occurrenceEditorTabModule = {
     setup() {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
-        const additionalDataFields = Vue.computed(() => occurrenceStore.getAdditionalDataFields);
         const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
+        const configuredDataFields = Vue.computed(() => occurrenceStore.getConfiguredDataFields);
+        const configuredDataLabel = Vue.computed(() => occurrenceStore.getConfiguredDataLabel);
         const containerWidth = Vue.inject('containerWidth');
         const isLocked = Vue.computed(() => occurrenceStore.getIsLocked);
-        const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const selectedTab = Vue.ref('data');
         const tabPanelStyle = Vue.ref('');
@@ -84,8 +84,9 @@ const occurrenceEditorTabModule = {
         });
 
         return {
-            additionalDataFields,
             collInfo,
+            configuredDataFields,
+            configuredDataLabel,
             isLocked,
             occurrenceData,
             selectedTab,

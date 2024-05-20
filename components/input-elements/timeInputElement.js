@@ -18,26 +18,26 @@ const timeInputElement = {
         }
     },
     template: `
-        <q-input outlined v-model="value" mask="time" :label="label" @update:model-value="processValueChange" :readonly="disabled" dense>
+        <q-input outlined v-model="value" mask="time" :label="label" debounce="700" @update:model-value="processValueChange" :readonly="disabled" dense>
             <template v-if="!disabled" v-slot:append>
-                <q-icon name="access_time" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time v-model="value" @update:model-value="processValueChange" format24h>
-                            <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat></q-btn>
-                            </div>
-                        </q-time>
-                    </q-popup-proxy>
+                <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        See field definition
+                    </q-tooltip>
                 </q-icon>
                 <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear value
                     </q-tooltip>
                 </q-icon>
-                <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
-                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                        See field definition
-                    </q-tooltip>
+                <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">
+                        <q-time v-model="value" @update:model-value="processValueChange" format24h>
+                            <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="Close" color="primary" flat></q-btn>
+                            </div>
+                        </q-time>
+                    </q-popup-proxy>
                 </q-icon>
             </template>
         </q-input>

@@ -1,8 +1,8 @@
 const occurrenceEditorFormLatestIdentificationElement = {
     template: `
         <q-card flat bordered>
-            <q-card-section class="q-pa-sm column q-col-gutter-xs">
-                <div class="row justify-between q-col-gutter-xs">
+            <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-4">
                         <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="occurrenceData.sciname" label="Scientific Name" @update:sciname="updateScientificNameValue"></single-scientific-common-name-auto-complete>
                     </div>
@@ -16,7 +16,7 @@ const occurrenceEditorFormLatestIdentificationElement = {
                         <text-field-input-element :disabled="Number(occurrenceData.tid) > 0" :definition="occurrenceFieldDefinitions['family']" label="Family" :maxlength="occurrenceFields['family'] ? occurrenceFields['family']['length'] : 0" :value="(Number(occurrenceData.tid) > 0 ? occurrenceData['taxonData'].family : occurrenceData.family)" @update:value="(value) => updateOccurrenceData('family', value)"></text-field-input-element>
                     </div>
                 </div>
-                <div class="row justify-between q-col-gutter-xs">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-7">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['identifiedby']" label="Identified By" :maxlength="occurrenceFields['identifiedby'] ? occurrenceFields['identifiedby']['length'] : 0" :value="occurrenceData.identifiedby" @update:value="(value) => updateOccurrenceData('identifiedby', value)"></text-field-input-element>
                     </div>

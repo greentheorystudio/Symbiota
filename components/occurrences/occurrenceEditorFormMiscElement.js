@@ -1,8 +1,8 @@
 const occurrenceEditorFormMiscElement = {
     template: `
         <q-card flat bordered>
-            <q-card-section class="q-pa-sm column q-col-gutter-xs">
-                <div class="row justify-between q-col-gutter-xs">
+            <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-11">
                         <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></text-field-input-element>
                     </div>
@@ -16,7 +16,7 @@ const occurrenceEditorFormMiscElement = {
                         </div>
                     </div>
                 </div>
-                <div class="row justify-between q-col-gutter-xs">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-grow">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :maxlength="occurrenceFields['lifestage'] ? occurrenceFields['lifestage']['length'] : 0" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)"></text-field-input-element>
                     </div>
@@ -29,7 +29,12 @@ const occurrenceEditorFormMiscElement = {
                         </div>
                     </template>
                     <div class="col-12 col-sm-6 col-md-grow">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['individualcount']" label="Individual Count" :maxlength="occurrenceFields['individualcount'] ? occurrenceFields['individualcount']['length'] : 0" :value="occurrenceData.individualcount" @update:value="(value) => updateOccurrenceData('individualcount', value)"></text-field-input-element>
+                        <template v-if="occurrenceEntryFormat === 'benthic'">
+                            <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['individualcount']" label="Individual Count" :maxlength="occurrenceFields['individualcount'] ? occurrenceFields['individualcount']['length'] : 0" :value="occurrenceData.individualcount" min-value="0" @update:value="(value) => updateOccurrenceData('individualcount', value)"></text-field-input-element>
+                        </template>
+                        <template v-else>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['individualcount']" label="Individual Count" :maxlength="occurrenceFields['individualcount'] ? occurrenceFields['individualcount']['length'] : 0" :value="occurrenceData.individualcount" @update:value="(value) => updateOccurrenceData('individualcount', value)"></text-field-input-element>
+                        </template>
                     </div>
                 </div>
                 <div class="row">
@@ -37,9 +42,9 @@ const occurrenceEditorFormMiscElement = {
                         <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['occurrenceremarks']" label="Occurrence Remarks" :value="occurrenceData.occurrenceremarks" @update:value="(value) => updateOccurrenceData('occurrenceremarks', value)"></text-field-input-element>
                     </div>
                 </div>
-                <div class="row justify-between q-col-gutter-xs">
+                <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-4">
-                        <occurrence-basis-of-record-selector :definition="occurrenceFieldDefinitions['basisofrecord']" label="Basis of Record" :value="occurrenceData.basisofrecord" @update:value="(value) => updateOccurrenceData('basisofrecord', value)"></occurrence-basis-of-record-selector>
+                        <selector-input-element :definition="occurrenceFieldDefinitions['basisofrecord']" label="Basis of Record" :options="basisOfRecordOptions" :value="occurrenceData.basisofrecord" @update:value="(value) => updateOccurrenceData('basisofrecord', value)"></selector-input-element>
                     </div>
                     <div class="col-11 col-sm-7">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['typestatus']" label="Type Status" :maxlength="occurrenceFields['typestatus'] ? occurrenceFields['typestatus']['length'] : 0" :value="occurrenceData.typestatus" @update:value="(value) => updateOccurrenceData('typestatus', value)"></text-field-input-element>
@@ -56,7 +61,7 @@ const occurrenceEditorFormMiscElement = {
                     </div>
                 </div>
                 <template v-if="showExtendedForm">
-                    <div class="row justify-between q-col-gutter-xs">
+                    <div class="row justify-between q-col-gutter-sm">
                         <div class="col-12 col-sm-6 col-md-5">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['reproductivecondition']" label="Reproductive Condition" :maxlength="occurrenceFields['reproductivecondition'] ? occurrenceFields['reproductivecondition']['length'] : 0" :value="occurrenceData.reproductivecondition" @update:value="(value) => updateOccurrenceData('reproductivecondition', value)"></text-field-input-element>
                         </div>
@@ -84,20 +89,26 @@ const occurrenceEditorFormMiscElement = {
             <occurrence-editor-associated-taxa-tool-popup
                     :associated-taxa-value="occurrenceData.associatedtaxa"
                     :show-popup="showAssociatedTaxaToolPopup"
-                    @close:popup="closeAssociatedTaxaToolPopup();"
+                    @close:popup="showAssociatedTaxaToolPopup = false"
             ></occurrence-editor-associated-taxa-tool-popup>
         </template>
+        <confirmation-popup ref="confirmationPopupRef" @confirmation:click="processConfirmation"></confirmation-popup>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
-        'occurrence-basis-of-record-selector': occurrenceBasisOfRecordSelector,
+        'confirmation-popup': confirmationPopup,
         'occurrence-editor-associated-taxa-tool-popup': occurrenceEditorAssociatedTaxaToolPopup,
+        'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
     },
     setup() {
+        const { showNotification } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const basisOfRecordOptions = Vue.computed(() => occurrenceStore.getBasisOfRecordOptions);
+        const confirmationPopupRef = Vue.ref(null);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
+        const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceFields = Vue.inject('occurrenceFields');
@@ -105,8 +116,24 @@ const occurrenceEditorFormMiscElement = {
         const showAssociatedTaxaToolPopup = Vue.ref(false);
         const showExtendedForm = Vue.ref(false);
 
-        function closeAssociatedTaxaToolPopup() {
-            showAssociatedTaxaToolPopup.value = false;
+        function processConfirmation(confirmed) {
+            if(confirmed){
+                occurrenceStore.evaluateOccurrenceForDeletion(occId.value, (data) => {
+                    if(Number(data['images']) === 0 && Number(data['media']) === 0 && Number(data['checklists']) === 0 && Number(data['genetic']) === 0){
+                        occurrenceStore.deleteOccurrenceRecord(occId.value, (res) => {
+                            if(res === 0){
+                                showNotification('negative', ('An error occurred while deleting this record.'));
+                            }
+                            else{
+                                occurrenceStore.setCollectingEventBenthicData();
+                            }
+                        });
+                    }
+                    else{
+                        showNotification('negative', ('This record cannot be deleted because it has associated images, media, checklists, or genetic linkages.'));
+                    }
+                });
+            }
         }
 
         function updateCultivationStatusSetting(value) {
@@ -119,10 +146,18 @@ const occurrenceEditorFormMiscElement = {
         }
 
         function updateOccurrenceData(key, value) {
-            occurrenceStore.updateOccurrenceEditData(key, value);
+            if(occurrenceEntryFormat.value === 'benthic' && key === 'individualcount' && Number(value) === 0){
+                const confirmText = 'Changing the Individual Count to 0 for this record will result in its deletion. Do you wish to continue?';
+                confirmationPopupRef.value.openPopup(confirmText, {cancel: true, trueText: 'Continue'});
+            }
+            else{
+                occurrenceStore.updateOccurrenceEditData(key, value);
+            }
         }
 
         return {
+            basisOfRecordOptions,
+            confirmationPopupRef,
             eventData,
             occurrenceData,
             occurrenceEntryFormat,
@@ -130,7 +165,7 @@ const occurrenceEditorFormMiscElement = {
             occurrenceFieldDefinitions,
             showAssociatedTaxaToolPopup,
             showExtendedForm,
-            closeAssociatedTaxaToolPopup,
+            processConfirmation,
             updateCultivationStatusSetting,
             updateOccurrenceData
         }

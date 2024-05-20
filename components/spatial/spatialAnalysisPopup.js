@@ -67,7 +67,7 @@ const spatialAnalysisPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
-            <q-card class="lg-popup">
+            <q-card class="lg-popup overflow-hidden">
                 <spatial-analysis-module ref="spatialModuleRef" :input-window-mode="true" :input-window-tools-arr="inputWindowToolsArr" @update:spatial-data="emitSpatialData" @close:spatial-popup="closePopup();"></spatial-analysis-module>
             </q-card>
         </q-dialog>

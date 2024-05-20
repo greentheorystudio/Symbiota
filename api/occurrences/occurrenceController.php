@@ -55,4 +55,10 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'getOccurrenceGeneticLinkArr' && $occid){
         echo json_encode($occManager->getOccurrenceGeneticLinkData($occid));
     }
+    elseif($action === 'evaluateOccurrenceForDeletion' && $occid && $isEditor){
+        echo json_encode($occManager->evaluateOccurrenceForDeletion($occid));
+    }
+    elseif($action === 'deleteOccurrenceRecord' && $occid && $isEditor){
+        echo $occManager->deleteOccurrenceRecord($occid);
+    }
 }

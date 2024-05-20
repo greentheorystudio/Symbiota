@@ -136,7 +136,7 @@ class OccurrenceDataManager{
         if($collId && $sciname){
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $data)){
-                    if($field === 'year' || $field === 'month' || $field === 'day'){
+                    if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
                         $fieldNameArr[] = '`' . $field . '`';
                     }
                     else{
@@ -146,9 +146,9 @@ class OccurrenceDataManager{
                 }
             }
             $fieldNameArr[] = 'dateentered';
-            $fieldValueArr[] = date('Y-m-d H:i:s');
+            $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
             $fieldNameArr[] = 'recordenteredby';
-            $fieldValueArr[] = $GLOBALS['USERNAME'];
+            $fieldValueArr[] = '"' . $GLOBALS['USERNAME'] . '"';
             $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
             //echo "<div>".$sql."</div>";
@@ -160,6 +160,86 @@ class OccurrenceDataManager{
             }
         }
         return $newID;
+    }
+
+    public function deleteOccurrenceRecord($occid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE gd.* FROM omoccurdeterminations AS d LEFT JOIN guidoccurdeterminations AS gd ON d.detid = gd.detid WHERE d.occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccurdeterminations WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM guidoccurrences WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omcrowdsourcequeue WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omexsiccatiocclink WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccuraccessstats WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccurdatasetlink WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccureditlocks WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccuredits WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccurloanslink WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccurpoints WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccurrencesfulltext WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccurrences WHERE occid = ' . $occid . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
+    public function evaluateOccurrenceForDeletion($occid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT imgid FROM images WHERE occid = ' . $occid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        $rs = $this->conn->query($sql);
+        $retArr['images'] = (int)$rs->num_rows;
+        $sql = 'SELECT DISTINCT mediaid FROM media WHERE occid = ' . $occid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        $rs = $this->conn->query($sql);
+        $retArr['media'] = (int)$rs->num_rows;
+        $sql = 'SELECT DISTINCT clid FROM fmvouchers WHERE occid = ' . $occid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        $rs = $this->conn->query($sql);
+        $retArr['checklists'] = (int)$rs->num_rows;
+        $sql = 'SELECT DISTINCT idoccurgenetic FROM omoccurgenetic WHERE occid = ' . $occid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        $rs = $this->conn->query($sql);
+        $retArr['genetic'] = (int)$rs->num_rows;
+        return $retArr;
     }
 
     public function getLock($occid): int
@@ -208,7 +288,7 @@ class OccurrenceDataManager{
         $retArr = array();
         $fieldNameArr = array();
         foreach($this->fields as $field => $fieldArr){
-            if($field === 'year' || $field === 'month' || $field === 'day'){
+            if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
                 $fieldNameArr[] = '`' . $field . '`';
             }
             else{
@@ -227,7 +307,7 @@ class OccurrenceDataManager{
                 }
             }
             $rs->free();
-            if($retArr['tid'] && (int)$retArr['tid'] > 0){
+            if($retArr && $retArr['tid'] && (int)$retArr['tid'] > 0){
                 $retArr['taxonData'] = $this->getTaxonData($retArr['tid']);
             }
         }
@@ -385,7 +465,7 @@ class OccurrenceDataManager{
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
                     $fieldStr = '';
-                    if($field === 'year' || $field === 'month' || $field === 'day'){
+                    if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
                         $fieldStr = '`' . $field . '`';
                     }
                     else{

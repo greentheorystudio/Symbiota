@@ -34,17 +34,35 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'getCollectingEventFields'){
         echo json_encode($evtManager->getCollectingEventFields());
     }
-    elseif($action === 'getAdditionalDataArr' && $eventid){
-        echo json_encode($evtManager->getAdditionalData($eventid));
+    elseif($action === 'getConfiguredFieldDataArr' && $eventid){
+        echo json_encode($evtManager->getConfiguredFieldData($eventid));
     }
-    elseif($action === 'getCollectingEventArr' && $collid){
+    elseif($action === 'getLocationCollectingEventArr' && $collid && array_key_exists('locationid', $_POST)){
+        $locationid = (int)$_POST['locationid'];
+        echo json_encode($evtManager->getLocationCollectingEventArr($collid, $locationid));
+    }
+    elseif($action === 'getOccurrenceCollectingEventArr' && $collid){
         $occid = $_POST['occid'] ?? null;
         $varsArr = array();
         $varsArr['recordedby'] = $_POST['recordedby'] ?? null;
         $varsArr['recordnumber'] = $_POST['recordnumber'] ?? null;
         $varsArr['eventdate'] = $_POST['eventdate'] ?? null;
         $varsArr['lastname'] = $_POST['lastname'] ?? null;
-        $varsArr['locationid'] = $_POST['locationid'] ?? null;
-        echo json_encode($evtManager->getCollectingEventArr($collid, $occid, $varsArr));
+        echo json_encode($evtManager->getOccurrenceCollectingEventArr($collid, $occid, $varsArr));
+    }
+    elseif($action === 'getCollectingEventBenthicData' && $eventid){
+        echo json_encode($evtManager->getCollectingEventBenthicData($eventid));
+    }
+    elseif($action === 'getCollectingEventCollectionsArr' && $eventid){
+        echo json_encode($evtManager->getCollectingEventCollectionsArr($eventid));
+    }
+    elseif($action === 'addConfiguredDataValue' && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
+        echo $evtManager->addConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
+    }
+    elseif($action === 'deleteConfiguredDataValue' && $eventid && array_key_exists('datakey', $_POST)){
+        echo $evtManager->deleteConfiguredDataValue($eventid, $_POST['datakey']);
+    }
+    elseif($action === 'updateConfiguredDataValue' && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
+        echo $evtManager->updateConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
     }
 }

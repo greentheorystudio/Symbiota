@@ -1,6 +1,6 @@
 const occurrenceEditorSingleDisplay = {
     template: `
-        <div class="row justify-center q-py-sm">
+        <div class="row justify-center">
             <div ref="moduleContainerRef" class="editor-inner-container rounded-borders shadow-5 q-pa-md column q-gutter-y-sm self-center">
                 <div class="row justify-between">
                     <div class="row justify-start">
@@ -24,7 +24,11 @@ const occurrenceEditorSingleDisplay = {
                         <div class="self-center text-bold q-mr-xs">Record {{ currentRecordIndex }} of {{ recordCount }}</div>
                         <q-btn v-if="currentRecordIndex !== recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord"></q-btn>
                         <q-btn v-if="recordCount > 1 && currentRecordIndex !== recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord"></q-btn>
-                        <q-btn v-if="recordCount > 1 && occId > 0" icon="note_add" color="grey-8" round dense flat @click="goToNewRecord"></q-btn>
+                        <q-btn v-if="occurrenceEntryFormat !== 'benthic' && occId > 0 && !newRecordExisting" icon="add_circle" color="grey-8" round dense flat @click="goToNewRecord">
+                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                Create new occurrence record
+                            </q-tooltip>
+                        </q-btn>
                     </div>
                 </div>
                 <div class="row justify-between">
@@ -42,25 +46,25 @@ const occurrenceEditorSingleDisplay = {
                         </template>
                         <template v-if="displayQueryPopupButton">
                             <div class="self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeQueryPopupDisplay(true);" icon="fas fa-search" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeQueryPopupDisplay(true);" icon="filter_alt" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                        Search and filter records
+                                        Filter records
                                     </q-tooltip>
                                 </q-btn>
                             </div>
                         </template>
-                        <template v-if="displayBatchUpdateButton">
+                        <template v-if="displayBatchUpdateButton && recordCount > 1">
                             <div class="self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeBatchUpdatePopupDisplay(true);" icon="fas fa-exchange-alt" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeBatchUpdatePopupDisplay(true);" icon="find_replace" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                        Batch Update Tool
+                                        Search and Replace Tool
                                     </q-tooltip>
                                 </q-btn>
                             </div>
                         </template>
                         <template v-if="imageCount > 0">
                             <div class="self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeImageTranscriberPopupDisplay(true);" icon="fas fa-camera" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeImageTranscriberPopupDisplay(true);" icon="image_search" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Display image transcription window
                                     </q-tooltip>
@@ -69,13 +73,15 @@ const occurrenceEditorSingleDisplay = {
                         </template>
                     </div>
                 </div>
-                <q-card flat bordered class="q-mt-sm black-border">
-                    <template v-if="Number(occId) > 0">
+                <template v-if="Number(occId) > 0">
+                    <q-card flat bordered class="q-mt-sm black-border">
                         <q-card-section class="q-pa-none">
                             <occurrence-editor-tab-module></occurrence-editor-tab-module>
                         </q-card-section>
-                    </template>
-                    <template v-else-if="Number(occId) === 0">
+                    </q-card>
+                </template>
+                <template v-else-if="Number(occId) === 0">
+                    <q-card flat>
                         <q-card-section class="q-pa-sm">
                             <template v-if="occurrenceEntryFormat === 'observation'">
                                 <occurrence-entry-observation-form-module></occurrence-entry-observation-form-module>
@@ -90,8 +96,8 @@ const occurrenceEditorSingleDisplay = {
                                 <occurrence-editor-occurrence-data-module></occurrence-editor-occurrence-data-module>
                             </template>
                         </q-card-section>
-                    </template>
-                </q-card>
+                    </q-card>
+                </template>
             </div>
             <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup"></occurrence-editor-image-transcriber-popup>
         </div>
@@ -121,6 +127,7 @@ const occurrenceEditorSingleDisplay = {
         const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
         const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
         const moduleContainerRef = Vue.ref(null);
+        const newRecordExisting = Vue.computed(() => occurrenceStore.getNewRecordExisting);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
@@ -185,6 +192,7 @@ const occurrenceEditorSingleDisplay = {
             imageCount,
             isEditor,
             moduleContainerRef,
+            newRecordExisting,
             occId,
             occurrenceEntryFormat,
             recordCount,
