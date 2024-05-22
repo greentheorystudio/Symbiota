@@ -70,7 +70,7 @@ class OccurrenceCollectingEventManager{
             $sql = 'INSERT INTO omoccuradditionaldata(eventid, field, datavalue) '.
                 'VALUES (' . (int)$eventId . ', '.
                 '"' . $key . '", '.
-                '"' . $value . '", '.
+                '"' . $value . '"'.
                 ') ';
             //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
