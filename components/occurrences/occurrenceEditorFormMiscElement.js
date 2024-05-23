@@ -25,12 +25,12 @@ const occurrenceEditorFormMiscElement = {
                     </div>
                     <template v-if="occurrenceEntryFormat === 'benthic'">
                         <div class="col-12 col-sm-6 col-md-grow">
-                            <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['rep']" label="Rep" :maxlength="occurrenceFields['rep'] ? occurrenceFields['rep']['length'] : 0" min-value="1" :max-value="eventData.repcount" :value="occurrenceData.rep" @update:value="(value) => updateOccurrenceData('rep', value)"></text-field-input-element>
+                            <text-field-input-element :disabled="true" data-type="int" :definition="occurrenceFieldDefinitions['rep']" label="Rep" :maxlength="occurrenceFields['rep'] ? occurrenceFields['rep']['length'] : 0" min-value="1" :max-value="eventData.repcount" :value="occurrenceData.rep" @update:value="(value) => updateOccurrenceData('rep', value)"></text-field-input-element>
                         </div>
                     </template>
                     <div class="col-12 col-sm-6 col-md-grow">
                         <template v-if="occurrenceEntryFormat === 'benthic'">
-                            <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['individualcount']" label="Individual Count" :maxlength="occurrenceFields['individualcount'] ? occurrenceFields['individualcount']['length'] : 0" :value="occurrenceData.individualcount" min-value="0" @update:value="(value) => updateOccurrenceData('individualcount', value)"></text-field-input-element>
+                            <text-field-input-element :disabled="true" data-type="int" :definition="occurrenceFieldDefinitions['individualcount']" label="Individual Count" :maxlength="occurrenceFields['individualcount'] ? occurrenceFields['individualcount']['length'] : 0" :value="occurrenceData.individualcount" min-value="0" @update:value="(value) => updateOccurrenceData('individualcount', value)"></text-field-input-element>
                         </template>
                         <template v-else>
                             <text-field-input-element :definition="occurrenceFieldDefinitions['individualcount']" label="Individual Count" :maxlength="occurrenceFields['individualcount'] ? occurrenceFields['individualcount']['length'] : 0" :value="occurrenceData.individualcount" @update:value="(value) => updateOccurrenceData('individualcount', value)"></text-field-input-element>

@@ -154,33 +154,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 							</form>
 						</fieldset>
 						<ul>
-							<?php
-							if($collData['colltype'] === 'HumanObservation'){
-								?>
-								<li>
-									<a href="../editor/observationsubmit.php?collid=<?php echo $collid; ?>">
-                                        Create A New Observation Record
-									</a>
-								</li>
-								<?php
-							}
-							?>
 							<li>
 								<a href="../editor/occurrenceeditor.php?gotomode=1&collid=<?php echo $collid; ?>">
                                     Create A New Occurrence Record
 								</a>
 							</li>
                             <li>
-                                <a href="../editor/imageoccursubmit.php?collid=<?php echo $collid; ?>">
-                                    Create A New Occurrence Record From An Image
-                                </a>
-                            </li>
-                            <li>
-                                <a href="../editor/skeletalsubmit.php?collid=<?php echo $collid; ?>">
-                                    Create A New Skeletal Occurrence Record
-                                </a>
-                            </li>
-							<li>
 								<a href="../editor/occurrencetabledisplay.php?displayquery=1&collid=<?php echo $collid; ?>">
                                     View/Edit Existing Records
 								</a>
