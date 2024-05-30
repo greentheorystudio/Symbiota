@@ -38,7 +38,7 @@ const collectionControlPanelMenus = {
                     <div class="col-12 col-sm-6">
                         <q-card flat bordered>
                             <q-card-section>
-                                <div class="text-body1 text-bold">Administration Control Panel</div>
+                                <div class="text-h6 text-bold">Administration Control Panel</div>
                                 <div class="q-mt-xs q-pl-sm column">
                                     <div>
                                         <a :href="(clientRoot + '/collections/misc/collmetadata.php?collid=' + collectionId)">
@@ -125,7 +125,7 @@ const collectionControlPanelMenus = {
                 <div class="col-12 col-sm-6">
                     <q-card flat bordered>
                         <q-card-section>
-                            <div class="text-body1 text-bold">Data Editor Control Panel</div>
+                            <div class="text-h6 text-bold">Data Editor Control Panel</div>
                             <div class="q-mt-xs q-pl-sm column">
                                 <div>
                                     <a :href="(clientRoot + '/collections/editor/occurrenceeditor.php?gotomode=1&collid=' + collectionId)">
