@@ -42,7 +42,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <div id="innertext">
             <template v-if="collId > 0">
                 <div class="column q-gutter-md">
-                    <div class="text-h5 text-bold">
+                    <div class="text-h4 text-bold">
                         {{ collectionData['collectionname'] + ' ' }}
                         <template v-if="collectionData['institutioncode']">
                             {{ collectionData['institutioncode'] + (collectionData['collectioncode'] ? '-' : '') }}
@@ -209,7 +209,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             <template v-else>
                 <div class="column q-gutter-md">
                     <div class="column">
-                        <div class="text-h6">
+                        <div class="text-h4">
                             {{ defaultTitle + ' Natural History Collections and Observation Projects' }}
                         </div>
                         <div class="q-ma-sm">
