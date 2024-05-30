@@ -33,7 +33,7 @@ const spatialVectorToolsTab = {
                         <q-input type="number" outlined v-model="bufferWidthValue" min="0" class="col-3" label="Buffer Width (km)" @update:model-value="processBufferWidthChange" dense />
                     </div>
                     <div class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createBuffers();" label="Create Buffer" :disabled="mapSettings.polyCount < 1" dense />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createBuffers();" label="Create Buffer" :disabled="mapSettings.featureCount < 1" dense />
                     </div>
                 </div>
             </div>

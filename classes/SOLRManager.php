@@ -523,37 +523,6 @@ class SOLRManager extends OccurrenceManager{
         }
     }
 
-    public function cleanSOLRIndex($collid): void{
-        $SOLROccArr = array();
-        $mysqlOccArr = array();
-        $solrWhere = 'q=(collid:('.$collid.'))';
-        $solrURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere;
-        $solrURL .= '&rows=1&start=1&wt=json';
-        //echo str_replace(' ','%20',$solrURL);
-        $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
-        $solrArr = json_decode($solrArrJson, true);
-        $cnt = $solrArr['response']['numFound'];
-        $occURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere.'&rows='.$cnt.'&start=1&fl=occid&wt=json';
-        //echo str_replace(' ','%20',$occURL);
-        $solrOccArrJson = file_get_contents(str_replace(' ','%20',$occURL));
-        $solrOccArr = json_decode($solrOccArrJson, true);
-        $recArr = $solrOccArr['response']['docs'];
-        foreach($recArr as $k){
-            $SOLROccArr[] = $k['occid'];
-        }
-        $sql = 'SELECT occid FROM omoccurrences WHERE collid = '.$collid;
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $mysqlOccArr[] = $r->occid;
-            }
-        }
-        $delOccArr = array_diff($SOLROccArr,$mysqlOccArr);
-        if($delOccArr){
-            $this->deleteSOLRDocument($delOccArr);
-        }
-        echo '<li>...Complete!</li>';
-    }
-
     private function checkLastSOLRUpdate(): bool{
         $now = new DateTime();
         $now = $now->format('Y-m-d H:i:sP');

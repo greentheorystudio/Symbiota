@@ -382,22 +382,24 @@ class PermissionsManager{
         return $retVal;
     }
 
-    public function validatePermission($permissions, $key): int
+    public function validatePermission($permissions, $key): array
     {
-        $returnVal = 0;
-        if($GLOBALS['IS_ADMIN']){
-            $returnVal = 1;
-        }
-        elseif(is_array($permissions)){
-            foreach($permissions as $permission){
-                if(array_key_exists($permission, $GLOBALS['USER_RIGHTS']) && (!$key || !is_array($GLOBALS['USER_RIGHTS'][$permission]) || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permission], true))){
-                    $returnVal = 1;
+        $returnArr = array();
+        if(is_array($permissions)){
+            if($GLOBALS['IS_ADMIN']){
+                $returnArr = $permissions;
+            }
+            else{
+                foreach($permissions as $permission){
+                    if(array_key_exists($permission, $GLOBALS['USER_RIGHTS']) && (!$key || !is_array($GLOBALS['USER_RIGHTS'][$permission]) || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permission], true))){
+                        $returnArr[] = $permission;
+                    }
                 }
             }
         }
-        elseif(array_key_exists($permissions, $GLOBALS['USER_RIGHTS']) && (!$key || !is_array($GLOBALS['USER_RIGHTS'][$permissions]) || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permissions], true))){
-            $returnVal = 1;
+        elseif($GLOBALS['IS_ADMIN'] || (array_key_exists($permissions, $GLOBALS['USER_RIGHTS']) && (!$key || !is_array($GLOBALS['USER_RIGHTS'][$permissions]) || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permissions], true)))){
+            $returnArr[] = $permissions;
         }
-        return $returnVal;
+        return $returnArr;
     }
 }

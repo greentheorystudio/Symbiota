@@ -58,12 +58,6 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
     $datasetKey = $collManager->getDatasetKey();
     $endpointKey = $collManager->getEndpointKey();
     $idigbioKey = $collManager->getIdigbioKey();
-	if($publishIDIGBIO && !$idigbioKey){
-        $idigbioKey = $collManager->findIdigbioKey($collPubArr[$collId]['collectionguid']);
-        if($idigbioKey){
-            $collManager->updateAggKeys($collId);
-        }
-    }
 }
 
 $isEditor = 0;

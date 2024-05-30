@@ -309,16 +309,20 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                 setup() {
                     const { getErrorResponseText, openTutorialWindow, showNotification } = useCore();
                     const store = useBaseStore();
+                    const collectionStore = useCollectionStore();
+
                     let abortController = null;
                     const changedCurrentSciname = Vue.ref('');
                     const changedParsedSciname = Vue.ref('');
                     const colInitialSearchResults = [];
                     const collId = COLLID;
-                    const collInfo = Vue.ref(null);
+                    const collInfo = Vue.computed(() => collectionStore.getCollectionData);
                     const currentProcess = Vue.ref(null);
                     const currentSciname = Vue.ref(null);
                     const dataSource = Vue.ref('col');
-                    const isEditor = Vue.ref(false);
+                    const isEditor = Vue.computed(() => {
+                        return collectionStore.getCollectionPermissions.includes('CollAdmin');
+                    });
                     const itisInitialSearchResults = [];
                     const levValue = Vue.ref(2);
                     let nameSearchResults = [];
@@ -1605,39 +1609,6 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         });
                     }
 
-                    function setCollInfo() {
-                        if(collId){
-                            const formData = new FormData();
-                            formData.append('collid', collId);
-                            formData.append('action', 'getCollectionInfoArr');
-                            fetch(collectionApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                response.json().then((resObj) => {
-                                    collInfo.value = resObj;
-                                });
-                            });
-                        }
-                    }
-
-                    function setEditor() {
-                        const formData = new FormData();
-                        formData.append('permission', 'CollAdmin');
-                        formData.append('key', collId);
-                        formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            response.text().then((res) => {
-                                isEditor.value = Number(res) === 1;
-                            });
-                        });
-                    }
-
                     function setScroller(info) {
                         if((currentProcess.value || scrollProcess) && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
                             procDisplayScrollHeight.value = info.verticalSize;
@@ -2067,9 +2038,14 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     }
 
                     Vue.onMounted(() => {
-                        setEditor();
-                        setCollInfo();
-                        setUnlinkedRecordCounts();
+                        collectionStore.setCollection(collId, () => {
+                            if(isEditor.value){
+                                setUnlinkedRecordCounts();
+                            }
+                            else{
+                                window.location.href = store.getClientRoot + '/index.php';
+                            }
+                        });
                     });
                     
                     return {

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 
 $occid = array_key_exists('occid',$_REQUEST) ? (int)$_REQUEST['occid'] : 0;
 $collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;

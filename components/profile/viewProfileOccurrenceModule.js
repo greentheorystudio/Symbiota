@@ -14,7 +14,7 @@ const viewProfileOccurrenceModule = {
             <q-list bordered class="rounded-borders q-mt-md">
                 <template v-for="collection in collectionArr">
                     <q-expansion-item expand-separator group="collectionGroup" :label="collection.label" header-class="text-h6">
-                        <collection-cotrol-panel-menus :user-name="accountInfo.username" :collection-id="collection.collid" :coll-type="collection.colltype" :occ-count="collection.occCount" :coll-access-level="collection.accesslevel"></collection-cotrol-panel-menus>
+                        <collection-cotrol-panel-menus :user-name="accountInfo.username" :collection-id="collection.collid" :collection-type="collection.colltype" :occurrence-count="collection.occcount" :collection-permissions="collection.collectionpermissions"></collection-cotrol-panel-menus>
                     </q-expansion-item>
                 </template>
             </q-list>
