@@ -17,28 +17,6 @@ class IRLManager {
 		}
 	}
 
-    public function getNativeStatus($tid): string
-    {
-        $returnArr = array();
-        if($tid){
-            $sql = 'SELECT TID, CLID ' .
-                'FROM fmchklsttaxalink  ' .
-                'WHERE TID = ' .$tid. ' AND CLID IN(13,14) ';
-            //echo $sql;
-            $result = $this->conn->query($sql);
-            if($row = $result->fetch_object()){
-                if((int)$row->CLID === 13) {
-                    $returnArr[] = 'NON-NATIVE';
-                }
-                if((int)$row->CLID === 14) {
-                    $returnArr[] = 'CRYPTOGENIC';
-                }
-            }
-            $result->free();
-        }
-        return implode(',', $returnArr);
-    }
-
     public function getChecklistTaxa($clid): array
     {
         $returnArr = array();
@@ -76,6 +54,47 @@ class IRLManager {
         }
         $result->free();
         return $returnArr;
+    }
+
+    public function getConfiguredData($collid): array
+    {
+        $returnArr = array();
+        if(file_exists($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collid . 'occurrencedatafields.json')) {
+            $retArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/collection' . $collid . 'occurrencedatafields.json'), true);
+        }
+        return $returnArr;
+    }
+
+    public function getProjectEnvironmentalData($collid): array
+    {
+        $returnArr = array();
+        $configuredData = $this->getConfiguredData($collid);
+        if($configuredData && array_key_exists('dataFields', $configuredData) ){
+
+        }
+        return $returnArr;
+    }
+
+    public function getNativeStatus($tid): string
+    {
+        $returnArr = array();
+        if($tid){
+            $sql = 'SELECT TID, CLID ' .
+                'FROM fmchklsttaxalink  ' .
+                'WHERE TID = ' .$tid. ' AND CLID IN(13,14) ';
+            //echo $sql;
+            $result = $this->conn->query($sql);
+            if($row = $result->fetch_object()){
+                if((int)$row->CLID === 13) {
+                    $returnArr[] = 'NON-NATIVE';
+                }
+                if((int)$row->CLID === 14) {
+                    $returnArr[] = 'CRYPTOGENIC';
+                }
+            }
+            $result->free();
+        }
+        return implode(',', $returnArr);
     }
 
     public function getTotalTaxa(): int

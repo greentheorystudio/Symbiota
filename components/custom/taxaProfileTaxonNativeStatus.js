@@ -24,7 +24,7 @@ const taxaProfileTaxonNativeStatus = {
     },
     methods: {
         getNativeStatus() {
-            const apiUrl = CLIENT_ROOT + '/api/custom/irlController.php';
+            const apiUrl = CLIENT_ROOT + '/api/custom/IRLController.php';
             const formData = new FormData();
             formData.append('tid', this.taxon['tid']);
             formData.append('action', 'getNativeStatus');
