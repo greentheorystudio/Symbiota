@@ -33,15 +33,15 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'processConfirmationCode' && array_key_exists('uid',$_POST) && array_key_exists('confirmationCode',$_POST)){
         echo $profileHandler->validateFromConfirmationEmail($_POST['uid'],$_POST['confirmationCode']);
     }
-    elseif($action === 'validatePermission' && (array_key_exists('permission',$_POST) || array_key_exists('permission[]',$_POST))){
+    elseif($action === 'validatePermission' && (array_key_exists('permission',$_POST) || array_key_exists('permissionJson',$_POST))){
         $key = array_key_exists('key',$_POST) ? (int)$_POST['key'] : null;
-        if(array_key_exists('permission[]',$_POST)){
-            $permissions = $_POST['permission[]'];
+        if(array_key_exists('permissionJson',$_POST)){
+            $permissions = json_decode($_POST['permissionJson']);
         }
         else{
             $permissions = $_POST['permission'];
         }
-        echo $permissionManager->validatePermission($permissions,$key);
+        echo json_encode($permissionManager->validatePermission($permissions, $key));
     }
     elseif($action === 'getUidFromUsername' && array_key_exists('username',$_POST)){
         echo $profileHandler->getUidFromUsername($_POST['username']);

@@ -3,9 +3,11 @@ const useBaseStore = Pinia.defineStore('base', {
         adminEmail: ADMIN_EMAIL,
         clientRoot: CLIENT_ROOT,
         defaultLanguage: DEFAULT_LANG,
+        defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
+        rightsTerms: RIGHTS_TERMS,
         solrMode: SOLR_MODE,
         symbUid: SYMB_UID,
         taxonomicRanks: TAXONOMIC_RANKS,
@@ -22,6 +24,9 @@ const useBaseStore = Pinia.defineStore('base', {
         getDefaultLanguage(state) {
             return state.defaultLanguage;
         },
+        getDefaultTitle(state) {
+            return state.defaultTitle;
+        },
         getEmailConfigured(state) {
             return state.emailConfigured;
         },
@@ -33,6 +38,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getSolrMode(state) {
             return state.solrMode;
+        },
+        getRightsTerms(state) {
+            return state.rightsTerms;
         },
         getSymbUid(state) {
             return state.symbUid;

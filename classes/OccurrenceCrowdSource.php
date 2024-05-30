@@ -56,8 +56,7 @@ class OccurrenceCrowdSource {
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR editing project.';
 			}
-            $this->conn->close();
-		}
+        }
 		return $statusStr;
 	}
 
@@ -70,8 +69,7 @@ class OccurrenceCrowdSource {
 			if($this->conn->query($sql)){
 				$this->omcsid = $this->conn->insert_id;
 			}
-            $this->conn->close();
-		}
+        }
 	}
 
 	public function getProjectStats(): array
@@ -255,7 +253,6 @@ class OccurrenceCrowdSource {
                     $statusStr = 'ERROR adding to queue.';
                     $statusStr .= '; SQL: '.$sql;
                 }
-                $this->conn->close();
             }
             else {
                 $statusStr = 'ERROR adding to queue, collid is null';
@@ -277,7 +274,6 @@ class OccurrenceCrowdSource {
                 if(!$this->conn->query($sql)){
                     $statusStr = 'ERROR removing occurrences from queue.';
                 }
-                $this->conn->close();
             }
             else {
                 $statusStr = 'ERROR adding to queue, collid is null';
@@ -401,8 +397,7 @@ class OccurrenceCrowdSource {
 				$sql2 = 'UPDATE omoccurrences SET processingstatus = "reviewed" WHERE occid IN('.implode(',',$successArr).')';
                 $this->conn->query($sql2);
 			}
-            $this->conn->close();
-		}
+        }
 		return $statusStr;
 	}
 

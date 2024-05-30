@@ -391,8 +391,8 @@ if(!$GLOBALS['SYMB_UID']) {
                             body: formData
                         })
                         .then((response) => {
-                            response.text().then((res) => {
-                                isEditor.value = Number(res) === 1;
+                            response.json().then((resData) => {
+                                isEditor.value = resData.includes('TaxonProfile');
                             });
                         });
                     }

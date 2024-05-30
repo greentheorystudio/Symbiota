@@ -282,6 +282,40 @@ function useCore() {
         return returnData;
     }
 
+    function processCsvDownload(csvDataArr, filename) {
+        if(typeof csvDataArr === 'object' && csvDataArr.length > 0 && typeof filename === 'string' && filename.length > 0){
+            let csvContent = '';
+            csvDataArr.forEach(row => {
+                const fixedRow = [];
+                if(Array.isArray(row)){
+                    row.forEach(val => {
+                        if(val){
+                            val = '\"' + val + '\"';
+                        }
+                        fixedRow.push(val);
+                    });
+                }
+                else{
+                    for(let key in row) {
+                        if(row.hasOwnProperty(key)){
+                            const val = '\"' + row[key] + '\"';
+                            fixedRow.push(val);
+                        }
+                    }
+                }
+                csvContent += fixedRow.join(',') + '\n';
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' });
+            const fName = filename + '.csv';
+            const elem = window.document.createElement('a');
+            elem.href = window.URL.createObjectURL(blob);
+            elem.download = fName;
+            document.body.appendChild(elem);
+            elem.click();
+            document.body.removeChild(elem);
+        }
+    }
+
     function showNotification(type, text, duration = 5000) {
         $q.notify({
             type: type,
@@ -360,6 +394,7 @@ function useCore() {
         hideWorking,
         openTutorialWindow,
         parseDate,
+        processCsvDownload,
         showNotification,
         showWorking,
         writeMySQLWktString

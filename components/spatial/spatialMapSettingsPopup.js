@@ -63,14 +63,9 @@ const spatialMapSettingsPopup = {
         }
 
         function changeFreehandMode(val) {
-            if(windowWidth < 875){
-                showNotification('negative','Draw Tool must be set to Freehand Mode when being used on mobile devices.');
-            }
-            else{
-                updateMapSettings('drawToolFreehandMode', val);
-                if(val === false && getPlatformProperty('has.touch')){
-                    showNotification('negative','WARNING: Draw Tool must be set to Freehand Mode when being used on touch screens.');
-                }
+            updateMapSettings('drawToolFreehandMode', val);
+            if(val === false && getPlatformProperty('has.touch')){
+                showNotification('negative','WARNING: Draw Tool must be set to Freehand Mode when being used on touch screens.');
             }
         }
 

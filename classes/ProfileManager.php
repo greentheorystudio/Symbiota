@@ -589,11 +589,17 @@ class ProfileManager{
                     }
                     $collid = (int)$r->collid;
                     $nodeArr = array();
-                    $nodeArr['accesslevel'] = (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) ? 'admin' : 'editor';
+                    $nodeArr['collectionpermissions'] = array();
+                    if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+                        $nodeArr['collectionpermissions'][] = 'CollAdmin';
+                    }
+                    if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+                        $nodeArr['collectionpermissions'][] = 'CollEditor';
+                    }
                     $nodeArr['collid'] = $collid;
                     $nodeArr['label'] = $r->collectionname.($collCode ? ' ('.$collCode.')' : '');
                     $nodeArr['colltype'] = $r->colltype;
-                    $nodeArr['occCount'] = $nodeArr['colltype'] === 'HumanObservation' ? $this->getPersonalOccurrenceCount($collid) : 0;
+                    $nodeArr['occcount'] = $nodeArr['colltype'] === 'HumanObservation' ? $this->getPersonalOccurrenceCount($collid) : 0;
                     $retArr[] = $nodeArr;
                 }
                 $rs->free();
