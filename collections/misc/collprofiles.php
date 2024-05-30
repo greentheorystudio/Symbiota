@@ -257,7 +257,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 'collection-metadata-block': collectionMetadataBlock
             },
             setup() {
-                const { processCsvDownload } = useCore();
+                const { hideWorking, processCsvDownload, showWorking } = useCore();
                 const baseStore = useBaseStore();
                 const collectionStore = useCollectionStore();
 
@@ -282,6 +282,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 const speciesIDPercent = Vue.computed(() => collectionStore.getSpeciesIDPercent);
 
                 function processConfiguredDataDownload(endpoint, action, filename) {
+                    showWorking();
                     const formData = new FormData();
                     formData.append('collid', collId.value.toString());
                     formData.append('action', action);
@@ -293,6 +294,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         return response.ok ? response.json() : null;
                     })
                     .then((data) => {
+                        hideWorking();
                         if(data){
                             processCsvDownload(data, (collId.value.toString() + '_' + filename));
                         }
@@ -300,6 +302,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 }
 
                 function processDownloadSpeciesList() {
+                    showWorking();
                     const formData = new FormData();
                     formData.append('collid', collId.value.toString());
                     formData.append('action', 'getSpeciesListDownloadData');
@@ -309,6 +312,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     })
                     .then((response) => {
                         response.json().then((resObj) => {
+                            hideWorking();
                             processCsvDownload(resObj, (collId.value.toString() + '_taxa_list'));
                         });
                     });
