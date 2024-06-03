@@ -92,11 +92,9 @@ const occurrenceEditorFormMiscElement = {
                     @close:popup="showAssociatedTaxaToolPopup = false"
             ></occurrence-editor-associated-taxa-tool-popup>
         </template>
-        <confirmation-popup ref="confirmationPopupRef" @confirmation:click="processConfirmation"></confirmation-popup>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
-        'confirmation-popup': confirmationPopup,
         'occurrence-editor-associated-taxa-tool-popup': occurrenceEditorAssociatedTaxaToolPopup,
         'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
@@ -106,7 +104,6 @@ const occurrenceEditorFormMiscElement = {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const basisOfRecordOptions = Vue.computed(() => occurrenceStore.getBasisOfRecordOptions);
-        const confirmationPopupRef = Vue.ref(null);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
@@ -146,18 +143,11 @@ const occurrenceEditorFormMiscElement = {
         }
 
         function updateOccurrenceData(key, value) {
-            if(occurrenceEntryFormat.value === 'benthic' && key === 'individualcount' && Number(value) === 0){
-                const confirmText = 'Changing the Individual Count to 0 for this record will result in its deletion. Do you wish to continue?';
-                confirmationPopupRef.value.openPopup(confirmText, {cancel: true, trueText: 'Continue'});
-            }
-            else{
-                occurrenceStore.updateOccurrenceEditData(key, value);
-            }
+            occurrenceStore.updateOccurrenceEditData(key, value);
         }
 
         return {
             basisOfRecordOptions,
-            confirmationPopupRef,
             eventData,
             occurrenceData,
             occurrenceEntryFormat,

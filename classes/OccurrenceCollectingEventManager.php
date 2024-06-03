@@ -126,7 +126,7 @@ class OccurrenceCollectingEventManager{
     public function getCollectingEventBenthicData($eventid): array
     {
         $retArr = array();
-        $sql = 'SELECT occid, sciname, identificationremarks, identificationqualifier, rep, individualcount '.
+        $sql = 'SELECT occid, tid, sciname, family, scientificnameauthorship, identificationremarks, identificationqualifier, rep, individualcount '.
             'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' '.
             'ORDER BY sciname, identificationqualifier, identificationremarks, rep ';
         //echo '<div>'.$sql.'</div>';
@@ -137,7 +137,10 @@ class OccurrenceCollectingEventManager{
                     $repLabel = 'rep' . (int)$r->rep;
                     if(!array_key_exists($key, $retArr)){
                         $retArr[$key] = array();
+                        $retArr[$key]['tid'] = $r->tid;
                         $retArr[$key]['sciname'] = $r->sciname;
+                        $retArr[$key]['family'] = $r->family;
+                        $retArr[$key]['scientificnameauthorship'] = $r->scientificnameauthorship;
                         $retArr[$key]['identificationqualifier'] = $r->identificationqualifier;
                         $retArr[$key]['identificationremarks'] = $r->identificationremarks;
                     }

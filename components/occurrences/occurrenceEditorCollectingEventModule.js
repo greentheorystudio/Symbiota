@@ -9,7 +9,7 @@ const occurrenceEditorCollectingEventModule = {
                                 <template v-if="collectingEventBenthicTaxaCnt > 0">
                                     <q-btn color="secondary" @click="showBenthicTaxaListPopup = true" label="View Taxa" />
                                 </template>
-                                <q-btn color="secondary" @click="showBenthicTaxaEditorPopup = true" label="Add/Edit Taxa" />
+                                <q-btn color="secondary" @click="showBenthicTaxaEditorPopup = true" label="Add Taxa" />
                             </template>
                             <template v-else-if="collectingEventCollectionArr.length > 0">
                                 <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" />
@@ -49,13 +49,15 @@ const occurrenceEditorCollectingEventModule = {
         <template v-if="showBenthicTaxaListPopup">
             <occurrence-collecting-event-benthic-taxa-list-popup
                     :show-popup="showBenthicTaxaListPopup"
+                    @update:edit-taxon="processEditTaxonRequest"
                     @close:popup="showBenthicTaxaListPopup = false"
             ></occurrence-collecting-event-benthic-taxa-list-popup>
         </template>
         <template v-if="showBenthicTaxaEditorPopup">
             <occurrence-collecting-event-benthic-taxa-editor-popup
+                    :edit-taxon="editTaxonPopupTaxonData"
                     :show-popup="showBenthicTaxaEditorPopup"
-                    @close:popup="showBenthicTaxaEditorPopup = false"
+                    @close:popup="closeBenthicTaxaEditorPopup();"
             ></occurrence-collecting-event-benthic-taxa-list-popup>
         </template>
         <template v-if="showEventEditorPopup">
@@ -89,6 +91,7 @@ const occurrenceEditorCollectingEventModule = {
         const collectingEventCollectionArr = Vue.computed(() => occurrenceStore.getCollectingEventCollectionArr);
         const configuredDataFields = Vue.computed(() => occurrenceStore.getConfiguredDataFields);
         const configuredDataLabel = Vue.computed(() => occurrenceStore.getConfiguredDataLabel);
+        const editTaxonPopupTaxonData = Vue.ref(null);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
@@ -102,6 +105,11 @@ const occurrenceEditorCollectingEventModule = {
         const showConfiguredDataEditorPopup = Vue.ref(false);
         const showEventEditorPopup = Vue.ref(false);
 
+        function closeBenthicTaxaEditorPopup() {
+            editTaxonPopupTaxonData.value = null;
+            showBenthicTaxaEditorPopup.value = false;
+        }
+
         function createCollectingEventRecord() {
             occurrenceStore.createCollectingEventRecord((newEventId) => {
                 if(newEventId > 0){
@@ -111,6 +119,12 @@ const occurrenceEditorCollectingEventModule = {
                     showNotification('negative', 'There was an error creating the event record.');
                 }
             });
+        }
+
+        function processEditTaxonRequest(taxon) {
+            editTaxonPopupTaxonData.value = taxon;
+            showBenthicTaxaListPopup.value = false;
+            showBenthicTaxaEditorPopup.value = true;
         }
 
         function updateCollectingEventData(key, value) {
@@ -127,6 +141,7 @@ const occurrenceEditorCollectingEventModule = {
             collectingEventCollectionArr,
             configuredDataFields,
             configuredDataLabel,
+            editTaxonPopupTaxonData,
             eventData,
             eventFields,
             eventId,
@@ -139,7 +154,9 @@ const occurrenceEditorCollectingEventModule = {
             showCollectionListPopup,
             showConfiguredDataEditorPopup,
             showEventEditorPopup,
+            closeBenthicTaxaEditorPopup,
             createCollectingEventRecord,
+            processEditTaxonRequest,
             updateCollectingEventData
         }
     }
