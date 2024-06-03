@@ -1,5 +1,9 @@
 const occurrenceCollectingEventBenthicTaxaEditorPopup = {
     props: {
+        editTaxon: {
+            type: Object,
+            default: null
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -28,18 +32,18 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                                         <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="taxonSciName" label="Scientific Name" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                                     </div>
                                     <div class="col-12 col-sm-3">
-                                        <text-field-input-element :disabled="Number(taxonTid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFields['scientificnameauthorship'] ? occurrenceFields['scientificnameauthorship']['length'] : 0" :value="taxonAuthor"></text-field-input-element>
+                                        <text-field-input-element :disabled="Number(taxonTid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFields['scientificnameauthorship'] ? occurrenceFields['scientificnameauthorship']['length'] : 0" :value="taxonAuthor" @update:value="processTaxonAuthorChange"></text-field-input-element>
                                     </div>
                                     <div class="col-12 col-sm-2">
-                                        <text-field-input-element :definition="occurrenceFieldDefinitions['identificationqualifier']" label="ID Qualifier" :maxlength="occurrenceFields['identificationqualifier'] ? occurrenceFields['identificationqualifier']['length'] : 0" :value="taxonQualifier" @update:value="setRepData"></text-field-input-element>
+                                        <text-field-input-element :definition="occurrenceFieldDefinitions['identificationqualifier']" label="ID Qualifier" :maxlength="occurrenceFields['identificationqualifier'] ? occurrenceFields['identificationqualifier']['length'] : 0" :value="taxonQualifier" @update:value="processTaxonQualifierChange"></text-field-input-element>
                                     </div>
                                     <div class="col-12 col-sm-3">
-                                        <text-field-input-element :disabled="Number(taxonTid) > 0" :definition="occurrenceFieldDefinitions['family']" label="Family" :maxlength="occurrenceFields['family'] ? occurrenceFields['family']['length'] : 0" :value="taxonFamily"></text-field-input-element>
+                                        <text-field-input-element :disabled="Number(taxonTid) > 0" :definition="occurrenceFieldDefinitions['family']" label="Family" :maxlength="occurrenceFields['family'] ? occurrenceFields['family']['length'] : 0" :value="taxonFamily" @update:value="processTaxonFamilyChange"></text-field-input-element>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-grow">
-                                        <text-field-input-element :definition="occurrenceFieldDefinitions['identificationremarks']" label="ID Remarks" :maxlength="occurrenceFields['identificationremarks'] ? occurrenceFields['identificationremarks']['length'] : 0" :value="taxonIdRemarks" @update:value="setRepData"></text-field-input-element>
+                                        <text-field-input-element :definition="occurrenceFieldDefinitions['identificationremarks']" label="ID Remarks" :maxlength="occurrenceFields['identificationremarks'] ? occurrenceFields['identificationremarks']['length'] : 0" :value="taxonIdRemarks" @update:value="processTaxonIdRemarksChange"></text-field-input-element>
                                     </div>
                                 </div>
                             </div>
@@ -62,14 +66,14 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                                 </div>
                             </div>
                             <div class="row justify-end full-width q-pr-lg">
-                                <q-btn color="secondary" @click="preProcessEnteredData();" label="Apply" :disabled="!editsExist" />
+                                <q-btn color="secondary" @click="preProcessEnteredData();" :label="(editMode ? 'Apply Edits' : 'Add Taxon')" :disabled="!editsExist && !taxonEditsExist" />
                             </div>
                         </div>
                     </div>
                 </div>
             </q-card>
         </q-dialog>
-        <confirmation-popup ref="confirmationPopupRef" @confirmation:click="processConfirmation"></confirmation-popup>
+        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
         'confirmation-popup': confirmationPopup,
@@ -96,6 +100,8 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             }
             return retValue;
         });
+        const editMode = Vue.ref(false);
+        const editTaxon = Vue.ref(null);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const existingData = Vue.ref({});
         const occurrenceFields = Vue.inject('occurrenceFields');
@@ -117,6 +123,22 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                 return null;
             }
         });
+        const taxonEditsExist = Vue.computed(() => {
+            let retValue = false;
+            if(taxonSciName.value){
+                if(editTaxon.value && (
+                    editTaxon.value['sciname'] !== taxonSciName.value ||
+                    editTaxon.value['family'] !== taxonFamily.value ||
+                    editTaxon.value['identificationqualifier'] !== taxonQualifier.value ||
+                    editTaxon.value['identificationremarks'] !== taxonIdRemarks.value ||
+                    editTaxon.value['scientificnameauthorship'] !== taxonAuthor.value ||
+                    Number(editTaxon.value['tid']) !== Number(taxonTid.value)
+                )){
+                    retValue = true;
+                }
+            }
+            return retValue;
+        });
         const taxonFamily = Vue.ref(null);
         const taxonIdRemarks = Vue.ref(null);
         const taxonQualifier = Vue.ref(null);
@@ -131,7 +153,32 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             setTableData();
         });
 
+        function checkExistingTaxon() {
+            if(!editMode.value){
+                if(!props.editTaxon && taxonDataKey.value && benthicData.value && benthicData.value.hasOwnProperty(taxonDataKey.value)){
+                    const confirmText = 'That taxon is already included in the data. Would you like to edit those records?';
+                    confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                        if(val){
+                            editMode.value = true;
+                            editTaxon.value = Object.assign({}, benthicData.value[taxonDataKey.value]);
+                            setRepData();
+                        }
+                        else{
+                            taxonSciName.value = null;
+                            taxonTid.value = null;
+                            taxonFamily.value = null;
+                            taxonAuthor.value = null;
+                        }
+                    }});
+                }
+                else{
+                    setRepData();
+                }
+            }
+        }
+
         function closePopup() {
+            editTaxon.value = null;
             context.emit('close:popup');
         }
 
@@ -150,6 +197,9 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                         processingUpdateArr.push({occid: repData[0][key]['occid'], cnt: repData[0][key]['cnt']});
                     }
                 }
+                else if(taxonEditsExist.value && Number(repData[0][key]['occid']) > 0){
+                    processingUpdateArr.push({occid: repData[0][key]['occid']});
+                }
             });
             if(processingAddArr.length > 0 || processingDeleteArr.length > 0 || processingUpdateArr.length > 0){
                 let confirmText = 'The data you have entered will result in: ';
@@ -162,14 +212,13 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                 if(processingUpdateArr.length > 0){
                     confirmText += (((processingAddArr.length > 0 || processingDeleteArr.length > 0) ? '; ' : '') + processingUpdateArr.length + ' record(s) being updated');
                 }
-                confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'Stop', trueText: 'Proceed'});
-            }
-        }
-
-        function processConfirmation(confirmed) {
-            if(confirmed){
-                showWorking();
-                processEnteredData();
+                confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'Stop', trueText: 'Proceed', callback: (val) => {
+                        if(val){
+                            showWorking();
+                            processEnteredData();
+                        }
+                    }
+                });
             }
         }
 
@@ -212,7 +261,27 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                 const recordToUpdate = processingUpdateArr[0];
                 processingUpdateArr.splice(0, 1);
                 occurrenceStore.setCurrentOccurrenceRecord(recordToUpdate.occid, () => {
-                    occurrenceStore.updateOccurrenceEditData('individualcount', recordToUpdate.cnt);
+                    if(recordToUpdate.hasOwnProperty('cnt')){
+                        occurrenceStore.updateOccurrenceEditData('individualcount', recordToUpdate.cnt);
+                    }
+                    if(editTaxon.value['sciname'] !== taxonSciName.value){
+                        occurrenceStore.updateOccurrenceEditData('sciname', taxonSciName.value);
+                    }
+                    if(editTaxon.value['family'] !== taxonFamily.value){
+                        occurrenceStore.updateOccurrenceEditData('family', taxonFamily.value);
+                    }
+                    if(editTaxon.value['identificationqualifier'] !== taxonQualifier.value){
+                        occurrenceStore.updateOccurrenceEditData('identificationqualifier', taxonQualifier.value);
+                    }
+                    if(editTaxon.value['identificationremarks'] !== taxonIdRemarks.value){
+                        occurrenceStore.updateOccurrenceEditData('identificationremarks', taxonIdRemarks.value);
+                    }
+                    if(editTaxon.value['scientificnameauthorship'] !== taxonAuthor.value){
+                        occurrenceStore.updateOccurrenceEditData('scientificnameauthorship', taxonAuthor.value);
+                    }
+                    if(Number(editTaxon.value['tid']) !== Number(taxonTid.value)){
+                        occurrenceStore.updateOccurrenceEditData('tid', taxonTid.value);
+                    }
                     if(occurrenceStore.getOccurrenceEditsExist){
                         occurrenceStore.updateOccurrenceRecord((res) => {
                             if(res === 0){
@@ -233,18 +302,49 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             }
         }
 
+        function processTaxonAuthorChange(value) {
+            taxonAuthor.value = value;
+        }
+
+        function processTaxonFamilyChange(value) {
+            taxonFamily.value = value;
+        }
+
+        function processTaxonIdRemarksChange(value) {
+            taxonIdRemarks.value = value;
+            checkExistingTaxon();
+        }
+
+        function processTaxonQualifierChange(value) {
+            taxonQualifier.value = value;
+            checkExistingTaxon();
+        }
+
         function processScientificNameChange(taxon) {
             taxonSciName.value = taxon ? taxon.sciname : null;
             taxonTid.value = taxon ? taxon.tid : null;
             taxonFamily.value = taxon ? taxon.family : null;
             taxonAuthor.value = taxon ? taxon.author : null;
-            setRepData();
+            checkExistingTaxon();
         }
 
         function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
+            }
+        }
+
+        function setEditTaxon(taxon) {
+            if(taxon){
+                editTaxon.value = Object.assign({}, taxon);
+                if(editTaxon.value.hasOwnProperty('identificationqualifier')){
+                    taxonQualifier.value = editTaxon.value['identificationqualifier'];
+                }
+                if(editTaxon.value.hasOwnProperty('identificationremarks')){
+                    taxonIdRemarks.value = editTaxon.value['identificationremarks'];
+                }
+                processScientificNameChange(taxon);
             }
         }
 
@@ -299,12 +399,18 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             setTableData();
+            if(props.editTaxon){
+                editMode.value = true;
+                setEditTaxon(props.editTaxon);
+                setRepData();
+            }
         });
 
         return {
             confirmationPopupRef,
             contentRef,
             contentStyle,
+            editMode,
             editsExist,
             occurrenceFields,
             occurrenceFieldDefinitions,
@@ -313,6 +419,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             tablePagination,
             taxonAuthor,
             taxonDataKey,
+            taxonEditsExist,
             taxonFamily,
             taxonIdRemarks,
             taxonQualifier,
@@ -320,7 +427,10 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             taxonTid,
             closePopup,
             preProcessEnteredData,
-            processConfirmation,
+            processTaxonAuthorChange,
+            processTaxonFamilyChange,
+            processTaxonIdRemarksChange,
+            processTaxonQualifierChange,
             processScientificNameChange,
             setRepData,
             validateRepDataCnt

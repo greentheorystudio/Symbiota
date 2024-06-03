@@ -902,12 +902,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((data) => {
-                    this.collectingEventBenthicData = Object.assign({}, data);
-                });
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.collectingEventBenthicData = Object.assign({}, data);
+            });
         },
         setCollectingEventCollectionsArr() {
             const formData = new FormData();
@@ -917,14 +917,14 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((dataArr) => {
-                    if(dataArr.length > 0){
-                        this.collectingEventCollectionArr = this.collectingEventCollectionArr.concat(dataArr);
-                    }
-                });
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((dataArr) => {
+                if(dataArr.length > 0){
+                    this.collectingEventCollectionArr = this.collectingEventCollectionArr.concat(dataArr);
+                }
+            });
         },
         setCollectingEventData() {
             const formData = new FormData();

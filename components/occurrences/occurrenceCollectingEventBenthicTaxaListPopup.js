@@ -29,7 +29,23 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
                                         <template v-for="column in tableColumns">
                                             <q-td :key="column.name" :props="props">
                                                 <template v-if="!column.name.startsWith('rep') || Number(props.row[column.name]) === 0">
-                                                    {{ props.row[column.name] }}
+                                                    <template v-if="column.name === 'sciname'">
+                                                        <div class="row justify-between">
+                                                            <div>
+                                                                {{ props.row[column.name] }}
+                                                            </div>
+                                                            <div>
+                                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="processEditTaxon(props.row['taxon']);" icon="fas fa-edit" dense>
+                                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                        Edit taxon records
+                                                                    </q-tooltip>
+                                                                </q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template v-else>
+                                                        {{ props.row[column.name] }}
+                                                    </template>
                                                 </template>
                                                 <template v-else>
                                                     <div class="cursor-pointer" @click="processOccurrenceSelection(props.row['occidData'][column.name]);">
@@ -79,6 +95,10 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
             context.emit('close:popup');
         }
 
+        function processEditTaxon(taxon) {
+            context.emit('update:edit-taxon', taxon);
+        }
+
         function processOccurrenceSelection(occid) {
             occurrenceStore.setCurrentOccurrenceRecord(occid);
             context.emit('close:popup');
@@ -125,6 +145,7 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
             taxaArr.forEach(taxon => {
                 const newRowObj = {};
                 newRowObj['occidData'] = {};
+                newRowObj['taxon'] = benthicData.value[taxon];
                 if(showQualifierColumn.value){
                     newRowObj['qualifier'] = benthicData.value[taxon]['identificationqualifier'];
                 }
@@ -160,6 +181,7 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
             tablePagination,
             tableRows,
             closePopup,
+            processEditTaxon,
             processOccurrenceSelection
         }
     }

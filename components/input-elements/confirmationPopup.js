@@ -11,6 +11,7 @@ const confirmationPopup = {
         </q-dialog>
     `,
     setup(props, context) {
+        const callbackFunction = Vue.ref(null);
         const cancelOption = Vue.ref(false);
         const falseButtonText = Vue.ref('Cancel');
         const popupText = Vue.ref(null);
@@ -30,18 +31,31 @@ const confirmationPopup = {
                     if(options.hasOwnProperty('trueText')){
                         trueButtonText.value = options['trueText'];
                     }
+                    if(options.hasOwnProperty('callback')){
+                        callbackFunction.value = options['callback'];
+                    }
                 }
                 showPopup.value = true;
             }
         }
 
         function processFalseClick() {
-            context.emit('confirmation:click', false);
+            if(callbackFunction.value){
+                callbackFunction.value(false);
+            }
+            else{
+                context.emit('confirmation:click', false);
+            }
             showPopup.value = false;
         }
 
         function processTrueClick() {
-            context.emit('confirmation:click', true);
+            if(callbackFunction.value){
+                callbackFunction.value(true);
+            }
+            else{
+                context.emit('confirmation:click', true);
+            }
             showPopup.value = false;
         }
 

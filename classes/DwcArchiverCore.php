@@ -1050,7 +1050,9 @@ class DwcArchiverCore extends Manager{
                 }
                 foreach($collArr as $collKey => $collValue){
                     $collElem2 = $newDoc->createElement($collKey);
-                    $collElem2->appendChild($newDoc->createTextNode($collValue));
+                    if($collValue){
+                        $collElem2->appendChild($newDoc->createTextNode($collValue));
+                    }
                     $collElem->appendChild($collElem2);
                 }
                 if($abstractStr){
