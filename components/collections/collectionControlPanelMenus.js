@@ -128,6 +128,9 @@ const collectionControlPanelMenus = {
                             <div class="text-h6 text-bold">Data Editor Control Panel</div>
                             <div class="q-mt-xs q-pl-sm column">
                                 <div>
+                                    <collection-catalog-number-quick-search :collection-id="collectionId"></collection-catalog-number-quick-search>
+                                </div>
+                                <div class="q-mt-sm">
                                     <a :href="(clientRoot + '/collections/editor/occurrenceeditor.php?gotomode=1&collid=' + collectionId)">
                                         Create A New Occurrence Record
                                     </a>
@@ -171,6 +174,9 @@ const collectionControlPanelMenus = {
             </template>
         </div>
     `,
+    components: {
+        'collection-catalog-number-quick-search': collectionCatalogNumberQuickSearch
+    },
     setup(props) {
         const { hideWorking, processCsvDownload, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();

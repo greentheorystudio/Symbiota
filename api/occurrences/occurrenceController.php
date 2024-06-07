@@ -61,4 +61,8 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'deleteOccurrenceRecord' && $occid && $isEditor){
         echo $occManager->deleteOccurrenceRecord($occid);
     }
+    elseif($action === 'getOccurrencesByCatalogNumber' && array_key_exists('catalognumber',$_POST)){
+        $collId = array_key_exists('collid',$_POST) ? (int)$_POST['collid'] : null;
+        echo json_encode($occManager->getOccurrencesByCatalogNumber($_POST['catalognumber'], $collId));
+    }
 }

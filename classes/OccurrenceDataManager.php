@@ -165,55 +165,55 @@ class OccurrenceDataManager{
     public function deleteOccurrenceRecord($occid): int
     {
         $retVal = 1;
-        $sql = 'DELETE gd.* FROM omoccurdeterminations AS d LEFT JOIN guidoccurdeterminations AS gd ON d.detid = gd.detid WHERE d.occid = ' . $occid . ' ';
+        $sql = 'DELETE gd.* FROM omoccurdeterminations AS d LEFT JOIN guidoccurdeterminations AS gd ON d.detid = gd.detid WHERE d.occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omoccurdeterminations WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omoccurdeterminations WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM guidoccurrences WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM guidoccurrences WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omcrowdsourcequeue WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omcrowdsourcequeue WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omexsiccatiocclink WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omexsiccatiocclink WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omoccuraccessstats WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omoccuraccessstats WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omoccurdatasetlink WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omoccurdatasetlink WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omoccureditlocks WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omoccureditlocks WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omoccuredits WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omoccuredits WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omoccurloanslink WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omoccurloanslink WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omoccurpoints WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omoccurpoints WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omoccurrencesfulltext WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omoccurrencesfulltext WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM omoccurrences WHERE occid = ' . $occid . ' ';
+        $sql = 'DELETE FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
         if(!$rs = $this->conn->query($sql)){
             $retVal = 0;
         }
@@ -223,19 +223,19 @@ class OccurrenceDataManager{
     public function evaluateOccurrenceForDeletion($occid): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT imgid FROM images WHERE occid = ' . $occid . ' ';
+        $sql = 'SELECT DISTINCT imgid FROM images WHERE occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['images'] = (int)$rs->num_rows;
-        $sql = 'SELECT DISTINCT mediaid FROM media WHERE occid = ' . $occid . ' ';
+        $sql = 'SELECT DISTINCT mediaid FROM media WHERE occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['media'] = (int)$rs->num_rows;
-        $sql = 'SELECT DISTINCT clid FROM fmvouchers WHERE occid = ' . $occid . ' ';
+        $sql = 'SELECT DISTINCT clid FROM fmvouchers WHERE occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['checklists'] = (int)$rs->num_rows;
-        $sql = 'SELECT DISTINCT idoccurgenetic FROM omoccurgenetic WHERE occid = ' . $occid . ' ';
+        $sql = 'SELECT DISTINCT idoccurgenetic FROM omoccurgenetic WHERE occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['genetic'] = (int)$rs->num_rows;
@@ -345,7 +345,7 @@ class OccurrenceDataManager{
         $retArr = array();
         $sql = 'SELECT DISTINCT d.duplicateid, d.title, d.description, d.notes '.
             'FROM omoccurduplicates AS d INNER JOIN omoccurduplicatelink AS l ON d.duplicateid = l.duplicateid '.
-            'WHERE l.occid = ' . $occid . ' ';
+            'WHERE l.occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -372,7 +372,7 @@ class OccurrenceDataManager{
         $retArr = array();
         $sql = 'SELECT g.idoccurgenetic, g.identifier, g.resourcename, g.locus, g.resourceurl, g.notes '.
             'FROM omoccurgenetic AS g '.
-            'WHERE g.occid = ' . $occid . ' ';
+            'WHERE g.occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -395,7 +395,7 @@ class OccurrenceDataManager{
         $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.photographer, i.photographeruid, i.sourceurl, i.copyright, '.
             'i.notes, i.username, i.sortsequence, i.initialtimestamp '.
             'FROM images AS i '.
-            'WHERE i.occid = ' . $occid . ' ORDER BY i.sortsequence ';
+            'WHERE i.occid = ' . (int)$occid . ' ORDER BY i.sortsequence ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -418,7 +418,40 @@ class OccurrenceDataManager{
         $sql = 'SELECT m.mediaid, m.accessuri, m.title, m.creatoruid, m.creator, m.`type`, m.`format`, m.owner, m.furtherinformationurl, '.
             'm.language, m.usageterms, m.rights, m.bibliographiccitation, m.publisher, m.contributor, m.locationcreated, m.description, m.sortsequence '.
             'FROM media AS m '.
-            'WHERE m.occid = ' . $occid . ' ORDER BY m.sortsequence ';
+            'WHERE m.occid = ' . (int)$occid . ' ORDER BY m.sortsequence ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $r->$name;
+                }
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getOccurrencesByCatalogNumber($catalogNumber, $collid = null): array
+    {
+        $retArr = array();
+        $fieldNameArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
+                $fieldNameArr[] = '`' . $field . '`';
+            }
+            else{
+                $fieldNameArr[] = $field;
+            }
+        }
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM omoccurrences WHERE catalognumber = "' . Sanitizer::cleanInStr($this->conn, $catalogNumber) . '" ';
+        if($collid){
+            $sql .= 'AND collid = ' . (int)$collid . ' ';
+        }
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -441,7 +474,7 @@ class OccurrenceDataManager{
         $sql = 'SELECT t.kingdomId, t.rankid, t.sciname, t.unitind1, t.unitname1, t.unitind2, t.unitname2, t.unitind3, t.unitname3, '.
             't.author, t.tidaccepted, t.parenttid, t.family, t.source, t.notes, t.hybrid, t.securitystatus '.
             'FROM taxa AS t '.
-            'WHERE t.tid = ' . $tid . ' ';
+            'WHERE t.tid = ' . (int)$tid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -476,12 +509,12 @@ class OccurrenceDataManager{
                 }
             }
             $sql = 'SELECT ' . implode(', ', $fieldNameArr) .
-                ' FROM omoccurrences WHERE occid = ' . $occId . ' ';
+                ' FROM omoccurrences WHERE occid = ' . (int)$occId . ' ';
             //echo $sql;
             $rs = $this->conn->query($sql);
             if($oldData = $rs->fetch_assoc()){
                 $sqlEditsBase = 'INSERT INTO omoccuredits(occid, reviewstatus, appliedstatus, uid, fieldname, fieldvaluenew, fieldvalueold) '.
-                    'VALUES(' . $occId . ', 1, 1, ' . $GLOBALS['SYMB_UID'] . ', ';
+                    'VALUES(' . (int)$occId . ', 1, 1, ' . $GLOBALS['SYMB_UID'] . ', ';
                 foreach($fieldNameArr as $fieldName){
                     $cleanedFieldName = str_replace('`','',$fieldName);
                     $oldValue = $oldData[$cleanedFieldName] ? Sanitizer::getSqlValueString($this->conn, $oldData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']) : '""';
@@ -493,7 +526,7 @@ class OccurrenceDataManager{
             }
             $rs->free();
             $sql = 'UPDATE omoccurrences SET ' . implode(', ', $sqlPartArr) . ' '.
-                'WHERE occid = ' . $occId . ' ';
+                'WHERE occid = ' . (int)$occId . ' ';
             //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
