@@ -189,6 +189,46 @@ class CollectionManager {
         return $retArr;
     }
 
+    public function getGeographicDistributionData($collId, $country = null, $state = null): array
+    {
+        $retArr = array();
+        if($state){
+            $sql = 'SELECT county AS termstr, COUNT(occid) AS cnt FROM omoccurrences '.
+                'WHERE collid = ' . (int)$collId . ' AND county IS NOT NULL '.
+                'AND country = "' . Sanitizer::cleanInStr($this->conn, $country) . '" '.
+                'AND stateprovince = "' . Sanitizer::cleanInStr($this->conn, $state) . '" '.
+                'GROUP BY stateprovince, county ORDER BY termstr ';
+        }
+        elseif($country){
+            $sql = 'SELECT stateprovince AS termstr, COUNT(occid) AS cnt FROM omoccurrences '.
+                'WHERE collid = ' . (int)$collId . ' AND stateprovince IS NOT NULL '.
+                'AND country = "' . Sanitizer::cleanInStr($this->conn, $country) . '" '.
+                'GROUP BY stateprovince, country ORDER BY termstr ';
+        }
+        else{
+            $sql = 'SELECT country AS termstr, COUNT(occid) AS cnt FROM omoccurrences '.
+                'WHERE collid = ' . (int)$collId . ' AND country IS NOT NULL '.
+                'GROUP BY country ORDER BY termstr ';
+        }
+        //echo $sql; exit;
+        $rs = $this->conn->query($sql);
+        while($row = $rs->fetch_object()){
+            if($row->termstr) {
+                $t = $row->termstr;
+                $cnt = $row->cnt;
+                if($state){
+                    $t = trim(str_ireplace(array(' county',' co.',' counties'),'',$t));
+                }
+                if(array_key_exists($t, $retArr)) {
+                    $cnt += $retArr[$t];
+                }
+                $retArr[$t] = $cnt;
+            }
+        }
+        $rs->free();
+        return $retArr;
+    }
+
     public function getSpeciesListDownloadData($collid): array
     {
         $returnArr = array();
@@ -243,6 +283,19 @@ class CollectionManager {
         array_multisort($kingdomName, SORT_ASC, $phylumName, SORT_ASC, $className, SORT_ASC, $orderName, SORT_ASC, $familyName, SORT_ASC, $SciName, SORT_ASC, $returnArr);
         array_unshift($returnArr, array('Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Scientific Name'));
         return $returnArr;
+    }
+
+    public function getTaxonomicDistributionData($collId): array
+    {
+        $retArr = array();
+        $sql = 'SELECT family, count(occid) AS cnt FROM omoccurrences WHERE family IS NOT NULL AND collid = ' . $collId . ' GROUP BY family';
+        //echo $sql; exit;
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $retArr[ucwords($r->family)] = $r->cnt;
+        }
+        $rs->free();
+        return $retArr;
     }
 
     public function performOccurrenceCleaning($collidStr): void

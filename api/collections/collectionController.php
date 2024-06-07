@@ -28,4 +28,12 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'getSpeciesListDownloadData' && $collid){
         echo json_encode($collManager->getSpeciesListDownloadData($collid));
     }
+    elseif($action === 'getGeographicDistributionData' && $collid){
+        $country = array_key_exists('country',$_POST) ? $_POST['country'] : null;
+        $state = array_key_exists('state',$_POST) ? $_POST['state'] : null;
+        echo json_encode($collManager->getGeographicDistributionData($collid, $country, $state));
+    }
+    elseif($action === 'getTaxonomicDistributionData' && $collid){
+        echo json_encode($collManager->getTaxonomicDistributionData($collid));
+    }
 }
