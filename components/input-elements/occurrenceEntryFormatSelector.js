@@ -12,7 +12,6 @@ const occurrenceEntryFormatSelector = {
         const formatSelectorOptions = [
             {value: 'specimen', label: 'Specimen'},
             {value: 'observation', label: 'Observation'},
-            {value: 'image', label: 'Image'},
             {value: 'skeletal', label: 'Skeletal'},
             {value: 'benthic', label: 'Benthic'}
         ];
