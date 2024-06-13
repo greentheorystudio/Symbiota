@@ -312,9 +312,6 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
                         }
                         ?>
                     </li>
-                    <li>
-                        <a href="coordinatevalidator.php?collid=<?php echo $collid; ?>">Check coordinates against political boundaries</a>
-                    </li>
                 </ul>
                 <?php
             }

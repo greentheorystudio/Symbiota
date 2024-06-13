@@ -124,41 +124,14 @@ class ImageExplorer{
 		if(isset($searchCriteria['photographer']) && $searchCriteria['photographer']){
 			$sqlWhere .= 'AND i.photographerUid IN('.implode(',',Sanitizer::cleanInArray($this->conn,$searchCriteria['photographer'])).') ';
 		}
-		
-		if (isset($searchCriteria['idToSpecies'], $searchCriteria['idNeeded']) && $searchCriteria['idToSpecies'] && $searchCriteria['idNeeded']) {
-			$includeVerification = FALSE;  // used later to include/exclude the join to omoccurrverification
-		} else { 
-			$includeVerification = FALSE;
-		    if(isset($searchCriteria['idNeeded']) && $searchCriteria['idNeeded']){
-	   		    $includeVerification = TRUE;
-	   		    $sqlWhere .= 'AND ( ' .
-					'   (o.occid NOT IN (SELECT occid FROM omoccurverification WHERE (category = "identification")) AND (t.rankid < 220 OR ISNULL(o.tid)) ) ' .
-					' ) ';
-		    }
-		    if(isset($searchCriteria['idToSpecies']) && $searchCriteria['idToSpecies']){
-	   		   $includeVerification = TRUE;
-	   		    $sqlWhere .= 'AND ( (o.occid IS NULL AND t.rankid IN(220,230,240,260)) OR ' .
-					'   (o.occid NOT IN (SELECT occid FROM omoccurverification WHERE (category = "identification")) AND t.rankid IN(220,230,240,260)) ' .
-					'   OR ' .
-					"   (v.category = 'identification' AND v.ranking >= 5) " .
-					' ) ';
-		    }
-            if(isset($searchCriteria['idPoor']) && $searchCriteria['idPoor']){
-	   		    $includeVerification = TRUE;
-	   		    $sqlWhere .= "AND ( v.category = 'identification' AND v.ranking < 5 ) ";
-		    }
-		}
 
-		$sqlStr = 'SELECT DISTINCT i.imgid, t.tidaccepted, i.url, i.thumbnailurl, i.originalurl, '.
+        $sqlStr = 'SELECT DISTINCT i.imgid, t.tidaccepted, i.url, i.thumbnailurl, i.originalurl, '.
 			'u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS photographer, i.caption, '.
 			'o.occid, o.stateprovince, o.catalognumber, i.initialtimestamp '.
 			'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
 			'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
 			'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
 			'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
-		if($includeVerification){
-			$sqlStr .= 'LEFT JOIN omoccurverification AS v ON o.occid = v.occid ';
-		}
 		if(isset($searchCriteria['tags']) && $searchCriteria['tags']){
 			$sqlStr .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
 		}

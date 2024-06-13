@@ -1453,24 +1453,6 @@ CREATE TABLE `omoccurrevisions` (
     CONSTRAINT `fk_omrevisions_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-CREATE TABLE `omoccurverification` (
-    `ovsid` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `category` varchar(45) NOT NULL,
-    `ranking` int(11) NOT NULL,
-    `protocol` varchar(100) DEFAULT NULL,
-    `source` varchar(45) DEFAULT NULL,
-    `uid` int(10) unsigned DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`ovsid`),
-    UNIQUE KEY `UNIQUE_omoccurverification` (`occid`,`category`),
-    KEY `FK_omoccurverification_occid_idx` (`occid`),
-    KEY `FK_omoccurverification_uid_idx` (`uid`),
-    CONSTRAINT `FK_omoccurverification_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurverification_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE `paleochronostratigraphy` (
     `chronoId` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `Eon` varchar(255) DEFAULT NULL,
