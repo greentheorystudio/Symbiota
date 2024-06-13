@@ -71,19 +71,19 @@ const occurrenceEditorAdminTab = {
                                 associations through the tabs above in order to delete this record.
                             </div>
                             <div v-if="checklistArr.length > 0" class="q-ml-lg">
-                                <span class="text-bold">Checklists: </span>This occurrence has voucher associations on {{ checklistArr.length + (checklistArr.length === 1 ? 'checklist' : 'checklists') }}.
+                                <span class="text-bold">Checklists: </span>This occurrence has voucher associations on {{ checklistArr.length + (checklistArr.length === 1 ? ' checklist' : ' checklists') }}.
                             </div>
                             <div v-if="geneticLinkArr.length > 0" class="q-ml-lg">
-                                <span class="text-bold">Genetic Records: </span>This occurrence has {{ geneticLinkArr.length + (geneticLinkArr.length === 1 ? 'genetic record' : 'genetic records') }} associated with it.
+                                <span class="text-bold">Genetic Records: </span>This occurrence has {{ geneticLinkArr.length + (geneticLinkArr.length === 1 ? ' genetic record ' : ' genetic records ') }}associated with it.
                             </div>
                             <div v-if="imageArr.length > 0" class="q-ml-lg">
-                                <span class="text-bold">Images: </span>This occurrence has {{ imageArr.length + (imageArr.length === 1 ? 'image' : 'images') }} associated with it.
+                                <span class="text-bold">Images: </span>This occurrence has {{ imageArr.length + (imageArr.length === 1 ? ' image ' : ' images ') }}associated with it.
                             </div>
                             <div v-if="mediaArr.length > 0" class="q-ml-lg">
-                                <span class="text-bold">Media Files: </span>This occurrence has {{ mediaArr.length + (mediaArr.length === 1 ? 'media file' : 'media files') }} associated with it.
+                                <span class="text-bold">Media Files: </span>This occurrence has {{ mediaArr.length + (mediaArr.length === 1 ? ' media file ' : ' media files ') }}associated with it.
                             </div>
                         </div>
-                        <div class="row justify-start">
+                        <div class="q-mt-md row justify-start">
                             <q-btn color="secondary" @click="processDeleteOccurrenceRecord();" label="Delete Occurrence" :disabled="!occurrenceDeleteApproved" />
                         </div>
                     </div>

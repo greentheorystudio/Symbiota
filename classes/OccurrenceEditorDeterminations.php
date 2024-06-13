@@ -77,9 +77,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
         }
         $sciname = Sanitizer::cleanInStr($this->conn,$detArr['sciname']);
         $notes = Sanitizer::cleanInStr($this->conn,$detArr['identificationremarks']);
-        if($isEditor === 3 && is_numeric($detArr['confidenceranking'])) {
-            $notes .= ($notes?'; ':'').'ConfidenceRanking: '.$detArr['confidenceranking'];
-        }
         $sql = 'INSERT INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
             'identificationQualifier, iscurrent, printqueue, appliedStatus, identificationReferences, identificationRemarks, sortsequence) '.
             'VALUES ('.$this->occid.','.($detArr['tidtoadd']?(int)$detArr['tidtoadd']:'NULL').',"'.Sanitizer::cleanInStr($this->conn,$detArr['identifiedby']).'","'.Sanitizer::cleanInStr($this->conn,$detArr['dateidentified']).'","'.
@@ -152,12 +149,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
                     ' WHERE (occid = '.$this->occid.')';
                 //echo "<div>".$sqlNewDet."</div>";
                 $this->conn->query($sqlNewDet);
-                if(isset($detArr['confidenceranking'])){
-                    $idStatus = $this->editIdentificationRanking($detArr['confidenceranking'],'');
-                    if($idStatus) {
-                        $status .= '; ' . $idStatus;
-                    }
-                }
                 $sql = 'UPDATE images SET tid = '.($tidToAdd?:'NULL').' WHERE (occid = '.$this->occid.')';
                 //echo $sql;
                 if(!$this->conn->query($sql)){
@@ -248,9 +239,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
         if($rcr = $rscr->fetch_object()){
             $iqStr = $rcr->identificationremarks;
             if(preg_match('/ConfidenceRanking: (\d{1,2})/',$iqStr,$m)){
-                if($makeCurrent) {
-                    $this->editIdentificationRanking($m[1], '');
-                }
                 $iqStr = trim(str_replace('ConfidenceRanking: '.$m[1],'',$iqStr),' ;');
             }
         }

@@ -127,11 +127,6 @@ class ObservationSubmitManager {
 				if(!$this->addImages($postArr,$newOccId,$tid)){
 					$this->errArr[] = 'Observation added successfully, but images did not upload successful';
 				}
-				if(is_numeric($postArr['confidenceranking'])){
-					$sqlVer = 'INSERT INTO omoccurverification(occid,category,ranking,uid) '.
-							'VALUES('.$newOccId.',"identification",'.$postArr['confidenceranking'].','.$GLOBALS['SYMB_UID'].')';
-					$this->conn->query($sqlVer);
-				}
 			}
 			else{
 				$this->errArr[] = 'ERROR: Failed to load observation record.';

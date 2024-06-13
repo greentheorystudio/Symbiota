@@ -292,13 +292,6 @@ if($GLOBALS['SYMB_UID']){
                 }
                 $tabTarget = 1;
             }
-            elseif($action === 'Submit Verification Edits'){
-                $statusStr = $occManager->editIdentificationRanking($_POST['confidenceranking'],$_POST['notes']);
-                if($GLOBALS['SOLR_MODE']) {
-                    $solrManager->updateSOLR();
-                }
-                $tabTarget = 1;
-            }
             elseif($action === 'Link to Checklist as Voucher'){
                 $statusStr = $occManager->linkChecklistVoucher($_POST['clidvoucher'],$_POST['tidvoucher']);
                 if($GLOBALS['SOLR_MODE']) {
@@ -861,21 +854,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 </div>
                                             </div>
                                             <div style="clear:both;padding:3px 0 0 10px;">
-                                                <?php
-                                                if(!$occId){
-                                                    echo '<div id="idRankDiv">';
-                                                    echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:'ID Confidence');
-                                                    echo ' <a href="#" onclick="return dwcDoc(\'idConfidence\')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a> ';
-                                                    echo '<select name="confidenceranking" onchange="fieldChanged(\'confidenceranking\')">';
-                                                    echo '<option value="">Undefined</option>';
-                                                    $idRankArr = array(0 => 'ID Requested', 1 => 'Low - ID Requested', 2 => 'Low', 3 => 'Low - insignificant material', 4 => 'Medium - verification requested', 5 => 'Medium', 6 => 'Medium - insignificant material', 7 => 'High - verification requested', 8 => 'High', 9 => 'Very High', 10 => 'Absolute');
-                                                    foreach($idRankArr as $rankKey => $rankText){
-                                                        echo '<option value="'.$rankKey.'">'.$rankKey.' - '.$rankText.'</option>';
-                                                    }
-                                                    echo '</select>';
-                                                    echo '</div>';
-                                                }
-                                                ?>
                                                 <div id="identificationQualifierDiv">
                                                     <?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'ID Qualifier'); ?>
                                                     <a href="#" onclick="return dwcDoc('identificationQualifier')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>

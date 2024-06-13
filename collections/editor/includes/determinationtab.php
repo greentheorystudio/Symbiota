@@ -21,91 +21,11 @@ $occManager = new OccurrenceEditorDeterminations();
 
 $occManager->setOccId($occId); 
 $detArr = $occManager->getDetMap($identBy, $dateIdent, $sciName);
-$idRanking = $occManager->getIdentificationRanking();
 
 $specImgArr = $occManager->getImageMap();
 
 ?>
 <div id="determdiv" style="width:795px;">
-	<div style="margin:15px 0 40px 15px;">
-		<div>
-			<b><u>Identification Confidence Ranking</u></b>
-			<?php
-			if($editMode < 3){ 
-				?>
-				<a href="#" title="Modify current identification ranking" onclick="toggle('idrankeditdiv');toggle('idrankdiv');return false;">
-                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
-				</a>
-				<?php
-			} 
-			?>
-		</div>
-		<?php
-		if($editMode < 3){ 
-			?>
-			<div id="idrankeditdiv" style="display:none;margin:15px;">
-				<form name="editidrankingform" action="occurrenceeditor.php" method="post">
-					<div style='margin:3px;'>
-						<b>Confidence of Determination:</b> 
-						<select name="confidenceranking">
-							<?php 
-							$currentRanking = 5;
-							if($idRanking) {
-                                $currentRanking = $idRanking['ranking'];
-                            }
-							?>
-							<option value="10" <?php echo ($currentRanking === 10?'SELECTED':''); ?>>10 - Absolute</option>
-							<option value="9" <?php echo ($currentRanking === 9?'SELECTED':''); ?>>9 - High</option>
-							<option value="8" <?php echo ($currentRanking === 8?'SELECTED':''); ?>>8 - High</option>
-							<option value="7" <?php echo ($currentRanking === 7?'SELECTED':''); ?>>7 - High</option>
-							<option value="6" <?php echo ($currentRanking === 6?'SELECTED':''); ?>>6 - Medium</option>
-							<option value="5" <?php echo ($currentRanking === 5?'SELECTED':''); ?>>5 - Medium</option>
-							<option value="4" <?php echo ($currentRanking === 4?'SELECTED':''); ?>>4 - Medium</option>
-							<option value="3" <?php echo ($currentRanking === 3?'SELECTED':''); ?>>3 - Low</option>
-							<option value="2" <?php echo ($currentRanking === 2?'SELECTED':''); ?>>2 - Low</option>
-							<option value="1" <?php echo ($currentRanking === 1?'SELECTED':''); ?>>1 - Low</option>
-							<option value="0" <?php echo ($currentRanking === 0?'SELECTED':''); ?>>0 - Unlikely</option>
-						</select>
-					</div>
-					<div style='margin:3px;'>
-						<b>Notes:</b> 
-						<input name="notes" type="text" value="<?php echo ($idRanking?$idRanking['notes']:''); ?>" style="width:90%;" />
-					</div>
-					<div style='margin:15px;'>
-						<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
-						<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
-						<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-						<input type="hidden" name="ovsid" value="<?php echo ($idRanking?$idRanking['ovsid']:''); ?>" />
-						<input type="submit" name="submitaction" value="Submit Verification Edits" />
-					</div>
-				</form>
-			</div>
-			<?php
-		} 
-		?>
-		<div id="idrankdiv" style="margin:15px;">
-			<?php 
-			if($idRanking){
-				echo '<div>';
-				echo '<b>Rank: </b> '.$idRanking['ranking'];
-				if($idRanking['ranking'] < 4){
-					echo ' - low ';
-				}
-				elseif($idRanking['ranking'] < 8){
-					echo ' - medium ';
-				}
-				elseif($idRanking['ranking'] > 7){
-					echo ' - high ';
-				}
-				echo '</div>';
-				echo '<div><b>Set by:</b> '.($idRanking['username']?:'undefined').'</div>';
-				if($idRanking['notes']) {
-                    echo '<div><b>Notes:</b> ' . $idRanking['notes'] . '</div>';
-                }
-			}
-			?>
-		</div>
-	</div>
 	<div>
 		<fieldset style="margin:15px;padding:15px;">
 			<legend><b>Determination History</b></legend>

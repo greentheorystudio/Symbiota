@@ -188,7 +188,6 @@ function verifyFullFormSciName(id = null){
 				}
 			}
 			else{
-				$( 'select[name=confidenceranking]' ).val(5);
 				alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
 			}
 		}

@@ -1122,9 +1122,6 @@ class OccurrenceEditorManager {
                     }
                 }
 
-                if(isset($occArr['confidenceranking']) && $occArr['confidenceranking']){
-                    $this->editIdentificationRanking($occArr['confidenceranking'],'');
-                }
                 if(isset($occArr['clidvoucher'], $occArr['tid'])){
                     $status .= $this->linkChecklistVoucher($occArr['clidvoucher'],$occArr['tid']);
                 }
@@ -1530,38 +1527,6 @@ class OccurrenceEditorManager {
             'habitat','substrate','lifestage', 'sex', 'individualcount', 'samplingprotocol', 'preparations',
             'associatedtaxa','basisofrecord','language','labelproject');
         return Sanitizer::cleanOutArray(array_intersect_key($fArr,array_flip($locArr)));
-    }
-
-    public function getIdentificationRanking(): array
-    {
-        $retArr = array();
-        $sql = 'SELECT v.ovsid, v.ranking, v.notes, l.username '.
-            'FROM omoccurverification AS v LEFT JOIN users AS l ON v.uid = l.uid '.
-            'WHERE v.category = "identification" AND v.occid = '.$this->occid;
-        //echo "<div>".$sql."</div>";
-        $rs = $this->conn->query($sql);
-        if($r = $rs->fetch_object()){
-            $retArr['ovsid'] = $r->ovsid;
-            $retArr['ranking'] = $r->ranking;
-            $retArr['notes'] = $r->notes;
-            $retArr['username'] = $r->username;
-        }
-        $rs->free();
-        return $retArr;
-    }
-
-    public function editIdentificationRanking($ranking, $notes = null): string
-    {
-        $statusStr = '';
-        if(is_numeric($ranking)){
-            $sql = 'REPLACE INTO omoccurverification(occid,category,ranking,notes,uid) '.
-                'VALUES('.$this->occid.',"identification",'.$ranking.','.($notes?'"'.Sanitizer::cleanInStr($this->conn,$notes).'"':'NULL').','.$GLOBALS['SYMB_UID'].')';
-            if(!$this->conn->query($sql)){
-                $statusStr .= 'WARNING editing/add confidence ranking failed.';
-                //echo $sql;
-            }
-        }
-        return $statusStr;
     }
 
     public function getVoucherChecklists(): array
