@@ -1,6 +1,5 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
-include_once(__DIR__ . '/OccurrenceDuplicate.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
 include_once(__DIR__ . '/Mailer.php');
 include_once(__DIR__ . '/Sanitizer.php');
@@ -280,15 +279,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $rs->free();
         }
-    }
-
-    public function getDuplicateArr(){
-        $dupManager = new OccurrenceDuplicate();
-        $retArr = $dupManager->getClusterArr($this->occid);
-        if($retArr){
-            unset($retArr[$this->occid]);
-        }
-        return $retArr;
     }
 
     public function getGeneticArr(): array

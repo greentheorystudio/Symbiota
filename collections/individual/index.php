@@ -100,7 +100,6 @@ $displayMap = false;
 if($displayLocality && ((is_numeric($occArr['decimallatitude']) && is_numeric($occArr['decimallongitude'])) || $occArr['footprintwkt'])) {
     $displayMap = true;
 }
-$dupClusterArr = $indManager->getDuplicateArr();
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -237,11 +236,6 @@ if($fullWindow){
                 }
                 if($genticArr) {
                     echo '<li><a href="#genetictab"><span>Genetic Data</span></a></li>';
-                }
-                if($dupClusterArr){
-                    ?>
-                    <li><a href="#dupestab"><span>Duplicates</span></a></li>
-                    <?php
                 }
                 ?>
                 <li id="indLinkedResourcesTab"><a href="linkedresources.php?occid=<?php echo $occid.'&tid='.$occArr['tid'].'&clid='.$clid.'&collid='.$collid; ?>"><span>Linked Resources</span></a></li>
@@ -942,87 +936,6 @@ if($fullWindow){
                         <?php
                     }
                     ?>
-                </div>
-                <?php
-            }
-            if($dupClusterArr){
-                ?>
-                <div id="dupestab">
-                    <div style="margin:20px;">
-                        <div style="font-weight:bold;margin-bottom:10px;"><u>Current Record</u></div>
-                        <?php
-                        echo '<div style="font-weight:bold;">'.$collMetadata['collectionname'].' ('.$collMetadata['institutioncode'].($collMetadata['collectioncode']?':'.$collMetadata['collectioncode']:'').')</div>';
-                        echo '<div style="margin:5px 15px">';
-                        if($occArr['recordedby']) {
-                            echo '<div>' . $occArr['recordedby'] . ' ' . $occArr['recordnumber'] . '<span style="margin-left:40px;">' . $occArr['eventdate'] . '</span></div>';
-                        }
-                        if($occArr['catalognumber']) {
-                            echo '<div><b>Catalog Number:</b> ' . $occArr['catalognumber'] . '</div>';
-                        }
-                        if($occArr['occurrenceid']) {
-                            echo '<div><b>GUID:</b> ' . $occArr['occurrenceid'] . '</div>';
-                        }
-                        if($occArr['sciname']) {
-                            echo '<div><b>Latest Identification:</b> ' . $occArr['sciname'] . '</div>';
-                        }
-                        if($occArr['identifiedby']) {
-                            echo '<div><b>Identified by:</b> ' . $occArr['identifiedby'] . '<span style="margin-left:30px;">' . $occArr['dateidentified'] . '</span></div>';
-                        }
-                        echo '</div>';
-                        echo '<div style="margin:20px 0;clear:both"><hr/><hr/></div>';
-                        foreach($dupClusterArr as $dupid => $dArr){
-                            $innerDupArr = $dArr['o'];
-                            foreach($innerDupArr as $dupOccid => $dupArr){
-                                if($dupOccid !== $occid){
-                                    $collCode = '';
-                                    if($dupArr['instcode']){
-                                        $collCode .= $dupArr['instcode'];
-                                    }
-                                    if($dupArr['collcode']){
-                                        $collCode .= ($collCode?':':'') . $dupArr['collcode'];
-                                    }
-                                    echo '<div style="clear:both;margin:15px;">';
-                                    echo '<div style="font-weight:bold;">'.$dupArr['collname'].($collCode?' ('.$collCode.')':'').'</div>';
-                                    echo '<div style="float:left;margin:5px 15px">';
-                                    if($dupArr['recordedby']) {
-                                        echo '<div>' . $dupArr['recordedby'] . ' ' . $dupArr['recordnumber'] . '<span style="margin-left:40px;">' . $dupArr['eventdate'] . '</span></div>';
-                                    }
-                                    if($dupArr['catnum']) {
-                                        echo '<div><b>Catalog Number:</b> ' . $dupArr['catnum'] . '</div>';
-                                    }
-                                    if($dupArr['occurrenceid']) {
-                                        echo '<div><b>GUID:</b> ' . $dupArr['occurrenceid'] . '</div>';
-                                    }
-                                    if($dupArr['sciname']) {
-                                        echo '<div><b>Latest Identification:</b> ' . $dupArr['sciname'] . '</div>';
-                                    }
-                                    if($dupArr['identifiedby']) {
-                                        echo '<div><b>Identified by:</b> ' . $dupArr['identifiedby'] . '<span style="margin-left:30px;">' . $dupArr['dateidentified'] . '</span></div>';
-                                    }
-                                    if($dupArr['notes']) {
-                                        echo '<div>' . $dupArr['notes'] . '</div>';
-                                    }
-                                    echo '<div><a href="#" onclick="openIndividual('.$dupOccid. ')">Show Full Details</a></div>';
-                                    echo '</div>';
-                                    if($dupArr['url']){
-                                        $url = $dupArr['url'];
-                                        $tnUrl = $dupArr['tnurl'];
-                                        if(!$tnUrl) {
-                                            $tnUrl = $url;
-                                        }
-                                        echo '<div style="float:left;margin:10px;">';
-                                        echo '<a href="'.$url.'">';
-                                        echo '<img src="'.$tnUrl.'" style="width:100px;border:1px solid grey" />';
-                                        echo '</a>';
-                                        echo '</div>';
-                                    }
-                                    echo '<div style="margin:10px 0;clear:both"><hr/></div>';
-                                    echo '</div>';
-                                }
-                            }
-                        }
-                        ?>
-                    </div>
                 </div>
                 <?php
             }

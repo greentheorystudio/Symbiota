@@ -3,7 +3,6 @@ include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceEditorDeterminations.php');
 include_once(__DIR__ . '/OccurrenceEditorImages.php');
 include_once(__DIR__ . '/OccurrenceEditorMedia.php');
-include_once(__DIR__ . '/OccurrenceDuplicate.php');
 include_once(__DIR__ . '/SOLRManager.php');
 include_once(__DIR__ . '/UuidFactory.php');
 include_once(__DIR__ . '/Sanitizer.php');
@@ -997,10 +996,6 @@ class OccurrenceEditorManager {
                             $this->conn->query($sql);
                         }
                     }
-                    if(isset($occArr['linkdupe']) && $occArr['linkdupe']){
-                        $dupTitle = $occArr['recordedby'].' '.$occArr['recordnumber'].' '.$occArr['eventdate'];
-                        $status .= $this->linkDuplicates($occArr['linkdupe'],$dupTitle);
-                    }
                 }
                 else{
                     $status = 'ERROR: failed to edit occurrence record (#'.$occArr['occid'].').';
@@ -1124,10 +1119,6 @@ class OccurrenceEditorManager {
 
                 if(isset($occArr['clidvoucher'], $occArr['tid'])){
                     $status .= $this->linkChecklistVoucher($occArr['clidvoucher'],$occArr['tid']);
-                }
-                if(isset($occArr['linkdupe']) && $occArr['linkdupe']){
-                    $dupTitle = $occArr['recordedby'].' '.$occArr['recordnumber'].' '.$occArr['eventdate'];
-                    $status .= $this->linkDuplicates($occArr['linkdupe'],$dupTitle);
                 }
             }
             else{
@@ -1606,14 +1597,6 @@ class OccurrenceEditorManager {
             asort($retArr);
         }
         return $retArr;
-    }
-
-    private function linkDuplicates($occidStr,$dupTitle): string
-    {
-        $status = '';
-        $dupManager = new OccurrenceDuplicate();
-        $dupManager->linkDuplicates($this->occid,$occidStr,$dupTitle);
-        return $status;
     }
 
     public function getGeneticArr(): array

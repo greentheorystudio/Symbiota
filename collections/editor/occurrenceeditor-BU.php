@@ -1406,7 +1406,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             <input type="hidden" name="collid" value="<?php echo $collId; ?>" />
                                             <input type="hidden" name="observeruid" value="<?php echo $GLOBALS['SYMB_UID']; ?>" />
                                             <input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-                                            <input type="hidden" name="linkdupe" value="" />
                                             <?php
                                             if($occId){
                                                 if(($isEditor === 1 || $isEditor === 2) && !$crowdSourceMode){

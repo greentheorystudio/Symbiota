@@ -52,9 +52,6 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'getOccurrenceChecklistArr' && $occid){
         echo json_encode($occManager->getOccurrenceChecklistData($occid));
     }
-    elseif($action === 'getOccurrenceDuplicateArr' && $occid){
-        echo json_encode($occManager->getOccurrenceDuplicateData($occid));
-    }
     elseif($action === 'getOccurrenceGeneticLinkArr' && $occid){
         echo json_encode($occManager->getOccurrenceGeneticLinkData($occid));
     }

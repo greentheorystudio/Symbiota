@@ -340,28 +340,6 @@ class OccurrenceDataManager{
         return $retArr;
     }
 
-    public function getOccurrenceDuplicateData($occid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT DISTINCT d.duplicateid, d.title, d.description, d.notes '.
-            'FROM omoccurduplicates AS d INNER JOIN omoccurduplicatelink AS l ON d.duplicateid = l.duplicateid '.
-            'WHERE l.occid = ' . (int)$occid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
-                }
-                $retArr[] = $nodeArr;
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
     public function getOccurrenceEditData($occid): array
     {
         $retArr = array();

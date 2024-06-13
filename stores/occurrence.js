@@ -211,7 +211,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         ],
         determinationArr: [],
         displayMode: 1,
-        duplicateArr: [],
         editArr: [],
         editorQueryFieldOptions: [
             {field: 'associatedcollectors', label: 'Associated Collectors'},
@@ -390,9 +389,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getDisplayMode(state) {
             return state.displayMode;
         },
-        getDuplicateArr(state) {
-            return state.duplicateArr;
-        },
         getEditArr(state) {
             return state.editArr;
         },
@@ -527,7 +523,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.imageArr.length = 0;
             this.mediaArr.length = 0;
             this.checklistArr.length = 0;
-            this.duplicateArr.length = 0;
             this.geneticLinkArr.length = 0;
         },
         createCollectingEventRecord(callback) {
@@ -1084,21 +1079,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setDisplayMode(value) {
             this.displayMode = Number(value);
         },
-        setDuplicateArr() {
-            const formData = new FormData();
-            formData.append('occid', this.occId.toString());
-            formData.append('action', 'getOccurrenceDuplicateArr');
-            fetch(occurrenceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.duplicateArr = data;
-            });
-        },
         setEditArr() {
             const formData = new FormData();
             formData.append('occid', this.occId.toString());
@@ -1236,7 +1216,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             this.setImageArr();
                             this.setMediaArr();
                             this.setChecklistArr();
-                            this.setDuplicateArr();
                             this.setGeneticLinkArr();
                             if(this.getCollId !== Number(this.occurrenceData.collid)){
                                 this.setCollection(this.occurrenceData.collid, callback);
