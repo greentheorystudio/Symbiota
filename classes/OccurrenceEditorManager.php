@@ -1288,12 +1288,6 @@ class OccurrenceEditorManager {
                 $status = false;
             }
 
-            $sql = 'UPDATE omoccurcomments SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-            if(!$this->conn->query($sql)){
-                $this->errorArr[] .= '; ERROR remapping comments.';
-                $status = false;
-            }
-
             $sql = 'UPDATE omoccurgenetic SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
             if(!$this->conn->query($sql)){
                 $this->errorArr[] .= '; ERROR remapping genetic resources.';

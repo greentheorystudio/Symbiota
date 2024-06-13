@@ -168,19 +168,7 @@ class OccurrenceCleaner extends Manager{
 		return $status;
 	}
 
-	public function hasDuplicateClusters(): bool
-	{
-		$retStatus = false;
-		$sql = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN omoccurduplicatelink AS d ON o.occid = d.occid WHERE (o.collid = '.$this->collid.') LIMIT 1';
-		$rs = $this->conn->query($sql);
-		if($rs->num_rows) {
-			$retStatus = true;
-		}
-		$rs->free();
-		return $retStatus;
-	}
-
-    public function countryCleanFirstStep(): void
+	public function countryCleanFirstStep(): void
 	{
 		echo '<div style="margin-left:15px;">Preparing countries index...</div>';
 		flush();

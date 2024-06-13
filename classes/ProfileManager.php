@@ -438,21 +438,6 @@ class ProfileManager{
         return $retCnt;
     }
 
-    public function unreviewedCommentsExist($collid): int
-    {
-        $retCnt = 0;
-        $sql = 'SELECT count(c.comid) AS reccnt '.
-            'FROM omoccurrences AS o INNER JOIN omoccurcomments AS c ON o.occid = c.occid '.
-            'WHERE o.observeruid = '.$GLOBALS['SYMB_UID'].' AND o.collid = '.$collid.' AND c.reviewstatus < 3 ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $retCnt = $r->reccnt;
-            }
-            $rs->free();
-        }
-        return $retCnt;
-    }
-
     public function getPersonalOccurrencesCsvData($collId){
         $returnArr = array();
         $headerArr = array('occid','dbpk','basisOfRecord','otherCatalogNumbers','ownerInstitutionCode','family','verbatimScientificName','sciname','tid',
