@@ -46,11 +46,6 @@ const collectionControlPanelMenus = {
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/misc/commentlist.php?collid=' + collectionId)">
-                                            View Posted Comments
-                                        </a>
-                                    </div>
-                                    <div>
                                         <a :href="(clientRoot + '/collections/reports/accessreport.php?collid=' + collectionId)">
                                             View Access Statistics
                                         </a>

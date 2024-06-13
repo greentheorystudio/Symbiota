@@ -212,6 +212,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         determinationArr: [],
         displayMode: 1,
         duplicateArr: [],
+        editArr: [],
         editorQueryFieldOptions: [
             {field: 'associatedcollectors', label: 'Associated Collectors'},
             {field: 'associatedoccurrences', label: 'Associated Occurrences'},
@@ -392,6 +393,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getDuplicateArr(state) {
             return state.duplicateArr;
         },
+        getEditArr(state) {
+            return state.editArr;
+        },
         getEditorQueryFieldOptions(state) {
             return state.editorQueryFieldOptions;
         },
@@ -519,6 +523,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceData = Object.assign({}, this.blankOccurrenceRecord);
             this.isLocked = false;
             this.determinationArr.length = 0;
+            this.editArr.length = 0;
             this.imageArr.length = 0;
             this.mediaArr.length = 0;
             this.checklistArr.length = 0;
@@ -1094,6 +1099,21 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 this.duplicateArr = data;
             });
         },
+        setEditArr() {
+            const formData = new FormData();
+            formData.append('occid', this.occId.toString());
+            formData.append('action', 'getOccurrenceEditArr');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.editArr = data;
+            });
+        },
         setEntryFollowUpAction(value) {
             this.entryFollowUpAction = value;
         },
@@ -1212,6 +1232,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         if(data.hasOwnProperty('occid') && Number(data.occid) > 0){
                             this.occurrenceData = Object.assign({}, data);
                             this.setDeterminationArr();
+                            this.setEditArr();
                             this.setImageArr();
                             this.setMediaArr();
                             this.setChecklistArr();
@@ -1326,6 +1347,22 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceData['minimumelevationinmeters'] = this.occurrenceEditData['minimumelevationinmeters'];
             this.occurrenceData['maximumelevationinmeters'] = this.occurrenceEditData['maximumelevationinmeters'];
             this.occurrenceData['verbatimelevation'] = this.occurrenceEditData['verbatimelevation'];
+        },
+        transferOccurrenceRecord(transferToCollid, callback) {
+            const formData = new FormData();
+            formData.append('occid', this.occId.toString());
+            formData.append('transferToCollid', transferToCollid);
+            formData.append('action', 'transferOccurrenceRecord');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(res);
+                    this.setCurrentOccurrenceRecord(this.occId);
+                });
+            });
         },
         updateCollectingEventEditData(key, value) {
             this.collectingEventEditData[key] = value;

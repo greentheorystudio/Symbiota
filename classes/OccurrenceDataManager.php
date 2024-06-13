@@ -362,6 +362,33 @@ class OccurrenceDataManager{
         return $retArr;
     }
 
+    public function getOccurrenceEditData($occid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT e.ocedid, e.fieldname, e.fieldvalueold, e.fieldvaluenew, e.reviewstatus, e.appliedstatus, '.
+            'CONCAT_WS(", ",u.lastname,u.firstname) AS editor, e.initialtimestamp '.
+            'FROM omoccuredits AS e LEFT JOIN users AS u ON e.uid = u.uid '.
+            'WHERE e.occid = ' . (int)$occid . ' ORDER BY e.initialtimestamp DESC ';
+        //echo $sql;
+        $result = $this->conn->query($sql);
+        if($result){
+            while($r = $result->fetch_object()){
+                $nodeArr = array();
+                $nodeArr['ocedid'] = $r->ocedid;
+                $nodeArr['editor'] = $r->editor;
+                $nodeArr['ts'] = substr($r->initialtimestamp,0,16);
+                $nodeArr['reviewstatus'] = $r->reviewstatus;
+                $nodeArr['appliedstatus'] = $r->appliedstatus;
+                $nodeArr['fieldname'] = $r->fieldname;
+                $nodeArr['old'] = $r->fieldvalueold;
+                $nodeArr['new'] = $r->fieldvaluenew;
+                $retArr[] = $nodeArr;
+            }
+            $result->free();
+        }
+        return $retArr;
+    }
+
     public function getOccurrenceFields(): array
     {
         return $this->fields;
@@ -487,6 +514,18 @@ class OccurrenceDataManager{
             $rs->free();
         }
         return $retArr;
+    }
+
+    public function transferOccurrenceRecord($occid, $transferToCollid): int
+    {
+        $returnVal = 0;
+        if((int)$occid > 0 && (int)$transferToCollid > 0){
+            $sql = 'UPDATE omoccurrences SET collid = ' . (int)$transferToCollid . ' WHERE occid = ' . (int)$occid;
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
     }
 
     public function updateOccurrenceRecord($occId, $editData): int

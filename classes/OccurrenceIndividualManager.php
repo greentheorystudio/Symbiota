@@ -22,7 +22,7 @@ class OccurrenceIndividualManager extends Manager{
     {
         if($this->collid){
             $sql = 'SELECT institutioncode, collectioncode, collectionname, homepage, individualurl, contact, email, icon, '.
-                'publicedits, rights, rightsholder, accessrights, guidtarget '.
+                'rights, rightsholder, accessrights, guidtarget '.
                 'FROM omcollections WHERE collid = '.$this->collid;
             $rs = $this->conn->query($sql);
             if($rs){
@@ -289,112 +289,6 @@ class OccurrenceIndividualManager extends Manager{
             unset($retArr[$this->occid]);
         }
         return $retArr;
-    }
-
-    public function getCommentArr($isEditor): array
-    {
-        $retArr = array();
-        $sql = 'SELECT c.comid, c.comment, u.username, c.reviewstatus, c.initialtimestamp '.
-            'FROM omoccurcomments c INNER JOIN users u ON c.uid = u.uid '.
-            'WHERE (c.occid = '.$this->occid.') ';
-        if(!$isEditor) {
-            $sql .= 'AND c.reviewstatus IN(1,3) ';
-        }
-        $sql .= 'ORDER BY c.initialtimestamp';
-        //echo $sql.'<br/><br/>';
-        $result = $this->conn->query($sql);
-        if($result){
-            while($row = $result->fetch_object()){
-                $comId = $row->comid;
-                $retArr[$comId]['comment'] = $row->comment;
-                $retArr[$comId]['reviewstatus'] = $row->reviewstatus;
-                $retArr[$comId]['username'] = $row->username;
-                $retArr[$comId]['initialtimestamp'] = $row->initialtimestamp;
-            }
-            $result->free();
-        }
-        return $retArr;
-    }
-
-    public function addComment($commentStr): bool
-    {
-        $status = false;
-        if($GLOBALS['SYMB_UID']){
-            $sql = 'INSERT INTO omoccurcomments(occid,comment,uid,reviewstatus) '.
-                'VALUES('.$this->occid.',"'.Sanitizer::cleanInStr($this->conn,$commentStr).'",'.$GLOBALS['SYMB_UID'].',1)';
-            //echo 'sql: '.$sql;
-            if($this->conn->query($sql)){
-                $status = true;
-            }
-            else{
-                $status = false;
-                $this->errorMessage = 'ERROR adding comment.';
-            }
-            $this->conn->close();
-        }
-        return $status;
-    }
-
-    public function deleteComment($comId): bool
-    {
-        $status = true;
-        if(is_numeric($comId)){
-            $sql = 'DELETE FROM omoccurcomments WHERE comid = '.$comId;
-            if(!$this->conn->query($sql)){
-                $status = false;
-                $this->errorMessage = 'ERROR deleting comment.';
-            }
-        }
-        $this->conn->close();
-        return $status;
-    }
-
-    public function reportComment($repComId): bool
-    {
-        if($GLOBALS['EMAIL_CONFIGURED'] && isset($GLOBALS['ADMIN_EMAIL']) && $GLOBALS['ADMIN_EMAIL']){
-            $status = true;
-            if(!is_numeric($repComId)) {
-                return false;
-            }
-            if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 2 WHERE comid = '.$repComId)){
-                $this->errorMessage = 'ERROR changing comment status to needing review.';
-                $status = false;
-            }
-            $this->conn->close();
-
-            $emailAddr = $GLOBALS['ADMIN_EMAIL'];
-            $comUrl = $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
-            $subject = $GLOBALS['DEFAULT_TITLE'].' inappropriate comment reported<br/>';
-            $bodyStr = 'The following comment has been reported as inappropriate:<br/> '.
-                '<a href="'.$comUrl.'">'.$comUrl.'</a>';
-            $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
-            if($mailerResult !== 'Sent'){
-                $this->errorMessage = 'ERROR sending email to portal manager, error unknown';
-                $status = false;
-            }
-        }
-        else{
-            $this->errorMessage = 'Email has not been configured on this portal. ';
-            if(isset($GLOBALS['ADMIN_EMAIL']) && $GLOBALS['ADMIN_EMAIL']){
-                $this->errorMessage .= 'Please contact portal administrator at: ' . $GLOBALS['ADMIN_EMAIL'];
-            }
-            $status = false;
-        }
-        return $status;
-    }
-
-    public function makeCommentPublic($comId): bool
-    {
-        $status = true;
-        if(!is_numeric($comId)) {
-            return false;
-        }
-        if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 1 WHERE comid = '.$comId)){
-            $this->errorMessage = 'ERROR making comment public.';
-            $status = false;
-        }
-        $this->conn->close();
-        return $status;
     }
 
     public function getGeneticArr(): array

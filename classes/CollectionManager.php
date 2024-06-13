@@ -56,7 +56,7 @@ class CollectionManager {
         $retArr = array();
         $sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, '.
             'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, c.datarecordingmethod, c.defaultRepCount, '.
-            'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.publicedits, c.isPublic, '.
+            'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.isPublic, '.
             'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, s.uploaddate '.
             'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid ';
         if(!$GLOBALS['IS_ADMIN']){
@@ -88,7 +88,6 @@ class CollectionManager {
             $nodeArr['managementtype'] = $row->managementtype;
             $nodeArr['datarecordingmethod'] = $row->datarecordingmethod;
             $nodeArr['defaultRepCount'] = $row->defaultRepCount;
-            $nodeArr['publicedits'] = $row->publicedits;
             $nodeArr['guidtarget'] = $row->guidtarget;
             $nodeArr['rights'] = $row->rights;
             $nodeArr['rightsholder'] = $row->rightsholder;
@@ -117,7 +116,7 @@ class CollectionManager {
         $uDate = null;
         $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.collectionid, c.fulldescription, c.homepage, '.
             'c.individualurl, c.contact, c.email, c.datarecordingmethod, c.defaultrepcount, c.latitudedecimal, c.longitudedecimal, '.
-            'c.icon, c.colltype, c.managementtype, c.publicedits, c.ispublic, c.guidtarget, c.rights, c.rightsholder, '.
+            'c.icon, c.colltype, c.managementtype, c.ispublic, c.guidtarget, c.rights, c.rightsholder, '.
             'c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, c.publishtogbif, c.publishtoidigbio, '.
             'c.aggkeysstr, s.uploaddate, s.recordcnt, s.georefcnt, s.familycnt, s.genuscnt, s.speciescnt, s.dynamicproperties, '.
             'i.iid, i.institutionname, i.institutionname2, i.address1, i.address2, i.city, i.stateprovince, i.postalcode, i.country '.
@@ -144,7 +143,6 @@ class CollectionManager {
             $retArr['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
             $retArr['colltype'] = $r->colltype;
             $retArr['managementtype'] = $r->managementtype;
-            $retArr['publicedits'] = $r->publicedits;
             $retArr['ispublic'] = (int)$r->ispublic;
             $retArr['guidtarget'] = $r->guidtarget;
             $retArr['rights'] = $r->rights;

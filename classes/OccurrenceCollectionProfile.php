@@ -40,7 +40,7 @@ class OccurrenceCollectionProfile {
 		$retArr = array();
         $sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, '.
 			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, c.datarecordingmethod, c.defaultRepCount, '.
-			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.publicedits, c.isPublic, '.
+			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.isPublic, '.
 			'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, s.uploaddate '.
 			'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid ';
 		if($this->collid){
@@ -76,7 +76,6 @@ class OccurrenceCollectionProfile {
                 $retArr[$row->collid]['managementtype'] = $row->managementtype;
                 $retArr[$row->collid]['datarecordingmethod'] = $row->datarecordingmethod;
                 $retArr[$row->collid]['defaultRepCount'] = $row->defaultRepCount;
-                $retArr[$row->collid]['publicedits'] = $row->publicedits;
                 $retArr[$row->collid]['guidtarget'] = $row->guidtarget;
                 $retArr[$row->collid]['rights'] = $row->rights;
                 $retArr[$row->collid]['rightsholder'] = $row->rightsholder;
@@ -145,7 +144,6 @@ class OccurrenceCollectionProfile {
 			$email = Sanitizer::cleanInStr($this->conn,$postArr['email']);
             $dataRecordingMethod = Sanitizer::cleanInStr($this->conn,$postArr['datarecordingmethod']);
             $defaultRepCount = (array_key_exists('defaultRepCount',$postArr) && (int)$postArr['defaultRepCount'] > 0)?$postArr['defaultRepCount']:'0';
-			$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
 			$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:'NULL');
             $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:'NULL');
 			$guidTarget = (array_key_exists('guidtarget',$postArr)?$postArr['guidtarget']:'');
@@ -180,8 +178,7 @@ class OccurrenceCollectionProfile {
             if(array_key_exists('publishToIdigbio',$postArr)){
                 $sql .= 'publishToIdigbio = '.$idigPublish.',';
             }
-            $sql .= 'publicedits = '.$publicEdits.','.
-                'isPublic = '.$isPublic.','.
+            $sql .= 'isPublic = '.$isPublic.','.
                 'guidtarget = '.($guidTarget?'"'.$guidTarget.'"':'NULL').','.
 				'rights = '.($rights?'"'.$rights.'"':'NULL').','.
 				'rightsholder = '.($rightsHolder?'"'.$rightsHolder.'"':'NULL').','.
@@ -231,8 +228,7 @@ class OccurrenceCollectionProfile {
 		$rights = Sanitizer::cleanInStr($this->conn,$postArr['rights']);
 		$rightsHolder = Sanitizer::cleanInStr($this->conn,$postArr['rightsholder']);
 		$accessRights = Sanitizer::cleanInStr($this->conn,$postArr['accessrights']);
-		$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
-        $gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:0);
+		$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:0);
         $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:0);
         $guidTarget = (array_key_exists('guidtarget',$postArr)?$postArr['guidtarget']:'');
 		if($_FILES['iconfile']['name']){
@@ -254,7 +250,7 @@ class OccurrenceCollectionProfile {
         $isPublic = ((array_key_exists('isPublic',$postArr) && (int)$postArr['isPublic'] === 1)?'1':'0');
 
 		$sql = 'INSERT INTO omcollections(institutioncode,collectioncode,collectionname,fulldescription,collectionid,homepage,'.
-			'contact,email,latitudedecimal,longitudedecimal,publicedits,publishToGbif,'.
+			'contact,email,latitudedecimal,longitudedecimal,publishToGbif,'.
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
             'guidtarget,rights,rightsholder,accessrights,icon,'.
 			'managementtype,datarecordingmethod,defaultRepCount,colltype,collectionguid,isPublic,individualurl,sortseq) '.
@@ -268,7 +264,6 @@ class OccurrenceCollectionProfile {
 			($email?'"'.$email.'"':'NULL').','.
 			($postArr['latitudedecimal']?:'NULL').','.
 			($postArr['longitudedecimal']?:'NULL').','.
-            $publicEdits.','.
             $gbifPublish.','.
             (array_key_exists('publishToIdigbio',$postArr)?$idigPublish.',':'').
 			($guidTarget?'"'.$guidTarget.'"':'NULL').','.

@@ -40,6 +40,9 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'getOccurrenceDeterminationArr' && $occid){
         echo json_encode($occManager->getOccurrenceDeterminationData($occid));
     }
+    elseif($action === 'getOccurrenceEditArr' && $occid){
+        echo json_encode($occManager->getOccurrenceEditData($occid));
+    }
     elseif($action === 'getOccurrenceImageArr' && $occid){
         echo json_encode($occManager->getOccurrenceImageData($occid));
     }
@@ -64,5 +67,9 @@ if($action && Sanitizer::validateInternalRequest()){
     elseif($action === 'getOccurrencesByCatalogNumber' && array_key_exists('catalognumber',$_POST)){
         $collId = array_key_exists('collid',$_POST) ? (int)$_POST['collid'] : null;
         echo json_encode($occManager->getOccurrencesByCatalogNumber($_POST['catalognumber'], $collId));
+    }
+    elseif($action === 'transferOccurrenceRecord' && $isEditor && array_key_exists('transferToCollid',$_POST)){
+        $collId = array_key_exists('transferToCollid',$_POST) ? (int)$_POST['transferToCollid'] : null;
+        echo $occManager->transferOccurrenceRecord($occid, $collId);
     }
 }
