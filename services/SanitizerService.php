@@ -1,5 +1,5 @@
 <?php
-class Sanitizer {
+class SanitizerService {
 
     public static function cleanInStr($conn,$str): string
     {

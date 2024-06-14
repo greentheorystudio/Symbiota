@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
+include_once(__DIR__ . '/../../models/Configurations.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -8,7 +8,7 @@ if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../../index.php');
 }
 
-$confManager = new ConfigurationManager();
+$confManager = new Configurations();
 
 $fullConfArr = $confManager->getConfigurationsArr();
 ?>

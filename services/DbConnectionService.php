@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/dbconnection.php');
 
-class DbConnection {
+class DbConnectionService {
     public function getConnection(): ?\mysqli
     {
         $con = null;

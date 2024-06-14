@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceSkeletal {
 
@@ -14,7 +14,7 @@ class OccurrenceSkeletal {
 	private $errorStr = '';
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbConnectionService();
 		$this->conn = $connection->getConnection();
 		$this->stateList = array('AK' => 'Alaska', 'AL' => 'Alabama', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California',
 			'CO' => 'Colorado', 'CT' => 'Connecticut', 'DE' => 'Delaware', 'DC' => 'District of Columbia', 'FL' => 'Florida',
@@ -52,7 +52,7 @@ class OccurrenceSkeletal {
 						$sql2 .= ','.$v;
 					}
 					else{
-						$sql2 .= ',"'.Sanitizer::cleanInStr($this->conn,$v).'"';
+						$sql2 .= ',"'.SanitizerService::cleanInStr($this->conn,$v).'"';
 					}
 				}
 				else{
@@ -66,7 +66,7 @@ class OccurrenceSkeletal {
 				$status = true;
 				$this->occidArr[] = $this->conn->insert_id;
 				$this->conn->query('UPDATE omcollectionstats SET recordcnt = recordcnt + 1 WHERE collid = '.$this->collid);
-				$guid = UuidFactory::getUuidV4();
+				$guid = UuidService::getUuidV4();
 				if(!$this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("'.$guid.'",'.$this->occidArr[0].')')){
 					$this->errorStr = '(WARNING: GUID mapping failed) ';
 				}
@@ -93,7 +93,7 @@ class OccurrenceSkeletal {
 						$sqlA .= $v;
 					}
 					else{
-						$sqlA .= '"'.Sanitizer::cleanInStr($this->conn,$v).'"';
+						$sqlA .= '"'.SanitizerService::cleanInStr($this->conn,$v).'"';
 					}
 					$sqlA .= ')';
 				}
@@ -127,7 +127,7 @@ class OccurrenceSkeletal {
 		$status = false;
 		if($this->collid){
 			$sql = 'SELECT occid FROM omoccurrences '.
-				'WHERE (catalognumber = "'.Sanitizer::cleanInStr($this->conn,$catNum).'") AND (collid = '.$this->collid.')';
+				'WHERE (catalognumber = "'.SanitizerService::cleanInStr($this->conn,$catNum).'") AND (collid = '.$this->collid.')';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {

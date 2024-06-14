@@ -1,8 +1,8 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
-class OccurrenceCollectingEventManager{
+class OccurrenceCollectingEvents{
 
 	private $conn;
 
@@ -51,7 +51,7 @@ class OccurrenceCollectingEventManager{
     );
 
     public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -64,8 +64,8 @@ class OccurrenceCollectingEventManager{
     public function addConfiguredDataValue($eventId, $dataKey, $dataValue): int
     {
         $returnVal = 0;
-        $key = Sanitizer::cleanInStr($this->conn, $dataKey);
-        $value = Sanitizer::cleanInStr($this->conn, $dataValue);
+        $key = SanitizerService::cleanInStr($this->conn, $dataKey);
+        $value = SanitizerService::cleanInStr($this->conn, $dataValue);
         if($eventId && $key && $value){
             $sql = 'INSERT INTO omoccuradditionaldata(eventid, field, datavalue) '.
                 'VALUES (' . (int)$eventId . ', '.
@@ -95,7 +95,7 @@ class OccurrenceCollectingEventManager{
                     else{
                         $fieldNameArr[] = $field;
                     }
-                    $fieldValueArr[] = Sanitizer::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
             $sql = 'INSERT INTO omoccurcollectingevents(' . implode(',', $fieldNameArr) . ') '.
@@ -111,7 +111,7 @@ class OccurrenceCollectingEventManager{
     public function deleteConfiguredDataValue($eventId, $dataKey): int
     {
         $returnVal = 0;
-        $key = Sanitizer::cleanInStr($this->conn, $dataKey);
+        $key = SanitizerService::cleanInStr($this->conn, $dataKey);
         if($eventId && $key){
             $sql = 'DELETE FROM omoccuradditionaldata '.
                 'WHERE eventid = ' . (int)$eventId . ' AND field = "' . $key . '" ';
@@ -267,10 +267,10 @@ class OccurrenceCollectingEventManager{
         $retArr = array();
         $fieldNameArr = array();
         $sqlWhereArr = array();
-        $recordedby = $vars['recordedby'] ? Sanitizer::cleanInStr($this->conn, $vars['recordedby']) : null;
-        $lastname = $vars['lastname'] ? Sanitizer::cleanInStr($this->conn, $vars['lastname']) : null;
-        $recordnumber = $vars['recordnumber'] ? Sanitizer::cleanInStr($this->conn, $vars['recordnumber']) : null;
-        $eventdate = $vars['eventdate'] ? Sanitizer::cleanInStr($this->conn, $vars['eventdate']) : null;
+        $recordedby = $vars['recordedby'] ? SanitizerService::cleanInStr($this->conn, $vars['recordedby']) : null;
+        $lastname = $vars['lastname'] ? SanitizerService::cleanInStr($this->conn, $vars['lastname']) : null;
+        $recordnumber = $vars['recordnumber'] ? SanitizerService::cleanInStr($this->conn, $vars['recordnumber']) : null;
+        $eventdate = $vars['eventdate'] ? SanitizerService::cleanInStr($this->conn, $vars['eventdate']) : null;
         foreach($this->fields as $field => $fieldArr){
             if($field !== 'eventtype' && $field !== 'eventremarks' && $field !== 'repcount'){
                 if($field === 'year' || $field === 'month' || $field === 'day'){
@@ -355,7 +355,7 @@ class OccurrenceCollectingEventManager{
                     else{
                         $fieldStr = $field;
                     }
-                    $sqlPartArr[] = $fieldStr . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    $sqlPartArr[] = $fieldStr . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                 }
             }
             $sql = 'UPDATE omoccurcollectingevents SET ' . implode(', ', $sqlPartArr) . ' '.
@@ -371,7 +371,7 @@ class OccurrenceCollectingEventManager{
                         else{
                             $fieldStr = $field;
                         }
-                        $occSqlPartArr[] = $fieldStr . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                        $occSqlPartArr[] = $fieldStr . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                         $occSql = 'UPDATE omoccurrences SET ' . implode(', ', $occSqlPartArr) . ' '.
                             'WHERE eventid = ' . $eventId . ' ';
                         if(!$this->conn->query($occSql)){
@@ -387,8 +387,8 @@ class OccurrenceCollectingEventManager{
     public function updateConfiguredDataValue($eventId, $dataKey, $dataValue): int
     {
         $returnVal = 0;
-        $key = Sanitizer::cleanInStr($this->conn, $dataKey);
-        $value = Sanitizer::cleanInStr($this->conn, $dataValue);
+        $key = SanitizerService::cleanInStr($this->conn, $dataKey);
+        $value = SanitizerService::cleanInStr($this->conn, $dataValue);
         if($eventId && $key && $value){
             $sql = 'UPDATE omoccuradditionaldata '.
                 'SET datavalue = "' . $value . '" '.

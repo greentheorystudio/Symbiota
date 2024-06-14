@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../services/DbConnectionService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 
 $responseStr = '';
-$connection = new DbConnection();
+$connection = new DbConnectionService();
 $con = $connection->getConnection();
 
 $sciName = $con->real_escape_string($_REQUEST['sciname']);

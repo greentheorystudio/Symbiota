@@ -1,14 +1,14 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
-include_once(__DIR__ . '/SOLRManager.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../classes/SOLRManager.php');
 
-class CollectionManager {
+class Collections {
 
     private $conn;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
         $this->conn = $connection->getConnection();
     }
 
@@ -22,7 +22,7 @@ class CollectionManager {
     {
         $SOLROccArr = array();
         $mysqlOccArr = array();
-        $collidStr = Sanitizer::cleanInStr($this->conn, $collidStr);
+        $collidStr = SanitizerService::cleanInStr($this->conn, $collidStr);
         $solrWhere = 'q=(collid:(' . $collidStr . '))';
         $solrURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere;
         $solrURL .= '&rows=1&start=1&wt=json';
@@ -193,14 +193,14 @@ class CollectionManager {
         if($state){
             $sql = 'SELECT county AS termstr, COUNT(occid) AS cnt FROM omoccurrences '.
                 'WHERE collid = ' . (int)$collId . ' AND county IS NOT NULL '.
-                'AND country = "' . Sanitizer::cleanInStr($this->conn, $country) . '" '.
-                'AND stateprovince = "' . Sanitizer::cleanInStr($this->conn, $state) . '" '.
+                'AND country = "' . SanitizerService::cleanInStr($this->conn, $country) . '" '.
+                'AND stateprovince = "' . SanitizerService::cleanInStr($this->conn, $state) . '" '.
                 'GROUP BY stateprovince, county ORDER BY termstr ';
         }
         elseif($country){
             $sql = 'SELECT stateprovince AS termstr, COUNT(occid) AS cnt FROM omoccurrences '.
                 'WHERE collid = ' . (int)$collId . ' AND stateprovince IS NOT NULL '.
-                'AND country = "' . Sanitizer::cleanInStr($this->conn, $country) . '" '.
+                'AND country = "' . SanitizerService::cleanInStr($this->conn, $country) . '" '.
                 'GROUP BY stateprovince, country ORDER BY termstr ';
         }
         else{
@@ -314,7 +314,7 @@ class CollectionManager {
 
     public function updateCollectionStatistics($collidStr): int
     {
-        $collidStr = Sanitizer::cleanInStr($this->conn, $collidStr);
+        $collidStr = SanitizerService::cleanInStr($this->conn, $collidStr);
         $this->performOccurrenceCleaning($collidStr);
         return $this->updateCollectionStats($collidStr);
     }
@@ -417,7 +417,7 @@ class CollectionManager {
 
         $returnArrJson = json_encode($statsArr);
         $sql = 'UPDATE omcollectionstats '.
-            "SET dynamicProperties = '".Sanitizer::cleanInStr($this->conn, $returnArrJson)."' ".
+            "SET dynamicProperties = '".SanitizerService::cleanInStr($this->conn, $returnArrJson)."' ".
             'WHERE collid IN(' . $collidStr . ') ';
         if(!$this->conn->query($sql)){
             $returnVal = 0;

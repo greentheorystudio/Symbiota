@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class KeyCharAdmin{
 
@@ -10,7 +10,7 @@ class KeyCharAdmin{
 	private $langId;
 
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbConnectionService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -30,7 +30,7 @@ class KeyCharAdmin{
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				$hid = ($r->hid?:0);
-				$retArr[$hid][$r->cid] = Sanitizer::cleanOutStr($r->charname);
+				$retArr[$hid][$r->cid] = SanitizerService::cleanOutStr($r->charname);
 			}
 			$rs->free();
 		}
@@ -47,14 +47,14 @@ class KeyCharAdmin{
 				'WHERE cid = '.$this->cid;
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
-					$retArr['charname'] = Sanitizer::cleanOutStr($r->charname);
+					$retArr['charname'] = SanitizerService::cleanOutStr($r->charname);
 					$retArr['chartype'] = $r->chartype;
-					$retArr['defaultlang'] = Sanitizer::cleanOutStr($r->defaultlang);
+					$retArr['defaultlang'] = SanitizerService::cleanOutStr($r->defaultlang);
 					$retArr['difficultyrank'] = $r->difficultyrank;
 					$retArr['hid'] = $r->hid;
-					$retArr['units'] = Sanitizer::cleanOutStr($r->units);
-					$retArr['description'] = Sanitizer::cleanOutStr($r->description);
-					$retArr['notes'] = Sanitizer::cleanOutStr($r->notes);
+					$retArr['units'] = SanitizerService::cleanOutStr($r->units);
+					$retArr['description'] = SanitizerService::cleanOutStr($r->description);
+					$retArr['notes'] = SanitizerService::cleanOutStr($r->notes);
 					$retArr['helpurl'] = $r->helpurl;
 					$retArr['enteredby'] = $r->enteredby;
 					$retArr['sortsequence'] = $r->sortsequence;
@@ -68,16 +68,16 @@ class KeyCharAdmin{
 	public function createCharacter($pArr,$un): string
 	{
 		$statusStr = 'SUCCESS: character added to database';
-		$dRank = Sanitizer::cleanInStr($this->conn,$pArr['difficultyrank']);
+		$dRank = SanitizerService::cleanInStr($this->conn,$pArr['difficultyrank']);
 		if(!$dRank) {
 			$dRank = 1;
 		}
-		$hid = Sanitizer::cleanInStr($this->conn,$pArr['hid']);
+		$hid = SanitizerService::cleanInStr($this->conn,$pArr['hid']);
 		if(!$hid) {
 			$hid = 'NULL';
 		}
 		$sql = 'INSERT INTO kmcharacters(charname,chartype,difficultyrank,hid,enteredby,sortsequence) '.
-			'VALUES("'.Sanitizer::cleanInStr($this->conn,$pArr['charname']).'","'.Sanitizer::cleanInStr($this->conn,$pArr['chartype']).'",'.
+			'VALUES("'.SanitizerService::cleanInStr($this->conn,$pArr['charname']).'","'.SanitizerService::cleanInStr($this->conn,$pArr['chartype']).'",'.
 			$dRank.','.$hid.',"'.$un.'",'.(is_numeric($pArr['sortsequence'])?$pArr['sortsequence']:1000).') ';
 		//echo $sql;
 		if($this->conn->query($sql)){
@@ -107,7 +107,7 @@ class KeyCharAdmin{
 		$sql = '';
 		foreach($pArr as $k => $v){
 			if(in_array($k, $targetArr, true)){
-				$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
+				$sql .= ','.$k.'='.($v?'"'.SanitizerService::cleanInStr($this->conn,$v).'"':'NULL');
 			}
 		}
 		$sql = 'UPDATE kmcharacters SET '.substr($sql,1).' WHERE (cid = '.$this->cid.')';
@@ -160,12 +160,12 @@ class KeyCharAdmin{
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					if(is_numeric($r->cs)){
-						$retArr[$r->cs]['charstatename'] = Sanitizer::cleanOutStr($r->charstatename);
+						$retArr[$r->cs]['charstatename'] = SanitizerService::cleanOutStr($r->charstatename);
 						$retArr[$r->cs]['implicit'] = $r->implicit;
-						$retArr[$r->cs]['notes'] = Sanitizer::cleanOutStr($r->notes);
-						$retArr[$r->cs]['description'] = Sanitizer::cleanOutStr($r->description);
+						$retArr[$r->cs]['notes'] = SanitizerService::cleanOutStr($r->notes);
+						$retArr[$r->cs]['description'] = SanitizerService::cleanOutStr($r->description);
 						$retArr[$r->cs]['illustrationurl'] = $r->illustrationurl;
-						$retArr[$r->cs]['sortsequence'] = Sanitizer::cleanOutStr($r->sortsequence);
+						$retArr[$r->cs]['sortsequence'] = SanitizerService::cleanOutStr($r->sortsequence);
 						$retArr[$r->cs]['enteredby'] = $r->enteredby;
 					}
 				}
@@ -198,12 +198,12 @@ class KeyCharAdmin{
 				}
 				$rs->free();
 			}
-			$illustrationUrl = Sanitizer::cleanInStr($this->conn,$illUrl);
-			$description = Sanitizer::cleanInStr($this->conn,$desc);
-			$notes = Sanitizer::cleanInStr($this->conn,$n);
-			$sortSequence = Sanitizer::cleanInStr($this->conn,$sort);
+			$illustrationUrl = SanitizerService::cleanInStr($this->conn,$illUrl);
+			$description = SanitizerService::cleanInStr($this->conn,$desc);
+			$notes = SanitizerService::cleanInStr($this->conn,$n);
+			$sortSequence = SanitizerService::cleanInStr($this->conn,$sort);
 			$sql = 'INSERT INTO kmcs(cid,cs,charstatename,implicit,illustrationurl,description,notes,sortsequence,enteredby) '.
-				'VALUES('.$this->cid.',"'.$csValue.'","'.Sanitizer::cleanInStr($this->conn,$csName).'",1,'.
+				'VALUES('.$this->cid.',"'.$csValue.'","'.SanitizerService::cleanInStr($this->conn,$csName).'",1,'.
 				($illustrationUrl?'"'.$illustrationUrl.'"':'NULL').','.
 				($description?'"'.$description.'"':'NULL').','.
 				($notes?'"'.$notes.'"':'NULL').','.
@@ -221,7 +221,7 @@ class KeyCharAdmin{
 		$sql = '';
 		foreach($pArr as $k => $v){
 			if(in_array($k, $targetArr, true)){
-				$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
+				$sql .= ','.$k.'='.($v?'"'.SanitizerService::cleanInStr($this->conn,$v).'"':'NULL');
 			}
 		}
 		$sql = 'UPDATE kmcs SET '.substr($sql,1).' WHERE (cid = '.$this->cid.') AND (cs = '.$cs.')';
@@ -297,7 +297,7 @@ class KeyCharAdmin{
                     }
                     if(file_exists($imagePath)){
                         if($this->createNewCsImage($imagePath)){
-                            $notes = Sanitizer::cleanInStr($this->conn,$formArr['notes']);
+                            $notes = SanitizerService::cleanInStr($this->conn,$formArr['notes']);
                             $sql = 'INSERT INTO kmcsimages(cid, cs, url, notes, sortsequence, username) '.
                                 'VALUES('.$formArr['cid'].','.$formArr['cs'].',"'.$GLOBALS['IMAGE_ROOT_URL'].$fileName.'",'.
                                 ($notes?'"'.$notes.'"':'NULL').','.
@@ -410,7 +410,7 @@ class KeyCharAdmin{
 		$statusStr = '';
 		if($this->cid && is_numeric($tid)){
 			$sql = 'INSERT INTO kmchartaxalink(cid,tid,relation,notes) '.
-				'VALUES('.$this->cid.','.$tid.',"'.Sanitizer::cleanInStr($this->conn,$rel).'","'.Sanitizer::cleanInStr($this->conn,$notes).'")';
+				'VALUES('.$this->cid.','.$tid.',"'.SanitizerService::cleanInStr($this->conn,$rel).'","'.SanitizerService::cleanInStr($this->conn,$notes).'")';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR: unable to add Taxon Relevance.';
@@ -445,8 +445,8 @@ class KeyCharAdmin{
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->hid]['name'] = Sanitizer::cleanOutStr($r->headingname);
-			$retArr[$r->hid]['notes'] = Sanitizer::cleanOutStr($r->notes);
+			$retArr[$r->hid]['name'] = SanitizerService::cleanOutStr($r->headingname);
+			$retArr[$r->hid]['notes'] = SanitizerService::cleanOutStr($r->notes);
 			$retArr[$r->hid]['sortsequence'] = $r->sortsequence;
 		}
 		$rs->free();
@@ -521,7 +521,7 @@ class KeyCharAdmin{
 		}
 		else{
 			$sql = 'SELECT langid FROM adminlanguages '.
-				'WHERE langname = "'.Sanitizer::cleanInStr($this->conn,$lang).'" OR iso639_1 = "'.Sanitizer::cleanInStr($this->conn,$lang).'" OR iso639_2 = "'.Sanitizer::cleanInStr($this->conn,$lang).'" ';
+				'WHERE langname = "'.SanitizerService::cleanInStr($this->conn,$lang).'" OR iso639_1 = "'.SanitizerService::cleanInStr($this->conn,$lang).'" OR iso639_2 = "'.SanitizerService::cleanInStr($this->conn,$lang).'" ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$this->langId = $r->langid;

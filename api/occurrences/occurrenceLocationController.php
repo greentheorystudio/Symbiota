@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-include_once(__DIR__ . '/../../classes/OccurrenceLocationManager.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+include_once(__DIR__ . '/../../models/OccurrenceLocations.php');
 
 $locationid = array_key_exists('locationid',$_REQUEST) ? (int)$_REQUEST['locationid'] : 0;
 $collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
@@ -20,8 +20,8 @@ elseif($collid){
     }
 }
 
-if($action && Sanitizer::validateInternalRequest()){
-    $locManager = new OccurrenceLocationManager();
+if($action && SanitizerService::validateInternalRequest()){
+    $locManager = new OccurrenceLocations();
     if($action === 'getLocationDataArr' && $isEditor && $locationid){
         echo json_encode($locManager->getLocationData($locationid));
     }

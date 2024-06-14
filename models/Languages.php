@@ -1,13 +1,13 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
-class LanguageManager {
+class Languages {
 
     private $conn;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
         $this->conn = $connection->getConnection();
     }
 
@@ -74,7 +74,7 @@ class LanguageManager {
     {
         $retArr = array();
         $sql = 'SELECT langid, iso639_1, iso639_2, langname FROM adminlanguages '.
-            'WHERE langname LIKE "%'.Sanitizer::cleanInStr($this->conn,$queryString).'%" '.
+            'WHERE langname LIKE "%'.SanitizerService::cleanInStr($this->conn,$queryString).'%" '.
             'ORDER BY langname LIMIT 10 ';
         $rs = $this->conn->query($sql);
         while ($r = $rs->fetch_object()){

@@ -1,8 +1,8 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
-class OccurrenceLocationManager{
+class OccurrenceLocations{
 
 	private $conn;
 
@@ -54,7 +54,7 @@ class OccurrenceLocationManager{
     );
 
     public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -74,7 +74,7 @@ class OccurrenceLocationManager{
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $data)){
                     $fieldNameArr[] = $field;
-                    $fieldValueArr[] = Sanitizer::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
             $sql = 'INSERT INTO omoccurlocations(' . implode(',', $fieldNameArr) . ') '.
@@ -93,10 +93,10 @@ class OccurrenceLocationManager{
         $sql = 'SELECT DISTINCT locationid, locationname, locationcode, country, stateprovince, county, decimallatitude, decimallongitude '.
             'FROM omoccurlocations WHERE collid = ' . (int)$collid . ' ';
         if($key === 'code'){
-            $sql .= 'AND locationcode LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+            $sql .= 'AND locationcode LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
         }
         if($key === 'name'){
-            $sql .= 'AND locationname LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+            $sql .= 'AND locationname LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
         }
         $sql .= 'ORDER BY locationcode, locationname, country, stateprovince, county LIMIT 10 ';
         $rs = $this->conn->query($sql);
@@ -207,7 +207,7 @@ class OccurrenceLocationManager{
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
                     $fieldStr = $field;
-                    $sqlPartArr[] = $fieldStr . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    $sqlPartArr[] = $fieldStr . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                 }
             }
             $sql = 'UPDATE omoccurlocations SET ' . implode(', ', $sqlPartArr) . ' '.
@@ -219,11 +219,11 @@ class OccurrenceLocationManager{
                     if($field !== 'locationname' && $field !== 'locationcode' && array_key_exists($field, $editData)){
                         if(in_array($field, $this->collectingEventOverlapFields)){
                             $sqlOcc = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
-                                'SET o.' . $field . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
+                                'SET o.' . $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
                                 'WHERE o.locationid = ' . $locationId . ' AND (ISNULL(o.eventid) OR ISNULL(e.' . $field . ')) ';
                         }
                         else{
-                            $sqlOcc = 'UPDATE omoccurrences SET ' . $field . ' = ' . Sanitizer::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
+                            $sqlOcc = 'UPDATE omoccurrences SET ' . $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
                                 'WHERE locationid = ' . $locationId . ' ';
                         }
                         if(!$this->conn->query($sqlOcc)){

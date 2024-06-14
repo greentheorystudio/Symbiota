@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
 
 class TaxonomyUtilities {
 
@@ -13,7 +13,7 @@ class TaxonomyUtilities {
     private $acceptedOnly = false;
 
     public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
         $this->conn = $connection->getConnection();
     }
 
@@ -490,7 +490,7 @@ class TaxonomyUtilities {
         $retArr = array();
         $sql = 'SELECT DISTINCT tid, kingdomId, rankid, sciname, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
             'author, tidaccepted, parenttid, family, source, notes, hybrid, securitystatus  '.
-            'FROM taxa WHERE sciname LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+            'FROM taxa WHERE sciname LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
         if($this->rankLimit){
             $sql .= 'AND rankid = '.$this->rankLimit.' ';
         }
@@ -534,7 +534,7 @@ class TaxonomyUtilities {
         $retArr = array();
         $sql = 'SELECT DISTINCT v.VernacularName '.
             'FROM taxavernaculars AS v ';
-        $sql .= 'WHERE v.VernacularName LIKE "%'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'WHERE v.VernacularName LIKE "%'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
         $sql .= 'ORDER BY v.VernacularName ';
         if($this->limit){
             $sql .= 'LIMIT '.$this->limit.' ';
@@ -833,14 +833,14 @@ class TaxonomyUtilities {
             $sql = 'INSERT INTO taxadescrblock (tid, caption, `source`, sourceurl, `language`, langid, displaylevel, uid, notes) '.
                 'VALUES ('.
                 (isset($description['tid']) ? (int)$description['tid'] :'NULL').','.
-                (isset($description['caption']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['caption']).'"' :'NULL').','.
-                (isset($description['source']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['source']).'"' :'NULL').','.
-                (isset($description['sourceurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['sourceurl']).'"' :'NULL').','.
-                (isset($description['language']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['language']).'"' :'NULL').','.
+                (isset($description['caption']) ? '"'.SanitizerService::cleanInStr($this->conn,$description['caption']).'"' :'NULL').','.
+                (isset($description['source']) ? '"'.SanitizerService::cleanInStr($this->conn,$description['source']).'"' :'NULL').','.
+                (isset($description['sourceurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$description['sourceurl']).'"' :'NULL').','.
+                (isset($description['language']) ? '"'.SanitizerService::cleanInStr($this->conn,$description['language']).'"' :'NULL').','.
                 (isset($description['langid']) ? (int)$description['langid'] :'NULL').','.
                 (isset($description['displaylevel']) ? (int)$description['displaylevel'] :'1').','.
                 '"'.$GLOBALS['USERNAME'].'",'.
-                (isset($description['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,$description['notes']).'"' :'NULL').')';
+                (isset($description['notes']) ? '"'.SanitizerService::cleanInStr($this->conn,$description['notes']).'"' :'NULL').')';
             //echo $sql; exit;
             if($this->conn->query($sql)){
                 $retVal = $this->conn->insert_id;
@@ -856,10 +856,10 @@ class TaxonomyUtilities {
             $sql = 'INSERT INTO taxadescrstmts (tdbid, heading, `statement`, displayheader, notes, sortsequence) '.
                 'VALUES ('.
                 (isset($statement['tdbid']) ? (int)$statement['tdbid'] :'NULL').','.
-                (isset($statement['heading']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['heading']).'"' :'NULL').','.
-                (isset($statement['statement']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($statement['statement'], '<i><b><em><div>')).'"' :'NULL').','.
+                (isset($statement['heading']) ? '"'.SanitizerService::cleanInStr($this->conn,$statement['heading']).'"' :'NULL').','.
+                (isset($statement['statement']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($statement['statement'], '<i><b><em><div>')).'"' :'NULL').','.
                 (isset($statement['displayheader']) ? (int)$statement['displayheader'] :'1').','.
-                (isset($statement['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,$statement['notes']).'"' :'NULL').','.
+                (isset($statement['notes']) ? '"'.SanitizerService::cleanInStr($this->conn,$statement['notes']).'"' :'NULL').','.
                 (isset($statement['sortsequence']) ? (int)$statement['sortsequence'] :'1').')';
             //echo $sql; exit;
             if($this->conn->query($sql)){
@@ -872,8 +872,8 @@ class TaxonomyUtilities {
     public function addTaxonIdentifier($tid, $idName, $id): bool
     {
         if($tid && $idName && $id){
-            $identifierName = Sanitizer::cleanInStr($this->conn,$idName);
-            $identifier = Sanitizer::cleanInStr($this->conn,$id);
+            $identifierName = SanitizerService::cleanInStr($this->conn,$idName);
+            $identifier = SanitizerService::cleanInStr($this->conn,$id);
             $sql = 'INSERT IGNORE INTO taxaidentifiers(tid,`name`,identifier) VALUES('.
                 $tid.',"'.$identifierName.'","'.$identifier.'")';
             if(!$this->conn->query($sql)){
@@ -889,7 +889,7 @@ class TaxonomyUtilities {
     {
         if($tid && $name && $langId){
             $sql = 'INSERT IGNORE INTO taxavernaculars(TID,VernacularName,langid) VALUES('.
-                $tid.',"'.Sanitizer::cleanInStr($this->conn,$name).'",'.(int)$langId.')';
+                $tid.',"'.SanitizerService::cleanInStr($this->conn,$name).'",'.(int)$langId.')';
             return $this->conn->query($sql);
         }
         return false;
@@ -1400,19 +1400,19 @@ class TaxonomyUtilities {
                 $sql .= 'TID = '.(int)$postArr['tid'].', ';
             }
             if(array_key_exists('vernacularname',$postArr) && $postArr['vernacularname']){
-                $sql .= 'VernacularName = '.(Sanitizer::cleanInStr($this->conn,$postArr['vernacularname'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['vernacularname']).'"':'NULL').', ';
+                $sql .= 'VernacularName = '.(SanitizerService::cleanInStr($this->conn,$postArr['vernacularname'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['vernacularname']).'"':'NULL').', ';
             }
             if(array_key_exists('language',$postArr) && $postArr['language']){
-                $sql .= '`Language` = '.(Sanitizer::cleanInStr($this->conn,$postArr['language'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['language']).'"':'NULL').', ';
+                $sql .= '`Language` = '.(SanitizerService::cleanInStr($this->conn,$postArr['language'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['language']).'"':'NULL').', ';
             }
             if(array_key_exists('langid',$postArr) && (int)$postArr['langid']){
                 $sql .= 'langid = '.(int)$postArr['langid'].', ';
             }
             if(array_key_exists('source',$postArr) && $postArr['source']){
-                $sql .= 'Source = '.(Sanitizer::cleanInStr($this->conn,$postArr['source'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', ';
+                $sql .= 'Source = '.(SanitizerService::cleanInStr($this->conn,$postArr['source'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', ';
             }
             if(array_key_exists('notes',$postArr) && $postArr['notes']){
-                $sql .= 'notes = '.(Sanitizer::cleanInStr($this->conn,$postArr['notes'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', ';
+                $sql .= 'notes = '.(SanitizerService::cleanInStr($this->conn,$postArr['notes'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', ';
             }
             if(array_key_exists('sortsequence',$postArr) && (int)$postArr['sortsequence']){
                 $sql .= 'SortSequence = '.(int)$postArr['sortsequence'].', ';
@@ -1442,22 +1442,22 @@ class TaxonomyUtilities {
 
     public function setRankLimit($val): void
     {
-        $this->rankLimit = Sanitizer::cleanInStr($this->conn,$val);
+        $this->rankLimit = SanitizerService::cleanInStr($this->conn,$val);
     }
 
     public function setRankLow($val): void
     {
-        $this->rankLow = Sanitizer::cleanInStr($this->conn,$val);
+        $this->rankLow = SanitizerService::cleanInStr($this->conn,$val);
     }
 
     public function setRankHigh($val): void
     {
-        $this->rankHigh = Sanitizer::cleanInStr($this->conn,$val);
+        $this->rankHigh = SanitizerService::cleanInStr($this->conn,$val);
     }
 
     public function setLimit($val): void
     {
-        $this->limit = Sanitizer::cleanInStr($this->conn,$val);
+        $this->limit = SanitizerService::cleanInStr($this->conn,$val);
     }
 
     public function setHideAuth($val): void
@@ -1482,6 +1482,6 @@ class TaxonomyUtilities {
 
     public function setHideProtected($val): void
     {
-        $this->hideProtected = Sanitizer::cleanInStr($this->conn,$val);
+        $this->hideProtected = SanitizerService::cleanInStr($this->conn,$val);
     }
 }

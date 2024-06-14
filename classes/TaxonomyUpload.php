@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TaxonomyUpload{
 
@@ -15,7 +15,7 @@ class TaxonomyUpload{
 	private $errorStr = '';
 
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbConnectionService();
 		$this->conn = $connection->getConnection();
  		$this->setUploadTargetPath();
  		set_time_limit(3000);
@@ -95,7 +95,7 @@ class TaxonomyUpload{
                         if(in_array('scinameinput', $fieldMap, true)){
                             $inputArr = array();
                             foreach($uploadTaxaIndexArr as $recIndex => $targetField){
-                                $valIn = Sanitizer::cleanInStr($this->conn,$recordArr[$recIndex]);
+                                $valIn = SanitizerService::cleanInStr($this->conn,$recordArr[$recIndex]);
                                 if($targetField === 'acceptance' && !is_numeric($valIn)){
                                     $valInTest = strtolower($valIn);
                                     if($valInTest === 'accepted' || $valInTest === 'valid'){
@@ -146,7 +146,7 @@ class TaxonomyUpload{
                                 unset($inputArr['identificationqualifier']);
                                 foreach($inputArr as $k => $v){
                                     $sql1 .= ','.$k;
-                                    $inValue = Sanitizer::cleanInStr($this->conn,$v);
+                                    $inValue = SanitizerService::cleanInStr($this->conn,$v);
                                     $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
                                 }
                                 $sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';

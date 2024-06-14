@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
 
 class OccurrenceSupport {
 
@@ -7,7 +7,7 @@ class OccurrenceSupport {
 	private $errorMessage;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
 	    $this->conn = $connection->getConnection();
 	}
 

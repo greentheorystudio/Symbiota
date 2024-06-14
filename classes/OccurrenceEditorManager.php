@@ -1,11 +1,11 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/OccurrenceEditorDeterminations.php');
 include_once(__DIR__ . '/OccurrenceEditorImages.php');
 include_once(__DIR__ . '/OccurrenceEditorMedia.php');
 include_once(__DIR__ . '/SOLRManager.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/UuidService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceEditorManager {
 
@@ -31,7 +31,7 @@ class OccurrenceEditorManager {
             $this->isShareConn = true;
         }
         else{
-            $connection = new DbConnection();
+            $connection = new DbConnectionService();
             $this->conn = $connection->getConnection();
         }
         $this->occFieldArr = array('dbpk', 'catalognumber', 'othercatalognumbers', 'occurrenceid','family', 'verbatimscientificname', 'sciname',
@@ -59,7 +59,7 @@ class OccurrenceEditorManager {
     public function setOccId($id): void
     {
         if(is_numeric($id)){
-            $this->occid = Sanitizer::cleanInStr($this->conn,$id);
+            $this->occid = SanitizerService::cleanInStr($this->conn,$id);
         }
     }
 
@@ -74,7 +74,7 @@ class OccurrenceEditorManager {
                 unset($this->collMap);
                 $this->collMap = array();
             }
-            $this->collId = Sanitizer::cleanInStr($this->conn,$id);
+            $this->collId = SanitizerService::cleanInStr($this->conn,$id);
         }
     }
 
@@ -95,7 +95,7 @@ class OccurrenceEditorManager {
                 $rs = $this->conn->query($sql);
                 if($row = $rs->fetch_object()){
                     $this->collMap['collid'] = $row->collid;
-                    $this->collMap['collectionname'] = Sanitizer::cleanOutStr($row->collectionname);
+                    $this->collMap['collectionname'] = SanitizerService::cleanOutStr($row->collectionname);
                     $this->collMap['institutioncode'] = $row->institutioncode;
                     $this->collMap['collectioncode'] = $row->collectioncode;
                     $this->collMap['colltype'] = $row->colltype;
@@ -252,8 +252,8 @@ class OccurrenceEditorManager {
                         $v = str_ireplace(array('>',' and ','<'),array('',' - ',''),$v);
                     }
                     if($p = strpos($v,' - ')){
-                        $term1 = Sanitizer::cleanInStr($this->conn,substr($v,0,$p));
-                        $term2 = Sanitizer::cleanInStr($this->conn,substr($v,$p+3));
+                        $term1 = SanitizerService::cleanInStr($this->conn,substr($v,0,$p));
+                        $term2 = SanitizerService::cleanInStr($this->conn,substr($v,$p+3));
                         if(is_numeric($term1) && is_numeric($term2)){
                             $catNumIsNum = true;
                             if($isOccid){
@@ -272,7 +272,7 @@ class OccurrenceEditorManager {
                         }
                     }
                     else{
-                        $vStr = Sanitizer::cleanInStr($this->conn,$v);
+                        $vStr = SanitizerService::cleanInStr($this->conn,$v);
                         if(is_numeric($vStr)){
                             if($iInFrag){
                                 $catNumIsNum = true;
@@ -327,7 +327,7 @@ class OccurrenceEditorManager {
                 $ocnBetweenFrag = array();
                 $ocnInFrag = array();
                 foreach($ocnArr as $v){
-                    $v = Sanitizer::cleanInStr($this->conn,$v);
+                    $v = SanitizerService::cleanInStr($this->conn,$v);
                     if(preg_match('/^>.*\s{1,3}AND\s{1,3}<./i',$v)){
                         $v = str_ireplace(array('>',' and ','<'),array('',' - ',''),$v);
                     }
@@ -389,7 +389,7 @@ class OccurrenceEditorManager {
                 $rnBetweenFrag = array();
                 $rnInFrag = array();
                 foreach($rnArr as $v){
-                    $v = Sanitizer::cleanInStr($this->conn,$v);
+                    $v = SanitizerService::cleanInStr($this->conn,$v);
                     if(preg_match('/^>.*\s{1,3}AND\s{1,3}<./i',$v)){
                         $v = str_ireplace(array('>',' and ','<'),array('',' - ',''),$v);
                     }
@@ -438,7 +438,7 @@ class OccurrenceEditorManager {
                 $sqlWhere .= 'AND ISNULL(o2.recordedby) ';
             }
             elseif(strncmp($this->qryArr['rb'], '%', 1) === 0){
-                $collStr = Sanitizer::cleanInStr($this->conn,substr($this->qryArr['rb'],1));
+                $collStr = SanitizerService::cleanInStr($this->conn,substr($this->qryArr['rb'],1));
                 if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
                     $sqlWhere .= 'AND o2.recordedby LIKE "%'.$collStr.'%" ';
                 }
@@ -447,7 +447,7 @@ class OccurrenceEditorManager {
                 }
             }
             else{
-                $sqlWhere .= 'AND o2.recordedby LIKE "'.Sanitizer::cleanInStr($this->conn,$this->qryArr['rb']).'%" ';
+                $sqlWhere .= 'AND o2.recordedby LIKE "'.SanitizerService::cleanInStr($this->conn,$this->qryArr['rb']).'%" ';
             }
         }
         if(array_key_exists('ed',$this->qryArr)){
@@ -455,7 +455,7 @@ class OccurrenceEditorManager {
                 $sqlWhere .= 'AND ISNULL(o2.eventdate) ';
             }
             else{
-                $edv = Sanitizer::cleanInStr($this->conn,$this->qryArr['ed']);
+                $edv = SanitizerService::cleanInStr($this->conn,$this->qryArr['ed']);
                 if(preg_match('/^>.*\s{1,3}AND\s{1,3}<./i',$edv)){
                     $edv = str_ireplace(array('>',' and ','<'),array('',' - ',''),$edv);
                 }
@@ -476,14 +476,14 @@ class OccurrenceEditorManager {
                 $sqlWhere .= 'AND ISNULL(o2.recordEnteredBy) ';
             }
             else{
-                $sqlWhere .= 'AND o2.recordEnteredBy = "'.Sanitizer::cleanInStr($this->conn,$this->qryArr['eb']).'" ';
+                $sqlWhere .= 'AND o2.recordEnteredBy = "'.SanitizerService::cleanInStr($this->conn,$this->qryArr['eb']).'" ';
             }
         }
         if(array_key_exists('ouid',$this->qryArr) && is_numeric($this->qryArr['ouid'])){
             $sqlWhere .= 'AND o2.observeruid = '.$this->qryArr['ouid'].' ';
         }
         if(array_key_exists('de',$this->qryArr)){
-            $de = Sanitizer::cleanInStr($this->conn,$this->qryArr['de']);
+            $de = SanitizerService::cleanInStr($this->conn,$this->qryArr['de']);
             if(preg_match('/^>.*\s{1,3}AND\s{1,3}<./i',$de)){
                 $de = str_ireplace(array('>',' and ','<'),array('',' - ',''),$de);
             }
@@ -499,7 +499,7 @@ class OccurrenceEditorManager {
             }
         }
         if(array_key_exists('dm',$this->qryArr)){
-            $dm = Sanitizer::cleanInStr($this->conn,$this->qryArr['dm']);
+            $dm = SanitizerService::cleanInStr($this->conn,$this->qryArr['dm']);
             if(preg_match('/^>.*\s{1,3}AND\s{1,3}<./i',$dm)){
                 $dm = str_ireplace(array('>',' and ','<'),array('',' - ',''),$dm);
             }
@@ -519,7 +519,7 @@ class OccurrenceEditorManager {
                 $sqlWhere .= 'AND ISNULL(o2.processingstatus) ';
             }
             else{
-                $sqlWhere .= 'AND o2.processingstatus = "'.Sanitizer::cleanInStr($this->conn,$this->qryArr['ps']).'" ';
+                $sqlWhere .= 'AND o2.processingstatus = "'.SanitizerService::cleanInStr($this->conn,$this->qryArr['ps']).'" ';
             }
         }
         if(array_key_exists('woi',$this->qryArr)){
@@ -529,12 +529,12 @@ class OccurrenceEditorManager {
             $sqlWhere .= 'AND exn.ometid = '.$this->qryArr['exsid'].' ';
         }
         for($x=1;$x<6;$x++){
-            $cao = (array_key_exists('cao'.$x,$this->qryArr)?Sanitizer::cleanInStr($this->conn,$this->qryArr['cao'.$x]):'');
-            $cop = (array_key_exists('cop'.$x,$this->qryArr)?Sanitizer::cleanInStr($this->conn,$this->qryArr['cop'.$x]):'');
-            $cf = (array_key_exists('cf'.$x,$this->qryArr)?Sanitizer::cleanInStr($this->conn,$this->qryArr['cf'.$x]):'');
-            $ct = (array_key_exists('ct'.$x,$this->qryArr)?Sanitizer::cleanInStr($this->conn,$this->qryArr['ct'.$x]):'');
-            $cv = (array_key_exists('cv'.$x,$this->qryArr)?Sanitizer::cleanInStr($this->conn,$this->qryArr['cv'.$x]):'');
-            $ccp = (array_key_exists('ccp'.$x,$this->qryArr)?Sanitizer::cleanInStr($this->conn,$this->qryArr['ccp'.$x]):'');
+            $cao = (array_key_exists('cao'.$x,$this->qryArr)?SanitizerService::cleanInStr($this->conn,$this->qryArr['cao'.$x]):'');
+            $cop = (array_key_exists('cop'.$x,$this->qryArr)?SanitizerService::cleanInStr($this->conn,$this->qryArr['cop'.$x]):'');
+            $cf = (array_key_exists('cf'.$x,$this->qryArr)?SanitizerService::cleanInStr($this->conn,$this->qryArr['cf'.$x]):'');
+            $ct = (array_key_exists('ct'.$x,$this->qryArr)?SanitizerService::cleanInStr($this->conn,$this->qryArr['ct'.$x]):'');
+            $cv = (array_key_exists('cv'.$x,$this->qryArr)?SanitizerService::cleanInStr($this->conn,$this->qryArr['cv'.$x]):'');
+            $ccp = (array_key_exists('ccp'.$x,$this->qryArr)?SanitizerService::cleanInStr($this->conn,$this->qryArr['ccp'.$x]):'');
             if(!$cao) {
                 $cao = 'AND';
             }
@@ -614,7 +614,7 @@ class OccurrenceEditorManager {
             $sqlWhere .= ($sqlWhere ? 'AND o2.collid = ' . $this->collId . ' ' : 'WHERE o2.collid = ' . $this->collId . ' ');
         }
         if(isset($this->qryArr['orderby'])){
-            $orderBy = Sanitizer::cleanInStr($this->conn,$this->qryArr['orderby']);
+            $orderBy = SanitizerService::cleanInStr($this->conn,$this->qryArr['orderby']);
             if($orderBy === 'catalognumber'){
                 if($catNumIsNum){
                     $sqlOrderBy = 'catalogNumber+1';
@@ -728,7 +728,7 @@ class OccurrenceEditorManager {
                     $retArr[$occid]['ownerinstitutioncode'] = $this->collMap['institutioncode'];
                 }
             }
-            $this->occurrenceMap = Sanitizer::cleanOutArray($retArr);
+            $this->occurrenceMap = SanitizerService::cleanOutArray($retArr);
             if($this->occid){
                 $this->setLoanData();
                 if($this->exsiccatiMode) {
@@ -868,8 +868,8 @@ class OccurrenceEditorManager {
                             if(!array_key_exists($fieldName,$occArr)){
                                 $occArr[$fieldName] = 0;
                             }
-                            $newValue = Sanitizer::cleanInStr($this->conn,$occArr[$fieldName]);
-                            $oldValue = is_array($oldValues) ? Sanitizer::cleanInStr($this->conn,$oldValues[$fieldName]) : '';
+                            $newValue = SanitizerService::cleanInStr($this->conn,$occArr[$fieldName]);
+                            $oldValue = is_array($oldValues) ? SanitizerService::cleanInStr($this->conn,$oldValues[$fieldName]) : '';
                             if(($oldValue !== $newValue) && $fieldName !== 'tid') {
                                 if($fieldName === 'ometid'){
                                     $exsTitleStr = '';
@@ -912,7 +912,7 @@ class OccurrenceEditorManager {
                 }
                 foreach($occArr as $oField => $ov){
                     if($oField !== 'observeruid' && in_array($oField, $this->occFieldArr, true)){
-                        $vStr = Sanitizer::cleanInStr($this->conn,$ov);
+                        $vStr = SanitizerService::cleanInStr($this->conn,$ov);
                         $sql .= ','.$oField.' = '.($vStr!==''?'"'.$vStr.'"':'NULL');
                         if(array_key_exists($this->occid,$this->occurrenceMap) && array_key_exists($oField,$this->occurrenceMap[$this->occid])){
                             $this->occurrenceMap[$this->occid][$oField] = $vStr;
@@ -962,8 +962,8 @@ class OccurrenceEditorManager {
                         }
                     }
                     if(in_array('ometid', $editArr, true) || in_array('exsnumber', $editArr, true)){
-                        $ometid = Sanitizer::cleanInStr($this->conn,$occArr['ometid']);
-                        $exsNumber = Sanitizer::cleanInStr($this->conn,$occArr['exsnumber']);
+                        $ometid = SanitizerService::cleanInStr($this->conn,$occArr['ometid']);
+                        $exsNumber = SanitizerService::cleanInStr($this->conn,$occArr['exsnumber']);
                         if($ometid && $exsNumber){
                             $exsNumberId = '';
                             $sql = 'SELECT omenid FROM omexsiccatinumbers WHERE ometid = '.$ometid.' AND exsnumber = "'.$exsNumber.'"';
@@ -1062,7 +1062,7 @@ class OccurrenceEditorManager {
                         }
                     }
                     else{
-                        $sql .= ', "'.Sanitizer::cleanInStr($this->conn,$fieldValue).'"';
+                        $sql .= ', "'.SanitizerService::cleanInStr($this->conn,$fieldValue).'"';
                     }
                 }
                 else{
@@ -1075,13 +1075,13 @@ class OccurrenceEditorManager {
                 $this->occid = $this->conn->insert_id;
                 $this->conn->query('UPDATE omcollectionstats SET recordcnt = recordcnt + 1 WHERE collid = '.$this->collId);
 
-                $guid = UuidFactory::getUuidV4();
+                $guid = UuidService::getUuidV4();
                 if(!$this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("'.$guid.'",'.$this->occid.')')){
                     $status .= '(WARNING: GUID mapping failed) ';
                 }
                 if(isset($occArr['ometid'], $occArr['exsnumber'])){
-                    $ometid = Sanitizer::cleanInStr($this->conn,$occArr['ometid']);
-                    $exsNumber = Sanitizer::cleanInStr($this->conn,$occArr['exsnumber']);
+                    $ometid = SanitizerService::cleanInStr($this->conn,$occArr['ometid']);
+                    $exsNumber = SanitizerService::cleanInStr($this->conn,$occArr['exsnumber']);
                     if($ometid && $exsNumber){
                         $exsNumberId = '';
                         $sql = 'SELECT omenid FROM omexsiccatinumbers WHERE ometid = '.$ometid.' AND exsnumber = "'.$exsNumber.'"';
@@ -1111,7 +1111,7 @@ class OccurrenceEditorManager {
                 }
                 if(array_key_exists('host',$occArr)){
                     $sql1 = 'INSERT INTO omoccurassociations(occid,relationship,verbatimsciname) '.
-                        'VALUES('.$this->occid.',"host","'.Sanitizer::cleanInStr($this->conn,$occArr['host']).'")';
+                        'VALUES('.$this->occid.',"host","'.SanitizerService::cleanInStr($this->conn,$occArr['host']).'")';
                     if(!$this->conn->query($sql1)){
                         $status .= '(WARNING adding host.) ';
                     }
@@ -1157,7 +1157,7 @@ class OccurrenceEditorManager {
                     }
                     $detObj = json_encode($detArr[$detId]);
                     $sqlArchive = 'UPDATE guidoccurdeterminations '.
-                        'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$this->encodeStrTargeted($detObj,'utf8','UTF-8')).'" '.
+                        'SET archivestatus = 1, archiveobj = "'.SanitizerService::cleanInStr($this->conn,$this->encodeStrTargeted($detObj,'utf8','UTF-8')).'" '.
                         'WHERE (detid = '.$detId.')';
                     $this->conn->query($sqlArchive);
                 }
@@ -1176,7 +1176,7 @@ class OccurrenceEditorManager {
                     }
                     $imgObj = json_encode($imgArr[$imgId]);
                     $sqlArchive = 'UPDATE guidimages '.
-                        'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$this->encodeStrTargeted($imgObj,'utf8','UTF-8')).'" '.
+                        'SET archivestatus = 1, archiveobj = "'.SanitizerService::cleanInStr($this->conn,$this->encodeStrTargeted($imgObj,'utf8','UTF-8')).'" '.
                         'WHERE (imgid = '.$imgId.')';
                     $this->conn->query($sqlArchive);
                 }
@@ -1212,7 +1212,7 @@ class OccurrenceEditorManager {
                 $archiveArr['dateDeleted'] = date('r').' by '.$GLOBALS['USER_DISPLAY_NAME'];
                 $archiveObj = json_encode($archiveArr);
                 $sqlArchive = 'UPDATE guidoccurrences '.
-                    'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$this->encodeStrTargeted($archiveObj,'utf8','UTF-8')).'" '.
+                    'SET archivestatus = 1, archiveobj = "'.SanitizerService::cleanInStr($this->conn,$this->encodeStrTargeted($archiveObj,'utf8','UTF-8')).'" '.
                     'WHERE (occid = '.$delOccid.')';
                 //echo $sqlArchive;
                 $this->conn->query($sqlArchive);
@@ -1258,7 +1258,7 @@ class OccurrenceEditorManager {
             $sqlFrag = '';
             foreach($sArr as $k => $v){
                 if(($v !== '') && $tArr[$k] === ''){
-                    $sqlFrag .= ','.$k.'="'.Sanitizer::cleanInStr($this->conn,$v).'"';
+                    $sqlFrag .= ','.$k.'="'.SanitizerService::cleanInStr($this->conn,$v).'"';
                 }
             }
             if($sqlFrag){
@@ -1415,9 +1415,9 @@ class OccurrenceEditorManager {
     public function batchUpdateField($fieldName,$oldValue,$newValue,$buMatch): string
     {
         $statusStr = '';
-        $fn = Sanitizer::cleanInStr($this->conn,$fieldName);
-        $ov = Sanitizer::cleanInStr($this->conn,$oldValue);
-        $nv = Sanitizer::cleanInStr($this->conn,$newValue);
+        $fn = SanitizerService::cleanInStr($this->conn,$fieldName);
+        $ov = SanitizerService::cleanInStr($this->conn,$oldValue);
+        $nv = SanitizerService::cleanInStr($this->conn,$newValue);
         if($fn && ($ov || $nv)){
             $occidArr = array();
             $sqlOccid = 'SELECT DISTINCT o2.occid FROM omoccurrences AS o2 ';
@@ -1472,8 +1472,8 @@ class OccurrenceEditorManager {
     {
         $retCnt = 0;
 
-        $fn = Sanitizer::cleanInStr($this->conn,$fieldName);
-        $ov = Sanitizer::cleanInStr($this->conn,$oldValue);
+        $fn = SanitizerService::cleanInStr($this->conn,$fieldName);
+        $ov = SanitizerService::cleanInStr($this->conn,$oldValue);
 
         $sql = 'SELECT COUNT(DISTINCT o2.occid) AS retcnt '.
             'FROM omoccurrences AS o2 ';
@@ -1511,7 +1511,7 @@ class OccurrenceEditorManager {
             'minimumelevationinmeters','maximumelevationinmeters','verbatimelevation','minimumdepthinmeters','maximumdepthinmeters','verbatimdepth',
             'habitat','substrate','lifestage', 'sex', 'individualcount', 'samplingprotocol', 'preparations',
             'associatedtaxa','basisofrecord','language','labelproject');
-        return Sanitizer::cleanOutArray(array_intersect_key($fArr,array_flip($locArr)));
+        return SanitizerService::cleanOutArray(array_intersect_key($fArr,array_flip($locArr)));
     }
 
     public function getVoucherChecklists(): array
@@ -1618,11 +1618,11 @@ class OccurrenceEditorManager {
     public function editGeneticResource($genArr): string
     {
         $sql = 'UPDATE omoccurgenetic SET '.
-            'identifier = "'.Sanitizer::cleanInStr($this->conn,$genArr['identifier']).'", '.
-            'resourcename = "'.Sanitizer::cleanInStr($this->conn,$genArr['resourcename']).'", '.
-            'locus = '.($genArr['locus']?'"'.Sanitizer::cleanInStr($this->conn,$genArr['locus']).'"':'NULL').', '.
+            'identifier = "'.SanitizerService::cleanInStr($this->conn,$genArr['identifier']).'", '.
+            'resourcename = "'.SanitizerService::cleanInStr($this->conn,$genArr['resourcename']).'", '.
+            'locus = '.($genArr['locus']?'"'.SanitizerService::cleanInStr($this->conn,$genArr['locus']).'"':'NULL').', '.
             'resourceurl = '.($genArr['resourceurl']?'"'.$genArr['resourceurl'].'"':'').', '.
-            'notes = '.($genArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$genArr['notes']).'"':'NULL').' '.
+            'notes = '.($genArr['notes']?'"'.SanitizerService::cleanInStr($this->conn,$genArr['notes']).'"':'NULL').' '.
             'WHERE idoccurgenetic = '.$genArr['genid'];
         if(!$this->conn->query($sql)){
             return 'ERROR editing genetic resource #'.$genArr['genid'].'.';
@@ -1642,11 +1642,11 @@ class OccurrenceEditorManager {
     public function addGeneticResource($genArr): string
     {
         $sql = 'INSERT INTO omoccurgenetic(occid, identifier, resourcename, locus, resourceurl, notes) '.
-            'VALUES('.Sanitizer::cleanInStr($this->conn,$genArr['occid']).',"'.Sanitizer::cleanInStr($this->conn,$genArr['identifier']).'","'.
-            Sanitizer::cleanInStr($this->conn,$genArr['resourcename']).'",'.
-            ($genArr['locus']?'"'.Sanitizer::cleanInStr($this->conn,$genArr['locus']).'"':'NULL').','.
-            ($genArr['resourceurl']?'"'.Sanitizer::cleanInStr($this->conn,$genArr['resourceurl']).'"':'NULL').','.
-            ($genArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$genArr['notes']).'"':'NULL').')';
+            'VALUES('.SanitizerService::cleanInStr($this->conn,$genArr['occid']).',"'.SanitizerService::cleanInStr($this->conn,$genArr['identifier']).'","'.
+            SanitizerService::cleanInStr($this->conn,$genArr['resourcename']).'",'.
+            ($genArr['locus']?'"'.SanitizerService::cleanInStr($this->conn,$genArr['locus']).'"':'NULL').','.
+            ($genArr['resourceurl']?'"'.SanitizerService::cleanInStr($this->conn,$genArr['resourceurl']).'"':'NULL').','.
+            ($genArr['notes']?'"'.SanitizerService::cleanInStr($this->conn,$genArr['notes']).'"':'NULL').')';
         if(!$this->conn->query($sql)){
             return 'ERROR Adding new genetic resource.';
         }
@@ -1668,14 +1668,14 @@ class OccurrenceEditorManager {
                 $imageMap[$imgId]['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
                 $imageMap[$imgId]['tnurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
                 $imageMap[$imgId]['origurl'] = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
-                $imageMap[$imgId]['caption'] = Sanitizer::cleanOutStr($row->caption);
-                $imageMap[$imgId]['photographer'] = Sanitizer::cleanOutStr($row->photographer);
+                $imageMap[$imgId]['caption'] = SanitizerService::cleanOutStr($row->caption);
+                $imageMap[$imgId]['photographer'] = SanitizerService::cleanOutStr($row->photographer);
                 $imageMap[$imgId]['photographeruid'] = $row->photographeruid;
                 $imageMap[$imgId]['sourceurl'] = $row->sourceurl;
-                $imageMap[$imgId]['copyright'] = Sanitizer::cleanOutStr($row->copyright);
-                $imageMap[$imgId]['notes'] = Sanitizer::cleanOutStr($row->notes);
+                $imageMap[$imgId]['copyright'] = SanitizerService::cleanOutStr($row->copyright);
+                $imageMap[$imgId]['notes'] = SanitizerService::cleanOutStr($row->notes);
                 $imageMap[$imgId]['occid'] = $row->occid;
-                $imageMap[$imgId]['username'] = Sanitizer::cleanOutStr($row->username);
+                $imageMap[$imgId]['username'] = SanitizerService::cleanOutStr($row->username);
                 $imageMap[$imgId]['sortseq'] = $row->sortsequence;
                 if($row->originalurl && strpos($row->originalurl, 'api.idigbio.org') && strtotime($row->initialtimestamp) > strtotime('-2 days')) {
                     $headerArr = get_headers($row->originalurl,1);
@@ -1702,21 +1702,21 @@ class OccurrenceEditorManager {
             while($row = $result->fetch_object()){
                 $medId = $row->mediaid;
                 $mediaMap[$medId]['accessuri'] = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
-                $mediaMap[$medId]['title'] = Sanitizer::cleanOutStr($row->title);
+                $mediaMap[$medId]['title'] = SanitizerService::cleanOutStr($row->title);
                 $mediaMap[$medId]['creatoruid'] = $row->creatoruid;
-                $mediaMap[$medId]['creator'] = Sanitizer::cleanOutStr($row->creator);
+                $mediaMap[$medId]['creator'] = SanitizerService::cleanOutStr($row->creator);
                 $mediaMap[$medId]['type'] = $row->type;
                 $mediaMap[$medId]['format'] = $row->format;
-                $mediaMap[$medId]['owner'] = Sanitizer::cleanOutStr($row->owner);
+                $mediaMap[$medId]['owner'] = SanitizerService::cleanOutStr($row->owner);
                 $mediaMap[$medId]['furtherinformationurl'] = $row->furtherinformationurl;
-                $mediaMap[$medId]['language'] = Sanitizer::cleanOutStr($row->language);
-                $mediaMap[$medId]['usageterms'] = Sanitizer::cleanOutStr($row->usageterms);
-                $mediaMap[$medId]['rights'] = Sanitizer::cleanOutStr($row->rights);
-                $mediaMap[$medId]['bibliographiccitation'] = Sanitizer::cleanOutStr($row->bibliographiccitation);
-                $mediaMap[$medId]['publisher'] = Sanitizer::cleanOutStr($row->publisher);
-                $mediaMap[$medId]['contributor'] = Sanitizer::cleanOutStr($row->contributor);
-                $mediaMap[$medId]['locationcreated'] = Sanitizer::cleanOutStr($row->locationcreated);
-                $mediaMap[$medId]['description'] = Sanitizer::cleanOutStr($row->description);
+                $mediaMap[$medId]['language'] = SanitizerService::cleanOutStr($row->language);
+                $mediaMap[$medId]['usageterms'] = SanitizerService::cleanOutStr($row->usageterms);
+                $mediaMap[$medId]['rights'] = SanitizerService::cleanOutStr($row->rights);
+                $mediaMap[$medId]['bibliographiccitation'] = SanitizerService::cleanOutStr($row->bibliographiccitation);
+                $mediaMap[$medId]['publisher'] = SanitizerService::cleanOutStr($row->publisher);
+                $mediaMap[$medId]['contributor'] = SanitizerService::cleanOutStr($row->contributor);
+                $mediaMap[$medId]['locationcreated'] = SanitizerService::cleanOutStr($row->locationcreated);
+                $mediaMap[$medId]['description'] = SanitizerService::cleanOutStr($row->description);
                 $mediaMap[$medId]['sortsequence'] = $row->sortsequence;
             }
             $result->free();
@@ -1869,10 +1869,10 @@ class OccurrenceEditorManager {
                     if($tok && (count($tok) > 1) && strlen($tok[0]) > 2) {
                         $taxon = $tok[0];
                     }
-                    $sqlWhere .= 't.sciname = "'.Sanitizer::cleanInStr($this->conn,$taxon).'" ';
+                    $sqlWhere .= 't.sciname = "'.SanitizerService::cleanInStr($this->conn,$taxon).'" ';
                 }
                 elseif($family){
-                    $sqlWhere .= 't.sciname = "'.Sanitizer::cleanInStr($this->conn,$family).'" ';
+                    $sqlWhere .= 't.sciname = "'.SanitizerService::cleanInStr($this->conn,$family).'" ';
                 }
                 if($sqlWhere){
                     $sql2 = 'SELECT e.parenttid '.

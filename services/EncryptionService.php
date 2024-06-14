@@ -1,5 +1,5 @@
 <?php
-class Encryption{
+class EncryptionService{
 
 	public const METHOD = 'aes-256-cbc';
 

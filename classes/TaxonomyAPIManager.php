@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TaxonomyAPIManager{
 
@@ -15,7 +15,7 @@ class TaxonomyAPIManager{
     private $acceptedOnly = false;
 
     public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
         $this->conn = $connection->getConnection();
     }
 
@@ -29,7 +29,7 @@ class TaxonomyAPIManager{
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT SciName, Author, TID FROM taxa ';
-        $sql .= 'WHERE SciName LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'WHERE SciName LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
         if($this->rankLimit){
             $sql .= 'AND RankId = '.$this->rankLimit.' ';
         }
@@ -66,7 +66,7 @@ class TaxonomyAPIManager{
         $retArr = array();
         $sql = 'SELECT DISTINCT t.TID, v.VernacularName, t.SciName '.
             'FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.TID = t.TID ';
-        $sql .= 'WHERE v.VernacularName LIKE "%'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'WHERE v.VernacularName LIKE "%'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
         if($this->limit){
             $sql .= 'LIMIT '.$this->limit.' ';
         }
@@ -82,22 +82,22 @@ class TaxonomyAPIManager{
 
     public function setRankLimit($val): void
     {
-        $this->rankLimit = Sanitizer::cleanInStr($this->conn,$val);
+        $this->rankLimit = SanitizerService::cleanInStr($this->conn,$val);
     }
 
     public function setRankLow($val): void
     {
-        $this->rankLow = Sanitizer::cleanInStr($this->conn,$val);
+        $this->rankLow = SanitizerService::cleanInStr($this->conn,$val);
     }
 
     public function setRankHigh($val): void
     {
-        $this->rankHigh = Sanitizer::cleanInStr($this->conn,$val);
+        $this->rankHigh = SanitizerService::cleanInStr($this->conn,$val);
     }
 
     public function setLimit($val): void
     {
-        $this->limit = Sanitizer::cleanInStr($this->conn,$val);
+        $this->limit = SanitizerService::cleanInStr($this->conn,$val);
     }
 
     public function setHideAuth($val): void
@@ -122,6 +122,6 @@ class TaxonomyAPIManager{
 
     public function setHideProtected($val): void
     {
-        $this->hideProtected = Sanitizer::cleanInStr($this->conn,$val);
+        $this->hideProtected = SanitizerService::cleanInStr($this->conn,$val);
     }
 }

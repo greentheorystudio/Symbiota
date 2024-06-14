@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/OccurrenceManager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageLibraryManager{
 
@@ -11,7 +11,7 @@ class ImageLibraryManager{
     private $sqlWhere = '';
 
     public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
         $this->conn = $connection->getConnection();
     }
 
@@ -42,7 +42,7 @@ class ImageLibraryManager{
         $sql = 'SELECT DISTINCT t.UnitName1 ';
         $sql .= $this->getImageSql();
         if($inTaxon){
-            $taxon = Sanitizer::cleanInStr($this->conn,$inTaxon);
+            $taxon = SanitizerService::cleanInStr($this->conn,$inTaxon);
             $sql .= "AND t.family = '".$taxon."' ";
         }
         $result = $this->conn->query($sql);
@@ -60,7 +60,7 @@ class ImageLibraryManager{
         $tidArr = array();
         $taxon = '';
         if($inTaxon){
-            $taxon = Sanitizer::cleanInStr($this->conn,$inTaxon);
+            $taxon = SanitizerService::cleanInStr($this->conn,$inTaxon);
             if(strpos($taxon, ' ')) {
                 $tidArr = array_keys(OccurrenceManager::getSynonyms($taxon));
             }

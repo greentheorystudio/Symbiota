@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 
@@ -12,26 +12,25 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
         $retArr = array();
         $hasCurrent = 0;
         $sql = 'SELECT detid, identifiedBy, dateIdentified, sciname, verbatimscientificname, scientificNameAuthorship, ' .
-            'identificationQualifier, iscurrent, appliedstatus, identificationReferences, identificationRemarks, sortsequence ' .
+            'identificationQualifier, iscurrent, identificationReferences, identificationRemarks, sortsequence ' .
             'FROM omoccurdeterminations ' .
             'WHERE (occid = ' .$this->occid. ') ORDER BY iscurrent DESC, sortsequence';
         //echo "<div>".$sql."</div>";
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $detId = $row->detid;
-            $retArr[$detId]['identifiedby'] = Sanitizer::cleanOutStr($row->identifiedBy);
-            $retArr[$detId]['dateidentified'] = Sanitizer::cleanOutStr($row->dateIdentified);
-            $retArr[$detId]['sciname'] = Sanitizer::cleanOutStr($row->sciname);
-            $retArr[$detId]['verbatimscientificname'] = Sanitizer::cleanOutStr($row->verbatimscientificname);
-            $retArr[$detId]['scientificnameauthorship'] = Sanitizer::cleanOutStr($row->scientificNameAuthorship);
-            $retArr[$detId]['identificationqualifier'] = Sanitizer::cleanOutStr($row->identificationQualifier);
+            $retArr[$detId]['identifiedby'] = SanitizerService::cleanOutStr($row->identifiedBy);
+            $retArr[$detId]['dateidentified'] = SanitizerService::cleanOutStr($row->dateIdentified);
+            $retArr[$detId]['sciname'] = SanitizerService::cleanOutStr($row->sciname);
+            $retArr[$detId]['verbatimscientificname'] = SanitizerService::cleanOutStr($row->verbatimscientificname);
+            $retArr[$detId]['scientificnameauthorship'] = SanitizerService::cleanOutStr($row->scientificNameAuthorship);
+            $retArr[$detId]['identificationqualifier'] = SanitizerService::cleanOutStr($row->identificationQualifier);
             if((int)$row->iscurrent === 1) {
                 $hasCurrent = 1;
             }
             $retArr[$detId]['iscurrent'] = $row->iscurrent;
-            $retArr[$detId]['appliedstatus'] = $row->appliedstatus;
-            $retArr[$detId]['identificationreferences'] = Sanitizer::cleanOutStr($row->identificationReferences);
-            $retArr[$detId]['identificationremarks'] = Sanitizer::cleanOutStr($row->identificationRemarks);
+            $retArr[$detId]['identificationreferences'] = SanitizerService::cleanOutStr($row->identificationReferences);
+            $retArr[$detId]['identificationremarks'] = SanitizerService::cleanOutStr($row->identificationRemarks);
             $retArr[$detId]['sortsequence'] = $row->sortsequence;
         }
         $result->free();
@@ -70,25 +69,25 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
             $sortSeq = 2100-$matches[1];
         }
         if($isCurrent){
-            $sqlSetCur1 = 'UPDATE omoccurdeterminations SET iscurrent = 0 WHERE appliedstatus = 1 AND occid = '.$this->occid;
+            $sqlSetCur1 = 'UPDATE omoccurdeterminations SET iscurrent = 0 WHERE occid = '.$this->occid;
             if(!$this->conn->query($sqlSetCur1)){
                 $status = 'ERROR resetting dets to not current.';
             }
         }
-        $sciname = Sanitizer::cleanInStr($this->conn,$detArr['sciname']);
-        $notes = Sanitizer::cleanInStr($this->conn,$detArr['identificationremarks']);
+        $sciname = SanitizerService::cleanInStr($this->conn,$detArr['sciname']);
+        $notes = SanitizerService::cleanInStr($this->conn,$detArr['identificationremarks']);
         $sql = 'INSERT INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
             'identificationQualifier, iscurrent, printqueue, appliedStatus, identificationReferences, identificationRemarks, sortsequence) '.
-            'VALUES ('.$this->occid.','.($detArr['tidtoadd']?(int)$detArr['tidtoadd']:'NULL').',"'.Sanitizer::cleanInStr($this->conn,$detArr['identifiedby']).'","'.Sanitizer::cleanInStr($this->conn,$detArr['dateidentified']).'","'.
-            $sciname.'",'.($detArr['scientificnameauthorship']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['scientificnameauthorship']).'"':'NULL').','.
-            ($detArr['identificationqualifier']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
+            'VALUES ('.$this->occid.','.($detArr['tidtoadd']?(int)$detArr['tidtoadd']:'NULL').',"'.SanitizerService::cleanInStr($this->conn,$detArr['identifiedby']).'","'.SanitizerService::cleanInStr($this->conn,$detArr['dateidentified']).'","'.
+            $sciname.'",'.($detArr['scientificnameauthorship']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['scientificnameauthorship']).'"':'NULL').','.
+            ($detArr['identificationqualifier']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
             $detArr['makecurrent'].','.$detArr['printqueue'].','.($isEditor === 3?0:1).','.
-            ($detArr['identificationreferences']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationreferences']).'"':'NULL').','.
+            ($detArr['identificationreferences']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['identificationreferences']).'"':'NULL').','.
             ($notes?'"'.$notes.'"':'NULL').','.
             $sortSeq.')';
         //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
-            $guid = UuidFactory::getUuidV4();
+            $guid = UuidService::getUuidV4();
             $detId = $this->conn->insert_id;
             if(!$this->conn->query('INSERT INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$detId.')')){
                 $status .= ' (Warning: GUID mapping #1 failed)';
@@ -101,7 +100,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
                     'FROM omoccurrences WHERE (occid = '.$this->occid.')';
                 //echo "<div>".$sqlInsert."</div>";
                 if($this->conn->query($sqlInsert)){
-                    $guid = UuidFactory::getUuidV4();
+                    $guid = UuidService::getUuidV4();
                     $detId = $this->conn->insert_id;
                     if(!$this->conn->query('INSERT IGNORE INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$detId.')')){
                         $status .= ' (Warning: GUID mapping #2 failed)';
@@ -138,13 +137,13 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
                 }
 
                 $sqlNewDet = 'UPDATE omoccurrences '.
-                    'SET identifiedBy = "'.Sanitizer::cleanInStr($this->conn,$detArr['identifiedby']).'", dateIdentified = "'.Sanitizer::cleanInStr($this->conn,$detArr['dateidentified']).'",'.
-                    'family = '.($detArr['family']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['family']).'"':'NULL').','.
+                    'SET identifiedBy = "'.SanitizerService::cleanInStr($this->conn,$detArr['identifiedby']).'", dateIdentified = "'.SanitizerService::cleanInStr($this->conn,$detArr['dateidentified']).'",'.
+                    'family = '.($detArr['family']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['family']).'"':'NULL').','.
                     'sciname = "'.$sciname.'",genus = NULL, specificEpithet = NULL, taxonRank = NULL, infraspecificepithet = NULL,'.
-                    'scientificNameAuthorship = '.($detArr['scientificnameauthorship']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['scientificnameauthorship']).'"':'NULL').','.
-                    'identificationQualifier = '.($detArr['identificationqualifier']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
-                    'identificationReferences = '.($detArr['identificationreferences']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationreferences']).'"':'NULL').','.
-                    'identificationRemarks = '.($detArr['identificationremarks']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationremarks']).'"':'NULL').', '.
+                    'scientificNameAuthorship = '.($detArr['scientificnameauthorship']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['scientificnameauthorship']).'"':'NULL').','.
+                    'identificationQualifier = '.($detArr['identificationqualifier']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
+                    'identificationReferences = '.($detArr['identificationreferences']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['identificationreferences']).'"':'NULL').','.
+                    'identificationRemarks = '.($detArr['identificationremarks']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['identificationremarks']).'"':'NULL').', '.
                     'tid = '.($tidToAdd?:'NULL').', localitysecurity = '.$sStatus.
                     ' WHERE (occid = '.$this->occid.')';
                 //echo "<div>".$sqlNewDet."</div>";
@@ -169,13 +168,13 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
         }
         $status = 'Determination editted successfully!';
         $sql = 'UPDATE omoccurdeterminations '.
-            'SET identifiedBy = "'.Sanitizer::cleanInStr($this->conn,$detArr['identifiedby']).'", '.
-            'dateIdentified = "'.Sanitizer::cleanInStr($this->conn,$detArr['dateidentified']).'", '.
-            'sciname = "'.Sanitizer::cleanInStr($this->conn,$detArr['sciname']).'", '.
-            'scientificNameAuthorship = '.($detArr['scientificnameauthorship']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['scientificnameauthorship']).'"':'NULL').','.
-            'identificationQualifier = '.($detArr['identificationqualifier']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
-            'identificationReferences = '.($detArr['identificationreferences']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationreferences']).'"':'NULL').','.
-            'identificationRemarks = '.($detArr['identificationremarks']?'"'.Sanitizer::cleanInStr($this->conn,$detArr['identificationremarks']).'"':'NULL').','.
+            'SET identifiedBy = "'.SanitizerService::cleanInStr($this->conn,$detArr['identifiedby']).'", '.
+            'dateIdentified = "'.SanitizerService::cleanInStr($this->conn,$detArr['dateidentified']).'", '.
+            'sciname = "'.SanitizerService::cleanInStr($this->conn,$detArr['sciname']).'", '.
+            'scientificNameAuthorship = '.($detArr['scientificnameauthorship']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['scientificnameauthorship']).'"':'NULL').','.
+            'identificationQualifier = '.($detArr['identificationqualifier']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['identificationqualifier']).'"':'NULL').','.
+            'identificationReferences = '.($detArr['identificationreferences']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['identificationreferences']).'"':'NULL').','.
+            'identificationRemarks = '.($detArr['identificationremarks']?'"'.SanitizerService::cleanInStr($this->conn,$detArr['identificationremarks']).'"':'NULL').','.
             'sortsequence = '.($detArr['sortsequence']?:'10').','.
             'printqueue = '.($detArr['printqueue']?:'NULL').' '.
             'WHERE (detid = '.$detArr['detid'].')';
@@ -204,7 +203,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
             }
             $detObj = json_encode($detArr);
             $sqlArchive = 'UPDATE guidoccurdeterminations '.
-                'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->conn,$detObj).'" '.
+                'SET archivestatus = 1, archiveobj = "'.SanitizerService::cleanInStr($this->conn,$detObj).'" '.
                 'WHERE (detid = '.$detId.')';
             $this->conn->query($sqlArchive);
         }
@@ -245,8 +244,8 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
         $rscr->free();
 
         $sql = 'UPDATE omoccurdeterminations '.
-            'SET appliedstatus = 1, iscurrent = '.$makeCurrent.', '.
-            'identificationremarks = '.($iqStr?'"'.Sanitizer::cleanInStr($this->conn,$iqStr).'"':'NULL').' WHERE detid = '.$detId;
+            'SET iscurrent = '.$makeCurrent.', '.
+            'identificationremarks = '.($iqStr?'"'.SanitizerService::cleanInStr($this->conn,$iqStr).'"':'NULL').' WHERE detid = '.$detId;
         if(!$this->conn->query($sql)){
             $statusStr = 'ERROR attempting to apply dertermiantion.';
         }
@@ -264,7 +263,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
             'identificationqualifier, identificationreferences, identificationremarks, 10 '.
             'FROM omoccurrences WHERE (occid = '.$this->occid.')';
         if($this->conn->query($sqlInsert)){
-            $guid = UuidFactory::getUuidV4();
+            $guid = UuidService::getUuidV4();
             $this->conn->query('INSERT IGNORE INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$this->conn->insert_id.')');
         }
         $tid = 0;

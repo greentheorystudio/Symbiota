@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-include_once(__DIR__ . '/../../classes/OccurrenceCollectingEventManager.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+include_once(__DIR__ . '/../../models/OccurrenceCollectingEvents.php');
 
 $eventid = array_key_exists('eventid',$_REQUEST) ? (int)$_REQUEST['eventid'] : 0;
 $collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
@@ -20,8 +20,8 @@ elseif($collid){
     }
 }
 
-if($action && Sanitizer::validateInternalRequest()){
-    $evtManager = new OccurrenceCollectingEventManager();
+if($action && SanitizerService::validateInternalRequest()){
+    $evtManager = new OccurrenceCollectingEvents();
     if($action === 'getCollectingEventDataArr' && $eventid){
         echo json_encode($evtManager->getCollectingEventData($eventid));
     }

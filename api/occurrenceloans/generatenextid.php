@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../services/DbConnectionService.php');
 	
 $collId = (int)$_REQUEST['collid'];
 $idType = array_key_exists('idtype',$_REQUEST)?$_REQUEST['idtype']:'out';
@@ -30,7 +30,7 @@ if($collId && is_numeric($collId)){
 		return '';
 	}
 
-    $connection = new DbConnection();
+    $connection = new DbConnectionService();
 	$conn = $connection->getConnection();
 	if($rs = $conn->query($sqlOut)){
 		$parsedArr = array();

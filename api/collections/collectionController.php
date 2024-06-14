@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/CollectionManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../models/Collections.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
@@ -11,8 +11,8 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
     $isEditor = true;
 }
 
-if($action && Sanitizer::validateInternalRequest()){
-    $collManager = new CollectionManager();
+if($action && SanitizerService::validateInternalRequest()){
+    $collManager = new Collections();
     if($action === 'getCollectionArr'){
         echo json_encode($collManager->getCollectionArr());
     }

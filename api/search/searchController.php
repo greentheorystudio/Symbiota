@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 
-if($action && Sanitizer::validateInternalRequest()){
+if($action && SanitizerService::validateInternalRequest()){
     $spatialManager = new SpatialModuleManager();
     $occManager = new OccurrenceManager();
     $stArr = array_key_exists('starr',$_POST) ? json_decode(str_replace('%squot;', "'", $_POST['starr']), true) : null;

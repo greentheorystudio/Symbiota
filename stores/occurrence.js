@@ -661,6 +661,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 });
             });
         },
+        getDeterminationData(detid) {
+            return this.determinationArr.find(det => Number(det.detid) === Number(detid));
+        },
         getLocationCollectingEvents(callback) {
             const formData = new FormData();
             formData.append('collid', this.getCollId.toString());

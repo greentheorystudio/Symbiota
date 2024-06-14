@@ -1,9 +1,9 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Encryption.php');
-include_once(__DIR__ . '/Mailer.php');
-include_once(__DIR__ . '/Sanitizer.php');
-include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/EncryptionService.php');
+include_once(__DIR__ . '/../services/MailerService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class ProfileManager{
 
@@ -18,7 +18,7 @@ class ProfileManager{
     private $encryption;
 
     public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
         $this->conn = $connection->getConnection();
         $dbVersion = $connection->getVersion();
         if((strncmp($dbVersion, '5.', 2) === 0) || (strncmp($dbVersion, 'ma', 2) === 0)){
@@ -59,10 +59,10 @@ class ProfileManager{
                     'WHERE username = "'.$this->userName.'" ';
                 if($pwdStr) {
                     if($this->encryption === 'password'){
-                        $this->authSql .= 'AND password = PASSWORD("' . Sanitizer::cleanInStr($this->conn,$pwdStr) . '") ';
+                        $this->authSql .= 'AND password = PASSWORD("' . SanitizerService::cleanInStr($this->conn,$pwdStr) . '") ';
                     }
                     if($this->encryption === 'sha2'){
-                        $this->authSql .= 'AND password = SHA2("' . Sanitizer::cleanInStr($this->conn,$pwdStr) . '", 224) ';
+                        $this->authSql .= 'AND password = SHA2("' . SanitizerService::cleanInStr($this->conn,$pwdStr) . '", 224) ';
                     }
                 }
             }
@@ -109,7 +109,7 @@ class ProfileManager{
             if ($domainName === 'localhost') {
                 $domainName = false;
             }
-            setcookie('BioSurvCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
+            setcookie('BioSurvCrumb', EncryptionService::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
         }
     }
 
@@ -152,47 +152,47 @@ class ProfileManager{
         $success = 0;
         if($personArr){
             $sql = 'UPDATE users SET ';
-            if(array_key_exists('firstname',$personArr) && Sanitizer::cleanInStr($this->conn,$personArr['firstname'])){
-                $sql .= 'firstname = "'.Sanitizer::cleanInStr($this->conn,$personArr['firstname']).'", ';
+            if(array_key_exists('firstname',$personArr) && SanitizerService::cleanInStr($this->conn,$personArr['firstname'])){
+                $sql .= 'firstname = "'.SanitizerService::cleanInStr($this->conn,$personArr['firstname']).'", ';
             }
             if(array_key_exists('middleinitial',$personArr)){
-                $sql .= 'middleinitial = '.(Sanitizer::cleanInStr($this->conn,$personArr['middleinitial'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['middleinitial']) . '"': 'NULL').', ';
+                $sql .= 'middleinitial = '.(SanitizerService::cleanInStr($this->conn,$personArr['middleinitial'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['middleinitial']) . '"': 'NULL').', ';
             }
-            if(array_key_exists('lastname',$personArr) && Sanitizer::cleanInStr($this->conn,$personArr['lastname'])){
-                $sql .= 'lastname = "'.Sanitizer::cleanInStr($this->conn,$personArr['lastname']).'", ';
+            if(array_key_exists('lastname',$personArr) && SanitizerService::cleanInStr($this->conn,$personArr['lastname'])){
+                $sql .= 'lastname = "'.SanitizerService::cleanInStr($this->conn,$personArr['lastname']).'", ';
             }
             if(array_key_exists('title',$personArr)){
-                $sql .= 'title = '.(Sanitizer::cleanInStr($this->conn,$personArr['title'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['title']) . '"': 'NULL').', ';
+                $sql .= 'title = '.(SanitizerService::cleanInStr($this->conn,$personArr['title'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['title']) . '"': 'NULL').', ';
             }
             if(array_key_exists('institution',$personArr)){
-                $sql .= 'institution = '.(Sanitizer::cleanInStr($this->conn,$personArr['institution'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['institution']) . '"': 'NULL').', ';
+                $sql .= 'institution = '.(SanitizerService::cleanInStr($this->conn,$personArr['institution'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['institution']) . '"': 'NULL').', ';
             }
             if(array_key_exists('department',$personArr)){
-                $sql .= 'department = '.(Sanitizer::cleanInStr($this->conn,$personArr['department'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['department']) . '"': 'NULL').', ';
+                $sql .= 'department = '.(SanitizerService::cleanInStr($this->conn,$personArr['department'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['department']) . '"': 'NULL').', ';
             }
             if(array_key_exists('address',$personArr)){
-                $sql .= 'address = '.(Sanitizer::cleanInStr($this->conn,$personArr['address'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['address']) . '"': 'NULL').', ';
+                $sql .= 'address = '.(SanitizerService::cleanInStr($this->conn,$personArr['address'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['address']) . '"': 'NULL').', ';
             }
             if(array_key_exists('city',$personArr)){
-                $sql .= 'city = '.(Sanitizer::cleanInStr($this->conn,$personArr['city'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['city']) . '"': 'NULL').', ';
+                $sql .= 'city = '.(SanitizerService::cleanInStr($this->conn,$personArr['city'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['city']) . '"': 'NULL').', ';
             }
             if(array_key_exists('state',$personArr)){
-                $sql .= 'state = '.(Sanitizer::cleanInStr($this->conn,$personArr['state'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['state']) . '"': 'NULL').', ';
+                $sql .= 'state = '.(SanitizerService::cleanInStr($this->conn,$personArr['state'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['state']) . '"': 'NULL').', ';
             }
             if(array_key_exists('zip',$personArr)){
-                $sql .= 'zip = '.(Sanitizer::cleanInStr($this->conn,$personArr['zip'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['zip']) . '"': 'NULL').', ';
+                $sql .= 'zip = '.(SanitizerService::cleanInStr($this->conn,$personArr['zip'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['zip']) . '"': 'NULL').', ';
             }
             if(array_key_exists('country',$personArr)){
-                $sql .= 'country = '.(Sanitizer::cleanInStr($this->conn,$personArr['country'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['country']) . '"': 'NULL').', ';
+                $sql .= 'country = '.(SanitizerService::cleanInStr($this->conn,$personArr['country'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['country']) . '"': 'NULL').', ';
             }
-            if(array_key_exists('email',$personArr) && Sanitizer::cleanInStr($this->conn,$personArr['email'])){
-                $sql .= 'email = "'.Sanitizer::cleanInStr($this->conn,$personArr['email']).'", ';
+            if(array_key_exists('email',$personArr) && SanitizerService::cleanInStr($this->conn,$personArr['email'])){
+                $sql .= 'email = "'.SanitizerService::cleanInStr($this->conn,$personArr['email']).'", ';
             }
             if(array_key_exists('url',$personArr)){
-                $sql .= 'url = '.(Sanitizer::cleanInStr($this->conn,$personArr['url'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['url']) . '"': 'NULL').', ';
+                $sql .= 'url = '.(SanitizerService::cleanInStr($this->conn,$personArr['url'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['url']) . '"': 'NULL').', ';
             }
             if(array_key_exists('biography',$personArr)){
-                $sql .= 'biography = '.(Sanitizer::cleanInStr($this->conn,$personArr['biography'])?'"' . Sanitizer::cleanInStr($this->conn,$personArr['biography']) . '"': 'NULL').', ';
+                $sql .= 'biography = '.(SanitizerService::cleanInStr($this->conn,$personArr['biography'])?'"' . SanitizerService::cleanInStr($this->conn,$personArr['biography']) . '"': 'NULL').', ';
             }
             $sql = substr($sql, 0, -2) . ' ';
             $sql .= 'WHERE uid = '.(int)$personArr['uid'].' ';
@@ -236,10 +236,10 @@ class ProfileManager{
         if($newPwd){
             $sql = '';
             if($this->encryption === 'password'){
-                $sql .= 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($this->conn,$newPwd).'") ';
+                $sql .= 'UPDATE users SET password = PASSWORD("'.SanitizerService::cleanInStr($this->conn,$newPwd).'") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($this->conn,$newPwd).'", 224) ';
+                $sql .= 'UPDATE users SET password = SHA2("'.SanitizerService::cleanInStr($this->conn,$newPwd).'", 224) ';
             }
             $sql .= 'WHERE uid = '.(int)$uid.' ';
             if($this->conn->query($sql)){
@@ -257,11 +257,11 @@ class ProfileManager{
             $newPassword = $this->generateNewPassword();
             $sql = '';
             if($this->encryption === 'password'){
-                $sql = 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($this->conn,$newPassword).'") '.
+                $sql = 'UPDATE users SET password = PASSWORD("'.SanitizerService::cleanInStr($this->conn,$newPassword).'") '.
                     'WHERE uid = '.(int)$uid.' ';
             }
             if($this->encryption === 'sha2'){
-                $sql = 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($this->conn,$newPassword).'", 224) '.
+                $sql = 'UPDATE users SET password = SHA2("'.SanitizerService::cleanInStr($this->conn,$newPassword).'", 224) '.
                     'WHERE uid = '.(int)$uid.' ';
             }
             $status = $this->conn->query($sql);
@@ -282,7 +282,7 @@ class ProfileManager{
                     if($GLOBALS['ADMIN_EMAIL']){
                         $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                     }
-                    (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
+                    (new MailerService)->sendEmail($emailAddr,$subject,$bodyStr);
                     $returnVal = 1;
                     $result->free();
                 }
@@ -311,29 +311,29 @@ class ProfileManager{
             $this->clearOldUnregisteredUsers();
         }
         $status = 0;
-        $firstName = Sanitizer::cleanInStr($this->conn,$personArr['firstname']);
-        $lastName = Sanitizer::cleanInStr($this->conn,$personArr['lastname']);
-        $email = Sanitizer::cleanInStr($this->conn,$personArr['email']);
-        $username = Sanitizer::cleanInStr($this->conn,$personArr['username']);
-        $password = Sanitizer::cleanInStr($this->conn,$personArr['pwd']);
+        $firstName = SanitizerService::cleanInStr($this->conn,$personArr['firstname']);
+        $lastName = SanitizerService::cleanInStr($this->conn,$personArr['lastname']);
+        $email = SanitizerService::cleanInStr($this->conn,$personArr['email']);
+        $username = SanitizerService::cleanInStr($this->conn,$personArr['username']);
+        $password = SanitizerService::cleanInStr($this->conn,$personArr['pwd']);
         if($firstName && $lastName && $email && $username && $password){
             $sql = 'INSERT INTO users (firstname,middleinitial,lastname,guid,title,institution,department,'.
                 'address,city,`state`,zip,country,email,url,biography,username,password) '.
                 'VALUES ("'.$firstName.'",'.
-                (Sanitizer::cleanInStr($this->conn,$personArr['middleinitial']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['middleinitial']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['middleinitial']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['middleinitial']).'"' : 'NULL').','.
                 '"'.$lastName.'",'.
-                '"'.UuidFactory::getUuidV4().'",'.
-                (Sanitizer::cleanInStr($this->conn,$personArr['title']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['title']).'"' : 'NULL').','.
-                (Sanitizer::cleanInStr($this->conn,$personArr['institution']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['institution']).'"' : 'NULL').','.
-                (Sanitizer::cleanInStr($this->conn,$personArr['department']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['department']).'"' : 'NULL').','.
-                (Sanitizer::cleanInStr($this->conn,$personArr['address']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['address']).'"' : 'NULL').','.
-                (Sanitizer::cleanInStr($this->conn,$personArr['city']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['city']).'"' : 'NULL').','.
-                (Sanitizer::cleanInStr($this->conn,$personArr['state']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['state']).'"' : 'NULL').','.
-                (Sanitizer::cleanInStr($this->conn,$personArr['zip']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['zip']).'"' : 'NULL').','.
-                (Sanitizer::cleanInStr($this->conn,$personArr['country']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['country']).'"' : 'NULL').','.
+                '"'.UuidService::getUuidV4().'",'.
+                (SanitizerService::cleanInStr($this->conn,$personArr['title']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['title']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['institution']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['institution']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['department']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['department']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['address']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['address']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['city']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['city']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['state']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['state']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['zip']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['zip']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['country']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['country']).'"' : 'NULL').','.
                 '"'.$email.'",'.
-                (Sanitizer::cleanInStr($this->conn,$personArr['url']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['url']).'"' : 'NULL').','.
-                (Sanitizer::cleanInStr($this->conn,$personArr['biography']) ? '"'.Sanitizer::cleanInStr($this->conn,$personArr['biography']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['url']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['url']).'"' : 'NULL').','.
+                (SanitizerService::cleanInStr($this->conn,$personArr['biography']) ? '"'.SanitizerService::cleanInStr($this->conn,$personArr['biography']).'"' : 'NULL').','.
                 '"'.$username.'",';
             if($this->encryption === 'password'){
                 $sql .= 'PASSWORD("'.$password.'"))';
@@ -369,7 +369,7 @@ class ProfileManager{
                 $email = $row->email;
                 $code = $row->guid;
                 if(!$code){
-                    $code = UuidFactory::getUuidV4();
+                    $code = UuidService::getUuidV4();
                     $sql = 'UPDATE users SET guid = "'.$code.'" WHERE uid = '.(int)$uid.' ';
                     $this->conn->query($sql);
                 }
@@ -384,7 +384,7 @@ class ProfileManager{
                 if($GLOBALS['ADMIN_EMAIL']){
                     $bodyStr .= '<br/>If you have trouble confirming your account, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                 }
-                $mailerResult = (new Mailer)->sendEmail($email,$subject,$bodyStr);
+                $mailerResult = (new MailerService)->sendEmail($email,$subject,$bodyStr);
                 if($mailerResult === 'Sent'){
                     $status = 1;
                 }
@@ -399,7 +399,7 @@ class ProfileManager{
         if($GLOBALS['EMAIL_CONFIGURED']){
             $loginStr = '';
             $sql = 'SELECT uid, username, concat_ws("; ",lastname,firstname) FROM users '.
-                'WHERE email = "'.Sanitizer::cleanInStr($this->conn,$emailAddr).'" ';
+                'WHERE email = "'.SanitizerService::cleanInStr($this->conn,$emailAddr).'" ';
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
                 if($loginStr) {
@@ -414,7 +414,7 @@ class ProfileManager{
                 if(isset($GLOBALS['ADMIN_EMAIL'])){
                     $bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                 }
-                $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
+                $mailerResult = (new MailerService)->sendEmail($emailAddr,$subject,$bodyStr);
                 if($mailerResult === 'Sent'){
                     $status = 1;
                 }
@@ -609,7 +609,7 @@ class ProfileManager{
     public function getUidFromUsername($un): int
     {
         $uid = 0;
-        $sql = 'SELECT uid FROM users WHERE username = "'.Sanitizer::cleanInStr($this->conn,$un).'"  ';
+        $sql = 'SELECT uid FROM users WHERE username = "'.SanitizerService::cleanInStr($this->conn,$un).'"  ';
         //echo $sql;
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
@@ -622,7 +622,7 @@ class ProfileManager{
     public function getUidFromEmail($email): string
     {
         $returnVal = 0;
-        $sql = 'SELECT uid FROM users WHERE email = "'.Sanitizer::cleanInStr($this->conn,$email).'"  ';
+        $sql = 'SELECT uid FROM users WHERE email = "'.SanitizerService::cleanInStr($this->conn,$email).'"  ';
         //echo $sql;
         $result = $this->conn->query($sql);
         if(($row = $result->fetch_object()) && $row->uid) {

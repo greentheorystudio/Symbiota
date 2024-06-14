@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/LanguageManager.php');
+include_once(__DIR__ . '/../../models/Languages.php');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $iso = array_key_exists('iso',$_REQUEST)?htmlspecialchars($_REQUEST['iso']):'';
 $name = array_key_exists('name',$_REQUEST)?htmlspecialchars($_REQUEST['name']):'';
 
 if($action){
-    $langManager = new LanguageManager();
+    $langManager = new Languages();
     if($action === 'getLanguageByIso'){
         echo json_encode($langManager->getLanguageByIso($iso));
     }

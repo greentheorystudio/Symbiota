@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/ImageShared.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceEditorImages extends OccurrenceEditorManager {
 
@@ -84,13 +84,13 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 	 		}
 		}
 		$occId = $_REQUEST['occid'];
-		$caption = Sanitizer::cleanInStr($this->conn,$_REQUEST['caption']);
-		$photographer = Sanitizer::cleanInStr($this->conn,$_REQUEST['photographer']);
+		$caption = SanitizerService::cleanInStr($this->conn,$_REQUEST['caption']);
+		$photographer = SanitizerService::cleanInStr($this->conn,$_REQUEST['photographer']);
 		$photographerUid = (array_key_exists('photographeruid',$_REQUEST)?$_REQUEST['photographeruid']:'');
-		$notes = Sanitizer::cleanInStr($this->conn,$_REQUEST['notes']);
-		$copyRight = Sanitizer::cleanInStr($this->conn,$_REQUEST['copyright']);
+		$notes = SanitizerService::cleanInStr($this->conn,$_REQUEST['notes']);
+		$copyRight = SanitizerService::cleanInStr($this->conn,$_REQUEST['copyright']);
 		$sortSeq = (is_numeric($_REQUEST['sortsequence'])?$_REQUEST['sortsequence']:'');
-		$sourceUrl = Sanitizer::cleanInStr($this->conn,$_REQUEST['sourceurl']);
+		$sourceUrl = SanitizerService::cleanInStr($this->conn,$_REQUEST['sourceurl']);
 
 		$sql = 'UPDATE images '.
 			'SET url = "'.$url.'", thumbnailurl = '.($tnUrl?'"'.$tnUrl.'"':'NULL').
@@ -274,7 +274,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
                 'FROM users u ORDER BY u.lastname, u.firstname ';
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
-				$this->photographerArr[$row->uid] = Sanitizer::cleanOutStr($row->fullname);
+				$this->photographerArr[$row->uid] = SanitizerService::cleanOutStr($row->fullname);
 			}
 			$result->close();
 		}

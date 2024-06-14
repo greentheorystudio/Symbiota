@@ -1,8 +1,8 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistLoaderManager {
 
@@ -14,7 +14,7 @@ class ChecklistLoaderManager {
 	private $errorStr = '';
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbConnectionService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -50,7 +50,7 @@ class ChecklistLoaderManager {
 			flush();
 			while($valueArr = fgetcsv($fh)){
 				if($valueArr){
-                    $sciNameStr = Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['sciname']]);
+                    $sciNameStr = SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['sciname']]);
                     if($sciNameStr){
                         $tid = 0;
                         $rankId = 0;
@@ -78,31 +78,31 @@ class ChecklistLoaderManager {
                                 $sqlInsert = '';
                                 $sqlValues = '';
                                 if(array_key_exists('family',$headerArr) && $valueArr[$headerArr['family']]){
-                                    $famValue = Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['family']]);
+                                    $famValue = SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['family']]);
                                     if(strcasecmp($family, $famValue)){
                                         $sqlInsert .= ',familyoverride';
-                                        $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['family']]).'"';
+                                        $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['family']]).'"';
                                     }
                                 }
                                 if(array_key_exists('habitat',$headerArr) && $valueArr[$headerArr['habitat']]){
                                     $sqlInsert .= ',habitat';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['habitat']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['habitat']]).'"';
                                 }
                                 if(array_key_exists('abundance',$headerArr) && $valueArr[$headerArr['abundance']]){
                                     $sqlInsert .= ',abundance';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['abundance']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['abundance']]).'"';
                                 }
                                 if(array_key_exists('notes',$headerArr) && $valueArr[$headerArr['notes']]){
                                     $sqlInsert .= ',notes';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['notes']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['notes']]).'"';
                                 }
                                 if(array_key_exists('internalnotes',$headerArr) && $valueArr[$headerArr['internalnotes']]){
                                     $sqlInsert .= ',internalnotes';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['internalnotes']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['internalnotes']]).'"';
                                 }
                                 if(array_key_exists('source',$headerArr) && $valueArr[$headerArr['source']]){
                                     $sqlInsert .= ',source';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['source']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['source']]).'"';
                                 }
 
                                 $sql = 'INSERT INTO fmchklsttaxalink (tid,clid'.$sqlInsert.') VALUES ('.$tid.', '.$this->clid.$sqlValues.')';

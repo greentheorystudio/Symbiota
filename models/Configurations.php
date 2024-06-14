@@ -1,10 +1,10 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Encryption.php');
-include_once(__DIR__ . '/ProfileManager.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
+include_once(__DIR__ . '/../services/EncryptionService.php');
+include_once(__DIR__ . '/../classes/ProfileManager.php');
 
-class ConfigurationManager{
+class Configurations{
 
     private $conn;
 
@@ -100,9 +100,11 @@ class ConfigurationManager{
         'ident',
         'imagelib',
         'misc',
+        'models',
         'profile',
         'projects',
         'references',
+        'services',
         'spatial',
         'stores',
         'taxa',
@@ -111,7 +113,7 @@ class ConfigurationManager{
     );
 
     public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
         $this->conn = $connection->getConnection();
         if(!$this->conn || $this->conn->connect_errno) {
             echo '<h2 style="color:red;">Cannot connect to the database</h2>';
@@ -134,7 +136,7 @@ class ConfigurationManager{
             while($r = $rs->fetch_object()){
                 $value = $r->configurationvalue;
                 if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
-                    $value = Encryption::decrypt($value);
+                    $value = EncryptionService::decrypt($value);
                 }
                 $GLOBALS[$r->configurationname] = $value;
             }
@@ -150,7 +152,7 @@ class ConfigurationManager{
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
         $GLOBALS['CSS_VERSION'] = '20240418';
-        $GLOBALS['JS_VERSION'] = '20240429111111111111122222232';
+        $GLOBALS['JS_VERSION'] = '2024042911111111111112222223233334444444';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -178,7 +180,7 @@ class ConfigurationManager{
         while($r = $rs->fetch_object()){
             $value = $r->configurationvalue;
             if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
-                $value = Encryption::decrypt($value);
+                $value = EncryptionService::decrypt($value);
             }
             $retArr[$r->configurationname] = $value;
             if(in_array($r->configurationname, $this->coreConfigurations, true)){
@@ -546,7 +548,7 @@ class ConfigurationManager{
 
     public function getGUID(): string
     {
-        return UuidFactory::getUuidV4();
+        return UuidService::getUuidV4();
     }
 
     public function getServerMaxFilesize(): int
@@ -559,7 +561,7 @@ class ConfigurationManager{
     public function updateConfigurationValue($name, $value): bool
     {
         if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
-            $value = Encryption::encrypt($value);
+            $value = EncryptionService::encrypt($value);
         }
         $sql = 'UPDATE configurations '.
             'SET configurationvalue = "'.$value.'" '.
@@ -577,7 +579,7 @@ class ConfigurationManager{
     public function addConfiguration($name, $value): bool
     {
         if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
-            $value = Encryption::encrypt($value);
+            $value = EncryptionService::encrypt($value);
         }
         $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
             'VALUES("'.$name.'","'.$value.'")';
@@ -716,7 +718,7 @@ class ConfigurationManager{
     public function readClientCookies(): void
     {
         if((isset($_COOKIE['BioSurvCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
-            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['BioSurvCrumb']), true);
+            $tokenArr = json_decode(EncryptionService::decrypt($_COOKIE['BioSurvCrumb']), true);
             if($tokenArr){
                 $pHandler = new ProfileManager();
                 if($pHandler->setUserName($tokenArr[0])){
@@ -731,7 +733,7 @@ class ConfigurationManager{
         }
 
         if((isset($_COOKIE['BioSurvCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
-            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['BioSurvCrumb']), true);
+            $tokenArr = json_decode(EncryptionService::decrypt($_COOKIE['BioSurvCrumb']), true);
             if($tokenArr){
                 $pHandler = new ProfileManager();
                 $uid = $pHandler->getUidFromUsername($tokenArr[0]);

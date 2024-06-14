@@ -3,7 +3,7 @@ require __DIR__ . '/../vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-class Mailer {
+class MailerService {
     public function sendEmail($emailAddr,$subject,$bodyStr): ?string
     {
         $returnStr = '';

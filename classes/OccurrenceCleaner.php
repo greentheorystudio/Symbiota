@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceCleaner extends Manager{
 
@@ -316,7 +316,7 @@ class OccurrenceCleaner extends Manager{
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT o.stateprovince) AS cnt '.$this->getBadStateSqlBase();
 		if($country) {
-			$sql .= 'AND o.country = "' . Sanitizer::cleanInStr($this->conn,$country) . '" ';
+			$sql .= 'AND o.country = "' . SanitizerService::cleanInStr($this->conn,$country) . '" ';
 		}
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -435,7 +435,7 @@ class OccurrenceCleaner extends Manager{
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT o.county) AS cnt '.$this->getBadCountySqlFrag();
 		if($state) {
-			$sql .= 'AND o.stateprovince = "' . Sanitizer::cleanInStr($this->conn,$state) . '" ';
+			$sql .= 'AND o.stateprovince = "' . SanitizerService::cleanInStr($this->conn,$state) . '" ';
 		}
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){

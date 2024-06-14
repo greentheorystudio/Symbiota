@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 header('Content-Type: application/json; charset=UTF-8' );
 
 $url = str_replace(' ','%20',$_REQUEST['url']);
@@ -9,7 +9,7 @@ $params = array_key_exists('params',$_REQUEST)?$_REQUEST['params']:'';
 
 $pArr = array();
 
-if(Sanitizer::validateInternalRequest()){
+if(SanitizerService::validateInternalRequest()){
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

@@ -91,14 +91,6 @@ $specImgArr = $occManager->getImageMap();
 							<input type="text" name="scientificnameauthorship" style="width:200px;" />
 						</div>
 						<div style='margin:3px;'>
-							<b>Confidence of Determination:</b> 
-							<select name="confidenceranking">
-								<option value="8">High</option>
-								<option value="5" selected>Medium</option>
-								<option value="2">Low</option>
-							</select>
-						</div>
-						<div style='margin:3px;'>
 							<b>Determiner:</b> 
 							<input type="text" name="identifiedby" style="background-color:lightyellow;width:200px;" />
 						</div>

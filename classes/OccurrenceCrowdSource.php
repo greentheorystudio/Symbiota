@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceCrowdSource {
 
@@ -14,7 +14,7 @@ class OccurrenceCrowdSource {
         'processingstatus','dateLastModified');
 
 	public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -51,7 +51,7 @@ class OccurrenceCrowdSource {
 		$statusStr = '';
 		if(is_numeric($omcsid)){
 			$sql = 'UPDATE omcrowdsourcecentral '.
-				'SET instructions = '.($instr?'"'.Sanitizer::cleanInStr($this->conn,$instr).'"':'NULL').',trainingurl = '.($url?'"'.Sanitizer::cleanInStr($this->conn,$url).'"':'NULL').
+				'SET instructions = '.($instr?'"'.SanitizerService::cleanInStr($this->conn,$instr).'"':'NULL').',trainingurl = '.($url?'"'.SanitizerService::cleanInStr($this->conn,$url).'"':'NULL').
 				' WHERE omcsid = '.$omcsid;
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR editing project.';
@@ -224,16 +224,16 @@ class OccurrenceCrowdSource {
                     'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
                     'WHERE o.collid = '.$this->collid.' AND q.occid IS NULL AND (o.processingstatus = "unprocessed") ';
                 if($family){
-                    $sqlFrag .= 'AND (o.family = "'.Sanitizer::cleanInStr($this->conn,$family).'") ';
+                    $sqlFrag .= 'AND (o.family = "'.SanitizerService::cleanInStr($this->conn,$family).'") ';
                 }
                 if($taxon){
-                    $sqlFrag .= 'AND (o.sciname LIKE "'.Sanitizer::cleanInStr($this->conn,$taxon).'%") ';
+                    $sqlFrag .= 'AND (o.sciname LIKE "'.SanitizerService::cleanInStr($this->conn,$taxon).'%") ';
                 }
                 if($country){
-                    $sqlFrag .= 'AND (o.country = "'.Sanitizer::cleanInStr($this->conn,$country).'") ';
+                    $sqlFrag .= 'AND (o.country = "'.SanitizerService::cleanInStr($this->conn,$country).'") ';
                 }
                 if($stateProvince){
-                    $sqlFrag .= 'AND (o.stateprovince = "'.Sanitizer::cleanInStr($this->conn,$stateProvince).'") ';
+                    $sqlFrag .= 'AND (o.stateprovince = "'.SanitizerService::cleanInStr($this->conn,$stateProvince).'") ';
                 }
                 $sqlCnt = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$sqlFrag;
                 $rs = $this->conn->query($sqlCnt);
@@ -382,7 +382,7 @@ class OccurrenceCrowdSource {
 			$successArr = array();
 			foreach($occidArr as $occid){
 				$points = $postArr['p-'.$occid];
-				$comments = Sanitizer::cleanInStr($this->conn,$postArr['c-'.$occid]);
+				$comments = SanitizerService::cleanInStr($this->conn,$postArr['c-'.$occid]);
 				$sql = 'UPDATE omcrowdsourcequeue '.
 					'SET points = '.$points.',notes = '.($comments?'"'.$comments.'"':'NULL').',reviewstatus = 10 '.
 					'WHERE occid = '.$occid;

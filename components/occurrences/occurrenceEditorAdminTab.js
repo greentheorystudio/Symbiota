@@ -1,7 +1,7 @@
 const occurrenceEditorAdminTab = {
     template: `
-        <div class="q-pa-md column q-gutter-sm">
-            <q-card v-if="editArr.length > 0" flat bordered>
+        <div class="column q-gutter-sm">
+            <q-card v-if="editArr.length > 0" flat bordered class="black-border">
                 <q-card-section>
                     <div class="text-h6 text-bold">Edit History</div>
                     <div class="q-mt-xs q-pl-sm column q-col-gutter-sm">
@@ -42,7 +42,7 @@ const occurrenceEditorAdminTab = {
                     </div>
                 </q-card-section>
             </q-card>
-            <q-card v-if="profileCollectionOptions.length > 0 && occurrenceEntryFormat !== 'benthic' && occurrenceEntryFormat !== 'lot'" flat bordered>
+            <q-card v-if="profileCollectionOptions.length > 0 && occurrenceEntryFormat !== 'benthic' && occurrenceEntryFormat !== 'lot'" flat bordered class="black-border">
                 <q-card-section>
                     <div class="text-h6 text-bold">Transfer Record</div>
                     <div class="q-mt-xs q-pl-sm row justify-between">
@@ -61,7 +61,7 @@ const occurrenceEditorAdminTab = {
                     </div>
                 </q-card-section>
             </q-card>
-            <q-card flat bordered>
+            <q-card flat bordered class="black-border">
                 <q-card-section>
                     <div class="text-h6 text-bold">Delete Record</div>
                     <div class="q-mt-xs q-pl-sm column q-col-gutter-sm">

@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../services/DbConnectionService.php');
 
-$connection = new DbConnection();
+$connection = new DbConnectionService();
 $con = $connection->getConnection();
 
 $retArrRow = array();

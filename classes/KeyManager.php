@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
 
 class KeyManager{
 
@@ -7,7 +7,7 @@ class KeyManager{
 	protected $language = 'English';
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbConnectionService();
 		$this->conn = $connection->getConnection();
 	}
 

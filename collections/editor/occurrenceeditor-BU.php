@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 600);
@@ -463,7 +463,7 @@ if($GLOBALS['SYMB_UID']){
     }
 }
 else{
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -1072,7 +1072,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 </div>
                                             </div>
                                             <?php
-                                            include_once(__DIR__ . '/includes/geotools.php');
                                             $georefExtraDiv = 'display:';
                                             if(array_key_exists('georeferencedby',$occArr) && $occArr['georeferencedby']){
                                                 $georefExtraDiv .= 'block';

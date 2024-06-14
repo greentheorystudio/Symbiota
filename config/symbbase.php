@@ -1,8 +1,8 @@
 <?php
-include_once(__DIR__ . '/../classes/Encryption.php');
-include_once(__DIR__ . '/../classes/ConfigurationManager.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
-Sanitizer::validateRequestPath();
+include_once(__DIR__ . '/../services/EncryptionService.php');
+include_once(__DIR__ . '/../models/Configurations.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+SanitizerService::validateRequestPath();
 ini_set('session.gc_maxlifetime',3600);
 ini_set('session.cookie_httponly',1);
 if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] === 443)){
@@ -10,7 +10,7 @@ if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['
 }
 session_start();
 
-$confManager = new ConfigurationManager();
+$confManager = new Configurations();
 $confManager->setGlobalArr();
 $confManager->setGlobalCssVersion();
 

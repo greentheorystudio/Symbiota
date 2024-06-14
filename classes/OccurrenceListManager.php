@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/OccurrenceManager.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceListManager extends OccurrenceManager{
 
@@ -178,7 +178,7 @@ class OccurrenceListManager extends OccurrenceManager{
     public function getCloseTaxaMatch($name): array
     {
         $retArr = array();
-        $searchName = Sanitizer::cleanInStr($this->conn,$name);
+        $searchName = SanitizerService::cleanInStr($this->conn,$name);
         $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex(?)';
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('s', $searchName);

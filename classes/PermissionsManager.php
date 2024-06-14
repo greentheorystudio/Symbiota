@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 /*
 SuperAdmin			Edit all data and assign new permissions
@@ -25,7 +25,7 @@ class PermissionsManager{
 	private $conn;
 
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbConnectionService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -261,7 +261,7 @@ class PermissionsManager{
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->collid]['collectionname'] = Sanitizer::cleanOutStr($r->collectionname);
+			$retArr[$r->collid]['collectionname'] = SanitizerService::cleanOutStr($r->collectionname);
 			$retArr[$r->collid]['institutioncode'] = $r->institutioncode;
 			$retArr[$r->collid]['collectioncode'] = $r->collectioncode;
 			$retArr[$r->collid]['colltype'] = $r->colltype;
@@ -290,7 +290,7 @@ class PermissionsManager{
 				elseif($r->role === 'CollEditor') {
 					$pGroup = 'editor';
 				}
-				$outStr = '<span title="assigned by: '.($r->assignedby?$r->assignedby.' ('.$r->initialtimestamp.')':'unknown').'">'.Sanitizer::cleanOutStr($r->uname).'</span>';
+				$outStr = '<span title="assigned by: '.($r->assignedby?$r->assignedby.' ('.$r->initialtimestamp.')':'unknown').'">'.SanitizerService::cleanOutStr($r->uname).'</span>';
 				$returnArr[$pGroup][$r->uid] = $outStr;
 			}
 			$rs->free();
@@ -316,7 +316,7 @@ class PermissionsManager{
             else{
                 $sql .= 'WHERE (';
             }
-            $searchTerm = Sanitizer::cleanInStr($this->conn,$searchTermIn);
+            $searchTerm = SanitizerService::cleanInStr($this->conn,$searchTermIn);
 			$sql .= '(lastname LIKE "'.$searchTerm.'%") ';
 			if(strlen($searchTerm) > 1) {
 				$sql .= "OR (username LIKE '" . $searchTerm . "%') ";
@@ -327,7 +327,7 @@ class PermissionsManager{
 		//echo "<div>".$sql."</div>";
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->uid] = Sanitizer::cleanOutStr($r->uname.($r->username?' ('.$r->username.')':''));
+			$retArr[$r->uid] = SanitizerService::cleanOutStr($r->uname.($r->username?' ('.$r->username.')':''));
 		}
 		$rs->free();
 		return $retArr;

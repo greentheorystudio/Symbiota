@@ -1,13 +1,13 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
-class GeographyManager {
+class Geography {
 
     private $conn;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbConnectionService();
         $this->conn = $connection->getConnection();
     }
 
@@ -21,7 +21,7 @@ class GeographyManager {
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT countryid, countryname FROM lkupcountry ';
-        $sql .= 'WHERE countryname LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'WHERE countryname LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $dataArr = array();
@@ -40,7 +40,7 @@ class GeographyManager {
         if($stateProvince){
             $sql .= 'LEFT JOIN lkupstateprovince AS s ON c.stateid = s.stateid ';
         }
-        $sql .= 'WHERE c.countyname LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'WHERE c.countyname LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
         if($stateProvince){
             $sql .= 'AND s.statename = "'.$stateProvince.'" ';
         }
@@ -63,7 +63,7 @@ class GeographyManager {
         if($country){
             $sql .= 'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid ';
         }
-        $sql .= 'WHERE s.statename LIKE "'.Sanitizer::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'WHERE s.statename LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
         if($country){
             $sql .= 'AND c.countryname = "'.$country.'" ';
         }

@@ -52,7 +52,7 @@
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
-    const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
+    const languageApiUrl = CLIENT_ROOT + '/api/languages/languageController.php';
     const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
     const occurrenceApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceController.php';
     const occurrenceCollectingEventApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceCollectingEventController.php';
