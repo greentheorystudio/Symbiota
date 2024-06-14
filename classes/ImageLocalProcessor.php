@@ -2,9 +2,9 @@
 include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/OccurrenceUtilities.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
-include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class ImageLocalProcessor {
 
@@ -751,7 +751,7 @@ class ImageLocalProcessor {
                                 $recMap['sciname'] = $sn;
                             }
                             elseif(array_key_exists('scientificname',$recMap) && $recMap['scientificname']){
-                                $recMap['sciname'] = (new TaxonomyUtilities)->formatScientificName($recMap['scientificname']);
+                                $recMap['sciname'] = TaxonomyService::formatScientificName($recMap['scientificname']);
                             }
                             if(array_key_exists('sciname',$recMap)){
                                 $symbMap['sciname']['type'] = 'string';

@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
+include_once(__DIR__ . '/../../models/TaxonHierarchy.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
@@ -15,6 +16,7 @@ $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $tid = (int)$_REQUEST['tid'];
 
 $taxUtilities = new TaxonomyUtilities();
+$taxHierarchy = new TaxonHierarchy();
 $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
 
@@ -31,8 +33,8 @@ if($editable){
 	elseif($submitAction === 'updatetaxparent'){
 		$statusStr = $taxonEditorObj->editTaxonParent($_POST['parenttid']);
         $tidArr = $taxUtilities->getChildTidArr($tid);
-        $taxUtilities->updateHierarchyTable($tid);
-        $taxUtilities->updateHierarchyTable($tidArr);
+        $taxHierarchy->updateHierarchyTable($tid);
+        $taxHierarchy->updateHierarchyTable($tidArr);
         $tidArr[] = $tid;
         $taxUtilities->updateFamily($tidArr);
 	}
@@ -52,7 +54,7 @@ if($editable){
 		header('Location: index.php?target='.$_REQUEST['genusstr'].'&statusstr='.$statusStr.'&tabindex=1');
 	}
 	elseif($submitAction === 'Delete Taxon'){
-        $taxUtilities->deleteTidFromHierarchyTable($tid);
+        $taxHierarchy->deleteTidFromHierarchyTable($tid);
         $statusStr = $taxonEditorObj->deleteTaxon();
 		header('Location: index.php?statusstr='.$statusStr.'&tabindex=1');
 	}

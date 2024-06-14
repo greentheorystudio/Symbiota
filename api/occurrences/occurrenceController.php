@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/Occurrences.php');
+include_once(__DIR__ . '/../../models/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $occid = array_key_exists('occid',$_REQUEST) ? (int)$_REQUEST['occid'] : 0;
@@ -38,7 +39,8 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($occManager->getOccurrenceData($occid));
     }
     elseif($action === 'getOccurrenceDeterminationArr' && $occid){
-        echo json_encode($occManager->getOccurrenceDeterminationData($occid));
+        $detManager = new OccurrenceDeterminations();
+        echo json_encode($detManager->getOccurrenceDeterminationData($occid));
     }
     elseif($action === 'getOccurrenceEditArr' && $occid){
         echo json_encode($occManager->getOccurrenceEditData($occid));

@@ -115,75 +115,6 @@ class Occurrences{
         "datelastmodified" => array("dataType" => "timestamp", "length" => 0)
     );
 
-    private $determinationFields = array(
-        "detid" => array("dataType" => "number", "length" => 10),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "identifiedby" => array("dataType" => "string", "length" => 60),
-        "dateidentified" => array("dataType" => "string", "length" => 45),
-        "sciname" => array("dataType" => "string", "length" => 100),
-        "verbatimscientificname" => array("dataType" => "string", "length" => 255),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "scientificnameauthorship" => array("dataType" => "string", "length" => 100),
-        "identificationqualifier" => array("dataType" => "string", "length" => 45),
-        "iscurrent" => array("dataType" => "number", "length" => 11),
-        "printqueue" => array("dataType" => "number", "length" => 11),
-        "identificationreferences" => array("dataType" => "string", "length" => 255),
-        "identificationremarks" => array("dataType" => "string", "length" => 500),
-        "sortsequence" => array("dataType" => "number", "length" => 10)
-    );
-
-    private $imageFields = array(
-        "imgid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "url" => array("dataType" => "string", "length" => 255),
-        "thumbnailurl" => array("dataType" => "string", "length" => 255),
-        "originalurl" => array("dataType" => "string", "length" => 255),
-        "archiveurl" => array("dataType" => "string", "length" => 255),
-        "photographer" => array("dataType" => "string", "length" => 100),
-        "photographeruid" => array("dataType" => "number", "length" => 10),
-        "imagetype" => array("dataType" => "string", "length" => 50),
-        "format" => array("dataType" => "string", "length" => 45),
-        "caption" => array("dataType" => "string", "length" => 750),
-        "owner" => array("dataType" => "string", "length" => 250),
-        "sourceurl" => array("dataType" => "string", "length" => 255),
-        "referenceurl" => array("dataType" => "string", "length" => 255),
-        "copyright" => array("dataType" => "string", "length" => 255),
-        "rights" => array("dataType" => "string", "length" => 255),
-        "accessrights" => array("dataType" => "string", "length" => 255),
-        "locality" => array("dataType" => "string", "length" => 250),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "notes" => array("dataType" => "string", "length" => 350),
-        "anatomy" => array("dataType" => "string", "length" => 100),
-        "username" => array("dataType" => "string", "length" => 45),
-        "sourceidentifier" => array("dataType" => "string", "length" => 150),
-        "mediamd5" => array("dataType" => "string", "length" => 45),
-        "dynamicproperties" => array("dataType" => "text", "length" => 0),
-        "sortsequence" => array("dataType" => "number", "length" => 10)
-    );
-
-    private $mediaFields = array(
-        "mediaid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "accessuri" => array("dataType" => "string", "length" => 2048),
-        "title" => array("dataType" => "string", "length" => 255),
-        "creatoruid" => array("dataType" => "number", "length" => 10),
-        "creator" => array("dataType" => "string", "length" => 45),
-        "type" => array("dataType" => "string", "length" => 45),
-        "format" => array("dataType" => "string", "length" => 45),
-        "owner" => array("dataType" => "string", "length" => 250),
-        "furtherinformationurl" => array("dataType" => "string", "length" => 2048),
-        "language" => array("dataType" => "string", "length" => 45),
-        "usageterms" => array("dataType" => "string", "length" => 255),
-        "rights" => array("dataType" => "string", "length" => 255),
-        "bibliographiccitation" => array("dataType" => "string", "length" => 255),
-        "publisher" => array("dataType" => "string", "length" => 255),
-        "contributor" => array("dataType" => "string", "length" => 255),
-        "locationcreated" => array("dataType" => "string", "length" => 1000),
-        "description" => array("dataType" => "string", "length" => 1000),
-        "sortsequence" => array("dataType" => "number", "length" => 10)
-    );
-
     private $geneticLinkageFields = array(
         "idoccurgenetic" => array("dataType" => "number", "length" => 11),
         "occid" => array("dataType" => "number", "length" => 10),
@@ -205,42 +136,6 @@ class Occurrences{
             $this->conn->close();
         }
 	}
-
-    public function createOccurrenceDeterminationRecord($data): int
-    {
-        $newID = 0;
-        $fieldNameArr = array();
-        $fieldValueArr = array();
-        $occId = array_key_exists('occid', $data) ? (int)$data['occid'] : 0;
-        $sciname = array_key_exists('sciname', $data) ? SanitizerService::cleanInStr($this->conn, $data['sciname']) : '';
-        if($occId && $sciname){
-            $isCurrent = (array_key_exists('iscurrent', $data) && (int)$data['iscurrent'] === 1);
-            if($isCurrent){
-                $sqlSetCur1 = 'UPDATE omoccurdeterminations SET iscurrent = 0 WHERE occid = ' . $occId;
-                $this->conn->query($sqlSetCur1);
-            }
-            foreach($this->determinationFields as $field => $fieldArr){
-                if($field !== 'detid' && array_key_exists($field, $data)){
-                    $fieldNameArr[] = $field;
-                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
-                }
-            }
-            $fieldNameArr[] = 'initialtimestamp';
-            $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
-            $sql = 'INSERT INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
-                'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $newID = $this->conn->insert_id;
-                $guid = UuidService::getUuidV4();
-                $this->conn->query('INSERT INTO guidoccurdeterminations(guid, detid) VALUES("' . $guid . '",' . $newID . ')');
-                if($isCurrent){
-
-                }
-            }
-        }
-        return $newID;
-    }
 
     public function createOccurrenceRecord($data): int
     {
@@ -430,32 +325,6 @@ class Occurrences{
         return $retArr;
     }
 
-    public function getOccurrenceDeterminationData($occid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT d.detid, d.identifiedby, d.dateidentified, d.sciname, d.verbatimscientificname, d.tid, d.scientificnameauthorship, ' .
-            'd.identificationqualifier, d.iscurrent, d.identificationreferences, d.identificationremarks, d.sortsequence, d.printqueue '.
-            'FROM omoccurdeterminations AS d '.
-            'WHERE d.occid = ' . (int)$occid . ' ORDER BY d.iscurrent DESC, d.sortsequence ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
-                }
-                if($nodeArr['tid'] && (int)$nodeArr['tid'] > 0){
-                    $nodeArr['taxonData'] = $this->getTaxonData($nodeArr['tid']);
-                }
-                $retArr[] = $nodeArr;
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
     public function getOccurrenceEditData($occid): array
     {
         $retArr = array();
@@ -630,7 +499,6 @@ class Occurrences{
         if($occId && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
-                    $fieldStr = '';
                     if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
                         $fieldStr = '`' . $field . '`';
                     }

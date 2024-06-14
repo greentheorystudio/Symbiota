@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../services/DbConnectionService.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
 
 class TaxonomyUpload{
 
@@ -134,7 +134,7 @@ class TaxonomyUpload{
                                     $sciArr['rankid'] = ($inputArr['rankid'] ?? '');
                                 }
                                 else{
-                                    $sciArr = (new TaxonomyUtilities)->parseScientificName($inputArr['scinameinput'],($inputArr['rankid'] ?? 0));
+                                    $sciArr = (new TaxonomyService)->parseScientificName($inputArr['scinameinput'],($inputArr['rankid'] ?? 0));
                                 }
                                 foreach($sciArr as $sciKey => $sciValue){
                                     if(!array_key_exists($sciKey, $inputArr)) {

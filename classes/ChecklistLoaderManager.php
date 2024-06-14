@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../services/DbConnectionService.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
 
 class ChecklistLoaderManager {
 
@@ -55,7 +55,7 @@ class ChecklistLoaderManager {
                         $tid = 0;
                         $rankId = 0;
                         $family = '';
-                        $sciNameArr = (new TaxonomyUtilities)->parseScientificName($sciNameStr);
+                        $sciNameArr = (new TaxonomyService)->parseScientificName($sciNameStr);
                         $sql = 'SELECT tid, sciname, family, rankid FROM taxa ';
                         $cleanSciName = $this->encodeString($sciNameArr['sciname']);
                         $sql .= 'WHERE (sciname IN("'.$sciNameStr.'"'.($cleanSciName?',"'.$cleanSciName.'"':'').'))';

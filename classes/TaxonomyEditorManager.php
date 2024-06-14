@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
 
 class TaxonomyEditorManager{
 
@@ -480,7 +480,7 @@ class TaxonomyEditorManager{
             }
         }
         if(!array_key_exists('unitname1',$dataArr) || !$dataArr['unitname1']){
-            $sciNameArr = (new TaxonomyUtilities)->parseScientificName($dataArr['sciname'],$dataArr['rankid']);
+            $sciNameArr = (new TaxonomyService)->parseScientificName($dataArr['sciname'],$dataArr['rankid']);
             $dataArr['unitind1'] = array_key_exists('unitind1',$sciNameArr) ? $sciNameArr['unitind1'] : '';
             $dataArr['unitname1'] = array_key_exists('unitname1',$sciNameArr) ? $sciNameArr['unitname1'] : '';
             $dataArr['unitind2'] = array_key_exists('unitind2',$sciNameArr) ? $sciNameArr['unitind2'] : '';

@@ -337,7 +337,7 @@ const taxonomicThesaurusMaintenanceModule = {
             addSubprocessToProcessorDisplay(currentTaxon.value['sciname'], 'text', text);
             const formData = new FormData();
             formData.append('tid', currentTaxon.value['tid']);
-            formData.append('action', 'checkTidForDataLinkages');
+            formData.append('action', 'evaluateTaxonForDeletion');
             fetch(taxonomyApiUrl, {
                 method: 'POST',
                 body: formData

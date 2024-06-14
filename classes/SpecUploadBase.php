@@ -2,9 +2,9 @@
 include_once(__DIR__ . '/SpecUpload.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/OccurrenceUtilities.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
-include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class SpecUploadBase extends SpecUpload{
 
@@ -1141,7 +1141,7 @@ class SpecUploadBase extends SpecUpload{
                 }
                 unset($recMap['genus'], $recMap['specificepithet'], $recMap['taxonrank'], $recMap['infraspecificepithet']);
                 if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
-                    $parsedArr = (new TaxonomyUtilities)->parseScientificName($recMap['sciname']);
+                    $parsedArr = (new TaxonomyService)->parseScientificName($recMap['sciname']);
                     if(array_key_exists('unitind1',$parsedArr)){
                         $parsedArr['unitname1'] = $parsedArr['unitind1'].' '.$parsedArr['unitname1'];
                     }

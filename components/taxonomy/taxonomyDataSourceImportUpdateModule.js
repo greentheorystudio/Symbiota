@@ -549,11 +549,11 @@ const taxonomyDataSourceImportUpdateModule = {
                 })
                 .then((response) => {
                     response.text().then((res) => {
-                        if(res && res !== ''){
-                            callback(res);
+                        if(Number(res) === 1){
+                            callback();
                         }
                         else{
-                            callback();
+                            callback('An error occurred while saving taxon edits.');
                         }
                     });
                 });
