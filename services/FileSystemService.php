@@ -1,9 +1,8 @@
 <?php
-class Utilities {
+class FileSystemService {
 
-	public function deleteDirectory($dir): bool
-    {
-        $returnVal = false;
+	public static function deleteDirectory($dir): bool
+	{
         if(!file_exists($dir)){
             $returnVal = true;
         }
@@ -12,7 +11,7 @@ class Utilities {
                 if($item === '.' || $item === '..'){
                     continue;
                 }
-                if(!$this->deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)){
+                if(!self::deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)){
                     return false;
                 }
 
@@ -23,5 +22,5 @@ class Utilities {
             $returnVal = unlink($dir);
         }
         return $returnVal;
-    }
+	}
 }

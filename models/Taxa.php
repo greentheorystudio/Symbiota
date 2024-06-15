@@ -432,30 +432,36 @@ class Taxa{
     public function getTaxonFromSciname($sciname, $kingdomId, $includeCommonNames = false, $includeChildren = false): array
     {
         $retArr = array();
-        $sql = 'SELECT t.TID, t.SciName, t.Author, t.family, k.kingdom_name, t.kingdomId, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
+        $fieldNameArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field === 'source'){
+                $fieldNameArr[] = 't.`' . $field . '`';
+            }
+            else{
+                $fieldNameArr[] = 't.' . $field;
+            }
+        }
+        $fieldNameArr[] = 'k.kingdom_name AS kingdom';
+        $fieldNameArr[] = 't2.sciname AS acceptedsciname';
+        $fieldNameArr[] = 't3.sciname AS parentsciname';
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
             'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
             'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
-            'WHERE t.SciName = "'.$sciname.'" AND t.kingdomId = '.$kingdomId.' ';
+            'WHERE t.SciName = "' . SanitizerService::cleanInStr($this->conn, $sciname) . '" AND t.kingdomId = ' . (int)$kingdomId . ' ';
         if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $retArr['tid'] = (int)$r->TID;
-                $retArr['sciname'] = $r->SciName;
-                $retArr['author'] = $r->Author;
-                $retArr['family'] = $r->family;
-                $retArr['kingdom'] = $r->kingdom_name;
-                $retArr['kingdomid'] = (int)$r->kingdomId;
-                $retArr['rankid'] = (int)$r->RankId;
-                $retArr['tidaccepted'] = (int)$r->tidaccepted;
-                $retArr['acceptedsciname'] = $r->acceptedSciName;
-                $retArr['parenttid'] = (int)$r->parenttid;
-                $retArr['parentsciname'] = $r->parentSciName;
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid((int)$r->TID);
+            $fields = mysqli_fetch_fields($rs);
+            if($r = $rs->fetch_object()){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $r->$name;
+                }
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($tid);
                 if($includeCommonNames){
-                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid((int)$r->TID);
+                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($tid);
                 }
                 if($includeChildren){
-                    $retArr['children'] = $this->getChildTaxaFromTid((int)$r->TID);
+                    $retArr['children'] = $this->getChildTaxaFromTid($tid);
                 }
             }
             $rs->free();
@@ -466,24 +472,30 @@ class Taxa{
     public function getTaxonFromTid($tid, $includeCommonNames = false, $includeChildren = false): array
     {
         $retArr = array();
-        $sql = 'SELECT t.TID, t.SciName, t.Author, t.family, k.kingdom_name, t.kingdomId, t.RankId, t.tidaccepted, t2.SciName AS acceptedSciName, t.parenttid, t3.SciName AS parentSciName '.
+        $fieldNameArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field === 'source'){
+                $fieldNameArr[] = 't.`' . $field . '`';
+            }
+            else{
+                $fieldNameArr[] = 't.' . $field;
+            }
+        }
+        $fieldNameArr[] = 'k.kingdom_name AS kingdom';
+        $fieldNameArr[] = 't2.sciname AS acceptedsciname';
+        $fieldNameArr[] = 't3.sciname AS parentsciname';
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
             'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
             'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
-            'WHERE t.TID = '.$tid.' ';
+            'WHERE t.tid = ' . (int)$tid . ' ';
         if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $retArr['tid'] = (int)$r->TID;
-                $retArr['sciname'] = $r->SciName;
-                $retArr['author'] = $r->Author;
-                $retArr['family'] = $r->family;
-                $retArr['kingdom'] = $r->kingdom_name;
-                $retArr['kingdomid'] = (int)$r->kingdomId;
-                $retArr['rankid'] = (int)$r->RankId;
-                $retArr['tidaccepted'] = (int)$r->tidaccepted;
-                $retArr['acceptedsciname'] = $r->acceptedSciName;
-                $retArr['parenttid'] = (int)$r->parenttid;
-                $retArr['parentsciname'] = $r->parentSciName;
+            $fields = mysqli_fetch_fields($rs);
+            if($r = $rs->fetch_object()){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $r->$name;
+                }
                 $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($tid);
                 if($includeCommonNames){
                     $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($tid);

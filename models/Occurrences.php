@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
@@ -319,7 +320,7 @@ class Occurrences{
             }
             $rs->free();
             if($retArr && $retArr['tid'] && (int)$retArr['tid'] > 0){
-                $retArr['taxonData'] = $this->getTaxonData($retArr['tid']);
+                $retArr['taxonData'] = (new Taxa)->getTaxonFromTid($retArr['tid']);
             }
         }
         return $retArr;
@@ -452,27 +453,6 @@ class Occurrences{
                     $nodeArr[$name] = $r->$name;
                 }
                 $retArr[] = $nodeArr;
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
-    public function getTaxonData($tid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT t.kingdomId, t.rankid, t.sciname, t.unitind1, t.unitname1, t.unitind2, t.unitname2, t.unitind3, t.unitname3, '.
-            't.author, t.tidaccepted, t.parenttid, t.family, t.source, t.notes, t.hybrid, t.securitystatus '.
-            'FROM taxa AS t '.
-            'WHERE t.tid = ' . (int)$tid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $retArr[$name] = $r->$name;
-                }
             }
             $rs->free();
         }
