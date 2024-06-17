@@ -206,8 +206,7 @@ class OccurrenceLocations{
         if($locationId && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
-                    $fieldStr = $field;
-                    $sqlPartArr[] = $fieldStr . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                 }
             }
             $sql = 'UPDATE omoccurlocations SET ' . implode(', ', $sqlPartArr) . ' '.

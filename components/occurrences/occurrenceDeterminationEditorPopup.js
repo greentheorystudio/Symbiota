@@ -74,8 +74,8 @@ const occurrenceDeterminationEditorPopup = {
                                     <checkbox-input-element label="Add to Annotation Queue" :value="determinationData['printqueue']" @update:value="(value) => updateDeterminationData('printqueue', (value ? 1 : 0))"></checkbox-input-element>
                                 </div>
                             </div>
-                            <div v-if="Number(determinationId) > 0" class="row justify-end q-gutter-md">
-                                <div v-if="Number(determinationData['iscurrent']) !== 1">
+                            <div v-if="Number(determinationId) > 0 && Number(determinationData['iscurrent']) !== 1" class="row justify-end q-gutter-md">
+                                <div>
                                     <q-btn color="primary" @click="makeDeterminationCurrent();" label="Make Determination Current" />
                                 </div>
                                 <div>
@@ -94,7 +94,7 @@ const occurrenceDeterminationEditorPopup = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { showNotification } = useCore();
+        const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const contentRef = Vue.ref(null);
@@ -123,11 +123,29 @@ const occurrenceDeterminationEditorPopup = {
         }
 
         function deleteDetermination() {
-
+            occurrenceStore.deleteOccurrenceDeterminationRecord((res) => {
+                if(res === 1){
+                    showNotification('positive','Determination has been deleted.');
+                    context.emit('close:popup');
+                }
+                else{
+                    showNotification('negative', 'There was an error deleting the determination.');
+                }
+            });
         }
 
         function makeDeterminationCurrent() {
-
+            showWorking('Making current determination...');
+            occurrenceStore.makeDeterminationCurrent((res) => {
+                hideWorking();
+                if(res === 1){
+                    showNotification('positive','Current determination changed.');
+                    context.emit('close:popup');
+                }
+                else{
+                    showNotification('negative', 'There was an error changing the current determination.');
+                }
+            });
         }
 
         function processScientificNameChange(taxon) {
@@ -137,7 +155,17 @@ const occurrenceDeterminationEditorPopup = {
         }
 
         function saveDeterminationEdits() {
-
+            showWorking('Saving edits...');
+            occurrenceStore.updateOccurrenceDeterminationRecord((res) => {
+                hideWorking();
+                if(res === 1){
+                    showNotification('positive','Edits saved.');
+                }
+                else{
+                    showNotification('negative', 'There was an error saving the determination edits.');
+                }
+                context.emit('close:popup');
+            });
         }
 
         function setContentStyle() {

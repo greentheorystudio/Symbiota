@@ -5,6 +5,7 @@ include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $occid = array_key_exists('occid',$_REQUEST) ? (int)$_REQUEST['occid'] : 0;
 $collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
+$detid = array_key_exists('detid',$_REQUEST) ? (int)$_REQUEST['detid'] : 0;
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 
 $isEditor = false;
@@ -27,5 +28,14 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'createOccurrenceDeterminationRecord' && $isEditor && array_key_exists('determination',$_POST)){
         echo $occurrenceDeterminations->createOccurrenceDeterminationRecord(json_decode($_POST['determination'], true));
+    }
+    elseif($action === 'updateDeterminationRecord' && $detid && $isEditor){
+        echo $occurrenceDeterminations->updateDeterminationRecord($detid, json_decode($_POST['determinationData'], true));
+    }
+    elseif($action === 'deleteDeterminationRecord' && $detid && $isEditor){
+        echo $occurrenceDeterminations->deleteDeterminationRecord($detid);
+    }
+    elseif($action === 'makeDeterminationCurrent' && $detid && $isEditor){
+        echo $occurrenceDeterminations->makeDeterminationCurrent($detid);
     }
 }

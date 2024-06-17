@@ -75,8 +75,38 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
                 });
             });
         },
+        deleteDeterminationRecord(collid, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('detid', this.determinationId.toString());
+            formData.append('action', 'deleteDeterminationRecord');
+            fetch(occurrenceDeterminationApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((val) => {
+                    callback(Number(val));
+                });
+            });
+        },
         getCurrentDeterminationData(detid) {
             return this.determinationArr.find(det => Number(det.detid) === Number(detid));
+        },
+        makeDeterminationCurrent(collid, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('detid', this.determinationId.toString());
+            formData.append('action', 'makeDeterminationCurrent');
+            fetch(occurrenceDeterminationApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((val) => {
+                    callback(Number(val));
+                });
+            });
         },
         setCurrentDeterminationRecord(detid) {
             if(Number(detid) > 0){
@@ -105,5 +135,24 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
         updateDeterminationEditData(key, value) {
             this.determinationEditData[key] = value;
         },
+        updateDeterminationRecord(collid, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('detid', this.determinationId.toString());
+            formData.append('determinationData', JSON.stringify(this.determinationUpdateData));
+            formData.append('action', 'updateDeterminationRecord');
+            fetch(occurrenceDeterminationApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(Number(res));
+                    if(res && Number(res) === 1){
+                        this.determinationData = Object.assign({}, this.determinationEditData);
+                    }
+                });
+            });
+        }
     }
 });

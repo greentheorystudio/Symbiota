@@ -455,9 +455,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             });
         },
         createOccurrenceDeterminationRecord(callback) {
+            const newIsCurrent = Number(this.determinationStore.getDeterminationData['iscurrent']) === 1;
             this.determinationStore.createOccurrenceDeterminationRecord(this.getCollId, this.occId, (newDetId) => {
                 callback(Number(newDetId));
-                if(newDetId && Number(newDetId) > 0){
+                if(newIsCurrent){
+                    this.setCurrentOccurrenceRecord(this.occId);
+                }
+                else if(newDetId && Number(newDetId) > 0){
                     this.determinationStore.setDeterminationArr(this.occId);
                 }
             });
@@ -490,6 +494,16 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     }
                     callback(Number(val));
                 });
+            });
+        },
+        deleteOccurrenceDeterminationRecord(callback = null) {
+            this.determinationStore.deleteDeterminationRecord(this.getCollId, (res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.determinationStore.setDeterminationArr(this.occId);
+                }
             });
         },
         evaluateOccurrenceForDeletion(occid, callback) {
@@ -557,6 +571,16 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         goToPreviousRecord() {
             this.setCurrentOccurrenceRecord(this.occidArr[(this.getCurrentRecordIndex - 2)]);
+        },
+        makeDeterminationCurrent(callback = null) {
+            this.determinationStore.makeDeterminationCurrent(this.getCollId, (res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.setCurrentOccurrenceRecord(this.occId);
+                }
+            });
         },
         mergeEventOccurrenceData() {
             const eventData = this.getCollectingEventData;
@@ -1060,6 +1084,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             .then((response) => {
                 response.text().then((res) => {
                     if(res && Number(res) === 1){
+                        if(this.occurrenceUpdateData.hasOwnProperty('sciname') || this.occurrenceUpdateData.hasOwnProperty('tid')){
+                            this.determinationStore.setDeterminationArr(this.occId);
+                        }
                         this.occurrenceData = Object.assign({}, this.occurrenceEditData);
                     }
                     if(this.getCollectingEventID > 0 && (this.occurrenceUpdateData.hasOwnProperty('locationid') || this.getEmbeddedOccurrenceRecord) && this.getCollectingEventEditsExist){
@@ -1069,6 +1096,15 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         callback(Number(res));
                     }
                 });
+            });
+        },
+        updateOccurrenceDeterminationRecord(callback) {
+            const isCurrent = Number(this.determinationStore.getDeterminationData['iscurrent']) === 1;
+            this.determinationStore.updateDeterminationRecord(this.getCollId, (res) => {
+                callback(Number(res));
+                if(isCurrent){
+                    this.setCurrentOccurrenceRecord(this.occId);
+                }
             });
         }
     }

@@ -95,18 +95,62 @@ class OccurrenceDeterminations{
         }
     }
 
+    public function deleteDeterminationRecord($detId): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM guidoccurdeterminations WHERE detid = ' . (int)$detId . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccurdeterminations WHERE detid = ' . (int)$detId . ' ';
+        if(!$rs = $this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getDeterminationFields(): array
     {
         return $this->fields;
     }
 
+    public function getDeterminationDataById($detid): array
+    {
+        $retArr = array();
+        $fieldNameArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            $fieldNameArr[] = $field;
+        }
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM omoccurdeterminations '.
+            'WHERE detid = ' . (int)$detid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            if($r = $rs->fetch_object()){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $r->$name;
+                }
+            }
+            $rs->free();
+            if($retArr && $retArr['tid'] && (int)$retArr['tid'] > 0){
+                $retArr['taxonData'] = (new Taxa)->getTaxonFromTid($retArr['tid']);
+            }
+        }
+        return $retArr;
+    }
+
     public function getOccurrenceDeterminationData($occid): array
     {
         $retArr = array();
-        $sql = 'SELECT d.detid, d.identifiedby, d.dateidentified, d.sciname, d.verbatimscientificname, d.tid, d.scientificnameauthorship, ' .
-            'd.identificationqualifier, d.iscurrent, d.identificationreferences, d.identificationremarks, d.sortsequence, d.printqueue '.
-            'FROM omoccurdeterminations AS d '.
-            'WHERE d.occid = ' . (int)$occid . ' ORDER BY d.iscurrent DESC, d.sortsequence ';
+        $fieldNameArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            $fieldNameArr[] = $field;
+        }
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM omoccurdeterminations '.
+            'WHERE occid = ' . (int)$occid . ' ORDER BY iscurrent DESC, sortsequence ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -124,5 +168,48 @@ class OccurrenceDeterminations{
             $rs->free();
         }
         return $retArr;
+    }
+
+    public function makeDeterminationCurrent($detId): int
+    {
+        $retVal = 0;
+        $determinationData = $this->getDeterminationDataById($detId);
+        $this->createOccurrenceDeterminationRecordFromOccurrence($determinationData['occid']);
+        $sqlSetCur1 = 'UPDATE omoccurdeterminations SET iscurrent = 0 WHERE occid = ' . (int)$determinationData['occid'];
+        if($this->conn->query($sqlSetCur1)){
+            $determinationData['family'] = $determinationData['taxonData']['family'];
+            $determinationData['localitysecurity'] = $determinationData['taxonData']['securitystatus'];
+            if((new Occurrences)->updateOccurrenceRecord($determinationData['occid'], $determinationData, true)){
+                $sqlSetCur2 = 'UPDATE omoccurdeterminations SET iscurrent = 1 WHERE detid = ' . (int)$detId;
+                if($this->conn->query($sqlSetCur2)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
+    public function updateDeterminationRecord($detId, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($detId && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'detid' && array_key_exists($field, $editData)){
+                    $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'UPDATE omoccurdeterminations SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE detid = ' . (int)$detId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                $determinationData = $this->getDeterminationDataById($detId);
+                if((int)$determinationData['iscurrent'] === 1){
+                    (new Occurrences)->updateOccurrenceRecord($determinationData['occid'], $editData, true);
+                }
+            }
+        }
+        return $retVal;
     }
 }
