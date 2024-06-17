@@ -37,45 +37,45 @@ const occurrenceDeterminationEditorPopup = {
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-5">
-                                    <single-scientific-common-name-auto-complete :sciname="determinationEditData['sciname']" label="Scientific Name" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
+                                    <single-scientific-common-name-auto-complete :sciname="determinationData['sciname']" label="Scientific Name" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                                 </div>
                                 <div class="col-12 col-sm-4">
-                                    <text-field-input-element :disabled="Number(determinationEditData['tid']) > 0" label="Author" :value="determinationEditData['scientificnameauthorship']" @update:value="(value) => processDeterminationEditDataChange('scientificnameauthorship', value)"></text-field-input-element>
+                                    <text-field-input-element :disabled="Number(determinationData['tid']) > 0" label="Author" :value="determinationData['scientificnameauthorship']" @update:value="(value) => updateDeterminationData('scientificnameauthorship', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-3">
-                                    <text-field-input-element label="ID Qualifier" :value="determinationEditData['identificationqualifier']" @update:value="(value) => processDeterminationEditDataChange('identificationqualifier', value)"></text-field-input-element>
+                                    <text-field-input-element label="ID Qualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-8">
-                                    <text-field-input-element label="Identified By" :value="determinationEditData['identifiedby']" @update:value="(value) => processDeterminationEditDataChange('identifiedby', value)"></text-field-input-element>
+                                    <text-field-input-element label="Identified By" :value="determinationData['identifiedby']" @update:value="(value) => updateDeterminationData('identifiedby', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-4">
-                                    <text-field-input-element label="Date Identified" :value="determinationEditData['dateidentified']" @update:value="(value) => processDeterminationEditDataChange('dateidentified', value)"></text-field-input-element>
+                                    <text-field-input-element label="Date Identified" :value="determinationData['dateidentified']" @update:value="(value) => updateDeterminationData('dateidentified', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="ID References" :value="determinationEditData['identificationreferences']" @update:value="(value) => processDeterminationEditDataChange('identificationreferences', value)"></text-field-input-element>
+                                    <text-field-input-element label="ID References" :value="determinationData['identificationreferences']" @update:value="(value) => updateDeterminationData('identificationreferences', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="ID Remarks" :value="determinationEditData['identificationremarks']" @update:value="(value) => processDeterminationEditDataChange('identificationremarks', value)"></text-field-input-element>
+                                    <text-field-input-element label="ID Remarks" :value="determinationData['identificationremarks']" @update:value="(value) => updateDeterminationData('identificationremarks', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div v-if="Number(determinationId) === 0" class="row justify-start">
                                 <div>
-                                    <checkbox-input-element label="Make this the current determination" :value="determinationEditData['iscurrent']" @update:value="updateMakeIsCurrent"></checkbox-input-element>
+                                    <checkbox-input-element label="Make this the current determination" :value="determinationData['iscurrent']" @update:value="(value) => updateDeterminationData('iscurrent', (value ? 1 : 0))"></checkbox-input-element>
                                 </div>
                             </div>
                             <div class="row justify-start">
                                 <div>
-                                    <checkbox-input-element label="Add to Annotation Queue" :value="determinationEditData['printqueue']" @update:value="updateAddToAnnotationQueue"></checkbox-input-element>
+                                    <checkbox-input-element label="Add to Annotation Queue" :value="determinationData['printqueue']" @update:value="(value) => updateDeterminationData('printqueue', (value ? 1 : 0))"></checkbox-input-element>
                                 </div>
                             </div>
                             <div v-if="Number(determinationId) > 0" class="row justify-end q-gutter-md">
-                                <div v-if="Number(determinationEditData['iscurrent']) !== 1">
+                                <div v-if="Number(determinationData['iscurrent']) !== 1">
                                     <q-btn color="primary" @click="makeDeterminationCurrent();" label="Make Determination Current" />
                                 </div>
                                 <div>
@@ -97,50 +97,25 @@ const occurrenceDeterminationEditorPopup = {
         const { showNotification } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
-        const blankDetermination = {
-            detid: 0,
-            identifiedby: null,
-            dateidentified: null,
-            sciname: null,
-            verbatimscientificname: null,
-            tid: null,
-            scientificnameauthorship: null,
-            identificationqualifier: null,
-            iscurrent: 0,
-            identificationreferences: null,
-            identificationremarks: null,
-            sortsequence: 10,
-            printqueue: 0
-        };
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const determinationData = Vue.ref({});
-        const determinationEditData = Vue.ref({});
-        const determinationValid = Vue.computed(() => {
-            return (
-                determinationEditData.value['sciname'] &&
-                determinationEditData.value['identifiedby'] &&
-                determinationEditData.value['dateidentified'] &&
-                Number(determinationEditData.value['sortsequence']) > 0
-            );
-        });
-        const editsExist = Vue.computed(() => {
-            let retValue = false;
-            const dataKeys = Object.keys(determinationEditData.value);
-            dataKeys.forEach(key => {
-                if(determinationEditData.value[key] !== determinationData.value[key]){
-                    retValue = true;
-                }
-            });
-            return retValue;
-        });
+        const determinationData = Vue.computed(() => occurrenceStore.getDeterminationData);
+        const determinationValid = Vue.computed(() => occurrenceStore.getDeterminationValid);
+        const editsExist = Vue.computed(() => occurrenceStore.getDeterminationEditsExist);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
         function addDetermination() {
-
+            occurrenceStore.createOccurrenceDeterminationRecord((newDetId) => {
+                if(newDetId > 0){
+                    showNotification('positive','Determination added successfully.');
+                }
+                else{
+                    showNotification('negative', 'There was an error adding the new determination.');
+                }
+            });
         }
 
         function closePopup() {
@@ -155,14 +130,10 @@ const occurrenceDeterminationEditorPopup = {
 
         }
 
-        function processDeterminationEditDataChange(key, value) {
-            determinationEditData.value[key] = value;
-        }
-
         function processScientificNameChange(taxon) {
-            determinationEditData.value['sciname'] = taxon ? taxon.sciname : null;
-            determinationEditData.value['tid'] = taxon ? taxon.tid : null;
-            determinationEditData.value['scientificnameauthorship'] = taxon ? taxon.author : null;
+            updateDeterminationData('sciname', (taxon ? taxon.sciname : null));
+            updateDeterminationData('tid', (taxon ? taxon.tid : null));
+            updateDeterminationData('scientificnameauthorship', (taxon ? taxon.author : null));
         }
 
         function saveDeterminationEdits() {
@@ -176,49 +147,28 @@ const occurrenceDeterminationEditorPopup = {
             }
         }
 
-        function setDeterminationData() {
-            if(Number(props.determinationId) > 0){
-                determinationData.value = Object.assign({}, occurrenceStore.getDeterminationData(props.determinationId));
-            }
-            else{
-                determinationData.value = Object.assign({}, blankDetermination);
-            }
-            determinationEditData.value = Object.assign({}, determinationData.value);
-        }
-
-        function updateAddToAnnotationQueue(value) {
-            determinationEditData.value['printqueue'] = value ? 1 : 0;
-        }
-
-        function updateCollectingEventData(key, value) {
-            occurrenceStore.updateCollectingEventEditData(key, value);
-        }
-
-        function updateMakeIsCurrent(value) {
-            determinationEditData.value['iscurrent'] = value ? 1 : 0;
+        function updateDeterminationData(key, value) {
+            occurrenceStore.updateDeterminationEditData(key, value);
         }
 
         Vue.onMounted(() => {
             setContentStyle();
-            setDeterminationData();
+            occurrenceStore.setCurrentDeterminationRecord(props.determinationId);
         });
 
         return {
             contentRef,
             contentStyle,
-            determinationEditData,
+            determinationData,
             determinationValid,
             editsExist,
             addDetermination,
             closePopup,
             deleteDetermination,
             makeDeterminationCurrent,
-            processDeterminationEditDataChange,
             processScientificNameChange,
             saveDeterminationEdits,
-            updateAddToAnnotationQueue,
-            updateCollectingEventData,
-            updateMakeIsCurrent
+            updateDeterminationData
         }
     }
 };

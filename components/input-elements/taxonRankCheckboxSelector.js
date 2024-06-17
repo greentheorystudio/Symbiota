@@ -98,7 +98,7 @@ const taxonRankCheckboxSelector = {
         }
 
         function setRankOptions() {
-            const url = taxonomyApiUrl + '?action=getRankArr&kingdomid=' + props.kingdomId;
+            const url = taxonRankApiUrl + '?action=getRankArr&kingdomid=' + props.kingdomId;
             fetch(url)
             .then((response) => {
                 if(response.ok){

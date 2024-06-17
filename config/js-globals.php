@@ -48,6 +48,7 @@
     let abortController;
     const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
+    const checklistVoucherApiUrl = CLIENT_ROOT + '/api/checklists/checklistVoucherController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
@@ -56,6 +57,8 @@
     const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
     const occurrenceApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceController.php';
     const occurrenceCollectingEventApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceCollectingEventController.php';
+    const occurrenceDeterminationApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceDeterminationController.php';
+    const occurrenceGeneticLinkApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceGeneticLinkController.php';
     const occurrenceLocationApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceLocationController.php';
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
@@ -63,6 +66,12 @@
     const searchApiUrl = CLIENT_ROOT + '/api/search/searchController.php';
     const solrConnectorUrl = CLIENT_ROOT + '/api/search/SOLRConnector.php';
     const spatialApiUrl = CLIENT_ROOT + '/api/spatial/spatialController.php';
+    const taxaApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
     const taxaProfileApiUrl = CLIENT_ROOT + '/api/taxa/taxaProfileController.php';
-    const taxonomyApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
+    const taxonDescriptionApiUrl = CLIENT_ROOT + '/api/taxa/taxonDescriptionController.php';
+    const taxonHierarchyApiUrl = CLIENT_ROOT + '/api/taxa/taxonHierarchyController.php';
+    const taxonKingdomApiUrl = CLIENT_ROOT + '/api/taxa/taxonKingdomController.php';
+    const taxonomyServiceApiUrl = CLIENT_ROOT + '/api/taxa/taxonomyServiceController.php';
+    const taxonRankApiUrl = CLIENT_ROOT + '/api/taxa/taxonRankController.php';
+    const taxonVernacularApiUrl = CLIENT_ROOT + '/api/taxa/taxonVernacularController.php';
 </script>

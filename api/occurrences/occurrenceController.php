@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/Occurrences.php');
-include_once(__DIR__ . '/../../models/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $occid = array_key_exists('occid',$_REQUEST) ? (int)$_REQUEST['occid'] : 0;
@@ -22,53 +21,49 @@ elseif($collid){
 }
 
 if($action && SanitizerService::validateInternalRequest()){
-    $occManager = new Occurrences();
+    $occurrences = new Occurrences();
     if($action === 'getOccurrenceDataLock' && $isEditor && $occid){
-        echo json_encode($occManager->getLock($occid));
+        echo json_encode($occurrences->getLock($occid));
     }
     elseif($action === 'createOccurrenceRecord' && $isEditor){
-        echo $occManager->createOccurrenceRecord(json_decode($_POST['occurrence'], true));
+        echo $occurrences->createOccurrenceRecord(json_decode($_POST['occurrence'], true));
     }
     elseif($action === 'updateOccurrenceRecord' && $occid && $isEditor){
-        echo $occManager->updateOccurrenceRecord($occid, json_decode($_POST['occurrenceData'], true));
+        echo $occurrences->updateOccurrenceRecord($occid, json_decode($_POST['occurrenceData'], true));
     }
     elseif($action === 'getOccurrenceFields'){
-        echo json_encode($occManager->getOccurrenceFields());
+        echo json_encode($occurrences->getOccurrenceFields());
     }
     elseif($action === 'getOccurrenceDataArr' && $occid){
-        echo json_encode($occManager->getOccurrenceData($occid));
-    }
-    elseif($action === 'getOccurrenceDeterminationArr' && $occid){
-        $detManager = new OccurrenceDeterminations();
-        echo json_encode($detManager->getOccurrenceDeterminationData($occid));
+        echo json_encode($occurrences->getOccurrenceData($occid));
     }
     elseif($action === 'getOccurrenceEditArr' && $occid){
-        echo json_encode($occManager->getOccurrenceEditData($occid));
+        echo json_encode($occurrences->getOccurrenceEditData($occid));
     }
     elseif($action === 'getOccurrenceImageArr' && $occid){
-        echo json_encode($occManager->getOccurrenceImageData($occid));
+        echo json_encode($occurrences->getOccurrenceImageData($occid));
     }
     elseif($action === 'getOccurrenceMediaArr' && $occid){
-        echo json_encode($occManager->getOccurrenceMediaData($occid));
+        echo json_encode($occurrences->getOccurrenceMediaData($occid));
     }
     elseif($action === 'getOccurrenceChecklistArr' && $occid){
-        echo json_encode($occManager->getOccurrenceChecklistData($occid));
+        echo json_encode($occurrences->getOccurrenceChecklistData($occid));
     }
     elseif($action === 'getOccurrenceGeneticLinkArr' && $occid){
-        echo json_encode($occManager->getOccurrenceGeneticLinkData($occid));
+        echo json_encode($occurrences->getOccurrenceGeneticLinkData($occid));
     }
     elseif($action === 'evaluateOccurrenceForDeletion' && $occid && $isEditor){
-        echo json_encode($occManager->evaluateOccurrenceForDeletion($occid));
+        echo json_encode($occurrences->evaluateOccurrenceForDeletion($occid));
     }
     elseif($action === 'deleteOccurrenceRecord' && $occid && $isEditor){
-        echo $occManager->deleteOccurrenceRecord($occid);
+        echo $occurrences->deleteOccurrenceRecord($occid);
     }
     elseif($action === 'getOccurrencesByCatalogNumber' && array_key_exists('catalognumber',$_POST)){
         $collId = array_key_exists('collid',$_POST) ? (int)$_POST['collid'] : null;
-        echo json_encode($occManager->getOccurrencesByCatalogNumber($_POST['catalognumber'], $collId));
+        echo json_encode($occurrences->getOccurrencesByCatalogNumber($_POST['catalognumber'], $collId));
     }
     elseif($action === 'transferOccurrenceRecord' && $isEditor && array_key_exists('transferToCollid',$_POST)){
         $collId = array_key_exists('transferToCollid',$_POST) ? (int)$_POST['transferToCollid'] : null;
-        echo $occManager->transferOccurrenceRecord($occid, $collId);
+        echo $occurrences->transferOccurrenceRecord($occid, $collId);
     }
 }

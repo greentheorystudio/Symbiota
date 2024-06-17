@@ -160,6 +160,7 @@ const singleScientificCommonNameAutoComplete = {
                 if(val.length > 2) {
                     let action = 'getAutocompleteSciNameList';
                     let rankLimit, rankLow, rankHigh;
+                    let dataSource = taxaApiUrl;
                     if(props.taxonType){
                         if(Number(props.taxonType) === 1){
                             rankLow = 140;
@@ -176,6 +177,7 @@ const singleScientificCommonNameAutoComplete = {
                         }
                         else if(Number(props.taxonType) === 6){
                             action = 'getAutocompleteVernacularList';
+                            dataSource = taxonVernacularApiUrl;
                         }
                     }
                     else{
@@ -193,7 +195,7 @@ const singleScientificCommonNameAutoComplete = {
                     formData.append('rlow', rankLow);
                     formData.append('rhigh', rankHigh);
                     formData.append('limit', props.optionLimit);
-                    fetch(taxonomyApiUrl, {
+                    fetch(dataSource, {
                         method: 'POST',
                         body: formData
                     })

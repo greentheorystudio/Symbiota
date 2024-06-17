@@ -113,4 +113,12 @@ class Media{
         $result->free();
         return $retArr;
     }
+
+    public function updateTidFromOccurrenceRecord($occid, $tid): void
+    {
+        if((int)$occid > 0){
+            $sql = 'UPDATE media SET tid = ' . (((int)$tid > 0) ? (int)$tid : 'NULL') . ' WHERE occid = ' . (int)$occid . ' ';
+            $this->conn->query($sql);
+        }
+    }
 }

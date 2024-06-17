@@ -1,4 +1,8 @@
 <?php
+include_once(__DIR__ . '/../models/ChecklistVouchers.php');
+include_once(__DIR__ . '/../models/Images.php');
+include_once(__DIR__ . '/../models/Media.php');
+include_once(__DIR__ . '/../models/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -471,12 +475,26 @@ class Occurrences{
         return $returnVal;
     }
 
-    public function updateOccurrenceRecord($occId, $editData): int
+    public function updateOccurrenceRecord($occId, $editData, $determinationUpdate = false): int
     {
         $retVal = 0;
         $fieldNameArr = array();
         $sqlPartArr = array();
         if($occId && $editData){
+            if(!$determinationUpdate && (array_key_exists('sciname', $editData) || array_key_exists('tid', $editData))){
+                $determinationData = array();
+                $determinationFields = (new OccurrenceDeterminations)->getDeterminationFields();
+                foreach($editData as $field => $value){
+                    if(array_key_exists($field, $determinationFields)){
+                        $determinationData[$field] = $value;
+                        unset($editData[$field]);
+                    }
+                }
+                $determinationData['occid'] = $occId;
+                $determinationData['iscurrent'] = 1;
+                $detId = (new OccurrenceDeterminations)->createOccurrenceDeterminationRecord($determinationData);
+                $retVal = $detId > 0 ? 1 : 0;
+            }
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
                     if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
@@ -489,28 +507,35 @@ class Occurrences{
                     $sqlPartArr[] = $fieldStr . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                 }
             }
-            $sql = 'SELECT ' . implode(', ', $fieldNameArr) .
-                ' FROM omoccurrences WHERE occid = ' . (int)$occId . ' ';
-            //echo $sql;
-            $rs = $this->conn->query($sql);
-            if($oldData = $rs->fetch_assoc()){
-                $sqlEditsBase = 'INSERT INTO omoccuredits(occid, reviewstatus, appliedstatus, uid, fieldname, fieldvaluenew, fieldvalueold) '.
-                    'VALUES(' . (int)$occId . ', 1, 1, ' . $GLOBALS['SYMB_UID'] . ', ';
-                foreach($fieldNameArr as $fieldName){
-                    $cleanedFieldName = str_replace('`','',$fieldName);
-                    $oldValue = $oldData[$cleanedFieldName] ? SanitizerService::getSqlValueString($this->conn, $oldData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']) : '""';
-                    $newValue = $editData[$cleanedFieldName] ? SanitizerService::getSqlValueString($this->conn, $editData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']) : '""';
-                    $sqlEdit = $sqlEditsBase . '"' . $cleanedFieldName . '",' . $newValue . ',' . $oldValue . ') ';
-                    //echo '<div>'.$sqlEdit.'</div>';
-                    $this->conn->query($sqlEdit);
+            if(count($sqlPartArr) > 0){
+                $sql = 'SELECT ' . implode(', ', $fieldNameArr) .
+                    ' FROM omoccurrences WHERE occid = ' . (int)$occId . ' ';
+                //echo $sql;
+                $rs = $this->conn->query($sql);
+                if($oldData = $rs->fetch_assoc()){
+                    $sqlEditsBase = 'INSERT INTO omoccuredits(occid, reviewstatus, appliedstatus, uid, fieldname, fieldvaluenew, fieldvalueold) '.
+                        'VALUES(' . (int)$occId . ', 1, 1, ' . $GLOBALS['SYMB_UID'] . ', ';
+                    foreach($fieldNameArr as $fieldName){
+                        $cleanedFieldName = str_replace('`','',$fieldName);
+                        $oldValue = $oldData[$cleanedFieldName] ? SanitizerService::getSqlValueString($this->conn, $oldData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']) : '""';
+                        $newValue = $editData[$cleanedFieldName] ? SanitizerService::getSqlValueString($this->conn, $editData[$cleanedFieldName], $this->fields[$cleanedFieldName]['dataType']) : '""';
+                        $sqlEdit = $sqlEditsBase . '"' . $cleanedFieldName . '",' . $newValue . ',' . $oldValue . ') ';
+                        //echo '<div>'.$sqlEdit.'</div>';
+                        $this->conn->query($sqlEdit);
+                    }
                 }
-            }
-            $rs->free();
-            $sql = 'UPDATE omoccurrences SET ' . implode(', ', $sqlPartArr) . ' '.
-                'WHERE occid = ' . (int)$occId . ' ';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $retVal = 1;
+                $rs->free();
+                $sql = 'UPDATE omoccurrences SET ' . implode(', ', $sqlPartArr) . ' '.
+                    'WHERE occid = ' . (int)$occId . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                    if($determinationUpdate){
+                        (new ChecklistVouchers)->updateTidFromOccurrenceRecord($occId, $editData['tid']);
+                        (new Images)->updateTidFromOccurrenceRecord($occId, $editData['tid']);
+                        (new Media)->updateTidFromOccurrenceRecord($occId, $editData['tid']);
+                    }
+                }
             }
         }
         return $retVal;

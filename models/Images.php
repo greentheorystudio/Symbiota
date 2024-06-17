@@ -85,4 +85,12 @@ class Images{
         $result->free();
         return $retArr;
     }
+
+    public function updateTidFromOccurrenceRecord($occid, $tid): void
+    {
+        if((int)$occid > 0){
+            $sql = 'UPDATE images SET tid = ' . (((int)$tid > 0) ? (int)$tid : 'NULL') . ' WHERE occid = ' . (int)$occid . ' ';
+            $this->conn->query($sql);
+        }
+    }
 }

@@ -1,4 +1,6 @@
 <?php
+include_once(__DIR__ . '/../models/Occurrences.php');
+include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../services/DbConnectionService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
@@ -21,7 +23,8 @@ class OccurrenceDeterminations{
         "printqueue" => array("dataType" => "number", "length" => 11),
         "identificationreferences" => array("dataType" => "string", "length" => 255),
         "identificationremarks" => array("dataType" => "string", "length" => 500),
-        "sortsequence" => array("dataType" => "number", "length" => 10)
+        "sortsequence" => array("dataType" => "number", "length" => 10),
+        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
     );
 
     public function __construct(){
@@ -65,6 +68,12 @@ class OccurrenceDeterminations{
                 $this->conn->query('INSERT INTO guidoccurdeterminations(guid, detid) VALUES("' . $guid . '",' . $newID . ')');
                 if($isCurrent){
                     $this->createOccurrenceDeterminationRecordFromOccurrence($occId);
+                    if(array_key_exists('tid', $data) && (int)$data['tid'] > 0){
+                        $taxonData = (new Taxa)->getTaxonFromTid($data['tid']);
+                        $data['family'] = $taxonData['family'];
+                        $data['localitysecurity'] = $taxonData['securitystatus'];
+                    }
+                    (new Occurrences)->updateOccurrenceRecord($occId, $data, true);
                 }
             }
         }
@@ -73,8 +82,8 @@ class OccurrenceDeterminations{
 
     public function createOccurrenceDeterminationRecordFromOccurrence($occid): void
     {
-        $sql = 'INSERT IGNORE INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, verbatimScientificName, '.
-            'scientificNameAuthorship, identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
+        $sql = 'INSERT IGNORE INTO omoccurdeterminations(occid, tid, identifiedby, dateidentified, sciname, verbatimscientificname, '.
+            'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, sortsequence) '.
             'SELECT occid, tid, IFNULL(identifiedby, "unknown"), IFNULL(dateidentified, "unknown"), sciname, verbatimScientificName, '.
             'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 '.
             'FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
@@ -84,6 +93,11 @@ class OccurrenceDeterminations{
             $detId = $this->conn->insert_id;
             $this->conn->query('INSERT IGNORE INTO guidoccurdeterminations(guid, detid) VALUES("' . $guid . '" ,' . $detId . ')');
         }
+    }
+
+    public function getDeterminationFields(): array
+    {
+        return $this->fields;
     }
 
     public function getOccurrenceDeterminationData($occid): array
@@ -103,7 +117,7 @@ class OccurrenceDeterminations{
                     $nodeArr[$name] = $r->$name;
                 }
                 if($nodeArr['tid'] && (int)$nodeArr['tid'] > 0){
-                    $nodeArr['taxonData'] = $this->getTaxonData($nodeArr['tid']);
+                    $nodeArr['taxonData'] = (new Taxa)->getTaxonFromTid($nodeArr['tid']);
                 }
                 $retArr[] = $nodeArr;
             }

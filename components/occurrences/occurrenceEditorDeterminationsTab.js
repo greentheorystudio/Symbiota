@@ -1,12 +1,14 @@
 const occurrenceEditorDeterminationsTab = {
     template: `
         <div class="column q-gutter-sm">
-            <div class="row justify-end">
-                <q-btn color="secondary" @click="openDeterminationEditorPopup(0);" label="Add New Determination" />
+            <div class="row justify-between q-gutter-sm">
+                <div class="text-h6 text-bold">Determination History</div>
+                <div>
+                    <q-btn color="secondary" @click="openDeterminationEditorPopup(0);" label="Add New Determination" />
+                </div>
             </div>
             <div class="q-mt-sm">
                 <template v-if="determinationArr.length > 0">
-                    <div class="q-my-sm text-h6 text-bold">Determination History</div>
                     <template v-for="determination in determinationArr">
                         <q-card flat bordered>
                             <q-card-section>

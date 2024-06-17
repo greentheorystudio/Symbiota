@@ -401,7 +401,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('taxa', JSON.stringify(nameArr));
                         formData.append('action', 'getTaxaArrFromNameArr');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             body: formData
                         })

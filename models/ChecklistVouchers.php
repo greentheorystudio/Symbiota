@@ -1,0 +1,37 @@
+<?php
+include_once(__DIR__ . '/../services/DbConnectionService.php');
+
+class ChecklistVouchers{
+
+	private $conn;
+
+    private $fields = array(
+        "vid" => array("dataType" => "number", "length" => 10),
+        "tid" => array("dataType" => "number", "length" => 10),
+        "clid" => array("dataType" => "number", "length" => 10),
+        "occid" => array("dataType" => "number", "length" => 10),
+        "editornotes" => array("dataType" => "string", "length" => 50),
+        "preferredimage" => array("dataType" => "number", "length" => 11),
+        "notes" => array("dataType" => "string", "length" => 250),
+        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+    );
+
+    public function __construct(){
+        $connection = new DbConnectionService();
+	    $this->conn = $connection->getConnection();
+	}
+
+ 	public function __destruct(){
+		if($this->conn) {
+            $this->conn->close();
+        }
+	}
+
+    public function updateTidFromOccurrenceRecord($occid, $tid): void
+    {
+        if((int)$occid > 0){
+            $sql = 'UPDATE fmvouchers SET tid = ' . (((int)$tid > 0) ? (int)$tid : 'NULL') . ' WHERE occid = ' . (int)$occid . ' ';
+            $this->conn->query($sql);
+        }
+    }
+}

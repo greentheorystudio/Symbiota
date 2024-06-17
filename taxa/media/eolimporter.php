@@ -226,7 +226,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('statement', JSON.stringify(statement));
                         formData.append('action', 'addTaxonDescriptionStatement');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonDescriptionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -244,7 +244,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('description', JSON.stringify(descTab));
                         formData.append('action', 'addTaxonDescriptionTab');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonDescriptionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -374,7 +374,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         formData.append('source', 'eol');
                         formData.append('index', identifierImportIndex.value);
                         formData.append('action', 'getIdentifiersForTaxonomicGroup');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -420,7 +420,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         else if(selectedMediaType.value === 'description'){
                             formData.append('action', 'getDescriptionCountsForTaxonomicGroup');
                         }
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             signal: abortController.signal,
                             body: formData
@@ -742,7 +742,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     formData.append('idname', 'eol');
                                                     formData.append('id', taxonResObj['id']);
                                                     formData.append('action', 'addTaxonIdentifier');
-                                                    fetch(taxonomyApiUrl, {
+                                                    fetch(taxaApiUrl, {
                                                         method: 'POST',
                                                         body: formData
                                                     })
@@ -862,39 +862,49 @@ if(!$GLOBALS['SYMB_UID']) {
 
                     function setTaxonMediaArr() {
                         if(Number(currentTaxon.value['cnt']) > 0){
+                            let dataSource = null;
                             const text = 'Getting existing ' + selectedMediaType.value + 's';
                             addSubprocessToProcessorDisplay(currentTaxon.value['sciname'],'text',text);
                             const formData = new FormData();
                             formData.append('tid', currentTaxon.value['tid']);
                             if(selectedMediaType.value === 'image'){
                                 formData.append('action', 'getTaxonImages');
+                                dataSource = imageApiUrl;
                             }
                             else if(selectedMediaType.value === 'video'){
                                 formData.append('action', 'getTaxonVideos');
+                                dataSource = mediaApiUrl;
                             }
                             else if(selectedMediaType.value === 'audio'){
                                 formData.append('action', 'getTaxonAudios');
+                                dataSource = mediaApiUrl;
                             }
                             else if(selectedMediaType.value === 'description'){
                                 formData.append('action', 'getTaxonDescriptions');
+                                dataSource = taxonDescriptionApiUrl;
                             }
-                            fetch(taxonomyApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                if(response.status === 200){
-                                    response.json().then((resObj) => {
-                                        taxonMediaArr.value = resObj;
-                                        processSubprocessSuccessResponse(false);
-                                        setEOLMediaArr();
-                                    });
-                                }
-                                else{
-                                    processSubprocessErrorResponse(currentTaxon.value['sciname'],'Error getting records');
-                                    setCurrentTaxon();
-                                }
-                            });
+                            if(dataSource){
+                                fetch(dataSource, {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then((response) => {
+                                    if(response.status === 200){
+                                        response.json().then((resObj) => {
+                                            taxonMediaArr.value = resObj;
+                                            processSubprocessSuccessResponse(false);
+                                            setEOLMediaArr();
+                                        });
+                                    }
+                                    else{
+                                        processSubprocessErrorResponse(currentTaxon.value['sciname'],'Error getting records');
+                                        setCurrentTaxon();
+                                    }
+                                });
+                            }
+                            else{
+                                setEOLMediaArr();
+                            }
                         }
                         else{
                             setEOLMediaArr();
