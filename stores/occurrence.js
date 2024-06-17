@@ -128,7 +128,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             {field: 'recordnumber', label: 'Collector Number'},
             {field: 'eventdate', label: 'Collection Date'}
         ],
-        determinationStore: useOccurrenceLocationStore(),
+        determinationStore: useOccurrenceDeterminationStore(),
         displayMode: 1,
         editArr: [],
         editorQueryFieldOptions: [

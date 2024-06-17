@@ -33,7 +33,7 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
             let exist = false;
             state.determinationUpdateData = Object.assign({}, {});
             for(let key in state.determinationEditData) {
-                if(state.determinationEditData.hasOwnProperty(key) && state.locationEditData[key] !== state.determinationData[key]) {
+                if(state.determinationEditData.hasOwnProperty(key) && state.determinationEditData[key] !== state.determinationData[key]) {
                     exist = true;
                     state.determinationUpdateData[key] = state.determinationEditData[key];
                 }
