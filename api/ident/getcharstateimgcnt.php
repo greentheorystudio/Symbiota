@@ -7,7 +7,7 @@ $cs = (int)$_POST['csinput'];
 
 $retCnt = 0;
 if($cid && $cs){
-    $connection = new DbConnectionService();
+    $connection = new DbService();
     $con = $connection->getConnection();
 	$sql = 'SELECT count(*) AS cnt FROM kmcsimages WHERE cid = '.$cid.' AND cs = '.$cs;
 	//echo $sql;

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceChecklistManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 
 $checklistManager = new OccurrenceChecklistManager();
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?(int)$_REQUEST['taxonfilter']:0;
@@ -10,7 +10,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $checklistArr = array();
 $taxaCnt = 0;
 
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 $checklistManager = new OccurrenceChecklistManager();
 
 if($stArrJson){

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnectionService.php');
+include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/SanitizerService.php');
 
 class TaxonomyService {
@@ -7,7 +7,7 @@ class TaxonomyService {
     private $conn;
 
     public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 

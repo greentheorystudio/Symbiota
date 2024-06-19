@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceUtilities.php');
 include_once(__DIR__ . '/ChecklistVoucherAdmin.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -18,7 +18,7 @@ class OccurrenceManager{
     private $collArrIndex = 0;
 
     public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 

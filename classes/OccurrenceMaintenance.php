@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
-include_once(__DIR__ . '/SOLRManager.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/SOLRService.php');
 
 class OccurrenceMaintenance {
 
@@ -16,7 +16,7 @@ class OccurrenceMaintenance {
 			$this->destructConn = false;
 		}
 		else{
-            $connection = new DbConnectionService();
+            $connection = new DbService();
 		    $this->conn = $connection->getConnection();
 		}
 	}
@@ -347,7 +347,7 @@ class OccurrenceMaintenance {
 			}
 		}
 		if($GLOBALS['SOLR_MODE']){
-            $solrManager = new SOLRManager();
+            $solrManager = new SOLRService();
             $solrManager->updateSOLR();
         }
 		return true;

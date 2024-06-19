@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 /*
@@ -25,7 +25,7 @@ class PermissionsManager{
 	private $conn;
 
 	public function __construct() {
-		$connection = new DbConnectionService();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -33,38 +33,6 @@ class PermissionsManager{
  		if($this->conn) {
 			$this->conn->close();
 		}
-	}
-
-	public function getUser($uid): array
-	{
-		$returnArr = array();
-		if(is_numeric($uid)){
-			$sql = 'SELECT u.uid, u.firstname, u.lastname, u.title, u.institution, u.city, u.state, u.validated, ' .
-				'u.zip, u.country, u.email, u.url, u.notes, u.username, IFNULL(u.lastlogindate,u.initialTimestamp) AS lastlogindate ' .
-				'FROM users AS u ' .
-				'WHERE (u.uid = ' .$uid.')';
-			//echo "<div>$sql</div>";
-			$result = $this->conn->query($sql);
-			if($row = $result->fetch_object()){
-				$returnArr['uid'] = $row->uid;
-				$returnArr['firstname'] = $row->firstname;
-				$returnArr['lastname'] = $row->lastname;
-				$returnArr['title'] = $row->title;
-				$returnArr['institution'] = $row->institution;
-				$returnArr['city'] = $row->city;
-				$returnArr['state'] = $row->state;
-				$returnArr['zip'] = $row->zip;
-				$returnArr['country'] = $row->country;
-				$returnArr['email'] = $row->email;
-				$returnArr['url'] = $row->url;
-				$returnArr['notes'] = $row->notes;
-				$returnArr['username'] = $row->username;
-				$returnArr['lastlogindate'] = $row->lastlogindate;
-                $returnArr['validated'] = $row->validated;
-			}
-			$result->free();
-		}
-		return $returnArr;
 	}
 
 	public function getUserPermissions($uid): array

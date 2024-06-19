@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/../models/Occurrences.php');
-include_once(__DIR__ . '/../models/Taxa.php');
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/Occurrences.php');
+include_once(__DIR__ . '/Taxa.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
@@ -28,7 +28,7 @@ class OccurrenceDeterminations{
     );
 
     public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -117,10 +117,7 @@ class OccurrenceDeterminations{
     public function getDeterminationDataById($detid): array
     {
         $retArr = array();
-        $fieldNameArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            $fieldNameArr[] = $field;
-        }
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurdeterminations '.
             'WHERE detid = ' . (int)$detid . ' ';
@@ -144,10 +141,7 @@ class OccurrenceDeterminations{
     public function getOccurrenceDeterminationData($occid): array
     {
         $retArr = array();
-        $fieldNameArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            $fieldNameArr[] = $field;
-        }
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurdeterminations '.
             'WHERE occid = ' . (int)$occid . ' ORDER BY iscurrent DESC, sortsequence ';

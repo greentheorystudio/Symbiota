@@ -1,12 +1,12 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class TaxonomyUtilities {
 
     private $conn;
 
     public function __construct() {
-        $connection = new DbConnectionService();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 

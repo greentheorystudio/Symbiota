@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/../models/TaxonKingdoms.php');
-include_once(__DIR__ . '/../models/TaxonVernaculars.php');
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/TaxonKingdoms.php');
+include_once(__DIR__ . '/TaxonVernaculars.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/TaxonomyService.php');
 
@@ -34,7 +34,7 @@ class Taxa{
     );
 
     public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -432,15 +432,7 @@ class Taxa{
     public function getTaxonFromSciname($sciname, $kingdomId, $includeCommonNames = false, $includeChildren = false): array
     {
         $retArr = array();
-        $fieldNameArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field === 'source'){
-                $fieldNameArr[] = 't.`' . $field . '`';
-            }
-            else{
-                $fieldNameArr[] = 't.' . $field;
-            }
-        }
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
         $fieldNameArr[] = 'k.kingdom_name AS kingdom';
         $fieldNameArr[] = 't2.sciname AS acceptedsciname';
         $fieldNameArr[] = 't3.sciname AS parentsciname';
@@ -472,15 +464,7 @@ class Taxa{
     public function getTaxonFromTid($tid, $includeCommonNames = false, $includeChildren = false): array
     {
         $retArr = array();
-        $fieldNameArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field === 'source'){
-                $fieldNameArr[] = 't.`' . $field . '`';
-            }
-            else{
-                $fieldNameArr[] = 't.' . $field;
-            }
-        }
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
         $fieldNameArr[] = 'k.kingdom_name AS kingdom';
         $fieldNameArr[] = 't2.sciname AS acceptedsciname';
         $fieldNameArr[] = 't3.sciname AS parentsciname';

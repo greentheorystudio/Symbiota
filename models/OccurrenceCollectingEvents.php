@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceCollectingEvents{
@@ -51,7 +51,7 @@ class OccurrenceCollectingEvents{
     );
 
     public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -178,15 +178,7 @@ class OccurrenceCollectingEvents{
     public function getCollectingEventData($eventid): array
     {
         $retArr = array();
-        $fieldNameArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field === 'year' || $field === 'month' || $field === 'day'){
-                $fieldNameArr[] = '`' . $field . '`';
-            }
-            else{
-                $fieldNameArr[] = $field;
-            }
-        }
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurcollectingevents WHERE eventID = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
@@ -227,16 +219,8 @@ class OccurrenceCollectingEvents{
     public function getLocationCollectingEventArr($collid, $locationid): array
     {
         $retArr = array();
-        $fieldNameArr = array();
         $sqlWhereArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field === 'year' || $field === 'month' || $field === 'day'){
-                $fieldNameArr[] = 'e.`' . $field . '`';
-            }
-            else{
-                $fieldNameArr[] = 'e.' . $field;
-            }
-        }
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'e');
         $locationFields = array('l.waterbody', 'l.country', 'l.stateprovince', 'l.county', 'l.municipality', 'l.locality',
             'l.coordinateprecision', 'l.locationremarks', 'l.verbatimcoordinates', 'l.verbatimcoordinatesystem', 'l.minimumelevationinmeters',
             'l.maximumelevationinmeters', 'l.verbatimelevation');

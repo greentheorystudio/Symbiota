@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class ChecklistVouchers{
 
@@ -17,7 +17,7 @@ class ChecklistVouchers{
     );
 
     public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 

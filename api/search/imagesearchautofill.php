@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../services/DbConnectionService.php');
-$connection = new DbConnectionService();
+include_once(__DIR__ . '/../../services/DbService.php');
+$connection = new DbService();
 $con = $connection->getConnection();
 $returnArr = array();
 $queryString = $con->real_escape_string($_REQUEST['q']);

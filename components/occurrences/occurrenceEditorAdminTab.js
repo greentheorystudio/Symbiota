@@ -121,7 +121,6 @@ const occurrenceEditorAdminTab = {
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const profileCollectionOptions = Vue.ref([]);
         const transferToCollid = Vue.ref(null);
-        const uId = baseStore.getSymbUid;
 
         function getReviewStatusText(statusCode) {
             let text = 'OPEN';
@@ -152,9 +151,8 @@ const occurrenceEditorAdminTab = {
 
         function setProfileCollectionsOptions() {
             const formData = new FormData();
-            formData.append('uid', uId);
-            formData.append('action', 'getAccountCollections');
-            fetch(profileApiUrl, {
+            formData.append('action', 'getCollectionListByUserRights');
+            fetch(collectionApiUrl, {
                 method: 'POST',
                 body: formData
             })

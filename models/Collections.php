@@ -1,14 +1,53 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
-include_once(__DIR__ . '/../classes/SOLRManager.php');
+include_once(__DIR__ . '/../services/SOLRService.php');
 
 class Collections {
 
     private $conn;
 
+    private $fields = array(
+        "colliD" => array("dataType" => "number", "length" => 10),
+        "institutioncode" => array("dataType" => "string", "length" => 45),
+        "collectioncode" => array("dataType" => "string", "length" => 45),
+        "collectionname" => array("dataType" => "string", "length" => 150),
+        "collectionid" => array("dataType" => "string", "length" => 100),
+        "datasetid" => array("dataType" => "string", "length" => 250),
+        "datasetname" => array("dataType" => "string", "length" => 100),
+        "iid" => array("dataType" => "number", "length" => 10),
+        "fulldescription" => array("dataType" => "string", "length" => 2000),
+        "homepage" => array("dataType" => "string", "length" => 250),
+        "individualurl" => array("dataType" => "string", "length" => 500),
+        "contact" => array("dataType" => "string", "length" => 250),
+        "email" => array("dataType" => "string", "length" => 45),
+        "latitudedecimal" => array("dataType" => "number", "length" => 8),
+        "longitudedecimal" => array("dataType" => "number", "length" => 9),
+        "icon" => array("dataType" => "string", "length" => 250),
+        "colltype" => array("dataType" => "string", "length" => 45),
+        "managementtype" => array("dataType" => "string", "length" => 45),
+        "datarecordingmethod" => array("dataType" => "string", "length" => 45),
+        "defaultrepcount" => array("dataType" => "number", "length" => 11),
+        "collectionguid" => array("dataType" => "string", "length" => 45),
+        "securitykey" => array("dataType" => "string", "length" => 45),
+        "guidtarget" => array("dataType" => "string", "length" => 45),
+        "rightsholder" => array("dataType" => "string", "length" => 250),
+        "rights" => array("dataType" => "string", "length" => 250),
+        "usageterm" => array("dataType" => "string", "length" => 250),
+        "publishtogbif" => array("dataType" => "number", "length" => 11),
+        "publishtoidigbio" => array("dataType" => "number", "length" => 11),
+        "aggkeysstr" => array("dataType" => "string", "length" => 1000),
+        "dwcaurl" => array("dataType" => "string", "length" => 250),
+        "bibliographiccitation" => array("dataType" => "string", "length" => 1000),
+        "accessrights" => array("dataType" => "string", "length" => 1000),
+        "dynamicproperties" => array("dataType" => "text", "length" => 0),
+        "sortseq" => array("dataType" => "number", "length" => 10),
+        "ispublic" => array("dataType" => "number", "length" => 6),
+        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+    );
+
 	public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 
@@ -46,7 +85,7 @@ class Collections {
         }
         $delOccArr = array_diff($SOLROccArr, $mysqlOccArr);
         if($delOccArr){
-            (new SOLRManager)->deleteSOLRDocument($delOccArr);
+            (new SOLRService)->deleteSOLRDocument($delOccArr);
         }
         return 1;
     }
@@ -54,48 +93,26 @@ class Collections {
     public function getCollectionArr(): array
     {
         $retArr = array();
-        $sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, '.
-            'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, c.datarecordingmethod, c.defaultRepCount, '.
-            'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.isPublic, '.
-            'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, s.uploaddate '.
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', s.uploaddate '.
             'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid ';
         if(!$GLOBALS['IS_ADMIN']){
-            $sql .= 'WHERE c.isPublic = 1 ';
+            $sql .= 'WHERE c.ispublic = 1 ';
             if($GLOBALS['PERMITTED_COLLECTIONS']){
                 $sql .= 'OR c.collid IN('.implode(',', $GLOBALS['PERMITTED_COLLECTIONS']).') ';
             }
         }
-        $sql .= 'ORDER BY c.SortSeq, c.CollectionName';
+        $sql .= 'ORDER BY c.sortseq, c.collectionname';
         //echo $sql;
         $rs = $this->conn->query($sql);
+        $fields = mysqli_fetch_fields($rs);
         while($row = $rs->fetch_object()){
-            $nodeArr = array();
             $uDate = null;
-            $nodeArr['collid'] = $row->collid;
-            $nodeArr['institutioncode'] = $row->institutioncode;
-            $nodeArr['collectioncode'] = $row->CollectionCode;
-            $nodeArr['collectionname'] = $row->CollectionName;
-            $nodeArr['collectionid'] = $row->collectionid;
-            $nodeArr['fulldescription'] = $row->FullDescription;
-            $nodeArr['homepage'] = $row->Homepage;
-            $nodeArr['individualurl'] = $row->individualurl;
-            $nodeArr['contact'] = $row->Contact;
-            $nodeArr['email'] = $row->email;
-            $nodeArr['latitudedecimal'] = $row->latitudedecimal;
-            $nodeArr['longitudedecimal'] = $row->longitudedecimal;
-            $nodeArr['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
-            $nodeArr['colltype'] = $row->colltype;
-            $nodeArr['managementtype'] = $row->managementtype;
-            $nodeArr['datarecordingmethod'] = $row->datarecordingmethod;
-            $nodeArr['defaultRepCount'] = $row->defaultRepCount;
-            $nodeArr['guidtarget'] = $row->guidtarget;
-            $nodeArr['rights'] = $row->rights;
-            $nodeArr['rightsholder'] = $row->rightsholder;
-            $nodeArr['accessrights'] = $row->accessrights;
-            $nodeArr['dwcaurl'] = $row->dwcaurl;
-            $nodeArr['sortseq'] = $row->sortseq;
-            $nodeArr['skey'] = $row->securitykey;
-            $nodeArr['guid'] = $row->collectionguid;
+            $nodeArr = array();
+            foreach($fields as $val){
+                $name = $val->name;
+                $nodeArr[$name] = $row->$name;
+            }
             if($row->uploaddate){
                 $uDate = $row->uploaddate;
                 $month = substr($uDate,5,2);
@@ -103,7 +120,7 @@ class Collections {
                 $year = substr($uDate,0,4);
                 $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
             }
-            $retArr['uploaddate'] = $uDate;
+            $nodeArr['uploaddate'] = $uDate;
             $retArr[] = $nodeArr;
         }
         $rs->free();
@@ -114,47 +131,21 @@ class Collections {
     {
         $retArr = array();
         $uDate = null;
-        $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.collectionid, c.fulldescription, c.homepage, '.
-            'c.individualurl, c.contact, c.email, c.datarecordingmethod, c.defaultrepcount, c.latitudedecimal, c.longitudedecimal, '.
-            'c.icon, c.colltype, c.managementtype, c.ispublic, c.guidtarget, c.rights, c.rightsholder, '.
-            'c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, c.publishtogbif, c.publishtoidigbio, '.
-            'c.aggkeysstr, s.uploaddate, s.recordcnt, s.georefcnt, s.familycnt, s.genuscnt, s.speciescnt, s.dynamicproperties, '.
-            'i.iid, i.institutionname, i.institutionname2, i.address1, i.address2, i.city, i.stateprovince, i.postalcode, i.country '.
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
+        $fieldNameArr = array_merge($fieldNameArr, array('s.uploaddate', 's.recordcnt', 's.georefcnt', 's.familycnt', 's.genuscnt', 's.speciescnt',
+            's.dynamicproperties', 'i.institutionname', 'i.address1', 'i.address2', 'i.city', 'i.stateprovince', 'i.postalcode', 'i.country'));
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid '.
             'LEFT JOIN institutions AS i ON c.iid = i.iid '.
-            'WHERE c.collid = '.(int)$collId.' ';
+            'WHERE c.collid = ' . (int)$collId . ' ';
         //echo $sql;
         $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $retArr['collid'] = $r->collid;
-            $retArr['institutioncode'] = $r->institutioncode;
-            $retArr['collectioncode'] = $r->collectioncode;
-            $retArr['collectionname'] = $r->collectionname;
-            $retArr['collectionid'] = $r->collectionid;
-            $retArr['fulldescription'] = $r->fulldescription;
-            $retArr['homepage'] = $r->homepage;
-            $retArr['individualurl'] = $r->individualurl;
-            $retArr['contact'] = $r->contact;
-            $retArr['email'] = $r->email;
-            $retArr['datarecordingmethod'] = $r->datarecordingmethod;
-            $retArr['defaultrepcount'] = $r->defaultrepcount;
-            $retArr['latitudedecimal'] = $r->latitudedecimal;
-            $retArr['longitudedecimal'] = $r->longitudedecimal;
-            $retArr['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
-            $retArr['colltype'] = $r->colltype;
-            $retArr['managementtype'] = $r->managementtype;
-            $retArr['ispublic'] = (int)$r->ispublic;
-            $retArr['guidtarget'] = $r->guidtarget;
-            $retArr['rights'] = $r->rights;
-            $retArr['rightsholder'] = $r->rightsholder;
-            $retArr['accessrights'] = $r->accessrights;
-            $retArr['dwcaurl'] = $r->dwcaurl;
-            $retArr['sortseq'] = $r->sortseq;
-            $retArr['securitykey'] = $r->securitykey;
-            $retArr['collectionguid'] = $r->collectionguid;
-            $retArr['publishtogbif'] = $r->publishtogbif;
-            $retArr['publishtoidigbio'] = $r->publishtoidigbio;
-            $retArr['aggkeysstr'] = $r->aggkeysstr;
+        $fields = mysqli_fetch_fields($rs);
+        if($r = $rs->fetch_object()){
+            foreach($fields as $val){
+                $name = $val->name;
+                $retArr[$name] = $r->$name;
+            }
             if($r->uploaddate){
                 $uDate = $r->uploaddate;
                 $month = substr($uDate,5,2);
@@ -163,26 +154,53 @@ class Collections {
                 $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
             }
             $retArr['uploaddate'] = $uDate;
-            $retArr['recordcnt'] = $r->recordcnt;
-            $retArr['georefcnt'] = $r->georefcnt;
-            $retArr['familycnt'] = $r->familycnt;
-            $retArr['genuscnt'] = $r->genuscnt;
-            $retArr['speciescnt'] = $r->speciescnt;
-            $retArr['dynamicProperties'] = $r->dynamicproperties;
-            $retArr['iid'] = $r->iid;
-            $retArr['institutionname'] = $r->institutionname;
-            $retArr['institutionname2'] = $r->institutionname2;
-            $retArr['address1'] = $r->address1;
-            $retArr['address2'] = $r->address2;
-            $retArr['city'] = $r->city;
-            $retArr['stateprovince'] = $r->stateprovince;
-            $retArr['postalcode'] = $r->postalcode;
-            $retArr['country'] = $r->country;
             $retArr['configuredData'] = null;
         }
         $rs->free();
         if(file_exists($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collId . 'occurrencedatafields.json')) {
             $retArr['configuredData'] = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/collection'.$collId.'occurrencedatafields.json'), true);
+        }
+        return $retArr;
+    }
+
+    public function getCollectionListByUserRights(): array
+    {
+        $retArr = array();
+        $cArr = array();
+        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])) {
+            $cArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+        }
+        if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])) {
+            $cArr = array_merge($cArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+        }
+        if($cArr){
+            $sql = 'SELECT collid, institutioncode, collectioncode, collectionname, colltype FROM omcollections '.
+                'WHERE collid IN(' . implode(',', $cArr) . ') ORDER BY collectionname ';
+            if($rs = $this->conn->query($sql)){
+                while($r = $rs->fetch_object()){
+                    $collCode = '';
+                    if($r->institutioncode){
+                        $collCode .= $r->institutioncode;
+                    }
+                    if($r->collectioncode){
+                        $collCode .= ($collCode ? '-' : '') . $r->collectioncode;
+                    }
+                    $collid = (int)$r->collid;
+                    $nodeArr = array();
+                    $nodeArr['collectionpermissions'] = array();
+                    if(array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+                        $nodeArr['collectionpermissions'][] = 'CollAdmin';
+                    }
+                    if(array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+                        $nodeArr['collectionpermissions'][] = 'CollEditor';
+                    }
+                    $nodeArr['collid'] = $collid;
+                    $nodeArr['label'] = $r->collectionname . ($collCode ? (' (' . $collCode . ')') : '');
+                    $nodeArr['colltype'] = $r->colltype;
+                    $retArr[] = $nodeArr;
+                }
+                $rs->free();
+            }
         }
         return $retArr;
     }
@@ -432,7 +450,7 @@ class Collections {
         }
         
         if($GLOBALS['SOLR_MODE']){
-            (new SOLRManager)->updateSOLR();
+            (new SOLRService)->updateSOLR();
         }
         return $returnVal;
     }

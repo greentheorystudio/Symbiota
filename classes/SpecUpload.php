@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class SpecUpload{
@@ -32,7 +32,7 @@ class SpecUpload{
     protected $DIRECTUPLOAD = 1, $FILEUPLOAD = 3, $STOREDPROCEDURE = 4, $SCRIPTUPLOAD = 5, $DWCAUPLOAD = 6, $SKELETAL = 7, $IPTUPLOAD = 8, $NFNUPLOAD = 9, $SYMBIOTA = 10;
 
     public function __construct() {
-        $connection = new DbConnectionService();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -16,7 +16,7 @@ class OccurrenceCollectionProfile {
     private $idigbioKey;
 
 	public function __construct(){
-		$connection = new DbConnectionService();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = $_REQUEST['starr'] ?? '';
@@ -17,7 +17,7 @@ $occurArr = array();
 $isEditor = false;
 
 if(isset($GLOBALS['SOLR_MODE']) && $GLOBALS['SOLR_MODE']){
-    $collManager = new SOLRManager();
+    $collManager = new SOLRService();
     if($collManager->validateSearchTermsArr($stArr)){
         $collManager->setSearchTermsArr($stArr);
         $solrArr = $collManager->getRecordArr($pageNumber,$cntPerPage);

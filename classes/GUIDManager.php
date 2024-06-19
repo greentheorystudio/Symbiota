@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
 class GUIDManager {
@@ -14,7 +14,7 @@ class GUIDManager {
 			$this->destructConn = false;
 		}
 		else{
-            $connection = new DbConnectionService();
+            $connection = new DbService();
 		    $this->conn = $connection->getConnection();
 		}
 	}

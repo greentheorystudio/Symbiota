@@ -72,14 +72,15 @@ const accountInformationForm = {
             return new Promise((resolve) => {
                 const formData = new FormData();
                 formData.append('email', val);
-                formData.append('action', 'getUidFromEmail');
+                formData.append('action', 'getUserFromEmail');
                 fetch(profileApiUrl, {
                     method: 'POST',
                     body: formData
                 })
                 .then((response) => {
-                    response.text().then((res) => {
-                        resolve(((props.user.uid && Number(props.user.uid) === Number(res)) || Number(res) === 0) || 'Email address is already associated with another account');
+                    response.json().then((resObj) => {
+                        const uId = resObj.hasOwnProperty('uid') ? Number(resObj['uid']) : 0;
+                        resolve(((props.user.uid && Number(props.user.uid) === uId) || uId === 0) || 'Email address is already associated with another account');
                     });
                 });
             });

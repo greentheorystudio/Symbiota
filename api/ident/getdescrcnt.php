@@ -7,7 +7,7 @@ $cs = (array_key_exists('csinput',$_POST)?(int)$_POST['csinput']:0);
 
 $retCnt = 0;
 if($cid && $cs){
-    $connection = new DbConnectionService();
+    $connection = new DbService();
     $con = $connection->getConnection();
 	$sql = 'SELECT count(*) AS cnt FROM kmdescr WHERE cid = '.$cid;
 	if($cs) {

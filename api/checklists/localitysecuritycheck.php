@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../services/DbConnectionService.php');
+include_once(__DIR__ . '/../../services/DbService.php');
 header('Content-Type: application/json; charset=UTF-8' );
 
-$connection = new DbConnectionService();
+$connection = new DbService();
 $con = $connection->getConnection();
 
 $retStr = 0;

@@ -1,8 +1,9 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/Users.php');
+include_once(__DIR__ . '/../services/EncryptionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/../services/EncryptionService.php');
-include_once(__DIR__ . '/../classes/ProfileManager.php');
 
 class Configurations{
 
@@ -113,7 +114,7 @@ class Configurations{
     );
 
     public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
         if(!$this->conn || $this->conn->connect_errno) {
             echo '<h2 style="color:red;">Cannot connect to the database</h2>';
@@ -128,34 +129,68 @@ class Configurations{
         }
     }
 
-    public function setGlobalArr(): void
+    public function addConfiguration($name, $value): bool
     {
-        $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
-        $rs = $this->conn->query($sql);
-        if($rs->num_rows){
-            while($r = $rs->fetch_object()){
-                $value = $r->configurationvalue;
-                if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
-                    $value = EncryptionService::decrypt($value);
+        if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
+            $value = EncryptionService::encrypt($value);
+        }
+        $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
+            'VALUES("'.$name.'","'.$value.'")';
+        return $this->conn->query($sql);
+    }
+
+    public function deleteConfiguration($name): bool
+    {
+        $sql = 'DELETE FROM configurations '.
+            'WHERE configurationname = "'.$name.'" ';
+        return $this->conn->query($sql);
+    }
+
+    public function deleteMapDataFile($fileName): bool
+    {
+        $status = false;
+        $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial/' . $fileName;
+        if(!file_exists($targetPath)) {
+            $status = true;
+        }
+        elseif(unlink($targetPath)){
+            $status = true;
+        }
+        return $status;
+    }
+
+    public function getClientMediaRootPath(): string
+    {
+        $clientPath = $this->getClientRootPath();
+        return $clientPath . '/content/imglib';
+    }
+
+    public function getClientRootPath(): string
+    {
+        $returnPath = '';
+        $urlPath = substr($_SERVER['REQUEST_URI'], 1);
+        $urlPathArr = explode('/', $urlPath);
+        if($urlPathArr){
+            $lastIndex = (count($urlPathArr)) - 1;
+            if($lastIndex > 0){
+                if(strpos($urlPathArr[$lastIndex], '.php') !== false){
+                    --$lastIndex;
                 }
-                $GLOBALS[$r->configurationname] = $value;
+                if(!in_array($urlPathArr[$lastIndex], $this->baseDirectories, true)){
+                    do {
+                        --$lastIndex;
+                    } while(!in_array($urlPathArr[$lastIndex], $this->baseDirectories, true) && $lastIndex > 0);
+                }
+                if($lastIndex > 0){
+                    $index = 0;
+                    do {
+                        $returnPath .= '/' . $urlPathArr[$index];
+                        $index++;
+                    } while($index <= $lastIndex);
+                }
             }
         }
-        else{
-            $this->initializeImportConfigurations();
-        }
-        $rs->free();
-        if(!isset($GLOBALS['CLIENT_ROOT'])){
-            $GLOBALS['CLIENT_ROOT'] = '';
-        }
-        if(!isset($GLOBALS['DEFAULT_TITLE'])){
-            $GLOBALS['DEFAULT_TITLE'] = '';
-        }
-        $GLOBALS['CSS_VERSION'] = '20240418';
-        $GLOBALS['JS_VERSION'] = '20240430111111';
-        $GLOBALS['PARAMS_ARR'] = array();
-        $GLOBALS['USER_RIGHTS'] = array();
-        $this->validateGlobalArr();
+        return $returnPath;
     }
 
     public function getCollectionCategoryArr(): array
@@ -194,6 +229,122 @@ class Configurations{
         return $retArr;
     }
 
+    public function getCssVersion(): int
+    {
+        $year = date('Y');
+        $month = date('m');
+        $day = date('d');
+        return $year . $month . $day;
+    }
+
+    public function getDatabasePropArr(): array
+    {
+        $versionArr = array();
+        $versionStr = '';
+        $sql = 'SELECT VERSION() AS ver ';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $versionStr = $r->ver;
+        }
+        $rs->free();
+        if($versionStr){
+            if(strpos($versionStr,'MariaDB') !== false){
+                $versionArr['db'] = 'MariaDB';
+            }
+            else{
+                $versionArr['db'] = 'MySQL';
+            }
+            $versionPieces = explode('-', $versionStr);
+            if(is_array($versionPieces)){
+                $versionArr['ver'] = $versionPieces[0];
+            }
+        }
+        return $versionArr;
+    }
+
+    public function setGlobalCssVersion(): void
+    {
+        if(strpos($GLOBALS['CSS_VERSION_LOCAL'], '-') !== false){
+            $versionParts = explode('-', $GLOBALS['CSS_VERSION_LOCAL']);
+            if($versionParts && (int)$versionParts[0] > (int)$GLOBALS['CSS_VERSION']){
+                $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
+            }
+        }
+        elseif((int)$GLOBALS['CSS_VERSION_LOCAL'] > (int)$GLOBALS['CSS_VERSION']){
+            $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
+        }
+    }
+
+    public function getPhpVersion(): string
+    {
+        return PHP_VERSION;
+    }
+
+    public function getServerLogFilePath(): string
+    {
+        $serverPath = $this->getServerRootPath();
+        return $serverPath . '/content/logs';
+    }
+
+    public function getServerMaxFilesize(): int
+    {
+        $upload = $this->getServerMaxUploadFilesize();
+        $post = $this->getServerMaxPostSize();
+        return max($upload, $post);
+    }
+
+    public function getServerMaxPostSize(): int
+    {
+        return (int)ini_get('post_max_size');
+    }
+
+    public function getServerMaxUploadFilesize(): int
+    {
+        return (int)ini_get('upload_max_filesize');
+    }
+
+    public function getServerMediaUploadPath(): string
+    {
+        $serverPath = $this->getServerRootPath();
+        return $serverPath . '/content/imglib';
+    }
+
+    public function getServerRootPath(): string
+    {
+        $returnPath = '';
+        $serverPath = substr(getcwd(), 1);
+        $serverPathArr = explode('/', $serverPath);
+        if($serverPathArr){
+            $lastIndex = (count($serverPathArr)) - 1;
+            if($lastIndex > 0){
+                if(array_intersect($serverPathArr, $this->baseDirectories)){
+                    if(in_array($serverPathArr[$lastIndex], $this->baseDirectories, true)){
+                        --$lastIndex;
+                    }
+                    else{
+                        do {
+                            --$lastIndex;
+                        } while(!in_array($serverPathArr[$lastIndex], $this->baseDirectories, true) && $lastIndex > 0);
+                    }
+                }
+                if($lastIndex > 0){
+                    $index = 0;
+                    do {
+                        $returnPath .= '/' . $serverPathArr[$index];
+                        $index++;
+                    } while($index <= $lastIndex);
+                }
+            }
+        }
+        return $returnPath;
+    }
+
+    public function getServerTempDirPath(): string
+    {
+        $serverPath = $this->getServerRootPath();
+        return $serverPath . '/temp';
+    }
+
     public function initializeImportConfigurations(): void
     {
         if(file_exists(__DIR__ . '/../config/symbini.php')){
@@ -204,6 +355,24 @@ class Configurations{
             $this->setGlobalArrFromDefaults();
         }
         $this->saveGlobalArrToDatabase();
+    }
+
+    public function readClientCookies(): void
+    {
+        $users = new Users();
+        if((isset($_COOKIE['BioSurvCrumb']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] !== 'logout'))){
+            $tokenArr = json_decode(EncryptionService::decrypt($_COOKIE['BioSurvCrumb']), true);
+            if($tokenArr && !$users->authenticateUserFromToken($tokenArr[0], $tokenArr[1])) {
+                $users->clearCookieSession();
+            }
+        }
+        if((isset($_COOKIE['BioSurvCrumb']) && (isset($_REQUEST['action']) && ($_REQUEST['action'] === 'logout' || $_REQUEST['action'] === 'loginas')))){
+            $tokenArr = json_decode(EncryptionService::decrypt($_COOKIE['BioSurvCrumb']), true);
+            if($tokenArr){
+                $user = $users->getUserByUsername($tokenArr[0]);
+                $users->deleteToken($user['uid'], $tokenArr[1]);
+            }
+        }
     }
 
     public function saveGlobalArrToDatabase(): void
@@ -221,6 +390,192 @@ class Configurations{
                 $this->conn->query($sql);
             }
         }
+    }
+
+    public function saveMapServerConfig($json): bool
+    {
+        $status = true;
+        if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/json/spatiallayerconfig.json', 'wb')){
+            if(!fwrite($fh,$json)){
+                $status = false;
+            }
+            fclose($fh);
+        }
+        else{
+            $status = false;
+        }
+        return $status;
+    }
+
+    public function setGlobalArr(): void
+    {
+        $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
+        $rs = $this->conn->query($sql);
+        if($rs->num_rows){
+            while($r = $rs->fetch_object()){
+                $value = $r->configurationvalue;
+                if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
+                    $value = EncryptionService::decrypt($value);
+                }
+                $GLOBALS[$r->configurationname] = $value;
+            }
+        }
+        else{
+            $this->initializeImportConfigurations();
+        }
+        $rs->free();
+        if(!isset($GLOBALS['CLIENT_ROOT'])){
+            $GLOBALS['CLIENT_ROOT'] = '';
+        }
+        if(!isset($GLOBALS['DEFAULT_TITLE'])){
+            $GLOBALS['DEFAULT_TITLE'] = '';
+        }
+        $GLOBALS['CSS_VERSION'] = '20240418';
+        $GLOBALS['JS_VERSION'] = '202404301111111';
+        $GLOBALS['PARAMS_ARR'] = array();
+        $GLOBALS['USER_RIGHTS'] = array();
+        $this->validateGlobalArr();
+    }
+
+    public function setGlobalArrFromDefaults(): void
+    {
+        $GLOBALS['CLIENT_ROOT'] = $this->getClientRootPath();
+        $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
+        $GLOBALS['DEFAULT_LANG'] = 'en';
+        $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
+        $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
+        $GLOBALS['IMG_LG_WIDTH'] = 3200;
+        $GLOBALS['IMG_TN_WIDTH'] = 200;
+        $GLOBALS['IMG_WEB_WIDTH'] = 1400;
+        $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
+        $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
+        $GLOBALS['PORTAL_GUID'] = UuidService::getUuidV4();
+        $GLOBALS['PROCESSING_STATUS_OPTIONS'] = UuidService::getUuidV4();
+        $GLOBALS['SECURITY_KEY'] = UuidService::getUuidV4();
+        $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
+        $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
+        $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
+        $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR'] = '#AAAAAA';
+        $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
+        $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] = '5';
+        $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
+        $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
+        $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
+        $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
+        $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] = '#000000';
+        $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] = '1';
+        $GLOBALS['SPATIAL_POINT_CLUSTER'] = true;
+        $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] = '50';
+        $GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = false;
+        $GLOBALS['SPATIAL_POINT_FILL_COLOR'] = '#E69E67';
+        $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] = '15';
+        $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '5';
+        $GLOBALS['SPATIAL_POINT_POINT_RADIUS'] = '7';
+        $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_COLOR'] = '#10D8E6';
+        $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_WIDTH'] = '2';
+        $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR'] = '#3399CC';
+        $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH'] = '2';
+        $GLOBALS['SPATIAL_SHAPES_FILL_COLOR'] = '#FFFFFF';
+        $GLOBALS['SPATIAL_SHAPES_OPACITY'] = '0.4';
+        $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS'] = '5';
+        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR'] = '#0099FF';
+        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH'] = '5';
+        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] = '#FFFFFF';
+        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY'] = '0.5';
+        $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
+        $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
+    }
+
+    public function updateConfigurationValue($name, $value): bool
+    {
+        if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
+            $value = EncryptionService::encrypt($value);
+        }
+        $sql = 'UPDATE configurations '.
+            'SET configurationvalue = "'.$value.'" '.
+            'WHERE configurationname = "'.$name.'" ';
+        return $this->conn->query($sql);
+    }
+
+    public function updateCssVersion(): bool
+    {
+        $currentCssVersion = '';
+        $subVersion = 0;
+        $sql = 'SELECT configurationvalue FROM configurations WHERE configurationname = "CSS_VERSION_LOCAL" ';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $currentCssVersion = $r->configurationvalue;
+        }
+        $rs->free();
+        $newCssVersion = $this->getCssVersion();
+        if($currentCssVersion){
+            if(strpos($currentCssVersion, '-') !== false){
+                $versionParts = explode('-', $currentCssVersion);
+                if($versionParts){
+                    $subVersion = (int)$versionParts[1];
+                }
+            }
+            if($currentCssVersion === (string)$newCssVersion || $subVersion){
+                if(!$subVersion){
+                    $subVersion = 1;
+                }
+                do {
+                    $versionParts = explode('-', $newCssVersion);
+                    if($versionParts){
+                        $newCssVersion = $versionParts[0] . '-' . $subVersion;
+                    }
+                    else{
+                        $newCssVersion .= '-' . $subVersion;
+                    }
+                    $subVersion++;
+                } while($currentCssVersion === $newCssVersion);
+            }
+            $sql = 'UPDATE configurations '.
+                'SET configurationvalue = "'.$newCssVersion.'" WHERE configurationname = "CSS_VERSION_LOCAL" ';
+        }
+        else{
+            $sql = 'INSERT INTO configurations(configurationname,configurationvalue) '.
+                'VALUES("CSS_VERSION_LOCAL","'.$newCssVersion.'")';
+        }
+        return $this->conn->query($sql);
+    }
+
+    public function uploadMapDataFile(): string
+    {
+        $returnStr = '';
+        $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial';
+        if(file_exists($targetPath) || (mkdir($targetPath, 0775) && is_dir($targetPath))) {
+            $uploadFileName = basename($_FILES['addLayerFile']['name']);
+            $uploadFileName = str_replace(array(',','&',' '), array('','',''), urldecode($uploadFileName));
+            $fileExtension =  substr(strrchr($uploadFileName, '.'), 1);
+            $fileNameOnly =  substr($uploadFileName, 0, ((strlen($fileExtension) + 1) * -1));
+            $tempFileName = $fileNameOnly;
+            $cnt = 0;
+            while(file_exists($targetPath.'/'.$tempFileName.'.'.$fileExtension)){
+                $tempFileName = $fileNameOnly.'_'.$cnt;
+                $cnt++;
+            }
+            if($cnt) {
+                $fileNameOnly = $tempFileName;
+            }
+            if(move_uploaded_file($_FILES['addLayerFile']['tmp_name'], $targetPath.'/'.$fileNameOnly.'.'.$fileExtension)){
+                $returnStr = $fileNameOnly.'.'.$fileExtension;
+            }
+        }
+        return $returnStr;
+    }
+
+    public function validateClientPath($path): bool
+    {
+        $testURL = 'http://';
+        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+            $testURL = 'https://';
+        }
+        $testURL .= $_SERVER['HTTP_HOST'];
+        $testURL .= $path . '/sitemap.php';
+        $headers = @get_headers($testURL);
+        $firstHeader = ($headers ? $headers[0] : '');
+        return stripos($firstHeader, '200 OK');
     }
 
     public function validateGlobalArr(): void
@@ -272,13 +627,13 @@ class Configurations{
             $GLOBALS['PORTAL_EMAIL_ADDRESS'] = $GLOBALS['ADMIN_EMAIL'];
         }
         if(!isset($GLOBALS['PORTAL_GUID']) || $GLOBALS['PORTAL_GUID'] === ''){
-            $GLOBALS['PORTAL_GUID'] = $this->getGUID();
+            $GLOBALS['PORTAL_GUID'] = UuidService::getUuidV4();
         }
         if(!isset($GLOBALS['PROCESSING_STATUS_OPTIONS'])){
             $GLOBALS['PROCESSING_STATUS_OPTIONS'] = array('Unprocessed','Stage 1','Stage 2','Stage 3','Pending Review','Expert Required','Reviewed','Closed');
         }
         if(!isset($GLOBALS['SECURITY_KEY']) || $GLOBALS['SECURITY_KEY'] === ''){
-            $GLOBALS['SECURITY_KEY'] = $this->getGUID();
+            $GLOBALS['SECURITY_KEY'] = UuidService::getUuidV4();
         }
         if(!isset($GLOBALS['SERVER_ROOT']) || $GLOBALS['SERVER_ROOT'] === ''){
             $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
@@ -405,187 +760,6 @@ class Configurations{
         }
     }
 
-    public function setGlobalArrFromDefaults(): void
-    {
-        $GLOBALS['CLIENT_ROOT'] = $this->getClientRootPath();
-        $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
-        $GLOBALS['DEFAULT_LANG'] = 'en';
-        $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
-        $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
-        $GLOBALS['IMG_LG_WIDTH'] = 3200;
-        $GLOBALS['IMG_TN_WIDTH'] = 200;
-        $GLOBALS['IMG_WEB_WIDTH'] = 1400;
-        $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
-        $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
-        $GLOBALS['PORTAL_GUID'] = $this->getGUID();
-        $GLOBALS['PROCESSING_STATUS_OPTIONS'] = $this->getGUID();
-        $GLOBALS['SECURITY_KEY'] = $this->getGUID();
-        $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
-        $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
-        $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
-        $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR'] = '#AAAAAA';
-        $GLOBALS['SPATIAL_DRAGDROP_OPACITY'] = '0.3';
-        $GLOBALS['SPATIAL_DRAGDROP_POINT_RADIUS'] = '5';
-        $GLOBALS['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = 'earth';
-        $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
-        $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
-        $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
-        $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] = '#000000';
-        $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] = '1';
-        $GLOBALS['SPATIAL_POINT_CLUSTER'] = true;
-        $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] = '50';
-        $GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = false;
-        $GLOBALS['SPATIAL_POINT_FILL_COLOR'] = '#E69E67';
-        $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] = '15';
-        $GLOBALS['SPATIAL_POINT_HEAT_MAP_RADIUS'] = '5';
-        $GLOBALS['SPATIAL_POINT_POINT_RADIUS'] = '7';
-        $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_COLOR'] = '#10D8E6';
-        $GLOBALS['SPATIAL_POINT_SELECTIONS_BORDER_WIDTH'] = '2';
-        $GLOBALS['SPATIAL_SHAPES_BORDER_COLOR'] = '#3399CC';
-        $GLOBALS['SPATIAL_SHAPES_BORDER_WIDTH'] = '2';
-        $GLOBALS['SPATIAL_SHAPES_FILL_COLOR'] = '#FFFFFF';
-        $GLOBALS['SPATIAL_SHAPES_OPACITY'] = '0.4';
-        $GLOBALS['SPATIAL_SHAPES_POINT_RADIUS'] = '5';
-        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_COLOR'] = '#0099FF';
-        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_BORDER_WIDTH'] = '5';
-        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] = '#FFFFFF';
-        $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY'] = '0.5';
-        $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
-        $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
-    }
-
-    public function getServerMaxUploadFilesize(): int
-    {
-        return (int)ini_get('upload_max_filesize');
-    }
-
-    public function getServerMaxPostSize(): int
-    {
-        return (int)ini_get('post_max_size');
-    }
-
-    public function getServerRootPath(): string
-    {
-        $returnPath = '';
-        $serverPath = substr(getcwd(), 1);
-        $serverPathArr = explode('/', $serverPath);
-        if($serverPathArr){
-            $lastIndex = (count($serverPathArr)) - 1;
-            if($lastIndex > 0){
-                if(array_intersect($serverPathArr, $this->baseDirectories)){
-                    if(in_array($serverPathArr[$lastIndex], $this->baseDirectories, true)){
-                        --$lastIndex;
-                    }
-                    else{
-                        do {
-                            --$lastIndex;
-                        } while(!in_array($serverPathArr[$lastIndex], $this->baseDirectories, true) && $lastIndex > 0);
-                    }
-                }
-                if($lastIndex > 0){
-                    $index = 0;
-                    do {
-                        $returnPath .= '/' . $serverPathArr[$index];
-                        $index++;
-                    } while($index <= $lastIndex);
-                }
-            }
-        }
-        return $returnPath;
-    }
-
-    public function getClientRootPath(): string
-    {
-        $returnPath = '';
-        $urlPath = substr($_SERVER['REQUEST_URI'], 1);
-        $urlPathArr = explode('/', $urlPath);
-        if($urlPathArr){
-            $lastIndex = (count($urlPathArr)) - 1;
-            if($lastIndex > 0){
-                if(strpos($urlPathArr[$lastIndex], '.php') !== false){
-                    --$lastIndex;
-                }
-                if(!in_array($urlPathArr[$lastIndex], $this->baseDirectories, true)){
-                    do {
-                        --$lastIndex;
-                    } while(!in_array($urlPathArr[$lastIndex], $this->baseDirectories, true) && $lastIndex > 0);
-                }
-                if($lastIndex > 0){
-                    $index = 0;
-                    do {
-                        $returnPath .= '/' . $urlPathArr[$index];
-                        $index++;
-                    } while($index <= $lastIndex);
-                }
-            }
-        }
-        return $returnPath;
-    }
-
-    public function getServerTempDirPath(): string
-    {
-        $serverPath = $this->getServerRootPath();
-        return $serverPath . '/temp';
-    }
-
-    public function getServerLogFilePath(): string
-    {
-        $serverPath = $this->getServerRootPath();
-        return $serverPath . '/content/logs';
-    }
-
-    public function getServerMediaUploadPath(): string
-    {
-        $serverPath = $this->getServerRootPath();
-        return $serverPath . '/content/imglib';
-    }
-
-    public function getClientMediaRootPath(): string
-    {
-        $clientPath = $this->getClientRootPath();
-        return $clientPath . '/content/imglib';
-    }
-
-    public function getGUID(): string
-    {
-        return UuidService::getUuidV4();
-    }
-
-    public function getServerMaxFilesize(): int
-    {
-        $upload = $this->getServerMaxUploadFilesize();
-        $post = $this->getServerMaxPostSize();
-        return max($upload, $post);
-    }
-
-    public function updateConfigurationValue($name, $value): bool
-    {
-        if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
-            $value = EncryptionService::encrypt($value);
-        }
-        $sql = 'UPDATE configurations '.
-            'SET configurationvalue = "'.$value.'" '.
-            'WHERE configurationname = "'.$name.'" ';
-        return $this->conn->query($sql);
-    }
-
-    public function deleteConfiguration($name): bool
-    {
-        $sql = 'DELETE FROM configurations '.
-            'WHERE configurationname = "'.$name.'" ';
-        return $this->conn->query($sql);
-    }
-
-    public function addConfiguration($name, $value): bool
-    {
-        if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
-            $value = EncryptionService::encrypt($value);
-        }
-        $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
-            'VALUES("'.$name.'","'.$value.'")';
-        return $this->conn->query($sql);
-    }
-
     public function validateNewConfNameCore($name): bool
     {
         return in_array($name, $this->coreConfigurations, true);
@@ -606,192 +780,5 @@ class Configurations{
     {
         $testPath = $path . '/sitemap.php';
         return file_exists($testPath);
-    }
-
-    public function validateClientPath($path): bool
-    {
-        $testURL = 'http://';
-        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-            $testURL = 'https://';
-        }
-        $testURL .= $_SERVER['HTTP_HOST'];
-        $testURL .= $path . '/sitemap.php';
-        $headers = @get_headers($testURL);
-        $firstHeader = ($headers ? $headers[0] : '');
-        return stripos($firstHeader, '200 OK');
-    }
-
-    public function updateCssVersion(): bool
-    {
-        $currentCssVersion = '';
-        $subVersion = 0;
-        $sql = 'SELECT configurationvalue FROM configurations WHERE configurationname = "CSS_VERSION_LOCAL" ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $currentCssVersion = $r->configurationvalue;
-        }
-        $rs->free();
-        $newCssVersion = $this->getCssVersion();
-        if($currentCssVersion){
-            if(strpos($currentCssVersion, '-') !== false){
-                $versionParts = explode('-', $currentCssVersion);
-                if($versionParts){
-                    $subVersion = (int)$versionParts[1];
-                }
-            }
-            if($currentCssVersion === (string)$newCssVersion || $subVersion){
-                if(!$subVersion){
-                    $subVersion = 1;
-                }
-                do {
-                    $versionParts = explode('-', $newCssVersion);
-                    if($versionParts){
-                        $newCssVersion = $versionParts[0] . '-' . $subVersion;
-                    }
-                    else{
-                        $newCssVersion .= '-' . $subVersion;
-                    }
-                    $subVersion++;
-                } while($currentCssVersion === $newCssVersion);
-            }
-            $sql = 'UPDATE configurations '.
-                'SET configurationvalue = "'.$newCssVersion.'" WHERE configurationname = "CSS_VERSION_LOCAL" ';
-        }
-        else{
-            $sql = 'INSERT INTO configurations(configurationname,configurationvalue) '.
-                'VALUES("CSS_VERSION_LOCAL","'.$newCssVersion.'")';
-        }
-        return $this->conn->query($sql);
-    }
-
-    public function getCssVersion(): int
-    {
-        $year = date('Y');
-        $month = date('m');
-        $day = date('d');
-        return $year . $month . $day;
-    }
-
-    public function getDatabasePropArr(): array
-    {
-        $versionArr = array();
-        $versionStr = '';
-        $sql = 'SELECT VERSION() AS ver ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $versionStr = $r->ver;
-        }
-        $rs->free();
-        if($versionStr){
-            if(strpos($versionStr,'MariaDB') !== false){
-                $versionArr['db'] = 'MariaDB';
-            }
-            else{
-                $versionArr['db'] = 'MySQL';
-            }
-            $versionPieces = explode('-', $versionStr);
-            if(is_array($versionPieces)){
-                $versionArr['ver'] = $versionPieces[0];
-            }
-        }
-        return $versionArr;
-    }
-
-    public function getPhpVersion(): string
-    {
-        return PHP_VERSION;
-    }
-
-    public function setGlobalCssVersion(): void
-    {
-        if(strpos($GLOBALS['CSS_VERSION_LOCAL'], '-') !== false){
-            $versionParts = explode('-', $GLOBALS['CSS_VERSION_LOCAL']);
-            if($versionParts && (int)$versionParts[0] > (int)$GLOBALS['CSS_VERSION']){
-                $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
-            }
-        }
-        elseif((int)$GLOBALS['CSS_VERSION_LOCAL'] > (int)$GLOBALS['CSS_VERSION']){
-            $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
-        }
-    }
-
-    public function readClientCookies(): void
-    {
-        if((isset($_COOKIE['BioSurvCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
-            $tokenArr = json_decode(EncryptionService::decrypt($_COOKIE['BioSurvCrumb']), true);
-            if($tokenArr){
-                $pHandler = new ProfileManager();
-                if($pHandler->setUserName($tokenArr[0])){
-                    $pHandler->setRememberMe(true);
-                    $pHandler->setToken($tokenArr[1]);
-                    $pHandler->setTokenAuthSql();
-                    if(!$pHandler->authenticate()){
-                        $pHandler->reset();
-                    }
-                }
-            }
-        }
-
-        if((isset($_COOKIE['BioSurvCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
-            $tokenArr = json_decode(EncryptionService::decrypt($_COOKIE['BioSurvCrumb']), true);
-            if($tokenArr){
-                $pHandler = new ProfileManager();
-                $uid = $pHandler->getUidFromUsername($tokenArr[0]);
-                $pHandler->deleteToken($uid,$tokenArr[1]);
-            }
-        }
-    }
-
-    public function saveMapServerConfig($json): bool
-    {
-        $status = true;
-        if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/json/spatiallayerconfig.json', 'wb')){
-            if(!fwrite($fh,$json)){
-                $status = false;
-            }
-            fclose($fh);
-        }
-        else{
-            $status = false;
-        }
-        return $status;
-    }
-
-    public function uploadMapDataFile(): string
-    {
-        $returnStr = '';
-        $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial';
-        if(file_exists($targetPath) || (mkdir($targetPath, 0775) && is_dir($targetPath))) {
-            $uploadFileName = basename($_FILES['addLayerFile']['name']);
-            $uploadFileName = str_replace(array(',','&',' '), array('','',''), urldecode($uploadFileName));
-            $fileExtension =  substr(strrchr($uploadFileName, '.'), 1);
-            $fileNameOnly =  substr($uploadFileName, 0, ((strlen($fileExtension) + 1) * -1));
-            $tempFileName = $fileNameOnly;
-            $cnt = 0;
-            while(file_exists($targetPath.'/'.$tempFileName.'.'.$fileExtension)){
-                $tempFileName = $fileNameOnly.'_'.$cnt;
-                $cnt++;
-            }
-            if($cnt) {
-                $fileNameOnly = $tempFileName;
-            }
-            if(move_uploaded_file($_FILES['addLayerFile']['tmp_name'], $targetPath.'/'.$fileNameOnly.'.'.$fileExtension)){
-                $returnStr = $fileNameOnly.'.'.$fileExtension;
-            }
-        }
-        return $returnStr;
-    }
-
-    public function deleteMapDataFile($fileName): bool
-    {
-        $status = false;
-        $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial/' . $fileName;
-        if(!file_exists($targetPath)) {
-            $status = true;
-        }
-        elseif(unlink($targetPath)){
-            $status = true;
-        }
-        return $status;
     }
 }

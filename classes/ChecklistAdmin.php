@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
-include_once(__DIR__ . '/ProfileManager.php');
+include_once(__DIR__ . '/../models/Permissions.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistAdmin{
@@ -10,7 +10,7 @@ class ChecklistAdmin{
 	private $clName;
 
 	public function __construct() {
-        $connection = new DbConnectionService();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -92,9 +92,7 @@ class ChecklistAdmin{
 		if($this->conn->query($sql)){
 			$newClId = $this->conn->insert_id;
 			$this->conn->query('INSERT INTO userroles (uid, role, tablename, tablepk) VALUES('.$GLOBALS['SYMB_UID'].',"ClAdmin","fmchecklists",'.$newClId.') ');
-			$newPManager = new ProfileManager();
-			$newPManager->setUserName($GLOBALS['USERNAME']);
-			$newPManager->authenticate();
+			(new Permissions)->setUserPermissions();
 		}
 		return $newClId;
 	}

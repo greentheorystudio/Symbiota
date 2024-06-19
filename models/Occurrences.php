@@ -1,10 +1,10 @@
 <?php
-include_once(__DIR__ . '/../models/ChecklistVouchers.php');
-include_once(__DIR__ . '/../models/Images.php');
-include_once(__DIR__ . '/../models/Media.php');
-include_once(__DIR__ . '/../models/OccurrenceDeterminations.php');
-include_once(__DIR__ . '/../models/Taxa.php');
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/ChecklistVouchers.php');
+include_once(__DIR__ . '/Images.php');
+include_once(__DIR__ . '/Media.php');
+include_once(__DIR__ . '/OccurrenceDeterminations.php');
+include_once(__DIR__ . '/Taxa.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
@@ -132,7 +132,7 @@ class Occurrences{
     );
 
     public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -302,15 +302,7 @@ class Occurrences{
     public function getOccurrenceData($occid): array
     {
         $retArr = array();
-        $fieldNameArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
-                $fieldNameArr[] = '`' . $field . '`';
-            }
-            else{
-                $fieldNameArr[] = $field;
-            }
-        }
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
@@ -433,15 +425,7 @@ class Occurrences{
     public function getOccurrencesByCatalogNumber($catalogNumber, $collid = null): array
     {
         $retArr = array();
-        $fieldNameArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
-                $fieldNameArr[] = '`' . $field . '`';
-            }
-            else{
-                $fieldNameArr[] = $field;
-            }
-        }
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurrences WHERE catalognumber = "' . SanitizerService::cleanInStr($this->conn, $catalogNumber) . '" ';
         if($collid){

@@ -107,14 +107,14 @@ header('X-Frame-Options: SAMEORIGIN');
                         return new Promise((resolve) => {
                             const formData = new FormData();
                             formData.append('username', val);
-                            formData.append('action', 'getUidFromUsername');
+                            formData.append('action', 'getUserFromUsername');
                             fetch(profileApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
                             .then((response) => {
-                                response.text().then((res) => {
-                                    resolve(Number(res) === 0 || 'Username is already associated with another account');
+                                response.json().then((resObj) => {
+                                    resolve((!resObj.hasOwnProperty('uid') || Number(resObj['uid']) === 0) || 'Username is already associated with another account');
                                 });
                             });
                         });
@@ -142,7 +142,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             })
                             .then((response) => {
                                 response.text().then((res) => {
-                                    if(Number(res) === 1){
+                                    if(Number(res) > 0){
                                         window.location.href = clientRoot + '/profile/viewprofile.php';
                                     }
                                     else{

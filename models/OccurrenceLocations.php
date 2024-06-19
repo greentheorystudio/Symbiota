@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceLocations{
@@ -54,7 +54,7 @@ class OccurrenceLocations{
     );
 
     public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -147,10 +147,7 @@ class OccurrenceLocations{
     public function getLocationData($locationid): array
     {
         $retArr = array();
-        $fieldNameArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            $fieldNameArr[] = $field;
-        }
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurlocations WHERE locationid = ' . $locationid . ' ';
         //echo '<div>'.$sql.'</div>';

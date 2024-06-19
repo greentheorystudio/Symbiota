@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class Manager  {
 	protected $conn;
@@ -11,7 +11,7 @@ class Manager  {
 	protected $verboseMode = 0;
 
     public function __construct($id = null){
-		$connection = new DbConnectionService();
+		$connection = new DbService();
     	$this->conn = $connection->getConnection();
  		if($id !== null || is_numeric($id)){
 	 		$this->id = $id;

@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
-include_once(__DIR__ . '/ProfileManager.php');
+include_once(__DIR__ . '/../models/Permissions.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
  
 class InventoryProjectManager {
@@ -12,7 +12,7 @@ class InventoryProjectManager {
 	private $errorStr;
 
 	public function __construct(){
-        $connection = new DbConnectionService();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -106,7 +106,7 @@ class InventoryProjectManager {
 		if($this->conn->query($sql)){
 			$this->pid = $this->conn->insert_id;
             $this->conn->query('INSERT INTO userroles (uid, role, tablename, tablepk) VALUES('.$GLOBALS['SYMB_UID'].',"ProjAdmin","fmprojects",'.$this->pid.') ');
-            (new ProfileManager)->setUserRights($GLOBALS['SYMB_UID']);
+            (new Permissions)->setUserPermissions();
 		}
 		else{
 			$this->errorStr = 'ERROR creating new project.';

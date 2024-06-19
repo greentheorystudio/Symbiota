@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
@@ -23,7 +23,7 @@ class ImageProcessor {
             $this->destructConn = false;
         }
         else{
-            $connection = new DbConnectionService();
+            $connection = new DbService();
             $this->conn = $connection->getConnection();
             if(!$this->conn) {
                 exit('ABORT: Image upload aborted: Unable to establish connection to database');

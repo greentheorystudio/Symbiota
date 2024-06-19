@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/ImageShared.php');
 
 class ImageImport{
@@ -12,7 +12,7 @@ class ImageImport{
 	
 	public function __construct() {
 		set_time_limit(2000);
-		$connection = new DbConnectionService();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 		
 		$this->setUploadTargetPath();

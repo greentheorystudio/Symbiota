@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/ChecklistAdmin.php');
+include_once(__DIR__ . '/../../models/Checklists.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 if($action && SanitizerService::validateInternalRequest()){
-    $checklistAdminManager = new ChecklistAdmin();
-    if($action === 'getChecklistsProjectsByUid' && array_key_exists('uid',$_POST)){
-        echo json_encode($checklistAdminManager->getManagementLists($_POST['uid']));
+    $checklists = new Checklists();
+    if($action === 'getChecklistListByUserRights'){
+        echo json_encode($checklists->getChecklistListByUserRights());
     }
 }

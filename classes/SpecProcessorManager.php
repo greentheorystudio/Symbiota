@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class SpecProcessorManager {
 
@@ -22,7 +22,7 @@ class SpecProcessorManager {
 	protected $lastRunDate = '';
 
 	public function __construct() {
-		$connection = new DbConnectionService();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 

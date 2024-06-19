@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
@@ -14,7 +14,7 @@ class OccurrenceSkeletal {
 	private $errorStr = '';
 
 	public function __construct(){
-		$connection = new DbConnectionService();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 		$this->stateList = array('AK' => 'Alaska', 'AL' => 'Alabama', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California',
 			'CO' => 'Colorado', 'CT' => 'Connecticut', 'DE' => 'Delaware', 'DC' => 'District of Columbia', 'FL' => 'Florida',

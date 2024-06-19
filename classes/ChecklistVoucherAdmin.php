@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistVoucherAdmin {
@@ -13,7 +13,7 @@ class ChecklistVoucherAdmin {
 	private $closeConnOnDestroy = true;
 
 	public function __construct() {
-        $connection = new DbConnectionService();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
 	}
 

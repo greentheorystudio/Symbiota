@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class SiteMapManager{
 	
@@ -9,7 +9,7 @@ class SiteMapManager{
 	private $genObsArr = array();
 	
 	public function __construct() {
-		$connection = new DbConnectionService();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 

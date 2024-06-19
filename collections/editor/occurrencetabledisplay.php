@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
@@ -15,7 +15,7 @@ $reset = (array_key_exists('reset', $_REQUEST) && $_REQUEST['reset']);
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 $occManager = new OccurrenceEditorManager();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 if($crowdSourceMode) {
     $occManager->setCrowdSourceMode(1);

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
  
 class InventoryDynSqlManager {
@@ -9,7 +9,7 @@ class InventoryDynSqlManager {
 	private $clName;
 	
 	public function __construct($id) {
-		$connection = new DbConnectionService();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 		if(is_numeric($id)){
 			$this->clid = $id;

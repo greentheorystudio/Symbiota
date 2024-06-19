@@ -1,6 +1,6 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../services/DbConnectionService.php');
+include_once(__DIR__ . '/../../services/DbService.php');
 include_once(__DIR__ . '/../../classes/DichoKeyManager.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');

@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../services/DbConnectionService.php');
+include_once(__DIR__ . '/../../services/DbService.php');
 
-$connection = new DbConnectionService();
+$connection = new DbService();
 header('Content-Type: application/json; charset=UTF-8' );
 $con = $connection->getConnection();
 $retArr = array();

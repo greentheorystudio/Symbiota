@@ -1,11 +1,11 @@
 <?php
-include_once(__DIR__ . '/../services/DbConnectionService.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceEditorDeterminations.php');
 include_once(__DIR__ . '/OccurrenceEditorImages.php');
 include_once(__DIR__ . '/OccurrenceEditorMedia.php');
-include_once(__DIR__ . '/SOLRManager.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/SOLRService.php');
 
 class OccurrenceEditorManager {
 
@@ -31,7 +31,7 @@ class OccurrenceEditorManager {
             $this->isShareConn = true;
         }
         else{
-            $connection = new DbConnectionService();
+            $connection = new DbService();
             $this->conn = $connection->getConnection();
         }
         $this->occFieldArr = array('dbpk', 'catalognumber', 'othercatalognumbers', 'occurrenceid','family', 'verbatimscientificname', 'sciname',
@@ -1348,7 +1348,7 @@ class OccurrenceEditorManager {
                 $status = false;
             }
             if($GLOBALS['SOLR_MODE']) {
-                $solrManager = new SOLRManager();
+                $solrManager = new SOLRService();
                 $solrManager->deleteSOLRDocument($sourceOccid);
             }
         }
