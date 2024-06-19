@@ -10,11 +10,11 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'validatePermission' && (array_key_exists('permission',$_POST) || array_key_exists('permissionJson',$_POST))){
         $key = array_key_exists('key',$_POST) ? (int)$_POST['key'] : null;
         if(array_key_exists('permissionJson',$_POST)){
-            $permissions = json_decode($_POST['permissionJson']);
+            $permissionVal = json_decode($_POST['permissionJson']);
         }
         else{
-            $permissions = $_POST['permission'];
+            $permissionVal = $_POST['permission'];
         }
-        echo json_encode($permissions->validatePermission($permissions, $key));
+        echo json_encode($permissions->validatePermission($permissionVal, $key));
     }
 }
