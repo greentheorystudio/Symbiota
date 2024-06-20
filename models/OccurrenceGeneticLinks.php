@@ -28,4 +28,27 @@ class OccurrenceGeneticLinks{
             $this->conn->close();
         }
 	}
+
+    public function getOccurrenceGeneticLinkData($occid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM omoccurgenetic '.
+            'WHERE occid = ' . (int)$occid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            while($r = $rs->fetch_object()){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $r->$name;
+                }
+                $retArr[] = $nodeArr;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
 }

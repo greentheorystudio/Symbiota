@@ -40,78 +40,37 @@ class Media{
         }
 	}
 
-    public function getTaxonAudios($tid, $includeOcc = false): array
+    public function getMediaArrByProperty($property, $value, $limitFormat = null): array
     {
-        $retArr = array();
-        $sql = 'SELECT mediaid, occid, accessuri, title, creator, type, format, owner, furtherinformationurl, language, usageterms, '.
-            'rights, bibliographiccitation, publisher, contributor, locationcreated, description, sortsequence '.
-            'FROM media '.
-            'WHERE tid = '.$tid.' AND format LIKE "audio/%" ';
-        if(!$includeOcc){
-            $sql .= 'AND ISNULL(occid) ';
+        $returnArr = array();
+        if($property === 'occid' || $property === 'tid'){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM media WHERE ' . $property . ' = ' . (int)$value . ' ';
+            if($limitFormat){
+                if($limitFormat === 'audio'){
+                    $sql .= 'AND format LIKE "audio/%" ';
+                }
+                elseif($limitFormat === 'video'){
+                    $sql .= 'AND format LIKE "video/%" ';
+                }
+            }
+            $sql .= 'ORDER BY sortsequence ';
+            //echo '<div>'.$sql.'</div>';
+            if($rs = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($rs);
+                while($r = $rs->fetch_object()){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $r->$name;
+                    }
+                    $returnArr[] = $nodeArr;
+                }
+                $rs->free();
+            }
         }
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $resultArr = array();
-            $resultArr['mediaid'] = $row->mediaid;
-            $resultArr['occid'] = $row->occid;
-            $resultArr['accessuri'] = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
-            $resultArr['title'] = $row->title;
-            $resultArr['creator'] = $row->creator;
-            $resultArr['type'] = $row->type;
-            $resultArr['format'] = $row->format;
-            $resultArr['owner'] = $row->owner;
-            $resultArr['furtherinformationurl'] = $row->furtherinformationurl;
-            $resultArr['language'] = $row->language;
-            $resultArr['usageterms'] = $row->usageterms;
-            $resultArr['rights'] = $row->rights;
-            $resultArr['bibliographiccitation'] = $row->bibliographiccitation;
-            $resultArr['publisher'] = $row->publisher;
-            $resultArr['contributor'] = $row->contributor;
-            $resultArr['locationcreated'] = $row->locationcreated;
-            $resultArr['description'] = $row->description;
-            $resultArr['sortsequence'] = $row->sortsequence;
-            $retArr[] = $resultArr;
-        }
-        $result->free();
-        return $retArr;
-    }
-
-    public function getTaxonVideos($tid, $includeOcc = false): array
-    {
-        $retArr = array();
-        $sql = 'SELECT mediaid, occid, accessuri, title, creator, type, format, owner, furtherinformationurl, language, usageterms, '.
-            'rights, bibliographiccitation, publisher, contributor, locationcreated, description, sortsequence '.
-            'FROM media '.
-            'WHERE tid = ' . $tid . ' AND format LIKE "video/%" ';
-        if(!$includeOcc){
-            $sql .= 'AND ISNULL(occid) ';
-        }
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $resultArr = array();
-            $resultArr['mediaid'] = $row->mediaid;
-            $resultArr['occid'] = $row->occid;
-            $resultArr['accessuri'] = ($row->accessuri && $GLOBALS['CLIENT_ROOT'] && strncmp($row->accessuri, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->accessuri) : $row->accessuri;
-            $resultArr['title'] = $row->title;
-            $resultArr['creator'] = $row->creator;
-            $resultArr['type'] = $row->type;
-            $resultArr['format'] = $row->format;
-            $resultArr['owner'] = $row->owner;
-            $resultArr['furtherinformationurl'] = $row->furtherinformationurl;
-            $resultArr['language'] = $row->language;
-            $resultArr['usageterms'] = $row->usageterms;
-            $resultArr['rights'] = $row->rights;
-            $resultArr['bibliographiccitation'] = $row->bibliographiccitation;
-            $resultArr['publisher'] = $row->publisher;
-            $resultArr['contributor'] = $row->contributor;
-            $resultArr['locationcreated'] = $row->locationcreated;
-            $resultArr['description'] = $row->description;
-            $resultArr['sortsequence'] = $row->sortsequence;
-            $retArr[] = $resultArr;
-        }
-        $result->free();
-        return $retArr;
+        return $returnArr;
     }
 
     public function updateTidFromOccurrenceRecord($occid, $tid): void

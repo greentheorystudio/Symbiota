@@ -40,29 +40,17 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getOccurrenceEditArr' && $occid){
         echo json_encode($occurrences->getOccurrenceEditData($occid));
     }
-    elseif($action === 'getOccurrenceImageArr' && $occid){
-        echo json_encode($occurrences->getOccurrenceImageData($occid));
-    }
-    elseif($action === 'getOccurrenceMediaArr' && $occid){
-        echo json_encode($occurrences->getOccurrenceMediaData($occid));
-    }
-    elseif($action === 'getOccurrenceChecklistArr' && $occid){
-        echo json_encode($occurrences->getOccurrenceChecklistData($occid));
-    }
-    elseif($action === 'getOccurrenceGeneticLinkArr' && $occid){
-        echo json_encode($occurrences->getOccurrenceGeneticLinkData($occid));
-    }
     elseif($action === 'evaluateOccurrenceForDeletion' && $occid && $isEditor){
         echo json_encode($occurrences->evaluateOccurrenceForDeletion($occid));
     }
     elseif($action === 'deleteOccurrenceRecord' && $occid && $isEditor){
         echo $occurrences->deleteOccurrenceRecord($occid);
     }
-    elseif($action === 'getOccurrencesByCatalogNumber' && array_key_exists('catalognumber',$_POST)){
+    elseif($action === 'getOccurrencesByCatalogNumber' && array_key_exists('catalognumber', $_POST)){
         $collId = array_key_exists('collid',$_POST) ? (int)$_POST['collid'] : null;
         echo json_encode($occurrences->getOccurrencesByCatalogNumber($_POST['catalognumber'], $collId));
     }
-    elseif($action === 'transferOccurrenceRecord' && $isEditor && array_key_exists('transferToCollid',$_POST)){
+    elseif($action === 'transferOccurrenceRecord' && $isEditor && array_key_exists('transferToCollid', $_POST)){
         $collId = array_key_exists('transferToCollid',$_POST) ? (int)$_POST['transferToCollid'] : null;
         echo $occurrences->transferOccurrenceRecord($occid, $collId);
     }

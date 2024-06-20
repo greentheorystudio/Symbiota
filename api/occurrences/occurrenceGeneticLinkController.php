@@ -22,5 +22,7 @@ elseif($collid){
 
 if($action && SanitizerService::validateInternalRequest()){
     $occurrenceGeneticLinks = new OccurrenceGeneticLinks();
-
+    if($action === 'getOccurrenceGeneticLinkArr' && $occid){
+        echo json_encode($occurrenceGeneticLinks->getOccurrenceGeneticLinkData($occid));
+    }
 }

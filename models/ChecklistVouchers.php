@@ -27,6 +27,26 @@ class ChecklistVouchers{
         }
 	}
 
+    public function getChecklistListByOccurrenceVoucher($occid): array
+    {
+        $retArr = array();
+        if($occid){
+            $sql = 'SELECT c.clid, c.name '.
+                'FROM fmchecklists AS c LEFT JOIN fmvouchers AS v ON c.clid = v.clid '.
+                'WHERE v.occid = ' . (int)$occid . ' ORDER BY c.name ';
+            if($rs = $this->conn->query($sql)){
+                while($r = $rs->fetch_object()){
+                    $nodeArr = array();
+                    $nodeArr['clid'] = $r->clid;
+                    $nodeArr['name'] = $r->name;
+                    $retArr[] = $nodeArr;
+                }
+                $rs->free();
+            }
+        }
+        return $retArr;
+    }
+
     public function updateTidFromOccurrenceRecord($occid, $tid): void
     {
         if((int)$occid > 0){

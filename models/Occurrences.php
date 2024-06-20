@@ -277,28 +277,6 @@ class Occurrences{
         return $isLocked;
     }
 
-    public function getOccurrenceChecklistData($occid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT c.clid, c.name '.
-            'FROM fmchecklists AS c LEFT JOIN fmvouchers AS v ON c.clid = v.clid '.
-            'WHERE v.occid = ' . (int)$occid . ' ORDER BY c.name ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
-                }
-                $retArr[] = $nodeArr;
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
     public function getOccurrenceData($occid): array
     {
         $retArr = array();
@@ -352,74 +330,6 @@ class Occurrences{
     public function getOccurrenceFields(): array
     {
         return $this->fields;
-    }
-
-    public function getOccurrenceGeneticLinkData($occid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT g.idoccurgenetic, g.identifier, g.resourcename, g.locus, g.resourceurl, g.notes '.
-            'FROM omoccurgenetic AS g '.
-            'WHERE g.occid = ' . (int)$occid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
-                }
-                $retArr[] = $nodeArr;
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
-    public function getOccurrenceImageData($occid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.photographer, i.photographeruid, i.sourceurl, i.copyright, '.
-            'i.notes, i.username, i.sortsequence, i.initialtimestamp '.
-            'FROM images AS i '.
-            'WHERE i.occid = ' . (int)$occid . ' ORDER BY i.sortsequence ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
-                }
-                $retArr[] = $nodeArr;
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
-    public function getOccurrenceMediaData($occid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT m.mediaid, m.accessuri, m.title, m.creatoruid, m.creator, m.`type`, m.`format`, m.owner, m.furtherinformationurl, '.
-            'm.language, m.usageterms, m.rights, m.bibliographiccitation, m.publisher, m.contributor, m.locationcreated, m.description, m.sortsequence '.
-            'FROM media AS m '.
-            'WHERE m.occid = ' . (int)$occid . ' ORDER BY m.sortsequence ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
-                }
-                $retArr[] = $nodeArr;
-            }
-            $rs->free();
-        }
-        return $retArr;
     }
 
     public function getOccurrencesByCatalogNumber($catalogNumber, $collid = null): array

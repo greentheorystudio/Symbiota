@@ -866,22 +866,23 @@ if(!$GLOBALS['SYMB_UID']) {
                             const text = 'Getting existing ' + selectedMediaType.value + 's';
                             addSubprocessToProcessorDisplay(currentTaxon.value['sciname'],'text',text);
                             const formData = new FormData();
-                            formData.append('tid', currentTaxon.value['tid']);
-                            if(selectedMediaType.value === 'image'){
-                                formData.append('action', 'getTaxonImages');
-                                dataSource = imageApiUrl;
-                            }
-                            else if(selectedMediaType.value === 'video'){
-                                formData.append('action', 'getTaxonVideos');
-                                dataSource = mediaApiUrl;
-                            }
-                            else if(selectedMediaType.value === 'audio'){
-                                formData.append('action', 'getTaxonAudios');
-                                dataSource = mediaApiUrl;
-                            }
-                            else if(selectedMediaType.value === 'description'){
+                            if(selectedMediaType.value === 'description'){
+                                formData.append('tid', currentTaxon.value['tid']);
                                 formData.append('action', 'getTaxonDescriptions');
                                 dataSource = taxonDescriptionApiUrl;
+                            }
+                            else{
+                                formData.append('property', 'tid');
+                                formData.append('value', currentTaxon.value['tid']);
+                                if(selectedMediaType.value === 'image'){
+                                    formData.append('action', 'getImageArrByProperty');
+                                    dataSource = imageApiUrl;
+                                }
+                                else if(selectedMediaType.value === 'audio' || selectedMediaType.value === 'video'){
+                                    formData.append('limitFormat', selectedMediaType.value);
+                                    formData.append('action', 'getMediaArrByProperty');
+                                    dataSource = mediaApiUrl;
+                                }
                             }
                             if(dataSource){
                                 fetch(dataSource, {

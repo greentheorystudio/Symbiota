@@ -93,10 +93,10 @@ class OccurrenceLocations{
         $sql = 'SELECT DISTINCT locationid, locationname, locationcode, country, stateprovince, county, decimallatitude, decimallongitude '.
             'FROM omoccurlocations WHERE collid = ' . (int)$collid . ' ';
         if($key === 'code'){
-            $sql .= 'AND locationcode LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
+            $sql .= 'AND locationcode LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         }
         if($key === 'name'){
-            $sql .= 'AND locationname LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
+            $sql .= 'AND locationname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         }
         $sql .= 'ORDER BY locationcode, locationname, country, stateprovince, county LIMIT 10 ';
         $rs = $this->conn->query($sql);

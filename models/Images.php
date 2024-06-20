@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class Images{
 
@@ -46,44 +47,32 @@ class Images{
         }
 	}
 
-    public function getTaxonImages($tid, $includeOcc = false): array
+    public function getImageArrByProperty($property, $value, $includeOccurrence = false): array
     {
-        $retArr = array();
-        $sql = 'SELECT imgid, url, thumbnailurl, originalurl, archiveurl, photographer, imagetype, format, caption, owner, '.
-            'sourceurl, referenceUrl, rights, accessrights, locality, occid, notes, anatomy, mediaMD5, dynamicProperties, sortsequence '.
-            'FROM images '.
-            'WHERE tid = ' . $tid . ' ';
-        if(!$includeOcc){
-            $sql .= 'AND ISNULL(occid) ';
+        $returnArr = array();
+        if($property === 'occid' || $property === 'tid'){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM images WHERE ' . $property . ' = ' . (int)$value . ' ';
+            if($property === 'tid' && !$includeOccurrence){
+                $sql .= 'AND ISNULL(occid) ';
+            }
+            $sql .= 'ORDER BY sortsequence ';
+            //echo '<div>'.$sql.'</div>';
+            if($rs = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($rs);
+                while($r = $rs->fetch_object()){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $r->$name;
+                    }
+                    $returnArr[] = $nodeArr;
+                }
+                $rs->free();
+            }
         }
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $resultArr = array();
-            $resultArr['imgid'] = $row->imgid;
-            $resultArr['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
-            $resultArr['thumbnailurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
-            $resultArr['originalurl'] = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
-            $resultArr['archiveurl'] = $row->archiveurl;
-            $resultArr['photographer'] = $row->photographer;
-            $resultArr['imagetype'] = $row->imagetype;
-            $resultArr['format'] = $row->format;
-            $resultArr['caption'] = $row->caption;
-            $resultArr['owner'] = $row->owner;
-            $resultArr['sourceurl'] = $row->sourceurl;
-            $resultArr['referenceUrl'] = $row->referenceUrl;
-            $resultArr['rights'] = $row->rights;
-            $resultArr['accessrights'] = $row->accessrights;
-            $resultArr['locality'] = $row->locality;
-            $resultArr['occid'] = $row->occid;
-            $resultArr['notes'] = $row->notes;
-            $resultArr['anatomy'] = $row->anatomy;
-            $resultArr['mediaMD5'] = $row->mediaMD5;
-            $resultArr['dynamicProperties'] = $row->dynamicProperties;
-            $resultArr['sortsequence'] = $row->sortsequence;
-            $retArr[] = $resultArr;
-        }
-        $result->free();
-        return $retArr;
+        return $returnArr;
     }
 
     public function updateTidFromOccurrenceRecord($occid, $tid): void

@@ -18,10 +18,8 @@ if($action && SanitizerService::validateInternalRequest()){
         $medUtilities = new MediaShared();
         echo json_encode($medUtilities->addMediaRecord(json_decode($_POST['media'], true)));
     }
-    elseif($action === 'getTaxonVideos' && $tId){
-        echo json_encode($media->getTaxonVideos($tId));
-    }
-    elseif($action === 'getTaxonAudios' && $tId){
-        echo json_encode($media->getTaxonAudios($tId));
+    elseif($action === 'getMediaArrByProperty' && array_key_exists('property',$_POST) && array_key_exists('value',$_POST)){
+        $limitFormat = $_POST['limitFormat'] ?? null;
+        echo json_encode($media->getMediaArrByProperty($_POST['property'], $_POST['value'], $limitFormat));
     }
 }

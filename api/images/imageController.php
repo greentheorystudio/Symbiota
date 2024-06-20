@@ -18,7 +18,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $imgUtilities = new ImageShared();
         echo json_encode($imgUtilities->addImageRecord(json_decode($_POST['image'], true)));
     }
-    elseif($action === 'getTaxonImages' && $tId){
-        echo json_encode($images->getTaxonImages($tId));
+    elseif($action === 'getImageArrByProperty' && array_key_exists('property',$_POST) && array_key_exists('value',$_POST)){
+        echo json_encode($images->getImageArrByProperty($_POST['property'], $_POST['value']));
     }
 }

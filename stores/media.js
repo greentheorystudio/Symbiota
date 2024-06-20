@@ -1,63 +1,66 @@
 const useMediaStore = Pinia.defineStore('media', {
     state: () => ({
-        blankDeterminationRecord: {
-            detid: 0,
-            identifiedby: null,
-            dateidentified: null,
-            sciname: null,
-            verbatimscientificname: null,
+        blankMediaRecord: {
+            mediaid: 0,
             tid: null,
-            scientificnameauthorship: null,
-            identificationqualifier: null,
-            iscurrent: 0,
-            identificationreferences: null,
-            identificationremarks: null,
-            sortsequence: 10,
-            printqueue: 0
+            occid: null,
+            accessuri: null,
+            title: null,
+            creatoruid: null,
+            creator: null,
+            type: null,
+            format: null,
+            owner: null,
+            furtherinformationurl: null,
+            language: null,
+            usageterms: null,
+            rights: null,
+            bibliographiccitation: null,
+            publisher: null,
+            contributor: null,
+            locationcreated: null,
+            description: null,
+            sortsequence: null,
+            initialtimestamp: null
         },
-        determinationArr: [],
-        determinationData: {},
-        determinationEditData: {},
-        determinationFields: {},
-        determinationId: 0,
-        determinationUpdateData: {}
+        mediaArr: [],
+        mediaData: {},
+        mediaEditData: {},
+        mediaFields: {},
+        mediaId: 0,
+        mediaUpdateData: {}
     }),
     getters: {
-        getDeterminationArr(state) {
-            return state.determinationArr;
+        getMediaArr(state) {
+            return state.mediaArr;
         },
-        getDeterminationData(state) {
-            return state.determinationEditData;
+        getMediaData(state) {
+            return state.mediaEditData;
         },
-        getDeterminationEditsExist(state) {
+        getMediaEditsExist(state) {
             let exist = false;
-            state.determinationUpdateData = Object.assign({}, {});
-            for(let key in state.determinationEditData) {
-                if(state.determinationEditData.hasOwnProperty(key) && state.determinationEditData[key] !== state.determinationData[key]) {
+            state.mediaUpdateData = Object.assign({}, {});
+            for(let key in state.mediaEditData) {
+                if(state.mediaEditData.hasOwnProperty(key) && state.mediaEditData[key] !== state.mediaData[key]) {
                     exist = true;
-                    state.determinationUpdateData[key] = state.determinationEditData[key];
+                    state.mediaUpdateData[key] = state.mediaEditData[key];
                 }
             }
             return exist;
         },
-        getDeterminationFields(state) {
-            return state.determinationFields;
+        getMediaFields(state) {
+            return state.mediaFields;
         },
-        getDeterminationID(state) {
-            return state.determinationId;
+        getMediaID(state) {
+            return state.mediaId;
         },
-        getDeterminationValid(state) {
-            return (
-                state.determinationEditData['sciname'] &&
-                state.determinationEditData['identifiedby'] &&
-                state.determinationEditData['dateidentified'] &&
-                Number(state.determinationEditData['sortsequence']) > 0
-            );
+        getMediaValid(state) {
+            return !!state.mediaEditData['accessuri'];
         }
     },
     actions: {
-        clearDeterminationArr() {
-            this.determinationArr.length = 0;
+        clearMediaArr() {
+            this.mediaArr.length = 0;
         },
         createOccurrenceDeterminationRecord(collid, occid, callback) {
             this.determinationEditData['occid'] = occid.toString();
@@ -117,11 +120,12 @@ const useMediaStore = Pinia.defineStore('media', {
             }
             this.determinationEditData = Object.assign({}, this.determinationData);
         },
-        setDeterminationArr(occid) {
+        setMediaArr(property, value) {
             const formData = new FormData();
-            formData.append('occid', occid.toString());
-            formData.append('action', 'getOccurrenceDeterminationArr');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('property', property);
+            formData.append('value', value.toString());
+            formData.append('action', 'getMediaArrByProperty');
+            fetch(mediaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -129,7 +133,7 @@ const useMediaStore = Pinia.defineStore('media', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.determinationArr = data;
+                this.mediaArr = data;
             });
         },
         updateDeterminationEditData(key, value) {

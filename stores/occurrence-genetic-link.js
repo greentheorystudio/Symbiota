@@ -1,63 +1,57 @@
 const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link', {
     state: () => ({
-        blankDeterminationRecord: {
-            detid: 0,
-            identifiedby: null,
-            dateidentified: null,
-            sciname: null,
-            verbatimscientificname: null,
-            tid: null,
-            scientificnameauthorship: null,
-            identificationqualifier: null,
-            iscurrent: 0,
-            identificationreferences: null,
-            identificationremarks: null,
-            sortsequence: 10,
-            printqueue: 0
+        blankGeneticLinkRecord: {
+            idoccurgenetic: 0,
+            occid: null,
+            identifier: null,
+            resourcename: null,
+            title: null,
+            locus: null,
+            resourceurl: null,
+            notes: 10,
+            initialtimestamp: 0
         },
-        determinationArr: [],
-        determinationData: {},
-        determinationEditData: {},
-        determinationFields: {},
-        determinationId: 0,
-        determinationUpdateData: {}
+        geneticLinkArr: [],
+        geneticLinkData: {},
+        geneticLinkEditData: {},
+        geneticLinkFields: {},
+        geneticLinkId: 0,
+        geneticLinkUpdateData: {}
     }),
     getters: {
-        getDeterminationArr(state) {
-            return state.determinationArr;
+        getGeneticLinkArr(state) {
+            return state.geneticLinkArr;
         },
-        getDeterminationData(state) {
-            return state.determinationEditData;
+        getGeneticLinkData(state) {
+            return state.geneticLinkEditData;
         },
-        getDeterminationEditsExist(state) {
+        getGeneticLinkEditsExist(state) {
             let exist = false;
-            state.determinationUpdateData = Object.assign({}, {});
-            for(let key in state.determinationEditData) {
-                if(state.determinationEditData.hasOwnProperty(key) && state.determinationEditData[key] !== state.determinationData[key]) {
+            state.geneticLinkUpdateData = Object.assign({}, {});
+            for(let key in state.geneticLinkEditData) {
+                if(state.geneticLinkEditData.hasOwnProperty(key) && state.geneticLinkEditData[key] !== state.geneticLinkData[key]) {
                     exist = true;
-                    state.determinationUpdateData[key] = state.determinationEditData[key];
+                    state.geneticLinkUpdateData[key] = state.geneticLinkEditData[key];
                 }
             }
             return exist;
         },
-        getDeterminationFields(state) {
-            return state.determinationFields;
+        getGeneticLinkFields(state) {
+            return state.geneticLinkFields;
         },
-        getDeterminationID(state) {
-            return state.determinationId;
+        getGeneticLinkID(state) {
+            return state.geneticLinkId;
         },
-        getDeterminationValid(state) {
+        getGeneticLinkValid(state) {
             return (
-                state.determinationEditData['sciname'] &&
-                state.determinationEditData['identifiedby'] &&
-                state.determinationEditData['dateidentified'] &&
-                Number(state.determinationEditData['sortsequence']) > 0
+                state.geneticLinkEditData['occid'] &&
+                state.geneticLinkEditData['resourcename']
             );
         }
     },
     actions: {
-        clearDeterminationArr() {
-            this.determinationArr.length = 0;
+        clearGeneticLinkArr() {
+            this.geneticLinkArr.length = 0;
         },
         createOccurrenceDeterminationRecord(collid, occid, callback) {
             this.determinationEditData['occid'] = occid.toString();
@@ -117,11 +111,11 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
             }
             this.determinationEditData = Object.assign({}, this.determinationData);
         },
-        setDeterminationArr(occid) {
+        setGeneticLinkArr(occid) {
             const formData = new FormData();
             formData.append('occid', occid.toString());
-            formData.append('action', 'getOccurrenceDeterminationArr');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('action', 'getOccurrenceGeneticLinkArr');
+            fetch(occurrenceGeneticLinkApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -129,7 +123,7 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.determinationArr = data;
+                this.geneticLinkArr = data;
             });
         },
         updateDeterminationEditData(key, value) {

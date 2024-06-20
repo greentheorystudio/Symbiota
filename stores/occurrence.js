@@ -212,12 +212,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             {field: '`year`', label: 'Year'}
         ],
         entryFollowUpAction: 'remain',
-        geneticLinkArr: [],
-        imageArr: [],
+        geneticLinkStore: useOccurrenceGeneticLinkStore(),
+        imageStore: useImageStore(),
         isEditor: false,
         isLocked: false,
         locationStore: useOccurrenceLocationStore(),
-        mediaArr: [],
+        mediaStore: useMediaStore(),
         occId: null,
         occidArr: [],
         occurrenceData: {},
@@ -326,13 +326,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             return state.collectingEventStore.getEventRecordFields;
         },
         getGeneticLinkArr(state) {
-            return state.geneticLinkArr;
+            return state.geneticLinkStore.getGeneticLinkArr;
         },
         getImageArr(state) {
-            return state.imageArr;
+            return state.imageStore.getImageArr;
         },
         getImageCount(state) {
-            return state.imageArr.length;
+            return state.imageStore.getImageCount;
         },
         getIsEditor(state) {
             return (state.collectionStore.getCollectionPermissions.includes('CollAdmin') || state.collectionStore.getCollectionPermissions.includes('CollEditor'));
@@ -359,7 +359,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             return state.locationStore.getLocationValid;
         },
         getMediaArr(state) {
-            return state.mediaArr;
+            return state.mediaStore.getMediaArr;
         },
         getNewRecordExisting(state) {
             return state.occidArr.includes(0);
@@ -406,10 +406,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.isLocked = false;
             this.determinationStore.clearDeterminationArr();
             this.editArr.length = 0;
-            this.imageArr.length = 0;
-            this.mediaArr.length = 0;
+            this.imageStore.clearImageArr();
+            this.mediaStore.clearMediaArr();
             this.checklistArr.length = 0;
-            this.geneticLinkArr.length = 0;
+            this.geneticLinkStore.clearGeneticLinkArr();
         },
         createCollectingEventRecord(callback) {
             this.collectingEventStore.createCollectingEventRecord(this.getCollId, this.getLocationID, (newEventId) => {
@@ -720,8 +720,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setChecklistArr() {
             const formData = new FormData();
             formData.append('occid', this.occId.toString());
-            formData.append('action', 'getOccurrenceChecklistArr');
-            fetch(occurrenceApiUrl, {
+            formData.append('action', 'getChecklistListByOccurrenceVoucher');
+            fetch(checklistVoucherApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -828,53 +828,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setEntryFollowUpAction(value) {
             this.entryFollowUpAction = value;
         },
-        setGeneticLinkArr() {
-            const formData = new FormData();
-            formData.append('occid', this.occId.toString());
-            formData.append('action', 'getOccurrenceGeneticLinkArr');
-            fetch(occurrenceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.geneticLinkArr = data;
-            });
-        },
-        setImageArr() {
-            const formData = new FormData();
-            formData.append('occid', this.occId.toString());
-            formData.append('action', 'getOccurrenceImageArr');
-            fetch(occurrenceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.imageArr = data;
-            });
-        },
         setLocationFields() {
             this.locationStore.setLocationFields();
-        },
-        setMediaArr() {
-            const formData = new FormData();
-            formData.append('occid', this.occId.toString());
-            formData.append('action', 'getOccurrenceMediaArr');
-            fetch(occurrenceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.mediaArr = data;
-            });
         },
         setOccurrenceCollectionData() {
             this.occurrenceData['collid'] = this.getCollId;
@@ -910,10 +865,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             this.occurrenceData = Object.assign({}, data);
                             this.determinationStore.setDeterminationArr(this.occId);
                             this.setEditArr();
-                            this.setImageArr();
-                            this.setMediaArr();
+                            this.imageStore.setImageArr('occid', this.occId);
+                            this.mediaStore.setMediaArr('occid', this.occId);
                             this.setChecklistArr();
-                            this.setGeneticLinkArr();
+                            this.geneticLinkStore.setGeneticLinkArr(this.occId);
                             if(this.getCollId !== Number(this.occurrenceData.collid)){
                                 this.setCollection(this.occurrenceData.collid, callback);
                             }

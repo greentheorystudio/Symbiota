@@ -1,63 +1,75 @@
 const useImageStore = Pinia.defineStore('image', {
     state: () => ({
-        blankDeterminationRecord: {
-            detid: 0,
-            identifiedby: null,
-            dateidentified: null,
-            sciname: null,
-            verbatimscientificname: null,
+        blankImageRecord: {
+            imgid: 0,
             tid: null,
-            scientificnameauthorship: null,
-            identificationqualifier: null,
-            iscurrent: 0,
-            identificationreferences: null,
-            identificationremarks: null,
-            sortsequence: 10,
-            printqueue: 0
+            url: null,
+            thumbnailurl: null,
+            originalurl: null,
+            archiveurl: null,
+            photographer: null,
+            photographeruid: null,
+            imagetype: null,
+            format: null,
+            caption: null,
+            owner: null,
+            sourceurl: null,
+            referenceurl: null,
+            copyright: null,
+            rights: null,
+            accessrights: null,
+            locality: null,
+            occid: null,
+            notes: null,
+            anatomy: null,
+            username: null,
+            sourceidentifier: null,
+            mediamd5: null,
+            dynamicproperties: null,
+            sortsequence: null,
+            initialtimestamp: null
         },
-        determinationArr: [],
-        determinationData: {},
-        determinationEditData: {},
-        determinationFields: {},
-        determinationId: 0,
-        determinationUpdateData: {}
+        imageArr: [],
+        imageData: {},
+        imageEditData: {},
+        imageFields: {},
+        imageId: 0,
+        imageUpdateData: {}
     }),
     getters: {
-        getDeterminationArr(state) {
-            return state.determinationArr;
+        getImageArr(state) {
+            return state.imageArr;
         },
-        getDeterminationData(state) {
-            return state.determinationEditData;
+        getImageCount(state) {
+            return state.imageArr.length;
         },
-        getDeterminationEditsExist(state) {
+        getImageData(state) {
+            return state.imageEditData;
+        },
+        getImageEditsExist(state) {
             let exist = false;
-            state.determinationUpdateData = Object.assign({}, {});
-            for(let key in state.determinationEditData) {
-                if(state.determinationEditData.hasOwnProperty(key) && state.determinationEditData[key] !== state.determinationData[key]) {
+            state.imageUpdateData = Object.assign({}, {});
+            for(let key in state.imageEditData) {
+                if(state.imageEditData.hasOwnProperty(key) && state.imageEditData[key] !== state.imageData[key]) {
                     exist = true;
-                    state.determinationUpdateData[key] = state.determinationEditData[key];
+                    state.imageUpdateData[key] = state.imageEditData[key];
                 }
             }
             return exist;
         },
-        getDeterminationFields(state) {
-            return state.determinationFields;
+        getImageFields(state) {
+            return state.imageFields;
         },
-        getDeterminationID(state) {
-            return state.determinationId;
+        getImageID(state) {
+            return state.imageId;
         },
-        getDeterminationValid(state) {
-            return (
-                state.determinationEditData['sciname'] &&
-                state.determinationEditData['identifiedby'] &&
-                state.determinationEditData['dateidentified'] &&
-                Number(state.determinationEditData['sortsequence']) > 0
-            );
+        getImageValid(state) {
+            return !!state.imageEditData['url'];
         }
     },
     actions: {
-        clearDeterminationArr() {
-            this.determinationArr.length = 0;
+        clearImageArr() {
+            this.imageArr.length = 0;
         },
         createOccurrenceDeterminationRecord(collid, occid, callback) {
             this.determinationEditData['occid'] = occid.toString();
@@ -117,11 +129,12 @@ const useImageStore = Pinia.defineStore('image', {
             }
             this.determinationEditData = Object.assign({}, this.determinationData);
         },
-        setDeterminationArr(occid) {
+        setImageArr(property, value) {
             const formData = new FormData();
-            formData.append('occid', occid.toString());
-            formData.append('action', 'getOccurrenceDeterminationArr');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('property', property);
+            formData.append('value', value.toString());
+            formData.append('action', 'getImageArrByProperty');
+            fetch(imageApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -129,7 +142,7 @@ const useImageStore = Pinia.defineStore('image', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.determinationArr = data;
+                this.imageArr = data;
             });
         },
         updateDeterminationEditData(key, value) {
