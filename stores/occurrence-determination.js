@@ -90,8 +90,8 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
                 });
             });
         },
-        getCurrentDeterminationData(detid) {
-            return this.determinationArr.find(det => Number(det.detid) === Number(detid));
+        getCurrentDeterminationData() {
+            return this.determinationArr.find(det => Number(det.detid) === this.determinationId);
         },
         makeDeterminationCurrent(collid, callback) {
             const formData = new FormData();
@@ -109,8 +109,9 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
             });
         },
         setCurrentDeterminationRecord(detid) {
-            if(Number(detid) > 0){
-                this.determinationData = Object.assign({}, this.getCurrentDeterminationData(detid));
+            this.determinationId = Number(detid);
+            if(this.determinationId > 0){
+                this.determinationData = Object.assign({}, this.getCurrentDeterminationData());
             }
             else{
                 this.determinationData = Object.assign({}, this.blankDeterminationRecord);

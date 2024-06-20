@@ -171,8 +171,10 @@ class OccurrenceDeterminations{
         $this->createOccurrenceDeterminationRecordFromOccurrence($determinationData['occid']);
         $sqlSetCur1 = 'UPDATE omoccurdeterminations SET iscurrent = 0 WHERE occid = ' . (int)$determinationData['occid'];
         if($this->conn->query($sqlSetCur1)){
-            $determinationData['family'] = $determinationData['taxonData']['family'];
-            $determinationData['localitysecurity'] = $determinationData['taxonData']['securitystatus'];
+            if(array_key_exists('taxonData', $determinationData)){
+                $determinationData['family'] = $determinationData['taxonData']['family'];
+                $determinationData['localitysecurity'] = $determinationData['taxonData']['securitystatus'];
+            }
             if((new Occurrences)->updateOccurrenceRecord($determinationData['occid'], $determinationData, true)){
                 $sqlSetCur2 = 'UPDATE omoccurdeterminations SET iscurrent = 1 WHERE detid = ' . (int)$detId;
                 if($this->conn->query($sqlSetCur2)){
