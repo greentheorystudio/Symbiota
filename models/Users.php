@@ -75,7 +75,10 @@ class Users{
                 $this->setUserParams($row);
                 (new Permissions)->setUserPermissions();
                 if($rememberMe){
-                    $this->setTokenCookie($row->uid, $username);
+                    $this->setTokenCookie($row->uid, $username, 2592000);
+                }
+                else{
+                    $this->setTokenCookie($row->uid, $username, 10800);
                 }
                 $sql = 'UPDATE users SET lastlogindate = NOW() WHERE username = "' . $username . '" ';
                 $this->conn->query($sql);
@@ -85,7 +88,7 @@ class Users{
         return $returnVal;
     }
 
-    public function authenticateUserFromToken($username, $token): int
+    public function authenticateUserFromToken($username, $token, $cookieDuration): int
     {
         $returnVal = 0;
         unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
@@ -100,7 +103,7 @@ class Users{
                 $this->clearCookieSession();
                 $this->setUserParams($row);
                 (new Permissions)->setUserPermissions();
-                $this->setTokenCookie($row->uid, $username);
+                $this->setTokenCookie($row->uid, $username, $cookieDuration);
                 $sql = 'UPDATE users SET lastlogindate = NOW() WHERE username = "' . $username . '" ';
                 $this->conn->query($sql);
             }
@@ -478,14 +481,15 @@ class Users{
         return $status;
     }
 
-    private function setTokenCookie($uid, $username): void
+    private function setTokenCookie($uid, $username, $duration): void
     {
         $tokenArr = array();
         $token = $this->createToken($uid);
         if($token){
             $tokenArr[] = $username;
             $tokenArr[] = $token;
-            $cookieExpire = time() + 60 * 60 * 24 * 30;
+            $tokenArr[] = $duration;
+            $cookieExpire = time() + $duration;
             $domainName = $_SERVER['HTTP_HOST'];
             setcookie('BioSurvCrumb', EncryptionService::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
         }

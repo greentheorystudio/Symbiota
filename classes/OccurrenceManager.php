@@ -312,7 +312,7 @@ class OccurrenceManager{
             $sqlWhere .= 'AND (o.collid IN(' .$collIdStr. ')) ';
         }
         elseif(!$GLOBALS['IS_ADMIN']){
-            $sqlWhere .= 'AND (c.isPublic = 1';
+            $sqlWhere .= 'AND (ISNULL(c.collid) OR c.isPublic = 1';
             if($GLOBALS['PERMITTED_COLLECTIONS']){
                 $sqlWhere .= ' OR o.collid IN('.implode(',', $GLOBALS['PERMITTED_COLLECTIONS']).')';
             }

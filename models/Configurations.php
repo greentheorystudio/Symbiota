@@ -362,7 +362,7 @@ class Configurations{
         $users = new Users();
         if((isset($_COOKIE['BioSurvCrumb']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] !== 'logout'))){
             $tokenArr = json_decode(EncryptionService::decrypt($_COOKIE['BioSurvCrumb']), true);
-            if($tokenArr && !$users->authenticateUserFromToken($tokenArr[0], $tokenArr[1])) {
+            if($tokenArr && !$users->authenticateUserFromToken($tokenArr[0], $tokenArr[1], $tokenArr[2])) {
                 $users->clearCookieSession();
             }
         }
