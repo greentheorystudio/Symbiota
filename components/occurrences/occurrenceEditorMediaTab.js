@@ -1,9 +1,7 @@
 const occurrenceEditorMediaTab = {
     template: `
         <div class="column q-gutter-sm">
-            <div class="row justify-end">
-                <q-btn color="secondary" @click="showMediaEditorPopup = true" label="Add New Media File" />
-            </div>
+            <media-file-upload-input-element></media-file-upload-input-element>
         </div>
         <template v-if="showMediaEditorPopup">
             <occurrence-media-editor-popup
@@ -13,6 +11,7 @@ const occurrenceEditorMediaTab = {
         </template>
     `,
     components: {
+        'media-file-upload-input-element': mediaFileUploadInputElement,
         'occurrence-media-editor-popup': occurrenceMediaEditorPopup
     },
     setup() {
