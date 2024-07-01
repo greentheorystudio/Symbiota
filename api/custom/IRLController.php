@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/IRLManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 $tId = array_key_exists('tid',$_REQUEST) ? (int)$_REQUEST['tid'] : null;
@@ -12,7 +12,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
     $isEditor = true;
 }
 
-if($action && Sanitizer::validateInternalRequest()){
+if($action && SanitizerService::validateInternalRequest()){
     $irlManager = new IRLManager();
     if($action === 'getNativeStatus' && $tId){
         echo $irlManager->getNativeStatus($tId);
