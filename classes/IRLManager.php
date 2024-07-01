@@ -1,15 +1,15 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class IRLManager {
 
 	private $conn;
     private $tidArr = array();
 
- 	public function __construct(){
-		$connection = new DbConnection();
- 		$this->conn = $connection->getConnection();
- 	}
+    public function __construct(){
+        $connection = new DbService();
+        $this->conn = $connection->getConnection();
+    }
 
  	public function __destruct(){
 		if(!($this->conn === null)) {
