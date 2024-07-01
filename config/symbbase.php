@@ -1,6 +1,7 @@
 <?php
-include_once(__DIR__ . '/../services/EncryptionService.php');
 include_once(__DIR__ . '/../models/Configurations.php');
+include_once(__DIR__ . '/../models/Permissions.php');
+include_once(__DIR__ . '/../services/EncryptionService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 SanitizerService::validateRequestPath();
 ini_set('session.gc_maxlifetime',3600);
@@ -14,16 +15,12 @@ $confManager = new Configurations();
 $confManager->setGlobalArr();
 $confManager->setGlobalCssVersion();
 
-if(!isset($_SESSION['PARAMS_ARR'])){
-    $confManager->readClientCookies();
-}
-
 if(isset($_SESSION['PARAMS_ARR'])){
     $GLOBALS['PARAMS_ARR'] = $_SESSION['PARAMS_ARR'];
+    (new Permissions)->setUserPermissions();
 }
-
-if(isset($_SESSION['USER_RIGHTS'])){
-    $GLOBALS['USER_RIGHTS'] = $_SESSION['USER_RIGHTS'];
+else{
+    $confManager->readClientCookies();
 }
 
 $GLOBALS['USER_DISPLAY_NAME'] = (array_key_exists('dn',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['dn']: '');

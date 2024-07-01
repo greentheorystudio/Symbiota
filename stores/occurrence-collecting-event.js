@@ -127,7 +127,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
         clearLocationData() {
             this.locationCollectingEventArr.length = 0;
         },
-        createCollectingEventRecord(collid, locationid, callback) {
+        createCollectingEventRecord(collid, locationid, defaultRepCount, configuredDataFields, callback) {
             this.collectingEventEditData['collid'] = collid;
             if(locationid > 0){
                 this.collectingEventEditData['locationid'] = locationid;
@@ -144,7 +144,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 response.text().then((res) => {
                     callback(Number(res));
                     if(res && Number(res) > 0){
-                        this.setCurrentCollectingEventRecord(Number(res));
+                        this.setCurrentCollectingEventRecord(Number(res), defaultRepCount, configuredDataFields);
                         if(locationid > 0){
                             this.getLocationCollectingEvents(collid, locationid);
                         }
@@ -166,7 +166,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                this.setConfiguredData();
+                this.setConfiguredData(configuredDataFields);
                 if(callback){
                     callback(Number(res));
                 }
@@ -318,7 +318,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 });
             });
         },
-        updateConfiguredDataValue(collid, key, value, callback = null) {
+        updateConfiguredDataValue(collid, key, value, configuredDataFields, callback = null) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
             formData.append('eventid', this.collectingEventId.toString());
@@ -333,7 +333,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                this.setConfiguredData();
+                this.setConfiguredData(configuredDataFields);
                 if(callback){
                     callback(Number(res));
                 }

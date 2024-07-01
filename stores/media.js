@@ -31,6 +31,9 @@ const useMediaStore = Pinia.defineStore('media', {
         mediaUpdateData: {}
     }),
     getters: {
+        getBlankMediaRecord(state) {
+            return state.blankMediaRecord;
+        },
         getMediaArr(state) {
             return state.mediaArr;
         },

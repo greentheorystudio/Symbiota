@@ -37,6 +37,9 @@ const useImageStore = Pinia.defineStore('image', {
         imageUpdateData: {}
     }),
     getters: {
+        getBlankImageRecord(state) {
+            return state.blankImageRecord;
+        },
         getImageArr(state) {
             return state.imageArr;
         },

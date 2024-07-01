@@ -489,7 +489,7 @@ class Users{
             $tokenArr[] = $username;
             $tokenArr[] = $token;
             $tokenArr[] = $duration;
-            $cookieExpire = time() + $duration;
+            $cookieExpire = time() + (int)$duration;
             $domainName = $_SERVER['HTTP_HOST'];
             setcookie('BioSurvCrumb', EncryptionService::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
         }

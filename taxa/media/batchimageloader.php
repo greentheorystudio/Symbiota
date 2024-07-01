@@ -42,9 +42,6 @@ if(!$GLOBALS['SYMB_UID']) {
                 width: 100%;
                 min-height: 150px;
             }
-            .q-uploader {
-                max-height: none;
-            }
         </style>
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
     </head>

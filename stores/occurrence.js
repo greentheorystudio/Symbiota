@@ -231,6 +231,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getBasisOfRecordOptions(state) {
             return state.basisOfRecordOptions;
         },
+        getBlankOccurrenceRecord(state) {
+            return state.blankOccurrenceRecord;
+        },
         getChecklistArr(state) {
             return state.checklistArr;
         },
@@ -412,7 +415,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.geneticLinkStore.clearGeneticLinkArr();
         },
         createCollectingEventRecord(callback) {
-            this.collectingEventStore.createCollectingEventRecord(this.getCollId, this.getLocationID, (newEventId) => {
+            this.collectingEventStore.createCollectingEventRecord(this.getCollId, this.getLocationID, this.getCollectionData['defaultrepcount'], this.getConfiguredDataFields, (newEventId) => {
                 callback(Number(newEventId));
                 if(newEventId && Number(newEventId) > 0){
                     this.updateOccurrenceEditData('eventid', Number(newEventId));
@@ -998,11 +1001,29 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         updateCollectingEventEditData(key, value) {
             this.collectingEventStore.updateCollectingEventEditData(key, value);
         },
+        updateCollectingEventRecord(callback) {
+            this.collectingEventStore.updateCollectingEventRecord(this.getCollId, callback);
+        },
+        updateConfiguredDataValue(key, value, callback = null) {
+            this.collectingEventStore.updateConfiguredDataValue(this.getCollId, key, value, this.getConfiguredDataFields, callback);
+        },
         updateDeterminationEditData(key, value) {
             this.determinationStore.updateDeterminationEditData(key, value);
         },
         updateLocationEditData(key, value) {
             this.locationStore.updateLocationEditData(key, value);
+        },
+        updateLocationRecord(callback) {
+            this.locationStore.updateLocationRecord(this.getCollId, callback);
+        },
+        updateOccurrenceDeterminationRecord(callback) {
+            const isCurrent = Number(this.determinationStore.getDeterminationData['iscurrent']) === 1;
+            this.determinationStore.updateDeterminationRecord(this.getCollId, (res) => {
+                callback(Number(res));
+                if(isCurrent){
+                    this.setCurrentOccurrenceRecord(this.occId);
+                }
+            });
         },
         updateOccurrenceEditData(key, value) {
             this.occurrenceEditData[key] = value;
@@ -1016,15 +1037,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['family'] = taxon ? taxon.family : null;
             this.occurrenceEditData['scientificnameauthorship'] = taxon ? taxon.author : null;
             this.occurrenceEditData['taxonData'] = taxon ? Object.assign({}, taxon) : null;
-        },
-        updateCollectingEventRecord(callback) {
-            this.collectingEventStore.updateCollectingEventRecord(this.getCollId, callback);
-        },
-        updateConfiguredDataValue(key, value, callback = null) {
-            this.collectingEventStore.updateConfiguredDataValue(this.getCollId, key, value, callback);
-        },
-        updateLocationRecord(callback) {
-            this.locationStore.updateLocationRecord(this.getCollId, callback);
         },
         updateOccurrenceRecord(callback) {
             const formData = new FormData();
@@ -1051,15 +1063,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         callback(Number(res));
                     }
                 });
-            });
-        },
-        updateOccurrenceDeterminationRecord(callback) {
-            const isCurrent = Number(this.determinationStore.getDeterminationData['iscurrent']) === 1;
-            this.determinationStore.updateDeterminationRecord(this.getCollId, (res) => {
-                callback(Number(res));
-                if(isCurrent){
-                    this.setCurrentOccurrenceRecord(this.occId);
-                }
             });
         }
     }

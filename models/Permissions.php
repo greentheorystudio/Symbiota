@@ -77,7 +77,7 @@ class Permissions{
             while($r = $rs->fetch_object()){
                 if($r->tablepk){
                     $userrights[$r->role][] = (int)$r->tablepk;
-                    if(($r->role === 'CollAdmin' || $r->role === 'CollEditor' || $r->role === 'CollTaxon') && !in_array((int)$r->tablepk, $permittedCollections)){
+                    if(($r->role === 'CollAdmin' || $r->role === 'CollEditor' || $r->role === 'CollTaxon') && !in_array((int)$r->tablepk, $permittedCollections, true)){
                         $permittedCollections[] = (int)$r->tablepk;
                     }
                 }

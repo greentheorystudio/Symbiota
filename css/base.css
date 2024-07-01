@@ -741,6 +741,17 @@ body.processing .loadingModal {
 	width: 100vw;
 	height: 100vh;
 }
+.q-uploader {
+	max-height: none;
+	border: 1px solid #616161;
+}
+.q-uploader-thumbnail {
+	max-height: 120px;
+	max-width: 120px;
+}
+.q-checkbox__bg{
+	background-color: white;
+}
 
 /* Spatial styles */
 #mapbody {

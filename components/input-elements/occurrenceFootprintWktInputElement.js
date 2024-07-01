@@ -20,7 +20,7 @@ const occurrenceFootprintWktInputElement = {
     template: `
         <template v-if="showFootprintWktText">
             <div class="col-grow">
-                <q-input outlined v-model="value" type="textarea" :label="label" @update:model-value="processValueChange" :readonly="disabled" autogrow dense>
+                <q-input outlined v-model="value" type="textarea" :label="label" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" autogrow dense>
                     <template v-if="!disabled" v-slot:append>
                         <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">

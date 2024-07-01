@@ -1,92 +1,133 @@
 const mediaFileUploadInputElement = {
     props: {
-        definition: {
-            type: Object,
+        collId: {
+            type: Number,
             default: null
         },
-        disabled: {
+        createOccurrence: {
             type: Boolean,
             default: false
         },
         label: {
             type: String,
-            default: ''
+            default: 'Upload Media Files'
         },
-        value: {
-            type: String,
+        occId: {
+            type: Number,
+            default: null
+        },
+        taxonId: {
+            type: Number,
             default: null
         }
     },
     template: `
-        <q-card flat bordered class="black-border">
+        <q-card flat bordered class="black-border fit bg-grey-4">
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
                 <div class="full-width row justify-between">
-                    <div class="row justify-start q-gutter-sm">
-                        <div>
-                            <q-btn color="positive" class="text-bold" label="Choose Files" icon="fas fa-plus" @click="uploaderRef.pickFiles();" glossy></q-btn>
-                        </div>
-                        <div>
-                            <q-btn color="warning" class="text-bold" label="Cancel Upload" icon="fas fa-ban" @click="cancelUpload();" glossy></q-btn>
-                        </div>
-                    </div>
-                    <div class="row justify-end">
-                        <div>
-                            <q-btn color="primary" class="text-bold" label="Start Upload" icon="fas fa-upload" @click="initializeUpload();" glossy></q-btn>
-                        </div>
-                        <div v-if="csvFileData.length > 0">
-                            <span class="text-bold text-red">
-                                CSV Data Uploaded
-                            </span>
-                        </div>
+                    <div class="text-h6 text-bold">{{ label }}</div>
+                    <div>
+                        <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary"></q-btn-toggle>
                     </div>
                 </div>
-                <div class="full-width" :class="fileArr.length === 0 ? 'hidden' : ''" :style="uploaderStyle">
-                    <q-uploader ref="uploaderRef" class="fit" color="grey-8" :factory="uploadFiles" :filter="validateFiles" @uploaded="processUploaded" multiple hide-upload-btn flat bordered="false">
+                <template v-if="selectedUploadMethod === 'upload'">
+                    <div class="full-width row justify-between">
+                        <div class="row justify-start q-gutter-sm">
+                            <div>
+                                <q-btn color="primary" @click="uploaderRef.pickFiles();" label="Choose Files" />
+                            </div>
+                            <div>
+                                <q-btn color="negative" @click="cancelUpload();" label="Clear Files" :disabled="fileArr.length === 0" />
+                            </div>
+                        </div>
+                        <div class="row justify-end">
+                            <div>
+                                <q-btn color="positive" @click="initializeUpload();" label="Start Upload" :disabled="fileArr.length === 0" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template v-if="selectedUploadMethod === 'url'">
+                    <div class="full-width column q-gutter-sm">
+                        <div class="full-width row justify-between">
+                            <div class="col-grow">
+                                <text-field-input-element data-type="textarea" label="Enter URL" :value="urlMethodUrl" @update:value="(value) => urlMethodUrl = value"></text-field-input-element>
+                            </div>
+                        </div>
+                        <div class="full-width row justify-between">
+                            <div>
+                                <checkbox-input-element label="Copy file to server" :value="urlMethodCopyFile" @update:value="(value) => urlMethodCopyFile = value"></checkbox-input-element>
+                            </div>
+                            <div>
+                                <q-btn color="primary" @click="uploaderRef.pickFiles();" label="Process URL" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div class="full-width" :class="fileArr.length === 0 ? 'hidden' : ''">
+                    <q-uploader ref="uploaderRef" class="fit" :style="uploaderStyle" color="grey-8" :factory="uploadFiles" :filter="validateFiles" @uploaded="processUploaded" multiple hide-upload-btn flat>
                         <template v-slot:header="scope">
-                            <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
-                                <q-spinner v-if="scope.isUploading" class="q-uploader__spinner"></q-spinner>
-                                <div v-if="queueSize > 0" class="q-uploader__subtitle">{{ queueSizeLabel }}</div>
-                                <q-uploader-add-trigger></q-uploader-add-trigger>
+                            <div class="full-width row justify-between">
+                                <div class="row no-wrap justify-start q-pa-sm q-gutter-xs">
+                                    <q-spinner v-if="scope.isUploading" class="q-uploader__spinner"></q-spinner>
+                                    <div v-if="queueSize > 0" class="q-uploader__subtitle text-bold">Total upload size: {{ queueSizeLabel }}</div>
+                                    <q-uploader-add-trigger></q-uploader-add-trigger>
+                                </div>
+                                <div class="row justify-end">
+                                    <span v-if="csvFileData.length > 0" class="text-bold text-red">
+                                        CSV Data Uploaded
+                                    </span>
+                                </div>
                             </div>
                         </template>
                         <template v-slot:list="scope">
-                            <div ref="fileListRef" :style="uploaderStyle">>
+                            <div ref="fileListRef">
                                 <q-list separator class="fit">
                                     <q-item v-for="file in scope.files" :key="file.__key" class="full-width">
                                         <q-item-section>
-                                            <q-item-label class="full-width ellipsis">
-                                                {{ file.name }}
-                                            </q-item-label>
-                                            <q-item-label class="full-width">
-                                                
-                                            </q-item-label>
-                                            <q-item-label v-if="file.errorMessage" class="full-width text-bold text-red">
-                                                {{ file.errorMessage }}
-                                            </q-item-label>
-                                            <q-item-label v-else class="full-width text-bold text-green">
-                                                Ready to upload
-                                            </q-item-label>
-                                            <q-item-label v-if="file.additionalData" class="full-width">
-                                                Additional Data:
-                                                <q-item-label caption>
-                                                    <template v-for="data in file.metadata">
-                                                        <template v-if="!data.system && data.value && data.value !== ''">
-                                                            <span class="text-bold q-ml-xs">{{ data.name }}:</span> {{ data.value }}
-                                                        </template>
-                                                    </template>
-                                                </q-item-label>
-                                            </q-item-label>
-                                            <q-item-label caption>
-                                                {{ file.correctedSizeLabel }}
-                                            </q-item-label>
-                                        </q-item-section>
-                                        <q-item-section top class="col-2 gt-sm"></q-item-section>
-                                        <q-item-section v-if="file.__img" class="thumbnail-section">
-                                            <q-img :src="file.__img.src" spinner-color="white"></q-img>
-                                        </q-item-section>
-                                        <q-item-section>
-                                            <div class="list-item-delete">
-                                                <q-btn color="negative" class="text-bold" label="Remove" icon="fas fa-times" @click="removePickedFile(file);" glossy dense></q-btn>
+                                            <div class="full-width row">
+                                                <div class="col-2">
+                                                    <div v-if="file.__img" class="q-uploader-thumbnail">
+                                                        <q-img :src="file.__img.src" spinner-color="white"></q-img>
+                                                    </div>
+                                                    <div v-else class="text-h6 text-bold">
+                                                        {{ file.name.split('.').pop() + ' file' }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-8 column">
+                                                    <div class="ellipsis">
+                                                        {{ file.name }}
+                                                    </div>
+                                                    <div v-if="file.errorMessage" class="text-bold text-red">
+                                                        {{ file.errorMessage }}
+                                                    </div>
+                                                    <div v-else class="text-bold text-green">
+                                                        Ready to upload
+                                                    </div>
+                                                    <div v-if="file.additionalData">
+                                                        Additional Data:
+                                                        <div caption>
+                                                            <template v-for="data in file.metadata">
+                                                                <template v-if="!data.system && data.value && data.value !== ''">
+                                                                    <span class="text-bold q-ml-xs">{{ data.name }}:</span> {{ data.value }}
+                                                                </template>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div caption>
+                                                        {{ file.correctedSizeLabel }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 row justify-end">
+                                                    <div class="column q-gutter-xs">
+                                                        <div class="row justify-end">
+                                                            <q-btn color="negative" class="black-border" @click="removePickedFile(file);" label="Remove" dense/>
+                                                        </div>
+                                                        <div class="row justify-end">
+                                                            <q-btn color="grey-4" class="black-border text-black" @click="" label="Edit Metadata" dense/>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </q-item-section>
                                     </q-item>
@@ -98,19 +139,37 @@ const mediaFileUploadInputElement = {
             </q-card-section>
         </q-card>
     `,
-    setup() {
-        const store = useBaseStore();
+    components: {
+        'checkbox-input-element': checkboxInputElement,
+        'text-field-input-element': textFieldInputElement
+    },
+    setup(props, context) {
+        const { parseCsvFile, parseScinameFromFilename, showNotification } = useCore();
+        const baseStore = useBaseStore();
+        const imageStore = useImageStore();
+        const mediaStore = useMediaStore();
+        const occurrenceStore = useOccurrenceStore();
+
+        const audioTypes = ['audio/mpeg', 'audio/ogg', 'audio/wav'];
         const csvFileData = Vue.ref([]);
         const fileArr = Vue.shallowReactive([]);
+        const fileExtensionTypes = ['jpeg', 'jpg', 'png', 'zc'];
         const fileListRef = Vue.ref(null);
-        const isEditor = Vue.ref(false);
-        const maxUploadFilesize = store.getMaxUploadFilesize;
+        const maxUploadFilesize = baseStore.getMaxUploadFilesize;
         const queueSize = Vue.ref(0);
         const queueSizeLabel = Vue.ref('');
+        const selectedUploadMethod = Vue.ref('upload');
         const systemProperties = Vue.ref(['format','type']);
         const taxaDataArr = Vue.ref([]);
         const uploaderRef = Vue.ref(null);
         const uploaderStyle = Vue.ref('');
+        const uploadMethodOptions = [
+            {label: 'Local Files', value: 'upload'},
+            {label: 'From URL', value: 'url'}
+        ];
+        const urlMethodCopyFile = Vue.ref(false);
+        const urlMethodUrl = Vue.ref(null);
+        const videoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
 
         function cancelUpload() {
             csvFileData.value = [];
@@ -118,28 +177,6 @@ const mediaFileUploadInputElement = {
             taxaDataArr.value = [];
             updateQueueSize();
             uploaderRef.value.reset();
-        }
-
-        function csvToArray(str) {
-            const headers = str.slice(0, str.indexOf("\n")).split(',');
-            if(str.endsWith("\n")){
-                str = str.substring(0, str.length - 2);
-            }
-            const rows = str.slice(str.indexOf("\n") + 1).split("\n");
-            return rows.map((row) => {
-                if(row){
-                    const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    return headers.reduce((object, header, index) => {
-                        const fieldName = header.trim();
-                        let fieldValue = values[index] ? values[index].replace('\r', '') : '';
-                        if(fieldValue.startsWith('"')){
-                            fieldValue = fieldValue.replaceAll('"','');
-                        }
-                        object[fieldName] = fieldValue;
-                        return object;
-                    }, {});
-                }
-            });
         }
 
         function initializeUpload() {
@@ -150,61 +187,6 @@ const mediaFileUploadInputElement = {
                 }
             });
             uploaderRef.value.upload();
-        }
-
-        function parseScinameFromFilename(fileName) {
-            let adjustedFileName = fileName.replace(/_/g, ' ');
-            adjustedFileName = adjustedFileName.replace(/\s+/g, ' ').trim();
-            const lastDotIndex = adjustedFileName.lastIndexOf('.');
-            adjustedFileName = adjustedFileName.substring(0, lastDotIndex);
-            const lastSpaceIndex = adjustedFileName.lastIndexOf(' ');
-            if(lastSpaceIndex){
-                const lastPartAfterSpace = adjustedFileName.substring(lastSpaceIndex);
-                if(Number(lastPartAfterSpace) > 0){
-                    adjustedFileName = adjustedFileName.substring(0, lastSpaceIndex);
-                }
-            }
-            setTaxaData([adjustedFileName],fileName);
-        }
-
-        function processCsvFile(file) {
-            const fileReader = new FileReader();
-            fileReader.onload = () => {
-                csvFileData.value = csvToArray(fileReader.result);
-                if(csvFileData.value.length > 0){
-                    const taxaArr = [];
-                    csvFileData.value.forEach((dataObj) => {
-                        if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.includes(dataObj['scientificname'])){
-                            taxaArr.push(dataObj['scientificname']);
-                        }
-                        if(dataObj.hasOwnProperty('filename') && dataObj['filename']){
-                            const file = fileArr.find((obj) => obj.name.toLowerCase() === dataObj['filename'].toLowerCase());
-                            if(file){
-                                const keys = Object.keys(dataObj);
-                                keys.forEach((key) => {
-                                    if(key !== 'filename' && dataObj[key] !== ''){
-                                        if(key === 'scientificname'){
-                                            file['scientificname'] = dataObj[key];
-                                        }
-                                        else{
-                                            const existingData = file['metadata'].find((obj) => obj.name === key);
-                                            if(existingData){
-                                                existingData['value'] = dataObj[key];
-                                            }
-                                            else{
-                                                file['metadata'].push({name: key, value: dataObj[key], system: systemProperties.value.includes(key)});
-                                            }
-                                        }
-                                    }
-                                });
-                                setAdditionalData(file);
-                            }
-                        }
-                    });
-                    setTaxaData(taxaArr);
-                }
-            };
-            fileReader.readAsText(file);
         }
 
         function processImageFileData(file, csvData) {
@@ -285,22 +267,7 @@ const mediaFileUploadInputElement = {
                 }
             });
             file['additionalData'] = additionalData;
-            uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
-        }
-
-        function setEditor() {
-            const formData = new FormData();
-            formData.append('permission', 'TaxonProfile');
-            formData.append('action', 'validatePermission');
-            fetch(permissionApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-                .then((response) => {
-                    response.json().then((resData) => {
-                        isEditor.value = resData.includes('TaxonProfile');
-                    });
-                });
+            uploaderRef.value.updateFileStatus(file, new Date().toTimeString());
         }
 
         function setUploaderStyle() {
@@ -308,7 +275,6 @@ const mediaFileUploadInputElement = {
             setTimeout(() => {
                 if(fileListRef.value.clientHeight > 0){
                     uploaderStyle.value = 'height: ' + (fileListRef.value.clientHeight + 50) + 'px;';
-                    console.log(uploaderStyle.value);
                 }
             }, 400 );
         }
@@ -321,18 +287,18 @@ const mediaFileUploadInputElement = {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    response.json().then((resObj) => {
-                        taxaDataArr.value = taxaDataArr.value.concat(resObj);
-                        if(fileName && resObj.length === 1){
-                            const file = fileArr.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
-                            file['scientificname'] = resObj[0]['sciname'];
-                            file['tid'] = resObj[0]['tid'];
-                            uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
-                        }
-                        updateMediaDataTids();
-                    });
+            .then((response) => {
+                response.json().then((resObj) => {
+                    taxaDataArr.value = taxaDataArr.value.concat(resObj);
+                    if(fileName && resObj.length === 1){
+                        const file = fileArr.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
+                        file['scientificname'] = resObj[0]['sciname'];
+                        file['tid'] = resObj[0]['tid'];
+                        uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
+                    }
+                    updateMediaDataTids();
                 });
+            });
         }
 
         function updateMediaDataTids() {
@@ -401,76 +367,114 @@ const mediaFileUploadInputElement = {
         }
 
         function validateFiles(files) {
-            const maxFileSizeBytes = maxUploadFilesize * 1000 * 1000;
-            const videoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
-            const audioTypes = ['audio/mpeg', 'audio/ogg', 'audio/wav'];
-            const fileExtensionTypes = ['jpeg', 'jpg', 'png', 'zc'];
             const returnArr = [];
             files.forEach((file) => {
-                const fileType = file.type;
-                const fileName = file.name;
-                const fileExtension = fileName.split('.').pop().toLowerCase();
-                const existingData = fileArr.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
-                if(fileName.endsWith(".csv")){
-                    processCsvFile(file);
+                const fileSizeMb = Math.round((file.size / 1000000) * 10 ) / 100;
+                const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
+                if(file.name.endsWith('.csv')){
+                    parseCsvFile(file, (csvData) => {
+                        csvFileData.value = csvData;
+                        if(csvFileData.value.length > 0){
+                            const taxaArr = [];
+                            csvFileData.value.forEach((dataObj) => {
+                                if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.includes(dataObj['scientificname'])){
+                                    taxaArr.push(dataObj['scientificname']);
+                                }
+                                if(dataObj.hasOwnProperty('filename') && dataObj['filename']){
+                                    const file = fileArr.find((obj) => obj.name.toLowerCase() === dataObj['filename'].toLowerCase());
+                                    if(file){
+                                        const keys = Object.keys(dataObj);
+                                        keys.forEach((key) => {
+                                            if(key !== 'filename' && dataObj[key] !== ''){
+                                                if(key === 'scientificname'){
+                                                    file['scientificname'] = dataObj[key];
+                                                }
+                                                else{
+                                                    const existingData = file['metadata'].find((obj) => obj.name === key);
+                                                    if(existingData){
+                                                        existingData['value'] = dataObj[key];
+                                                    }
+                                                    else{
+                                                        file['metadata'].push({name: key, value: dataObj[key], system: systemProperties.value.includes(key)});
+                                                    }
+                                                }
+                                            }
+                                        });
+                                        setAdditionalData(file);
+                                    }
+                                }
+                            });
+                            setTaxaData(taxaArr);
+                        }
+                    });
                 }
-                else if(!existingData && (file.size <= maxFileSizeBytes && (videoTypes.includes(fileType) || audioTypes.includes(fileType) || fileExtensionTypes.includes(fileExtension)))){
-                    let tid = null;
-                    let csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
-                    if(!csvData){
-                        csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
-                    }
-                    if(!csvData || !csvData.hasOwnProperty('scientificname')){
-                        parseScinameFromFilename(file.name);
-                    }
-                    const sciname = (csvData && csvData.hasOwnProperty('scientificname')) ? csvData['scientificname'] : null;
-                    if(sciname){
-                        const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
-                        if(taxonData){
-                            tid = taxonData['tid'];
+                else if(!existingData){
+                    if(fileSizeMb <= Number(maxUploadFilesize)){
+                        if(videoTypes.includes(file.type) || audioTypes.includes(file.type) || fileExtensionTypes.includes(file.name.split('.').pop().toLowerCase())){
+                            let tid = null;
+                            let csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
+                            if(!csvData){
+                                csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
+                            }
+                            if(!csvData || !csvData.hasOwnProperty('scientificname')){
+                                const filenameSciname = parseScinameFromFilename(file.name);
+                                setTaxaData([filenameSciname], file.name);
+                            }
+                            const sciname = (csvData && csvData.hasOwnProperty('scientificname')) ? csvData['scientificname'] : null;
+                            if(sciname){
+                                const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
+                                if(taxonData){
+                                    tid = taxonData['tid'];
+                                }
+                            }
+                            file['scientificname'] = sciname;
+                            file['tid'] = tid;
+                            if(sciname && tid){
+                                file['errorMessage'] = null;
+                            }
+                            else if(sciname){
+                                file['errorMessage'] = 'Scientific name not found in taxonomic thesaurus';
+                            }
+                            else{
+                                file['errorMessage'] = 'Scientific name required';
+                            }
+                            file['metadata'] = [];
+                            file['correctedSizeLabel'] =   (Math.round((file.size / 1000000) * 10 ) / 100).toString() + 'MB';
+                            if(videoTypes.includes(file.type) || audioTypes.includes(file.type) || file.name.endsWith(".zc")){
+                                processMediaFileData(file, csvData);
+                            }
+                            else{
+                                processImageFileData(file, csvData);
+                            }
+                            setAdditionalData(file);
+                            fileArr.push(file);
+                            updateQueueSize();
+                            returnArr.push(file);
+                        }
+                        else{
+                            showNotification('negative', (file.name + ' cannot be uploaded because it is ' + file.type + ' file type. Only jpg, jpeg, png, zc, mp3, wav, ogg, mp4, webm, and csv files can be processed through this uploader.'));
                         }
                     }
-                    file['scientificname'] = sciname;
-                    file['tid'] = tid;
-                    if(sciname && tid){
-                        file['errorMessage'] = null;
-                    }
-                    else if(sciname){
-                        file['errorMessage'] = 'Scientific name not found in taxonomic thesaurus';
-                    }
                     else{
-                        file['errorMessage'] = 'Scientific name required';
+                        showNotification('negative', (file.name + ' cannot be uploaded because it is ' + fileSizeMb.toString() + 'MB, which exceeds the server limit of ' + maxUploadFilesize.toString() + 'MB for uploads.'));
                     }
-                    file['metadata'] = [];
-                    file['correctedSizeLabel'] =   (Math.round((file.size / 1000000) * 10 ) / 10).toString() + 'MB';
-                    if(videoTypes.includes(fileType) || audioTypes.includes(fileType) || fileName.endsWith(".zc")){
-                        processMediaFileData(file, csvData);
-                    }
-                    else{
-                        processImageFileData(file, csvData);
-                    }
-                    setAdditionalData(file);
-                    fileArr.push(file);
-                    updateQueueSize();
-                    returnArr.push(file);
                 }
             });
             return returnArr;
         }
 
-        Vue.onMounted(() => {
-            setEditor();
-        });
-
         return {
             csvFileData,
-            isEditor,
             fileArr,
             fileListRef,
             queueSize,
             queueSizeLabel,
+            selectedUploadMethod,
             uploaderRef,
             uploaderStyle,
+            uploadMethodOptions,
+            urlMethodCopyFile,
+            urlMethodUrl,
             cancelUpload,
             initializeUpload,
             processUploaded,

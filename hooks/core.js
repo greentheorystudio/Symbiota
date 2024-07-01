@@ -111,6 +111,28 @@ function useCore() {
         return (Number(latValue) > 0 && Number(lngValue) > 0) ? {lat: latValue, long: lngValue} : null;
     }
 
+    function csvToArray(str) {
+        const headers = str.slice(0, str.indexOf("\n")).split(',');
+        if(str.endsWith("\n")){
+            str = str.substring(0, str.length - 2);
+        }
+        const rows = str.slice(str.indexOf("\n") + 1).split("\n");
+        return rows.map((row) => {
+            if(row){
+                const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                return headers.reduce((object, header, index) => {
+                    const fieldName = header.trim();
+                    let fieldValue = values[index] ? values[index].replace('\r', '') : '';
+                    if(fieldValue.startsWith('"')){
+                        fieldValue = fieldValue.replaceAll('"','');
+                    }
+                    object[fieldName] = fieldValue;
+                    return object;
+                }, {});
+            }
+        });
+    }
+
     function generateRandHexColor() {
         let hexColor = '';
         const x = Math.round(0xffffff * Math.random()).toString(16);
@@ -206,6 +228,14 @@ function useCore() {
         window.open(url, '_blank');
     }
 
+    function parseCsvFile(file, callback) {
+        const fileReader = new FileReader();
+        fileReader.onload = () => {
+            callback(csvToArray(fileReader.result));
+        };
+        fileReader.readAsText(file);
+    }
+
     function parseDate(dateStr){
         const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
         const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/;
@@ -280,6 +310,21 @@ function useCore() {
             }
         }
         return returnData;
+    }
+
+    function parseScinameFromFilename(fileName) {
+        let adjustedFileName = fileName.replace(/_/g, ' ');
+        adjustedFileName = adjustedFileName.replace(/\s+/g, ' ').trim();
+        const lastDotIndex = adjustedFileName.lastIndexOf('.');
+        adjustedFileName = adjustedFileName.substring(0, lastDotIndex);
+        const lastSpaceIndex = adjustedFileName.lastIndexOf(' ');
+        if(lastSpaceIndex){
+            const lastPartAfterSpace = adjustedFileName.substring(lastSpaceIndex);
+            if(Number(lastPartAfterSpace) > 0){
+                adjustedFileName = adjustedFileName.substring(0, lastSpaceIndex);
+            }
+        }
+        return adjustedFileName;
     }
 
     function processCsvDownload(csvDataArr, filename) {
@@ -393,7 +438,9 @@ function useCore() {
         hexToRgb,
         hideWorking,
         openTutorialWindow,
+        parseCsvFile,
         parseDate,
+        parseScinameFromFilename,
         processCsvDownload,
         showNotification,
         showWorking,
