@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-include_once(__DIR__ . '/../../classes/OccurrenceCollectingEventManager.php');
+include_once(__DIR__ . '/../../models/OccurrenceCollectingEvents.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $eventid = array_key_exists('eventid',$_REQUEST) ? (int)$_REQUEST['eventid'] : 0;
 $collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
@@ -20,26 +20,26 @@ elseif($collid){
     }
 }
 
-if($action && Sanitizer::validateInternalRequest()){
-    $evtManager = new OccurrenceCollectingEventManager();
+if($action && SanitizerService::validateInternalRequest()){
+    $occurrenceCollectingEvents = new OccurrenceCollectingEvents();
     if($action === 'getCollectingEventDataArr' && $eventid){
-        echo json_encode($evtManager->getCollectingEventData($eventid));
+        echo json_encode($occurrenceCollectingEvents->getCollectingEventData($eventid));
     }
     elseif($action === 'createCollectingEventRecord' && $isEditor){
-        echo $evtManager->createCollectingEventRecord(json_decode($_POST['event'], true));
+        echo $occurrenceCollectingEvents->createCollectingEventRecord(json_decode($_POST['event'], true));
     }
     elseif($action === 'updateCollectingEventRecord' && $eventid && $isEditor){
-        echo $evtManager->updateCollectingEventRecord($eventid, json_decode($_POST['eventData'], true));
+        echo $occurrenceCollectingEvents->updateCollectingEventRecord($eventid, json_decode($_POST['eventData'], true));
     }
     elseif($action === 'getCollectingEventFields'){
-        echo json_encode($evtManager->getCollectingEventFields());
+        echo json_encode($occurrenceCollectingEvents->getCollectingEventFields());
     }
     elseif($action === 'getConfiguredFieldDataArr' && $eventid){
-        echo json_encode($evtManager->getConfiguredFieldData($eventid));
+        echo json_encode($occurrenceCollectingEvents->getConfiguredFieldData($eventid));
     }
     elseif($action === 'getLocationCollectingEventArr' && $collid && array_key_exists('locationid', $_POST)){
         $locationid = (int)$_POST['locationid'];
-        echo json_encode($evtManager->getLocationCollectingEventArr($collid, $locationid));
+        echo json_encode($occurrenceCollectingEvents->getLocationCollectingEventArr($collid, $locationid));
     }
     elseif($action === 'getOccurrenceCollectingEventArr' && $collid){
         $occid = $_POST['occid'] ?? null;
@@ -48,21 +48,21 @@ if($action && Sanitizer::validateInternalRequest()){
         $varsArr['recordnumber'] = $_POST['recordnumber'] ?? null;
         $varsArr['eventdate'] = $_POST['eventdate'] ?? null;
         $varsArr['lastname'] = $_POST['lastname'] ?? null;
-        echo json_encode($evtManager->getOccurrenceCollectingEventArr($collid, $occid, $varsArr));
+        echo json_encode($occurrenceCollectingEvents->getOccurrenceCollectingEventArr($collid, $occid, $varsArr));
     }
     elseif($action === 'getCollectingEventBenthicData' && $eventid){
-        echo json_encode($evtManager->getCollectingEventBenthicData($eventid));
+        echo json_encode($occurrenceCollectingEvents->getCollectingEventBenthicData($eventid));
     }
     elseif($action === 'getCollectingEventCollectionsArr' && $eventid){
-        echo json_encode($evtManager->getCollectingEventCollectionsArr($eventid));
+        echo json_encode($occurrenceCollectingEvents->getCollectingEventCollectionsArr($eventid));
     }
-    elseif($action === 'addConfiguredDataValue' && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
-        echo $evtManager->addConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
+    elseif($action === 'addConfiguredDataValue' && $isEditor && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
+        echo $occurrenceCollectingEvents->addConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
     }
-    elseif($action === 'deleteConfiguredDataValue' && $eventid && array_key_exists('datakey', $_POST)){
-        echo $evtManager->deleteConfiguredDataValue($eventid, $_POST['datakey']);
+    elseif($action === 'deleteConfiguredDataValue' && $isEditor && $eventid && array_key_exists('datakey', $_POST)){
+        echo $occurrenceCollectingEvents->deleteConfiguredDataValue($eventid, $_POST['datakey']);
     }
-    elseif($action === 'updateConfiguredDataValue' && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
-        echo $evtManager->updateConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
+    elseif($action === 'updateConfiguredDataValue' && $isEditor && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
+        echo $occurrenceCollectingEvents->updateConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
     }
 }

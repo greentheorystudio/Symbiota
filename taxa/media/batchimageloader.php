@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -41,9 +41,6 @@ if(!$GLOBALS['SYMB_UID']) {
             .uploader {
                 width: 100%;
                 min-height: 150px;
-            }
-            .q-uploader {
-                max-height: none;
             }
         </style>
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
@@ -386,7 +383,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('permission', 'TaxonProfile');
                         formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
+                        fetch(permissionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -401,7 +398,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('taxa', JSON.stringify(nameArr));
                         formData.append('action', 'getTaxaArrFromNameArr');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             body: formData
                         })

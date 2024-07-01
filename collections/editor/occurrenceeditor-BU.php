@@ -3,8 +3,8 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 600);
@@ -37,7 +37,7 @@ else{
 if($crowdSourceMode){
     $occManager->setCrowdSourceMode(1);
 }
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 $isEditor = 0;
 $displayQuery = 0;
@@ -292,13 +292,6 @@ if($GLOBALS['SYMB_UID']){
                 }
                 $tabTarget = 1;
             }
-            elseif($action === 'Submit Verification Edits'){
-                $statusStr = $occManager->editIdentificationRanking($_POST['confidenceranking'],$_POST['notes']);
-                if($GLOBALS['SOLR_MODE']) {
-                    $solrManager->updateSOLR();
-                }
-                $tabTarget = 1;
-            }
             elseif($action === 'Link to Checklist as Voucher'){
                 $statusStr = $occManager->linkChecklistVoucher($_POST['clidvoucher'],$_POST['tidvoucher']);
                 if($GLOBALS['SOLR_MODE']) {
@@ -470,7 +463,7 @@ if($GLOBALS['SYMB_UID']){
     }
 }
 else{
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -861,21 +854,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 </div>
                                             </div>
                                             <div style="clear:both;padding:3px 0 0 10px;">
-                                                <?php
-                                                if(!$occId){
-                                                    echo '<div id="idRankDiv">';
-                                                    echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:'ID Confidence');
-                                                    echo ' <a href="#" onclick="return dwcDoc(\'idConfidence\')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a> ';
-                                                    echo '<select name="confidenceranking" onchange="fieldChanged(\'confidenceranking\')">';
-                                                    echo '<option value="">Undefined</option>';
-                                                    $idRankArr = array(0 => 'ID Requested', 1 => 'Low - ID Requested', 2 => 'Low', 3 => 'Low - insignificant material', 4 => 'Medium - verification requested', 5 => 'Medium', 6 => 'Medium - insignificant material', 7 => 'High - verification requested', 8 => 'High', 9 => 'Very High', 10 => 'Absolute');
-                                                    foreach($idRankArr as $rankKey => $rankText){
-                                                        echo '<option value="'.$rankKey.'">'.$rankKey.' - '.$rankText.'</option>';
-                                                    }
-                                                    echo '</select>';
-                                                    echo '</div>';
-                                                }
-                                                ?>
                                                 <div id="identificationQualifierDiv">
                                                     <?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'ID Qualifier'); ?>
                                                     <a href="#" onclick="return dwcDoc('identificationQualifier')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
@@ -1094,7 +1072,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                                 </div>
                                             </div>
                                             <?php
-                                            include_once(__DIR__ . '/includes/geotools.php');
                                             $georefExtraDiv = 'display:';
                                             if(array_key_exists('georeferencedby',$occArr) && $occArr['georeferencedby']){
                                                 $georefExtraDiv .= 'block';
@@ -1428,7 +1405,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                             <input type="hidden" name="collid" value="<?php echo $collId; ?>" />
                                             <input type="hidden" name="observeruid" value="<?php echo $GLOBALS['SYMB_UID']; ?>" />
                                             <input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-                                            <input type="hidden" name="linkdupe" value="" />
                                             <?php
                                             if($occId){
                                                 if(($isEditor === 1 || $isEditor === 2) && !$crowdSourceMode){

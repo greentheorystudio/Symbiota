@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 
 $schema = array_key_exists('schema',$_REQUEST)?htmlspecialchars($_REQUEST['schema']):'native';
@@ -13,7 +13,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $dlManager = new OccurrenceDownload();
 $dwcaHandler = new DwcArchiverCore();
 $occurManager = new OccurrenceManager();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 $occWhereStr = '';
 

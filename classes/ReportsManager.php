@@ -1,12 +1,12 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class ReportsManager{
 
 	private $conn;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
  

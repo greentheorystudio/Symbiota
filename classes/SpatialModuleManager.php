@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class SpatialModuleManager{
 
@@ -11,7 +11,7 @@ class SpatialModuleManager{
     private $taxaArr = array();
 
     public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 
@@ -375,16 +375,16 @@ class SpatialModuleManager{
         while($r = $result->fetch_object()){
             $occId = $r->occid;
             $collId = $r->collid;
-            $retArr[$occId]['i'] = Sanitizer::cleanOutStr($r->institutioncode);
-            $retArr[$occId]['cat'] = Sanitizer::cleanOutStr($r->catalognumber);
-            $retArr[$occId]['c'] = Sanitizer::cleanOutStr($r->collector);
-            $retArr[$occId]['e'] = Sanitizer::cleanOutStr($r->eventdate);
-            $retArr[$occId]['f'] = Sanitizer::cleanOutStr($r->family);
-            $retArr[$occId]['s'] = Sanitizer::cleanOutStr($r->sciname);
-            $retArr[$occId]['l'] = Sanitizer::cleanOutStr($r->locality);
-            $retArr[$occId]['lat'] = Sanitizer::cleanOutStr($r->DecimalLatitude);
-            $retArr[$occId]['lon'] = Sanitizer::cleanOutStr($r->DecimalLongitude);
-            $retArr[$occId]['tid'] = Sanitizer::cleanOutStr($r->tid);
+            $retArr[$occId]['i'] = SanitizerService::cleanOutStr($r->institutioncode);
+            $retArr[$occId]['cat'] = SanitizerService::cleanOutStr($r->catalognumber);
+            $retArr[$occId]['c'] = SanitizerService::cleanOutStr($r->collector);
+            $retArr[$occId]['e'] = SanitizerService::cleanOutStr($r->eventdate);
+            $retArr[$occId]['f'] = SanitizerService::cleanOutStr($r->family);
+            $retArr[$occId]['s'] = SanitizerService::cleanOutStr($r->sciname);
+            $retArr[$occId]['l'] = SanitizerService::cleanOutStr($r->locality);
+            $retArr[$occId]['lat'] = SanitizerService::cleanOutStr($r->DecimalLatitude);
+            $retArr[$occId]['lon'] = SanitizerService::cleanOutStr($r->DecimalLongitude);
+            $retArr[$occId]['tid'] = SanitizerService::cleanOutStr($r->tid);
             $localitySecurity = $r->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
                 || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))

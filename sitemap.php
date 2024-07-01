@@ -56,6 +56,15 @@ include_once(__DIR__ . '/config/header-includes.php');
 
             <h3>Additional Resources</h3>
 			<ul>
+                <li><a href="projects/index.php">Biotic Inventory Projects</a></li>
+                <li><a href="checklists/index.php">Checklists</a></li>
+                <li><a href="checklists/dynamicmap.php?interface=checklist">Dynamic Checklist</a></li>
+                <?php
+                if(isset($GLOBALS['KEY_MOD_IS_ACTIVE']) && $GLOBALS['KEY_MOD_IS_ACTIVE']){
+                    echo '<li><a href="checklists/dynamicmap.php?interface=key">Dynamic Key</a></li>';
+                }
+                ?>
+                <li><a href="taxa/dynamictaxalist.php">Dynamic Taxonomy List</a></li>
                 <?php
                 if($smManager->hasGlossary()){
                     ?>
@@ -64,14 +73,6 @@ include_once(__DIR__ . '/config/header-includes.php');
                 }
                 ?>
                 <li><a href="taxa/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
-                <li><a href="checklists/index.php">Checklists</a></li>
-                <li><a href="projects/index.php">Biotic Inventory Projects</a></li>
-                <li><a href="checklists/dynamicmap.php?interface=checklist">Dynamic Checklist</a></li>
-                <?php
-                if(isset($GLOBALS['KEY_MOD_IS_ACTIVE']) && $GLOBALS['KEY_MOD_IS_ACTIVE']){
-                    echo '<li><a href="checklists/dynamicmap.php?interface=key">Dynamic Key</a></li>';
-                }
-                ?>
 			</ul>
 
 			<?php

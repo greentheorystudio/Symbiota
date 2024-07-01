@@ -169,7 +169,7 @@ const viewProfileAccountModule = {
 
         function deleteAccount() {
             const formData = new FormData();
-            formData.append('uid', props.uid);
+            formData.append('uid', props.uid.toString());
             formData.append('action', 'deleteAccount');
             fetch(profileApiUrl, {
                 method: 'POST',
@@ -190,6 +190,7 @@ const viewProfileAccountModule = {
         function editAccount() {
             if(!accountInformationFormRef.value.formHasErrors()) {
                 const formData = new FormData();
+                formData.append('uid', props.uid.toString());
                 formData.append('user', JSON.stringify(props.accountInfo));
                 formData.append('action', 'editAccount');
                 fetch(profileApiUrl, {

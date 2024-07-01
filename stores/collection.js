@@ -120,7 +120,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 formData.append('permissionJson', JSON.stringify(["CollAdmin", "CollEditor"]));
                 formData.append('key', collid.toString());
                 formData.append('action', 'validatePermission');
-                fetch(profileApiUrl, {
+                fetch(permissionApiUrl, {
                     method: 'POST',
                     body: formData
                 })

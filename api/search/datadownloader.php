@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 
 $fileType = array_key_exists('dh-type',$_REQUEST)?$_REQUEST['dh-type']:'';
@@ -22,7 +22,7 @@ $spatialManager = new SpatialModuleManager();
 $dwcaHandler = new DwcArchiverCore();
 $occManager = new OccurrenceManager();
 $dlManager = new OccurrenceDownload();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 $jsonContent = '';
 $spatial = false;

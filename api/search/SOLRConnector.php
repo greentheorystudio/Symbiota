@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 $qStr = '';

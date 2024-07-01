@@ -252,7 +252,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                         });
                     }
                     else{
-                        showNotification('negative', ('Occurrence record ' + recordToDelete + ' cannot be deleted because it has associated images, media, checklists, or genetic linkages.'));
+                        showNotification('negative', ('Occurrence record ' + recordToDelete + ' cannot be deleted because it has associated images, media, checklists, or genetic records.'));
                         processEnteredData();
                     }
                 });

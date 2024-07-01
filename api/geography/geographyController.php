@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/GeographyManager.php');
+include_once(__DIR__ . '/../../models/Geography.php');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 if($action){
-    $geoManager = new GeographyManager();
+    $geoManager = new Geography();
     if($action === 'getAutocompleteCountryList'){
         echo json_encode($geoManager->getAutocompleteCountryList($_POST['term']));
     }

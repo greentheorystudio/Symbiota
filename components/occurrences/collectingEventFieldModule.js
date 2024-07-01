@@ -149,12 +149,15 @@ const collectingEventFieldModule = {
         'time-input-element': timeInputElement
     },
     setup(props, context) {
+        const occurrenceStore = Vue.inject('occurrenceStore');
+
+        const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
         const propsRefs = Vue.toRefs(props);
         const showExtendedForm = Vue.ref(false);
         const showLocationForm = Vue.ref(false);
 
         Vue.watch(propsRefs.data, () => {
-            if(!props.disabled){
+            if(!props.disabled || imageCount.value > 0){
                 setExtendedView();
             }
         });
@@ -173,7 +176,8 @@ const collectingEventFieldModule = {
                 props.data.verbatimdepth ||
                 props.data.samplingprotocol ||
                 props.data.samplingeffort ||
-                props.data.labelproject
+                props.data.labelproject ||
+                (!props.eventMode && imageCount.value > 0)
             ){
                 showExtendedForm.value = true;
             }
@@ -196,7 +200,7 @@ const collectingEventFieldModule = {
         }
 
         Vue.onMounted(() => {
-            if(!props.disabled){
+            if(!props.disabled || imageCount.value > 0){
                 setExtendedView();
             }
         });

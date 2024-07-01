@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class TaxonomyDisplayManager{
@@ -13,7 +13,7 @@ class TaxonomyDisplayManager{
 	private $displaySubGenera = false;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 

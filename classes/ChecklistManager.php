@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistManager {
 
@@ -33,7 +33,7 @@ class ChecklistManager {
 	private $basicSql;
 
 	public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -151,7 +151,7 @@ class ChecklistManager {
                 }
                 $this->filterArr[$family] = '';
                 $tid = $row->tid;
-                $sciName = Sanitizer::cleanOutStr($row->sciname);
+                $sciName = SanitizerService::cleanOutStr($row->sciname);
                 $taxonTokens = explode(' ',$sciName);
                 if($taxonTokens){
                     if(in_array('x', $taxonTokens, true) || in_array('X', $taxonTokens, true)){
@@ -191,7 +191,7 @@ class ChecklistManager {
                         $this->taxaList[$tid]['family'] = $family;
                         $tidReturn[] = $tid;
                         if($this->showAuthors){
-                            $this->taxaList[$tid]['author'] = Sanitizer::cleanOutStr($row->author);
+                            $this->taxaList[$tid]['author'] = SanitizerService::cleanOutStr($row->author);
                         }
                     }
                     if(!in_array($family, $familyCntArr, true)){
@@ -321,7 +321,7 @@ class ChecklistManager {
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->vernacularname) {
-					$this->taxaList[$r->tid]['vern'] = Sanitizer::cleanOutStr($r->vernacularname);
+					$this->taxaList[$r->tid]['vern'] = SanitizerService::cleanOutStr($r->vernacularname);
 				}
 			}
 			$rs->free();
@@ -480,9 +480,9 @@ class ChecklistManager {
                 $retArr[$pid]['coords'] = json_encode($projCoordArr);
             }
 			if($projName){
-                $retArr[$pid]['name'] = Sanitizer::cleanOutStr($projName);
+                $retArr[$pid]['name'] = SanitizerService::cleanOutStr($projName);
             }
-			$retArr[$pid]['clid'][$row->clid] = Sanitizer::cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
+			$retArr[$pid]['clid'][$row->clid] = SanitizerService::cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
 		}
 		$rs->free();
 		if(isset($retArr[0])){
@@ -495,7 +495,7 @@ class ChecklistManager {
 
 	public function setTaxonFilter($tFilter): void
 	{
-		$this->taxonFilter = Sanitizer::cleanInStr($this->conn,strtolower($tFilter));
+		$this->taxonFilter = SanitizerService::cleanInStr($this->conn,strtolower($tFilter));
 	}
 
     public function setThesFilter(): void
@@ -563,13 +563,13 @@ class ChecklistManager {
 			$sql .= 'WHERE (pid = '.$pValue.')';
 		}
 		else{
-			$sql .= 'WHERE (projname = "'.Sanitizer::cleanInStr($this->conn,$pValue).'")';
+			$sql .= 'WHERE (projname = "'.SanitizerService::cleanInStr($this->conn,$pValue).'")';
 		}
 		$rs = $this->conn->query($sql);
 		if($rs){
 			if($r = $rs->fetch_object()){
 				$this->pid = $r->pid;
-				$this->projName = Sanitizer::cleanOutStr($r->projname);
+				$this->projName = SanitizerService::cleanOutStr($r->projname);
 			}
 			$rs->free();
 		}

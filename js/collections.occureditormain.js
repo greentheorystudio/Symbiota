@@ -188,7 +188,6 @@ function verifyFullFormSciName(id = null){
 				}
 			}
 			else{
-				$( 'select[name=confidenceranking]' ).val(5);
 				alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
 			}
 		}
@@ -227,7 +226,6 @@ function fieldChanged(fieldName){
 
 function recordNumberChanged(){
 	fieldChanged('recordnumber');
-	autoDupeSearch();
 }
 
 function stateProvinceChanged(stateVal){ 
@@ -515,9 +513,6 @@ function verifyFullForm(f){
 		return true;
 	}
 
-	if(searchDupesCatalogNumber(f,false)) {
-		return false;
-	}
 	const validformat1 = /^\d{4}-[0][0-9]-\d{1,2}$/;
 	const validformat2 = /^\d{4}-[1][0-2]-\d{1,2}$/;
 	if(f.eventdate.value && !(validformat1.test(f.eventdate.value) || validformat2.test(f.eventdate.value))){
@@ -784,9 +779,6 @@ function eventDateChanged(eventDateInput){
 	}
 	fieldChanged('eventdate');
 	const f = eventDateInput.form;
-	if(!eventDateInput.form.recordnumber.value && f.recordedby.value) {
-		autoDupeSearch();
-	}
 	return true;
 }
 

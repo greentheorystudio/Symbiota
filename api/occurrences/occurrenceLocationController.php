@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-include_once(__DIR__ . '/../../classes/OccurrenceLocationManager.php');
+include_once(__DIR__ . '/../../models/OccurrenceLocations.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $locationid = array_key_exists('locationid',$_REQUEST) ? (int)$_REQUEST['locationid'] : 0;
 $collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
@@ -20,24 +20,24 @@ elseif($collid){
     }
 }
 
-if($action && Sanitizer::validateInternalRequest()){
-    $locManager = new OccurrenceLocationManager();
+if($action && SanitizerService::validateInternalRequest()){
+    $occurrenceLocations = new OccurrenceLocations();
     if($action === 'getLocationDataArr' && $isEditor && $locationid){
-        echo json_encode($locManager->getLocationData($locationid));
+        echo json_encode($occurrenceLocations->getLocationData($locationid));
     }
-    elseif($action === 'createLocationRecord' && $isEditor){
-        echo $locManager->createLocationRecord(json_decode($_POST['location'], true));
+    elseif($action === 'createLocationRecord' && $isEditor && array_key_exists('location',$_POST)){
+        echo $occurrenceLocations->createLocationRecord(json_decode($_POST['location'], true));
     }
     elseif($action === 'updateLocationRecord' && $locationid && $isEditor){
-        echo $locManager->updateLocationRecord($locationid, json_decode($_POST['locationData'], true));
+        echo $occurrenceLocations->updateLocationRecord($locationid, json_decode($_POST['locationData'], true));
     }
     elseif($action === 'getLocationFields'){
-        echo json_encode($locManager->getLocationFields());
+        echo json_encode($occurrenceLocations->getLocationFields());
     }
     else if($action === 'getNameCodeAutocompleteLocationList'){
-        echo json_encode($locManager->getAutocompleteLocationList($collid, $_POST['key'], $_POST['term']));
+        echo json_encode($occurrenceLocations->getAutocompleteLocationList($collid, $_POST['key'], $_POST['term']));
     }
     else if($action === 'getNearbyLocationArr' && array_key_exists('decimallatitude',$_POST) && array_key_exists('decimallongitude',$_POST)){
-        echo json_encode($locManager->getNearbyLocationArr($collid, $locationid, $_POST['decimallatitude'], $_POST['decimallongitude']));
+        echo json_encode($occurrenceLocations->getNearbyLocationArr($collid, $locationid, $_POST['decimallatitude'], $_POST['decimallongitude']));
     }
 }

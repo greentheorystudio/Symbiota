@@ -86,9 +86,6 @@ const occurrenceEditorSingleDisplay = {
                             <template v-if="occurrenceEntryFormat === 'observation'">
                                 <occurrence-entry-observation-form-module></occurrence-entry-observation-form-module>
                             </template>
-                            <template v-else-if="occurrenceEntryFormat === 'image'">
-                                <occurrence-entry-image-form-module></occurrence-entry-image-form-module>
-                            </template>
                             <template v-else-if="occurrenceEntryFormat === 'skeletal'">
                                 <occurrence-entry-skeletal-form-module></occurrence-entry-skeletal-form-module>
                             </template>
@@ -107,7 +104,6 @@ const occurrenceEditorSingleDisplay = {
         'occurrence-editor-occurrence-data-module': occurrenceEditorOccurrenceDataModule,
         'occurrence-editor-tab-module': occurrenceEditorTabModule,
         'occurrence-entry-format-selector': occurrenceEntryFormatSelector,
-        'occurrence-entry-image-form-module': occurrenceEntryImageFormModule,
         'occurrence-entry-observation-form-module': occurrenceEntryObservationFormModule,
         'occurrence-entry-skeletal-form-module': occurrenceEntrySkeletalFormModule
     },

@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/SOLRManager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/SOLRService.php');
 
 class OccurrenceMaintenance {
 
@@ -16,7 +16,7 @@ class OccurrenceMaintenance {
 			$this->destructConn = false;
 		}
 		else{
-            $connection = new DbConnection();
+            $connection = new DbService();
 		    $this->conn = $connection->getConnection();
 		}
 	}
@@ -306,7 +306,7 @@ class OccurrenceMaintenance {
 
 			$returnArrJson = json_encode($statsArr);
 			$sql = 'UPDATE omcollectionstats '.
-				"SET dynamicProperties = '".Sanitizer::cleanInStr($this->conn,$returnArrJson)."' ".
+				"SET dynamicProperties = '".SanitizerService::cleanInStr($this->conn,$returnArrJson)."' ".
 				'WHERE collid IN('.$collid.') ';
 			if(!$this->conn->query($sql)){
 				$errStr = 'WARNING: unable to update collection stats table [1].';
@@ -347,7 +347,7 @@ class OccurrenceMaintenance {
 			}
 		}
 		if($GLOBALS['SOLR_MODE']){
-            $solrManager = new SOLRManager();
+            $solrManager = new SOLRService();
             $solrManager->updateSOLR();
         }
 		return true;

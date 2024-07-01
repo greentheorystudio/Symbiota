@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
@@ -71,7 +71,7 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
 }
 if($collid){
     $collDataFull = $collManager->getCollectionMetadata();
-    $collData = Sanitizer::cleanOutArray($collDataFull[$collid]);
+    $collData = SanitizerService::cleanOutArray($collDataFull[$collid]);
 }
 ?>
 <!DOCTYPE html>
@@ -365,21 +365,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 <?php
                             }
                             ?>
-                            <div class="field-block">
-                                <span class="field-label">Allow Public Edits:</span>
-                                <span class="field-elem">
-									<input type="checkbox" name="publicedits" value="1" <?php echo ($collData && $collData['publicedits']?'CHECKED':''); ?> />
-                                    <a id="peditsinfo" href="#" onclick="return false" title="More information about Public Edits">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="peditsinfodialog">
-										Checking public edits will allow any user logged into the system to modify occurrence records
-                                        and resolve errors found within the collection. However, if the user does not have explicit
-                                        authorization for the given collection, edits will not be applied until they are
-                                        reviewed and approved by collection administrator.
-									</span>
-								</span>
-                            </div>
                             <div class="field-block">
                                 <span class="field-label">License:</span>
                                 <span class="field-elem">

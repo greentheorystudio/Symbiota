@@ -80,30 +80,7 @@ if($GLOBALS['SYMB_UID']){
     if(array_key_exists('delvouch', $_GET) && $occid && !$indManager->deleteVoucher($occid, $_GET['delvouch'])) {
         $statusStr = $indManager->getErrorMessage();
     }
-    if(array_key_exists('commentstr',$_POST)){
-        if(!$indManager->addComment($_POST['commentstr'])){
-            $statusStr = $indManager->getErrorMessage();
-        }
-    }
-    elseif($submit === 'Delete Comment'){
-        if(!$indManager->deleteComment($_POST['comid'])){
-            $statusStr = $indManager->getErrorMessage();
-        }
-    }
-    elseif(array_key_exists('repcomid',$_GET)){
-        if($indManager->reportComment($_GET['repcomid'])){
-            $statusStr = 'Comment reported as inappropriate. Comment will remain unavailable to public until reviewed by an administrator.';
-        }
-        else{
-            $statusStr = $indManager->getErrorMessage();
-        }
-    }
-    elseif(array_key_exists('publiccomid',$_GET)){
-        if(!$indManager->makeCommentPublic($_GET['publiccomid'])){
-            $statusStr = $indManager->getErrorMessage();
-        }
-    }
-    elseif($submit === 'Add Voucher'){
+    if($submit === 'Add Voucher'){
         if(!$indManager->linkVoucher($_POST)){
             $statusStr = $indManager->getErrorMessage();
         }
@@ -123,8 +100,6 @@ $displayMap = false;
 if($displayLocality && ((is_numeric($occArr['decimallatitude']) && is_numeric($occArr['decimallongitude'])) || $occArr['footprintwkt'])) {
     $displayMap = true;
 }
-$dupClusterArr = $indManager->getDuplicateArr();
-$commentArr = $indManager->getCommentArr($isEditor);
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -223,14 +198,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             return true;
         }
 
-        function verifyCommentForm(f){
-            if(f.commentstr.value.replaceAll(/^\s+|\s+$/g,"")){
-                return true;
-            }
-            alert("Please enter a comment");
-            return false;
-        }
-
         function openIndividual(target) {
             let occWindow = open("index.php?occid="+target,"occdisplay","resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
             if (occWindow.opener == null) {
@@ -270,13 +237,7 @@ if($fullWindow){
                 if($genticArr) {
                     echo '<li><a href="#genetictab"><span>Genetic Data</span></a></li>';
                 }
-                if($dupClusterArr){
-                    ?>
-                    <li><a href="#dupestab"><span>Duplicates</span></a></li>
-                    <?php
-                }
                 ?>
-                <li id="indCommentsTab"><a href="#commenttab"><span><?php echo ($commentArr?count($commentArr).' ':''); ?>Comments</span></a></li>
                 <li id="indLinkedResourcesTab"><a href="linkedresources.php?occid=<?php echo $occid.'&tid='.$occArr['tid'].'&clid='.$clid.'&collid='.$collid; ?>"><span>Linked Resources</span></a></li>
                 <?php
                 if($isEditor){
@@ -946,29 +907,6 @@ if($fullWindow){
                             <?php echo $collMetadata['contact'].' ('.$collMetadata['email'].')'; ?>
                         </a>
                     </div>
-                    <?php
-                    if($isEditor || ($displayLocality && $collMetadata['publicedits'])){
-                        ?>
-                        <div style="margin-bottom:10px;">
-                            <?php
-                            if($GLOBALS['SYMB_UID']){
-                                ?>
-                                Do you see an error? If so, errors can be fixed using the
-                                <a href="../editor/occurrenceeditor.php?occid=<?php echo $occArr['occid'];?>">
-                                    Occurrence Editor.
-                                </a>
-                                <?php
-                            }
-                            else{
-                                ?>
-                                See an error? <a href="../../profile/index.php?refurl=../collections/individual/index.php?occid=<?php echo $occid; ?>">Login</a> to edit data
-                                <?php
-                            }
-                            ?>
-                        </div>
-                        <?php
-                    }
-                    ?>
                 </div>
             </div>
             <?php
@@ -1001,168 +939,6 @@ if($fullWindow){
                 </div>
                 <?php
             }
-            if($dupClusterArr){
-                ?>
-                <div id="dupestab">
-                    <div style="margin:20px;">
-                        <div style="font-weight:bold;margin-bottom:10px;"><u>Current Record</u></div>
-                        <?php
-                        echo '<div style="font-weight:bold;">'.$collMetadata['collectionname'].' ('.$collMetadata['institutioncode'].($collMetadata['collectioncode']?':'.$collMetadata['collectioncode']:'').')</div>';
-                        echo '<div style="margin:5px 15px">';
-                        if($occArr['recordedby']) {
-                            echo '<div>' . $occArr['recordedby'] . ' ' . $occArr['recordnumber'] . '<span style="margin-left:40px;">' . $occArr['eventdate'] . '</span></div>';
-                        }
-                        if($occArr['catalognumber']) {
-                            echo '<div><b>Catalog Number:</b> ' . $occArr['catalognumber'] . '</div>';
-                        }
-                        if($occArr['occurrenceid']) {
-                            echo '<div><b>GUID:</b> ' . $occArr['occurrenceid'] . '</div>';
-                        }
-                        if($occArr['sciname']) {
-                            echo '<div><b>Latest Identification:</b> ' . $occArr['sciname'] . '</div>';
-                        }
-                        if($occArr['identifiedby']) {
-                            echo '<div><b>Identified by:</b> ' . $occArr['identifiedby'] . '<span style="margin-left:30px;">' . $occArr['dateidentified'] . '</span></div>';
-                        }
-                        echo '</div>';
-                        echo '<div style="margin:20px 0;clear:both"><hr/><hr/></div>';
-                        foreach($dupClusterArr as $dupid => $dArr){
-                            $innerDupArr = $dArr['o'];
-                            foreach($innerDupArr as $dupOccid => $dupArr){
-                                if($dupOccid !== $occid){
-                                    $collCode = '';
-                                    if($dupArr['instcode']){
-                                        $collCode .= $dupArr['instcode'];
-                                    }
-                                    if($dupArr['collcode']){
-                                        $collCode .= ($collCode?':':'') . $dupArr['collcode'];
-                                    }
-                                    echo '<div style="clear:both;margin:15px;">';
-                                    echo '<div style="font-weight:bold;">'.$dupArr['collname'].($collCode?' ('.$collCode.')':'').'</div>';
-                                    echo '<div style="float:left;margin:5px 15px">';
-                                    if($dupArr['recordedby']) {
-                                        echo '<div>' . $dupArr['recordedby'] . ' ' . $dupArr['recordnumber'] . '<span style="margin-left:40px;">' . $dupArr['eventdate'] . '</span></div>';
-                                    }
-                                    if($dupArr['catnum']) {
-                                        echo '<div><b>Catalog Number:</b> ' . $dupArr['catnum'] . '</div>';
-                                    }
-                                    if($dupArr['occurrenceid']) {
-                                        echo '<div><b>GUID:</b> ' . $dupArr['occurrenceid'] . '</div>';
-                                    }
-                                    if($dupArr['sciname']) {
-                                        echo '<div><b>Latest Identification:</b> ' . $dupArr['sciname'] . '</div>';
-                                    }
-                                    if($dupArr['identifiedby']) {
-                                        echo '<div><b>Identified by:</b> ' . $dupArr['identifiedby'] . '<span style="margin-left:30px;">' . $dupArr['dateidentified'] . '</span></div>';
-                                    }
-                                    if($dupArr['notes']) {
-                                        echo '<div>' . $dupArr['notes'] . '</div>';
-                                    }
-                                    echo '<div><a href="#" onclick="openIndividual('.$dupOccid. ')">Show Full Details</a></div>';
-                                    echo '</div>';
-                                    if($dupArr['url']){
-                                        $url = $dupArr['url'];
-                                        $tnUrl = $dupArr['tnurl'];
-                                        if(!$tnUrl) {
-                                            $tnUrl = $url;
-                                        }
-                                        echo '<div style="float:left;margin:10px;">';
-                                        echo '<a href="'.$url.'">';
-                                        echo '<img src="'.$tnUrl.'" style="width:100px;border:1px solid grey" />';
-                                        echo '</a>';
-                                        echo '</div>';
-                                    }
-                                    echo '<div style="margin:10px 0;clear:both"><hr/></div>';
-                                    echo '</div>';
-                                }
-                            }
-                        }
-                        ?>
-                    </div>
-                </div>
-                <?php
-            }
-            ?>
-            <div id="commenttab">
-                <?php
-                if($commentArr){
-                    echo '<div><b>'.count($commentArr).' Comments</b></div>';
-                    echo '<hr style="color:gray;"/>';
-                    foreach($commentArr as $comId => $comArr){
-                        ?>
-                        <div style="margin:15px;">
-                            <?php
-                            echo '<div>';
-                            echo '<b>'.$comArr['username'].'</b> <span style="color:gray;">posted '.$comArr['initialtimestamp'].'</span>';
-                            echo '</div>';
-                            if($comArr['reviewstatus'] === 0 || $comArr['reviewstatus'] === 2) {
-                                echo '<div style="color:red;">Comment not public due to pending abuse report (viewable to administrators only)</div>';
-                            }
-                            echo '<div style="margin:10px;">'.$comArr['comment'].'</div>';
-                            if($comArr['reviewstatus']){
-                                if($GLOBALS['SYMB_UID']){
-                                    ?>
-                                    <div><a href="index.php?repcomid=<?php echo $comId.'&occid='.$occid.'&tabindex='.($displayMap?2:1); ?>">Report as inappropriate or abusive</a></div>
-                                    <?php
-                                }
-                            }
-                            else{
-                                ?>
-                                <div><a href="index.php?publiccomid=<?php echo $comId.'&occid='.$occid.'&tabindex='.($displayMap?2:1); ?>">Make comment public</a></div>
-                                <?php
-                            }
-                            if($isEditor || ($GLOBALS['SYMB_UID'] && $comArr['username'] === $GLOBALS['PARAMS_ARR']['un'])){
-                                ?>
-                                <div style="margin:20px;">
-                                    <form name="delcommentform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to delete comment?')">
-                                        <input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-                                        <input name="comid" type="hidden" value="<?php echo $comId; ?>" />
-                                        <input name="tabindex" type="hidden" value="<?php echo ($displayMap?2:1); ?>" />
-                                        <input name="formsubmit" type="submit" value="Delete Comment" />
-                                    </form>
-                                </div>
-                                <?php
-                            }
-                            ?>
-                        </div>
-                        <hr style="color:gray;"/>
-                        <?php
-                    }
-                }
-                else{
-                    echo '<div style="font-weight:bold;margin:20px;">No comments have been submitted</div>';
-                }
-                ?>
-                <fieldset style="padding:20px;">
-                    <legend><b>New Comment</b></legend>
-                    <?php
-                    if($GLOBALS['VALID_USER']){
-                        ?>
-                        <form name="commentform" action="index.php" method="post" onsubmit="return verifyCommentForm(this);">
-                            <textarea name="commentstr" rows="8" style="width:98%;"></textarea>
-                            <div style="margin:15px;">
-                                <input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-                                <input name="tabindex" type="hidden" value="<?php echo ($displayMap?2:1); ?>" />
-                                <input type="submit" name="formsubmit" value="Submit Comment" />
-                            </div>
-                            <div>
-                                Messages over 500 words long may be automatically truncated. All comments are moderated.
-                            </div>
-                        </form>
-                        <?php
-                    }
-                    else{
-                        ?>
-                        <div style="margin:10px;">
-                            <a href="../../profile/index.php?refurl=../collections/individual/index.php?tabindex=2&occid=<?php echo $occid; ?>">Login</a> to leave a comment.
-                        </div>
-                        <?php
-                    }
-                    ?>
-                </fieldset>
-
-            </div>
-            <?php
             if($isEditor){
                 ?>
                 <div id="edittab">

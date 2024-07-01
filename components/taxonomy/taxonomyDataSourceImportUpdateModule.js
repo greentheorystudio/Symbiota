@@ -223,7 +223,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('tid', tid);
             formData.append('name', name);
             formData.append('langid', langid);
-            fetch(taxonomyApiUrl, {
+            fetch(taxonVernacularApiUrl, {
                 method: 'POST',
                 body: formData
             });
@@ -235,7 +235,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('tid', tid);
             formData.append('idname', dataSource.value);
             formData.append('id', identifier);
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             });
@@ -258,7 +258,7 @@ const taxonomyDataSourceImportUpdateModule = {
             const formData = new FormData();
             formData.append('taxon', JSON.stringify(newTaxonObj));
             formData.append('action', 'addTaxon');
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -543,17 +543,17 @@ const taxonomyDataSourceImportUpdateModule = {
                 formData.append('tid', tid);
                 formData.append('taxonData', JSON.stringify(taxonData));
                 formData.append('action', 'editTaxon');
-                fetch(taxonomyApiUrl, {
+                fetch(taxaApiUrl, {
                     method: 'POST',
                     body: formData
                 })
                 .then((response) => {
                     response.text().then((res) => {
-                        if(res && res !== ''){
-                            callback(res);
+                        if(Number(res) === 1){
+                            callback();
                         }
                         else{
-                            callback();
+                            callback('An error occurred while saving taxon edits.');
                         }
                     });
                 });
@@ -765,7 +765,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('kingdomid', props.kingdomId);
             formData.append('includeCommonNames', (importCommonNames.value ? '1' : '0'));
             formData.append('includeChildren', '1');
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -788,7 +788,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('tid', tid);
             formData.append('includeCommonNames', (importCommonNames.value ? '1' : '0'));
             formData.append('includeChildren', '1');
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1457,7 +1457,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 const text = 'Setting rank data';
                 currentProcess.value = 'setRankArr';
                 addProcessToProcessorDisplay(getNewProcessObject('single',text));
-                const url = taxonomyApiUrl + '?action=getRankNameArr'
+                const url = taxonRankApiUrl + '?action=getRankNameArr'
                 abortController = new AbortController();
                 fetch(url, {
                     signal: abortController.signal
@@ -1493,7 +1493,7 @@ const taxonomyDataSourceImportUpdateModule = {
             if(rebuildHierarchyLoop.value < 40){
                 const formData = new FormData();
                 formData.append('action', 'populateHierarchyTable');
-                fetch(taxonomyApiUrl, {
+                fetch(taxonHierarchyApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -1527,7 +1527,7 @@ const taxonomyDataSourceImportUpdateModule = {
             const formData = new FormData();
             formData.append('tidarr', JSON.stringify(newEditedTidArr.value));
             formData.append('action', 'primeHierarchyTable');
-            fetch(taxonomyApiUrl, {
+            fetch(taxonHierarchyApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -2121,7 +2121,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 const formData = new FormData();
                 formData.append('tidarr', JSON.stringify(newEditedTidArr.value));
                 formData.append('action', 'clearHierarchyTable');
-                fetch(taxonomyApiUrl, {
+                fetch(taxonHierarchyApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -2145,7 +2145,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('action', 'editTaxonParent');
             formData.append('tid', tid);
             formData.append('parenttid', parenttid);
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -2175,7 +2175,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('tid', taxon['tid']);
             formData.append('tidaccepted', taxon['tidaccepted']);
             formData.append('kingdom', (kingdom ? '1' : '0'));
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })

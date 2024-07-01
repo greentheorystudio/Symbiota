@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditReview.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = (int)$_REQUEST['collid'];
@@ -55,7 +55,7 @@ if($isEditor){
 			$statusStr = '<br>'.implode('</br><br>',$reviewManager->getWarningArr()).'</br>';
 		}
 		if($GLOBALS['SOLR_MODE']){
-			$solrManager = new SOLRManager();
+			$solrManager = new SOLRService();
 			$solrManager->updateSOLR();
 		}
 	}
@@ -63,7 +63,7 @@ if($isEditor){
 		$idStr = implode(',',$_POST['id']);
 		$reviewManager->deleteEdits($idStr);
 		if($GLOBALS['SOLR_MODE']){
-			$solrManager = new SOLRManager();
+			$solrManager = new SOLRService();
 			$solrManager->updateSOLR();
 		}
 	}

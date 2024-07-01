@@ -921,21 +921,6 @@ CREATE TABLE `omoccurcollectingevents` (
     CONSTRAINT `FK_eventcollid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE `omoccurcomments` (
-    `comid` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `comment` text NOT NULL,
-    `uid` int(10) unsigned NOT NULL,
-    `reviewstatus` int(10) unsigned NOT NULL DEFAULT '0',
-    `parentcomid` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`comid`),
-    KEY `fk_omoccurcomments_occid` (`occid`),
-    KEY `fk_omoccurcomments_uid` (`uid`),
-    CONSTRAINT `fk_omoccurcomments_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_omoccurcomments_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE `omoccurdatasetlink` (
     `occid` int(10) unsigned NOT NULL,
     `datasetid` int(10) unsigned NOT NULL,
@@ -992,30 +977,6 @@ CREATE TABLE `omoccurdeterminations` (
     CONSTRAINT `FK_omoccurdets_idby` FOREIGN KEY (`idbyid`) REFERENCES `omcollectors` (`recordedById`) ON DELETE SET NULL ON UPDATE SET NULL,
     CONSTRAINT `FK_omoccurdets_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `FK_omoccurdets_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
-);
-
-CREATE TABLE `omoccurduplicatelink` (
-    `occid` int(10) unsigned NOT NULL,
-    `duplicateid` int(11) NOT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `modifiedUid` int(10) unsigned DEFAULT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`occid`,`duplicateid`),
-    KEY `FK_omoccurdupelink_occid_idx` (`occid`),
-    KEY `FK_omoccurdupelink_dupeid_idx` (`duplicateid`),
-    CONSTRAINT `FK_omoccurdupelink_dupeid` FOREIGN KEY (`duplicateid`) REFERENCES `omoccurduplicates` (`duplicateid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurdupelink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `omoccurduplicates` (
-    `duplicateid` int(11) NOT NULL AUTO_INCREMENT,
-    `title` varchar(50) NOT NULL,
-    `description` varchar(255) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `dupeType` varchar(45) NOT NULL DEFAULT 'Exact Duplicate',
-    `initialTimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`duplicateid`)
 );
 
 CREATE TABLE `omoccureditlocks` (
@@ -1490,24 +1451,6 @@ CREATE TABLE `omoccurrevisions` (
     KEY `Index_omrevisions_editor` (`externalEditor`),
     CONSTRAINT `fk_omrevisions_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_omrevisions_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
-CREATE TABLE `omoccurverification` (
-    `ovsid` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `category` varchar(45) NOT NULL,
-    `ranking` int(11) NOT NULL,
-    `protocol` varchar(100) DEFAULT NULL,
-    `source` varchar(45) DEFAULT NULL,
-    `uid` int(10) unsigned DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`ovsid`),
-    UNIQUE KEY `UNIQUE_omoccurverification` (`occid`,`category`),
-    KEY `FK_omoccurverification_occid_idx` (`occid`),
-    KEY `FK_omoccurverification_uid_idx` (`uid`),
-    CONSTRAINT `FK_omoccurverification_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurverification_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `paleochronostratigraphy` (

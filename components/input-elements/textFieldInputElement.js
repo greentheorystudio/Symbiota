@@ -39,7 +39,7 @@ const textFieldInputElement = {
     },
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-            <q-input outlined v-model="value" :type="inputType" :label="label" debounce="700" :counter="(showCounter && dataType !== 'int' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="inputType === 'textarea'" dense>
+            <q-input outlined v-model="value" :type="inputType" :label="label" debounce="700" bg-color="white" :counter="(showCounter && dataType !== 'int' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="inputType === 'textarea'" dense>
                 <template v-if="value || definition" v-slot:append>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -55,7 +55,7 @@ const textFieldInputElement = {
             </q-input>
         </template>
         <template v-else>
-            <q-input outlined v-model="value" :type="inputType" :label="label" debounce="700" @update:model-value="processValueChange" :readonly="disabled" :autogrow="inputType === 'textarea'" dense>
+            <q-input outlined v-model="value" :type="inputType" :label="label" debounce="700" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :autogrow="inputType === 'textarea'" dense>
                 <template v-if="!disabled && (value || definition)" v-slot:append>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">

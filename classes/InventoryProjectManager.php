@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/ProfileManager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../models/Permissions.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
  
 class InventoryProjectManager {
 
@@ -12,7 +12,7 @@ class InventoryProjectManager {
 	private $errorStr;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -73,7 +73,7 @@ class InventoryProjectManager {
 		$sql = '';
 		foreach($projArr as $field => $value){
 			if(in_array($field, $fieldArr, true)){
-				$sql .= ','.$field.' = "'.Sanitizer::cleanInStr($this->conn,$value).'"';
+				$sql .= ','.$field.' = "'.SanitizerService::cleanInStr($this->conn,$value).'"';
 			}
 		}
 		$sql = 'UPDATE fmprojects SET '.substr($sql,1).' WHERE (pid = '.$this->pid.')';
@@ -97,16 +97,16 @@ class InventoryProjectManager {
 
 	public function addNewProject($projArr){
 		$sql = 'INSERT INTO fmprojects(projname,managers,fulldescription,notes,ispublic) '.
-			'VALUES("'.Sanitizer::cleanInStr($this->conn,$projArr['projname']).'",'.
-			($projArr['managers']?'"'.Sanitizer::cleanInStr($this->conn,$projArr['managers']).'"':'NULL').','.
-			($projArr['fulldescription']?'"'.Sanitizer::cleanInStr($this->conn,$projArr['fulldescription']).'"':'NULL').','.
-			($projArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$projArr['notes']).'"':'NULL').','.
+			'VALUES("'.SanitizerService::cleanInStr($this->conn,$projArr['projname']).'",'.
+			($projArr['managers']?'"'.SanitizerService::cleanInStr($this->conn,$projArr['managers']).'"':'NULL').','.
+			($projArr['fulldescription']?'"'.SanitizerService::cleanInStr($this->conn,$projArr['fulldescription']).'"':'NULL').','.
+			($projArr['notes']?'"'.SanitizerService::cleanInStr($this->conn,$projArr['notes']).'"':'NULL').','.
 			(($GLOBALS['PUBLIC_CHECKLIST'] && is_numeric($projArr['ispublic']))?$projArr['ispublic']:'0').')';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->pid = $this->conn->insert_id;
             $this->conn->query('INSERT INTO userroles (uid, role, tablename, tablepk) VALUES('.$GLOBALS['SYMB_UID'].',"ProjAdmin","fmprojects",'.$this->pid.') ');
-            (new ProfileManager)->setUserRights($GLOBALS['SYMB_UID']);
+            (new Permissions)->setUserPermissions();
 		}
 		else{
 			$this->errorStr = 'ERROR creating new project.';

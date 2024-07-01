@@ -235,12 +235,14 @@ const locationFieldModule = {
     },
     setup(props, context) {
         const { getCoordinateVerificationData, showNotification } = useCore();
+        const occurrenceStore = Vue.inject('occurrenceStore');
 
         const confirmationPopupRef = Vue.ref(null);
         const coordinateUncertaintyInMetersValue = Vue.ref(null);
         const decimalLatitudeValue = Vue.ref(null);
         const decimalLongitudeValue = Vue.ref(null);
         const footprintWktValue = Vue.ref(null);
+        const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
         const popupWindowType = Vue.ref(null);
         const propsRefs = Vue.toRefs(props);
         const showCoordinateToolPopup = Vue.ref(false);
@@ -249,7 +251,7 @@ const locationFieldModule = {
         const showSpatialPopup = Vue.ref(false);
 
         Vue.watch(propsRefs.data, () => {
-            if(!props.disabled && !props.eventMode){
+            if((!props.disabled && !props.eventMode) || imageCount.value > 0){
                 setExtendedView();
             }
         });
@@ -354,7 +356,8 @@ const locationFieldModule = {
                 props.data.georeferenceremarks ||
                 props.data.georeferencesources ||
                 props.data.georeferenceverificationstatus ||
-                props.data.locationremarks
+                props.data.locationremarks ||
+                (props.eventMode && imageCount.value > 0)
             ){
                 showExtendedForm.value = true;
             }
@@ -436,7 +439,7 @@ const locationFieldModule = {
         Vue.provide('openSpatialPopup', openSpatialPopup);
 
         Vue.onMounted(() => {
-            if(!props.disabled && !props.eventMode){
+            if((!props.disabled && !props.eventMode) || imageCount.value > 0){
                 setExtendedView();
             }
         });

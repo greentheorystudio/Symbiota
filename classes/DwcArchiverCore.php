@@ -4,9 +4,9 @@ include_once(__DIR__ . '/DwcArchiverOccurrence.php');
 include_once(__DIR__ . '/DwcArchiverDetermination.php');
 include_once(__DIR__ . '/DwcArchiverImage.php');
 include_once(__DIR__ . '/DwcArchiverAttribute.php');
-include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class DwcArchiverCore extends Manager{
 
@@ -118,8 +118,8 @@ class DwcArchiverCore extends Manager{
 
     public function setCollArr($collTarget, $collTypeStr = null): void
     {
-        $collTarget = Sanitizer::cleanInStr($this->conn,$collTarget);
-        $collType = Sanitizer::cleanInStr($this->conn,$collTypeStr);
+        $collTarget = SanitizerService::cleanInStr($this->conn,$collTarget);
+        $collType = SanitizerService::cleanInStr($this->conn,$collTypeStr);
         $sqlWhere = '';
         if($collType === 'specimens'){
             $sqlWhere = '(c.colltype = "PreservedSpecimen") ';
@@ -194,10 +194,10 @@ class DwcArchiverCore extends Manager{
             }
             if($value || ($cond === 'NULL' || $cond === 'NOTNULL')){
                 if(is_array($value)){
-                    $this->conditionArr[$field][$cond] = Sanitizer::cleanInArray($this->conn,$value);
+                    $this->conditionArr[$field][$cond] = SanitizerService::cleanInArray($this->conn,$value);
                 }
                 else{
-                    $this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($this->conn,$value);
+                    $this->conditionArr[$field][$cond][] = SanitizerService::cleanInStr($this->conn,$value);
                 }
             }
         }
@@ -869,7 +869,7 @@ class DwcArchiverCore extends Manager{
         $rootElem->setAttribute('xmlns:dc','http://purl.org/dc/terms/');
         $rootElem->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
         $rootElem->setAttribute('xsi:schemaLocation','eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.0.1/eml.xsd');
-        $rootElem->setAttribute('packageId',UuidFactory::getUuidV4());
+        $rootElem->setAttribute('packageId',UuidService::getUuidV4());
         $rootElem->setAttribute('system','https://github.com/greentheorystudio/Symbiota');
         $rootElem->setAttribute('scope','system');
         $rootElem->setAttribute('xml:lang','eng');
@@ -1019,7 +1019,7 @@ class DwcArchiverCore extends Manager{
         $dateElem = $newDoc->createElement('dateStamp');
         $dateElem->appendChild($newDoc->createTextNode(date('c')));
         $symbElem->appendChild($dateElem);
-        $id = UuidFactory::getUuidV4();
+        $id = UuidService::getUuidV4();
         $citeElem = $newDoc->createElement('citation');
         $citeElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' - '.$id));
         $citeElem->setAttribute('identifier',$id);

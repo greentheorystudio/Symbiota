@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistVoucherAdmin {
 
@@ -13,7 +13,7 @@ class ChecklistVoucherAdmin {
 	private $closeConnOnDestroy = true;
 
 	public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
 	}
 
@@ -34,7 +34,7 @@ class ChecklistVoucherAdmin {
 			$sql = 'SELECT name, dynamicsql FROM fmchecklists WHERE clid = '.$this->clid.' ';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
-				$this->clName = Sanitizer::cleanOutStr($row->name);
+				$this->clName = SanitizerService::cleanOutStr($row->name);
 				$sqlFrag = $row->dynamicsql;
 				$varArr = json_decode($sqlFrag, true);
 				if(json_last_error() !== JSON_ERROR_NONE){
@@ -76,7 +76,7 @@ class ChecklistVoucherAdmin {
 				$jsonArr[$fieldName] = $postArr[$fieldName];
 			}
 		}
-		$sql = 'UPDATE fmchecklists AS c SET c.dynamicsql = '.($jsonArr?'"'.Sanitizer::cleanInStr($this->conn,json_encode($jsonArr)).'"':'NULL').' WHERE c.clid = '.$this->clid.' ';
+		$sql = 'UPDATE fmchecklists AS c SET c.dynamicsql = '.($jsonArr?'"'.SanitizerService::cleanInStr($this->conn,json_encode($jsonArr)).'"':'NULL').' WHERE c.clid = '.$this->clid.' ';
 		//echo $sql; exit;
 		$this->conn->query($sql);
 	}
@@ -131,11 +131,11 @@ class ChecklistVoucherAdmin {
 	{
 		$sqlFrag = '';
 		if(isset($this->queryVariablesArr['country']) && $this->queryVariablesArr['country']){
-			$countryStr = str_replace(';',',',Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['country']));
+			$countryStr = str_replace(';',',',SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['country']));
 			$sqlFrag = 'AND (o.country IN("'.$countryStr.'")) ';
 		}
 		if(isset($this->queryVariablesArr['state']) && $this->queryVariablesArr['state']){
-			$stateStr = str_replace(';',',',Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['state']));
+			$stateStr = str_replace(';',',',SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['state']));
 			$sqlFrag .= 'AND (o.stateprovince = "'.$stateStr.'") ';
 		}
 		if(isset($this->queryVariablesArr['county']) && $this->queryVariablesArr['county']){
@@ -143,7 +143,7 @@ class ChecklistVoucherAdmin {
 			$cArr = explode(',', $countyStr);
 			$cStr = '';
 			foreach($cArr as $str){
-				$cStr .= 'OR (o.county LIKE "'.Sanitizer::cleanInStr($this->conn,$str).'%") ';
+				$cStr .= 'OR (o.county LIKE "'.SanitizerService::cleanInStr($this->conn,$str).'%") ';
 			}
 			$sqlFrag .= 'AND ('.substr($cStr, 2).') ';
 		}
@@ -152,7 +152,7 @@ class ChecklistVoucherAdmin {
 			$locArr = explode(',', $localityStr);
 			$locStr = '';
 			foreach($locArr as $str){
-				$str = Sanitizer::cleanInStr($this->conn,$str);
+				$str = SanitizerService::cleanInStr($this->conn,$str);
 				if(strlen($str) > 4){
 					$locStr .= 'OR (MATCH(f.locality) AGAINST("'.$str.'")) ';
 				}
@@ -163,7 +163,7 @@ class ChecklistVoucherAdmin {
 			$sqlFrag .= 'AND ('.substr($locStr, 2).') ';
 		}
 		if(isset($this->queryVariablesArr['taxon']) && $this->queryVariablesArr['taxon']){
-			$tStr = Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['taxon']);
+			$tStr = SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['taxon']);
 			$tidPar = $this->getTid($tStr);
 			if($tidPar){
 				$sqlFrag .= 'AND (o.tid IN (SELECT tid FROM taxaenumtree WHERE parenttid = '.$tidPar.')) ';
@@ -198,10 +198,10 @@ class ChecklistVoucherAdmin {
 			$tempArr = array();
 			foreach($collArr as $str => $postArr){
 				if(strlen($str) < 4 || strtolower($str) === 'best'){
-					$tempArr[] = '(o.recordedby LIKE "%'.Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['recordedby']).'%")';
+					$tempArr[] = '(o.recordedby LIKE "%'.SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['recordedby']).'%")';
 				}
 				else{
-					$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.Sanitizer::cleanInStr($this->conn,$str).'"))';
+					$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.SanitizerService::cleanInStr($this->conn,$str).'"))';
 				}
 			}
 			$sqlFrag .= 'AND ('.implode(' OR ', $tempArr).') ';
@@ -253,7 +253,7 @@ class ChecklistVoucherAdmin {
 		//echo '<div>'.$sql.'</div>';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			$retArr[$row->family][$row->tid] = Sanitizer::cleanOutStr($row->sciname);
+			$retArr[$row->family][$row->tid] = SanitizerService::cleanOutStr($row->sciname);
 		}
 		$rs->free();
 		return $retArr;
@@ -340,7 +340,7 @@ class ChecklistVoucherAdmin {
 			//echo '<div>'.$sql.'</div>';
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
-				$retArr[$row->tid] = Sanitizer::cleanOutStr($row->sciname);
+				$retArr[$row->tid] = SanitizerService::cleanOutStr($row->sciname);
 			}
 			asort($retArr);
 			$rs->free();
@@ -418,13 +418,13 @@ class ChecklistVoucherAdmin {
 			if($row->recordnumber) {
 				$collStr .= ' (' . $row->recordnumber . ')';
 			}
-			$retArr[$cnt]['recordnumber'] = Sanitizer::cleanOutStr($collStr);
-			$retArr[$cnt]['specid'] = Sanitizer::cleanOutStr($voucherSciname);
+			$retArr[$cnt]['recordnumber'] = SanitizerService::cleanOutStr($collStr);
+			$retArr[$cnt]['specid'] = SanitizerService::cleanOutStr($voucherSciname);
 			$idBy = $row->identifiedby;
 			if($row->dateidentified) {
-				$idBy .= ' (' . Sanitizer::cleanOutStr($row->dateidentified) . ')';
+				$idBy .= ' (' . SanitizerService::cleanOutStr($row->dateidentified) . ')';
 			}
-			$retArr[$cnt]['identifiedby'] = Sanitizer::cleanOutStr($idBy);
+			$retArr[$cnt]['identifiedby'] = SanitizerService::cleanOutStr($idBy);
 			$cnt++;
 		}
 		$rs->free();
@@ -877,7 +877,7 @@ class ChecklistVoucherAdmin {
 	private function getTid($sciname): int
 	{
 		$tidRet = 0;
-		$sql = 'SELECT tid FROM taxa WHERE sciname = "'.Sanitizer::cleanInStr($this->conn,$sciname).'" ';
+		$sql = 'SELECT tid FROM taxa WHERE sciname = "'.SanitizerService::cleanInStr($this->conn,$sciname).'" ';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$tidRet = $r->tid;

@@ -24,7 +24,7 @@ const taxaKingdomSelector = {
         }
 
         function setKingdomOptions() {
-            const url = taxonomyApiUrl + '?action=getKingdomArr';
+            const url = taxonKingdomApiUrl + '?action=getKingdomArr';
             fetch(url)
             .then((response) => {
                 if(response.ok){

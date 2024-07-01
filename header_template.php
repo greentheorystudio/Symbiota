@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/classes/Sanitizer.php');
+include_once(__DIR__ . '/services/SanitizerService.php');
 ?>
 <div id="mainContainer">
     <div id="bannerContainer">
@@ -72,7 +72,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
         </q-toolbar>
     </div>
     <script>
-        const REQUEST_PATH = "<?php echo Sanitizer::getCleanedRequestPath(true); ?>";
+        const REQUEST_PATH = "<?php echo SanitizerService::getCleanedRequestPath(true); ?>";
         document.addEventListener("DOMContentLoaded", () => {
             const dropDownNavBar = Vue.createApp({
                 setup() {

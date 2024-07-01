@@ -12,26 +12,12 @@ const collectionControlPanelMenus = {
             type: Number,
             default: null
         },
-        occurrenceCount: {
-            type: Number,
-            default: 0
-        },
         userName: {
             type: String,
             default: null
         }
     },
     template: `
-        <template v-if="userName && collectionType === 'HumanObservation' && Number(occurrenceCount) > 0">
-            <div class="q-ml-md row justify-start q-gutter-lg">
-                <div class="text-h6 text-bold">
-                    Total Record Count: {{ occurrenceCount }}
-                </div>
-                <div>
-                    <q-btn round color="primary" size=".6rem" @click="downloadPersonalOccurrences(collectionId);" icon="fas fa-download"></q-btn>
-                </div>
-            </div>
-        </template>
         <div class="q-px-md q-py-sm row justify-between q-col-gutter-x-sm">
             <template v-if="collectionPermissions.includes('CollEditor') || collectionPermissions.includes('CollAdmin')">
                 <template v-if="collectionPermissions.includes('CollAdmin')">
@@ -43,11 +29,6 @@ const collectionControlPanelMenus = {
                                     <div>
                                         <a :href="(clientRoot + '/collections/misc/collmetadata.php?collid=' + collectionId)">
                                             Edit Collection Metadata
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <a :href="(clientRoot + '/collections/misc/commentlist.php?collid=' + collectionId)">
-                                            View Posted Comments
                                         </a>
                                     </div>
                                     <div>
@@ -128,6 +109,9 @@ const collectionControlPanelMenus = {
                             <div class="text-h6 text-bold">Data Editor Control Panel</div>
                             <div class="q-mt-xs q-pl-sm column">
                                 <div>
+                                    <collection-catalog-number-quick-search :collection-id="collectionId"></collection-catalog-number-quick-search>
+                                </div>
+                                <div class="q-mt-sm">
                                     <a :href="(clientRoot + '/collections/editor/occurrenceeditor.php?gotomode=1&collid=' + collectionId)">
                                         Create A New Occurrence Record
                                     </a>
@@ -171,6 +155,9 @@ const collectionControlPanelMenus = {
             </template>
         </div>
     `,
+    components: {
+        'collection-catalog-number-quick-search': collectionCatalogNumberQuickSearch
+    },
     setup(props) {
         const { hideWorking, processCsvDownload, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
@@ -192,22 +179,6 @@ const collectionControlPanelMenus = {
             });
         }
 
-        function downloadPersonalOccurrences(collid) {
-            const formData = new FormData();
-            formData.append('collid', collid);
-            formData.append('action', 'getPersonalOccurrencesCsvData');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.json().then((resObj) => {
-                    const filename = props.userName + '_' + Math.floor(new Date().getTime() / 1000).toString();
-                    processCsvDownload(resObj, filename);
-                });
-            });
-        }
-
         function updateCollectionStatistics() {
             showWorking();
             collectionStore.updateCollectionStatistics(props.collectionId, (res) => {
@@ -225,7 +196,6 @@ const collectionControlPanelMenus = {
             clientRoot,
             solrMode,
             cleanSOLRIndex,
-            downloadPersonalOccurrences,
             updateCollectionStatistics
         }
     }

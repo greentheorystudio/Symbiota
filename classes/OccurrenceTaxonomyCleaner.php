@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceTaxonomyCleaner extends Manager{
 
@@ -50,7 +50,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
         $retCnt = 0;
         if($this->collid){
             $sql = 'UPDATE omoccurrences SET tid = '.$tid.' '.
-                'WHERE collid = '.$this->collid.' AND sciname = "' . Sanitizer::cleanInStr($this->conn,$sciname) . '" ';
+                'WHERE collid = '.$this->collid.' AND sciname = "' . SanitizerService::cleanInStr($this->conn,$sciname) . '" ';
             //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt = $this->conn->affected_rows;
@@ -81,12 +81,12 @@ class OccurrenceTaxonomyCleaner extends Manager{
         $retCnt = 0;
         if($this->collid){
             $sql = 'UPDATE omoccurrences SET verbatimscientificname = sciname '.
-                'WHERE collid = '.$this->collid.' AND sciname = "' . Sanitizer::cleanInStr($this->conn,$sciname) . '" ';
+                'WHERE collid = '.$this->collid.' AND sciname = "' . SanitizerService::cleanInStr($this->conn,$sciname) . '" ';
             //echo $sql;
             if($this->conn->query($sql)){
-                $sql2 = 'UPDATE omoccurrences SET sciname = "'.Sanitizer::cleanInStr($this->conn,$cleanedSciname).'"'.
+                $sql2 = 'UPDATE omoccurrences SET sciname = "'.SanitizerService::cleanInStr($this->conn,$cleanedSciname).'"'.
                     ((int)$tid > 0 ? ', tid = ' . (int)$tid . ' ' : ' ').
-                    'WHERE collid = '.$this->collid.' AND sciname = "' . Sanitizer::cleanInStr($this->conn,$sciname) . '" ';
+                    'WHERE collid = '.$this->collid.' AND sciname = "' . SanitizerService::cleanInStr($this->conn,$sciname) . '" ';
                 //echo $sql2;
                 if($this->conn->query($sql2)){
                     $retCnt = $this->conn->affected_rows;
@@ -101,7 +101,7 @@ class OccurrenceTaxonomyCleaner extends Manager{
         $retCnt = 0;
         if($this->collid){
             $sql = 'UPDATE omoccurrences SET sciname = verbatimscientificname, verbatimscientificname = NULL, tid = NULL '.
-                'WHERE collid = '.$this->collid.' AND verbatimscientificname = "' . Sanitizer::cleanInStr($this->conn,$oldSciname) . '" AND sciname = "' . Sanitizer::cleanInStr($this->conn,$newSciname) . '" ';
+                'WHERE collid = '.$this->collid.' AND verbatimscientificname = "' . SanitizerService::cleanInStr($this->conn,$oldSciname) . '" AND sciname = "' . SanitizerService::cleanInStr($this->conn,$newSciname) . '" ';
             //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt = $this->conn->affected_rows;

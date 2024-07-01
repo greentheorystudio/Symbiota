@@ -41,7 +41,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             <account-checklist-project-list :checklist-arr="checklistArr" :project-arr="projectArr"></account-checklist-project-list>
                         </q-tab-panel>
                         <q-tab-panel name="occurrence">
-                            <view-profile-occurrence-module :account-info="accountInfo" :uid="uid"></view-profile-occurrence-module>
+                            <view-profile-occurrence-module :account-info="accountInfo"></view-profile-occurrence-module>
                         </q-tab-panel>
                         <q-tab-panel name="account">
                             <view-profile-account-module :account-info="accountInfo" :checklist-arr="checklistArr" :project-arr="projectArr" :uid="uid" @update:account-information="updateAccountObj"></view-profile-account-module>
@@ -55,6 +55,7 @@ header('X-Frame-Options: SAMEORIGIN');
         include_once(__DIR__ . '/../config/footer-includes.php');
         ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionCatalogNumberQuickSearch.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileAccountModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountChecklistProjectList.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -77,22 +78,16 @@ header('X-Frame-Options: SAMEORIGIN');
                     const uid = store.getSymbUid;
                     const validUser = store.getValidUser;
 
-                    function setAccountChecklistsProjects() {
+                    function setAccountChecklists() {
                         const formData = new FormData();
-                        formData.append('uid', uid);
-                        formData.append('action', 'getChecklistsProjectsByUid');
+                        formData.append('action', 'getChecklistListByUserRights');
                         fetch(checklistApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
                             response.json().then((resObj) => {
-                                if(resObj.hasOwnProperty('cl')){
-                                    checklistArr.value = resObj['cl'];
-                                }
-                                if(resObj.hasOwnProperty('proj')){
-                                    projectArr.value = resObj['proj'];
-                                }
+                                checklistArr.value = resObj;
                             });
                         });
                     }
@@ -100,7 +95,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     function setAccountInfo() {
                         const formData = new FormData();
                         formData.append('uid', uid);
-                        formData.append('action', 'getAccountInfoByUid');
+                        formData.append('action', 'getUserByUid');
                         fetch(profileApiUrl, {
                             method: 'POST',
                             body: formData
@@ -108,6 +103,20 @@ header('X-Frame-Options: SAMEORIGIN');
                         .then((response) => {
                             response.json().then((resObj) => {
                                 accountInfo.value = resObj;
+                            });
+                        });
+                    }
+
+                    function setAccountProjects() {
+                        const formData = new FormData();
+                        formData.append('action', 'getProjectListByUserRights');
+                        fetch(projectApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            response.json().then((resObj) => {
+                                projectArr.value = resObj;
                             });
                         });
                     }
@@ -122,7 +131,8 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                         if(Number(uid) > 0){
                             setAccountInfo();
-                            setAccountChecklistsProjects();
+                            setAccountChecklists();
+                            setAccountProjects();
                         }
                         else{
                             window.location.href = clientRoot + '/index.php';

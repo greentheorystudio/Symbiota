@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -900,7 +900,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             adjustUIStart('resolveFromTaxaDataSource');
                             const text = 'Setting rank data for processing search returns';
                             addProcessToProcessorDisplay(getNewProcessObject('resolveFromTaxaDataSource', 'multi', text));
-                            const url = taxonomyApiUrl + '?action=getRankNameArr'
+                            const url = taxonRankApiUrl + '?action=getRankNameArr'
                             abortController = new AbortController();
                             fetch(url, {
                                 signal: abortController.signal
@@ -965,7 +965,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         if(rebuildHierarchyLoop < 40){
                             const formData = new FormData();
                             formData.append('action', 'populateHierarchyTable');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxonHierarchyApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1001,7 +1001,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const formData = new FormData();
                         formData.append('tidarr', JSON.stringify(newTidArr));
                         formData.append('action', 'primeHierarchyTable');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonHierarchyApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -1044,7 +1044,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const formData = new FormData();
                             formData.append('taxon', JSON.stringify(newTaxonObj));
                             formData.append('action', 'addTaxon');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxaApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1094,7 +1094,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const formData = new FormData();
                             formData.append('taxon', JSON.stringify(newTaxonObj));
                             formData.append('action', 'addTaxon');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxaApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1394,7 +1394,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const formData = new FormData();
                             formData.append('sciname', currentSciname.value);
                             formData.append('action', 'parseSciName');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxonomyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1554,7 +1554,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             formData.append('sciname', currentSciname.value);
                             formData.append('lev', levValue.value);
                             formData.append('action', 'getSciNameFuzzyMatches');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxaApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1650,7 +1650,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 formData.append('rankid', rankid);
                                 formData.append('kingdomid', selectedKingdomId.value);
                                 formData.append('action', 'getTid');
-                                fetch(taxonomyApiUrl, {
+                                fetch(taxaApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })

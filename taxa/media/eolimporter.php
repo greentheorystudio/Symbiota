@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -226,7 +226,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('statement', JSON.stringify(statement));
                         formData.append('action', 'addTaxonDescriptionStatement');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonDescriptionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -244,7 +244,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('description', JSON.stringify(descTab));
                         formData.append('action', 'addTaxonDescriptionTab');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonDescriptionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -374,7 +374,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         formData.append('source', 'eol');
                         formData.append('index', identifierImportIndex.value);
                         formData.append('action', 'getIdentifiersForTaxonomicGroup');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -420,7 +420,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         else if(selectedMediaType.value === 'description'){
                             formData.append('action', 'getDescriptionCountsForTaxonomicGroup');
                         }
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             signal: abortController.signal,
                             body: formData
@@ -742,7 +742,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     formData.append('idname', 'eol');
                                                     formData.append('id', taxonResObj['id']);
                                                     formData.append('action', 'addTaxonIdentifier');
-                                                    fetch(taxonomyApiUrl, {
+                                                    fetch(taxaApiUrl, {
                                                         method: 'POST',
                                                         body: formData
                                                     })
@@ -782,7 +782,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('permission', 'TaxonProfile');
                         formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
+                        fetch(permissionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -862,39 +862,50 @@ if(!$GLOBALS['SYMB_UID']) {
 
                     function setTaxonMediaArr() {
                         if(Number(currentTaxon.value['cnt']) > 0){
+                            let dataSource = null;
                             const text = 'Getting existing ' + selectedMediaType.value + 's';
                             addSubprocessToProcessorDisplay(currentTaxon.value['sciname'],'text',text);
                             const formData = new FormData();
-                            formData.append('tid', currentTaxon.value['tid']);
-                            if(selectedMediaType.value === 'image'){
-                                formData.append('action', 'getTaxonImages');
-                            }
-                            else if(selectedMediaType.value === 'video'){
-                                formData.append('action', 'getTaxonVideos');
-                            }
-                            else if(selectedMediaType.value === 'audio'){
-                                formData.append('action', 'getTaxonAudios');
-                            }
-                            else if(selectedMediaType.value === 'description'){
+                            if(selectedMediaType.value === 'description'){
+                                formData.append('tid', currentTaxon.value['tid']);
                                 formData.append('action', 'getTaxonDescriptions');
+                                dataSource = taxonDescriptionApiUrl;
                             }
-                            fetch(taxonomyApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                if(response.status === 200){
-                                    response.json().then((resObj) => {
-                                        taxonMediaArr.value = resObj;
-                                        processSubprocessSuccessResponse(false);
-                                        setEOLMediaArr();
-                                    });
+                            else{
+                                formData.append('property', 'tid');
+                                formData.append('value', currentTaxon.value['tid']);
+                                if(selectedMediaType.value === 'image'){
+                                    formData.append('action', 'getImageArrByProperty');
+                                    dataSource = imageApiUrl;
                                 }
-                                else{
-                                    processSubprocessErrorResponse(currentTaxon.value['sciname'],'Error getting records');
-                                    setCurrentTaxon();
+                                else if(selectedMediaType.value === 'audio' || selectedMediaType.value === 'video'){
+                                    formData.append('limitFormat', selectedMediaType.value);
+                                    formData.append('action', 'getMediaArrByProperty');
+                                    dataSource = mediaApiUrl;
                                 }
-                            });
+                            }
+                            if(dataSource){
+                                fetch(dataSource, {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then((response) => {
+                                    if(response.status === 200){
+                                        response.json().then((resObj) => {
+                                            taxonMediaArr.value = resObj;
+                                            processSubprocessSuccessResponse(false);
+                                            setEOLMediaArr();
+                                        });
+                                    }
+                                    else{
+                                        processSubprocessErrorResponse(currentTaxon.value['sciname'],'Error getting records');
+                                        setCurrentTaxon();
+                                    }
+                                });
+                            }
+                            else{
+                                setEOLMediaArr();
+                            }
                         }
                         else{
                             setEOLMediaArr();

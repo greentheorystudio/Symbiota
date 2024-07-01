@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceTaxonomyCleaner.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $kingdomid = array_key_exists('kingdomid',$_REQUEST)?(int)$_REQUEST['kingdomid']:0;
@@ -13,7 +14,7 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
     $isEditor = true;
 }
 
-if($isEditor && $collid && $action){
+if($isEditor && $collid && $action && SanitizerService::validateInternalRequest()){
     $cleanManager = new OccurrenceTaxonomyCleaner();
     $cleanManager->setCollId($collid);
     if($action === 'getUnlinkedScinameCounts'){

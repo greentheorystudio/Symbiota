@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/SpecUploadBase.php');
-include_once(__DIR__ . '/Utilities.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 
 class SpecUploadDwca extends SpecUploadBase{
 
@@ -531,7 +531,7 @@ class SpecUploadDwca extends SpecUploadBase{
             closedir($handle);
         }
         if(stripos($dirPath,$this->uploadTargetPath) === 0){
-            (new Utilities)->deleteDirectory($dirPath);
+            FileSystemService::deleteDirectory($dirPath);
         }
     }
 

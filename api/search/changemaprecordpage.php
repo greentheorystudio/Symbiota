@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 
 $cntPerPage = array_key_exists('cntperpage',$_REQUEST)?(int)$_REQUEST['cntperpage']:100;
@@ -21,7 +21,7 @@ $paginationStr = '';
 $stArr = array();
 $validStArr = false;
 
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 $spatialManager = new SpatialModuleManager();
 $occManager = new OccurrenceManager();
 

@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = (int)$_REQUEST['collid'];
@@ -15,7 +15,7 @@ $tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']
 $formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $occManager = new OccurrenceEditorDeterminations();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 $occManager->setCollId($collid);
 $occManager->getCollMap();
@@ -397,14 +397,6 @@ include(__DIR__ . '/../../header.php');
                                 <div style='margin:3px;'>
                                     <b>Author:</b>
                                     <input type="text" name="scientificnameauthorship" style="width:200px;" />
-                                </div>
-                                <div style='margin:3px;'>
-                                    <b>Confidence of Determination:</b>
-                                    <select name="confidenceranking">
-                                        <option value="8">High</option>
-                                        <option value="5" selected>Medium</option>
-                                        <option value="2">Low</option>
-                                    </select>
                                 </div>
                                 <div style='margin:3px;'>
                                     <b>Determiner:</b>

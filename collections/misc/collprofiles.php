@@ -168,41 +168,52 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 row justify-end q-gutter-sm">
-                        <div class="col-auto">
-                            <q-card flat bordered>
-                                <q-card-section>
-                                    <div class="text-h6 text-bold">Extra Statistics</div>
-                                    <div class="q-pl-sm column">
-                                        <div class="cursor-pointer">
-                                            <a @click="">Show Geographic Distribution</a>
+                    <div class="col-12 col-sm-6 column q-gutter-sm">
+                        <div class="row justify-end q-gutter-sm">
+                            <div class="col-auto">
+                                <q-card flat bordered>
+                                    <q-card-section>
+                                        <div class="text-h6 text-bold">Record Distribution</div>
+                                        <div class="q-pl-sm column">
+                                            <div v-if="distributionDisplay !== 'geographic'" class="cursor-pointer">
+                                                <a @click="distributionDisplay = 'geographic'">Show Geographic Distribution</a>
+                                            </div>
+                                            <div v-if="distributionDisplay === 'geographic'" class="cursor-pointer">
+                                                <a @click="distributionDisplay = null">Hide Geographic Distribution</a>
+                                            </div>
+                                            <div v-if="distributionDisplay !== 'taxonomic'" class="cursor-pointer">
+                                                <a @click="distributionDisplay = 'taxonomic'">Show Family Distribution</a>
+                                            </div>
+                                            <div v-if="distributionDisplay === 'taxonomic'" class="cursor-pointer">
+                                                <a @click="distributionDisplay = null">Hide Family Distribution</a>
+                                            </div>
                                         </div>
-                                        <div class="cursor-pointer">
-                                            <a @click="">Show Family Distribution</a>
-                                        </div>
-                                    </div>
-                                </q-card-section>
-                            </q-card>
-                        </div>
-                        <div class="col-auto">
-                            <q-card flat bordered>
-                                <q-card-section>
-                                    <div class="text-h6 text-bold">Data Downloads</div>
-                                    <div class="q-pl-sm column">
-                                        <div class="cursor-pointer">
-                                            <a @click="processDownloadSpeciesList()">Download Taxa List</a>
-                                        </div>
-                                        <template v-if="configuredDataDownloads.length > 0">
-                                            <template v-for="download in configuredDataDownloads">
-                                                <div class="cursor-pointer">
-                                                    <a @click="processConfiguredDataDownload(download['api-endpoint'], download['endpoint-action'], download['filename'])">{{ download.label }}</a>
-                                                </div>
+                                    </q-card-section>
+                                </q-card>
+                            </div>
+                            <div class="col-auto">
+                                <q-card flat bordered>
+                                    <q-card-section>
+                                        <div class="text-h6 text-bold">Data Downloads</div>
+                                        <div class="q-pl-sm column">
+                                            <div class="cursor-pointer">
+                                                <a @click="processDownloadSpeciesList()">Download Taxa List</a>
+                                            </div>
+                                            <template v-if="configuredDataDownloads.length > 0">
+                                                <template v-for="download in configuredDataDownloads">
+                                                    <div class="cursor-pointer">
+                                                        <a @click="processConfiguredDataDownload(download['api-endpoint'], download['endpoint-action'], download['filename'])">{{ download.label }}</a>
+                                                    </div>
+                                                </template>
                                             </template>
-                                        </template>
-                                    </div>
-                                </q-card-section>
-                            </q-card>
+                                        </div>
+                                    </q-card-section>
+                                </q-card>
+                            </div>
                         </div>
+                        <template v-if="distributionDisplay">
+                            <collection-record-distribution-display :collection-id="collId" :display-type="distributionDisplay"></collection-record-distribution-display>
+                        </template>
                     </div>
                 </div>
             </template>
@@ -248,13 +259,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
 	?>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionCatalogNumberQuickSearch.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionControlPanelMenus.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionMetadataBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionRecordDistributionDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript">
         const collectionProfileModule = Vue.createApp({
             components: {
                 'collection-cotrol-panel-menus': collectionControlPanelMenus,
-                'collection-metadata-block': collectionMetadataBlock
+                'collection-metadata-block': collectionMetadataBlock,
+                'collection-record-distribution-display': collectionRecordDistributionDisplay
             },
             setup() {
                 const { hideWorking, processCsvDownload, showWorking } = useCore();
@@ -269,6 +283,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 const configuredDataDownloads = Vue.computed(() => collectionStore.getConfiguredDataDownloads);
                 const datasetKey = Vue.computed(() => collectionStore.getDatasetKey);
                 const defaultTitle = baseStore.getDefaultTitle;
+                const distributionDisplay = Vue.ref(null);
                 const endpointKey = Vue.computed(() => collectionStore.getEndpointKey);
                 const georeferencedPercent = Vue.computed(() => collectionStore.getGeoreferencedPercent);
                 const idigbioKey = Vue.computed(() => collectionStore.getIdigbioKey);
@@ -341,6 +356,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     configuredDataDownloads,
                     datasetKey,
                     defaultTitle,
+                    distributionDisplay,
                     endpointKey,
                     georeferencedPercent,
                     idigbioKey,

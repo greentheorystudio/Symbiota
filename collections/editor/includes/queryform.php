@@ -4,7 +4,7 @@
 /** @var int $crowdSourceMode */
 /** @var int $isGenObs */
 /** @var string $collId */
-include_once(__DIR__ . '/../../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../../services/SanitizerService.php');
 if(!$displayQuery && array_key_exists('displayquery',$_REQUEST) && $_REQUEST['displayquery']) {
     $displayQuery = true;
 }
@@ -104,7 +104,7 @@ if($qryArr){
 $processingStatusArr = $GLOBALS['PROCESSING_STATUS_OPTIONS'];
 ?>
 <div id="querydiv" style="clear:both;width:830px;display:<?php echo ($displayQuery?'block':'none'); ?>;">
-	<form name="queryform" id="queryform" action="<?php echo Sanitizer::getCleanedRequestPath(); ?>" method="post" onsubmit="return verifyQueryForm()">
+	<form name="queryform" id="queryform" action="<?php echo SanitizerService::getCleanedRequestPath(); ?>" method="post" onsubmit="return verifyQueryForm()">
 		<fieldset style="padding:5px;">
 			<legend><b>Record Search Form</b></legend>
 			<?php 

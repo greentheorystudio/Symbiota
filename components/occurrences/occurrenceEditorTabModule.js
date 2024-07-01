@@ -16,7 +16,6 @@ const occurrenceEditorTabModule = {
                         <q-tab name="configured" class="bg-grey-3" :label="configuredDataLabel" no-caps />
                     </template>
                     <q-tab name="determinations" class="bg-grey-3" label="Determination History" no-caps />
-                    <q-tab name="images" class="bg-grey-3" label="Images" no-caps />
                     <q-tab name="media" class="bg-grey-3" label="Media" no-caps />
                     <q-tab name="resources" class="bg-grey-3" label="Linked Resources" no-caps />
                     <q-tab name="admin" class="bg-grey-3" label="Admin" no-caps />
@@ -33,9 +32,6 @@ const occurrenceEditorTabModule = {
                     </template>
                     <q-tab-panel name="determinations">
                         <occurrence-editor-determinations-tab></occurrence-editor-determinations-tab>
-                    </q-tab-panel>
-                    <q-tab-panel name="images">
-                        <occurrence-editor-images-tab></occurrence-editor-images-tab>
                     </q-tab-panel>
                     <q-tab-panel name="media">
                         <occurrence-editor-media-tab></occurrence-editor-media-tab>
@@ -54,7 +50,6 @@ const occurrenceEditorTabModule = {
         'configured-data-field-module': configuredDataFieldModule,
         'occurrence-editor-admin-tab': occurrenceEditorAdminTab,
         'occurrence-editor-determinations-tab': occurrenceEditorDeterminationsTab,
-        'occurrence-editor-images-tab': occurrenceEditorImagesTab,
         'occurrence-editor-media-tab': occurrenceEditorMediaTab,
         'occurrence-editor-occurrence-data-module': occurrenceEditorOccurrenceDataModule,
         'occurrence-editor-resources-tab': occurrenceEditorResourcesTab
