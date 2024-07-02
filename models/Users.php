@@ -208,10 +208,10 @@ class Users{
             }
             $fieldNameArr[] = 'password';
             if($this->encryption === 'password'){
-                $fieldValueArr[] = 'PASSWORD("' . $password . '"))';
+                $fieldValueArr[] = 'PASSWORD("' . $password . '")';
             }
             else{
-                $fieldValueArr[] = 'SHA2("' . $password . '", 224))';
+                $fieldValueArr[] = 'SHA2("' . $password . '", 224)';
             }
             $sql = 'INSERT INTO users(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
@@ -405,7 +405,7 @@ class Users{
                     if($emailAddr){
                         $subject = 'Your password';
                         $bodyStr = 'Your ' . $GLOBALS['DEFAULT_TITLE'] . ' password has been reset to: ' . $newPassword . ' ';
-                        $bodyStr .= '<br/><br/>After logging in, you can reset your password by clicking on <a href="' . (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) ? 'https':'http') . '://' . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . '/profile/viewprofile.php">View Profile</a> link and then click the View Profile tab.';
+                        $bodyStr .= '<br/><br/>After logging in, you can reset your password by clicking on <a href="' . ($_SERVER['SERVER_PORT'] === 443 ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . '/profile/viewprofile.php">View Profile</a> link and then click the View Profile tab.';
                         if($GLOBALS['ADMIN_EMAIL']){
                             $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                         }
@@ -437,7 +437,7 @@ class Users{
             }
             $result->free();
             if($email && $code){
-                $confirmationLink = ((!empty($_SERVER['HTTPS'] && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
+                $confirmationLink = ($_SERVER['SERVER_PORT'] === 443 ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
                 $confirmationLink .= '/profile/index.php?uid=' . (int)$uid . '&confirmationcode=' . $code;
                 $subject = $GLOBALS['DEFAULT_TITLE'] . ' Confirmation';
                 $bodyStr = 'Your ' . $GLOBALS['DEFAULT_TITLE'] . ' account has been created. ';
