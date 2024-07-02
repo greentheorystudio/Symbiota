@@ -189,6 +189,41 @@ const mediaFileUploadInputElement = {
             uploaderRef.value.upload();
         }
 
+        function processCsvFileData() {
+            if(csvFileData.value.length > 0){
+                const taxaArr = [];
+                csvFileData.value.forEach((dataObj) => {
+                    if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.includes(dataObj['scientificname'])){
+                        taxaArr.push(dataObj['scientificname']);
+                    }
+                    if(dataObj.hasOwnProperty('filename') && dataObj['filename']){
+                        const file = fileArr.find((obj) => obj.name.toLowerCase() === dataObj['filename'].toLowerCase());
+                        if(file){
+                            const keys = Object.keys(dataObj);
+                            keys.forEach((key) => {
+                                if(key !== 'filename' && dataObj[key] !== ''){
+                                    if(key === 'scientificname'){
+                                        file['scientificname'] = dataObj[key];
+                                    }
+                                    else{
+                                        const existingData = file['metadata'].find((obj) => obj.name === key);
+                                        if(existingData){
+                                            existingData['value'] = dataObj[key];
+                                        }
+                                        else{
+                                            file['metadata'].push({name: key, value: dataObj[key], system: systemProperties.value.includes(key)});
+                                        }
+                                    }
+                                }
+                            });
+                            setAdditionalData(file);
+                        }
+                    }
+                });
+                setTaxaData(taxaArr);
+            }
+        }
+
         function processImageFileData(file, csvData) {
             file['metadata'].push({name: 'type', value: 'StillImage', system: true});
             file['metadata'].push({name: 'action', value: 'uploadTaxonImage', system: true});
@@ -270,13 +305,24 @@ const mediaFileUploadInputElement = {
             uploaderRef.value.updateFileStatus(file, new Date().toTimeString());
         }
 
-        function setUploaderStyle() {
-            uploaderStyle.value = '';
-            setTimeout(() => {
-                if(fileListRef.value.clientHeight > 0){
-                    uploaderStyle.value = 'height: ' + (fileListRef.value.clientHeight + 50) + 'px;';
+        function setCsvFileData() {
+            fileArr.forEach((file) => {
+                let csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
+                if(!file.hasOwnProperty('tid') || !file.tid || file.tid === ''){
+                    const sciname = file.scientificname;
+                    if(sciname){
+                        const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
+                        if(taxonData){
+                            file.tid = taxonData['tid'];
+                            file.errorMessage = '';
+                        }
+                        else{
+                            file.errorMessage = 'Scientific name not found in taxonomic thesaurus';
+                        }
+                        uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
+                    }
                 }
-            }, 400 );
+            });
         }
 
         function setTaxaData(nameArr, fileName = null) {
@@ -299,6 +345,15 @@ const mediaFileUploadInputElement = {
                     updateMediaDataTids();
                 });
             });
+        }
+
+        function setUploaderStyle() {
+            uploaderStyle.value = '';
+            setTimeout(() => {
+                if(fileListRef.value.clientHeight > 0){
+                    uploaderStyle.value = 'height: ' + (fileListRef.value.clientHeight + 50) + 'px;';
+                }
+            }, 400 );
         }
 
         function updateMediaDataTids() {
@@ -333,7 +388,7 @@ const mediaFileUploadInputElement = {
             else{
                 file['errorMessage'] = 'Scientific name required';
             }
-            uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
+            uploaderRef.value.updateFileStatus(file, new Date().toTimeString());
         }
 
         function updateQueueSize() {
@@ -341,7 +396,7 @@ const mediaFileUploadInputElement = {
             fileArr.forEach((file) => {
                 size += file.size;
             });
-            const sizeMb = (Math.round((size / 1000000) * 10 ) / 10);
+            const sizeMb = (Math.round((size / 1000000) * 10 ) / 100);
             queueSize.value = size;
             queueSizeLabel.value = sizeMb.toString() + 'MB';
             setUploaderStyle();
@@ -439,11 +494,17 @@ const mediaFileUploadInputElement = {
                                 file['errorMessage'] = 'Scientific name required';
                             }
                             file['metadata'] = [];
-                            file['correctedSizeLabel'] =   (Math.round((file.size / 1000000) * 10 ) / 100).toString() + 'MB';
-                            if(videoTypes.includes(file.type) || audioTypes.includes(file.type) || file.name.endsWith(".zc")){
+
+
+                            file['correctedSizeLabel'] =   fileSizeMb.toString() + 'MB';
+                            if(videoTypes.includes(file.type) || audioTypes.includes(file.type) || file.name.endsWith('.zc')){
+                                file['uploadType'] = 'media';
+                                file['uploadMetadata'] = Object.assign({}, mediaStore.getBlankMediaRecord);
                                 processMediaFileData(file, csvData);
                             }
                             else{
+                                file['uploadType'] = 'image';
+                                file['uploadMetadata'] = Object.assign({}, imageStore.getBlankImageRecord);
                                 processImageFileData(file, csvData);
                             }
                             setAdditionalData(file);

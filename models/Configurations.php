@@ -567,10 +567,7 @@ class Configurations{
 
     public function validateClientPath($path): bool
     {
-        $testURL = 'http://';
-        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-            $testURL = 'https://';
-        }
+        $testURL = $_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://';
         $testURL .= $_SERVER['HTTP_HOST'];
         $testURL .= $path . '/sitemap.php';
         $headers = @get_headers($testURL);
