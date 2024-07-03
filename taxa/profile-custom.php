@@ -219,7 +219,7 @@
                                 formData.append('sciname', taxonValue.value);
                                 formData.append('lev', '2');
                                 formData.append('action', 'getSciNameFuzzyMatches');
-                                fetch(taxonomyApiUrl, {
+                                fetch(taxaApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -243,7 +243,7 @@
                 const formData = new FormData();
                 formData.append('tid', taxon.value['tid']);
                 formData.append('action', 'getTaxonDescriptions');
-                fetch(taxonomyApiUrl, {
+                fetch(taxaApiUrl, {
                     method: 'POST',
                     body: formData
                 })
