@@ -19,8 +19,7 @@ class GlossaryUpload{
  		$this->setUploadTargetPath();
  		set_time_limit(3000);
 		ini_set('max_input_time',120);
-  		ini_set('auto_detect_line_endings', true);
-	}
+  	}
 
 	public function __destruct(){
 		if($this->conn) {

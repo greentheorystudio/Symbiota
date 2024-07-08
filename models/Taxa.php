@@ -78,7 +78,7 @@ class Taxa{
             }
         }
         $fieldNameArr[] = 'modifieduid';
-        $fieldValueArr[] = '"' . $GLOBALS['USERNAME'] . '"';
+        $fieldValueArr[] = $GLOBALS['SYMB_UID'];
         $fieldNameArr[] = 'modifiedtimestamp';
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $fieldNameArr[] = 'initialtimestamp';
