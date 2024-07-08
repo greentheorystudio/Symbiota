@@ -35,7 +35,6 @@ class ImageLocalProcessor {
 
     public function __construct(){
         ini_set('memory_limit','1024M');
-        ini_set('auto_detect_line_endings', true);
         $connection = new DbService();
         $this->conn = $connection->getConnection();
         if($GLOBALS['LOG_PATH']) {
