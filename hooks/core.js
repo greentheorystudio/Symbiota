@@ -312,21 +312,6 @@ function useCore() {
         return returnData;
     }
 
-    function parseScinameFromFilename(fileName) {
-        let adjustedFileName = fileName.replace(/_/g, ' ');
-        adjustedFileName = adjustedFileName.replace(/\s+/g, ' ').trim();
-        const lastDotIndex = adjustedFileName.lastIndexOf('.');
-        adjustedFileName = adjustedFileName.substring(0, lastDotIndex);
-        const lastSpaceIndex = adjustedFileName.lastIndexOf(' ');
-        if(lastSpaceIndex){
-            const lastPartAfterSpace = adjustedFileName.substring(lastSpaceIndex);
-            if(Number(lastPartAfterSpace) > 0){
-                adjustedFileName = adjustedFileName.substring(0, lastSpaceIndex);
-            }
-        }
-        return adjustedFileName;
-    }
-
     function processCsvDownload(csvDataArr, filename) {
         if(typeof csvDataArr === 'object' && csvDataArr.length > 0 && typeof filename === 'string' && filename.length > 0){
             let csvContent = '';
@@ -440,7 +425,6 @@ function useCore() {
         openTutorialWindow,
         parseCsvFile,
         parseDate,
-        parseScinameFromFilename,
         processCsvDownload,
         showNotification,
         showWorking,
