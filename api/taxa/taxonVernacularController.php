@@ -14,7 +14,7 @@ if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array
 if($action && SanitizerService::validateInternalRequest()){
     $taxonVernaculars = new TaxonVernaculars();
     if($action === 'getAutocompleteVernacularList' && $_POST['term']){
-        echo json_encode($taxonVernaculars->getAutocompleteVernacularList($_POST['term']));
+        echo json_encode($taxonVernaculars->getAutocompleteVernacularList($_POST));
     }
     elseif($isEditor && $action === 'addTaxonCommonName' && $tId && array_key_exists('name',$_POST) && array_key_exists('langid',$_POST)){
         echo $taxonVernaculars->addTaxonCommonName($tId,htmlspecialchars($_POST['name']),(int)$_POST['langid']);
