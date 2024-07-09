@@ -9,7 +9,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
         <a class="text-white cursor-pointer login-link" @click="logout();">Logout</a>
     </template>
     <template v-else>
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true); ?>" class="text-white login-link">Log In</a>
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true); ?>" class="text-white login-link">Login</a>
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php" class="text-white login-link">New Account</a>
     </template>
     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" class="text-white login-link">Sitemap</a>
