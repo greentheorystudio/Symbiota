@@ -16,8 +16,11 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getAutocompleteVernacularList' && $_POST['term']){
         echo json_encode($taxonVernaculars->getAutocompleteVernacularList($_POST));
     }
+    elseif($action === 'getHighestRankingTidByVernacular' && array_key_exists('vernacular',$_POST)){
+        echo $taxonVernaculars->getHighestRankingTidByVernacular($_POST['vernacular']);
+    }
     elseif($isEditor && $action === 'addTaxonCommonName' && $tId && array_key_exists('name',$_POST) && array_key_exists('langid',$_POST)){
-        echo $taxonVernaculars->addTaxonCommonName($tId,htmlspecialchars($_POST['name']),(int)$_POST['langid']);
+        echo $taxonVernaculars->addTaxonCommonName($tId, $_POST['name'], (int)$_POST['langid']);
     }
     elseif($action === 'getCommonNamesByTaxonomicGroup' && array_key_exists('index',$_POST) && array_key_exists('parenttid',$_POST)){
         echo json_encode($taxonVernaculars->getCommonNamesByTaxonomicGroup((int)$_POST['parenttid'],(int)$_POST['index']));
