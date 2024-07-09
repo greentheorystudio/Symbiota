@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TaxonVernaculars{
 
-	private $conn;
+    private $conn;
 
     private $fields = array(
         "vid" => array("dataType" => "number", "length" => 11),
@@ -22,20 +22,20 @@ class TaxonVernaculars{
 
     public function __construct(){
         $connection = new DbService();
-	    $this->conn = $connection->getConnection();
-	}
+        $this->conn = $connection->getConnection();
+    }
 
- 	public function __destruct(){
-		if($this->conn) {
+    public function __destruct(){
+        if($this->conn) {
             $this->conn->close();
         }
-	}
+    }
 
     public function addTaxonCommonName($tid, $name, $langId): bool
     {
         if($tid && $name && $langId){
             $sql = 'INSERT IGNORE INTO taxavernaculars(TID,VernacularName,langid) VALUES('.
-                $tid.',"'.SanitizerService::cleanInStr($this->conn,$name).'",'.(int)$langId.')';
+                (int)$tid . ',"' . SanitizerService::cleanInStr($this->conn, $name) . '",' . (int)$langId . ')';
             return $this->conn->query($sql);
         }
         return false;
@@ -66,12 +66,12 @@ class TaxonVernaculars{
         return $retArr;
     }
 
-    public function getCommonNamesByTaxonomicGroup($parentTid,$index): array
+    public function getCommonNamesByTaxonomicGroup($parentTid, $index): array
     {
         $retArr = array();
         if($parentTid){
             $sql = 'SELECT DISTINCT VID, VernacularName FROM taxavernaculars '.
-                'WHERE TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
+                'WHERE TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
                 'ORDER BY VernacularName '.
                 'LIMIT ' . (($index - 1) * 50000) . ', 50000';
             //echo $sql;
@@ -91,7 +91,7 @@ class TaxonVernaculars{
     public function getCommonNamesFromTid($tid): array
     {
         $retArr = array();
-        $sql = 'SELECT VernacularName, langid FROM taxavernaculars WHERE TID = '.$tid.' ';
+        $sql = 'SELECT VernacularName, langid FROM taxavernaculars WHERE TID = ' . (int)$tid . ' ';
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
                 $nodeArr = array();
@@ -104,11 +104,25 @@ class TaxonVernaculars{
         return $retArr;
     }
 
+    public function getHighestRankingTidByVernacular($vernacular): int
+    {
+        $returnVal = 0;
+        $sql = 'SELECT v.tid FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.TID = t.TID '.
+            'WHERE v.VernacularName = "' . SanitizerService::cleanInStr($this->conn, $vernacular) . '" ORDER BY t.RankId LIMIT 1 ';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $returnVal = $r->tid;
+            }
+            $rs->free();
+        }
+        return $returnVal;
+    }
+
     public function removeCommonNamesInTaxonomicGroup($parentTid): int
     {
         $retVal = 1;
         if($parentTid){
-            $sql = 'DELETE FROM taxavernaculars WHERE TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') ';
+            $sql = 'DELETE FROM taxavernaculars WHERE TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') ';
             //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
