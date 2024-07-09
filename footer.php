@@ -295,14 +295,32 @@ include_once(__DIR__ . '/services/SanitizerService.php');
 
             function processSearch() {
                 if(Number(props.taxonType) === 6){
-
+                    const formData = new FormData();
+                    formData.append('vernacular', selectedTaxon.value['label']);
+                    formData.append('action', 'getHighestRankingTidByVernacular');
+                    fetch(taxonVernacularApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        if(response.status === 200){
+                            response.text().then((res) => {
+                                if(Number(res) > 0){
+                                    window.location.href = (clientRoot + '/taxa/index.php?taxon=' + res);
+                                }
+                                else{
+                                    showNotification('negative', 'That common name was not found in the database');
+                                }
+                            });
+                        }
+                    });
                 }
                 else{
                     if(selectedTaxon.value.hasOwnProperty('tid') && Number(selectedTaxon.value['tid']) > 0){
-                        window.location.href = (clientRoot + '/profile/viewprofile.php');
+                        window.location.href = (clientRoot + '/taxa/index.php?taxon=' + selectedTaxon.value['tid']);
                     }
                     else{
-                        showNotification('negative', 'That name was not found');
+                        showNotification('negative', 'That scientific name was not found in the database');
                     }
                 }
             }
