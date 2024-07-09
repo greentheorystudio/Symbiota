@@ -4,7 +4,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
 <div id="footer" class="footer-container">
     <div class="q-pa-md full-width row justify-between">
         <div class="col-grow column">
-            <div class="full-width q-py-sm q-pl-sm q-pr-lg">
+            <div class="full-width q-pt-xs q-pb-sm q-pl-sm q-pr-lg">
                 <q-card flat bordered class="black-border bg-grey-3">
                     <q-card-section class="q-pa-sm column">
                         <div class="q-mb-xs row justify-between">
@@ -13,25 +13,42 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                             </div>
                             <div class="row justify-end">
                                 <div>
-                                    <a class="text-h6 text-bold" :href="(clientRoot + '/taxa/dynamictaxalist.php')">
+                                    <a class="text-body1 text-bold" :href="(clientRoot + '/taxa/dynamictaxalist.php')">
                                         Advanced Search
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <div class="row justify-between">
-                            <div class="col-10">
-                                <taxa-search-auto-complete :sciname="" :label="autoCompleteLabel" :taxon-type="taxonType" @update:sciname="processAutocompleteChange"></taxa-search-auto-complete>
-                            </div>
-                            <div class="col-2">
-
+                        <div class="row">
+                            <div class="col-grow">
+                                <taxa-search-auto-complete :label="autoCompleteLabel" :taxon-type="taxonType"></taxa-search-auto-complete>
                             </div>
                         </div>
                     </q-card-section>
                 </q-card>
             </div>
+            <div class="row justify-center q-col-gutter-sm">
+                <div class="col-6">
+                    <q-card flat bordered class="full-width black-border bg-white">
+                        <q-card-section class="q-pa-xs">
+                            <a href="https://naturalhistory.si.edu/research/smithsonian-marine-station" target="_blank">
+                                <q-img height="100px" fit="contain" :src="(clientRoot + '/content/imglib/layout/Smithsonian-Logo.png')"></q-img>
+                            </a>
+                        </q-card-section>
+                    </q-card>
+                </div>
+                <div class="col-6">
+                    <q-card flat bordered class="full-width black-border bg-white">
+                        <q-card-section class="q-pa-xs">
+                            <a href="https://onelagoon.org/" target="_blank">
+                                <q-img height="100px" fit="contain" :src="(clientRoot + '/content/imglib/layout/one_lagoon_logo.png')"></q-img>
+                            </a>
+                        </q-card-section>
+                    </q-card>
+                </div>
+            </div>
         </div>
-        <div class="col-5 row justify-end q-col-gutter-sm">
+        <div class="col-6 row justify-end q-col-gutter-sm">
             <div class="col-3 column">
                 <div>
                     <a class="text-white text-h6 text-bold" :href="(clientRoot + '/misc/Maps.php')">
@@ -80,13 +97,6 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         Sitemap
                     </a>
                 </div>
-            </div>
-            <div class="col-3">
-                <div>
-                    <q-btn class="horizontalDropDownDonateButton" text-color="white" label="Donate" @click="donateConfirm = true" glossy></q-btn>
-                </div>
-            </div>
-            <div class="col-3 column">
                 <div v-if="userDisplayName" class="cursor-pointer">
                     <a class="text-white text-h6 text-bold" @click="logout();">
                         Logout
@@ -96,6 +106,11 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     <a class="text-white text-h6 text-bold" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true); ?>">
                         Login
                     </a>
+                </div>
+            </div>
+            <div class="col-2">
+                <div>
+                    <q-btn class="horizontalDropDownDonateButton" text-color="white" label="Donate" @click="donateConfirm = true" glossy></q-btn>
                 </div>
             </div>
         </div>
@@ -117,18 +132,6 @@ include_once(__DIR__ . '/services/SanitizerService.php');
 <script>
     const taxaSearchAutoComplete = {
         props: {
-            acceptedTaxaOnly: {
-                type: Boolean,
-                default: false
-            },
-            definition: {
-                type: Object,
-                default: null
-            },
-            disabled: {
-                type: Boolean,
-                default: false
-            },
             hideAuthor: {
                 type: Boolean,
                 default: true
@@ -161,73 +164,37 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 type: Number,
                 default: null
             },
-            sciname: {
-                type: String,
-                default: null
-            },
             taxonType: {
                 type: Number,
                 default: null
             }
         },
         template: `
-            <q-select v-model="sciname" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label" :disable="disabled">
-                <template v-if="!disabled && (sciname || definition)" v-slot:append>
-                    <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            See field definition
-                        </q-tooltip>
-                    </q-icon>
-                    <q-icon v-if="sciname" name="cancel" class="cursor-pointer" @click="clearAction();">
+            <q-select v-model="selectedTaxon.label" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label">
+                <template v-slot:append>
+                    <q-icon name="search" class="cursor-pointer" @click="processSearch();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
                         </q-tooltip>
                     </q-icon>
                 </template>
             </q-select>
-            <template v-if="definition">
-                <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
-                    <q-card class="sm-popup">
-                        <div class="row justify-end items-start map-sm-popup">
-                            <div>
-                                <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false"></q-btn>
-                            </div>
-                        </div>
-                        <div class="q-pa-sm column q-gutter-sm">
-                            <div class="text-h6">{{ label }}</div>
-                            <template v-if="definition.definition">
-                                <div>
-                                    <span class="text-bold">Definition: </span>{{ definition.definition }}
-                                </div>
-                            </template>
-                            <template v-if="definition.comments">
-                                <div>
-                                    <span class="text-bold">Comments: </span>{{ definition.comments }}
-                                </div>
-                            </template>
-                            <template v-if="definition.examples">
-                                <div>
-                                    <span class="text-bold">Examples: </span>{{ definition.examples }}
-                                </div>
-                            </template>
-                            <template v-if="definition.source">
-                                <div>
-                                    <a :href="definition.source" target="_blank"><span class="text-bold">Go to source</span></a>
-                                </div>
-                            </template>
-                        </div>
-                    </q-card>
-                </q-dialog>
-            </template>
         `,
-        setup(props, context) {
+        setup(props) {
             const { showNotification } = useCore();
+            const store = useBaseStore();
 
             const autocompleteOptions = Vue.ref([]);
-            const displayDefinitionPopup = Vue.ref(false);
+            const clientRoot = store.getClientRoot;
+            const propsRefs = Vue.toRefs(props);
+            const selectedTaxon = Vue.ref({});
+
+            Vue.watch(propsRefs.taxonType, () => {
+                selectedTaxon.value = Object.assign({}, {});
+            });
 
             function blurAction(val) {
-                if(val && val.target.value !== props.sciname){
+                if(val && selectedTaxon.value && val.target.value !== selectedTaxon.value.label){
                     const optionObj = autocompleteOptions.value.find(option => option['sciname'] === val.target.value);
                     if(optionObj){
                         processChange(optionObj);
@@ -245,10 +212,6 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         showNotification('negative', 'That name was not found in the Taxonomic Thesaurus.');
                     }
                 }
-            }
-
-            function clearAction() {
-                processChange(null);
             }
 
             function createValue(val, done) {
@@ -307,7 +270,6 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         formData.append('term', val);
                         formData.append('hideauth', props.hideAuthor);
                         formData.append('hideprotected', props.hideProtected);
-                        formData.append('acceptedonly', props.acceptedTaxaOnly);
                         formData.append('rlimit', rankLimit);
                         formData.append('rlow', rankLow);
                         formData.append('rhigh', rankHigh);
@@ -327,23 +289,32 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 });
             }
 
-            function openDefinitionPopup() {
-                displayDefinitionPopup.value = true;
+            function processChange(taxonObj) {
+                selectedTaxon.value = Object.assign({}, taxonObj);
             }
 
-            function processChange(taxonObj) {
-                context.emit('update:sciname', taxonObj);
+            function processSearch() {
+                if(Number(props.taxonType) === 6){
+
+                }
+                else{
+                    if(selectedTaxon.value.hasOwnProperty('tid') && Number(selectedTaxon.value['tid']) > 0){
+                        window.location.href = (clientRoot + '/profile/viewprofile.php');
+                    }
+                    else{
+                        showNotification('negative', 'That name was not found');
+                    }
+                }
             }
 
             return {
                 autocompleteOptions,
-                displayDefinitionPopup,
+                selectedTaxon,
                 blurAction,
-                clearAction,
                 createValue,
                 getOptions,
-                openDefinitionPopup,
-                processChange
+                processChange,
+                processSearch
             }
         }
     };
@@ -366,26 +337,17 @@ include_once(__DIR__ . '/services/SanitizerService.php');
             ];
             const taxonType = Vue.ref(6);
             const userDisplayName = storeRefs.getUserDisplayName;
-            const windowWidth = Vue.ref(0);
-
-            function  handleResize() {
-                windowWidth.value = window.innerWidth;
-            }
 
             function logout() {
                 const url = profileApiUrl + '?action=logout';
                 fetch(url)
-                    .then(() => {
-                        window.location.href = clientRoot + '/index.php';
-                    })
+                .then(() => {
+                    window.location.href = clientRoot + '/index.php';
+                })
             }
 
             function openDonatePage() {
                 window.open('https://support.si.edu/site/Donation2;jsessionid=00000000.app30030a?idb=172924536&df_id=19745&mfc_pref=T&19745.donation=form1&NONCE_TOKEN=B8237A09ED48545AB4117EA7BD9F20EF&s_subsrc=top-btn&s_src=main-web&autologin=true&19745_donation=form1', '_blank');
-            }
-
-            function processAutocompleteChange(taxon) {
-                console.log(taxon);
             }
 
             function processTaxonTypeChange(value) {
@@ -399,11 +361,6 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 }
             }
 
-            Vue.onMounted(() => {
-                window.addEventListener('resize', handleResize);
-                handleResize();
-            });
-
             return {
                 autoCompleteLabel,
                 clientRoot,
@@ -412,11 +369,8 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 taxonTypeOptions,
                 userDisplayName,
                 taxonType,
-                windowWidth,
-                handleResize,
                 logout,
                 openDonatePage,
-                processAutocompleteChange,
                 processTaxonTypeChange
             };
         }

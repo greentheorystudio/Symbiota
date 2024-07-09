@@ -19,12 +19,6 @@ include_once(__DIR__ . '/config/header-includes.php');
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/external/jquery-ui.css" type="text/css" rel="Stylesheet" />
-    <style>
-        .footer-container{
-            width: 100%;
-            background-color: #173753;
-        }
-    </style>
     <script src="js/external/all.min.js" type="text/javascript"></script>
     <script src="js/external/jquery.js" type="text/javascript"></script>
     <script src="js/external/jquery-ui.js" type="text/javascript"></script>

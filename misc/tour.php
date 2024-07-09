@@ -30,8 +30,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
         </a>
     </div>
     <?php
-    include(__DIR__ . '/../footer.php');
     include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
     ?>
 </body>
 </html>

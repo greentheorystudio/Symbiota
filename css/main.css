@@ -987,3 +987,7 @@ a.header-home-link, a.header-home-link:hover, a.header-home-link:visited {
 	text-decoration: none;
 	color: white;
 }
+.footer-container{
+	width: 100%;
+	background-color: #173753;
+}
