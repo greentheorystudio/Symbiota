@@ -249,7 +249,7 @@
                 const formData = new FormData();
                 formData.append('tid', taxon.value['tid']);
                 formData.append('action', 'getTaxonDescriptions');
-                fetch(taxaApiUrl, {
+                fetch(taxonDescriptionApiUrl, {
                     method: 'POST',
                     body: formData
                 })
