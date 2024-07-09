@@ -111,8 +111,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <div style="font-weight:bold;"><a href="../upload/index.php?collid=<?php echo $collid.'&tabindex='.$tabIndex; ?>"><b>Return to Occurrence Data Upload Module</b></a></div>
     </div>
     <?php
-    include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
     ?>
 </body>
 </html>

@@ -795,6 +795,7 @@ if(!$printMode){
 <div style="clear:both;"></div>
 <?php
 if(!$printMode) {
+    include_once(__DIR__ . '/../config/footer-includes.php');
     include(__DIR__ . '/../footer.php');
 }
 
@@ -903,7 +904,6 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']){
     </div>
     <?php
 }
-include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>
