@@ -728,7 +728,7 @@ ol.report-caterories li p.heading {
 	position: absolute;
 	top: 10px;
 	left: 10px;
-	z-index: 5000000;
+	z-index: 5000;
 }
 
 .logo-image {

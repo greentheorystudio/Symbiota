@@ -49,61 +49,66 @@ include_once(__DIR__ . '/services/SanitizerService.php');
             </div>
         </div>
         <div class="col-6 row justify-end q-col-gutter-sm">
-            <div class="col-3 column">
+            <div class="col-4 column">
                 <div>
-                    <a class="text-white text-h6 text-bold" :href="(clientRoot + '/misc/Maps.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Maps.php')">
                         The Indian River Lagoon
                     </a>
                 </div>
                 <div>
-                    <a class="text-white text-h6 text-bold" :href="(clientRoot + '/misc/Whatsa_Habitat.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Whatsa_Habitat.php')">
                         Habitats
                     </a>
                 </div>
                 <div>
-                    <a class="text-white text-h6 text-bold" :href="(clientRoot + '/misc/Habitat_Threats.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Habitat_Threats.php')">
                         Threats
                     </a>
                 </div>
                 <div>
-                    <a class="text-white text-h6 text-bold" :href="(clientRoot + '/misc/Total_Biodiv.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Total_Biodiv.php')">
                         Biodiversity
                     </a>
                 </div>
                 <div>
-                    <a class="text-white text-h6 text-bold" :href="(clientRoot + '/misc/Protect-IRL.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Protect-IRL.php')">
                         Stewardship
                     </a>
                 </div>
                 <div>
-                    <a class="text-white text-h6 text-bold" :href="(clientRoot + '/misc/tour.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/tour.php')">
                         Take a Tour
                     </a>
                 </div>
             </div>
-            <div class="col-3 column">
+            <div class="col-4 column">
                 <div>
-                    <a class="text-white text-h6 text-bold" :href="(clientRoot + '/misc/contact.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/index.php')">
+                        Home
+                    </a>
+                </div>
+                <div>
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/contact.php')">
                         Contact Us
                     </a>
                 </div>
                 <div v-if="userDisplayName">
-                    <a class="text-white text-h6 text-bold" :href="(clientRoot + '/profile/viewprofile.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/profile/viewprofile.php')">
                         My Profile
                     </a>
                 </div>
                 <div>
-                    <a class="text-white text-h6 text-bold" :href="(clientRoot + '/sitemap.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/sitemap.php')">
                         Sitemap
                     </a>
                 </div>
                 <div v-if="userDisplayName" class="cursor-pointer">
-                    <a class="text-white text-h6 text-bold" @click="logout();">
+                    <a class="text-white login-link text-h6" @click="logout();">
                         Logout
                     </a>
                 </div>
                 <div v-else>
-                    <a class="text-white text-h6 text-bold" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true); ?>">
+                    <a class="text-white login-link text-h6" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true); ?>">
                         Login
                     </a>
                 </div>
