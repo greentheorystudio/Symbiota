@@ -126,25 +126,25 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     </template>
                                     georeferenced
                                 </div>
-                                <template v-if="collectionData['dynamicProperties']">
-                                    <div v-if="collectionData['dynamicProperties']['imgcnt'] && Number(collectionData['dynamicProperties']['imgcnt']) > 0">
-                                        {{ collectionData['dynamicProperties']['imgcnt'] + ' ' }}
+                                <template v-if="collectionData['dynamicproperties']">
+                                    <div v-if="collectionData['dynamicproperties']['imgcnt'] && Number(collectionData['dynamicproperties']['imgcnt']) > 0">
+                                        {{ collectionData['dynamicproperties']['imgcnt'] + ' ' }}
                                         <template v-if="imagePercent > 0">
                                             {{ '(' + imagePercent + '%) ' }}
                                         </template>
                                         with images
                                     </div>
-                                    <div v-if="collectionData['dynamicProperties']['gencnt'] && Number(collectionData['dynamicProperties']['gencnt']) > 0">
-                                        {{ collectionData['dynamicProperties']['gencnt'] + ' with GenBank references' }}
+                                    <div v-if="collectionData['dynamicproperties']['gencnt'] && Number(collectionData['dynamicproperties']['gencnt']) > 0">
+                                        {{ collectionData['dynamicproperties']['gencnt'] + ' with GenBank references' }}
                                     </div>
-                                    <div v-if="collectionData['dynamicProperties']['boldcnt'] && Number(collectionData['dynamicProperties']['boldcnt']) > 0">
-                                        {{ collectionData['dynamicProperties']['boldcnt'] + ' with BOLD references' }}
+                                    <div v-if="collectionData['dynamicproperties']['boldcnt'] && Number(collectionData['dynamicproperties']['boldcnt']) > 0">
+                                        {{ collectionData['dynamicproperties']['boldcnt'] + ' with BOLD references' }}
                                     </div>
-                                    <div v-if="collectionData['dynamicProperties']['refcnt'] && Number(collectionData['dynamicProperties']['refcnt']) > 0">
-                                        {{ collectionData['dynamicProperties']['refcnt'] + ' with publication references' }}
+                                    <div v-if="collectionData['dynamicproperties']['refcnt'] && Number(collectionData['dynamicproperties']['refcnt']) > 0">
+                                        {{ collectionData['dynamicproperties']['refcnt'] + ' with publication references' }}
                                     </div>
-                                    <div v-if="collectionData['dynamicProperties']['SpecimensCountID'] && Number(collectionData['dynamicProperties']['SpecimensCountID']) > 0">
-                                        {{ collectionData['dynamicProperties']['SpecimensCountID'] + ' ' }}
+                                    <div v-if="collectionData['dynamicproperties']['SpecimensCountID'] && Number(collectionData['dynamicproperties']['SpecimensCountID']) > 0">
+                                        {{ collectionData['dynamicproperties']['SpecimensCountID'] + ' ' }}
                                         <template v-if="speciesIDPercent > 0">
                                             {{ '(' + speciesIDPercent + '%) ' }}
                                         </template>
@@ -160,9 +160,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 <div>
                                     {{ collectionData['speciescnt'] + ' species' }}
                                 </div>
-                                <template v-if="collectionData['dynamicProperties']">
-                                    <div v-if="collectionData['dynamicProperties']['TotalTaxaCount'] && Number(collectionData['dynamicProperties']['TotalTaxaCount']) > 0">
-                                        {{ collectionData['dynamicProperties']['TotalTaxaCount'] + ' total taxa (including subsp. and var.)' }}
+                                <template v-if="collectionData['dynamicproperties']">
+                                    <div v-if="collectionData['dynamicproperties']['TotalTaxaCount'] && Number(collectionData['dynamicproperties']['TotalTaxaCount']) > 0">
+                                        {{ collectionData['dynamicproperties']['TotalTaxaCount'] + ' total taxa (including subsp. and var.)' }}
                                     </div>
                                 </template>
                             </div>
