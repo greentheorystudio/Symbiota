@@ -412,17 +412,15 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxaArrFromNameArr($nameArr): array
+    public function getTaxaIdDataFromNameArr($nameArr): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT sciname, tidaccepted FROM taxa  '.
-            'WHERE sciname IN("'.implode('","', $nameArr).'") ';
+        $sql = 'SELECT DISTINCT tid, sciname FROM taxa  '.
+            'WHERE sciname IN("' . implode('","', $nameArr) . '") ';
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
-                $nodeArr = array();
-                $nodeArr['tid'] = $r->tidaccepted;
-                $nodeArr['sciname'] = $r->sciname;
-                $retArr[] = $nodeArr;
+                $retArr[strtolower($r->sciname)]['tid'] = $r->tid;
+                $retArr[strtolower($r->sciname)]['sciname'] = $r->sciname;
             }
             $rs->free();
         }

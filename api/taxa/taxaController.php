@@ -52,8 +52,8 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getTaxonomicTreeChildNodes' && $tId){
         echo json_encode($taxa->getTaxonomicTreeChildNodes($tId));
     }
-    elseif($action === 'getTaxaArrFromNameArr' && array_key_exists('taxa',$_POST)){
-        echo json_encode($taxa->getTaxaArrFromNameArr(json_decode($_POST['taxa'], true)));
+    elseif($action === 'getTaxaIdDataFromNameArr' && array_key_exists('taxa',$_POST)){
+        echo json_encode($taxa->getTaxaIdDataFromNameArr(json_decode($_POST['taxa'], true)));
     }
     elseif($action === 'getTaxonFromTid' && array_key_exists('tid',$_POST)){
         $includeCommonNames = array_key_exists('includeCommonNames',$_POST) && $_POST['includeCommonNames'];

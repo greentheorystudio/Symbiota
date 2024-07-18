@@ -334,32 +334,11 @@ class ImageLocalProcessor {
                     $fileExists = true;
                 }
                 if($fileExists){
-                    if($this->imgExists === 2){
-                        unlink($targetPath.$targetFileName);
-                        if(file_exists($targetPath.substr($targetFileName,0, -4). 'tn.jpg')){
-                            unlink($targetPath.substr($targetFileName,0, -4). 'tn.jpg');
-                        }
-                        if(file_exists($targetPath.substr($targetFileName,0, -4). '_tn.jpg')){
-                            unlink($targetPath.substr($targetFileName,0, -4). '_tn.jpg');
-                        }
-                        if(file_exists($targetPath.substr($targetFileName,0, -4). 'lg.jpg')){
-                            unlink($targetPath.substr($targetFileName,0, -4). 'lg.jpg');
-                        }
-                        if(file_exists($targetPath.substr($targetFileName,0, -4). '_lg.jpg')){
-                            unlink($targetPath.substr($targetFileName,0, -4). '_lg.jpg');
-                        }
-                    }
-                    elseif($this->imgExists === 1){
-                        $cnt = 1;
-                        $tempFileName = $targetFileName;
-                        while(file_exists($targetPath.$targetFileName)){
-                            $targetFileName = str_ireplace('.jpg', '_' .$cnt. '.jpg',$tempFileName);
-                            $cnt++;
-                        }
-                    }
-                    else{
-                        $this->logOrEcho('NOTICE: image import skipped because image file already exists ',1);
-                        $retVal = false;
+                    $cnt = 1;
+                    $tempFileName = $targetFileName;
+                    while(file_exists($targetPath.$targetFileName)){
+                        $targetFileName = str_ireplace('.jpg', '_' .$cnt. '.jpg',$tempFileName);
+                        $cnt++;
                     }
                 }
                 if(!$fileExists || $this->imgExists !== 0){

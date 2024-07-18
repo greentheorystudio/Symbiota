@@ -211,6 +211,18 @@ function useCore() {
         return retStr;
     }
 
+    function getSubstringByRegEx(regExStr, text) {
+        if(regExStr.startsWith('/')){
+            regExStr = regExStr.substring(1);
+        }
+        if(regExStr.endsWith('/')){
+            regExStr = regExStr.substring(0, (regExStr.length - 1));
+        }
+        const regExObj = new RegExp(regExStr);
+        const matchArr = text.match(regExObj);
+        return (matchArr && matchArr.length > 1) ? matchArr[1] : null;
+    }
+
     function hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? {
@@ -420,6 +432,7 @@ function useCore() {
         getErrorResponseText,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,
+        getSubstringByRegEx,
         hexToRgb,
         hideWorking,
         openTutorialWindow,

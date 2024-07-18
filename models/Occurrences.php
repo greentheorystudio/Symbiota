@@ -261,13 +261,13 @@ class Occurrences{
     public function getLock($occid): int
     {
         $isLocked = 0;
-        $delSql = 'DELETE FROM omoccureditlocks WHERE ts < '.(time()-900).' OR uid = '.$GLOBALS['SYMB_UID'].' ';
+        $delSql = 'DELETE FROM omoccureditlocks WHERE ts < ' . (time() - 900) . ' OR uid = ' . $GLOBALS['SYMB_UID'] . ' ';
         if($this->conn->query($delSql)) {
             $sqlFind = 'SELECT * FROM omoccureditlocks WHERE occid = ' . (int)$occid . ' ';
             $frs = $this->conn->query($sqlFind);
             if(!$frs->num_rows){
-                $sql = 'INSERT INTO omoccureditlocks(occid,uid,ts) '.
-                    'VALUES ('.(int)$occid.','.$GLOBALS['SYMB_UID'].','.time().')';
+                $sql = 'INSERT INTO omoccureditlocks(occid, uid, ts) '.
+                    'VALUES (' . (int)$occid . ',' . $GLOBALS['SYMB_UID'] . ',' . time() . ')';
                 $this->conn->query($sql);
             }
             else{
@@ -330,6 +330,23 @@ class Occurrences{
     public function getOccurrenceFields(): array
     {
         return $this->fields;
+    }
+
+    public function getOccurrenceIdDataFromIdentifierArr($collid, $identifierField, $identifierArr): array
+    {
+        $retArr = array();
+        if($identifierField === 'catalognumber' || $identifierField === 'othercatalognumbers'){
+            $sql = 'SELECT DISTINCT occid, tid, ' . $identifierField . ' FROM omoccurrences  '.
+                'WHERE collid = ' . (int)$collid . ' AND ' . $identifierField . ' IN("' . implode('","', $identifierArr) . '") ';
+            if($rs = $this->conn->query($sql)){
+                while($r = $rs->fetch_object()){
+                    $retArr[strtolower($r->$identifierField)]['occid'] = $r->occid;
+                    $retArr[strtolower($r->$identifierField)]['tid'] = $r->tid;
+                }
+                $rs->free();
+            }
+        }
+        return $retArr;
     }
 
     public function getOccurrencesByCatalogNumber($catalogNumber, $collid = null): array

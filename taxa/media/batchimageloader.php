@@ -200,13 +200,13 @@ if(!$GLOBALS['SYMB_UID']) {
                     const queueSize = Vue.ref(0);
                     const queueSizeLabel = Vue.ref('');
                     const systemProperties = Vue.ref(['format','type']);
-                    const taxaDataArr = Vue.ref([]);
+                    const taxaDataArr = Vue.ref({});
                     const uploaderRef = Vue.ref(null);
 
                     function cancelUpload() {
                         csvFileData.value = [];
                         fileArr.value = [];
-                        taxaDataArr.value = [];
+                        taxaDataArr.value = Object.assign({}, {});
                         updateQueueSize();
                         uploaderRef.value.reset();
                     }
@@ -397,14 +397,16 @@ if(!$GLOBALS['SYMB_UID']) {
                     function setTaxaData(nameArr, fileName = null) {
                         const formData = new FormData();
                         formData.append('taxa', JSON.stringify(nameArr));
-                        formData.append('action', 'getTaxaArrFromNameArr');
+                        formData.append('action', 'getTaxaIdDataFromNameArr');
                         fetch(taxaApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
                             response.json().then((resObj) => {
-                                taxaDataArr.value = taxaDataArr.value.concat(resObj);
+                                Object.keys(resObj).forEach((key) => {
+                                    taxaDataArr.value[key] = Object.assign({}, resObj[key]);
+                                });
                                 if(fileName && resObj.length === 1){
                                     const file = fileArr.value.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
                                     file['scientificname'] = resObj[0]['sciname'];
@@ -421,9 +423,8 @@ if(!$GLOBALS['SYMB_UID']) {
                             if(!file.hasOwnProperty('tid') || !file.tid || file.tid === ''){
                                 const sciname = file.scientificname;
                                 if(sciname){
-                                    const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
-                                    if(taxonData){
-                                        file.tid = taxonData['tid'];
+                                    if(taxaDataArr.value.hasOwnProperty(sciname.toLowerCase())){
+                                        file.tid = taxaDataArr[sciname.toLowerCase()]['tid'];
                                         file.errorMessage = '';
                                     }
                                     else{
@@ -505,9 +506,8 @@ if(!$GLOBALS['SYMB_UID']) {
                                 }
                                 const sciname = (csvData && csvData.hasOwnProperty('scientificname')) ? csvData['scientificname'] : null;
                                 if(sciname){
-                                    const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
-                                    if(taxonData){
-                                        tid = taxonData['tid'];
+                                    if(taxaDataArr.value.hasOwnProperty(sciname.toLowerCase())){
+                                        tid = taxaDataArr[sciname.toLowerCase()]['tid'];
                                     }
                                 }
                                 file['scientificname'] = sciname;
