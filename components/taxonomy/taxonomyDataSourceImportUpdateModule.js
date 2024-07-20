@@ -570,8 +570,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://api.catalogueoflife.org/dataset/3/tree/' + currentId + '/children?limit=100000';
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -620,8 +621,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + id + '/info';
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -643,8 +645,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://api.checklistbank.org/dataset/3/nameusage/search?content=SCIENTIFIC_NAME&q=' + sciname + '&offset=0&limit=100';
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -685,8 +688,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://www.itis.gov/ITISWebService/jsonservice/getHierarchyDownFromTSN?tsn=' + currentId;
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -735,8 +739,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + sciname;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -812,8 +817,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://www.marinespecies.org/rest/AphiaChildrenByAphiaID/' + currentId + '?marine_only=false';
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -859,8 +865,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + sciname + '?marine_only=false';
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -889,8 +896,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + currentTaxonExternal.value['id'] + '/vernacular';
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -986,8 +994,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getCommonNamesFromTSN?tsn=' + currentTaxonExternal.value['id'];
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1039,8 +1048,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1091,8 +1101,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1206,8 +1217,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -1245,8 +1257,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.marinespecies.org/rest/AphiaVernacularsByAphiaID/' + currentTaxonExternal.value['id'];
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1297,8 +1310,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1360,8 +1374,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -2211,8 +2226,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + id + '/classification';
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -2370,8 +2386,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })

@@ -588,8 +588,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -640,8 +641,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -723,8 +725,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                             const formData = new FormData();
                             formData.append('url', url);
-                            formData.append('action', 'get');
-                            fetch(proxyApiUrl, {
+                            formData.append('action', 'getExternalData');
+                            formData.append('requestType', 'get');
+                            fetch(proxyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -762,8 +765,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -823,8 +827,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -1456,8 +1461,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 const url = 'https://api.checklistbank.org/dataset/3/nameusage/search?content=SCIENTIFIC_NAME&q=' + currentSciname.value + '&offset=0&limit=100';
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -1481,8 +1487,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + currentSciname.value;
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -1505,8 +1512,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + currentSciname.value + '?marine_only=false';
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -1867,8 +1875,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + id + '/classification';
                             const formData = new FormData();
                             formData.append('url', url);
-                            formData.append('action', 'get');
-                            fetch(proxyApiUrl, {
+                            formData.append('action', 'getExternalData');
+                            formData.append('requestType', 'get');
+                            fetch(proxyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1943,8 +1952,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
                             const formData = new FormData();
                             formData.append('url', url);
-                            formData.append('action', 'get');
-                            fetch(proxyApiUrl, {
+                            formData.append('action', 'getExternalData');
+                            formData.append('requestType', 'get');
+                            fetch(proxyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })

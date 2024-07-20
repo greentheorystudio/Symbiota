@@ -724,8 +724,9 @@ if(!$GLOBALS['SYMB_UID']) {
                                 const url = 'https://eol.org/api/search/1.0.json?q=' + currentTaxon.value['sciname'];
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -811,8 +812,9 @@ if(!$GLOBALS['SYMB_UID']) {
                         }
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })

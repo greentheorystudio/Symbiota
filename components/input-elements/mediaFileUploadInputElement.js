@@ -16,10 +16,6 @@ const mediaFileUploadInputElement = {
             type: String,
             default: null
         },
-        importExternalFiles: {
-            type: Boolean,
-            default: false
-        },
         label: {
             type: String,
             default: 'Upload Media Files'
@@ -82,7 +78,7 @@ const mediaFileUploadInputElement = {
                             <div class="full-width row justify-between">
                                 <div class="row no-wrap justify-start q-pa-sm q-gutter-xs">
                                     <q-spinner v-if="scope.isUploading" class="q-uploader__spinner"></q-spinner>
-                                    <div v-if="queueSize > 0" class="q-uploader__subtitle text-bold">Total upload size: {{ queueSizeLabel }}</div>
+                                    <div class="q-uploader__subtitle text-bold">Total upload size: {{ queueSizeLabel }}</div>
                                     <q-uploader-add-trigger></q-uploader-add-trigger>
                                 </div>
                                 <div class="row justify-end">
@@ -95,11 +91,14 @@ const mediaFileUploadInputElement = {
                         <template v-slot:list="scope">
                             <div ref="fileListRef">
                                 <q-list separator class="fit">
-                                    <q-item v-for="file in scope.files" :key="file.__key" class="full-width">
+                                    <q-item v-for="file in fileArr" :key="file.__key" class="full-width">
                                         <q-item-section>
                                             <div class="full-width row">
                                                 <div class="col-2">
-                                                    <div v-if="file.__img">
+                                                    <div v-if="file.hasOwnProperty('externalUrl')">
+                                                        <q-img :src="file['externalUrl']" spinner-color="white"></q-img>
+                                                    </div>
+                                                    <div v-else-if="file.__img">
                                                         <q-img :src="file.__img.src" spinner-color="white"></q-img>
                                                     </div>
                                                     <div v-else class="text-h6 text-bold">
@@ -117,10 +116,11 @@ const mediaFileUploadInputElement = {
                                                     </div>
                                                     <div>
                                                         <div caption>
-                                                            <span class="text-bold q-mr-xs">Metadata: </span>
                                                             <template v-for="key in Object.keys(file['uploadMetadata'])">
                                                                 <template v-if="file['uploadMetadata'][key] && file['uploadMetadata'][key] !== ''">
-                                                                    <span class="text-bold q-ml-xs">{{ key }}:</span> {{ file['uploadMetadata'][key] }}
+                                                                    <span class="q-mr-xs">
+                                                                        <span class="text-bold">{{ key }}:</span> {{ file['uploadMetadata'][key] }}
+                                                                    </span>
                                                                 </template>
                                                             </template>
                                                         </div>
@@ -164,13 +164,22 @@ const mediaFileUploadInputElement = {
         const mediaStore = useMediaStore();
         const occurrenceStore = useOccurrenceStore();
 
-        const audioTypes = ['audio/mpeg', 'audio/ogg', 'audio/wav'];
+        const acceptedMediaTypes = [
+            {extension: 'jpeg', type: 'StillImage', mimetype: 'image/jpeg'},
+            {extension: 'jpg', type: 'StillImage', mimetype: 'image/jpeg'},
+            {extension: 'png', type: 'StillImage', mimetype: 'image/png'},
+            {extension: 'zc', type: 'Zipkey', mimetype: 'application/zc'},
+            {extension: 'mp4', type: 'MovingImage', mimetype: 'video/mp4'},
+            {extension: 'webm', type: 'MovingImage', mimetype: 'video/webm'},
+            {extension: 'ogg', type: 'MovingImage', mimetype: 'video/ogg'},
+            {extension: 'wav', type: 'Sound', mimetype: 'audio/wav'},
+            {extension: 'mp3', type: 'Sound', mimetype: 'audio/mpeg'}
+        ];
         let csvFileData = [];
         const csvFileDataUploaded = Vue.computed(() => {
             return csvFileData.length > 0;
         });
         const fileArr = Vue.shallowReactive([]);
-        const fileExtensionTypes = ['jpeg', 'jpg', 'png', 'zc'];
         const fileListRef = Vue.ref(null);
         const identifierArr = Vue.ref([]);
         const identifierData = Vue.ref({});
@@ -178,7 +187,6 @@ const mediaFileUploadInputElement = {
         const queueSize = Vue.ref(0);
         const queueSizeLabel = Vue.ref('');
         const selectedUploadMethod = Vue.ref('upload');
-        const systemProperties = Vue.ref(['format','type']);
         const taxaArr = Vue.ref([]);
         const taxaData = Vue.ref({});
         const uploaderRef = Vue.ref(null);
@@ -187,9 +195,8 @@ const mediaFileUploadInputElement = {
             {label: 'Local Files', value: 'upload'},
             {label: 'From URL', value: 'url'}
         ];
-        const urlMethodCopyFile = Vue.ref(false);
+        const urlMethodCopyFile = Vue.ref(true);
         const urlMethodUrl = Vue.ref(null);
-        const videoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
 
         function cancelUpload() {
             csvFileData.length = 0;
@@ -230,13 +237,13 @@ const mediaFileUploadInputElement = {
         }
 
         function getUploadData(file) {
-            if(file['uploadType'] === 'image'){
+            if(file['uploadMetadata']['type'] === 'StillImage'){
                 return {
                     url: imageApiUrl,
                     formFields: [
                         {name: 'action', value: 'addImage'},
                         {name: 'collid', value: props.collId.toString()},
-                        {name: 'copyToServer', value: (props.importExternalFiles ? '1' : '0')},
+                        {name: 'copyToServer', value: file['copyToServer']},
                         {name: 'image', value: JSON.stringify(file['uploadMetadata'])}
                     ],
                     fieldName: 'imgfile'
@@ -248,7 +255,7 @@ const mediaFileUploadInputElement = {
                     formFields: [
                         {name: 'action', value: 'addMedia'},
                         {name: 'collid', value: props.collId.toString()},
-                        {name: 'copyToServer', value: (props.importExternalFiles ? '1' : '0')},
+                        {name: 'copyToServer', value: file['copyToServer']},
                         {name: 'media', value: JSON.stringify(file['uploadMetadata'])}
                     ],
                     fieldName: 'medfile'
@@ -291,28 +298,54 @@ const mediaFileUploadInputElement = {
 
         function processExternalUrl() {
             if(urlMethodUrl.value){
-                fetch(urlMethodUrl.value).then((fileFetch) => {
-                    fileFetch.blob().then((blob) => {
-                        uploaderRef.value.addFiles([
-                            new File([blob], urlMethodUrl.value)
-                        ]);
-                        console.log(blob);
+                const file = {
+                    name: urlMethodUrl.value.split('/').pop(),
+                    size: 0,
+                    externalUrl: urlMethodUrl.value,
+                    copyToServer: (urlMethodCopyFile.value ? '1' : '0')
+                };
+                if(urlMethodCopyFile.value){
+                    const formData = new FormData();
+                    formData.append('url', urlMethodUrl.value);
+                    formData.append('action', 'getFileInfoFromUrl');
+                    fetch(proxyServiceApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        if(response.status === 200){
+                            response.json().then((resObj) => {
+                                file.size = resObj['fileSize'];
+                                validateFiles([file]);
+                                resetUrlMethodSettings();
+                            });
+                        }
                     });
-                });
+                }
+                else{
+                    validateFiles([file]);
+                    resetUrlMethodSettings();
+                }
             }
         }
 
         function processUploaded(info) {
-            info.files.forEach((file) => {
+            console.log('after');
+            /*info.files.forEach((file) => {
                 removePickedFile(file);
-            });
+            });*/
         }
 
         function removePickedFile(file) {
             const fileIndex = fileArr.indexOf(file);
             fileArr.splice(fileIndex,1);
-            uploaderRef.value.removeFile(file);
             updateQueueSize();
+        }
+
+        function resetUrlMethodSettings() {
+            urlMethodUrl.value = null;
+            selectedUploadMethod.value = 'upload';
+            urlMethodCopyFile.value = true;
         }
 
         function setFileData() {
@@ -326,13 +359,15 @@ const mediaFileUploadInputElement = {
                         csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
                     }
                     if(csvData){
-                        Object.keys(csvData).forEach((key) => {
+                        const dataKeys = Object.keys(csvData);
+                        if(dataKeys.includes(props.identifierField)){
+                            file['recordIdentifier'] = csvData[props.identifierField];
+                            file['occurrenceData'] = csvData;
+                        }
+                        dataKeys.forEach((key) => {
                             if(key !== 'filename' && csvData[key] && csvData[key] !== ''){
                                 if(key === 'scientificname' || key === 'sciname'){
                                     file['scientificName'] = csvData[key];
-                                }
-                                else if(key === props.identifierField){
-                                    file['recordIdentifier'] = csvData[key];
                                 }
                                 else if(file['uploadMetadata'].hasOwnProperty(key)){
                                     file['uploadMetadata'][key] = csvData[key];
@@ -368,32 +403,6 @@ const mediaFileUploadInputElement = {
             }
             else{
                 setFileData();
-            }
-        }
-
-        function setFileMediaTypeFormat(file) {
-            if(file.name.endsWith(".mp4")){
-                file['uploadMetadata']['type'] = 'MovingImage';
-                file['uploadMetadata']['format'] = 'video/mp4';
-            }
-            else if(file.name.endsWith(".webm")){
-                file['uploadMetadata']['type'] = 'MovingImage';
-                file['uploadMetadata']['format'] = 'video/webm';
-            }
-            else if(file.name.endsWith(".ogg")){
-                file['uploadMetadata']['type'] = 'MovingImage';
-                file['uploadMetadata']['format'] = 'video/ogg';
-            }
-            else if(file.name.endsWith(".mp3")){
-                file['uploadMetadata']['type'] = 'Sound';
-                file['uploadMetadata']['format'] = 'audio/mpeg';
-            }
-            else if(file.name.endsWith(".wav")){
-                file['uploadMetadata']['type'] = 'Sound';
-                file['uploadMetadata']['format'] = 'audio/wav';
-            }
-            else if(file.name.endsWith(".zc")){
-                file['uploadMetadata']['type'] = 'Sound';
             }
         }
 
@@ -449,7 +458,9 @@ const mediaFileUploadInputElement = {
         function updateQueueSize() {
             let size = 0;
             fileArr.forEach((file) => {
-                size += file.size;
+                if(file.hasOwnProperty('size')){
+                    size += file.size;
+                }
             });
             const sizeMb = (Math.round((size / 1000000) * 10 ) / 100);
             queueSize.value = size;
@@ -482,7 +493,17 @@ const mediaFileUploadInputElement = {
                 });
             }
             else if((Number(props.collId) > 0 && Number(files[0]['uploadMetadata']['occid']) > 0) || (!props.collId && Number(files[0]['uploadMetadata']['tid']) > 0)){
-                return getUploadData(files[0]);
+                console.log(files[0]);
+                return {
+                    url: occurrenceApiUrl,
+                    formFields: [
+                        {name: 'action', value: 'addImage'},
+                        {name: 'collid', value: props.collId.toString()},
+                        {name: 'copyToServer', value: file['copyToServer']},
+                        {name: 'image', value: JSON.stringify(files[0]['uploadMetadata'])}
+                    ],
+                    fieldName: 'imgfile'
+                }
             }
             else{
                 return false;
@@ -490,10 +511,7 @@ const mediaFileUploadInputElement = {
         }
 
         function validateFiles(files) {
-            console.log(files);
-            const returnArr = [];
             files.forEach((file) => {
-                const fileSizeMb = Math.round((file.size / 1000000) * 10 ) / 100;
                 const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
                 if(file.name.endsWith('.csv')){
                     parseCsvFile(file, (csvData) => {
@@ -502,18 +520,19 @@ const mediaFileUploadInputElement = {
                     });
                 }
                 else if(!existingData){
+                    const fileSizeMb = Number(file.size) > 0 ? Math.round((file.size / 1000000) * 10 ) / 100 : 0;
                     if(fileSizeMb <= Number(maxUploadFilesize)){
-                        if(videoTypes.includes(file.type) || audioTypes.includes(file.type) || fileExtensionTypes.includes(file.name.split('.').pop().toLowerCase())){
+                        const mediaTypeInfo = acceptedMediaTypes.find((mType) => mType.extension === file.name.split('.').pop().toLowerCase());
+                        if(mediaTypeInfo){
                             file['correctedSizeLabel'] =   fileSizeMb.toString() + 'MB';
-                            if(videoTypes.includes(file.type) || audioTypes.includes(file.type) || file.name.endsWith('.zc')){
-                                file['uploadType'] = 'media';
-                                file['uploadMetadata'] = Object.assign({}, mediaStore.getBlankMediaRecord);
-                                setFileMediaTypeFormat(file);
-                            }
-                            else{
-                                file['uploadType'] = 'image';
+                            if(mediaTypeInfo.type === 'StillImage'){
                                 file['uploadMetadata'] = Object.assign({}, imageStore.getBlankImageRecord);
                             }
+                            else{
+                                file['uploadMetadata'] = Object.assign({}, mediaStore.getBlankMediaRecord);
+                            }
+                            file['uploadMetadata']['type'] = mediaTypeInfo.type;
+                            file['uploadMetadata']['format'] = mediaTypeInfo.mimetype;
                             file['filenameRecordIdentifier'] = (Number(props.collId) > 0 && props.identifierRegEx) ? getSubstringByRegEx(props.identifierRegEx, file.name) : null;
                             if(file['filenameRecordIdentifier'] && !identifierArr.value.includes(file['filenameRecordIdentifier'])){
                                 identifierArr.value.push(file['filenameRecordIdentifier']);
@@ -526,9 +545,11 @@ const mediaFileUploadInputElement = {
                             if(Number(props.taxonId) > 0){
                                 file['uploadMetadata']['tid'] = props.taxonId;
                             }
+                            if(!file.hasOwnProperty('copyToServer')){
+                                file['copyToServer'] = '0';
+                            }
                             fileArr.push(file);
                             updateQueueSize();
-                            returnArr.push(file);
                         }
                         else{
                             showNotification('negative', (file.name + ' cannot be uploaded because it is ' + file.type + ' file type. Only jpg, jpeg, png, zc, mp3, wav, ogg, mp4, webm, and csv files can be processed through this uploader.'));
@@ -540,7 +561,7 @@ const mediaFileUploadInputElement = {
                 }
             });
             setFileIdentifierData();
-            return returnArr;
+            return fileArr;
         }
 
         return {

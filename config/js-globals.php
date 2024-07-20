@@ -64,7 +64,7 @@
     const permissionApiUrl = CLIENT_ROOT + '/api/profile/permissionController.php';
     const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
     const projectApiUrl = CLIENT_ROOT + '/api/checklists/projectController.php';
-    const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';
+    const proxyServiceApiUrl = CLIENT_ROOT + '/api/services/proxyServiceController.php';
     const searchApiUrl = CLIENT_ROOT + '/api/search/searchController.php';
     const solrConnectorUrl = CLIENT_ROOT + '/api/search/SOLRConnector.php';
     const spatialApiUrl = CLIENT_ROOT + '/api/spatial/spatialController.php';
