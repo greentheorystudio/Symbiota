@@ -73,6 +73,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                 }
                 ?>
                 <li><a href="taxa/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
+                <li><a href="taxa/dynamictreeviewer.php">Dynamic Taxonomic Tree Viewer</a></li>
 			</ul>
 
 			<?php
