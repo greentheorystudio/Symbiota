@@ -47,10 +47,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                 <selector-input-element label="Link Layout" :options="linkLayoutOptions" :value="selectedLinkLayout" @update:value="(value) => selectedLinkLayout = value"></selector-input-element>
                             </div>
                             <div>
-                                <text-field-input-element data-type="int" label="Margin x (px)" min-value="0" :value="marginXValue" @update:value="(value) => marginXValue = value"></text-field-input-element>
+                                <text-field-input-element data-type="int" label="Margin x (px)" min-value="0" :value="marginXValue" @update:value="setMarginX"></text-field-input-element>
                             </div>
                             <div>
-                                <text-field-input-element data-type="int" label="Margin y (px)" min-value="0" :value="marginYValue" @update:value="(value) => marginYValue = value"></text-field-input-element>
+                                <text-field-input-element data-type="int" label="Margin y (px)" min-value="0" :value="marginYValue" @update:value="setMarginY"></text-field-input-element>
                             </div>
                             <div>
                                 <text-field-input-element data-type="int" label="Radius (px)" min-value="0" :value="radiusValue" @update:value="setRadius"></text-field-input-element>
@@ -95,8 +95,8 @@ header('X-Frame-Options: SAMEORIGIN');
                         'bezier',
                         'orthogonal'
                     ];
-                    const marginXValue = Vue.ref(30);
-                    const marginYValue = Vue.ref(30);
+                    const marginXValue = Vue.ref(20);
+                    const marginYValue = Vue.ref(150);
                     const radiusValue = Vue.ref(3);
                     const selectedLayoutType = Vue.ref('horizontal');
                     const selectedLinkLayout = Vue.ref('bezier');
@@ -110,9 +110,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     ];
 
                     const root = d3.hierarchy(treeData);
-                    const dx = 10;
-                    const dy = containerWidth.value / (1 + root.height);
-                    const tree = d3.tree().nodeSize([dx, dy]);
+                    let tree = d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
 
                     const svg = d3.create("svg")
                         .attr("width", containerWidth.value)
@@ -136,6 +134,18 @@ header('X-Frame-Options: SAMEORIGIN');
                         setPng();
                     }
 
+                    function setMarginX(value) {
+                        marginXValue.value = value;
+                        tree = d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
+                        update(null, root);
+                    }
+
+                    function setMarginY(value) {
+                        marginYValue.value = value;
+                        tree = d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
+                        update(null, root);
+                    }
+
                     function setPng() {
                         const extent = [[0, 0], [containerWidth.value - 0, containerHeight.value - 0]];
                         svg.call(d3.zoom()
@@ -144,7 +154,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .extent(extent)
                             .on("zoom", zoomed));
 
-                        root.x0 = dy / 2;
+                        root.x0 = marginYValue.value / 2;
                         root.y0 = 0;
                         root.descendants().forEach((d, i) => {
                             d.id = i;
@@ -279,6 +289,8 @@ header('X-Frame-Options: SAMEORIGIN');
                         treeData,
                         treeDisplayRef,
                         typeOptions,
+                        setMarginX,
+                        setMarginY,
                         setRadius,
                         setTextMargin
                     }
