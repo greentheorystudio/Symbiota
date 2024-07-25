@@ -44,7 +44,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                 <selector-input-element label="Layout Type" :options="layoutTypeOptions" :value="selectedLayoutType" @update:value="(value) => selectedLayoutType = value"></selector-input-element>
                             </div>
                             <div>
-                                <selector-input-element label="Link Layout" :options="linkLayoutOptions" :value="selectedLinkLayout" @update:value="(value) => selectedLinkLayout = value"></selector-input-element>
+                                <selector-input-element label="Link Layout" :options="linkLayoutOptions" :value="selectedLinkLayout" @update:value="setLinkLayout"></selector-input-element>
                             </div>
                             <div>
                                 <text-field-input-element data-type="int" label="Margin x (px)" min-value="0" :value="marginXValue" :clearable="false" @update:value="setMarginX"></text-field-input-element>
@@ -85,7 +85,6 @@ header('X-Frame-Options: SAMEORIGIN');
                 setup() {
                     const containerHeight = Vue.ref(1945);
                     const containerWidth = Vue.ref(928);
-                    const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
                     const layoutTypeOptions = [
                         'horizontal',
                         'vertical',
@@ -109,6 +108,14 @@ header('X-Frame-Options: SAMEORIGIN');
                         'cluster'
                     ];
 
+                    const diagonal = Vue.computed(() => {
+                        if(selectedLinkLayout.value === 'bezier'){
+                            return d3.link(d3.curveBumpX).x(d => d.y).y(d => d.x);
+                        }
+                        else{
+                            return d3.link(d3.curveStep).x(d => d.y).y(d => d.x);
+                        }
+                    });
                     const root = d3.hierarchy(treeData);
                     let tree = d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
 
@@ -132,6 +139,11 @@ header('X-Frame-Options: SAMEORIGIN');
                         containerHeight.value = treeDisplayRef.value.clientHeight;
                         containerWidth.value = treeDisplayRef.value.clientWidth;
                         setPng();
+                    }
+
+                    function setLinkLayout(value) {
+                        selectedLinkLayout.value = value;
+                        update(null, root);
                     }
 
                     function setMarginX(value) {
@@ -260,16 +272,16 @@ header('X-Frame-Options: SAMEORIGIN');
                         const linkEnter = link.enter().append("path")
                             .attr("d", d => {
                                 const o = {x: source.x0, y: source.y0};
-                                return diagonal({source: o, target: o});
+                                return diagonal.value({source: o, target: o});
                             });
 
                         link.merge(linkEnter).transition(transition)
-                            .attr("d", diagonal);
+                            .attr("d", diagonal.value);
 
                         link.exit().transition(transition).remove()
                             .attr("d", d => {
                                 const o = {x: source.x, y: source.y};
-                                return diagonal({source: o, target: o});
+                                return diagonal.value({source: o, target: o});
                             });
 
                         root.eachBefore(d => {
@@ -300,6 +312,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         treeData,
                         treeDisplayRef,
                         typeOptions,
+                        setLinkLayout,
                         setMarginX,
                         setMarginY,
                         setRadius,
