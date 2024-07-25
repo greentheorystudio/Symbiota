@@ -86,9 +86,6 @@ header('X-Frame-Options: SAMEORIGIN');
                     const containerHeight = Vue.ref(1945);
                     const containerWidth = Vue.ref(928);
                     const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
-                    const extent = Vue.computed(() => {
-                        return [[0, 0], [containerWidth.value - 0, containerHeight.value - 0]];
-                    });
                     const layoutTypeOptions = [
                         'horizontal',
                         'vertical',
@@ -130,11 +127,6 @@ header('X-Frame-Options: SAMEORIGIN');
                     const gNode = svg.append("g")
                         .attr("cursor", "pointer")
                         .attr("pointer-events", "all");
-                    const zoom = d3.zoom()
-                        .scaleExtent([1, 8])
-                        .translateExtent(extent.value)
-                        .extent(extent.value)
-                        .on("zoom", zoomed);
 
                     function setDimensions() {
                         containerHeight.value = treeDisplayRef.value.clientHeight;
@@ -155,7 +147,12 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function setPng() {
-                        svg.call(zoom);
+                        const extent = [[0, 0], [containerWidth.value - 0, containerHeight.value - 0]];
+                        svg.call(d3.zoom()
+                            .scaleExtent([1, 8])
+                            .translateExtent(extent)
+                            .extent(extent)
+                            .on("zoom", zoomed));
 
                         root.x0 = marginYValue.value / 2;
                         root.y0 = 0;
@@ -203,6 +200,9 @@ header('X-Frame-Options: SAMEORIGIN');
 
                         const transition = svg.transition()
                             .duration(duration)
+                            .attr("width", containerWidth.value)
+                            .attr("height", containerHeight.value)
+                            .attr("viewBox", [(-1 * (containerWidth.value * 0.2)), (-1 * (containerHeight.value / 2)), containerWidth.value, height])
                             .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
 
                         const node = gNode.selectAll("g")
@@ -215,7 +215,6 @@ header('X-Frame-Options: SAMEORIGIN');
                             .on("click", (event, d) => {
                                 d.children = d.children ? null : d._children;
                                 update(event, d);
-                                zoomToFit();
                             });
 
                         nodeEnter.append("circle")
@@ -270,38 +269,6 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function zoomed({transform}) {
                         svg.attr("transform", transform);
-                    }
-
-                    function zoomToFit(paddingPercent) {
-                        /*const bounds = g.node().getBBox();
-                        const parent = svg.node().parentElement;
-                        const fullWidth = parent.clientWidth;
-                        const fullHeight = parent.clientHeight;
-
-                        const width = bounds.width;
-                        const height = bounds.height;
-
-                        const midX = bounds.x + (width / 2);
-                        const midY = bounds.y + (height / 2);
-
-                        if (width == 0 || height == 0) return; // nothing to fit
-
-                        const scale = (paddingPercent || 0.75) / Math.max(width / fullWidth, height / fullHeight);
-                        const translate = [fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY];
-
-                        const transform = d3.zoomIdentity
-                            .translate(translate[0], translate[1])
-                            .scale(scale);
-
-                        svg
-                            .transition()
-                            .duration(500)
-                            .call(zoomBehaviours.transform, transform)
-                            .call(d3.zoom()
-                            .scaleExtent([1, 8])
-                            .translateExtent(extent.value)
-                            .extent(extent.value)
-                            .on("zoom", zoomed));*/
                     }
 
                     Vue.onMounted(() => {
