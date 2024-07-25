@@ -38,7 +38,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     <q-card flat bordered>
                         <q-card-section class="column q-gutter-sm q-pa-sm">
                             <div>
-                                <selector-input-element label="Type" :options="typeOptions" :value="selectedType" @update:value="(value) => selectedType = value"></selector-input-element>
+                                <selector-input-element label="Type" :options="typeOptions" :value="selectedType" @update:value="setTreeType"></selector-input-element>
                             </div>
                             <div>
                                 <selector-input-element label="Layout Type" :options="layoutTypeOptions" :value="selectedLayoutType" @update:value="(value) => selectedLayoutType = value"></selector-input-element>
@@ -178,6 +178,17 @@ header('X-Frame-Options: SAMEORIGIN');
                         d3.selectAll('.child-text-label').attr('x', textMarginValue.value);
                     }
 
+                    function setTreeType(value) {
+                        selectedType.value = value;
+                        if(selectedType.value === 'tree'){
+                            tree = d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
+                        }
+                        else{
+                            tree = d3.cluster ().nodeSize([marginXValue.value, marginYValue.value]);
+                        }
+                        update(null, root);
+                    }
+
                     function update(event, source) {
                         const duration = event?.altKey ? 2500 : 250;
                         const nodes = root.descendants().reverse();
@@ -292,7 +303,8 @@ header('X-Frame-Options: SAMEORIGIN');
                         setMarginX,
                         setMarginY,
                         setRadius,
-                        setTextMargin
+                        setTextMargin,
+                        setTreeType
                     }
                 }
             });
