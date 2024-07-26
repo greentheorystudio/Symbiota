@@ -147,7 +147,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         .attr('stroke', '#555')
                         .attr('stroke-opacity', 0.4)
                         .attr('stroke-width', 1.5);
-                    const gNode = svg.append("g")
+                    const gNode = svg.append('g')
                         .attr('cursor', 'pointer')
                         .attr('pointer-events', 'all');
 
@@ -300,7 +300,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('viewBox', [(-1 * (containerWidth.value * 0.2)), (-1 * (containerHeight.value / 2)), containerWidth.value, height])
                             .tween('resize', window.ResizeObserver ? null : () => () => svg.dispatch('toggle'));
 
-                        const node = gNode.selectAll("g")
+                        const node = gNode.selectAll('g')
                             .data(nodes, d => d.id);
 
                         const nodeEnter = node.enter().append('g')
@@ -324,7 +324,7 @@ header('X-Frame-Options: SAMEORIGIN');
 
                         nodeEnter.append('circle')
                             .attr('r', radiusValue.value)
-                            .attr('fill', d => d._children ? "#555" : "#999")
+                            .attr('fill', d => d._children ? '#555' : '#999')
                             .attr('stroke-width', 10);
 
                         nodeEnter.append('text')
@@ -370,7 +370,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .data(links, d => d.target.id);
 
                         const linkEnter = link.enter().append('path')
-                            .attr("d", d => {
+                            .attr('d', d => {
                                 const o = {x: source.x0, y: source.y0};
                                 return diagonal.value({source: o, target: o});
                             });
