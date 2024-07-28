@@ -172,12 +172,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         .attr('viewBox', [-cx.value, -cy.value, containerWidth.value, containerHeight.value])
                         .attr('style', 'width: 100%; height: auto; font: 10px sans-serif;')
                         .style('user-select', 'none');
-                    const gLink = svg.append('g')
+                    const g = svg.append('g');
+                    const gLink = g.append('g')
                         .attr('fill', 'none')
                         .attr('stroke', '#555')
                         .attr('stroke-opacity', 0.4)
                         .attr('stroke-width', 1.5);
-                    const gNode = svg.append('g')
+                    const gNode = g.append('g')
                         .attr('cursor', 'pointer')
                         .attr('pointer-events', 'all');
 
@@ -260,11 +261,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function setPng() {
-                        const extent = [[0, 0], [containerWidth.value - 0, containerHeight.value - 0]];
                         svg.call(d3.zoom()
-                            .scaleExtent([-100, 100])
-                            .translateExtent(extent)
-                            .extent(extent)
                             .on('zoom', zoomed));
 
                         root.x0 = marginYValue.value / 2;
@@ -413,8 +410,9 @@ header('X-Frame-Options: SAMEORIGIN');
                         processText();
                     }
 
-                    function zoomed({transform}) {
-                        svg.attr('transform', transform);
+                    function zoomed(e) {
+                        d3.select('svg g')
+                            .attr('transform', e.transform);
                     }
 
                     Vue.onMounted(() => {
