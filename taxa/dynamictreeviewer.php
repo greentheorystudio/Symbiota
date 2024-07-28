@@ -108,6 +108,12 @@ header('X-Frame-Options: SAMEORIGIN');
                         'cluster'
                     ];
 
+                    const cx = Vue.computed(() => {
+                        return (containerWidth.value * 0.5);
+                    });
+                    const cy = Vue.computed(() => {
+                        return (containerHeight.value * 0.59);
+                    });
                     const diagonal = Vue.computed(() => {
                         if(selectedLinkLayout.value === 'bezier'){
                             if(selectedLayoutType.value === 'horizontal'){
@@ -117,7 +123,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                 return d3.link(d3.curveBumpY).x(d => d.x).y(d => d.y);
                             }
                             else{
-
+                                return d3.linkRadial().angle(d => d.x).radius(d => d.y);
                             }
                         }
                         else{
@@ -133,15 +139,39 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     });
                     const root = d3.hierarchy(treeData);
-                    let tree = d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
+                    const treeRadius = Vue.computed(() => {
+                        return (Math.min(containerWidth.value, containerHeight.value) / 2 - 30);
+                    });
+
+                    const tree = Vue.computed(() => {
+                        if(selectedLayoutType.value === 'circular'){
+                            if(selectedType.value === 'tree'){
+                                return d3.tree()
+                                    .size([2 * Math.PI, treeRadius.value])
+                                    .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
+                            }
+                            else{
+                                return d3.cluster()
+                                    .size([2 * Math.PI, treeRadius.value])
+                                    .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
+                            }
+                        }
+                        else{
+                            if(selectedType.value === 'tree'){
+                                return d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
+                            }
+                            else{
+                                return d3.cluster().nodeSize([marginXValue.value, marginYValue.value]);
+                            }
+                        }
+                    });
 
                     const svg = d3.create('svg')
                         .attr('width', containerWidth.value)
                         .attr('height', containerHeight.value)
-                        .attr('viewBox', [(-1 * (containerWidth.value * 0.2)), (-1 * (containerHeight.value / 2)), containerWidth.value, containerHeight.value])
-                        .style('font', '10px sans-serif')
+                        .attr('viewBox', [-cx.value, -cy.value, containerWidth.value, containerHeight.value])
+                        .attr('style', 'width: 100%; height: auto; font: 10px sans-serif;')
                         .style('user-select', 'none');
-                    const g = svg.append('g');
                     const gLink = svg.append('g')
                         .attr('fill', 'none')
                         .attr('stroke', '#555')
@@ -155,6 +185,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         d3.selectAll('text')
                         .each(function() {
                             const element = d3.select(this);
+                            console.log(element);
                             const parentText = element.attr('text-type') === 'parent';
                             element.attr('x', function() {
                                 if(selectedLayoutType.value === 'horizontal'){
@@ -164,7 +195,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     return parentText ? null : textMarginValue.value;
                                 }
                                 else{
-
+                                    return parentText ? (-1 * textMarginValue.value) : textMarginValue.value;
                                 }
                             });
                             element.attr('y', function() {
@@ -175,7 +206,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     return parentText ? (-1 * textMarginValue.value) : null;
                                 }
                                 else{
-
+                                    return null;
                                 }
                             });
                             element.attr('text-anchor', function() {
@@ -186,7 +217,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     return 'middle'
                                 }
                                 else{
-
+                                    return parentText ? 'end' : 'start'
                                 }
                             });
                             element.attr('transform', function() {
@@ -197,7 +228,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     return parentText ? null : 'rotate(90)'
                                 }
                                 else{
-
+                                    return 'rotate(' + (Number(element.attr('x')) * 180 / Math.PI - 90).toString() + ') translate(' + element.attr('y') + ', 0) rotate(' + (Number(element.attr('x')) >= Math.PI ? '180' : '0') + ')';
                                 }
                             });
                         });
@@ -221,13 +252,11 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function setMarginX(value) {
                         marginXValue.value = value;
-                        tree = d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
                         update(null, root);
                     }
 
                     function setMarginY(value) {
                         marginYValue.value = value;
-                        tree = d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
                         update(null, root);
                     }
 
@@ -264,21 +293,14 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function setTreeType(value) {
                         selectedType.value = value;
-                        if(selectedType.value === 'tree'){
-                            tree = d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
-                        }
-                        else{
-                            tree = d3.cluster ().nodeSize([marginXValue.value, marginYValue.value]);
-                        }
                         update(null, root);
                     }
 
                     function update(event, source) {
-                        const duration = event?.altKey ? 2500 : 250;
                         const nodes = root.descendants().reverse();
                         const links = root.links();
 
-                        tree(root);
+                        tree.value(root);
 
                         let left = root;
                         let right = root;
@@ -294,7 +316,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         const height = right.x - left.x;
 
                         const transition = svg.transition()
-                            .duration(duration)
+                            .duration(250)
                             .attr('width', containerWidth.value)
                             .attr('height', containerHeight.value)
                             .attr('viewBox', [(-1 * (containerWidth.value * 0.2)), (-1 * (containerHeight.value / 2)), containerWidth.value, height])
@@ -306,13 +328,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         const nodeEnter = node.enter().append('g')
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'horizontal'){
-                                    return `translate(${source.y0},${source.x0})`
+                                    return `translate(${source.y0}, ${source.x0})`
                                 }
                                 else if(selectedLayoutType.value === 'vertical'){
-                                    return `translate(${source.x0},${source.y0})`
+                                    return `translate(${source.x0}, ${source.y0})`
                                 }
                                 else{
-
+                                    return `rotate(${source.x0 * 180 / Math.PI - 90}) translate(${source.y0}, 0)`
                                 }
                             })
                             .attr('fill-opacity', 0)
@@ -328,7 +350,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('stroke-width', 10);
 
                         nodeEnter.append('text')
-                            .attr('dy', '0.25em')
+                            .attr('dy', '0.31em')
                             .attr('text-type', d => d._children ? 'parent' : 'child')
                             .text(d => d.data.name)
                             .attr('stroke-linejoin', 'round')
@@ -339,13 +361,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         node.merge(nodeEnter).transition(transition)
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'horizontal'){
-                                    return `translate(${d.y},${d.x})`
+                                    return `translate(${d.y}, ${d.x})`
                                 }
                                 else if(selectedLayoutType.value === 'vertical'){
-                                    return `translate(${d.x},${d.y})`
+                                    return `translate(${d.x}, ${d.y})`
                                 }
                                 else{
-
+                                    return `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y}, 0)`
                                 }
                             })
                             .attr('fill-opacity', 1)
@@ -354,13 +376,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         node.exit().transition(transition).remove()
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'horizontal'){
-                                    return `translate(${source.y},${source.x})`
+                                    return `translate(${source.y}, ${source.x})`
                                 }
                                 else if(selectedLayoutType.value === 'vertical'){
-                                    return `translate(${source.x},${source.y})`
+                                    return `translate(${source.x}, ${source.y})`
                                 }
                                 else{
-
+                                    return `rotate(${source.x * 180 / Math.PI - 90}) translate(${source.y}, 0)`
                                 }
                             })
                             .attr('fill-opacity', 0)
