@@ -185,7 +185,6 @@ header('X-Frame-Options: SAMEORIGIN');
                         d3.selectAll('text')
                         .each(function() {
                             const element = d3.select(this);
-                            console.log(element);
                             const parentText = element.attr('text-type') === 'parent';
                             element.attr('x', function() {
                                 if(selectedLayoutType.value === 'horizontal'){
@@ -228,7 +227,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     return parentText ? null : 'rotate(90)'
                                 }
                                 else{
-                                    return 'rotate(' + (Number(element.attr('x')) * 180 / Math.PI - 90).toString() + ') translate(' + element.attr('y') + ', 0) rotate(' + (Number(element.attr('x')) >= Math.PI ? '180' : '0') + ')';
+                                    return 'rotate(' + ((Number(element.attr('x')) * 180) / (Math.PI - 180)).toString() + ')';
                                 }
                             });
                         });
