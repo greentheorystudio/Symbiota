@@ -1,5 +1,9 @@
 const textFieldInputElement = {
     props: {
+        clearable: {
+            type: Boolean,
+            default: true
+        },
         dataType: {
             type: String,
             default: 'text'
@@ -40,13 +44,13 @@ const textFieldInputElement = {
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
             <q-input outlined v-model="value" :type="inputType" :label="label" debounce="700" bg-color="white" :counter="(showCounter && dataType !== 'int' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="inputType === 'textarea'" dense>
-                <template v-if="value || definition" v-slot:append>
+                <template v-if="(value && clearable) || definition" v-slot:append>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                    <q-icon v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
                         </q-tooltip>
@@ -56,13 +60,13 @@ const textFieldInputElement = {
         </template>
         <template v-else>
             <q-input outlined v-model="value" :type="inputType" :label="label" debounce="700" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :autogrow="inputType === 'textarea'" dense>
-                <template v-if="!disabled && (value || definition)" v-slot:append>
+                <template v-if="!disabled && ((value && clearable) || definition)" v-slot:append>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                    <q-icon v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
                         </q-tooltip>

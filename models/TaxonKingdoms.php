@@ -33,7 +33,7 @@ class TaxonKingdoms{
     public function getKingdomArr(): array
     {
         $retArr = array();
-        $sql = 'SELECT k.kingdom_id, t.sciname '.
+        $sql = 'SELECT k.kingdom_id, t.tid, t.sciname '.
             'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.kingdom_name = t.SciName '.
             'WHERE t.tid IS NOT NULL '.
             'ORDER BY t.SciName ';
@@ -42,6 +42,7 @@ class TaxonKingdoms{
         while($r = $rs->fetch_object()){
             $tArr = array();
             $tArr['id'] = $r->kingdom_id;
+            $tArr['tid'] = $r->tid;
             $tArr['name'] = $r->sciname;
             $retArr[] = $tArr;
         }

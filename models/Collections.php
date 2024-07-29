@@ -144,7 +144,12 @@ class Collections {
         if($r = $rs->fetch_object()){
             foreach($fields as $val){
                 $name = $val->name;
-                $retArr[$name] = $r->$name;
+                if($name === 'dynamicproperties' && $r->$name){
+                    $retArr[$name] = json_decode($r->$name, true);
+                }
+                else{
+                    $retArr[$name] = $r->$name;
+                }
             }
             if($r->uploaddate){
                 $uDate = $r->uploaddate;

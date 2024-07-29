@@ -1,7 +1,7 @@
 <?php
 class SanitizerService {
 
-    public static function cleanInStr($conn,$str): string
+    public static function cleanInStr($conn, $str): string
     {
         $newStr = '';
         if($str){
@@ -12,7 +12,7 @@ class SanitizerService {
         return $newStr;
     }
 
-    public static function cleanInArray($conn,$arr): array
+    public static function cleanInArray($conn, $arr): array
     {
         $newArray = array();
         foreach($arr as $key => $value){

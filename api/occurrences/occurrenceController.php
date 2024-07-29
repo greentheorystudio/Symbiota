@@ -54,4 +54,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $collId = array_key_exists('transferToCollid',$_POST) ? (int)$_POST['transferToCollid'] : null;
         echo $occurrences->transferOccurrenceRecord($occid, $collId);
     }
+    elseif($action === 'getOccurrenceIdDataFromIdentifierArr' && $collid && array_key_exists('identifierField',$_POST) && array_key_exists('identifiers',$_POST)){
+        echo json_encode($occurrences->getOccurrenceIdDataFromIdentifierArr($collid, $_POST['identifierField'], json_decode($_POST['identifiers'], true)));
+    }
 }

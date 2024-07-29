@@ -2,7 +2,7 @@ const mediaFileUploadInputElement = {
     props: {
         collId: {
             type: Number,
-            default: null
+            default: 1
         },
         createOccurrence: {
             type: Boolean,
@@ -67,7 +67,7 @@ const mediaFileUploadInputElement = {
                                 <checkbox-input-element label="Copy file to server" :value="urlMethodCopyFile" @update:value="(value) => urlMethodCopyFile = value"></checkbox-input-element>
                             </div>
                             <div>
-                                <q-btn color="primary" @click="uploaderRef.pickFiles();" label="Process URL" />
+                                <q-btn color="primary" @click="processExternalUrl();" label="Process URL" />
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@ const mediaFileUploadInputElement = {
                             <div class="full-width row justify-between">
                                 <div class="row no-wrap justify-start q-pa-sm q-gutter-xs">
                                     <q-spinner v-if="scope.isUploading" class="q-uploader__spinner"></q-spinner>
-                                    <div v-if="queueSize > 0" class="q-uploader__subtitle text-bold">Total upload size: {{ queueSizeLabel }}</div>
+                                    <div class="q-uploader__subtitle text-bold">Total upload size: {{ queueSizeLabel }}</div>
                                     <q-uploader-add-trigger></q-uploader-add-trigger>
                                 </div>
                                 <div class="row justify-end">
@@ -91,18 +91,21 @@ const mediaFileUploadInputElement = {
                         <template v-slot:list="scope">
                             <div ref="fileListRef">
                                 <q-list separator class="fit">
-                                    <q-item v-for="file in scope.files" :key="file.__key" class="full-width">
+                                    <q-item v-for="file in fileArr" :key="file.__key" class="full-width">
                                         <q-item-section>
                                             <div class="full-width row">
                                                 <div class="col-2">
-                                                    <div v-if="file.__img" class="q-uploader-thumbnail">
+                                                    <div v-if="file.hasOwnProperty('externalUrl')">
+                                                        <q-img :src="file['externalUrl']" spinner-color="white"></q-img>
+                                                    </div>
+                                                    <div v-else-if="file.__img">
                                                         <q-img :src="file.__img.src" spinner-color="white"></q-img>
                                                     </div>
                                                     <div v-else class="text-h6 text-bold">
                                                         {{ file.name.split('.').pop() + ' file' }}
                                                     </div>
                                                 </div>
-                                                <div class="col-8 column">
+                                                <div class="col-8 column q-pl-sm">
                                                     <div class="row full-width justify-between">
                                                         <div class="ellipsis">
                                                             {{ file.name }}
@@ -113,10 +116,11 @@ const mediaFileUploadInputElement = {
                                                     </div>
                                                     <div>
                                                         <div caption>
-                                                            <span class="text-bold q-mr-xs">Metadata: </span>
                                                             <template v-for="key in Object.keys(file['uploadMetadata'])">
                                                                 <template v-if="file['uploadMetadata'][key] && file['uploadMetadata'][key] !== ''">
-                                                                    <span class="text-bold q-ml-xs">{{ key }}:</span> {{ file['uploadMetadata'][key] }}
+                                                                    <span class="q-mr-xs">
+                                                                        <span class="text-bold">{{ key }}:</span> {{ file['uploadMetadata'][key] }}
+                                                                    </span>
                                                                 </template>
                                                             </template>
                                                         </div>
@@ -154,40 +158,53 @@ const mediaFileUploadInputElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { parseCsvFile, showNotification } = useCore();
+        const { getSubstringByRegEx, parseCsvFile, showNotification } = useCore();
         const baseStore = useBaseStore();
         const imageStore = useImageStore();
         const mediaStore = useMediaStore();
         const occurrenceStore = useOccurrenceStore();
 
-        const audioTypes = ['audio/mpeg', 'audio/ogg', 'audio/wav'];
+        const acceptedMediaTypes = [
+            {extension: 'jpeg', type: 'StillImage', mimetype: 'image/jpeg'},
+            {extension: 'jpg', type: 'StillImage', mimetype: 'image/jpeg'},
+            {extension: 'png', type: 'StillImage', mimetype: 'image/png'},
+            {extension: 'zc', type: 'Zipkey', mimetype: 'application/zc'},
+            {extension: 'mp4', type: 'MovingImage', mimetype: 'video/mp4'},
+            {extension: 'webm', type: 'MovingImage', mimetype: 'video/webm'},
+            {extension: 'ogg', type: 'MovingImage', mimetype: 'video/ogg'},
+            {extension: 'wav', type: 'Sound', mimetype: 'audio/wav'},
+            {extension: 'mp3', type: 'Sound', mimetype: 'audio/mpeg'}
+        ];
         let csvFileData = [];
         const csvFileDataUploaded = Vue.computed(() => {
             return csvFileData.length > 0;
         });
         const fileArr = Vue.shallowReactive([]);
-        const fileExtensionTypes = ['jpeg', 'jpg', 'png', 'zc'];
         const fileListRef = Vue.ref(null);
+        const identifierArr = Vue.ref([]);
+        const identifierData = Vue.ref({});
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
         const queueSize = Vue.ref(0);
         const queueSizeLabel = Vue.ref('');
         const selectedUploadMethod = Vue.ref('upload');
-        const systemProperties = Vue.ref(['format','type']);
-        const taxaDataArr = Vue.ref([]);
+        const taxaArr = Vue.ref([]);
+        const taxaData = Vue.ref({});
         const uploaderRef = Vue.ref(null);
         const uploaderStyle = Vue.ref('');
         const uploadMethodOptions = [
             {label: 'Local Files', value: 'upload'},
             {label: 'From URL', value: 'url'}
         ];
-        const urlMethodCopyFile = Vue.ref(false);
+        const urlMethodCopyFile = Vue.ref(true);
         const urlMethodUrl = Vue.ref(null);
-        const videoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
 
         function cancelUpload() {
             csvFileData.length = 0;
             fileArr.length = 0;
-            taxaDataArr.value = [];
+            identifierArr.value = [];
+            identifierData.value = Object.assign({}, {});
+            taxaArr.value = [];
+            taxaData.value = Object.assign({}, {});
             updateQueueSize();
             uploaderRef.value.reset();
         }
@@ -207,7 +224,7 @@ const mediaFileUploadInputElement = {
                 }
                 else{
                     if(!file['uploadMetadata']['tid']){
-                        if(file['scientificname']){
+                        if(file['scientificName']){
                             errorMessage = 'Scientific name was not found in taxonomic thesaurus';
                         }
                         else{
@@ -217,6 +234,33 @@ const mediaFileUploadInputElement = {
                 }
             }
             return errorMessage;
+        }
+
+        function getUploadData(file) {
+            if(file['uploadMetadata']['type'] === 'StillImage'){
+                return {
+                    url: imageApiUrl,
+                    formFields: [
+                        {name: 'action', value: 'addImage'},
+                        {name: 'collid', value: props.collId.toString()},
+                        {name: 'copyToServer', value: file['copyToServer']},
+                        {name: 'image', value: JSON.stringify(file['uploadMetadata'])}
+                    ],
+                    fieldName: 'imgfile'
+                }
+            }
+            else{
+                return {
+                    url: mediaApiUrl,
+                    formFields: [
+                        {name: 'action', value: 'addMedia'},
+                        {name: 'collid', value: props.collId.toString()},
+                        {name: 'copyToServer', value: file['copyToServer']},
+                        {name: 'media', value: JSON.stringify(file['uploadMetadata'])}
+                    ],
+                    fieldName: 'medfile'
+                }
+            }
         }
 
         function initializeUpload() {
@@ -231,133 +275,173 @@ const mediaFileUploadInputElement = {
 
         function processCsvFileData() {
             if(csvFileData.length > 0){
-                const taxaArr = [];
+                taxaArr.value = [];
                 csvFileData.forEach((dataObj, index) => {
                     if(dataObj.hasOwnProperty('filename') && dataObj['filename']){
-                        if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.includes(dataObj['scientificname'])){
-                            taxaArr.push(dataObj['scientificname']);
+                        if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.value.includes(dataObj['scientificname'])){
+                            taxaArr.value.push(dataObj['scientificname']);
+                        }
+                        else if(dataObj.hasOwnProperty('sciname') && dataObj['sciname'] !== '' && !taxaArr.value.includes(dataObj['sciname'])){
+                            taxaArr.value.push(dataObj['sciname']);
+                        }
+                        if(Number(props.collId) > 0 && dataObj.hasOwnProperty(props.identifierField) && dataObj[props.identifierField] !== '' && !identifierArr.value.includes(dataObj[props.identifierField])){
+                            identifierArr.value.push(dataObj[props.identifierField]);
                         }
                     }
                     else{
                         csvFileData.splice(index,1);
                     }
                 });
-                //setTaxaData(taxaArr);
+                setFileIdentifierData();
             }
         }
 
-        function processMediaFileData(file, csvData) {
-            if(file.name.endsWith(".mp4")){
-                file['metadata'].push({name: 'type', value: 'MovingImage', system: true});
-                file['metadata'].push({name: 'format', value: 'video/mp4', system: true});
+        function processExternalUrl() {
+            if(urlMethodUrl.value){
+                const file = {
+                    name: urlMethodUrl.value.split('/').pop(),
+                    size: 0,
+                    externalUrl: urlMethodUrl.value,
+                    copyToServer: (urlMethodCopyFile.value ? '1' : '0')
+                };
+                if(urlMethodCopyFile.value){
+                    const formData = new FormData();
+                    formData.append('url', urlMethodUrl.value);
+                    formData.append('action', 'getFileInfoFromUrl');
+                    fetch(proxyServiceApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        if(response.status === 200){
+                            response.json().then((resObj) => {
+                                file.size = resObj['fileSize'];
+                                validateFiles([file]);
+                                resetUrlMethodSettings();
+                            });
+                        }
+                    });
+                }
+                else{
+                    validateFiles([file]);
+                    resetUrlMethodSettings();
+                }
             }
-            else if(file.name.endsWith(".webm")){
-                file['metadata'].push({name: 'type', value: 'MovingImage', system: true});
-                file['metadata'].push({name: 'format', value: 'video/webm', system: true});
-            }
-            else if(file.name.endsWith(".ogg")){
-                file['metadata'].push({name: 'type', value: 'MovingImage', system: true});
-                file['metadata'].push({name: 'format', value: 'video/ogg', system: true});
-            }
-            else if(file.name.endsWith(".mp3")){
-                file['metadata'].push({name: 'type', value: 'Sound', system: true});
-                file['metadata'].push({name: 'format', value: 'audio/mpeg', system: true});
-            }
-            else if(file.name.endsWith(".wav")){
-                file['metadata'].push({name: 'type', value: 'Sound', system: true});
-                file['metadata'].push({name: 'format', value: 'audio/wav', system: true});
-            }
-            else if(file.name.endsWith(".zc")){
-                file['metadata'].push({name: 'type', value: 'Sound', system: true});
-                file['metadata'].push({name: 'format', value: '', system: true});
-            }
-            else{
-                file['metadata'].push({name: 'type', value: '', system: true});
-                file['metadata'].push({name: 'format', value: '', system: true});
-            }
-            file['metadata'].push({name: 'action', value: 'uploadTaxonMedia', system: true});
-            file['metadata'].push({name: 'title', value: ((csvData && csvData.hasOwnProperty('title') && csvData['title'] !== '') ? csvData['title'] : ''), system: false});
-            file['metadata'].push({name: 'creator', value: ((csvData && csvData.hasOwnProperty('creator') && csvData['creator'] !== '') ? csvData['creator'] : ''), system: false});
-            file['metadata'].push({name: 'description', value: ((csvData && csvData.hasOwnProperty('description') && csvData['description'] !== '') ? csvData['description'] : ''), system: false});
-            file['metadata'].push({name: 'locationcreated', value: ((csvData && csvData.hasOwnProperty('locationcreated') && csvData['locationcreated'] !== '') ? csvData['locationcreated'] : ''), system: false});
-            file['metadata'].push({name: 'language', value: ((csvData && csvData.hasOwnProperty('language') && csvData['language'] !== '') ? csvData['language'] : ''), system: false});
-            file['metadata'].push({name: 'usageterms', value: ((csvData && csvData.hasOwnProperty('usageterms') && csvData['usageterms'] !== '') ? csvData['usageterms'] : ''), system: false});
-            file['metadata'].push({name: 'rights', value: ((csvData && csvData.hasOwnProperty('rights') && csvData['rights'] !== '') ? csvData['rights'] : ''), system: false});
-            file['metadata'].push({name: 'owner', value: ((csvData && csvData.hasOwnProperty('owner') && csvData['owner'] !== '') ? csvData['owner'] : ''), system: false});
-            file['metadata'].push({name: 'publisher', value: ((csvData && csvData.hasOwnProperty('publisher') && csvData['publisher'] !== '') ? csvData['publisher'] : ''), system: false});
-            file['metadata'].push({name: 'contributor', value: ((csvData && csvData.hasOwnProperty('contributor') && csvData['contributor'] !== '') ? csvData['contributor'] : ''), system: false});
-            file['metadata'].push({name: 'bibliographiccitation', value: ((csvData && csvData.hasOwnProperty('bibliographiccitation') && csvData['bibliographiccitation'] !== '') ? csvData['bibliographiccitation'] : ''), system: false});
-            file['metadata'].push({name: 'furtherinformationurl', value: ((csvData && csvData.hasOwnProperty('furtherinformationurl') && csvData['furtherinformationurl'] !== '') ? csvData['furtherinformationurl'] : ''), system: false});
-            file['metadata'].push({name: 'accessuri', value: ((csvData && csvData.hasOwnProperty('accessuri') && csvData['accessuri'] !== '') ? csvData['accessuri'] : ''), system: false});
         }
 
         function processUploaded(info) {
-            info.files.forEach((file) => {
+            console.log('after');
+            /*info.files.forEach((file) => {
                 removePickedFile(file);
-            });
+            });*/
         }
 
         function removePickedFile(file) {
             const fileIndex = fileArr.indexOf(file);
             fileArr.splice(fileIndex,1);
-            uploaderRef.value.removeFile(file);
             updateQueueSize();
         }
 
-        function setCsvFileData() {
+        function resetUrlMethodSettings() {
+            urlMethodUrl.value = null;
+            selectedUploadMethod.value = 'upload';
+            urlMethodCopyFile.value = true;
+        }
+
+        function setFileData() {
             if(fileArr.length > 0 && csvFileData.length > 0){
                 fileArr.forEach((file) => {
+                    if(!file['recordIdentifier'] && file['filenameRecordIdentifier']){
+                        file['recordIdentifier'] = file['filenameRecordIdentifier'];
+                    }
                     let csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
                     if(!csvData){
                         csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
                     }
                     if(csvData){
-                        let tid = null;
-                        const keys = Object.keys(csvData);
-                        keys.forEach((key) => {
-                            if(key !== 'filename' && csvData[key] !== ''){
-                                if(key === 'scientificname'){
-                                    const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === csvData[key].toLowerCase());
-                                    if(taxonData){
-                                        tid = taxonData['tid'];
-                                    }
-                                    file['scientificname'] = csvData[key];
-                                    file['tid'] = tid;
+                        const dataKeys = Object.keys(csvData);
+                        if(dataKeys.includes(props.identifierField)){
+                            file['recordIdentifier'] = csvData[props.identifierField];
+                            file['occurrenceData'] = csvData;
+                        }
+                        dataKeys.forEach((key) => {
+                            if(key !== 'filename' && csvData[key] && csvData[key] !== ''){
+                                if(key === 'scientificname' || key === 'sciname'){
+                                    file['scientificName'] = csvData[key];
                                 }
-                                else{
-                                    const existingData = file['metadata'].find((obj) => obj.name === key);
-                                    if(existingData){
-                                        existingData['value'] = csvData[key];
-                                    }
-                                    else{
-                                        file['metadata'].push({name: key, value: csvData[key], system: systemProperties.value.includes(key)});
-                                    }
+                                else if(file['uploadMetadata'].hasOwnProperty(key)){
+                                    file['uploadMetadata'][key] = csvData[key];
                                 }
                             }
                         });
+                    }
+                    if(!file['uploadMetadata']['tid'] && file['scientificName'] && taxaData.value.hasOwnProperty(file['scientificName'].toLowerCase())){
+                        file['uploadMetadata']['tid'] = taxaData.value[file['scientificName'].toLowerCase()]['tid'];
+                    }
+                    if(!file['uploadMetadata']['occid'] && file['recordIdentifier'] && identifierData.value.hasOwnProperty(file['recordIdentifier'].toLowerCase())){
+                        file['uploadMetadata']['occid'] = identifierData.value[file['recordIdentifier'].toLowerCase()]['occid'];
+                        if(!file['uploadMetadata']['tid'] && identifierData.value[file['recordIdentifier'].toLowerCase()]['tid']){
+                            file['uploadMetadata']['tid'] = identifierData.value[file['recordIdentifier'].toLowerCase()]['tid'];
+                        }
+                    }
+                    else if(!file['uploadMetadata']['occid'] && file['filenameRecordIdentifier'] && identifierData.value.hasOwnProperty(file['filenameRecordIdentifier'].toLowerCase())){
+                        file['uploadMetadata']['occid'] = identifierData.value[file['filenameRecordIdentifier'].toLowerCase()]['occid'];
+                        if(!file['uploadMetadata']['tid'] && identifierData.value[file['filenameRecordIdentifier'].toLowerCase()]['tid']){
+                            file['uploadMetadata']['tid'] = identifierData.value[file['filenameRecordIdentifier'].toLowerCase()]['tid'];
+                        }
                     }
                 });
             }
         }
 
-        function setTaxaData(nameArr, fileName = null) {
+        function setFileIdentifierData() {
+            if(Number(props.taxonId) === 0 && taxaArr.value.length > 0){
+                setTaxaData();
+            }
+            else if(Number(props.collId) > 0 && identifierArr.value.length > 0){
+                setIdentifierData();
+            }
+            else{
+                setFileData();
+            }
+        }
+
+        function setIdentifierData() {
             const formData = new FormData();
-            formData.append('taxa', JSON.stringify(nameArr));
-            formData.append('action', 'getTaxaArrFromNameArr');
+            formData.append('collid', props.collId.toString());
+            formData.append('identifierField', props.identifierField);
+            formData.append('identifiers', JSON.stringify(identifierArr.value));
+            formData.append('action', 'getOccurrenceIdDataFromIdentifierArr');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.json().then((resObj) => {
+                    identifierArr.value.length = 0;
+                    Object.keys(resObj).forEach((key) => {
+                        identifierData.value[key] = Object.assign({}, resObj[key]);
+                    });
+                    setFileIdentifierData();
+                });
+            });
+        }
+
+        function setTaxaData() {
+            const formData = new FormData();
+            formData.append('taxa', JSON.stringify(taxaArr.value));
+            formData.append('action', 'getTaxaIdDataFromNameArr');
             fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
             .then((response) => {
                 response.json().then((resObj) => {
-                    taxaDataArr.value = taxaDataArr.value.concat(resObj);
-                    if(fileName && resObj.length === 1){
-                        const file = fileArr.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
-                        file['scientificname'] = resObj[0]['sciname'];
-                        file['tid'] = resObj[0]['tid'];
-                        uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
-                    }
-                    updateMediaDataTids();
+                    taxaArr.value.length = 0;
+                    Object.keys(resObj).forEach((key) => {
+                        taxaData.value[key] = Object.assign({}, resObj[key]);
+                    });
+                    setFileIdentifierData();
                 });
             });
         }
@@ -371,45 +455,12 @@ const mediaFileUploadInputElement = {
             }, 400 );
         }
 
-        function updateMediaDataTids() {
-            fileArr.forEach((file) => {
-                if(!file.hasOwnProperty('tid') || !file.tid || file.tid === ''){
-                    const sciname = file.scientificname;
-                    if(sciname){
-                        const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
-                        if(taxonData){
-                            file.tid = taxonData['tid'];
-                            file.errorMessage = '';
-                        }
-                        else{
-                            file.errorMessage = 'Scientific name not found in taxonomic thesaurus';
-                        }
-                        uploaderRef.value.updateFileStatus(file,new Date().toTimeString());
-                    }
-                }
-            });
-        }
-
-        function updateMediaScientificName(taxonObj) {
-            const file = fileArr.find((obj) => obj.name.toLowerCase() === taxonObj['filename'].toLowerCase());
-            file['scientificname'] = taxonObj['sciname'];
-            file['tid'] = taxonObj['tid'];
-            if(taxonObj['sciname'] && taxonObj['tid']){
-                file['errorMessage'] = null;
-            }
-            else if(taxonObj['sciname']){
-                file['errorMessage'] = 'Scientific name not found in taxonomic thesaurus';
-            }
-            else{
-                file['errorMessage'] = 'Scientific name required';
-            }
-            uploaderRef.value.updateFileStatus(file, new Date().toTimeString());
-        }
-
         function updateQueueSize() {
             let size = 0;
             fileArr.forEach((file) => {
-                size += file.size;
+                if(file.hasOwnProperty('size')){
+                    size += file.size;
+                }
             });
             const sizeMb = (Math.round((size / 1000000) * 10 ) / 100);
             queueSize.value = size;
@@ -418,17 +469,40 @@ const mediaFileUploadInputElement = {
         }
 
         function uploadFiles(files) {
-            if(files[0].hasOwnProperty('tid') && files[0].tid && Number(files[0].tid) > 0){
-                const typeData = files[0]['metadata'].find((obj) => obj.name === 'type');
-                if(typeData.value === 'StillImage' || typeData.value === 'MovingImage' || typeData.value === 'Sound'){
-                    return {
-                        url: taxaProfileApiUrl,
-                        formFields: files[0]['metadata'],
-                        fieldName: (typeData.value === 'StillImage' ? 'imgfile' : 'medfile')
-                    }
-                }
-                else{
-                    return false;
+            if(Number(props.collId) > 0 && props.createOccurrence && !files[0]['uploadMetadata']['occid']){
+                const occurrenceData = {};
+                occurrenceData['collid'] = props.collId;
+                occurrenceData[props.identifierField] = files[0]['recordIdentifier'];
+                occurrenceData['sciname'] = files[0]['scientificName'];
+                occurrenceData['tid'] = files[0]['uploadMetadata']['tid'];
+                const formData = new FormData();
+                formData.append('collid', props.collId.toString());
+                formData.append('occurrence', JSON.stringify(occurrenceData));
+                formData.append('action', 'createOccurrenceRecord');
+                fetch(occurrenceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    response.text().then((res) => {
+                        if(res && Number(res) > 0){
+                            files[0]['uploadMetadata']['occid'] = res;
+                            return getUploadData(files[0]);
+                        }
+                    });
+                });
+            }
+            else if((Number(props.collId) > 0 && Number(files[0]['uploadMetadata']['occid']) > 0) || (!props.collId && Number(files[0]['uploadMetadata']['tid']) > 0)){
+                console.log(files[0]);
+                return {
+                    url: occurrenceApiUrl,
+                    formFields: [
+                        {name: 'action', value: 'addImage'},
+                        {name: 'collid', value: props.collId.toString()},
+                        {name: 'copyToServer', value: file['copyToServer']},
+                        {name: 'image', value: JSON.stringify(files[0]['uploadMetadata'])}
+                    ],
+                    fieldName: 'imgfile'
                 }
             }
             else{
@@ -437,9 +511,7 @@ const mediaFileUploadInputElement = {
         }
 
         function validateFiles(files) {
-            const returnArr = [];
             files.forEach((file) => {
-                const fileSizeMb = Math.round((file.size / 1000000) * 10 ) / 100;
                 const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
                 if(file.name.endsWith('.csv')){
                     parseCsvFile(file, (csvData) => {
@@ -448,28 +520,36 @@ const mediaFileUploadInputElement = {
                     });
                 }
                 else if(!existingData){
+                    const fileSizeMb = Number(file.size) > 0 ? Math.round((file.size / 1000000) * 10 ) / 100 : 0;
                     if(fileSizeMb <= Number(maxUploadFilesize)){
-                        if(videoTypes.includes(file.type) || audioTypes.includes(file.type) || fileExtensionTypes.includes(file.name.split('.').pop().toLowerCase())){
+                        const mediaTypeInfo = acceptedMediaTypes.find((mType) => mType.extension === file.name.split('.').pop().toLowerCase());
+                        if(mediaTypeInfo){
                             file['correctedSizeLabel'] =   fileSizeMb.toString() + 'MB';
-                            if(videoTypes.includes(file.type) || audioTypes.includes(file.type) || file.name.endsWith('.zc')){
-                                file['uploadType'] = 'media';
-                                file['uploadMetadata'] = Object.assign({}, mediaStore.getBlankMediaRecord);
-                                //processMediaFileData(file, csvData);
+                            if(mediaTypeInfo.type === 'StillImage'){
+                                file['uploadMetadata'] = Object.assign({}, imageStore.getBlankImageRecord);
                             }
                             else{
-                                file['uploadType'] = 'image';
-                                file['uploadMetadata'] = Object.assign({}, imageStore.getBlankImageRecord);
-                                //processImageFileData(file, csvData);
+                                file['uploadMetadata'] = Object.assign({}, mediaStore.getBlankMediaRecord);
                             }
+                            file['uploadMetadata']['type'] = mediaTypeInfo.type;
+                            file['uploadMetadata']['format'] = mediaTypeInfo.mimetype;
+                            file['filenameRecordIdentifier'] = (Number(props.collId) > 0 && props.identifierRegEx) ? getSubstringByRegEx(props.identifierRegEx, file.name) : null;
+                            if(file['filenameRecordIdentifier'] && !identifierArr.value.includes(file['filenameRecordIdentifier'])){
+                                identifierArr.value.push(file['filenameRecordIdentifier']);
+                            }
+                            file['recordIdentifier'] = null;
+                            file['scientificName'] = null;
                             if(Number(props.occId) > 0){
                                 file['uploadMetadata']['occid'] = props.occId;
                             }
                             if(Number(props.taxonId) > 0){
                                 file['uploadMetadata']['tid'] = props.taxonId;
                             }
+                            if(!file.hasOwnProperty('copyToServer')){
+                                file['copyToServer'] = '0';
+                            }
                             fileArr.push(file);
                             updateQueueSize();
-                            returnArr.push(file);
                         }
                         else{
                             showNotification('negative', (file.name + ' cannot be uploaded because it is ' + file.type + ' file type. Only jpg, jpeg, png, zc, mp3, wav, ogg, mp4, webm, and csv files can be processed through this uploader.'));
@@ -480,8 +560,8 @@ const mediaFileUploadInputElement = {
                     }
                 }
             });
-            setCsvFileData();
-            return returnArr;
+            setFileIdentifierData();
+            return fileArr;
         }
 
         return {
@@ -499,9 +579,9 @@ const mediaFileUploadInputElement = {
             cancelUpload,
             getFileErrorMessage,
             initializeUpload,
+            processExternalUrl,
             processUploaded,
             removePickedFile,
-            updateMediaScientificName,
             uploadFiles,
             validateFiles
         }
