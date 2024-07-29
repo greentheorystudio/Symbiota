@@ -20,9 +20,6 @@ header('X-Frame-Options: SAMEORIGIN');
         </style>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/d3.v7.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            const data = <?php include(__DIR__ . '/../collapse-data.json'); ?>;
-        </script>
     </head>
     <body>
         <?php
@@ -149,20 +146,21 @@ header('X-Frame-Options: SAMEORIGIN');
                         return d3.hierarchy(treeData.value);
                     });
                     const treeRadius = Vue.computed(() => {
-                        return (Math.min(containerWidth.value, containerHeight.value) / 2 - 30);
+                        console.log(Math.min(containerWidth.value, containerHeight.value) / 2 - 30);
+                        return ((Math.min(containerWidth.value, containerHeight.value) / 2 - 30) * 1);
                     });
 
                     const tree = Vue.computed(() => {
                         if(selectedLayoutType.value === 'circular'){
                             if(selectedType.value === 'tree'){
                                 return d3.tree()
-                                    .size([2 * Math.PI, treeRadius.value])
-                                    .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
+                                    .size([2 * Math.PI, (treeRadius.value * root.value.height)])
+                                    .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
                             }
                             else{
                                 return d3.cluster()
-                                    .size([2 * Math.PI, treeRadius.value])
-                                    .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
+                                    .size([2 * Math.PI, (treeRadius.value * root.value.height)])
+                                    .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
                             }
                         }
                         else{
@@ -335,7 +333,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .tween('resize', window.ResizeObserver ? null : () => () => svg.dispatch('toggle'));
 
                         const node = gNode.selectAll('g')
-                            .data(nodes, d => d.tid);
+                            .data(nodes, d => d.data.tid);
 
                         const nodeEnter = node.enter().append('g')
                             .attr('transform', d => {
