@@ -38,6 +38,9 @@ header('X-Frame-Options: SAMEORIGIN');
                     <q-card flat bordered>
                         <q-card-section class="column q-gutter-sm q-pa-sm">
                             <div>
+                                <taxa-kingdom-selector :selected-kingdom="selectedKingdom" label="Select Kingdom" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
+                            </div>
+                            <div>
                                 <selector-input-element label="Type" :options="typeOptions" :value="selectedType" @update:value="setTreeType"></selector-input-element>
                             </div>
                             <div>
@@ -76,15 +79,17 @@ header('X-Frame-Options: SAMEORIGIN');
         ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const dynamicTaxonomicTreeViewer = Vue.createApp({
                 components: {
                     'selector-input-element': selectorInputElement,
+                    'taxa-kingdom-selector': taxaKingdomSelector,
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
-                    const containerHeight = Vue.ref(1945);
-                    const containerWidth = Vue.ref(928);
+                    const containerHeight = Vue.ref(0);
+                    const containerWidth = Vue.ref(0);
                     const layoutTypeOptions = [
                         'horizontal',
                         'vertical',
@@ -97,11 +102,12 @@ header('X-Frame-Options: SAMEORIGIN');
                     const marginXValue = Vue.ref(20);
                     const marginYValue = Vue.ref(150);
                     const radiusValue = Vue.ref(3);
+                    const selectedKingdom = Vue.ref(null);
                     const selectedLayoutType = Vue.ref('horizontal');
                     const selectedLinkLayout = Vue.ref('bezier');
                     const selectedType = Vue.ref('tree');
                     const textMarginValue = Vue.ref(6);
-                    const treeData = data;
+                    let treeData = Vue.ref({});
                     const treeDisplayRef = Vue.ref(null);
                     const typeOptions = [
                         'tree',
@@ -134,11 +140,13 @@ header('X-Frame-Options: SAMEORIGIN');
                                 return d3.link(d3.curveStepAfter).x(d => d.x).y(d => d.y);
                             }
                             else{
-
+                                return d3.linkRadial().angle(d => d.x).radius(d => d.y);
                             }
                         }
                     });
-                    const root = d3.hierarchy(treeData);
+                    const root = Vue.computed(() => {
+                        return d3.hierarchy(treeData.value);
+                    });
                     const treeRadius = Vue.computed(() => {
                         return (Math.min(containerWidth.value, containerHeight.value) / 2 - 30);
                     });
@@ -181,6 +189,21 @@ header('X-Frame-Options: SAMEORIGIN');
                     const gNode = g.append('g')
                         .attr('cursor', 'pointer')
                         .attr('pointer-events', 'all');
+
+                    function getTaxonChildren(id, callback) {
+                        const formData = new FormData();
+                        formData.append('tid', id);
+                        formData.append('action', 'getTaxonomicTreeChildNodes');
+                        fetch(taxaApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            response.json().then((resObj) => {
+                                callback(resObj);
+                            });
+                        });
+                    }
 
                     function processText() {
                         d3.selectAll('text')
@@ -237,44 +260,35 @@ header('X-Frame-Options: SAMEORIGIN');
                     function setDimensions() {
                         containerHeight.value = treeDisplayRef.value.clientHeight;
                         containerWidth.value = treeDisplayRef.value.clientWidth;
-                        setPng();
                     }
 
                     function setLayoutType(value) {
                         selectedLayoutType.value = value;
-                        update(null, root);
+                        update(null, root.value);
                     }
 
                     function setLinkLayout(value) {
                         selectedLinkLayout.value = value;
-                        update(null, root);
+                        update(null, root.value);
                     }
 
                     function setMarginX(value) {
                         marginXValue.value = value;
-                        update(null, root);
+                        update(null, root.value);
                     }
 
                     function setMarginY(value) {
                         marginYValue.value = value;
-                        update(null, root);
+                        update(null, root.value);
                     }
 
                     function setPng() {
                         svg.call(d3.zoom()
                             .on('zoom', zoomed));
-
-                        root.x0 = marginYValue.value / 2;
-                        root.y0 = 0;
-                        root.descendants().forEach((d, i) => {
-                            d.id = i;
-                            d._children = d.children;
-                            if(d.depth && d.data.name.length !== 7) {
-                                d.children = null;
-                            }
-                        });
+                        root.value.x0 = marginYValue.value / 2;
+                        root.value.y0 = 0;
                         treeDisplayRef.value.append(svg.node());
-                        update(null, root);
+                        update(null, root.value);
                     }
 
                     function setRadius(value) {
@@ -289,18 +303,18 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function setTreeType(value) {
                         selectedType.value = value;
-                        update(null, root);
+                        update(null, root.value);
                     }
 
                     function update(event, source) {
-                        const nodes = root.descendants().reverse();
-                        const links = root.links();
+                        const nodes = root.value.descendants().reverse();
+                        const links = root.value.links();
 
-                        tree.value(root);
+                        tree.value(root.value);
 
-                        let left = root;
-                        let right = root;
-                        root.eachBefore(node => {
+                        let left = root.value;
+                        let right = root.value;
+                        root.value.eachBefore(node => {
                             if(node.x < left.x) {
                                 left = node;
                             }
@@ -319,7 +333,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .tween('resize', window.ResizeObserver ? null : () => () => svg.dispatch('toggle'));
 
                         const node = gNode.selectAll('g')
-                            .data(nodes, d => d.id);
+                            .data(nodes, d => d.tid);
 
                         const nodeEnter = node.enter().append('g')
                             .attr('transform', d => {
@@ -336,19 +350,24 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('fill-opacity', 0)
                             .attr('stroke-opacity', 0)
                             .on('click', (event, d) => {
-                                d.children = d.children ? null : d._children;
-                                update(event, d);
+                                console.log(d);
+                                getTaxonChildren(d.data.tid, (data) => {
+                                    d.children = data.length > 0 ? data : null;
+                                    update(event, d);
+                                });
                             });
 
                         nodeEnter.append('circle')
                             .attr('r', radiusValue.value)
-                            .attr('fill', d => d._children ? '#555' : '#999')
+                            .attr('fill', d => {
+                                return d.data.expandable ? '#555' : '#999'
+                            })
                             .attr('stroke-width', 10);
 
                         nodeEnter.append('text')
                             .attr('dy', '0.31em')
-                            .attr('text-type', d => d._children ? 'parent' : 'child')
-                            .text(d => d.data.name)
+                            .attr('text-type', d => d.data.expandable ? 'parent' : 'child')
+                            .text(d => d.data.sciname)
                             .attr('stroke-linejoin', 'round')
                             .attr('stroke-width', 3)
                             .attr('stroke', 'white')
@@ -385,7 +404,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('stroke-opacity', 0);
 
                         const link = gLink.selectAll('path')
-                            .data(links, d => d.target.id);
+                            .data(links, d => d.target.tid);
 
                         const linkEnter = link.enter().append('path')
                             .attr('d', d => {
@@ -402,12 +421,32 @@ header('X-Frame-Options: SAMEORIGIN');
                                 return diagonal.value({source: o, target: o});
                             });
 
-                        root.eachBefore(d => {
+                        root.value.eachBefore(d => {
                             d.x0 = d.x;
                             d.y0 = d.y;
                         });
 
                         processText();
+                    }
+
+                    function updateSelectedKingdom(kingdomObj) {
+                        treeDisplayRef.value.innerHTML = '';
+                        treeData.value = Object.assign({}, {});
+                        selectedKingdom.value = kingdomObj;
+                        if(selectedKingdom.value){
+                            getTaxonChildren(selectedKingdom.value['id'], (data) => {
+                                if(data.length > 0){
+                                    treeData.value = Object.assign({}, {
+                                        tid: selectedKingdom.value['id'],
+                                        expandable: true,
+                                        sciname: selectedKingdom.value['name'],
+                                        author: null,
+                                        children: data
+                                    });
+                                    setPng();
+                                }
+                            });
+                        }
                     }
 
                     function zoomed(e) {
@@ -426,11 +465,11 @@ header('X-Frame-Options: SAMEORIGIN');
                         marginXValue,
                         marginYValue,
                         radiusValue,
+                        selectedKingdom,
                         selectedLayoutType,
                         selectedLinkLayout,
                         selectedType,
                         textMarginValue,
-                        treeData,
                         treeDisplayRef,
                         typeOptions,
                         setLayoutType,
@@ -439,7 +478,8 @@ header('X-Frame-Options: SAMEORIGIN');
                         setMarginY,
                         setRadius,
                         setTextMargin,
-                        setTreeType
+                        setTreeType,
+                        updateSelectedKingdom
                     }
                 }
             });
