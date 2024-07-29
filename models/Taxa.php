@@ -507,27 +507,29 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxonomicTreeChildNodes($tId): array
+    public function getTaxonomicTreeChildNodes($tId, $limitToAccepted): array
     {
         $retArr = array();
-        $sql = 'SELECT t.TID, t.SciName, t.Author, tu.rankname '.
-            'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid  '.
-            'WHERE t.tidaccepted = '.$tId.' AND TID <> tidaccepted '.
-            'ORDER BY tu.rankid, t.SciName ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $nTid = $r->TID;
-                $nodeArr = array();
-                $nodeArr['tid'] = $nTid;
-                $nodeArr['sciname'] = $r->SciName;
-                $nodeArr['author'] = $r->Author;
-                $nodeArr['rankname'] = $r->rankname;
-                $nodeArr['nodetype'] = 'synonym';
-                $nodeArr['expandable'] = false;
-                $nodeArr['lazy'] = false;
-                $retArr[] = $nodeArr;
+        if(!$limitToAccepted){
+            $sql = 'SELECT t.TID, t.SciName, t.Author, tu.rankname '.
+                'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid  '.
+                'WHERE t.tidaccepted = '.$tId.' AND TID <> tidaccepted '.
+                'ORDER BY tu.rankid, t.SciName ';
+            if($rs = $this->conn->query($sql)){
+                while($r = $rs->fetch_object()){
+                    $nTid = $r->TID;
+                    $nodeArr = array();
+                    $nodeArr['tid'] = $nTid;
+                    $nodeArr['sciname'] = $r->SciName;
+                    $nodeArr['author'] = $r->Author;
+                    $nodeArr['rankname'] = $r->rankname;
+                    $nodeArr['nodetype'] = 'synonym';
+                    $nodeArr['expandable'] = false;
+                    $nodeArr['lazy'] = false;
+                    $retArr[] = $nodeArr;
+                }
+                $rs->free();
             }
-            $rs->free();
         }
 
         $sql = 'SELECT t.TID, t.SciName, t.Author, tu.rankname '.

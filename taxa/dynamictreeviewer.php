@@ -101,6 +101,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     ];
                     const marginXValue = Vue.ref(20);
                     const marginYValue = Vue.ref(150);
+                    const nodeArr = Vue.ref([]);
                     const radiusValue = Vue.ref(3);
                     const selectedKingdom = Vue.ref(null);
                     const selectedLayoutType = Vue.ref('horizontal');
@@ -193,6 +194,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     function getTaxonChildren(id, callback) {
                         const formData = new FormData();
                         formData.append('tid', id);
+                        formData.append('limittoaccepted', '1');
                         formData.append('action', 'getTaxonomicTreeChildNodes');
                         fetch(taxaApiUrl, {
                             method: 'POST',
@@ -350,11 +352,21 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('fill-opacity', 0)
                             .attr('stroke-opacity', 0)
                             .on('click', (event, d) => {
-                                console.log(d);
-                                getTaxonChildren(d.data.tid, (data) => {
-                                    d.children = data.length > 0 ? data : null;
+                                if(d.hasOwnProperty('children') && d.children){
+                                    let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
+                                    parentNode.children = null;
                                     update(event, d);
-                                });
+                                }
+                                else{
+                                    getTaxonChildren(d.data.tid, (data) => {
+                                        let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
+                                        parentNode.children = data;
+                                        data.forEach((node) => {
+                                            nodeArr.value.push(node);
+                                        });
+                                        update(event, d);
+                                    });
+                                }
                             });
 
                         nodeEnter.append('circle')
@@ -431,17 +443,23 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function updateSelectedKingdom(kingdomObj) {
                         treeDisplayRef.value.innerHTML = '';
+                        nodeArr.value.length = 0;
                         treeData.value = Object.assign({}, {});
                         selectedKingdom.value = kingdomObj;
                         if(selectedKingdom.value){
-                            getTaxonChildren(selectedKingdom.value['id'], (data) => {
+                            getTaxonChildren(selectedKingdom.value['tid'], (data) => {
                                 if(data.length > 0){
-                                    treeData.value = Object.assign({}, {
-                                        tid: selectedKingdom.value['id'],
+                                    const rootObj = {
+                                        tid: selectedKingdom.value['tid'],
                                         expandable: true,
                                         sciname: selectedKingdom.value['name'],
                                         author: null,
                                         children: data
+                                    };
+                                    treeData.value = Object.assign({}, rootObj);
+                                    nodeArr.value.push(rootObj);
+                                    data.forEach((node) => {
+                                        nodeArr.value.push(node);
                                     });
                                     setPng();
                                 }
