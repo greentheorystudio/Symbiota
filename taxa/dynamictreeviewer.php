@@ -309,7 +309,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function update(event, source) {
-                        const nodes = root.value.descendants().reverse();
+                        const nodes = root.value.descendants();
                         const links = root.value.links();
 
                         tree.value(root.value);
@@ -362,7 +362,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                         let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
                                         parentNode.children = data;
                                         data.forEach((node) => {
-                                            nodeArr.value.push(node);
+                                            const existingNode = nodeArr.value.find((eNode) => Number(eNode.tid) === Number(node.tid));
+                                            if(!existingNode){
+                                                nodeArr.value.push(node);
+                                            }
                                         });
                                         update(event, d);
                                     });
@@ -416,7 +419,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('stroke-opacity', 0);
 
                         const link = gLink.selectAll('path')
-                            .data(links, d => d.target.tid);
+                            .data(links, d => d.target.data.tid);
 
                         const linkEnter = link.enter().append('path')
                             .attr('d', d => {
