@@ -111,6 +111,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         'tree',
                         'cluster'
                     ];
+                    const zoom = d3.zoom().on('zoom', zoomed);
 
                     const cx = Vue.computed(() => {
                         return (containerWidth.value * 0.5);
@@ -146,8 +147,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         return d3.hierarchy(treeData.value);
                     });
                     const treeRadius = Vue.computed(() => {
-                        console.log(Math.min(containerWidth.value, containerHeight.value) / 2 - 30);
-                        return ((Math.min(containerWidth.value, containerHeight.value) / 2 - 30) * 1);
+                        return ((Math.min(containerWidth.value, containerHeight.value) / 2 - 30));
                     });
 
                     const tree = Vue.computed(() => {
@@ -283,8 +283,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function setPng() {
-                        svg.call(d3.zoom()
-                            .on('zoom', zoomed));
+                        svg.call(zoom);
                         root.value.x0 = marginYValue.value / 2;
                         root.value.y0 = 0;
                         treeDisplayRef.value.append(svg.node());
