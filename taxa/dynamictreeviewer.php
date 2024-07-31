@@ -304,13 +304,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         const nodeEnter = node.enter().append('g')
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'horizontal'){
-                                    return null
+                                    return `translate(${source.y0}, ${source.x0})`
                                 }
                                 else if(selectedLayoutType.value === 'vertical'){
-                                    return null
+                                    return `translate(${source.x0}, ${source.y0})`
                                 }
                                 else{
-                                    return null
+                                    return `rotate(${source.x0 * 180 / Math.PI - 90}) translate(${source.y0}, 0)`
                                 }
                             })
                             .attr('fill-opacity', 0)
@@ -393,13 +393,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         node.exit().transition(transition).remove()
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'horizontal'){
-                                    return null
+                                    return `translate(${source.y}, ${source.x})`
                                 }
                                 else if(selectedLayoutType.value === 'vertical'){
-                                    return null
+                                    return `translate(${source.x}, ${source.y})`
                                 }
                                 else{
-                                    return null
+                                    return `rotate(${source.x * 180 / Math.PI - 90}) translate(${source.y}, 0)`
                                 }
                             })
                             .attr('fill-opacity', 0)
@@ -451,10 +451,6 @@ header('X-Frame-Options: SAMEORIGIN');
                                     data.forEach((node) => {
                                         setDefs(node);
                                         nodeArr.value.push(node);
-                                    });
-                                    root.value.eachBefore(d => {
-                                        d.x0 = d.x;
-                                        d.y0 = d.y;
                                     });
                                     update(null, root.value);
                                 }
