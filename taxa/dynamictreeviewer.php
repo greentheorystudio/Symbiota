@@ -9,7 +9,7 @@ header('X-Frame-Options: SAMEORIGIN');
     include_once(__DIR__ . '/../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Dynamic Taxonomic Tree Viewer</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Interactive Taxonomic Tree</title>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <style>
@@ -304,13 +304,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         const nodeEnter = node.enter().append('g')
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'horizontal'){
-                                    return `translate(${source.y0}, ${source.x0})`
+                                    return null
                                 }
                                 else if(selectedLayoutType.value === 'vertical'){
-                                    return `translate(${source.x0}, ${source.y0})`
+                                    return null
                                 }
                                 else{
-                                    return `rotate(${source.x0 * 180 / Math.PI - 90}) translate(${source.y0}, 0)`
+                                    return null
                                 }
                             })
                             .attr('fill-opacity', 0)
@@ -393,13 +393,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         node.exit().transition(transition).remove()
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'horizontal'){
-                                    return `translate(${source.y}, ${source.x})`
+                                    return null
                                 }
                                 else if(selectedLayoutType.value === 'vertical'){
-                                    return `translate(${source.x}, ${source.y})`
+                                    return null
                                 }
                                 else{
-                                    return `rotate(${source.x * 180 / Math.PI - 90}) translate(${source.y}, 0)`
+                                    return null
                                 }
                             })
                             .attr('fill-opacity', 0)
@@ -451,6 +451,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                     data.forEach((node) => {
                                         setDefs(node);
                                         nodeArr.value.push(node);
+                                    });
+                                    root.value.eachBefore(d => {
+                                        d.x0 = d.x;
+                                        d.y0 = d.y;
                                     });
                                     update(null, root.value);
                                 }
