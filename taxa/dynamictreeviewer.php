@@ -303,6 +303,12 @@ header('X-Frame-Options: SAMEORIGIN');
 
                         const nodeEnter = node.enter().append('g')
                             .attr('transform', d => {
+                                if(!source.hasOwnProperty('x0') || !source.x0){
+                                    source.x0 = 0;
+                                }
+                                if(!source.hasOwnProperty('y0') || !source.y0){
+                                    source.y0 = 0;
+                                }
                                 if(selectedLayoutType.value === 'horizontal'){
                                     return `translate(${source.y0}, ${source.x0})`
                                 }
