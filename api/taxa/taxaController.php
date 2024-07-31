@@ -50,8 +50,9 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($taxa->getTaxonomicTreeKingdomNodes());
     }
     elseif($action === 'getTaxonomicTreeChildNodes' && $tId){
+        $includeImage = array_key_exists('includeimage',$_POST) && (int)$_POST['includeimage'] === 1;
         $limitToAccepted = array_key_exists('limittoaccepted',$_POST) && (int)$_POST['limittoaccepted'] === 1;
-        echo json_encode($taxa->getTaxonomicTreeChildNodes($tId, $limitToAccepted));
+        echo json_encode($taxa->getTaxonomicTreeChildNodes($tId, $limitToAccepted, $includeImage));
     }
     elseif($action === 'getTaxaIdDataFromNameArr' && array_key_exists('taxa',$_POST)){
         echo json_encode($taxa->getTaxaIdDataFromNameArr(json_decode($_POST['taxa'], true)));
