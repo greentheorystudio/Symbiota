@@ -9,7 +9,7 @@ header('X-Frame-Options: SAMEORIGIN');
     include_once(__DIR__ . '/../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Dynamic Taxonomic Tree Viewer</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Interactive Taxonomic Tree</title>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <style>
@@ -85,8 +85,15 @@ header('X-Frame-Options: SAMEORIGIN');
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
+                    const baseStore = useBaseStore();
+
+                    const clientRoot = baseStore.getClientRoot;
                     const containerHeight = Vue.ref(0);
                     const containerWidth = Vue.ref(0);
+                    const defsElement = Vue.ref(null);
+                    const gElement = Vue.ref(null);
+                    const gLinkElement = Vue.ref(null);
+                    const gNodeElement = Vue.ref(null);
                     const layoutTypeOptions = [
                         'horizontal',
                         'vertical',
@@ -96,14 +103,15 @@ header('X-Frame-Options: SAMEORIGIN');
                         'bezier',
                         'orthogonal'
                     ];
-                    const marginXValue = Vue.ref(20);
-                    const marginYValue = Vue.ref(150);
+                    const marginXValue = Vue.ref(1000);
+                    const marginYValue = Vue.ref(5000);
                     const nodeArr = Vue.ref([]);
                     const radiusValue = Vue.ref(3);
                     const selectedKingdom = Vue.ref(null);
                     const selectedLayoutType = Vue.ref('horizontal');
                     const selectedLinkLayout = Vue.ref('bezier');
                     const selectedType = Vue.ref('tree');
+                    const svgElement = Vue.ref(null);
                     const textMarginValue = Vue.ref(6);
                     let treeData = Vue.ref({});
                     const treeDisplayRef = Vue.ref(null);
@@ -111,6 +119,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         'tree',
                         'cluster'
                     ];
+                    const zoom = d3.zoom().on('zoom', zoomed);
 
                     const cx = Vue.computed(() => {
                         return (containerWidth.value * 0.5);
@@ -146,8 +155,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         return d3.hierarchy(treeData.value);
                     });
                     const treeRadius = Vue.computed(() => {
-                        console.log(Math.min(containerWidth.value, containerHeight.value) / 2 - 30);
-                        return ((Math.min(containerWidth.value, containerHeight.value) / 2 - 30) * 1);
+                        return ((Math.min(containerWidth.value, containerHeight.value) / 2 - 30));
                     });
 
                     const tree = Vue.computed(() => {
@@ -173,25 +181,10 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     });
 
-                    const svg = d3.create('svg')
-                        .attr('width', containerWidth.value)
-                        .attr('height', containerHeight.value)
-                        .attr('viewBox', [-cx.value, -cy.value, containerWidth.value, containerHeight.value])
-                        .attr('style', 'width: 100%; height: auto; font: 10px sans-serif;')
-                        .style('user-select', 'none');
-                    const g = svg.append('g');
-                    const gLink = g.append('g')
-                        .attr('fill', 'none')
-                        .attr('stroke', '#555')
-                        .attr('stroke-opacity', 0.4)
-                        .attr('stroke-width', 1.5);
-                    const gNode = g.append('g')
-                        .attr('cursor', 'pointer')
-                        .attr('pointer-events', 'all');
-
                     function getTaxonChildren(id, callback) {
                         const formData = new FormData();
                         formData.append('tid', id);
+                        formData.append('includeimage', '1');
                         formData.append('limittoaccepted', '1');
                         formData.append('action', 'getTaxonomicTreeChildNodes');
                         fetch(taxaApiUrl, {
@@ -205,56 +198,16 @@ header('X-Frame-Options: SAMEORIGIN');
                         });
                     }
 
-                    function processText() {
-                        d3.selectAll('text')
-                        .each(function() {
-                            const element = d3.select(this);
-                            const parentText = element.attr('text-type') === 'parent';
-                            element.attr('x', function() {
-                                if(selectedLayoutType.value === 'horizontal'){
-                                    return parentText ? (-1 * textMarginValue.value) : textMarginValue.value;
-                                }
-                                else if(selectedLayoutType.value === 'vertical'){
-                                    return parentText ? null : textMarginValue.value;
-                                }
-                                else{
-                                    return parentText ? (-1 * textMarginValue.value) : textMarginValue.value;
-                                }
-                            });
-                            element.attr('y', function() {
-                                if(selectedLayoutType.value === 'horizontal'){
-                                    return null;
-                                }
-                                else if(selectedLayoutType.value === 'vertical'){
-                                    return parentText ? (-1 * textMarginValue.value) : null;
-                                }
-                                else{
-                                    return null;
-                                }
-                            });
-                            element.attr('text-anchor', function() {
-                                if(selectedLayoutType.value === 'horizontal'){
-                                    return parentText ? 'end' : 'start'
-                                }
-                                else if(selectedLayoutType.value === 'vertical'){
-                                    return 'middle'
-                                }
-                                else{
-                                    return parentText ? 'end' : 'start'
-                                }
-                            });
-                            element.attr('transform', function() {
-                                if(selectedLayoutType.value === 'horizontal'){
-                                    return null
-                                }
-                                else if(selectedLayoutType.value === 'vertical'){
-                                    return parentText ? null : 'rotate(90)'
-                                }
-                                else{
-                                    return 'rotate(' + ((Number(element.attr('x')) * 180) / (Math.PI - 180)).toString() + ')';
-                                }
-                            });
-                        });
+                    function setDefs(node) {
+                        if(node.image){
+                            const patternElement = defsElement.value.append('pattern')
+                                .attr('id', node.tid.toString())
+                                .attr('height', '100%')
+                                .attr('width', '100%');
+                            patternElement.append('image')
+                                .attr('preserveAspectRatio', 'none')
+                                .attr('xlink:href', node.image);
+                        }
                     }
 
                     function setDimensions() {
@@ -283,11 +236,24 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function setPng() {
-                        svg.call(d3.zoom()
-                            .on('zoom', zoomed));
+                        svgElement.value = d3.create('svg')
+                            .attr('width', containerWidth.value)
+                            .attr('height', containerHeight.value)
+                            .attr('viewBox', [-cx.value, -cy.value, containerWidth.value, containerHeight.value])
+                            .attr('style', 'width: 100%; height: auto; font: 10px sans-serif;')
+                            .style('user-select', 'none');
+                        defsElement.value = svgElement.value.append('defs');
+                        gElement.value = svgElement.value.append('g');
+                        gLinkElement.value = gElement.value.append('g')
+                            .attr('fill', 'none')
+                            .attr('stroke', '#555')
+                            .attr('stroke-opacity', 0.6)
+                            .attr('stroke-width', 10);
+                        gNodeElement.value = gElement.value.append('g');
+                        svgElement.value.call(zoom);
                         root.value.x0 = marginYValue.value / 2;
                         root.value.y0 = 0;
-                        treeDisplayRef.value.append(svg.node());
+                        treeDisplayRef.value.append(svgElement.value.node());
                         update(null, root.value);
                     }
 
@@ -298,7 +264,6 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function setTextMargin(value) {
                         textMarginValue.value = value;
-                        processText();
                     }
 
                     function setTreeType(value) {
@@ -325,66 +290,90 @@ header('X-Frame-Options: SAMEORIGIN');
 
                         const height = right.x - left.x;
 
-                        const transition = svg.transition()
+                        const bBox = gElement.value.node().getBBox();
+
+                        const transition = svgElement.value.transition()
                             .duration(250)
                             .attr('width', containerWidth.value)
                             .attr('height', containerHeight.value)
-                            .attr('viewBox', [(-1 * (containerWidth.value * 0.2)), (-1 * (containerHeight.value / 2)), containerWidth.value, height])
-                            .tween('resize', window.ResizeObserver ? null : () => () => svg.dispatch('toggle'));
+                            .attr('viewBox', [(-1 * (containerWidth.value * 0.2)), (-1 * (bBox.height + 30)), containerWidth.value, height]);
 
-                        const node = gNode.selectAll('g')
+                        const node = gNodeElement.value.selectAll('g')
                             .data(nodes, d => d.data.tid);
 
                         const nodeEnter = node.enter().append('g')
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'horizontal'){
-                                    return `translate(${source.y0}, ${source.x0})`
+                                    return null
                                 }
                                 else if(selectedLayoutType.value === 'vertical'){
-                                    return `translate(${source.x0}, ${source.y0})`
+                                    return null
                                 }
                                 else{
-                                    return `rotate(${source.x0 * 180 / Math.PI - 90}) translate(${source.y0}, 0)`
+                                    return null
                                 }
                             })
                             .attr('fill-opacity', 0)
-                            .attr('stroke-opacity', 0)
+                            .attr('stroke-opacity', 0);
+
+                        nodeEnter.append('circle')
+                            .attr('height', 250)
+                            .attr('width', 250)
+                            .attr('r', 250)
+                            .attr('fill', d => {
+                                return d.data.image ? `url(#${d.data.tid})` : null
+                            })
+                            .attr('stroke-width', 10)
+                            .attr('cursor', d => {
+                                return d.data.expandable ? 'pointer' : 'default'
+                            })
+                            .attr('pointer-events', d => {
+                                return d.data.expandable ? 'all' : null
+                            })
                             .on('click', (event, d) => {
-                                if(d.hasOwnProperty('children') && d.children){
-                                    let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
-                                    parentNode.children = null;
-                                    update(event, d);
-                                }
-                                else{
-                                    getTaxonChildren(d.data.tid, (data) => {
+                                if(d.data.expandable){
+                                    if(d.data.hasOwnProperty('children') && d.data.children){
                                         let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
-                                        parentNode.children = data;
-                                        data.forEach((node) => {
-                                            const existingNode = nodeArr.value.find((eNode) => Number(eNode.tid) === Number(node.tid));
-                                            if(!existingNode){
-                                                nodeArr.value.push(node);
-                                            }
-                                        });
+                                        parentNode.children = null;
                                         update(event, d);
-                                    });
+                                    }
+                                    else{
+                                        getTaxonChildren(d.data.tid, (data) => {
+                                            let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
+                                            parentNode.children = data;
+                                            data.forEach((node) => {
+                                                const existingNode = nodeArr.value.find((eNode) => Number(eNode.tid) === Number(node.tid));
+                                                if(!existingNode){
+                                                    setDefs(node);
+                                                    nodeArr.value.push(node);
+                                                }
+                                            });
+                                            update(event, d);
+                                        });
+                                    }
                                 }
                             });
 
-                        nodeEnter.append('circle')
-                            .attr('r', radiusValue.value)
-                            .attr('fill', d => {
-                                return d.data.expandable ? '#555' : '#999'
-                            })
-                            .attr('stroke-width', 10);
-
                         nodeEnter.append('text')
                             .attr('dy', '0.31em')
-                            .attr('text-type', d => d.data.expandable ? 'parent' : 'child')
                             .text(d => d.data.sciname)
+                            .attr('y', 300)
+                            .attr('text-anchor', 'middle')
                             .attr('stroke-linejoin', 'round')
-                            .attr('stroke-width', 3)
+                            .attr('stroke-width', 50)
                             .attr('stroke', 'white')
-                            .attr('paint-order', 'stroke');
+                            .attr('paint-order', 'stroke')
+                            .style('font-size', '60px')
+                            .attr('cursor', d => {
+                                return d.data.expandable ? 'pointer' : 'default'
+                            })
+                            .attr('pointer-events', d => {
+                                return d.data.expandable ? 'all' : null
+                            })
+                            .on('click', (event, d) => {
+                                const url = clientRoot + '/taxa/index.php?taxon=' + d.data.tid;
+                                window.open(url, '_blank');
+                            });
 
                         node.merge(nodeEnter).transition(transition)
                             .attr('transform', d => {
@@ -404,19 +393,19 @@ header('X-Frame-Options: SAMEORIGIN');
                         node.exit().transition(transition).remove()
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'horizontal'){
-                                    return `translate(${source.y}, ${source.x})`
+                                    return null
                                 }
                                 else if(selectedLayoutType.value === 'vertical'){
-                                    return `translate(${source.x}, ${source.y})`
+                                    return null
                                 }
                                 else{
-                                    return `rotate(${source.x * 180 / Math.PI - 90}) translate(${source.y}, 0)`
+                                    return null
                                 }
                             })
                             .attr('fill-opacity', 0)
                             .attr('stroke-opacity', 0);
 
-                        const link = gLink.selectAll('path')
+                        const link = gLinkElement.value.selectAll('path')
                             .data(links, d => d.target.data.tid);
 
                         const linkEnter = link.enter().append('path')
@@ -438,8 +427,6 @@ header('X-Frame-Options: SAMEORIGIN');
                             d.x0 = d.x;
                             d.y0 = d.y;
                         });
-
-                        processText();
                     }
 
                     function updateSelectedKingdom(kingdomObj) {
@@ -450,19 +437,26 @@ header('X-Frame-Options: SAMEORIGIN');
                         if(selectedKingdom.value){
                             getTaxonChildren(selectedKingdom.value['tid'], (data) => {
                                 if(data.length > 0){
+                                    setPng();
                                     const rootObj = {
                                         tid: selectedKingdom.value['tid'],
                                         expandable: true,
                                         sciname: selectedKingdom.value['name'],
                                         author: null,
+                                        image: null,
                                         children: data
                                     };
                                     treeData.value = Object.assign({}, rootObj);
                                     nodeArr.value.push(rootObj);
                                     data.forEach((node) => {
+                                        setDefs(node);
                                         nodeArr.value.push(node);
                                     });
-                                    setPng();
+                                    root.value.eachBefore(d => {
+                                        d.x0 = d.x;
+                                        d.y0 = d.y;
+                                    });
+                                    update(null, root.value);
                                 }
                             });
                         }

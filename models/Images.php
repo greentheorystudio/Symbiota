@@ -47,7 +47,7 @@ class Images{
         }
 	}
 
-    public function getImageArrByProperty($property, $value, $includeOccurrence = false): array
+    public function getImageArrByProperty($property, $value, $includeOccurrence = false, $limit = null): array
     {
         $returnArr = array();
         if($property === 'occid' || $property === 'tid'){
@@ -58,6 +58,40 @@ class Images{
                 $sql .= 'AND ISNULL(occid) ';
             }
             $sql .= 'ORDER BY sortsequence ';
+            if($limit){
+                $sql .= 'LIMIT ' . (int)$limit . ' ';
+            }
+            //echo '<div>'.$sql.'</div>';
+            if($rs = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($rs);
+                while($r = $rs->fetch_object()){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $r->$name;
+                    }
+                    $returnArr[] = $nodeArr;
+                }
+                $rs->free();
+            }
+        }
+        return $returnArr;
+    }
+
+    public function getImageArrByTaxonomicGroup($parentTid, $includeOccurrence = false, $limit = null): array
+    {
+        $returnArr = array();
+        if($parentTid){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM images WHERE tid = ' . (int)$parentTid . ' OR tid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') ';
+            if(!$includeOccurrence){
+                $sql .= 'AND ISNULL(occid) ';
+            }
+            $sql .= 'ORDER BY sortsequence ';
+            if($limit){
+                $sql .= 'LIMIT ' . (int)$limit . ' ';
+            }
             //echo '<div>'.$sql.'</div>';
             if($rs = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($rs);

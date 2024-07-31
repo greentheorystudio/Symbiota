@@ -127,7 +127,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
         clearLocationData() {
             this.locationCollectingEventArr.length = 0;
         },
-        createCollectingEventRecord(collid, locationid, defaultRepCount, configuredDataFields, callback) {
+        createCollectingEventRecord(collid, locationid, entryFormat, defaultRepCount, configuredDataFields, callback) {
             this.collectingEventEditData['collid'] = collid;
             if(locationid > 0){
                 this.collectingEventEditData['locationid'] = locationid;
@@ -144,7 +144,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 response.text().then((res) => {
                     callback(Number(res));
                     if(res && Number(res) > 0){
-                        this.setCurrentCollectingEventRecord(Number(res), defaultRepCount, configuredDataFields);
+                        this.setCurrentCollectingEventRecord(Number(res), entryFormat, defaultRepCount, configuredDataFields);
                         if(locationid > 0){
                             this.getLocationCollectingEvents(collid, locationid);
                         }
@@ -226,7 +226,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 }
             });
         },
-        setCollectingEventData(configuredDataFields) {
+        setCollectingEventData(entryFormat, configuredDataFields) {
             const formData = new FormData();
             formData.append('eventid', this.collectingEventId.toString());
             formData.append('action', 'getCollectingEventDataArr');
@@ -241,7 +241,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 this.collectingEventData = Object.assign({}, data);
                 this.collectingEventEditData = Object.assign({}, this.collectingEventData);
                 this.setConfiguredData(configuredDataFields);
-                if(this.occurrenceEntryFormat === 'benthic'){
+                if(entryFormat === 'benthic'){
                     this.setCollectingEventBenthicData();
                 }
                 else{
@@ -281,12 +281,12 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 });
             });
         },
-        setCurrentCollectingEventRecord(eventid, defaultRepCount, configuredDataFields) {
+        setCurrentCollectingEventRecord(eventid, entryFormat, defaultRepCount, configuredDataFields) {
             if(eventid && Number(eventid) > 0){
                 if(this.collectingEventId !== Number(eventid)){
                     this.collectingEventId = Number(eventid);
                     this.clearCollectingEventData();
-                    this.setCollectingEventData(configuredDataFields);
+                    this.setCollectingEventData(entryFormat, configuredDataFields);
                 }
             }
             else{

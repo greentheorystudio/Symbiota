@@ -415,7 +415,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.geneticLinkStore.clearGeneticLinkArr();
         },
         createCollectingEventRecord(callback) {
-            this.collectingEventStore.createCollectingEventRecord(this.getCollId, this.getLocationID, this.getCollectionData['defaultrepcount'], this.getConfiguredDataFields, (newEventId) => {
+            this.collectingEventStore.createCollectingEventRecord(this.getCollId, this.getLocationID, this.occurrenceEntryFormat, this.getCollectionData['defaultrepcount'], this.getConfiguredDataFields, (newEventId) => {
                 callback(Number(newEventId));
                 if(newEventId && Number(newEventId) > 0){
                     this.updateOccurrenceEditData('eventid', Number(newEventId));
@@ -769,7 +769,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             });
         },
         setCurrentCollectingEventRecord(eventid) {
-            this.collectingEventStore.setCurrentCollectingEventRecord(eventid, this.getCollectionData['defaultrepcount'], this.getConfiguredDataFields);
+            this.collectingEventStore.setCurrentCollectingEventRecord(eventid, this.occurrenceEntryFormat, this.getCollectionData['defaultrepcount'], this.getConfiguredDataFields);
         },
         setCurrentDeterminationRecord(detid) {
             this.determinationStore.setCurrentDeterminationRecord(detid);

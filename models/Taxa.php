@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/TaxonKingdoms.php');
 include_once(__DIR__ . '/TaxonVernaculars.php');
 include_once(__DIR__ . '/../services/DbService.php');
@@ -107,19 +108,19 @@ class Taxa{
     {
         $retVal = 1;
         if($tid){
-            $sql = 'DELETE FROM taxaenumtree WHERE tid = '.$tid.' OR parenttid = '.$tid.' ';
+            $sql = 'DELETE FROM taxaenumtree WHERE tid = ' . (int)$tid . ' OR parenttid = ' . (int)$tid . ' ';
             //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
 
-            $sql = 'DELETE FROM taxavernaculars WHERE TID = '.$tid.' ';
+            $sql = 'DELETE FROM taxavernaculars WHERE TID = ' . (int)$tid . ' ';
             //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
 
-            $sql = 'DELETE FROM taxa WHERE TID = '.$tid.' ';
+            $sql = 'DELETE FROM taxa WHERE TID = ' . (int)$tid . ' ';
             //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
@@ -133,8 +134,8 @@ class Taxa{
         $status = '';
         if($tId && is_numeric($parentTid) && $parentTid){
             $sql = 'UPDATE taxa '.
-                'SET parenttid = '.$parentTid.' '.
-                'WHERE tid = '.$tId.' ';
+                'SET parenttid = ' . $parentTid . ' '.
+                'WHERE tid = ' . (int)$tId . ' ';
             if(!$this->conn->query($sql)){
                 $status = 'Unable to edit taxonomic placement.';
             }
@@ -507,7 +508,7 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxonomicTreeChildNodes($tId, $limitToAccepted): array
+    public function getTaxonomicTreeChildNodes($tId, $limitToAccepted, $includeImage): array
     {
         $retArr = array();
         if(!$limitToAccepted){
@@ -548,6 +549,13 @@ class Taxa{
                 $nodeArr['nodetype'] = 'child';
                 $nodeArr['expandable'] = $expandable;
                 $nodeArr['lazy'] = $expandable;
+                if($includeImage){
+                    $nodeArr['image'] = null;
+                    $imageArr = (new Images)->getImageArrByTaxonomicGroup($nTid, false, 1);
+                    if(count($imageArr) > 0){
+                        $nodeArr['image'] = $imageArr[0]['url'];
+                    }
+                }
                 $retArr[] = $nodeArr;
             }
             $rs->free();
