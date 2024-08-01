@@ -53,10 +53,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                 <text-field-input-element data-type="int" label="Margin y (px)" min-value="0" :value="marginYValue" :clearable="false" @update:value="setMarginY"></text-field-input-element>
                             </div>
                             <div>
-                                <text-field-input-element data-type="int" label="Radius (px)" min-value="0" :value="radiusValue" :clearable="false" @update:value="setRadius"></text-field-input-element>
-                            </div>
-                            <div>
-                                <text-field-input-element data-type="int" label="Text Margin (px)" min-value="0" :value="textMarginValue" :clearable="false" @update:value="setTextMargin"></text-field-input-element>
+                                <q-btn color="primary" @click="centerTree();" label="Center Tree" dense />
                             </div>
                         </q-card-section>
                     </q-card>
@@ -85,6 +82,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
+                    const { showNotification } = useCore();
                     const baseStore = useBaseStore();
 
                     const clientRoot = baseStore.getClientRoot;
@@ -106,13 +104,11 @@ header('X-Frame-Options: SAMEORIGIN');
                     const marginXValue = Vue.ref(1000);
                     const marginYValue = Vue.ref(5000);
                     const nodeArr = Vue.ref([]);
-                    const radiusValue = Vue.ref(3);
                     const selectedKingdom = Vue.ref(null);
                     const selectedLayoutType = Vue.ref('horizontal');
                     const selectedLinkLayout = Vue.ref('bezier');
                     const selectedType = Vue.ref('tree');
                     const svgElement = Vue.ref(null);
-                    const textMarginValue = Vue.ref(6);
                     let treeData = Vue.ref({});
                     const treeDisplayRef = Vue.ref(null);
                     const typeOptions = [
@@ -162,12 +158,12 @@ header('X-Frame-Options: SAMEORIGIN');
                         if(selectedLayoutType.value === 'circular'){
                             if(selectedType.value === 'tree'){
                                 return d3.tree()
-                                    .size([2 * Math.PI, (treeRadius.value * root.value.height)])
+                                    .size([((2 * Math.PI) * 10), ((treeRadius.value * root.value.height) * 10)])
                                     .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
                             }
                             else{
                                 return d3.cluster()
-                                    .size([2 * Math.PI, (treeRadius.value * root.value.height)])
+                                    .size([((2 * Math.PI) * 10), ((treeRadius.value * root.value.height) * 10)])
                                     .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
                             }
                         }
@@ -180,6 +176,12 @@ header('X-Frame-Options: SAMEORIGIN');
                             }
                         }
                     });
+
+                    function centerTree() {
+                        d3.select('svg')
+                            .transition()
+                            .call(zoom.translateTo, (0.5 * containerWidth.value), (0.5 * containerHeight.value));
+                    }
 
                     function getTaxonChildren(id, callback) {
                         const formData = new FormData();
@@ -217,12 +219,20 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function setLayoutType(value) {
                         selectedLayoutType.value = value;
+                        if(selectedLayoutType.value === 'circular' && selectedLinkLayout.value === 'orthogonal'){
+                            selectedLinkLayout.value = 'bezier';
+                        }
                         update(null, root.value);
                     }
 
                     function setLinkLayout(value) {
-                        selectedLinkLayout.value = value;
-                        update(null, root.value);
+                        if(selectedLayoutType.value !== 'circular' || value !== 'orthogonal'){
+                            selectedLinkLayout.value = value;
+                            update(null, root.value);
+                        }
+                        else{
+                            showNotification('negative', 'Orthogonal link layout is not compatable with a circular layout type.');
+                        }
                     }
 
                     function setMarginX(value) {
@@ -257,58 +267,44 @@ header('X-Frame-Options: SAMEORIGIN');
                         update(null, root.value);
                     }
 
-                    function setRadius(value) {
-                        radiusValue.value = value;
-                        d3.selectAll('circle').attr('r', radiusValue.value);
-                    }
-
-                    function setTextMargin(value) {
-                        textMarginValue.value = value;
-                    }
-
                     function setTreeType(value) {
                         selectedType.value = value;
                         update(null, root.value);
                     }
 
                     function update(event, source) {
+                        let transition;
+                        if(!source.hasOwnProperty('x0') || !source.x0){
+                            source.x0 = 0;
+                        }
+                        if(!source.hasOwnProperty('y0') || !source.y0){
+                            source.y0 = 0;
+                        }
                         const nodes = root.value.descendants();
                         const links = root.value.links();
 
                         tree.value(root.value);
 
-                        let left = root.value;
-                        let right = root.value;
-                        root.value.eachBefore(node => {
-                            if(node.x < left.x) {
-                                left = node;
-                            }
-                            if(node.x > right.x) {
-                                right = node;
-                            }
-                        });
-
-                        const height = right.x - left.x;
-
-                        const bBox = gElement.value.node().getBBox();
-
-                        const transition = svgElement.value.transition()
-                            .duration(250)
-                            .attr('width', containerWidth.value)
-                            .attr('height', containerHeight.value)
-                            .attr('viewBox', [(-1 * (containerWidth.value * 0.2)), (-1 * (bBox.height + 30)), containerWidth.value, height]);
+                        if(Number(source.x0) === 0){
+                            transition = svgElement.value.transition()
+                                .duration(250)
+                                .call(zoom.scaleBy, 0.046)
+                                .attr('width', containerWidth.value)
+                                .attr('height', containerHeight.value)
+                                .attr('viewBox', [-50, (-1 * (containerHeight.value / 2)), containerWidth.value, containerHeight.value]);
+                        }
+                        else{
+                            transition = svgElement.value.transition()
+                                .duration(250)
+                                .attr('width', containerWidth.value)
+                                .attr('height', containerHeight.value);
+                        }
 
                         const node = gNodeElement.value.selectAll('g')
                             .data(nodes, d => d.data.tid);
 
                         const nodeEnter = node.enter().append('g')
                             .attr('transform', d => {
-                                if(!source.hasOwnProperty('x0') || !source.x0){
-                                    source.x0 = 0;
-                                }
-                                if(!source.hasOwnProperty('y0') || !source.y0){
-                                    source.y0 = 0;
-                                }
                                 if(selectedLayoutType.value === 'horizontal'){
                                     return `translate(${source.y0}, ${source.x0})`
                                 }
@@ -327,7 +323,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('width', 250)
                             .attr('r', 250)
                             .attr('fill', d => {
-                                return d.data.image ? `url(#${d.data.tid})` : null
+                                return d.data.image ? `url(#${d.data.tid})` : '#999'
                             })
                             .attr('stroke-width', 10)
                             .attr('cursor', d => {
@@ -465,8 +461,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function zoomed(e) {
-                        d3.select('svg g')
-                            .attr('transform', e.transform);
+                        d3.select('svg g').attr('transform', e.transform);
                     }
 
                     Vue.onMounted(() => {
@@ -479,20 +474,17 @@ header('X-Frame-Options: SAMEORIGIN');
                         linkLayoutOptions,
                         marginXValue,
                         marginYValue,
-                        radiusValue,
                         selectedKingdom,
                         selectedLayoutType,
                         selectedLinkLayout,
                         selectedType,
-                        textMarginValue,
                         treeDisplayRef,
                         typeOptions,
+                        centerTree,
                         setLayoutType,
                         setLinkLayout,
                         setMarginX,
                         setMarginY,
-                        setRadius,
-                        setTextMargin,
                         setTreeType,
                         updateSelectedKingdom
                     }
