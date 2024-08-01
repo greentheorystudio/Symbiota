@@ -151,19 +151,19 @@ header('X-Frame-Options: SAMEORIGIN');
                         return d3.hierarchy(treeData.value);
                     });
                     const treeRadius = Vue.computed(() => {
-                        return ((Math.min(containerWidth.value, containerHeight.value) / 2 - 30));
+                        return ((Math.min(containerWidth.value, containerHeight.value)));
                     });
 
                     const tree = Vue.computed(() => {
                         if(selectedLayoutType.value === 'circular'){
                             if(selectedType.value === 'tree'){
                                 return d3.tree()
-                                    .size([((2 * Math.PI) * 10), ((treeRadius.value * root.value.height) * 10)])
+                                    .size([2 * Math.PI, ((treeRadius.value * root.value.height) * 10)])
                                     .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
                             }
                             else{
                                 return d3.cluster()
-                                    .size([((2 * Math.PI) * 10), ((treeRadius.value * root.value.height) * 10)])
+                                    .size([2 * Math.PI, ((treeRadius.value * root.value.height) * 10)])
                                     .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
                             }
                         }
