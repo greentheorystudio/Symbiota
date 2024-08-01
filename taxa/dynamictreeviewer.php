@@ -328,7 +328,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     return `translate(${source.x0}, ${source.y0})`
                                 }
                                 else{
-                                    return `rotate(${source.x0 * 180 / Math.PI - 90}) translate(${source.y0}, 0)`
+                                    return `rotate(${(source.x0 * 180 / Math.PI) - 90}) translate(${source.y0}, 0) rotate(${-(source.x0 * 180 / Math.PI) + 90})`
                                 }
                             })
                             .attr('fill-opacity', 0)
@@ -402,7 +402,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     return `translate(${d.x}, ${d.y})`
                                 }
                                 else{
-                                    return `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y}, 0)`
+                                    return `rotate(${(d.x * 180 / Math.PI) - 90}) translate(${d.y}, 0) rotate(${-(d.x * 180 / Math.PI) + 90})`
                                 }
                             })
                             .attr('fill-opacity', 1)
@@ -417,7 +417,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     return `translate(${source.x}, ${source.y})`
                                 }
                                 else{
-                                    return `rotate(${source.x * 180 / Math.PI - 90}) translate(${source.y}, 0)`
+                                    return `rotate(${(source.x * 180 / Math.PI) - 90}) translate(${source.y}, 0) rotate(${-(source.x * 180 / Math.PI) + 90})`
                                 }
                             })
                             .attr('fill-opacity', 0)
