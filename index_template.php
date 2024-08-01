@@ -12,7 +12,6 @@ include_once(__DIR__ . '/config/header-includes.php');
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <meta name='keywords' content='' />
-    <?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
 </head>
 <body>
 <?php

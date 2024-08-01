@@ -93,12 +93,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             </span>
         </div>
         <div class="field-block">
-            <span class="field-label">Google Analytics Key:</span>
-            <span class="field-elem">
-                <input type="text" id="GOOGLE_ANALYTICS_KEY" value="<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GOOGLE_ANALYTICS_KEY','<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>',false);" />
-            </span>
-        </div>
-        <div class="field-block">
             <span class="field-label">Default Collection Category:</span>
             <span class="field-elem">
                 <select id="DEFAULTCATID" style="width:600px;" onchange="processTextConfigurationChange('DEFAULTCATID','<?php echo (array_key_exists('DEFAULTCATID',$coreConfArr)?$coreConfArr['DEFAULTCATID']:''); ?>',false);" >

@@ -147,7 +147,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 	<?php
-    include_once(__DIR__ . '/../config/googleanalytics.php');
     include(__DIR__ . '/../header.php');
     ?>
     <div class='navpath'>
