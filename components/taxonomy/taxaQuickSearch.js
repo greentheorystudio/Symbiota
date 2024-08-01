@@ -165,6 +165,10 @@ const taxaQuickSearch = {
             }
         }
 
+        Vue.onMounted(() => {
+            selectedTaxon.value = Object.assign({}, {});
+        });
+
         return {
             autoCompleteLabel,
             autoCompleteOptions,
