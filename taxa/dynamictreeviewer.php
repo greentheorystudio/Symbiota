@@ -223,14 +223,19 @@ header('X-Frame-Options: SAMEORIGIN');
                         if(selectedLayoutType.value === 'circular' && selectedLinkLayout.value === 'orthogonal'){
                             selectedLinkLayout.value = 'bezier';
                         }
-                        update(null, root.value);
-                        d3.select('svg').transition().call(zoom.scaleBy, 1);
+                        if(Object.keys(treeData.value).length > 0){
+                            update(null, root.value);
+                            d3.select('svg').transition().call(zoom.scaleBy, 1);
+                        }
                     }
 
                     function setLinkLayout(value) {
                         if(selectedLayoutType.value !== 'circular' || value !== 'orthogonal'){
                             selectedLinkLayout.value = value;
-                            update(null, root.value);
+                            if(Object.keys(treeData.value).length > 0){
+                                update(null, root.value);
+                                d3.select('svg').transition().call(zoom.scaleBy, 1);
+                            }
                         }
                         else{
                             showNotification('negative', 'Orthogonal link layout is not compatable with a circular layout type.');
@@ -239,12 +244,18 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function setMarginX(value) {
                         marginXValue.value = value;
-                        update(null, root.value);
+                        if(Object.keys(treeData.value).length > 0){
+                            update(null, root.value);
+                            d3.select('svg').transition().call(zoom.scaleBy, 1);
+                        }
                     }
 
                     function setMarginY(value) {
                         marginYValue.value = value;
-                        update(null, root.value);
+                        if(Object.keys(treeData.value).length > 0){
+                            update(null, root.value);
+                            d3.select('svg').transition().call(zoom.scaleBy, 1);
+                        }
                     }
 
                     function setPng() {
@@ -270,7 +281,10 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function setTreeType(value) {
                         selectedType.value = value;
-                        update(null, root.value);
+                        if(Object.keys(treeData.value).length > 0){
+                            update(null, root.value);
+                            d3.select('svg').transition().call(zoom.scaleBy, 1);
+                        }
                     }
 
                     function update(event, source) {
