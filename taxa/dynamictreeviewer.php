@@ -208,6 +208,8 @@ header('X-Frame-Options: SAMEORIGIN');
                                 .attr('height', '100%')
                                 .attr('width', '100%');
                             patternElement.append('image')
+                                .attr('height', '500px')
+                                .attr('width', '100%')
                                 .attr('preserveAspectRatio', 'none')
                                 .attr('xlink:href', node.image);
                         }
