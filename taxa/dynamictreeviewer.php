@@ -27,7 +27,7 @@ header('X-Frame-Options: SAMEORIGIN');
         ?>
         <div class="navpath">
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <a href="dynamictreeviewer.php"><b>Dynamic Taxonomic Tree Viewer</b></a>
+            <a href="dynamictreeviewer.php"><b>Interactive Taxonomic Tree</b></a>
         </div>
         <div id="app" class="fit">
             <div class="fit row justify-between q-ma-none q-pa-none q-col-gutter-sm">
