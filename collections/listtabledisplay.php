@@ -56,7 +56,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
     <script src="../js/collections.search.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript" src="../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
         let collJson = '';

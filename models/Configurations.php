@@ -21,7 +21,6 @@ class Configurations{
         'DEFAULTCATID',
         'DYN_CHECKLIST_RADIUS',
         'EMAIL_CONFIGURED',
-        'GOOGLE_ANALYTICS_KEY',
         'GBIF_ORG_KEY',
         'GBIF_PASSWORD',
         'GBIF_USERNAME',
