@@ -92,6 +92,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     const gElement = Vue.ref(null);
                     const gLinkElement = Vue.ref(null);
                     const gNodeElement = Vue.ref(null);
+                    const initialCenter = Vue.ref(true);
                     const layoutTypeOptions = [
                         'horizontal',
                         'vertical',
@@ -223,6 +224,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             selectedLinkLayout.value = 'bezier';
                         }
                         update(null, root.value);
+                        d3.select('svg').transition().call(zoom.scaleBy, 1);
                     }
 
                     function setLinkLayout(value) {
@@ -286,11 +288,10 @@ header('X-Frame-Options: SAMEORIGIN');
 
                         if(Number(source.x0) === 0){
                             transition = svgElement.value.transition()
-                                .duration(250)
                                 .call(zoom.scaleBy, 0.046)
                                 .attr('width', containerWidth.value)
                                 .attr('height', containerHeight.value)
-                                .attr('viewBox', [-50, (-1 * (containerHeight.value / 2)), containerWidth.value, containerHeight.value]);
+                                .attr('viewBox', [(-0.5 * containerWidth.value), (-0.5 * containerHeight.value), containerWidth.value, containerHeight.value]);
                         }
                         else{
                             transition = svgElement.value.transition()
@@ -428,6 +429,13 @@ header('X-Frame-Options: SAMEORIGIN');
                             d.x0 = d.x;
                             d.y0 = d.y;
                         });
+
+                        if(initialCenter.value){
+                            setTimeout(() => {
+                                centerTree();
+                                initialCenter.value = false;
+                            }, 200);
+                        }
                     }
 
                     function updateSelectedKingdom(kingdomObj) {
