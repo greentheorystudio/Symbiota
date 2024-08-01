@@ -250,7 +250,6 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('width', containerWidth.value)
                             .attr('height', containerHeight.value)
                             .attr('viewBox', [-cx.value, -cy.value, containerWidth.value, containerHeight.value])
-                            .attr('style', 'width: 100%; height: auto; font: 10px sans-serif;')
                             .style('user-select', 'none');
                         defsElement.value = svgElement.value.append('defs');
                         gElement.value = svgElement.value.append('g');
