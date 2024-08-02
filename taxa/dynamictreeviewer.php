@@ -212,6 +212,13 @@ header('X-Frame-Options: SAMEORIGIN');
                                 .attr('width', '100%')
                                 .attr('preserveAspectRatio', 'none')
                                 .attr('xlink:href', node.image);
+
+                            const newPattern = d3.selectAll('pattern')
+                                .filter(function() {
+                                    return d3.select(this).attr('id') === node.tid.toString();
+                                });
+                            const bbox = newPattern.select('image').node().getBBox();
+                            newPattern.select('image').attr('x', -((bbox.width - 500) * 0.5));
                         }
                     }
 
