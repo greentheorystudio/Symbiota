@@ -84,8 +84,8 @@ const spatialAnalysisModule = {
         const inputResponseData = Vue.ref({});
         const layerOrderArr = Vue.shallowReactive([]);
         const layersArr = Vue.shallowReactive([]);
-        const layersConfigArr = Vue.ref([]);
-        const layersInfoObj = Vue.shallowReactive({});
+        const layersConfigArr = Vue.reactive([]);
+        const layersInfoObj = Vue.reactive({});
         const layersObj = Vue.shallowReactive({});
         let map = null;
         const mapProjection = new ol.proj.Projection({
@@ -1356,8 +1356,10 @@ const spatialAnalysisModule = {
                 if(response.status === 200){
                     response.json().then((layerArrObject) => {
                         if(layerArrObject.hasOwnProperty('layerConfig') && layerArrObject['layerConfig'].length > 0){
-                            layersConfigArr.value = layerArrObject['layerConfig'];
-                            layersConfigArr.value.forEach((object) => {
+                            layerArrObject['layerConfig'].forEach((object) => {
+                                layersConfigArr.push(object);
+                            });
+                            layersConfigArr.forEach((object) => {
                                 if(object['type'] === 'layer'){
                                     processAddedLayer(object,false);
                                 }
