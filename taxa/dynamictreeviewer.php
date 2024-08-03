@@ -389,9 +389,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('stroke', 'white')
                             .attr('paint-order', 'stroke')
                             .style('font-size', '60px')
-                            .attr('cursor', d => {
-                                return d.data.expandable ? 'pointer' : 'default'
-                            })
+                            .attr('cursor', 'pointer')
                             .attr('pointer-events', d => {
                                 return d.data.expandable ? 'all' : null
                             })
