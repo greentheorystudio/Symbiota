@@ -154,19 +154,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
         return false;
     };
 
-    layersObj['dragdrop1'].on('postrender', function(evt) {
+    layersObj['dragDrop1'].on('postrender', function(evt) {
         if(!loadPointsEvent){
             hideWorking();
         }
     });
 
-    layersObj['dragdrop2'].on('postrender', function(evt) {
+    layersObj['dragDrop2'].on('postrender', function(evt) {
         if(!loadPointsEvent){
             hideWorking();
         }
     });
 
-    layersObj['dragdrop3'].on('postrender', function(evt) {
+    layersObj['dragDrop3'].on('postrender', function(evt) {
         if(!loadPointsEvent){
             hideWorking();
         }
@@ -732,7 +732,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 }
                 clickedFeatures = [];
             }
-            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6' || layersObj[activeLayer] instanceof ol.layer.Image){
+            else if(activeLayer === 'dragDrop4' || activeLayer === 'dragDrop5' || activeLayer === 'dragDrop6' || layersObj[activeLayer] instanceof ol.layer.Image){
                 infoHTML = '';
                 const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
                 const dataIndex = activeLayer + 'Data';

@@ -413,9 +413,9 @@ function primeSymbologyData(features){
 
 function refreshLayerOrder(){
     const layerCount = map.getLayers().getArray().length;
-    layersObj['dragdrop1'].setZIndex(layerCount-8);
-    layersObj['dragdrop2'].setZIndex(layerCount-7);
-    layersObj['dragdrop3'].setZIndex(layerCount-6);
+    layersObj['dragDrop1'].setZIndex(layerCount-8);
+    layersObj['dragDrop2'].setZIndex(layerCount-7);
+    layersObj['dragDrop3'].setZIndex(layerCount-6);
     layersObj['uncertainty'].setZIndex(layerCount-5);
     layersObj['select'].setZIndex(layerCount-4);
     layersObj['pointv'].setZIndex(layerCount-3);
