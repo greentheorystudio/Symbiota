@@ -29,6 +29,11 @@ if($action && SanitizerService::validateInternalRequest()){
         $imgUtilities = new ImageShared();
         echo json_encode($imgUtilities->addImageRecord(json_decode($_POST['image'], true)));
     }
+    elseif($action === 'getImageArrByTaxonomicGroup' && array_key_exists('parenttid',$_POST)){
+        $includeOccurrence = array_key_exists('includeoccurrence',$_POST) && (int)$_POST['includeoccurrence'] === 1;
+        $limit = array_key_exists('limit',$_POST) ? (int)$_POST['limit'] : null;
+        echo json_encode($images->getImageArrByTaxonomicGroup((int)$_POST['parenttid'], $includeOccurrence, $limit));
+    }
     elseif($action === 'getImageArrByProperty' && array_key_exists('property',$_POST) && array_key_exists('value',$_POST)){
         echo json_encode($images->getImageArrByProperty($_POST['property'], $_POST['value']));
     }
