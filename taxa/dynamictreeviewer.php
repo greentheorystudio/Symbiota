@@ -27,7 +27,7 @@ header('X-Frame-Options: SAMEORIGIN');
         ?>
         <div class="navpath">
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <a href="dynamictreeviewer.php"><b>Dynamic Taxonomic Tree Viewer</b></a>
+            <a href="dynamictreeviewer.php"><b>Interactive Taxonomic Tree</b></a>
         </div>
         <div id="app" class="fit">
             <div class="fit row justify-between q-ma-none q-pa-none q-col-gutter-sm">
@@ -212,6 +212,13 @@ header('X-Frame-Options: SAMEORIGIN');
                                 .attr('width', '100%')
                                 .attr('preserveAspectRatio', 'none')
                                 .attr('xlink:href', node.image);
+
+                            const newPattern = d3.selectAll('pattern')
+                                .filter(function() {
+                                    return d3.select(this).attr('id') === node.tid.toString();
+                                });
+                            const bbox = newPattern.select('image').node().getBBox();
+                            newPattern.select('image').attr('x', -((bbox.width - 500) * 0.5));
                         }
                     }
 
@@ -463,21 +470,34 @@ header('X-Frame-Options: SAMEORIGIN');
                             getTaxonChildren(selectedKingdom.value['tid'], (data) => {
                                 if(data.length > 0){
                                     setPng();
-                                    const rootObj = {
-                                        tid: selectedKingdom.value['tid'],
-                                        expandable: true,
-                                        sciname: selectedKingdom.value['name'],
-                                        author: null,
-                                        image: null,
-                                        children: data
-                                    };
-                                    treeData.value = Object.assign({}, rootObj);
-                                    nodeArr.value.push(rootObj);
-                                    data.forEach((node) => {
-                                        setDefs(node);
-                                        nodeArr.value.push(node);
+                                    const formData = new FormData();
+                                    formData.append('parenttid', selectedKingdom.value['tid'].toString());
+                                    formData.append('limit', '1');
+                                    formData.append('action', 'getImageArrByTaxonomicGroup');
+                                    fetch(imageApiUrl, {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then((response) => {
+                                        response.json().then((resObj) => {
+                                            const rootObj = {
+                                                tid: selectedKingdom.value['tid'],
+                                                expandable: true,
+                                                sciname: selectedKingdom.value['name'],
+                                                author: null,
+                                                image: (resObj.length > 0 ? resObj[0].url : null),
+                                                children: data
+                                            };
+                                            setDefs(rootObj);
+                                            treeData.value = Object.assign({}, rootObj);
+                                            nodeArr.value.push(rootObj);
+                                            data.forEach((node) => {
+                                                setDefs(node);
+                                                nodeArr.value.push(node);
+                                            });
+                                            update(null, root.value);
+                                        });
                                     });
-                                    update(null, root.value);
                                 }
                             });
                         }

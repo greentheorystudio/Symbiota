@@ -2993,34 +2993,34 @@ function removeUserLayer(layerID,raster){
         pointActive = false;
     }
     else{
-        if(layerID === 'dragdrop1' || layerID === 'dragdrop2' || layerID === 'dragdrop3'){
+        if(layerID === 'dragDrop1' || layerID === 'dragDrop2' || layerID === 'dragDrop3'){
             layersObj[layerID].setSource(blankdragdropsource);
             const sourceIndex = dragDropTarget + 'Source';
             delete layersObj[sourceIndex];
-            if(layerID === 'dragdrop1') {
+            if(layerID === 'dragDrop1') {
                 dragDrop1 = false;
             }
-            else if(layerID === 'dragdrop2') {
+            else if(layerID === 'dragDrop2') {
                 dragDrop2 = false;
             }
-            else if(layerID === 'dragdrop3') {
+            else if(layerID === 'dragDrop3') {
                 dragDrop3 = false;
             }
         }
-        else if(layerID === 'dragdrop4' || layerID === 'dragdrop5' || layerID === 'dragdrop6') {
+        else if(layerID === 'dragDrop4' || layerID === 'dragDrop5' || layerID === 'dragDrop6') {
             map.removeLayer(layersObj[layerID]);
             layersObj[layerID].setSource(null);
             const sourceIndex = dragDropTarget + 'Source';
             const dataIndex = dragDropTarget + 'Data';
             delete layersObj[sourceIndex];
             delete layersObj[dataIndex];
-            if(layerID === 'dragdrop4') {
+            if(layerID === 'dragDrop4') {
                 dragDrop4 = false;
             }
-            else if(layerID === 'dragdrop5') {
+            else if(layerID === 'dragDrop5') {
                 dragDrop5 = false;
             }
-            else if(layerID === 'dragdrop6') {
+            else if(layerID === 'dragDrop6') {
                 dragDrop6 = false;
             }
             removeRasterLayerFromTargetList(layerID);
@@ -3140,17 +3140,17 @@ function setDragDropTarget(){
     dragDropTarget = '';
     if(!dragDrop1){
         dragDrop1 = true;
-        dragDropTarget = 'dragdrop1';
+        dragDropTarget = 'dragDrop1';
         return true;
     }
     else if(!dragDrop2){
         dragDrop2 = true;
-        dragDropTarget = 'dragdrop2';
+        dragDropTarget = 'dragDrop2';
         return true;
     }
     else if(!dragDrop3){
         dragDrop3 = true;
-        dragDropTarget = 'dragdrop3';
+        dragDropTarget = 'dragDrop3';
         return true;
     }
     else{
@@ -3199,17 +3199,17 @@ function setRasterDragDropTarget(){
     dragDropTarget = '';
     if(!dragDrop4){
         dragDrop4 = true;
-        dragDropTarget = 'dragdrop4';
+        dragDropTarget = 'dragDrop4';
         return true;
     }
     else if(!dragDrop5){
         dragDrop5 = true;
-        dragDropTarget = 'dragdrop5';
+        dragDropTarget = 'dragDrop5';
         return true;
     }
     else if(!dragDrop6){
         dragDrop6 = true;
-        dragDropTarget = 'dragdrop6';
+        dragDropTarget = 'dragDrop6';
         return true;
     }
     else{

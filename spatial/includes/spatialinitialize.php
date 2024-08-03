@@ -227,31 +227,31 @@ if($stArrJson){
     const blankdragdropsource = new ol.source.Vector({
         wrapX: true
     });
-    layersObj['dragdrop1'] = new ol.layer.Vector({
+    layersObj['dragDrop1'] = new ol.layer.Vector({
         zIndex: 1,
         source: blankdragdropsource,
         style: getVectorLayerStyle(SPATIAL_DRAGDROP_FILL_COLOR, SPATIAL_DRAGDROP_BORDER_COLOR, SPATIAL_DRAGDROP_BORDER_WIDTH, SPATIAL_DRAGDROP_POINT_RADIUS, SPATIAL_DRAGDROP_OPACITY)
     });
-    layersArr.push(layersObj['dragdrop1']);
-    layersObj['dragdrop2'] = new ol.layer.Vector({
+    layersArr.push(layersObj['dragDrop1']);
+    layersObj['dragDrop2'] = new ol.layer.Vector({
         zIndex: 2,
         source: blankdragdropsource,
         style: getVectorLayerStyle(SPATIAL_DRAGDROP_FILL_COLOR, SPATIAL_DRAGDROP_BORDER_COLOR, SPATIAL_DRAGDROP_BORDER_WIDTH, SPATIAL_DRAGDROP_POINT_RADIUS, SPATIAL_DRAGDROP_OPACITY)
     });
-    layersArr.push(layersObj['dragdrop2']);
-    layersObj['dragdrop3'] = new ol.layer.Vector({
+    layersArr.push(layersObj['dragDrop2']);
+    layersObj['dragDrop3'] = new ol.layer.Vector({
         zIndex: 3,
         source: blankdragdropsource,
         style: getVectorLayerStyle(SPATIAL_DRAGDROP_FILL_COLOR, SPATIAL_DRAGDROP_BORDER_COLOR, SPATIAL_DRAGDROP_BORDER_WIDTH, SPATIAL_DRAGDROP_POINT_RADIUS, SPATIAL_DRAGDROP_OPACITY)
     });
-    layersArr.push(layersObj['dragdrop3']);
-    layersObj['dragdrop4'] = new ol.layer.Image({
+    layersArr.push(layersObj['dragDrop3']);
+    layersObj['dragDrop4'] = new ol.layer.Image({
         zIndex: 4,
     });
-    layersObj['dragdrop5'] = new ol.layer.Image({
+    layersObj['dragDrop5'] = new ol.layer.Image({
         zIndex: 5,
     });
-    layersObj['dragdrop6'] = new ol.layer.Image({
+    layersObj['dragDrop6'] = new ol.layer.Image({
         zIndex: 6,
     });
 

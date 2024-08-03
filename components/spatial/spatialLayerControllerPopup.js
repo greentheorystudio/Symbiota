@@ -16,23 +16,23 @@ const spatialLayerControllerPopup = {
                             <template v-if="layersInfoObj['select']">
                                 <spatial-layer-controller-layer-element :layer="layersInfoObj['select']" query="true" removable="true"></spatial-layer-controller-layer-element>
                             </template>
-                            <template v-if="layersInfoObj['dragdrop1']">
-                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragdrop1']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
+                            <template v-if="layersInfoObj['dragDrop1']">
+                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragDrop1']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
                             </template>
-                            <template v-if="layersInfoObj['dragdrop2']">
-                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragdrop2']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
+                            <template v-if="layersInfoObj['dragDrop2']">
+                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragDrop2']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
                             </template>
-                            <template v-if="layersInfoObj['dragdrop3']">
-                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragdrop3']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
+                            <template v-if="layersInfoObj['dragDrop3']">
+                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragDrop3']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
                             </template>
-                            <template v-if="layersInfoObj['dragdrop4']">
-                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragdrop4']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
+                            <template v-if="layersInfoObj['dragDrop4']">
+                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragDrop4']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
                             </template>
-                            <template v-if="layersInfoObj['dragdrop5']">
-                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragdrop5']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
+                            <template v-if="layersInfoObj['dragDrop5']">
+                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragDrop5']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
                             </template>
-                            <template v-if="layersInfoObj['dragdrop6']">
-                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragdrop6']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
+                            <template v-if="layersInfoObj['dragDrop6']">
+                                <spatial-layer-controller-layer-element :layer="layersInfoObj['dragDrop6']" query="true" removable="true" sortable="true" symbology="true"></spatial-layer-controller-layer-element>
                             </template>
                             <template v-if="layersConfigArr.length > 0">
                                 <template v-for="layerObj in layersConfigArr">

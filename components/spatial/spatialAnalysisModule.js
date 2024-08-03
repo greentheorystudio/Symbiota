@@ -84,8 +84,8 @@ const spatialAnalysisModule = {
         const inputResponseData = Vue.ref({});
         const layerOrderArr = Vue.shallowReactive([]);
         const layersArr = Vue.shallowReactive([]);
-        const layersConfigArr = Vue.ref([]);
-        const layersInfoObj = Vue.shallowReactive({});
+        const layersConfigArr = Vue.reactive([]);
+        const layersInfoObj = Vue.reactive({});
         const layersObj = Vue.shallowReactive({});
         let map = null;
         const mapProjection = new ol.proj.Projection({
@@ -1200,34 +1200,34 @@ const spatialAnalysisModule = {
                 updateMapSettings('pointActive', false);
             }
             else{
-                if(layerID === 'dragdrop1' || layerID === 'dragdrop2' || layerID === 'dragdrop3'){
+                if(layerID === 'dragDrop1' || layerID === 'dragDrop2' || layerID === 'dragDrop3'){
                     layersObj[layerID].setSource(mapSettings.blankDragDropSource);
                     const sourceIndex = mapSettings.dragDropTarget + 'Source';
                     delete layersObj[sourceIndex];
-                    if(layerID === 'dragdrop1') {
+                    if(layerID === 'dragDrop1') {
                         updateMapSettings('dragDrop1', false);
                     }
-                    else if(layerID === 'dragdrop2') {
-                        updateMapSettings('dragdrop2', false);
+                    else if(layerID === 'dragDrop2') {
+                        updateMapSettings('dragDrop2', false);
                     }
-                    else if(layerID === 'dragdrop3') {
+                    else if(layerID === 'dragDrop3') {
                         updateMapSettings('dragDrop3', false);
                     }
                 }
-                else if(layerID === 'dragdrop4' || layerID === 'dragdrop5' || layerID === 'dragdrop6') {
+                else if(layerID === 'dragDrop4' || layerID === 'dragDrop5' || layerID === 'dragDrop6') {
                     map.removeLayer(layersObj[layerID]);
                     layersObj[layerID].setSource(null);
                     const sourceIndex = mapSettings.dragDropTarget + 'Source';
                     const dataIndex = mapSettings.dragDropTarget + 'Data';
                     delete layersObj[sourceIndex];
                     delete layersObj[dataIndex];
-                    if(layerID === 'dragdrop4') {
+                    if(layerID === 'dragDrop4') {
                         updateMapSettings('dragDrop4', false);
                     }
-                    else if(layerID === 'dragdrop5') {
+                    else if(layerID === 'dragDrop5') {
                         updateMapSettings('dragDrop5', false);
                     }
-                    else if(layerID === 'dragdrop6') {
+                    else if(layerID === 'dragDrop6') {
                         updateMapSettings('dragDrop6', false);
                     }
                     rasterLayersArr.value = rasterLayersArr.value.filter((obj) => {
@@ -1356,8 +1356,10 @@ const spatialAnalysisModule = {
                 if(response.status === 200){
                     response.json().then((layerArrObject) => {
                         if(layerArrObject.hasOwnProperty('layerConfig') && layerArrObject['layerConfig'].length > 0){
-                            layersConfigArr.value = layerArrObject['layerConfig'];
-                            layersConfigArr.value.forEach((object) => {
+                            layerArrObject['layerConfig'].forEach((object) => {
+                                layersConfigArr.push(object);
+                            });
+                            layersConfigArr.forEach((object) => {
                                 if(object['type'] === 'layer'){
                                     processAddedLayer(object,false);
                                 }
@@ -1469,7 +1471,7 @@ const spatialAnalysisModule = {
                         }
                         clickedFeatures.length = 0;
                     }
-                    else if(mapSettings.activeLayer === 'dragdrop4' || mapSettings.activeLayer === 'dragdrop5' || mapSettings.activeLayer === 'dragdrop6' || layersObj[mapSettings.activeLayer] instanceof ol.layer.Image){
+                    else if(mapSettings.activeLayer === 'dragDrop4' || mapSettings.activeLayer === 'dragDrop5' || mapSettings.activeLayer === 'dragDrop6' || layersObj[mapSettings.activeLayer] instanceof ol.layer.Image){
                         infoHTML = '';
                         const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
                         const dataIndex = mapSettings.activeLayer + 'Data';
@@ -1584,31 +1586,31 @@ const spatialAnalysisModule = {
                 zIndex: 0
             });
             layersArr.push(layersObj['base']);
-            layersObj['dragdrop1'] = new ol.layer.Vector({
+            layersObj['dragDrop1'] = new ol.layer.Vector({
                 zIndex: 1,
                 source: mapSettings.blankDragDropSource,
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
-            layersArr.push(layersObj['dragdrop1']);
-            layersObj['dragdrop2'] = new ol.layer.Vector({
+            layersArr.push(layersObj['dragDrop1']);
+            layersObj['dragDrop2'] = new ol.layer.Vector({
                 zIndex: 2,
                 source: mapSettings.blankDragDropSource,
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
-            layersArr.push(layersObj['dragdrop2']);
-            layersObj['dragdrop3'] = new ol.layer.Vector({
+            layersArr.push(layersObj['dragDrop2']);
+            layersObj['dragDrop3'] = new ol.layer.Vector({
                 zIndex: 3,
                 source: mapSettings.blankDragDropSource,
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
-            layersArr.push(layersObj['dragdrop3']);
-            layersObj['dragdrop4'] = new ol.layer.Image({
+            layersArr.push(layersObj['dragDrop3']);
+            layersObj['dragDrop4'] = new ol.layer.Image({
                 zIndex: 4,
             });
-            layersObj['dragdrop5'] = new ol.layer.Image({
+            layersObj['dragDrop5'] = new ol.layer.Image({
                 zIndex: 5,
             });
-            layersObj['dragdrop6'] = new ol.layer.Image({
+            layersObj['dragDrop6'] = new ol.layer.Image({
                 zIndex: 6,
             });
             layersObj['uncertainty'] = new ol.layer.Vector({
@@ -1680,17 +1682,17 @@ const spatialAnalysisModule = {
                 })
             });
             layersArr.push(layersObj['rasteranalysis']);
-            layersObj['dragdrop1'].on('postrender', () => {
+            layersObj['dragDrop1'].on('postrender', () => {
                 if(!mapSettings.loadPointsEvent){
                     hideWorking();
                 }
             });
-            layersObj['dragdrop2'].on('postrender', () => {
+            layersObj['dragDrop2'].on('postrender', () => {
                 if(!mapSettings.loadPointsEvent){
                     hideWorking();
                 }
             });
-            layersObj['dragdrop3'].on('postrender', () => {
+            layersObj['dragDrop3'].on('postrender', () => {
                 if(!mapSettings.loadPointsEvent){
                     hideWorking();
                 }
@@ -2108,7 +2110,7 @@ const spatialAnalysisModule = {
             updateMapSettings('dragDropTarget', '');
             if(!mapSettings.dragDrop4){
                 updateMapSettings('dragDrop4', true);
-                updateMapSettings('dragDropTarget', 'dragdrop4');
+                updateMapSettings('dragDropTarget', 'dragDrop4');
                 return true;
             }
             else if(!mapSettings.dragDrop5){
