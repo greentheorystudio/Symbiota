@@ -1,8 +1,8 @@
 const mediaFileUploadInputElement = {
     props: {
-        collId: {
-            type: Number,
-            default: 1
+        collection: {
+            type: Object,
+            default: null
         },
         createOccurrence: {
             type: Boolean,
@@ -22,6 +22,10 @@ const mediaFileUploadInputElement = {
         },
         occId: {
             type: Number,
+            default: null
+        },
+        taxon: {
+            type: Object,
             default: null
         },
         taxonId: {
@@ -50,7 +54,7 @@ const mediaFileUploadInputElement = {
                         </div>
                         <div class="row justify-end">
                             <div>
-                                <q-btn color="positive" @click="initializeUpload();" label="Start Upload" :disabled="fileArr.length === 0" />
+                                <q-btn color="positive" @click="uploadFiles();" label="Start Upload" :disabled="fileArr.length === 0" />
                             </div>
                         </div>
                     </div>
@@ -73,7 +77,7 @@ const mediaFileUploadInputElement = {
                     </div>
                 </template>
                 <div class="full-width" :class="fileArr.length === 0 ? 'hidden' : ''">
-                    <q-uploader ref="uploaderRef" class="fit" :style="uploaderStyle" color="grey-8" :factory="uploadFiles" :filter="validateFiles" @uploaded="processUploaded" multiple hide-upload-btn flat>
+                    <q-uploader ref="uploaderRef" class="fit" :style="uploaderStyle" color="grey-8" :filter="validateFiles" multiple hide-upload-btn flat>
                         <template v-slot:header="scope">
                             <div class="full-width row justify-between">
                                 <div class="row no-wrap justify-start q-pa-sm q-gutter-xs">
@@ -95,7 +99,7 @@ const mediaFileUploadInputElement = {
                                         <q-item-section>
                                             <div class="full-width row">
                                                 <div class="col-2">
-                                                    <div v-if="file.hasOwnProperty('externalUrl')">
+                                                    <div v-if="file.hasOwnProperty('externalUrl') && file['uploadMetadata']['type'] === 'StillImage'">
                                                         <q-img :src="file['externalUrl']" spinner-color="white"></q-img>
                                                     </div>
                                                     <div v-else-if="file.__img">
@@ -158,11 +162,10 @@ const mediaFileUploadInputElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { getSubstringByRegEx, parseCsvFile, showNotification } = useCore();
+        const { getSubstringByRegEx, hideWorking, parseCsvFile, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
         const imageStore = useImageStore();
         const mediaStore = useMediaStore();
-        const occurrenceStore = useOccurrenceStore();
 
         const acceptedMediaTypes = [
             {extension: 'jpeg', type: 'StillImage', mimetype: 'image/jpeg'},
@@ -175,6 +178,9 @@ const mediaFileUploadInputElement = {
             {extension: 'wav', type: 'Sound', mimetype: 'audio/wav'},
             {extension: 'mp3', type: 'Sound', mimetype: 'audio/mpeg'}
         ];
+        const collId = Vue.computed(() => {
+            return props.collection ? Number(props.collection.collid) : 0;
+        });
         let csvFileData = [];
         const csvFileDataUploaded = Vue.computed(() => {
             return csvFileData.length > 0;
@@ -184,6 +190,7 @@ const mediaFileUploadInputElement = {
         const identifierArr = Vue.ref([]);
         const identifierData = Vue.ref({});
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
+        const processingArr = Vue.ref([]);
         const queueSize = Vue.ref(0);
         const queueSizeLabel = Vue.ref('');
         const selectedUploadMethod = Vue.ref('upload');
@@ -195,6 +202,32 @@ const mediaFileUploadInputElement = {
             {label: 'Local Files', value: 'upload'},
             {label: 'From URL', value: 'url'}
         ];
+        const uploadPath = Vue.computed(() => {
+            let path = '';
+            if(props.collection){
+                if(props.collection.institutioncode){
+                    path += props.collection.institutioncode;
+                }
+                if(props.collection.institutioncode && props.collection.collectioncode){
+                    path += '_';
+                }
+                if(props.collection.collectioncode){
+                    path += props.collection.collectioncode;
+                }
+            }
+            else if(props.taxon){
+                if(props.taxon.family){
+                    path += props.taxon.family;
+                }
+                else{
+                    path += props.taxon['unitname1'];
+                }
+            }
+            else{
+                path += 'general';
+            }
+            return path;
+        });
         const urlMethodCopyFile = Vue.ref(true);
         const urlMethodUrl = Vue.ref(null);
 
@@ -212,7 +245,7 @@ const mediaFileUploadInputElement = {
         function getFileErrorMessage(file) {
             let errorMessage = null;
             if(Number(props.occId) === 0 && Number(props.taxonId) === 0){
-                if(Number(props.collId) > 0){
+                if(collId.value > 0){
                     if(!file['uploadMetadata']['occid'] && !props.createOccurrence){
                         if(file['catalognumber']){
                             errorMessage = 'Catalog number was not found in the database';
@@ -236,43 +269,6 @@ const mediaFileUploadInputElement = {
             return errorMessage;
         }
 
-        function getUploadData(file) {
-            if(file['uploadMetadata']['type'] === 'StillImage'){
-                return {
-                    url: imageApiUrl,
-                    formFields: [
-                        {name: 'action', value: 'addImage'},
-                        {name: 'collid', value: props.collId.toString()},
-                        {name: 'copyToServer', value: file['copyToServer']},
-                        {name: 'image', value: JSON.stringify(file['uploadMetadata'])}
-                    ],
-                    fieldName: 'imgfile'
-                }
-            }
-            else{
-                return {
-                    url: mediaApiUrl,
-                    formFields: [
-                        {name: 'action', value: 'addMedia'},
-                        {name: 'collid', value: props.collId.toString()},
-                        {name: 'copyToServer', value: file['copyToServer']},
-                        {name: 'media', value: JSON.stringify(file['uploadMetadata'])}
-                    ],
-                    fieldName: 'medfile'
-                }
-            }
-        }
-
-        function initializeUpload() {
-            fileArr.forEach((file) => {
-                if(file.hasOwnProperty('tid') && file.tid && Number(file.tid) > 0){
-                    file['metadata'].push({name: 'tid', value: file.tid, system: true});
-                    uploaderRef.value.updateFileStatus(file,'idle');
-                }
-            });
-            uploaderRef.value.upload();
-        }
-
         function processCsvFileData() {
             if(csvFileData.length > 0){
                 taxaArr.value = [];
@@ -284,7 +280,7 @@ const mediaFileUploadInputElement = {
                         else if(dataObj.hasOwnProperty('sciname') && dataObj['sciname'] !== '' && !taxaArr.value.includes(dataObj['sciname'])){
                             taxaArr.value.push(dataObj['sciname']);
                         }
-                        if(Number(props.collId) > 0 && dataObj.hasOwnProperty(props.identifierField) && dataObj[props.identifierField] !== '' && !identifierArr.value.includes(dataObj[props.identifierField])){
+                        if(collId.value > 0 && dataObj.hasOwnProperty(props.identifierField) && dataObj[props.identifierField] !== '' && !identifierArr.value.includes(dataObj[props.identifierField])){
                             identifierArr.value.push(dataObj[props.identifierField]);
                         }
                     }
@@ -302,7 +298,7 @@ const mediaFileUploadInputElement = {
                     name: urlMethodUrl.value.split('/').pop(),
                     size: 0,
                     externalUrl: urlMethodUrl.value,
-                    copyToServer: (urlMethodCopyFile.value ? '1' : '0')
+                    copyToServer: urlMethodCopyFile.value
                 };
                 if(urlMethodCopyFile.value){
                     const formData = new FormData();
@@ -315,7 +311,9 @@ const mediaFileUploadInputElement = {
                     .then((response) => {
                         if(response.status === 200){
                             response.json().then((resObj) => {
+                                file.height = resObj['fileHeight'];
                                 file.size = resObj['fileSize'];
+                                file.width = resObj['fileWidth'];
                                 validateFiles([file]);
                                 resetUrlMethodSettings();
                             });
@@ -329,11 +327,37 @@ const mediaFileUploadInputElement = {
             }
         }
 
-        function processUploaded(info) {
-            console.log('after');
-            /*info.files.forEach((file) => {
-                removePickedFile(file);
-            });*/
+        function processUpload(file) {
+            let action;
+            processingArr.value.push({file: file['uploadMetadata']['filename'], status: 'processing'});
+            if(file['uploadMetadata']['sourceurl']){
+                if(file['copyToServer']){
+                    action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImageFromUrl' : 'addMediaFromUrl';
+                }
+                else{
+                    action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImage' : 'addMedia';
+                }
+            }
+            else{
+                action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImageFromFile' : 'addMediaFromFile';
+            }
+            if(file['uploadMetadata']['type'] === 'StillImage'){
+                if(action === 'addImage'){
+                    file['uploadMetadata']['url'] = file['uploadMetadata']['sourceurl'];
+                    file['uploadMetadata']['originalurl'] = file['uploadMetadata']['sourceurl'];
+                }
+                uploadImageFile(file, action, (id, file) => {
+                    uploadPostProcess(id, file);
+                });
+            }
+            else{
+                if(action === 'addMedia'){
+                    file['uploadMetadata']['accessuri'] = file['uploadMetadata']['sourceurl'];
+                }
+                uploadMediaFile(file, action, (id, file) => {
+                    uploadPostProcess(id, file);
+                });
+            }
         }
 
         function removePickedFile(file) {
@@ -398,7 +422,7 @@ const mediaFileUploadInputElement = {
             if(Number(props.taxonId) === 0 && taxaArr.value.length > 0){
                 setTaxaData();
             }
-            else if(Number(props.collId) > 0 && identifierArr.value.length > 0){
+            else if(collId.value > 0 && identifierArr.value.length > 0){
                 setIdentifierData();
             }
             else{
@@ -408,7 +432,7 @@ const mediaFileUploadInputElement = {
 
         function setIdentifierData() {
             const formData = new FormData();
-            formData.append('collid', props.collId.toString());
+            formData.append('collid', collId.value.toString());
             formData.append('identifierField', props.identifierField);
             formData.append('identifiers', JSON.stringify(identifierArr.value));
             formData.append('action', 'getOccurrenceIdDataFromIdentifierArr');
@@ -468,45 +492,98 @@ const mediaFileUploadInputElement = {
             setUploaderStyle();
         }
 
-        function uploadFiles(files) {
-            if(Number(props.collId) > 0 && props.createOccurrence && !files[0]['uploadMetadata']['occid']){
-                const occurrenceData = {};
-                occurrenceData['collid'] = props.collId;
-                occurrenceData[props.identifierField] = files[0]['recordIdentifier'];
-                occurrenceData['sciname'] = files[0]['scientificName'];
-                occurrenceData['tid'] = files[0]['uploadMetadata']['tid'];
-                const formData = new FormData();
-                formData.append('collid', props.collId.toString());
-                formData.append('occurrence', JSON.stringify(occurrenceData));
-                formData.append('action', 'createOccurrenceRecord');
-                fetch(occurrenceApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    response.text().then((res) => {
-                        if(res && Number(res) > 0){
-                            files[0]['uploadMetadata']['occid'] = res;
-                            return getUploadData(files[0]);
-                        }
-                    });
-                });
-            }
-            else if((Number(props.collId) > 0 && Number(files[0]['uploadMetadata']['occid']) > 0) || (!props.collId && Number(files[0]['uploadMetadata']['tid']) > 0)){
-                console.log(files[0]);
-                return {
-                    url: occurrenceApiUrl,
-                    formFields: [
-                        {name: 'action', value: 'addImage'},
-                        {name: 'collid', value: props.collId.toString()},
-                        {name: 'copyToServer', value: file['copyToServer']},
-                        {name: 'image', value: JSON.stringify(files[0]['uploadMetadata'])}
-                    ],
-                    fieldName: 'imgfile'
+        function uploadFiles() {
+            showWorking();
+            processingArr.value.length = 0;
+            fileArr.forEach((file) => {
+                file['uploadMetadata']['filename'] = file.name;
+                if(!file.hasOwnProperty('height')){
+                    file['uploadMetadata']['height'] = file.hasOwnProperty('__img') ? file['__img']['height'] : null;
                 }
+                else{
+                    file['uploadMetadata']['height'] = file.height;
+                }
+                if(!file.hasOwnProperty('width')){
+                    file['uploadMetadata']['width'] = file.hasOwnProperty('__img') ? file['__img']['width'] : null;
+                }
+                else{
+                    file['uploadMetadata']['width'] = file.width;
+                }
+                if(collId.value > 0 && props.createOccurrence && !file['uploadMetadata']['occid']){
+                    const occurrenceData = {};
+                    occurrenceData['collid'] = collId.value.toString();
+                    occurrenceData[props.identifierField] = file['recordIdentifier'];
+                    occurrenceData['sciname'] = file['scientificName'];
+                    occurrenceData['tid'] = file['uploadMetadata']['tid'];
+                    const formData = new FormData();
+                    formData.append('collid', collId.value.toString());
+                    formData.append('occurrence', JSON.stringify(occurrenceData));
+                    formData.append('action', 'createOccurrenceRecord');
+                    fetch(occurrenceApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        response.text().then((res) => {
+                            if(res && Number(res) > 0){
+                                file['uploadMetadata']['occid'] = res;
+                                processUpload(file);
+                            }
+                        });
+                    });
+                }
+                else if((collId.value > 0 && Number(file['uploadMetadata']['occid']) > 0) || (collId.value === 0 && Number(file['uploadMetadata']['tid']) > 0)){
+                    processUpload(file);
+                }
+            });
+        }
+
+        function uploadImageFile(file, action, callback) {
+            const formData = new FormData();
+            formData.append('collid', collId.value.toString());
+            formData.append('image', JSON.stringify(file['uploadMetadata']));
+            formData.append('imgfile', file);
+            formData.append('uploadpath', uploadPath.value);
+            formData.append('action', action);
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(res, file);
+                });
+            });
+        }
+
+        function uploadMediaFile(file, action, callback) {
+            const formData = new FormData();
+            formData.append('collid', collId.value.toString());
+            formData.append('media', JSON.stringify(file['uploadMetadata']));
+            formData.append('medfile', file);
+            formData.append('uploadpath', uploadPath.value);
+            formData.append('action', action);
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(res, file);
+                });
+            });
+        }
+
+        function uploadPostProcess(id, file) {
+            if(id && Number(id) > 0){
+                removePickedFile(file);
             }
-            else{
-                return false;
+            const fileProcess = processingArr.value.find(proc => proc['file'] === file['uploadMetadata']['filename']);
+            fileProcess['status'] = 'complete';
+            const currentProcess = processingArr.value.find(proc => proc['status'] === 'processing');
+            if(!currentProcess){
+                hideWorking();
+                context.emit('upload:complete');
             }
         }
 
@@ -531,9 +608,12 @@ const mediaFileUploadInputElement = {
                             else{
                                 file['uploadMetadata'] = Object.assign({}, mediaStore.getBlankMediaRecord);
                             }
+                            if(file.hasOwnProperty('externalUrl') && file['externalUrl']){
+                                file['uploadMetadata']['sourceurl'] = file['externalUrl'];
+                            }
                             file['uploadMetadata']['type'] = mediaTypeInfo.type;
                             file['uploadMetadata']['format'] = mediaTypeInfo.mimetype;
-                            file['filenameRecordIdentifier'] = (Number(props.collId) > 0 && props.identifierRegEx) ? getSubstringByRegEx(props.identifierRegEx, file.name) : null;
+                            file['filenameRecordIdentifier'] = (collId.value > 0 && props.identifierRegEx) ? getSubstringByRegEx(props.identifierRegEx, file.name) : null;
                             if(file['filenameRecordIdentifier'] && !identifierArr.value.includes(file['filenameRecordIdentifier'])){
                                 identifierArr.value.push(file['filenameRecordIdentifier']);
                             }
@@ -546,7 +626,7 @@ const mediaFileUploadInputElement = {
                                 file['uploadMetadata']['tid'] = props.taxonId;
                             }
                             if(!file.hasOwnProperty('copyToServer')){
-                                file['copyToServer'] = '0';
+                                file['copyToServer'] = false;
                             }
                             fileArr.push(file);
                             updateQueueSize();
@@ -578,9 +658,7 @@ const mediaFileUploadInputElement = {
             urlMethodUrl,
             cancelUpload,
             getFileErrorMessage,
-            initializeUpload,
             processExternalUrl,
-            processUploaded,
             removePickedFile,
             uploadFiles,
             validateFiles

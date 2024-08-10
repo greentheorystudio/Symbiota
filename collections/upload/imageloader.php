@@ -41,7 +41,6 @@ $globalImageRootPath = $GLOBALS['IMAGE_ROOT_PATH'] ?? '';
 $globalImageRootUrl = $GLOBALS['IMAGE_ROOT_URL'] ?? '';
 $globalImageWebWidth = $GLOBALS['IMG_WEB_WIDTH'] ?? 1400;
 $globalImageTnWidth = $GLOBALS['IMG_TN_WIDTH'] ?? 200;
-$globalImageLgWidth = $GLOBALS['IMG_LG_WIDTH'] ?? 3200;
 ?>
 <script>
     $(function() {

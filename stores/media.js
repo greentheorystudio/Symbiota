@@ -20,8 +20,7 @@ const useMediaStore = Pinia.defineStore('media', {
             contributor: null,
             locationcreated: null,
             description: null,
-            sortsequence: null,
-            initialtimestamp: null
+            sortsequence: null
         },
         mediaArr: [],
         mediaData: {},

@@ -26,7 +26,6 @@ class Configurations{
         'GBIF_USERNAME',
         'IMAGE_ROOT_PATH',
         'IMAGE_ROOT_URL',
-        'IMG_LG_WIDTH',
         'IMG_TN_WIDTH',
         'IMG_WEB_WIDTH',
         'IS_ADMIN',
@@ -430,7 +429,7 @@ class Configurations{
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
         $GLOBALS['CSS_VERSION'] = '20240627';
-        $GLOBALS['JS_VERSION'] = '202404311111112';
+        $GLOBALS['JS_VERSION'] = '20240431111111222222223333333';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -443,7 +442,6 @@ class Configurations{
         $GLOBALS['DEFAULT_LANG'] = 'en';
         $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
         $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
-        $GLOBALS['IMG_LG_WIDTH'] = 3200;
         $GLOBALS['IMG_TN_WIDTH'] = 200;
         $GLOBALS['IMG_WEB_WIDTH'] = 1400;
         $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
@@ -600,9 +598,6 @@ class Configurations{
         }
         if(!isset($GLOBALS['IMAGE_ROOT_URL'])){
             $GLOBALS['IMAGE_ROOT_URL'] = '';
-        }
-        if(!isset($GLOBALS['IMG_LG_WIDTH']) || $GLOBALS['IMG_LG_WIDTH'] === ''){
-            $GLOBALS['IMG_LG_WIDTH'] = 3200;
         }
         if(!isset($GLOBALS['IMG_TN_WIDTH']) || $GLOBALS['IMG_TN_WIDTH'] === ''){
             $GLOBALS['IMG_TN_WIDTH'] = 200;

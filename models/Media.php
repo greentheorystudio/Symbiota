@@ -10,6 +10,7 @@ class Media{
         "tid" => array("dataType" => "number", "length" => 10),
         "occid" => array("dataType" => "number", "length" => 10),
         "accessuri" => array("dataType" => "string", "length" => 2048),
+        "sourceurl" => array("dataType" => "string", "length" => 255),
         "title" => array("dataType" => "string", "length" => 255),
         "creatoruid" => array("dataType" => "number", "length" => 10),
         "creator" => array("dataType" => "string", "length" => 45),
@@ -39,6 +40,33 @@ class Media{
             $this->conn->close();
         }
 	}
+
+    public function createMediaRecord($data): int
+    {
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'mediaid' && array_key_exists($field, $data)){
+                if($field === 'language' || $field === 'owner'){
+                    $fieldNameArr[] = '`' . $field . '`';
+                }
+                else{
+                    $fieldNameArr[] = $field;
+                }
+                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+            }
+        }
+        $fieldNameArr[] = 'initialtimestamp';
+        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+        $sql = 'INSERT IGNORE INTO media(' . implode(',', $fieldNameArr) . ') '.
+            'VALUES (' . implode(',', $fieldValueArr) . ') ';
+        //echo "<div>".$sql."</div>";
+        if($this->conn->query($sql)){
+            $newID = $this->conn->insert_id;
+        }
+        return $newID;
+    }
 
     public function getMediaArrByProperty($property, $value, $limitFormat = null): array
     {

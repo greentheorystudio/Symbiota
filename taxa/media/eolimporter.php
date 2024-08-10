@@ -550,7 +550,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                 newImageObj['sortsequence'] = '20';
                                 const formData = new FormData();
                                 formData.append('image', JSON.stringify(newImageObj));
-                                formData.append('action', 'addImageRecord');
+                                formData.append('action', 'addImage');
                                 fetch(imageApiUrl, {
                                     method: 'POST',
                                     body: formData
@@ -594,7 +594,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                 newMediaObj['sortsequence'] = '20';
                                 const formData = new FormData();
                                 formData.append('media', JSON.stringify(newMediaObj));
-                                formData.append('action', 'addMediaRecord');
+                                formData.append('action', 'addMedia');
                                 fetch(mediaApiUrl, {
                                     method: 'POST',
                                     body: formData

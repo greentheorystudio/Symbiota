@@ -182,12 +182,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
                 <input type="text" id="IMG_TN_WIDTH" value="<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_TN_WIDTH','<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>',true);" />
             </span>
         </div>
-        <div class="field-block">
-            <span class="field-label">Large Image Width (px):</span>
-            <span class="field-elem">
-                <input type="text" id="IMG_LG_WIDTH" value="<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_LG_WIDTH','<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>',true);" />
-            </span>
-        </div>
     </fieldset>
     <fieldset style="margin: 10px 0;">
         <legend><b>SOLR</b></legend>

@@ -8,7 +8,7 @@ class Collections {
     private $conn;
 
     private $fields = array(
-        "colliD" => array("dataType" => "number", "length" => 10),
+        "collid" => array("dataType" => "number", "length" => 10),
         "institutioncode" => array("dataType" => "string", "length" => 45),
         "collectioncode" => array("dataType" => "string", "length" => 45),
         "collectionname" => array("dataType" => "string", "length" => 150),

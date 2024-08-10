@@ -26,8 +26,7 @@ const useImageStore = Pinia.defineStore('image', {
             sourceidentifier: null,
             mediamd5: null,
             dynamicproperties: null,
-            sortsequence: null,
-            initialtimestamp: null
+            sortsequence: null
         },
         imageArr: [],
         imageData: {},

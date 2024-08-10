@@ -1,7 +1,7 @@
 const occurrenceEditorMediaTab = {
     template: `
         <div class="column q-gutter-sm">
-            <media-file-upload-input-element :occ-id="occId" :taxon-id="occurrenceData.tid"></media-file-upload-input-element>
+            <media-file-upload-input-element :collection="collectionData" :occ-id="occId" :taxon-id="occurrenceData.tid"></media-file-upload-input-element>
         </div>
         <template v-if="showMediaEditorPopup">
             <occurrence-media-editor-popup
@@ -17,11 +17,13 @@ const occurrenceEditorMediaTab = {
     setup() {
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const collectionData = Vue.computed(() => occurrenceStore.getCollectionData);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const showMediaEditorPopup = Vue.ref(false);
 
         return {
+            collectionData,
             occId,
             occurrenceData,
             showMediaEditorPopup

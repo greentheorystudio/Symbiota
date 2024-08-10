@@ -373,13 +373,7 @@ class ImageLocalProcessor {
                         $lgUrlFrag = '';
                         if($this->lgImg){
                             $lgTargetFileName = substr($targetFileName,0,-4). '_lg.jpg';
-                            if($fileSize && $fileSize > $GLOBALS['MAX_UPLOAD_FILESIZE']){
-                                if($this->createNewImage($sourcePath.$fileName,$targetPath.$lgTargetFileName,$GLOBALS['IMG_LG_WIDTH'],round($GLOBALS['IMG_LG_WIDTH'] * ($height / $width)),$width,$height)){
-                                    $lgUrlFrag = $GLOBALS['IMAGE_ROOT_URL'].'/'.$targetFrag.$lgTargetFileName;
-                                    $this->logOrEcho('Resized source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
-                                }
-                            }
-                            else if(copy($sourcePath.$fileName,$targetPath.$lgTargetFileName)){
+                            if($fileSize && $fileSize < $GLOBALS['MAX_UPLOAD_FILESIZE'] && copy($sourcePath.$fileName,$targetPath.$lgTargetFileName)){
                                 $lgUrlFrag = $GLOBALS['IMAGE_ROOT_URL'].'/'.$targetFrag.$lgTargetFileName;
                                 $this->logOrEcho('Imported source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
                             }

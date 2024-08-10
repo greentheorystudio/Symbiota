@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class Images{
 
@@ -46,6 +47,35 @@ class Images{
             $this->conn->close();
         }
 	}
+
+    public function createImageRecord($data): int
+    {
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'imgid' && array_key_exists($field, $data)){
+                if($field === 'owner'){
+                    $fieldNameArr[] = '`' . $field . '`';
+                }
+                else{
+                    $fieldNameArr[] = $field;
+                }
+                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+            }
+        }
+        $fieldNameArr[] = 'initialtimestamp';
+        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+        $sql = 'INSERT IGNORE INTO images(' . implode(',', $fieldNameArr) . ') '.
+            'VALUES (' . implode(',', $fieldValueArr) . ') ';
+        //echo "<div>".$sql."</div>";
+        if($this->conn->query($sql)){
+            $newID = $this->conn->insert_id;
+            $guid = UuidService::getUuidV4();
+            $this->conn->query('INSERT INTO guidimages(guid, imgid) VALUES("' . $guid . '",' . $newID . ')');
+        }
+        return $newID;
+    }
 
     public function getImageArrByProperty($property, $value, $includeOccurrence = false, $limit = null): array
     {

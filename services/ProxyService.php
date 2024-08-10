@@ -27,6 +27,7 @@ class ProxyService {
 
     public static function getFileInfoFromUrl($url): array
     {
+        $size = array();
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_HEADER, TRUE);
@@ -35,9 +36,14 @@ class ProxyService {
         $fileSize = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
         $httpResponseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
+        if((int)$httpResponseCode === 200){
+            $size = getimagesize($url);
+        }
         return [
             'fileExists' => (int)$httpResponseCode === 200,
-            'fileSize' => (int)$fileSize
+            'fileSize' => (int)$fileSize,
+            'fileHeight' => $size ? (int)$size[1] : 0,
+            'fileWidth' => $size ? (int)$size[0] : 0
         ];
     }
 }

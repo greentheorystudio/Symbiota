@@ -68,7 +68,7 @@ class Taxa{
         $fieldValueArr = array();
         $data = $this->validateNewTaxaData($data);
         foreach($this->fields as $field => $fieldArr){
-            if($field !== 'occid' && array_key_exists($field, $data)){
+            if($field !== 'tid' && array_key_exists($field, $data)){
                 if($field === 'source'){
                     $fieldNameArr[] = '`' . $field . '`';
                 }
