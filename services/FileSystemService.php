@@ -63,9 +63,9 @@ class FileSystemService {
         return implode('/', $pathParts);
     }
 
-    public static function getServerServerPathFromUrlPath($relPath): string
+    public static function getServerPathFromUrlPath($path): string
     {
-        return str_replace($GLOBALS['IMAGE_ROOT_URL'], $GLOBALS['SERVER_ROOT'], $relPath);
+        return str_replace($GLOBALS['IMAGE_ROOT_URL'], ($GLOBALS['SERVER_ROOT'] . '/' . $GLOBALS['IMAGE_ROOT_URL']), $path);
     }
 
     public static function getServerUploadFilename($targetPath, $origFilename, $suffix = null): string
@@ -75,7 +75,7 @@ class FileSystemService {
         $shortOrigFilename = substr($origFilename,0, $dotPos);
         $tempFileName = $shortOrigFilename . ($suffix ?: '');
         $cnt = 0;
-        while(file_exists($targetPath . $tempFileName . '.' . $fileExt)){
+        while(file_exists($targetPath . '/' . $tempFileName . '.' . $fileExt)){
             $tempFileName = $shortOrigFilename . ($suffix ?: '') . '_' . $cnt;
             $cnt++;
         }
@@ -104,6 +104,11 @@ class FileSystemService {
         return $fullUploadPath;
     }
 
+    public static function getUrlPathFromServerPath($path): string
+    {
+        return str_replace($GLOBALS['SERVER_ROOT'], '', $path);
+    }
+
     public static function moveUploadedFileToServer($file, $targetPath, $targetFilename): bool
     {
         if(move_uploaded_file($file['tmp_name'], $targetPath . '/' . $targetFilename)){
@@ -118,7 +123,7 @@ class FileSystemService {
             if((int)$imageData['width'] > (int)$GLOBALS['IMG_WEB_WIDTH']){
                 $webFilename = self::getServerUploadFilename($targetPath, $origFilename);
                 if($webFilename && self::createNewImageFromFile(($targetPath . '/' . $targetFilename), $targetPath, $webFilename, $GLOBALS['IMG_WEB_WIDTH'], round($GLOBALS['IMG_WEB_WIDTH'] * ($imageData['height'] / $imageData['width'])), $imageData['width'], $imageData['height'])){
-                    $imageData['url'] = $GLOBALS['IMAGE_ROOT_URL'] . '/' . $targetPath . '/' . $webFilename;
+                    $imageData['url'] = self::getUrlPathFromServerPath($targetPath . '/' . $webFilename);
                 }
             }
             else{
@@ -127,7 +132,7 @@ class FileSystemService {
             if((int)$imageData['width'] > (int)$GLOBALS['IMG_TN_WIDTH']){
                 $tnFilename = self::getServerUploadFilename($targetPath, $origFilename, '_tn');
                 if($tnFilename && self::createNewImageFromFile(($targetPath . '/' . $targetFilename), $targetPath, $tnFilename, $GLOBALS['IMG_TN_WIDTH'], round($GLOBALS['IMG_TN_WIDTH'] * ($imageData['height'] / $imageData['width'])), $imageData['width'], $imageData['height'])){
-                    $imageData['thumbnailurl'] = $GLOBALS['IMAGE_ROOT_URL'] . '/' . $targetPath . '/' . $tnFilename;
+                    $imageData['thumbnailurl'] = self::getUrlPathFromServerPath($targetPath . '/' . $tnFilename);
                 }
             }
         }
@@ -141,7 +146,7 @@ class FileSystemService {
         if($targetPath && $origFilename) {
             $targetFilename = self::getServerUploadFilename($targetPath, $origFilename, '_lg');
             if($targetFilename && self::moveUploadedFileToServer($_FILES['imgfile'], $targetPath, $targetFilename)){
-                $imageData['originalurl'] = $GLOBALS['IMAGE_ROOT_URL'] . '/' . $targetPath . '/' . $targetFilename;
+                $imageData['originalurl'] = self::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
                 $imageData = self::processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename);
             }
         }
@@ -155,7 +160,7 @@ class FileSystemService {
         if($targetPath && $origFilename) {
             $targetFilename = self::getServerUploadFilename($targetPath, $origFilename, '_lg');
             if($targetFilename && self::copyFileToTarget($imageData['sourceurl'], $targetPath, $targetFilename)){
-                $imageData['originalurl'] = $GLOBALS['IMAGE_ROOT_URL'] . '/' . $targetPath . '/' . $targetFilename;
+                $imageData['originalurl'] = self::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
                 $imageData = self::processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename);
             }
         }

@@ -73,7 +73,7 @@ class Media{
         $retVal = 1;
         $data = $this->getMediaData($mediaid);
         if($data['accessuri'] && strpos($data['accessuri'], '/') === 0){
-            $urlServerPath = FileSystemService::getServerServerPathFromUrlPath($data['accessuri']);
+            $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['accessuri']);
             FileSystemService::deleteFile($urlServerPath, true);
         }
         $sql = 'DELETE FROM media WHERE mediaid = ' . (int)$mediaid . ' ';

@@ -83,15 +83,15 @@ class Images{
         $retVal = 1;
         $data = $this->getImageData($imgid);
         if($data['url'] && strpos($data['url'], '/') === 0){
-            $urlServerPath = FileSystemService::getServerServerPathFromUrlPath($data['url']);
+            $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['url']);
             FileSystemService::deleteFile($urlServerPath, true);
         }
         if($data['thumbnailurl'] && strpos($data['thumbnailurl'], '/') === 0){
-            $tnServerPath = FileSystemService::getServerServerPathFromUrlPath($data['thumbnailurl']);
+            $tnServerPath = FileSystemService::getServerPathFromUrlPath($data['thumbnailurl']);
             FileSystemService::deleteFile($tnServerPath, true);
         }
         if($data['originalurl'] && strpos($data['originalurl'], '/') === 0){
-            $origServerPath = FileSystemService::getServerServerPathFromUrlPath($data['originalurl']);
+            $origServerPath = FileSystemService::getServerPathFromUrlPath($data['originalurl']);
             FileSystemService::deleteFile($origServerPath, true);
         }
         $sql = 'DELETE FROM imagetag WHERE imgid = ' . (int)$imgid . ' ';

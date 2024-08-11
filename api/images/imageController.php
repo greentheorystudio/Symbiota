@@ -39,7 +39,6 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif(($action === 'addImageFromFile' || $action === 'addImageFromUrl') && $isEditor && array_key_exists('image',$_POST) && array_key_exists('uploadpath',$_POST)){
         $imageData = json_decode($_POST['image'], true);
-        $targetPath = FileSystemService::getServerUploadPath($_POST['uploadpath']);
         if($action === 'addImageFromFile'){
             $imageData = FileSystemService::processUploadImageFromFile($imageData, $_POST['uploadpath']);
         }
