@@ -6,6 +6,7 @@ include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 $collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
+$imgid = array_key_exists('imgid',$_REQUEST) ? (int)$_REQUEST['imgid'] : 0;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN']){
@@ -46,5 +47,8 @@ if($action && SanitizerService::validateInternalRequest()){
             $imageData = FileSystemService::processUploadImageFromExternalUrl($imageData, $_POST['uploadpath']);
         }
         echo $imageData['url'] ? $images->createImageRecord($imageData) : 0;
+    }
+    elseif($action === 'deleteImageRecord' && $imgid && $isEditor){
+        echo $images->deleteImageRecord($imgid);
     }
 }

@@ -68,6 +68,21 @@ class Media{
         return $newID;
     }
 
+    public function deleteMediaRecord($mediaid): int
+    {
+        $retVal = 1;
+        $data = $this->getMediaData($mediaid);
+        if($data['accessuri'] && strpos($data['accessuri'], '/') === 0){
+            $urlServerPath = FileSystemService::getServerServerPathFromUrlPath($data['accessuri']);
+            FileSystemService::deleteFile($urlServerPath, true);
+        }
+        $sql = 'DELETE FROM media WHERE mediaid = ' . (int)$mediaid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getMediaArrByProperty($property, $value, $limitFormat = null): array
     {
         $returnArr = array();
@@ -99,6 +114,26 @@ class Media{
             }
         }
         return $returnArr;
+    }
+
+    public function getMediaData($mediaid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM media WHERE mediaid = ' . (int)$mediaid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            if($r = $rs->fetch_object()){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $r->$name;
+                }
+            }
+            $rs->free();
+        }
+        return $retArr;
     }
 
     public function updateTidFromOccurrenceRecord($occid, $tid): void

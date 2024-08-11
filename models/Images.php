@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
@@ -77,6 +78,37 @@ class Images{
         return $newID;
     }
 
+    public function deleteImageRecord($imgid): int
+    {
+        $retVal = 1;
+        $data = $this->getImageData($imgid);
+        if($data['url'] && strpos($data['url'], '/') === 0){
+            $urlServerPath = FileSystemService::getServerServerPathFromUrlPath($data['url']);
+            FileSystemService::deleteFile($urlServerPath, true);
+        }
+        if($data['thumbnailurl'] && strpos($data['thumbnailurl'], '/') === 0){
+            $tnServerPath = FileSystemService::getServerServerPathFromUrlPath($data['thumbnailurl']);
+            FileSystemService::deleteFile($tnServerPath, true);
+        }
+        if($data['originalurl'] && strpos($data['originalurl'], '/') === 0){
+            $origServerPath = FileSystemService::getServerServerPathFromUrlPath($data['originalurl']);
+            FileSystemService::deleteFile($origServerPath, true);
+        }
+        $sql = 'DELETE FROM imagetag WHERE imgid = ' . (int)$imgid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM guidimages WHERE imgid = ' . (int)$imgid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM images WHERE imgid = ' . (int)$imgid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getImageArrByProperty($property, $value, $includeOccurrence = false, $limit = null): array
     {
         $returnArr = array();
@@ -137,6 +169,26 @@ class Images{
             }
         }
         return $returnArr;
+    }
+
+    public function getImageData($imgid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM images WHERE imgid = ' . (int)$imgid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            if($r = $rs->fetch_object()){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $r->$name;
+                }
+            }
+            $rs->free();
+        }
+        return $retArr;
     }
 
     public function updateTidFromOccurrenceRecord($occid, $tid): void

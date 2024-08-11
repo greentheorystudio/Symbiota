@@ -120,17 +120,6 @@ class Occurrences{
         "datelastmodified" => array("dataType" => "timestamp", "length" => 0)
     );
 
-    private $geneticLinkageFields = array(
-        "idoccurgenetic" => array("dataType" => "number", "length" => 11),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "identifier" => array("dataType" => "string", "length" => 150),
-        "resourcename" => array("dataType" => "string", "length" => 150),
-        "title" => array("dataType" => "string", "length" => 150),
-        "locus" => array("dataType" => "string", "length" => 500),
-        "resourceurl" => array("dataType" => "string", "length" => 500),
-        "notes" => array("dataType" => "string", "length" => 250)
-    );
-
     public function __construct(){
         $connection = new DbService();
 	    $this->conn = $connection->getConnection();
@@ -182,55 +171,55 @@ class Occurrences{
     {
         $retVal = 1;
         $sql = 'DELETE gd.* FROM omoccurdeterminations AS d LEFT JOIN guidoccurdeterminations AS gd ON d.detid = gd.detid WHERE d.occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccurdeterminations WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM guidoccurrences WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omcrowdsourcequeue WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omexsiccatiocclink WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccuraccessstats WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccurdatasetlink WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccureditlocks WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccuredits WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccurloanslink WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccurpoints WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccurrencesfulltext WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         return $retVal;

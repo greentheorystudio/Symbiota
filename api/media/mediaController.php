@@ -5,10 +5,22 @@ include_once(__DIR__ . '/../../services/FileSystemService.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
-$tId = array_key_exists('tid',$_REQUEST) ? (int)$_REQUEST['tid'] : null;
+$collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
+$mediaid = array_key_exists('mediaid',$_REQUEST) ? (int)$_REQUEST['mediaid'] : 0;
 
 $isEditor = false;
-if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
+if($GLOBALS['IS_ADMIN']){
+    $isEditor = true;
+}
+elseif($collid){
+    if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+        $isEditor = true;
+    }
+    elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+        $isEditor = true;
+    }
+}
+elseif(array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
     $isEditor = true;
 }
 
@@ -35,5 +47,8 @@ if($action && SanitizerService::validateInternalRequest()){
             }
         }
         echo $mediaData['accessuri'] ? $media->createMediaRecord($mediaData) : 0;
+    }
+    elseif($action === 'deleteMediaRecord' && $mediaid && $isEditor){
+        echo $media->deleteMediaRecord($mediaid);
     }
 }

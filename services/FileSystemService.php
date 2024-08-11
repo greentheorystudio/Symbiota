@@ -43,6 +43,31 @@ class FileSystemService {
         return $returnVal;
 	}
 
+    public static function deleteFile($filePath, $cleanParentFolder = false): void
+    {
+        if(file_exists($filePath)) {
+            unlink($filePath);
+        }
+        if($cleanParentFolder){
+            $parentPath = self::getParentFolderPath($filePath);
+            if(is_dir($parentPath) && !scandir($parentPath)){
+                unlink($parentPath);
+            }
+        }
+    }
+
+    public static function getParentFolderPath($filePath): string
+    {
+        $pathParts = explode('/', $filePath);
+        array_pop($pathParts);
+        return implode('/', $pathParts);
+    }
+
+    public static function getServerServerPathFromUrlPath($relPath): string
+    {
+        return str_replace($GLOBALS['IMAGE_ROOT_URL'], $GLOBALS['SERVER_ROOT'], $relPath);
+    }
+
     public static function getServerUploadFilename($targetPath, $origFilename, $suffix = null): string
     {
         $dotPos = strrpos($origFilename,'.');
