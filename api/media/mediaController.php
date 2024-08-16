@@ -40,10 +40,10 @@ if($action && SanitizerService::validateInternalRequest()){
         if($targetPath && $origFilename){
             $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
             if($action === 'addMediaFromFile' && $targetFilename && FileSystemService::moveUploadedFileToServer($_FILES['medfile'], $targetPath, $targetFilename)){
-                $mediaData['accessuri'] = $GLOBALS['IMAGE_ROOT_URL'] . '/' . $targetPath . '/' . $targetFilename;
+                $mediaData['accessuri'] = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
             }
             elseif($action === 'addMediaFromUrl' && $targetFilename && FileSystemService::copyFileToTarget($mediaData['sourceurl'], $targetPath, $targetFilename)){
-                $mediaData['accessuri'] = $GLOBALS['IMAGE_ROOT_URL'] . '/' . $targetPath . '/' . $targetFilename;
+                $mediaData['accessuri'] = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
             }
         }
         echo $mediaData['accessuri'] ? $media->createMediaRecord($mediaData) : 0;
