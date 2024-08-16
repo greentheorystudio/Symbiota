@@ -5,6 +5,7 @@ const useMediaStore = Pinia.defineStore('media', {
             tid: null,
             occid: null,
             accessuri: null,
+            sourceurl: null,
             title: null,
             creatoruid: null,
             creator: null,

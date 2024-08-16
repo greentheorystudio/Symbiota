@@ -26,7 +26,8 @@ const useImageStore = Pinia.defineStore('image', {
             sourceidentifier: null,
             mediamd5: null,
             dynamicproperties: null,
-            sortsequence: null
+            sortsequence: null,
+            tagArr: []
         },
         imageArr: [],
         imageData: {},
@@ -106,30 +107,6 @@ const useImageStore = Pinia.defineStore('image', {
         },
         getCurrentDeterminationData(detid) {
             return this.determinationArr.find(det => Number(det.detid) === Number(detid));
-        },
-        makeDeterminationCurrent(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'makeDeterminationCurrent');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
-            });
-        },
-        setCurrentDeterminationRecord(detid) {
-            if(Number(detid) > 0){
-                this.determinationData = Object.assign({}, this.getCurrentDeterminationData(detid));
-            }
-            else{
-                this.determinationData = Object.assign({}, this.blankDeterminationRecord);
-            }
-            this.determinationEditData = Object.assign({}, this.determinationData);
         },
         setImageArr(property, value) {
             const formData = new FormData();

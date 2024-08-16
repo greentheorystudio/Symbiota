@@ -1,5 +1,13 @@
-const occurrenceImageEditorPopup = {
+const mediaEditorPopup = {
     props: {
+        mediaData: {
+            type: Object,
+            default: null
+        },
+        mediaId: {
+            type: Number,
+            default: null
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -42,7 +50,6 @@ const occurrenceImageEditorPopup = {
         </q-dialog>
     `,
     components: {
-        'collecting-event-field-module': collectingEventFieldModule,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {

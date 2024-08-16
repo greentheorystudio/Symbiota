@@ -130,7 +130,7 @@ class SanitizerService {
         else{
             $requestPath = htmlspecialchars($fullRequestPath);
         }
-        if(substr($requestPath,-4) !== '.php' && substr($requestPath,-5) !== '.html'){
+        if(strpos($requestPath, $GLOBALS['IMAGE_ROOT_URL']) === false && substr($requestPath,-4) !== '.php' && substr($requestPath,-5) !== '.html'){
             $clientRoot = $GLOBALS['CLIENT_ROOT'] ?? '';
             $fixedPath = $clientRoot . '/index.php';
             if(strpos($requestPath, '.php') !== false){

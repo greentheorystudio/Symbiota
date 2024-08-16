@@ -5,6 +5,7 @@ const useBaseStore = Pinia.defineStore('base', {
         defaultLanguage: DEFAULT_LANG,
         defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
+        imageTagOptions: IMAGE_TAG_OPTIONS,
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         rightsTerms: RIGHTS_TERMS,
@@ -29,6 +30,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getEmailConfigured(state) {
             return state.emailConfigured;
+        },
+        getImageTagOptions(state) {
+            return state.imageTagOptions;
         },
         getMaxUploadFilesize(state) {
             return state.maxUploadFilesize;

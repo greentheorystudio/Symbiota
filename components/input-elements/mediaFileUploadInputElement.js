@@ -100,10 +100,10 @@ const mediaFileUploadInputElement = {
                                             <div class="full-width row">
                                                 <div class="col-2">
                                                     <div v-if="file.hasOwnProperty('externalUrl') && file['uploadMetadata']['type'] === 'StillImage'">
-                                                        <q-img :src="file['externalUrl']" spinner-color="white"></q-img>
+                                                        <q-img :src="file['externalUrl']" spinner-color="white" class="media-thumbnail"></q-img>
                                                     </div>
                                                     <div v-else-if="file.__img">
-                                                        <q-img :src="file.__img.src" spinner-color="white"></q-img>
+                                                        <q-img :src="file.__img.src" spinner-color="white" class="media-thumbnail"></q-img>
                                                     </div>
                                                     <div v-else class="text-h6 text-bold">
                                                         {{ file.name.split('.').pop() + ' file' }}
@@ -142,7 +142,7 @@ const mediaFileUploadInputElement = {
                                                             <q-btn color="negative" class="black-border" @click="removePickedFile(file);" label="Remove" dense/>
                                                         </div>
                                                         <div class="row justify-end">
-                                                            <q-btn color="grey-4" class="black-border text-black" @click="" label="Edit Metadata" dense/>
+                                                            <q-btn color="grey-4" class="black-border text-black" @click="openDataEditor(file['uploadMetadata']);" label="Edit Metadata" dense/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -156,9 +156,25 @@ const mediaFileUploadInputElement = {
                 </div>
             </q-card-section>
         </q-card>
+        <template v-if="showImageEditorPopup">
+            <image-editor-popup
+                    :image-data="editData"
+                    :show-popup="showImageEditorPopup"
+                    @close:popup="showImageEditorPopup = false"
+            ></image-editor-popup>
+        </template>
+        <template v-if="showMediaEditorPopup">
+            <media-editor-popup
+                    :media-data="editData"
+                    :show-popup="showMediaEditorPopup"
+                    @close:popup="showMediaEditorPopup = false"
+            ></media-editor-popup>
+        </template>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
+        'image-editor-popup': imageEditorPopup,
+        'media-editor-popup': mediaEditorPopup,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
@@ -185,6 +201,7 @@ const mediaFileUploadInputElement = {
         const csvFileDataUploaded = Vue.computed(() => {
             return csvFileData.length > 0;
         });
+        const editData = Vue.ref({});
         const fileArr = Vue.shallowReactive([]);
         const fileListRef = Vue.ref(null);
         const identifierArr = Vue.ref([]);
@@ -194,6 +211,8 @@ const mediaFileUploadInputElement = {
         const queueSize = Vue.ref(0);
         const queueSizeLabel = Vue.ref('');
         const selectedUploadMethod = Vue.ref('upload');
+        const showImageEditorPopup = Vue.ref(false);
+        const showMediaEditorPopup = Vue.ref(false);
         const taxaArr = Vue.ref([]);
         const taxaData = Vue.ref({});
         const uploaderRef = Vue.ref(null);
@@ -269,6 +288,16 @@ const mediaFileUploadInputElement = {
             return errorMessage;
         }
 
+        function openDataEditor(data) {
+            editData.value = Object.assign({}, data);
+            if(editData.value['type'] === 'StillImage'){
+                showImageEditorPopup.value = true;
+            }
+            else{
+                showMediaEditorPopup.value = true;
+            }
+        }
+
         function processCsvFileData() {
             if(csvFileData.length > 0){
                 taxaArr.value = [];
@@ -294,6 +323,7 @@ const mediaFileUploadInputElement = {
 
         function processExternalUrl() {
             if(urlMethodUrl.value){
+                const imageFile = ((urlMethodUrl.value.toLowerCase().endsWith('.jpg') || urlMethodUrl.value.toLowerCase().endsWith('.jpeg') || urlMethodUrl.value.toLowerCase().endsWith('.png')) ? '1' : '0');
                 const file = {
                     name: urlMethodUrl.value.split('/').pop(),
                     size: 0,
@@ -303,6 +333,7 @@ const mediaFileUploadInputElement = {
                 if(urlMethodCopyFile.value){
                     const formData = new FormData();
                     formData.append('url', urlMethodUrl.value);
+                    formData.append('image', imageFile);
                     formData.append('action', 'getFileInfoFromUrl');
                     fetch(proxyServiceApiUrl, {
                         method: 'POST',
@@ -496,7 +527,6 @@ const mediaFileUploadInputElement = {
             showWorking();
             processingArr.value.length = 0;
             fileArr.forEach((file) => {
-                file['uploadMetadata']['filename'] = file.name;
                 if(!file.hasOwnProperty('height')){
                     file['uploadMetadata']['height'] = file.hasOwnProperty('__img') ? file['__img']['height'] : null;
                 }
@@ -611,6 +641,7 @@ const mediaFileUploadInputElement = {
                             if(file.hasOwnProperty('externalUrl') && file['externalUrl']){
                                 file['uploadMetadata']['sourceurl'] = file['externalUrl'];
                             }
+                            file['uploadMetadata']['filename'] = file.name;
                             file['uploadMetadata']['type'] = mediaTypeInfo.type;
                             file['uploadMetadata']['format'] = mediaTypeInfo.mimetype;
                             file['filenameRecordIdentifier'] = (collId.value > 0 && props.identifierRegEx) ? getSubstringByRegEx(props.identifierRegEx, file.name) : null;
@@ -624,6 +655,12 @@ const mediaFileUploadInputElement = {
                             }
                             if(Number(props.taxonId) > 0){
                                 file['uploadMetadata']['tid'] = props.taxonId;
+                            }
+                            if(props.collection){
+                                file['uploadMetadata']['sortsequence'] = 50;
+                            }
+                            else{
+                                file['uploadMetadata']['sortsequence'] = 20;
                             }
                             if(!file.hasOwnProperty('copyToServer')){
                                 file['copyToServer'] = false;
@@ -646,11 +683,14 @@ const mediaFileUploadInputElement = {
 
         return {
             csvFileDataUploaded,
+            editData,
             fileArr,
             fileListRef,
             queueSize,
             queueSizeLabel,
             selectedUploadMethod,
+            showImageEditorPopup,
+            showMediaEditorPopup,
             uploaderRef,
             uploaderStyle,
             uploadMethodOptions,
@@ -658,6 +698,7 @@ const mediaFileUploadInputElement = {
             urlMethodUrl,
             cancelUpload,
             getFileErrorMessage,
+            openDataEditor,
             processExternalUrl,
             removePickedFile,
             uploadFiles,

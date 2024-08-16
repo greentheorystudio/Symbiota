@@ -26,6 +26,7 @@ class Configurations{
         'GBIF_USERNAME',
         'IMAGE_ROOT_PATH',
         'IMAGE_ROOT_URL',
+        'IMAGE_TAG_OPTIONS',
         'IMG_TN_WIDTH',
         'IMG_WEB_WIDTH',
         'IS_ADMIN',
@@ -428,8 +429,8 @@ class Configurations{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20240627';
-        $GLOBALS['JS_VERSION'] = '2024043111111122222222333333344';
+        $GLOBALS['CSS_VERSION'] = '20240801';
+        $GLOBALS['JS_VERSION'] = '202405011111111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -442,6 +443,7 @@ class Configurations{
         $GLOBALS['DEFAULT_LANG'] = 'en';
         $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
         $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
+        $GLOBALS['IMAGE_TAG_OPTIONS'] = '["Diagnostic","Handwriting","HasIDLabel","HasLabel","HasOrganism","HasProblem","ImageOfAdult","ImageOfImmature","ShowsHabitat","TypedText"]';
         $GLOBALS['IMG_TN_WIDTH'] = 200;
         $GLOBALS['IMG_WEB_WIDTH'] = 1400;
         $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
@@ -598,6 +600,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['IMAGE_ROOT_URL'])){
             $GLOBALS['IMAGE_ROOT_URL'] = '';
+        }
+        if(!isset($GLOBALS['IMAGE_TAG_OPTIONS']) || $GLOBALS['IMAGE_TAG_OPTIONS'] === ''){
+            $GLOBALS['IMAGE_TAG_OPTIONS'] = '["Diagnostic","Handwriting","HasIDLabel","HasLabel","HasOrganism","HasProblem","ImageOfAdult","ImageOfImmature","ShowsHabitat","TypedText"]';
         }
         if(!isset($GLOBALS['IMG_TN_WIDTH']) || $GLOBALS['IMG_TN_WIDTH'] === ''){
             $GLOBALS['IMG_TN_WIDTH'] = 200;

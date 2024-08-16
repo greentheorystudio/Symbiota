@@ -866,10 +866,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     .then((data) => {
                         if(data.hasOwnProperty('occid') && Number(data.occid) > 0){
                             this.occurrenceData = Object.assign({}, data);
-                            this.determinationStore.setDeterminationArr(this.occId);
+                            this.setOccurrenceDeterminationArr();
                             this.setEditArr();
-                            this.imageStore.setImageArr('occid', this.occId);
-                            this.mediaStore.setMediaArr('occid', this.occId);
+                            this.setOccurrenceImageArr();
+                            this.setOccurrenceMediaArr();
                             this.setChecklistArr();
                             this.geneticLinkStore.setGeneticLinkArr(this.occId);
                             if(this.getCollId !== Number(this.occurrenceData.collid)){
@@ -897,6 +897,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     });
                 }
             });
+        },
+        setOccurrenceDeterminationArr() {
+            this.determinationStore.setDeterminationArr(this.occId);
         },
         setOccurrenceEntryFormat(value) {
             this.occurrenceEntryFormat = value;
@@ -926,6 +929,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     this.occurrenceFieldDefinitions = Object.assign({}, data['occurrence']);
                 }
             });
+        },
+        setOccurrenceImageArr() {
+            this.imageStore.setImageArr('occid', this.occId);
+        },
+        setOccurrenceMediaArr() {
+            this.mediaStore.setMediaArr('occid', this.occId);
         },
         transferEditCollectingEventDataToOccurrenceData() {
             this.transferEditLocationDataToOccurrenceData();
@@ -1022,6 +1031,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 callback(Number(res));
                 if(isCurrent){
                     this.setCurrentOccurrenceRecord(this.occId);
+                }
+                else{
+                    this.setOccurrenceDeterminationArr();
                 }
             });
         },

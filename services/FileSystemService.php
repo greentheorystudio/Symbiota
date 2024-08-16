@@ -56,6 +56,14 @@ class FileSystemService {
         }
     }
 
+    public static function getImageSize($imageUrl): array
+    {
+        if(strpos($imageUrl, '/') === 0){
+            $imageUrl = self::getServerPathFromUrlPath($imageUrl);
+        }
+        return getimagesize($imageUrl);
+    }
+
     public static function getParentFolderPath($filePath): string
     {
         $pathParts = explode('/', $filePath);
@@ -65,7 +73,7 @@ class FileSystemService {
 
     public static function getServerPathFromUrlPath($path): string
     {
-        return str_replace($GLOBALS['IMAGE_ROOT_URL'], ($GLOBALS['SERVER_ROOT'] . '/' . $GLOBALS['IMAGE_ROOT_URL']), $path);
+        return str_replace($GLOBALS['IMAGE_ROOT_URL'], $GLOBALS['IMAGE_ROOT_PATH'], $path);
     }
 
     public static function getServerUploadFilename($targetPath, $origFilename, $suffix = null): string

@@ -3,7 +3,6 @@ include_once(__DIR__ . '/../models/Configurations.php');
 include_once(__DIR__ . '/../models/Permissions.php');
 include_once(__DIR__ . '/../services/EncryptionService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
-SanitizerService::validateRequestPath();
 ini_set('session.gc_maxlifetime',3600);
 ini_set('session.cookie_httponly',1);
 if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] === 443)){
@@ -14,6 +13,7 @@ session_start();
 $confManager = new Configurations();
 $confManager->setGlobalArr();
 $confManager->setGlobalCssVersion();
+SanitizerService::validateRequestPath();
 
 if(isset($_SESSION['PARAMS_ARR'])){
     $GLOBALS['PARAMS_ARR'] = $_SESSION['PARAMS_ARR'];

@@ -49,13 +49,23 @@ class Images{
         }
 	}
 
+    public function addImageTag($imgid, $tag): void
+    {
+        if($imgid && $tag){
+            $tagValue = SanitizerService::cleanInStr($this->conn, $tag);
+            $sql = 'INSERT INTO imagetag(imgid, keyvalue) VALUES('.
+                (int)$imgid . ', "' . $tagValue . '")';
+            $this->conn->query($sql);
+        }
+    }
+
     public function createImageRecord($data): int
     {
         $newID = 0;
         $fieldNameArr = array();
         $fieldValueArr = array();
         foreach($this->fields as $field => $fieldArr){
-            if($field !== 'imgid' && array_key_exists($field, $data)){
+            if($field !== 'imgid' && $field !== 'tagArr' && array_key_exists($field, $data)){
                 if($field === 'owner'){
                     $fieldNameArr[] = '`' . $field . '`';
                 }
@@ -74,6 +84,11 @@ class Images{
             $newID = $this->conn->insert_id;
             $guid = UuidService::getUuidV4();
             $this->conn->query('INSERT INTO guidimages(guid, imgid) VALUES("' . $guid . '",' . $newID . ')');
+            if(array_key_exists('tagArr', $data) && is_array($data['tagArr']) && count($data['tagArr']) > 0){
+                foreach($data['tagArr'] as $tag){
+                    $this->addImageTag($newID, $tag);
+                }
+            }
         }
         return $newID;
     }
@@ -132,6 +147,7 @@ class Images{
                         $name = $val->name;
                         $nodeArr[$name] = $r->$name;
                     }
+                    $nodeArr['tagArr'] = $this->getImageTags($r->imgid);
                     $returnArr[] = $nodeArr;
                 }
                 $rs->free();
@@ -185,6 +201,20 @@ class Images{
                     $name = $val->name;
                     $retArr[$name] = $r->$name;
                 }
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getImageTags($imgid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT keyvalue FROM imagetag WHERE imgid = ' . (int)$imgid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            while($r = $rs->fetch_object()){
+                $retArr[] = $r->keyvalue;
             }
             $rs->free();
         }
