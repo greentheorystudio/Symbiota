@@ -2,6 +2,9 @@ const occurrenceEditorFormCollectingEventElement = {
     template: `
         <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
+                    Collecting Event
+                </div>
                 <collecting-event-field-module
                     :auto-search="collectionEventAutoSearch"
                     :data="occurrenceData"

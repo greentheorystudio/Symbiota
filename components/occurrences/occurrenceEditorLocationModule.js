@@ -3,17 +3,16 @@ const occurrenceEditorLocationModule = {
         <q-card flat bordered class="black-border">
             <q-card-section class="q-px-sm q-pb-sm column q-col-gutter-sm">
                 <div class="row justify-between">
-                    <div>
-                        <div class="row q-gutter-sm">
-                            <template v-if="locationId > 0 && collectingEventArr.length > 0">
-                                <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Events" />
-                            </template>
-                            <template v-if="locationData.decimallatitude && locationData.decimallongitude">
-                                <q-btn color="secondary" @click="findNearbyLocations();" label="Find Nearby Locations" />
-                            </template>
-                        </div>
+                    <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
+                        Location
                     </div>
-                    <div class="row justify-end">
+                    <div class="row justify-end q-gutter-sm">
+                        <template v-if="locationId > 0 && collectingEventArr.length > 0">
+                            <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Events" />
+                        </template>
+                        <template v-if="locationData.decimallatitude && locationData.decimallongitude">
+                            <q-btn color="secondary" @click="findNearbyLocations();" label="Find Nearby Locations" />
+                        </template>
                         <template v-if="Number(locationId) === 0">
                             <q-btn color="secondary" @click="createLocationRecord();" label="Create Location Record" :disabled="!locationValid" />
                         </template>

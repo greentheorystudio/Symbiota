@@ -3,8 +3,11 @@ const occurrenceEditorCollectingEventModule = {
         <q-card flat bordered class="black-border">
             <q-card-section class="q-px-sm q-pb-sm column q-col-gutter-sm">
                 <div class="row justify-between">
-                    <div>
-                        <div v-if="Number(eventId) > 0" class="row q-gutter-sm">
+                    <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
+                        Collecting Event
+                    </div>
+                    <div class="row justify-end q-gutter-sm">
+                        <template v-if="Number(eventId) > 0">
                             <template v-if="occurrenceEntryFormat === 'benthic' && Number(eventData.repcount) > 0">
                                 <template v-if="collectingEventBenthicTaxaCnt > 0">
                                     <q-btn color="secondary" @click="showBenthicTaxaListPopup = true" label="View Taxa" />
@@ -17,9 +20,7 @@ const occurrenceEditorCollectingEventModule = {
                             <template v-if="Object.keys(configuredDataFields).length > 0 && Number(occId) === 0">
                                 <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
                             </template>
-                        </div>
-                    </div>
-                    <div class="row justify-end">
+                        </template>
                         <template v-if="Number(eventId) === 0">
                             <q-btn color="secondary" @click="createCollectingEventRecord();" label="Create Event Record" :disabled="!eventValid" />
                         </template>

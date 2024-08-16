@@ -2,6 +2,9 @@ const occurrenceEditorFormLatestIdentificationElement = {
     template: `
         <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
+                    Identification
+                </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-4">
                         <single-scientific-common-name-auto-complete :disabled="occurrenceEntryFormat === 'benthic'" :definition="occurrenceFieldDefinitions['sciname']" :sciname="occurrenceData.sciname" label="Scientific Name" @update:sciname="updateScientificNameValue"></single-scientific-common-name-auto-complete>
