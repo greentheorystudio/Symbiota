@@ -50,4 +50,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteImageRecord' && $imgid && $isEditor){
         echo $images->deleteImageRecord($imgid);
     }
+    elseif($action === 'getImageData' && $imgid){
+        echo json_encode($images->getImageData($imgid));
+    }
 }

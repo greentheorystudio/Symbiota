@@ -14,10 +14,8 @@ class Images{
         "url" => array("dataType" => "string", "length" => 255),
         "thumbnailurl" => array("dataType" => "string", "length" => 255),
         "originalurl" => array("dataType" => "string", "length" => 255),
-        "archiveurl" => array("dataType" => "string", "length" => 255),
         "photographer" => array("dataType" => "string", "length" => 100),
         "photographeruid" => array("dataType" => "number", "length" => 10),
-        "imagetype" => array("dataType" => "string", "length" => 50),
         "format" => array("dataType" => "string", "length" => 45),
         "caption" => array("dataType" => "string", "length" => 750),
         "owner" => array("dataType" => "string", "length" => 250),
@@ -25,7 +23,6 @@ class Images{
         "referenceurl" => array("dataType" => "string", "length" => 255),
         "copyright" => array("dataType" => "string", "length" => 255),
         "rights" => array("dataType" => "string", "length" => 255),
-        "accessrights" => array("dataType" => "string", "length" => 255),
         "locality" => array("dataType" => "string", "length" => 250),
         "occid" => array("dataType" => "number", "length" => 10),
         "notes" => array("dataType" => "string", "length" => 350),
@@ -201,6 +198,7 @@ class Images{
                     $name = $val->name;
                     $retArr[$name] = $r->$name;
                 }
+                $retArr['tagArr'] = $this->getImageTags($r->imgid);
             }
             $rs->free();
         }

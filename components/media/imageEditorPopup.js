@@ -1,11 +1,11 @@
 const imageEditorPopup = {
     props: {
-        imageData: {
-            type: Object,
-            default: null
-        },
         imageId: {
             type: Number,
+            default: null
+        },
+        newImageData: {
+            type: Object,
             default: null
         },
         showPopup: {
@@ -24,25 +24,89 @@ const imageEditorPopup = {
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
                         <div class="q-pa-md column q-col-gutter-sm">
-                            <div class="row justify-between">
+                            <div v-if="Number(imageId) > 0" class="row justify-between">
                                 <div>
                                     <template v-if="editsExist">
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" />
+                                    <q-btn color="secondary" @click="saveImageEdits();" label="Save Image Edits" :disabled="!editsExist" />
                                 </div>
                             </div>
-                            <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
                             <div class="row justify-between q-col-gutter-sm">
-                                <div class="col-12 col-sm-6 col-md-9">
-                                    <text-field-input-element :definition="occurrenceFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFields['eventremarks'] ? eventFields['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Photographer" :value="imageData.photographer" @update:value="(value) => updateData('photographer', value)"></text-field-input-element>
                                 </div>
-                                <div class="col-12 col-sm-6 col-md-3">
-                                    <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['repcount']" label="Rep Count" :maxlength="eventFields['repcount'] ? eventFields['repcount']['length'] : 0" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Owner" :value="imageData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Caption" :value="imageData.caption" @update:value="(value) => updateData('caption', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Locality" :value="imageData.locality" @update:value="(value) => updateData('locality', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Notes" :value="imageData.notes" @update:value="(value) => updateData('notes', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Anatomy" :value="imageData.anatomy" @update:value="(value) => updateData('anatomy', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Reference URL" :value="imageData.referenceurl" @update:value="(value) => updateData('referenceurl', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Copyright" :value="imageData.copyright" @update:value="(value) => updateData('copyright', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Rights" :value="imageData.rights" @update:value="(value) => updateData('rights', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row justify-between q-col-gutter-sm">
+                                <div class="col-12 col-sm-3">
+                                    <text-field-input-element data-type="int" label="Sort Sequence" :value="imageData.sortsequence" min-value="1" :clearable="false" @update:value="(value) => updateData('sortsequence', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <image-tag-selector label="Image Tags" :tag-arr="imageData.tagArr" @update:value="(value) => updateData('tagArr', value)"></image-tag-selector>
+                                </div>
+                            </div>
+                            <template v-if="Number(imageId) > 0">
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <text-field-input-element :disabled="true" data-type="textarea" label="URL" :value="imageData.url"></text-field-input-element>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <text-field-input-element :disabled="true" data-type="textarea" label="Thumbnail URL" :value="imageData.thumbnailurl"></text-field-input-element>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <text-field-input-element :disabled="true" data-type="textarea" label="Original URL" :value="imageData.originalurl"></text-field-input-element>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <text-field-input-element :disabled="true" data-type="textarea" label="Source URL" :value="imageData.sourceurl"></text-field-input-element>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -50,32 +114,34 @@ const imageEditorPopup = {
         </q-dialog>
     `,
     components: {
+        'image-tag-selector': imageTagSelector,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const imageStore = useImageStore();
 
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const editsExist = Vue.computed(() => occurrenceStore.getCollectingEventEditsExist);
-        const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
-        const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
-        const eventValid = Vue.computed(() => occurrenceStore.getCollectingEventValid);
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const editsExist = Vue.computed(() => imageStore.getImageEditsExist);
+        const imageData = Vue.computed(() => {
+            if(Number(props.imageId) > 0){
+                return imageStore.getImageData;
+            }
+            else{
+                return props.newImageData['uploadMetadata'];
+            }
+        });
 
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
         function closePopup() {
-            if(editsExist.value){
-                occurrenceStore.revertCollectingEventEditData();
-            }
             context.emit('close:popup');
         }
 
-        function saveEventEdits() {
+        function saveImageEdits() {
             showWorking('Saving edits...');
             occurrenceStore.updateCollectingEventRecord((res) => {
                 hideWorking();
@@ -96,26 +162,30 @@ const imageEditorPopup = {
             }
         }
 
-        function updateCollectingEventData(key, value) {
-            occurrenceStore.updateCollectingEventEditData(key, value);
+        function updateData(key, value) {
+            if(Number(props.imageId) > 0){
+                imageStore.updateImageEditData(key, value);
+            }
+            else{
+                context.emit('update:image-data', {key: key, value: value});
+            }
         }
 
         Vue.onMounted(() => {
             setContentStyle();
-            occurrenceStore.setCollectingEventFields();
+            if(Number(props.imageId) > 0){
+                imageStore.setCurrentImageRecord(props.imageId);
+            }
         });
 
         return {
             contentRef,
             contentStyle,
             editsExist,
-            eventData,
-            eventFields,
-            eventValid,
-            occurrenceFieldDefinitions,
+            imageData,
             closePopup,
-            saveEventEdits,
-            updateCollectingEventData
+            saveImageEdits,
+            updateData
         }
     }
 };

@@ -51,4 +51,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteMediaRecord' && $mediaid && $isEditor){
         echo $media->deleteMediaRecord($mediaid);
     }
+    elseif($action === 'getMediaData' && $mediaid){
+        echo json_encode($media->getMediaData($mediaid));
+    }
 }

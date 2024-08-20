@@ -6,10 +6,8 @@ const useImageStore = Pinia.defineStore('image', {
             url: null,
             thumbnailurl: null,
             originalurl: null,
-            archiveurl: null,
             photographer: null,
             photographeruid: null,
-            imagetype: null,
             format: null,
             caption: null,
             owner: null,
@@ -17,7 +15,6 @@ const useImageStore = Pinia.defineStore('image', {
             referenceurl: null,
             copyright: null,
             rights: null,
-            accessrights: null,
             locality: null,
             occid: null,
             notes: null,
@@ -74,39 +71,16 @@ const useImageStore = Pinia.defineStore('image', {
         clearImageArr() {
             this.imageArr.length = 0;
         },
-        createOccurrenceDeterminationRecord(collid, occid, callback) {
-            this.determinationEditData['occid'] = occid.toString();
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('determination', JSON.stringify(this.determinationEditData));
-            formData.append('action', 'createOccurrenceDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                });
-            });
+        clearImageData() {
+            this.imageData = Object.assign({}, this.blankImageRecord);
+            this.imageEditData = Object.assign({}, {});
         },
-        deleteDeterminationRecord(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'deleteDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
-            });
-        },
-        getCurrentDeterminationData(detid) {
-            return this.determinationArr.find(det => Number(det.detid) === Number(detid));
+        setCurrentImageRecord(imgid) {
+            this.imageId = Number(imgid);
+            this.clearImageData();
+            if(this.imageId > 0){
+                this.setImageData();
+            }
         },
         setImageArr(property, value) {
             const formData = new FormData();
@@ -124,8 +98,26 @@ const useImageStore = Pinia.defineStore('image', {
                 this.imageArr = data;
             });
         },
-        updateDeterminationEditData(key, value) {
-            this.determinationEditData[key] = value;
+        setImageData() {
+            const formData = new FormData();
+            formData.append('imgid', this.imageId.toString());
+            formData.append('action', 'getImageData');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data.hasOwnProperty('imgid') && Number(data.imgid) > 0){
+                    this.imageData = Object.assign({}, data);
+                    this.imageEditData = Object.assign({}, this.imageData);
+                }
+            });
+        },
+        updateImageEditData(key, value) {
+            this.imageEditData[key] = value;
         },
         updateDeterminationRecord(collid, callback) {
             const formData = new FormData();

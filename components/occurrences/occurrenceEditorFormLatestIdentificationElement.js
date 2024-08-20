@@ -3,7 +3,7 @@ const occurrenceEditorFormLatestIdentificationElement = {
         <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
                 <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
-                    Identification
+                    Determination
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-4">

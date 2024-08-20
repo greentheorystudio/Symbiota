@@ -86,7 +86,7 @@ const mediaRecordInfoBlock = {
                     </div>
                     <div v-if="editor" class="col-1 row justify-end">
                         <div>
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openEditorPopup(mediaData['imgid']);" icon="fas fa-edit" dense>
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openEditorPopup(mediaData['mediaid']);" icon="fas fa-edit" dense>
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Edit media record
                                 </q-tooltip>

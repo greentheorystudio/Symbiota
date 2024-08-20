@@ -123,7 +123,7 @@ const mediaFileUploadInputElement = {
                                                             <template v-for="key in Object.keys(file['uploadMetadata'])">
                                                                 <template v-if="file['uploadMetadata'][key] && file['uploadMetadata'][key] !== ''">
                                                                     <span class="q-mr-xs">
-                                                                        <span class="text-bold">{{ key }}:</span> {{ file['uploadMetadata'][key] }}
+                                                                        <span class="text-bold">{{ key }}:</span> {{ key === 'tagArr' ? JSON.stringify(file['uploadMetadata'][key]) : file['uploadMetadata'][key] }}
                                                                     </span>
                                                                 </template>
                                                             </template>
@@ -158,16 +158,18 @@ const mediaFileUploadInputElement = {
         </q-card>
         <template v-if="showImageEditorPopup">
             <image-editor-popup
-                    :image-data="editData"
-                    :show-popup="showImageEditorPopup"
-                    @close:popup="showImageEditorPopup = false"
+                :new-image-data="editData"
+                :show-popup="showImageEditorPopup"
+                @update:image-data="updateFileMetadata"
+                @close:popup="showImageEditorPopup = false"
             ></image-editor-popup>
         </template>
         <template v-if="showMediaEditorPopup">
             <media-editor-popup
-                    :media-data="editData"
-                    :show-popup="showMediaEditorPopup"
-                    @close:popup="showMediaEditorPopup = false"
+                :new-media-data="editData"
+                :show-popup="showMediaEditorPopup"
+                @update:media-data="updateFileMetadata"
+                @close:popup="showMediaEditorPopup = false"
             ></media-editor-popup>
         </template>
     `,
@@ -202,7 +204,8 @@ const mediaFileUploadInputElement = {
             return csvFileData.length > 0;
         });
         const editData = Vue.ref({});
-        const fileArr = Vue.shallowReactive([]);
+        const editFile = Vue.ref(null);
+        const fileArr = Vue.reactive([]);
         const fileListRef = Vue.ref(null);
         const identifierArr = Vue.ref([]);
         const identifierData = Vue.ref({});
@@ -289,8 +292,9 @@ const mediaFileUploadInputElement = {
         }
 
         function openDataEditor(data) {
-            editData.value = Object.assign({}, data);
-            if(editData.value['type'] === 'StillImage'){
+            editFile.value = data['filename'];
+            setEditData();
+            if(data['type'] === 'StillImage'){
                 showImageEditorPopup.value = true;
             }
             else{
@@ -403,6 +407,10 @@ const mediaFileUploadInputElement = {
             urlMethodCopyFile.value = true;
         }
 
+        function setEditData() {
+            editData.value = Object.assign({}, fileArr.find((obj) => obj['uploadMetadata']['filename'] === editFile.value));
+        }
+
         function setFileData() {
             if(fileArr.length > 0 && csvFileData.length > 0){
                 fileArr.forEach((file) => {
@@ -508,6 +516,15 @@ const mediaFileUploadInputElement = {
                     uploaderStyle.value = 'height: ' + (fileListRef.value.clientHeight + 50) + 'px;';
                 }
             }, 400 );
+        }
+
+        function updateFileMetadata(data) {
+            const file = fileArr.find((obj) => obj['uploadMetadata']['filename'] === editFile.value);
+            if(file){
+                file['uploadMetadata'][data.key] = data.value;
+                uploaderRef.value.updateFileStatus(file, new Date().toTimeString());
+                setEditData();
+            }
         }
 
         function updateQueueSize() {
@@ -701,6 +718,7 @@ const mediaFileUploadInputElement = {
             openDataEditor,
             processExternalUrl,
             removePickedFile,
+            updateFileMetadata,
             uploadFiles,
             validateFiles
         }

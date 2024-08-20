@@ -1,15 +1,15 @@
 const imageTagSelector = {
     props: {
-        tagArr: {
-            type: Array
+        disable: {
+            type: Boolean,
+            default: false
         },
         label: {
             type: String,
             default: 'Image Tags'
         },
-        disable: {
-            type: Boolean,
-            default: false
+        tagArr: {
+            type: Array
         }
     },
     template: `
@@ -26,18 +26,8 @@ const imageTagSelector = {
             clearInput.value = true;
         }
 
-        function processChange(languageObj) {
-            const newValArr = [];
-            if(languageObj){
-                languageObj.forEach((lang) => {
-                    const existingObj = newValArr.find(obj => obj['name'] === lang['name']);
-                    if(!existingObj){
-                        newValArr.push(lang);
-                    }
-                });
-            }
-            context.emit('update:language', newValArr);
-            inputRef.value.updateInputValue('');
+        function processChange(tagArrVal) {
+            context.emit('update:value', (tagArrVal ? tagArrVal : []));
         }
 
         return {

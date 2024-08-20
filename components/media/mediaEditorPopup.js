@@ -1,11 +1,11 @@
 const mediaEditorPopup = {
     props: {
-        mediaData: {
-            type: Object,
-            default: null
-        },
         mediaId: {
             type: Number,
+            default: null
+        },
+        newMediaData: {
+            type: Object,
             default: null
         },
         showPopup: {
@@ -24,25 +24,87 @@ const mediaEditorPopup = {
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
                         <div class="q-pa-md column q-col-gutter-sm">
-                            <div class="row justify-between">
+                            <div v-if="Number(mediaId) > 0" class="row justify-between">
                                 <div>
                                     <template v-if="editsExist">
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" />
+                                    <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist" />
                                 </div>
                             </div>
-                            <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
                             <div class="row justify-between q-col-gutter-sm">
-                                <div class="col-12 col-sm-6 col-md-9">
-                                    <text-field-input-element :definition="occurrenceFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFields['eventremarks'] ? eventFields['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Creator" :value="mediaData.creator" @update:value="(value) => updateData('creator', value)"></text-field-input-element>
                                 </div>
-                                <div class="col-12 col-sm-6 col-md-3">
-                                    <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['repcount']" label="Rep Count" :maxlength="eventFields['repcount'] ? eventFields['repcount']['length'] : 0" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Owner" :value="mediaData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
+                            <div class="row justify-between q-col-gutter-sm">
+                                <div class="col-12 col-sm-6 col-md-8">
+                                    <text-field-input-element label="Title" :value="mediaData.title" @update:value="(value) => updateData('title', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4">
+                                    <text-field-input-element label="Language" :value="mediaData.language" @update:value="(value) => updateData('language', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row justify-between q-col-gutter-sm">
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Publisher" :value="mediaData.publisher" @update:value="(value) => updateData('publisher', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Contributor" :value="mediaData.contributor" @update:value="(value) => updateData('contributor', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Description" :value="mediaData.description" @update:value="(value) => updateData('description', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Location Created" :value="mediaData.locationcreated" @update:value="(value) => updateData('locationcreated', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Bibliographic Citation" :value="mediaData.bibliographiccitation" @update:value="(value) => updateData('bibliographiccitation', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Further Information URL" :value="mediaData.furtherinformationurl" @update:value="(value) => updateData('furtherinformationurl', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Usage Terms" :value="mediaData.usageterms" @update:value="(value) => updateData('usageterms', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Rights" :value="mediaData.rights" @update:value="(value) => updateData('rights', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row justify-start">
+                                <div class="col-12 col-sm-3">
+                                    <text-field-input-element data-type="int" label="Sort Sequence" :value="mediaData.sortsequence" min-value="1" :clearable="false" @update:value="(value) => updateData('sortsequence', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <template v-if="Number(mediaId) > 0">
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <text-field-input-element :disabled="true" data-type="textarea" label="URL" :value="mediaData.accessuri"></text-field-input-element>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <text-field-input-element :disabled="true" data-type="textarea" label="Source URL" :value="mediaData.sourceurl"></text-field-input-element>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -54,28 +116,29 @@ const mediaEditorPopup = {
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const mediaStore = useMediaStore();
 
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const editsExist = Vue.computed(() => occurrenceStore.getCollectingEventEditsExist);
-        const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
-        const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
-        const eventValid = Vue.computed(() => occurrenceStore.getCollectingEventValid);
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const editsExist = Vue.computed(() => mediaStore.getMediaEditsExist);
+        const mediaData = Vue.computed(() => {
+            if(Number(props.mediaId) > 0){
+                return mediaStore.getMediaData;
+            }
+            else{
+                return props.newMediaData['uploadMetadata'];
+            }
+        });
 
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
         function closePopup() {
-            if(editsExist.value){
-                occurrenceStore.revertCollectingEventEditData();
-            }
             context.emit('close:popup');
         }
 
-        function saveEventEdits() {
+        function saveMediaEdits() {
             showWorking('Saving edits...');
             occurrenceStore.updateCollectingEventRecord((res) => {
                 hideWorking();
@@ -96,26 +159,30 @@ const mediaEditorPopup = {
             }
         }
 
-        function updateCollectingEventData(key, value) {
-            occurrenceStore.updateCollectingEventEditData(key, value);
+        function updateData(key, value) {
+            if(Number(props.mediaId) > 0){
+                mediaStore.updateMediaEditData(key, value);
+            }
+            else{
+                context.emit('update:media-data', {key: key, value: value});
+            }
         }
 
         Vue.onMounted(() => {
             setContentStyle();
-            occurrenceStore.setCollectingEventFields();
+            if(Number(props.mediaId) > 0){
+                mediaStore.setCurrentMediaRecord(props.mediaId);
+            }
         });
 
         return {
             contentRef,
             contentStyle,
             editsExist,
-            eventData,
-            eventFields,
-            eventValid,
-            occurrenceFieldDefinitions,
+            mediaData,
             closePopup,
-            saveEventEdits,
-            updateCollectingEventData
+            saveMediaEdits,
+            updateData
         }
     }
 };

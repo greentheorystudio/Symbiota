@@ -65,63 +65,16 @@ const useMediaStore = Pinia.defineStore('media', {
         clearMediaArr() {
             this.mediaArr.length = 0;
         },
-        createOccurrenceDeterminationRecord(collid, occid, callback) {
-            this.determinationEditData['occid'] = occid.toString();
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('determination', JSON.stringify(this.determinationEditData));
-            formData.append('action', 'createOccurrenceDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                });
-            });
+        clearMediaData() {
+            this.mediaData = Object.assign({}, this.blankMediaRecord);
+            this.mediaEditData = Object.assign({}, {});
         },
-        deleteDeterminationRecord(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'deleteDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
-            });
-        },
-        getCurrentDeterminationData(detid) {
-            return this.determinationArr.find(det => Number(det.detid) === Number(detid));
-        },
-        makeDeterminationCurrent(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'makeDeterminationCurrent');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
-            });
-        },
-        setCurrentDeterminationRecord(detid) {
-            if(Number(detid) > 0){
-                this.determinationData = Object.assign({}, this.getCurrentDeterminationData(detid));
+        setCurrentMediaRecord(medid) {
+            this.mediaId = Number(medid);
+            this.clearMediaData();
+            if(this.mediaId > 0){
+                this.setMediaData();
             }
-            else{
-                this.determinationData = Object.assign({}, this.blankDeterminationRecord);
-            }
-            this.determinationEditData = Object.assign({}, this.determinationData);
         },
         setMediaArr(property, value) {
             const formData = new FormData();
@@ -139,8 +92,26 @@ const useMediaStore = Pinia.defineStore('media', {
                 this.mediaArr = data;
             });
         },
-        updateDeterminationEditData(key, value) {
-            this.determinationEditData[key] = value;
+        setMediaData() {
+            const formData = new FormData();
+            formData.append('mediaid', this.mediaId.toString());
+            formData.append('action', 'getMediaData');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data.hasOwnProperty('mediaid') && Number(data.mediaid) > 0){
+                    this.mediaData = Object.assign({}, data);
+                    this.mediaEditData = Object.assign({}, this.mediaData);
+                }
+            });
+        },
+        updateMediaEditData(key, value) {
+            this.mediaEditData[key] = value;
         },
         updateDeterminationRecord(collid, callback) {
             const formData = new FormData();
