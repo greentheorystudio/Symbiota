@@ -46,14 +46,18 @@ class Images{
         }
 	}
 
-    public function addImageTag($imgid, $tag): void
+    public function addImageTag($imgid, $tag): int
     {
+        $retVal = 0;
         if($imgid && $tag){
             $tagValue = SanitizerService::cleanInStr($this->conn, $tag);
             $sql = 'INSERT INTO imagetag(imgid, keyvalue) VALUES('.
                 (int)$imgid . ', "' . $tagValue . '")';
-            $this->conn->query($sql);
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
         }
+        return $retVal;
     }
 
     public function createImageRecord($data): int
@@ -117,6 +121,19 @@ class Images{
         $sql = 'DELETE FROM images WHERE imgid = ' . (int)$imgid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
+        }
+        return $retVal;
+    }
+
+    public function deleteImageTag($imgid, $tag): int
+    {
+        $retVal = 1;
+        if($imgid && $tag){
+            $sql = 'DELETE FROM imagetag WHERE imgid = ' . (int)$imgid . ' AND keyvalue = "' . SanitizerService::cleanInStr($this->conn, $tag) . '" ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
         }
         return $retVal;
     }
@@ -217,6 +234,41 @@ class Images{
             $rs->free();
         }
         return $retArr;
+    }
+
+    public function updateImageRecord($imgId, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($imgId && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'imgid' && $field !== 'tagArr' && array_key_exists($field, $editData)){
+                    if($field === 'owner'){
+                        $fieldName = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldName = $field;
+                    }
+                    $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                }
+            }
+            if(count($sqlPartArr) > 0){
+                $sql = 'UPDATE images SET ' . implode(', ', $sqlPartArr) . ' '.
+                    'WHERE imgid = ' . (int)$imgId . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+            if(array_key_exists('tagArr', $editData) && is_array($editData['tagArr']) && count($editData['tagArr']) > 0){
+                foreach($editData['tagArr'] as $tag){
+                    if($this->addImageTag($imgId, $tag)){
+                        $retVal = 1;
+                    }
+                }
+            }
+        }
+        return $retVal;
     }
 
     public function updateTidFromOccurrenceRecord($occid, $tid): void

@@ -91,6 +91,17 @@ const useImageStore = Pinia.defineStore('image', {
             this.imageData = Object.assign({}, this.blankImageRecord);
             this.imageEditData = Object.assign({}, {});
         },
+        deleteImageTag(collid, tag) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('imgid', this.imageId.toString());
+            formData.append('tag', tag);
+            formData.append('action', 'deleteImageTag');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            });
+        },
         setCurrentImageRecord(imgid) {
             this.imageId = Number(imgid);
             this.clearImageData();
@@ -135,24 +146,40 @@ const useImageStore = Pinia.defineStore('image', {
         updateImageEditData(key, value) {
             this.imageEditData[key] = value;
         },
-        updateDeterminationRecord(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('determinationData', JSON.stringify(this.determinationUpdateData));
-            formData.append('action', 'updateDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                    if(res && Number(res) === 1){
-                        this.determinationData = Object.assign({}, this.determinationEditData);
+        updateImageRecord(collid, callback) {
+            if(this.imageUpdateData.hasOwnProperty('tagArr')){
+                this.imageData['tagArr'].forEach(tag => {
+                    if(!this.imageUpdateData['tagArr'].includes(tag)){
+                        this.deleteImageTag(collid, tag);
+                    }
+                    else{
+                        const index = this.imageUpdateData['tagArr'].indexOf(tag);
+                        this.imageUpdateData['tagArr'].splice(index,1);
                     }
                 });
-            });
+            }
+            if(!this.imageUpdateData.hasOwnProperty('tagArr') || this.imageUpdateData['tagArr'].length > 0 || Object.keys(this.imageUpdateData).length > 1){
+                const formData = new FormData();
+                formData.append('collid', collid.toString());
+                formData.append('imgid', this.imageId.toString());
+                formData.append('imageData', JSON.stringify(this.imageUpdateData));
+                formData.append('action', 'updateImageRecord');
+                fetch(imageApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    response.text().then((res) => {
+                        callback(Number(res));
+                        if(res && Number(res) === 1){
+                            this.imageData = Object.assign({}, this.imageEditData);
+                        }
+                    });
+                });
+            }
+            else{
+                callback(1);
+            }
         }
     }
 });

@@ -1,5 +1,9 @@
 const imageEditorPopup = {
     props: {
+        collId: {
+            type: Number,
+            default: null
+        },
         imageId: {
             type: Number,
             default: null
@@ -35,10 +39,10 @@ const imageEditorPopup = {
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
-                                <div class="col-12 col-sm-6">
+                                <div class="col-12 col-sm-6 col-md-5">
                                     <text-field-input-element label="Photographer" :value="imageData.photographer" @update:value="(value) => updateData('photographer', value)"></text-field-input-element>
                                 </div>
-                                <div class="col-12 col-sm-6">
+                                <div class="col-12 col-sm-6 col-md-7">
                                     <text-field-input-element label="Owner" :value="imageData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
@@ -118,7 +122,7 @@ const imageEditorPopup = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { hideWorking, showNotification, showWorking } = useCore();
+        const { showNotification } = useCore();
         const imageStore = useImageStore();
 
         const contentRef = Vue.ref(null);
@@ -142,16 +146,15 @@ const imageEditorPopup = {
         }
 
         function saveImageEdits() {
-            showWorking('Saving edits...');
-            occurrenceStore.updateCollectingEventRecord((res) => {
-                hideWorking();
+            imageStore.updateImageRecord(props.collId, (res) => {
                 if(res === 1){
                     showNotification('positive','Edits saved.');
+                    context.emit('image:updated');
+                    context.emit('close:popup');
                 }
                 else{
-                    showNotification('negative', 'There was an error saving the event edits.');
+                    showNotification('negative', 'There was an error saving the image edits.');
                 }
-                context.emit('close:popup');
             });
         }
 

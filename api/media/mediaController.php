@@ -54,4 +54,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getMediaData' && $mediaid){
         echo json_encode($media->getMediaData($mediaid));
     }
+    elseif($action === 'updateMediaRecord' && $mediaid && $isEditor && array_key_exists('mediaData', $_POST)){
+        echo $media->updateMediaRecord($mediaid, json_decode($_POST['mediaData'], true));
+    }
 }

@@ -136,6 +136,32 @@ class Media{
         return $retArr;
     }
 
+    public function updateMediaRecord($medId, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($medId && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'mediaid' && array_key_exists($field, $editData)){
+                    if($field === 'language' || $field === 'owner'){
+                        $fieldName = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldName = $field;
+                    }
+                    $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'UPDATE media SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE mediaid = ' . (int)$medId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function updateTidFromOccurrenceRecord($occid, $tid): void
     {
         if((int)$occid > 0){

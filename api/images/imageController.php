@@ -53,4 +53,10 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getImageData' && $imgid){
         echo json_encode($images->getImageData($imgid));
     }
+    elseif($action === 'updateImageRecord' && $imgid && $isEditor && array_key_exists('imageData', $_POST)){
+        echo $images->updateImageRecord($imgid, json_decode($_POST['imageData'], true));
+    }
+    elseif($action === 'deleteImageTag' && $imgid && $isEditor && array_key_exists('tag', $_POST)){
+        echo $images->deleteImageTag($imgid, $_POST['tag']);
+    }
 }

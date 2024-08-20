@@ -1,5 +1,9 @@
 const imageRecordInfoBlock = {
     props: {
+        collId: {
+            type: Number,
+            default: null
+        },
         imageData: {
             type: Object,
             default: null
@@ -85,6 +89,9 @@ const imageRecordInfoBlock = {
                         <div v-if="imageData.referenceurl">
                             <span class="text-bold">Reference URL: </span>{{ imageData.referenceurl }}
                         </div>
+                        <div v-if="imageData.tagArr && imageData.tagArr.length > 0">
+                            <span class="text-bold">Tags: </span>{{ JSON.stringify(imageData.tagArr) }}
+                        </div>
                     </div>
                     <div v-if="editor" class="col-1 row justify-end">
                         <div>
@@ -100,8 +107,10 @@ const imageRecordInfoBlock = {
         </q-card>
         <template v-if="showImageEditorPopup">
             <image-editor-popup
+                :coll-id="collId"
                 :image-id="editImageId"
-                :show-popup="showImageEditorPopup"
+                :show-popup="showImageEditorPopup" 
+                @image:updated="processImageUpdate" 
                 @close:popup="showImageEditorPopup = false"
             ></image-editor-popup>
         </template>
@@ -109,7 +118,7 @@ const imageRecordInfoBlock = {
     components: {
         'image-editor-popup': imageEditorPopup
     },
-    setup() {
+    setup(_, context) {
         const editImageId = Vue.ref(0);
         const showImageEditorPopup = Vue.ref(false);
 
@@ -118,10 +127,15 @@ const imageRecordInfoBlock = {
             showImageEditorPopup.value = true;
         }
 
+        function processImageUpdate() {
+            context.emit('image:updated');
+        }
+
         return {
             editImageId,
             showImageEditorPopup,
-            openEditorPopup
+            openEditorPopup,
+            processImageUpdate
         }
     }
 };

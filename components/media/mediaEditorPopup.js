@@ -1,5 +1,9 @@
 const mediaEditorPopup = {
     props: {
+        collId: {
+            type: Number,
+            default: null
+        },
         mediaId: {
             type: Number,
             default: null
@@ -31,7 +35,7 @@ const mediaEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist" />
+                                    <q-btn color="secondary" @click="saveMediaEdits();" label="Save Media Edits" :disabled="!editsExist" />
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
@@ -115,7 +119,7 @@ const mediaEditorPopup = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { hideWorking, showNotification, showWorking } = useCore();
+        const { showNotification } = useCore();
         const mediaStore = useMediaStore();
 
         const contentRef = Vue.ref(null);
@@ -139,16 +143,15 @@ const mediaEditorPopup = {
         }
 
         function saveMediaEdits() {
-            showWorking('Saving edits...');
-            occurrenceStore.updateCollectingEventRecord((res) => {
-                hideWorking();
+            mediaStore.updateMediaRecord(props.collId, (res) => {
                 if(res === 1){
                     showNotification('positive','Edits saved.');
+                    context.emit('media:updated');
+                    context.emit('close:popup');
                 }
                 else{
-                    showNotification('negative', 'There was an error saving the event edits.');
+                    showNotification('negative', 'There was an error saving the media edits.');
                 }
-                context.emit('close:popup');
             });
         }
 

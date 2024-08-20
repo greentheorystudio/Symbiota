@@ -113,13 +113,13 @@ const useMediaStore = Pinia.defineStore('media', {
         updateMediaEditData(key, value) {
             this.mediaEditData[key] = value;
         },
-        updateDeterminationRecord(collid, callback) {
+        updateMediaRecord(collid, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('determinationData', JSON.stringify(this.determinationUpdateData));
-            formData.append('action', 'updateDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('mediaid', this.mediaId.toString());
+            formData.append('mediaData', JSON.stringify(this.mediaUpdateData));
+            formData.append('action', 'updateMediaRecord');
+            fetch(mediaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -127,7 +127,7 @@ const useMediaStore = Pinia.defineStore('media', {
                 response.text().then((res) => {
                     callback(Number(res));
                     if(res && Number(res) === 1){
-                        this.determinationData = Object.assign({}, this.determinationEditData);
+                        this.mediaData = Object.assign({}, this.mediaEditData);
                     }
                 });
             });
