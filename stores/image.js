@@ -50,9 +50,25 @@ const useImageStore = Pinia.defineStore('image', {
             let exist = false;
             state.imageUpdateData = Object.assign({}, {});
             for(let key in state.imageEditData) {
-                if(state.imageEditData.hasOwnProperty(key) && state.imageEditData[key] !== state.imageData[key]) {
-                    exist = true;
-                    state.imageUpdateData[key] = state.imageEditData[key];
+                if(key === 'tagArr'){
+                    if(state.imageEditData[key].length !== state.imageData[key].length){
+                        exist = true;
+                        state.imageUpdateData[key] = state.imageEditData[key];
+                    }
+                    else if(state.imageData[key].length > 0){
+                        state.imageData[key].forEach(tag => {
+                            if(!state.imageEditData[key].includes(tag)){
+                                exist = true;
+                                state.imageUpdateData[key] = state.imageEditData[key];
+                            }
+                        });
+                    }
+                }
+                else{
+                    if(state.imageEditData.hasOwnProperty(key) && state.imageEditData[key] !== state.imageData[key]) {
+                        exist = true;
+                        state.imageUpdateData[key] = state.imageEditData[key];
+                    }
                 }
             }
             return exist;
