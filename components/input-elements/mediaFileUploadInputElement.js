@@ -277,15 +277,8 @@ const mediaFileUploadInputElement = {
                         }
                     }
                 }
-                else{
-                    if(!file['uploadMetadata']['tid']){
-                        if(file['scientificName']){
-                            errorMessage = 'Scientific name was not found in taxonomic thesaurus';
-                        }
-                        else{
-                            errorMessage = 'Scientific name required';
-                        }
-                    }
+                else if(!file['uploadMetadata']['tid']){
+                    errorMessage = 'Scientific name required';
                 }
             }
             return errorMessage;
@@ -430,7 +423,7 @@ const mediaFileUploadInputElement = {
                         dataKeys.forEach((key) => {
                             if(key !== 'filename' && csvData[key] && csvData[key] !== ''){
                                 if(key === 'scientificname' || key === 'sciname'){
-                                    file['scientificName'] = csvData[key];
+                                    file['uploadMetadata']['sciname'] = csvData[key];
                                 }
                                 else if(file['uploadMetadata'].hasOwnProperty(key)){
                                     file['uploadMetadata'][key] = csvData[key];
@@ -438,8 +431,8 @@ const mediaFileUploadInputElement = {
                             }
                         });
                     }
-                    if(!file['uploadMetadata']['tid'] && file['scientificName'] && taxaData.value.hasOwnProperty(file['scientificName'].toLowerCase())){
-                        file['uploadMetadata']['tid'] = taxaData.value[file['scientificName'].toLowerCase()]['tid'];
+                    if(!file['uploadMetadata']['tid'] && file['uploadMetadata']['sciname'] && taxaData.value.hasOwnProperty(file['uploadMetadata']['sciname'].toLowerCase())){
+                        file['uploadMetadata']['tid'] = taxaData.value[file['uploadMetadata']['sciname'].toLowerCase()]['tid'];
                     }
                     if(!file['uploadMetadata']['occid'] && file['recordIdentifier'] && identifierData.value.hasOwnProperty(file['recordIdentifier'].toLowerCase())){
                         file['uploadMetadata']['occid'] = identifierData.value[file['recordIdentifier'].toLowerCase()]['occid'];
@@ -560,7 +553,7 @@ const mediaFileUploadInputElement = {
                     const occurrenceData = {};
                     occurrenceData['collid'] = collId.value.toString();
                     occurrenceData[props.identifierField] = file['recordIdentifier'];
-                    occurrenceData['sciname'] = file['scientificName'];
+                    occurrenceData['sciname'] = file['uploadMetadata']['sciname'];
                     occurrenceData['tid'] = file['uploadMetadata']['tid'];
                     const formData = new FormData();
                     formData.append('collid', collId.value.toString());
@@ -666,7 +659,7 @@ const mediaFileUploadInputElement = {
                                 identifierArr.value.push(file['filenameRecordIdentifier']);
                             }
                             file['recordIdentifier'] = null;
-                            file['scientificName'] = null;
+                            file['uploadMetadata']['sciname'] = null;
                             if(Number(props.occId) > 0){
                                 file['uploadMetadata']['occid'] = props.occId;
                             }

@@ -38,6 +38,13 @@ const imageEditorPopup = {
                                     <q-btn color="secondary" @click="saveImageEdits();" label="Save Image Edits" :disabled="!editsExist" />
                                 </div>
                             </div>
+                            <template v-if="Number(imageData.occid) === 0">
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <single-scientific-common-name-auto-complete :sciname="imageData.sciname" label="Scientific Name" :clearable="false" :limit-to-thesaurus="true" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
+                                    </div>
+                                </div>
+                            </template>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-5">
                                     <text-field-input-element label="Photographer" :value="imageData.photographer" @update:value="(value) => updateData('photographer', value)"></text-field-input-element>
@@ -119,6 +126,7 @@ const imageEditorPopup = {
     `,
     components: {
         'image-tag-selector': imageTagSelector,
+        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
@@ -143,6 +151,11 @@ const imageEditorPopup = {
 
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function processScientificNameChange(taxon) {
+            updateData('sciname', taxon.sciname);
+            updateData('tid', taxon.tid);
         }
 
         function saveImageEdits() {
@@ -187,6 +200,7 @@ const imageEditorPopup = {
             editsExist,
             imageData,
             closePopup,
+            processScientificNameChange,
             saveImageEdits,
             updateData
         }

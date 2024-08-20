@@ -3,6 +3,7 @@ const useMediaStore = Pinia.defineStore('media', {
         blankMediaRecord: {
             mediaid: 0,
             tid: null,
+            sciname: null,
             occid: null,
             accessuri: null,
             sourceurl: null,
@@ -28,6 +29,7 @@ const useMediaStore = Pinia.defineStore('media', {
         mediaEditData: {},
         mediaFields: {},
         mediaId: 0,
+        mediaTaxon: {},
         mediaUpdateData: {}
     }),
     getters: {
@@ -57,6 +59,9 @@ const useMediaStore = Pinia.defineStore('media', {
         getMediaID(state) {
             return state.mediaId;
         },
+        getMediaTaxon(state) {
+            return state.mediaTaxon;
+        },
         getMediaValid(state) {
             return !!state.mediaEditData['accessuri'];
         }
@@ -68,6 +73,7 @@ const useMediaStore = Pinia.defineStore('media', {
         clearMediaData() {
             this.mediaData = Object.assign({}, this.blankMediaRecord);
             this.mediaEditData = Object.assign({}, {});
+            this.mediaTaxon = Object.assign({}, {});
         },
         setCurrentMediaRecord(medid) {
             this.mediaId = Number(medid);
@@ -105,6 +111,9 @@ const useMediaStore = Pinia.defineStore('media', {
             })
             .then((data) => {
                 if(data.hasOwnProperty('mediaid') && Number(data.mediaid) > 0){
+                    data.sciname = data['taxonData'] ? data['taxonData']['sciname'] : null;
+                    this.mediaTaxon = Object.assign({}, data['taxonData']);
+                    delete data['taxonData'];
                     this.mediaData = Object.assign({}, data);
                     this.mediaEditData = Object.assign({}, this.mediaData);
                 }

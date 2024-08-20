@@ -3,6 +3,7 @@ const useImageStore = Pinia.defineStore('image', {
         blankImageRecord: {
             imgid: 0,
             tid: null,
+            sciname: null,
             url: null,
             thumbnailurl: null,
             originalurl: null,
@@ -31,6 +32,7 @@ const useImageStore = Pinia.defineStore('image', {
         imageEditData: {},
         imageFields: {},
         imageId: 0,
+        imageTaxon: {},
         imageUpdateData: {}
     }),
     getters: {
@@ -79,6 +81,9 @@ const useImageStore = Pinia.defineStore('image', {
         getImageID(state) {
             return state.imageId;
         },
+        getImageTaxon(state) {
+            return state.imageTaxon;
+        },
         getImageValid(state) {
             return !!state.imageEditData['url'];
         }
@@ -90,6 +95,7 @@ const useImageStore = Pinia.defineStore('image', {
         clearImageData() {
             this.imageData = Object.assign({}, this.blankImageRecord);
             this.imageEditData = Object.assign({}, {});
+            this.imageTaxon = Object.assign({}, {});
         },
         deleteImageTag(collid, tag) {
             const formData = new FormData();
@@ -138,6 +144,9 @@ const useImageStore = Pinia.defineStore('image', {
             })
             .then((data) => {
                 if(data.hasOwnProperty('imgid') && Number(data.imgid) > 0){
+                    data.sciname = data['taxonData'] ? data['taxonData']['sciname'] : null;
+                    this.imageTaxon = Object.assign({}, data['taxonData']);
+                    delete data['taxonData'];
                     this.imageData = Object.assign({}, data);
                     this.imageEditData = Object.assign({}, this.imageData);
                 }

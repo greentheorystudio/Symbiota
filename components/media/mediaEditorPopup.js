@@ -38,6 +38,13 @@ const mediaEditorPopup = {
                                     <q-btn color="secondary" @click="saveMediaEdits();" label="Save Media Edits" :disabled="!editsExist" />
                                 </div>
                             </div>
+                            <template v-if="Number(mediaData.occid) === 0">
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <single-scientific-common-name-auto-complete :sciname="mediaData.sciname" label="Scientific Name" :clearable="false" :limit-to-thesaurus="true" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
+                                    </div>
+                                </div>
+                            </template>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
                                     <text-field-input-element label="Creator" :value="mediaData.creator" @update:value="(value) => updateData('creator', value)"></text-field-input-element>
@@ -116,6 +123,7 @@ const mediaEditorPopup = {
         </q-dialog>
     `,
     components: {
+        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
@@ -140,6 +148,11 @@ const mediaEditorPopup = {
 
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function processScientificNameChange(taxon) {
+            updateData('sciname', taxon.sciname);
+            updateData('tid', taxon.tid);
         }
 
         function saveMediaEdits() {
@@ -184,6 +197,7 @@ const mediaEditorPopup = {
             editsExist,
             mediaData,
             closePopup,
+            processScientificNameChange,
             saveMediaEdits,
             updateData
         }

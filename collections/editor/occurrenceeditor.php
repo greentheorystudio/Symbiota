@@ -34,6 +34,9 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
             .black-border {
                 border-color: black;
             }
+            .occurrence-tab-border {
+                border-bottom: 1px solid black;
+            }
             .occurrence-editor-preview-image-carousel {
                 min-height: 400px;
             }

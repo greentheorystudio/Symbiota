@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -216,6 +217,7 @@ class Images{
                     $retArr[$name] = $r->$name;
                 }
                 $retArr['tagArr'] = $this->getImageTags($r->imgid);
+                $retArr['taxonData'] = (int)$retArr['tid'] > 0 ? (new Taxa)->getTaxonFromTid($retArr['tid']) : null;
             }
             $rs->free();
         }
