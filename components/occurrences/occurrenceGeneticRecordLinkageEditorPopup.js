@@ -95,6 +95,7 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
 
         Vue.onMounted(() => {
             setContentStyle();
+            window.addEventListener('resize', setContentStyle);
             occurrenceStore.setCollectingEventFields();
         });
 

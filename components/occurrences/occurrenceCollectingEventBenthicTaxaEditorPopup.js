@@ -398,6 +398,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
 
         Vue.onMounted(() => {
             setContentStyle();
+            window.addEventListener('resize', setContentStyle);
             setTableData();
             if(props.editTaxon){
                 editMode.value = true;

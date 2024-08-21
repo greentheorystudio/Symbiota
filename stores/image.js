@@ -97,6 +97,21 @@ const useImageStore = Pinia.defineStore('image', {
             this.imageEditData = Object.assign({}, {});
             this.imageTaxon = Object.assign({}, {});
         },
+        deleteImageRecord(collid, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('imgid', this.imageId.toString());
+            formData.append('action', 'deleteImageRecord');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((val) => {
+                    callback(Number(val));
+                });
+            });
+        },
         deleteImageTag(collid, tag) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
@@ -106,6 +121,22 @@ const useImageStore = Pinia.defineStore('image', {
             fetch(imageApiUrl, {
                 method: 'POST',
                 body: formData
+            });
+        },
+        resetOccurrenceLinkage(collid, occidVal, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('imgid', this.imageId.toString());
+            formData.append('imageData', JSON.stringify({occid: occidVal}));
+            formData.append('action', 'updateImageRecord');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(Number(res));
+                });
             });
         },
         setCurrentImageRecord(imgid) {

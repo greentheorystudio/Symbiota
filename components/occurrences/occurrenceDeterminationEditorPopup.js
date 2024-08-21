@@ -181,6 +181,7 @@ const occurrenceDeterminationEditorPopup = {
 
         Vue.onMounted(() => {
             setContentStyle();
+            window.addEventListener('resize', setContentStyle);
             occurrenceStore.setCurrentDeterminationRecord(props.determinationId);
         });
 

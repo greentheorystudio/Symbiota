@@ -75,6 +75,37 @@ const useMediaStore = Pinia.defineStore('media', {
             this.mediaEditData = Object.assign({}, {});
             this.mediaTaxon = Object.assign({}, {});
         },
+        deleteMediaRecord(collid, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('mediaid', this.mediaId.toString());
+            formData.append('action', 'deleteMediaRecord');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((val) => {
+                    callback(Number(val));
+                });
+            });
+        },
+        resetOccurrenceLinkage(collid, occidVal, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('mediaid', this.mediaId.toString());
+            formData.append('mediaData', JSON.stringify({occid: occidVal}));
+            formData.append('action', 'updateMediaRecord');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(Number(res));
+                });
+            });
+        },
         setCurrentMediaRecord(medid) {
             this.mediaId = Number(medid);
             this.clearMediaData();

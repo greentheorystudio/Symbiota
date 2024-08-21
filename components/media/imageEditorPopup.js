@@ -117,14 +117,39 @@ const imageEditorPopup = {
                                         <text-field-input-element :disabled="true" data-type="textarea" label="Source URL" :value="imageData.sourceurl"></text-field-input-element>
                                     </div>
                                 </div>
+                                <div class="row justify-between">
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div>
+                                            <q-btn color="primary" @click="setOccurrenceLinkage();" label="Set Occurrence Linkage" dense>
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Link, or change linkage, to an occurrence record
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                        <div>
+                                            <q-btn color="primary" @click="removeOccurrenceLinkage();" label="Remove Occurrence Linkage" dense>
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Remove occurrence linkage so that image only displays on Taxon Profile page
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-end q-gutter-sm">
+                                        <div>
+                                            <q-btn color="negative" @click="processDeleteImageRecord();" label="Delete Image" />
+                                        </div>
+                                    </div>
+                                </div>
                             </template>
                         </div>
                     </div>
                 </div>
             </q-card>
         </q-dialog>
+        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
+        'confirmation-popup': confirmationPopup,
         'image-tag-selector': imageTagSelector,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'text-field-input-element': textFieldInputElement
@@ -133,6 +158,7 @@ const imageEditorPopup = {
         const { showNotification } = useCore();
         const imageStore = useImageStore();
 
+        const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const editsExist = Vue.computed(() => imageStore.getImageEditsExist);
@@ -153,9 +179,40 @@ const imageEditorPopup = {
             context.emit('close:popup');
         }
 
+        function processDeleteImageRecord() {
+            const confirmText = 'Are you sure you want to delete this image? This action cannot be undone.';
+            confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                if(val){
+                    imageStore.deleteImageRecord(props.collId, (res) => {
+                        if(res === 0){
+                            showNotification('negative', ('An error occurred while deleting this image.'));
+                        }
+                        else{
+                            showNotification('positive','Image deleted');
+                            context.emit('image:updated');
+                            context.emit('close:popup');
+                        }
+                    });
+                }
+            }});
+        }
+
         function processScientificNameChange(taxon) {
             updateData('sciname', taxon.sciname);
             updateData('tid', taxon.tid);
+        }
+
+        function removeOccurrenceLinkage() {
+            imageStore.resetOccurrenceLinkage(props.collId, null, (res) => {
+                if(res === 1){
+                    showNotification('positive','Occurrence linkage removed');
+                    context.emit('image:updated');
+                    context.emit('close:popup');
+                }
+                else{
+                    showNotification('negative', 'There was an error removing the occurrence linkage.');
+                }
+            });
         }
 
         function saveImageEdits() {
@@ -189,18 +246,22 @@ const imageEditorPopup = {
 
         Vue.onMounted(() => {
             setContentStyle();
+            window.addEventListener('resize', setContentStyle);
             if(Number(props.imageId) > 0){
                 imageStore.setCurrentImageRecord(props.imageId);
             }
         });
 
         return {
+            confirmationPopupRef,
             contentRef,
             contentStyle,
             editsExist,
             imageData,
             closePopup,
+            processDeleteImageRecord,
             processScientificNameChange,
+            removeOccurrenceLinkage,
             saveImageEdits,
             updateData
         }

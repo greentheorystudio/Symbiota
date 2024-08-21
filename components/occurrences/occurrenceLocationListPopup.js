@@ -137,6 +137,7 @@ const occurrenceLocationListPopup = {
 
         Vue.onMounted(() => {
             setContentStyle();
+            window.addEventListener('resize', setContentStyle);
         });
 
         return {

@@ -107,6 +107,7 @@ const occurrenceEditorAssociatedTaxaToolPopup = {
 
         Vue.onMounted(() => {
             setContentStyle();
+            window.addEventListener('resize', setContentStyle);
             associatedTaxaStr.value = props.associatedTaxaValue;
         });
 

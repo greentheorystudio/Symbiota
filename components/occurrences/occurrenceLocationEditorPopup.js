@@ -95,6 +95,7 @@ const occurrenceLocationEditorPopup = {
 
         Vue.onMounted(() => {
             setContentStyle();
+            window.addEventListener('resize', setContentStyle);
             occurrenceStore.setLocationFields();
         });
 
