@@ -266,6 +266,26 @@ class Occurrences{
         return $isLocked;
     }
 
+    public function getOccidByGUIDArr($guidArr): array
+    {
+        $retArr = array();
+        if(is_array($guidArr)){
+            $searchStr = implode('","', $guidArr);
+        }
+        else{
+            $searchStr = SanitizerService::cleanInStr($this->conn, $guidArr);
+        }
+        if($guidArr){
+            $sql = 'SELECT occid FROM guidoccurrences WHERE guid IN("' . $searchStr . '")';
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $retArr[] = $r->occid;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
     public function getOccurrenceData($occid): array
     {
         $retArr = array();

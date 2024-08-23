@@ -416,9 +416,6 @@ class SpatialModuleManager{
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
-        if(array_key_exists('assochost',$this->searchTermsArr)) {
-            $sqlJoin .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
-        }
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }

@@ -128,6 +128,19 @@ class TaxonHierarchy{
         return $retVal;
     }
 
+    public function setParentSearchDataByTidArr($searchData, $tidArr): array
+    {
+        $sql = 'SELECT DISTINCT t.tid, t.sciname ' .
+            'FROM taxa AS t LEFT JOIN taxaenumtree AS te ON t.tid = te.tid ' .
+            'WHERE te.parenttid IN(' . implode('', $tidArr) . ') AND t.tidaccepted = t.tid ';
+        $rs = $this->conn->query($sql);
+        while ($r = $rs->fetch_object()) {
+            $searchData[$r->sciname] = $r->tid;
+        }
+        $rs->free();
+        return $searchData;
+    }
+
     public function updateHierarchyTable($tid = null): void
     {
         if(is_array($tid) || is_numeric($tid)){

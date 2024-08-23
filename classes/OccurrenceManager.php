@@ -470,20 +470,6 @@ class OccurrenceManager{
                 '	  ( ISNULL(maximumElevationInMeters) AND minimumElevationInMeters >= ' .$elevlow. ' AND minimumElevationInMeters <= ' .$elevhigh. ' ) ' .
                 '	) ';
         }
-        if(array_key_exists('assochost',$this->searchTermsArr) && $this->searchTermsArr['assochost']){
-            $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['assochost']);
-            $hostAr = explode(';',$searchStr);
-            if($hostAr){
-                $tempArr = array();
-                foreach($hostAr as $k => $value){
-                    if($value !== 'NULL'){
-                        $tempArr[] = '(oas.relationship = "host" AND oas.verbatimsciname LIKE "%'.SanitizerService::cleanInStr($this->conn,$value).'%")';
-                    }
-                }
-                $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
-                $this->localSearchArr[] = implode(' OR ',$hostAr);
-            }
-        }
         if((array_key_exists('upperlat',$this->searchTermsArr) && $this->searchTermsArr['upperlat']) || (array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']) || (array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']) || (array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr'])){
             $geoSqlStrArr = array();
             if(array_key_exists('upperlat',$this->searchTermsArr) && $this->searchTermsArr['upperlat']){
@@ -1162,9 +1148,6 @@ class OccurrenceManager{
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(array_key_exists('assochost',$this->searchTermsArr)) {
-            $sqlJoin .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
         }
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';

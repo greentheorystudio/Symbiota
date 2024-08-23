@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/Images.php');
+include_once(__DIR__ . '/TaxonHierarchy.php');
 include_once(__DIR__ . '/TaxonKingdoms.php');
 include_once(__DIR__ . '/TaxonVernaculars.php');
 include_once(__DIR__ . '/../services/DbService.php');
@@ -175,13 +176,13 @@ class Taxa{
         return $retVal;
     }
 
-    public function getAcceptedTaxaByTaxonomicGroup($parentTid,$index,$rankId = null): array
+    public function getAcceptedTaxaByTaxonomicGroup($parentTid, $index, $rankId = null): array
     {
         $retArr = array();
         if($parentTid){
             $sql = 'SELECT DISTINCT TID, SciName, parenttid FROM taxa '.
-                'WHERE TID = tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
-                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.')) ';
+                'WHERE TID = tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ') '.
+                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ')) ';
             if($rankId){
                 $sql .= 'AND RankId = ' . $rankId . ' ';
             }
@@ -588,16 +589,19 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTid($sciName, $kingdomid, $rankid, $author): int
+    public function getTid($sciName, $kingdomid = null, $rankid = null, $author = null): int
     {
         $retTid = 0;
-        if($sciName && $kingdomid){
-            $sql = 'SELECT tid FROM taxa WHERE sciname = "'.$sciName.'" AND kingdomId = '.$kingdomid.' ';
+        if($sciName){
+            $sql = 'SELECT tid FROM taxa WHERE sciname = "' . SanitizerService::cleanInStr($this->conn, $sciName) . '" ';
+            if($kingdomid){
+                $sql .= 'AND kingdomId = ' . (int)$kingdomid . ' ';
+            }
             if($rankid){
-                $sql .= 'AND rankid = '.$rankid.' ';
+                $sql .= 'AND rankid = ' . (int)$rankid . ' ';
             }
             if($author){
-                $sql .= 'AND author = "'.$author.'" ';
+                $sql .= 'AND author = "' . SanitizerService::cleanInStr($this->conn, $author) . '" ';
             }
             $rs = $this->conn->query($sql);
             if($r = $rs->fetch_object()){
@@ -608,13 +612,13 @@ class Taxa{
         return $retTid;
     }
 
-    public function getUnacceptedTaxaByTaxonomicGroup($parentTid,$index,$rankId = null): array
+    public function getUnacceptedTaxaByTaxonomicGroup($parentTid, $index, $rankId = null): array
     {
         $retArr = array();
         if($parentTid){
             $sql = 'SELECT DISTINCT TID, SciName FROM taxa '.
-                'WHERE TID <> tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
-                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.')) ';
+                'WHERE TID <> tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ') '.
+                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ')) ';
             if($rankId){
                 $sql .= 'AND RankId = ' . $rankId . ' ';
             }
@@ -658,6 +662,59 @@ class Taxa{
         }
         $result->free();
         return $retArr;
+    }
+
+    public function setSynonymSearchData($searchData): array
+    {
+        foreach($searchData as $key => $tid){
+            $targetTidArr = array();
+            if($key){
+                $sql = 'SELECT tid, tidaccepted FROM taxa WHERE sciname IN("' . $key . '") ';
+                $rs = $this->conn->query($sql);
+                while($r = $rs->fetch_object()){
+                    if($r->tid && !in_array($r->tid, $targetTidArr, true)){
+                        $targetTidArr[] = $r->tid;
+                    }
+                    if($r->tidaccepted && !in_array($r->tidaccepted, $targetTidArr, true)){
+                        $targetTidArr[] = $r->tidaccepted;
+                    }
+                }
+                $rs->free();
+            }
+
+            if($targetTidArr){
+                $parentTidArr = array();
+                $sql = 'SELECT DISTINCT tid, sciname, rankid FROM taxa '.
+                    'WHERE tid IN(' . implode(',', $targetTidArr) . ') OR tidaccepted IN(' . implode(',', $targetTidArr) . ') ';
+                $rs = $this->conn->query($sql);
+                while($r = $rs->fetch_object()){
+                    $searchData[$r->sciname] = $r->tid;
+                    if((int)$r->rankid === 220){
+                        $parentTidArr[] = $r->tid;
+                    }
+                }
+                $rs->free();
+
+                if($parentTidArr) {
+                    $searchData = (new TaxonHierarchy)->setParentSearchDataByTidArr($searchData, $parentTidArr);
+                }
+            }
+        }
+        return $searchData;
+    }
+
+    public function setTaxaSearchDataTids($searchData): array
+    {
+        foreach($searchData as $name => $tid){
+            $cleanName = SanitizerService::cleanInStr($this->conn, $name);
+            $sql = 'SELECT DISTINCT TID, SciName FROM taxa '.
+                "WHERE SciName = '" . $cleanName . "' OR SciName LIKE '" . $cleanName . " %' ";
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $searchData[$r->SciName] = $r->TID;
+            }
+        }
+        return $searchData;
     }
 
     public function setUpdateFamiliesAccepted($parentTid): int

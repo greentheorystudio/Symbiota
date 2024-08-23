@@ -250,6 +250,19 @@ class Collections {
         return $retArr;
     }
 
+    public function getPublicCollections(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT collid FROM omcollections WHERE isPublic = 1 ';
+        //echo "<div>$sql</div>";
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $retArr[] = (int)$r->collid;
+        }
+        $rs->free();
+        return $retArr;
+    }
+
     public function getSpeciesListDownloadData($collid): array
     {
         $returnArr = array();
