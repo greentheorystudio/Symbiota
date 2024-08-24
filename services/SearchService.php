@@ -23,6 +23,30 @@ class SearchService {
         }
     }
 
+    public function clearSensitiveResultData($resultObj): array
+    {
+        $resultObj['recordnumber'] = null;
+        $resultObj['habitat'] = null;
+        $resultObj['date'] = null;
+        $resultObj['decimallatitude'] = null;
+        $resultObj['decimallongitude'] = null;
+        $resultObj['verbatimcoordinates'] = null;
+        $resultObj['eventdate'] = null;
+        $resultObj['year'] = null;
+        $resultObj['month'] = null;
+        $resultObj['day'] = null;
+        $resultObj['startdayofyear'] = null;
+        $resultObj['enddayofyear'] = null;
+        $resultObj['verbatimeventdate'] = null;
+        $resultObj['minimumelevationinmeters'] = null;
+        $resultObj['maximumelevationinmeters'] = null;
+        $resultObj['verbatimelevation'] = null;
+        $resultObj['substrate'] = null;
+        $resultObj['associatedtaxa'] = null;
+        $resultObj['locality'] = '[obscurred]';
+        return $resultObj;
+    }
+
     public function getOccurrenceSearchRecordCnt($searchTermsArr, $options): int
     {
         $returnVal = 0;
@@ -725,12 +749,70 @@ class SearchService {
                 }
                 $sql .= 'LIMIT ' . $bottomLimit . ',' . $options['numRows'];
                 //echo "<div>Count sql: ".$sql."</div>";
-                $result = $this->conn->query($sql);
-                if($row = $result->fetch_object()){
-                    $returnVal = $row->cnt;
+                if($result = $this->conn->query($sql)){
+                    if($options['output'] === 'geojson'){
+                        $returnArr = $this->serializeGeoJsonResultArr($result, $options['numRows']);
+                    }
+                    else{
+                        $returnArr = $this->serializeJsonResultArr($result, $options['schema'], $spatial);
+                    }
+                    $result->free();
                 }
-                $result->close();
             }
+        }
+        return $returnArr;
+    }
+
+    public function serializeGeoJsonResultArr($result, $numRows): array
+    {
+        $returnArr = array();
+        $featuresArr = array();
+        $fields = mysqli_fetch_fields($result);
+        while($row = $result->fetch_object()){
+            $geoArr = array();
+            $geoArr['type'] = 'Feature';
+            $geoArr['geometry']['type'] = 'Point';
+            $geoArr['geometry']['coordinates'] = [$row->decimallongitude, $row->decimallatitude];
+            foreach($fields as $val){
+                $name = $val->name;
+                $geoArr['properties'][$name] = $row->$name;
+            }
+            $featuresArr[] = $geoArr;
+        }
+        $returnArr['type'] = 'FeatureCollection';
+        $returnArr['numFound'] = $numRows;
+        $returnArr['start'] = 0;
+        $returnArr['features'] = $featuresArr;
+        return $returnArr;
+    }
+
+    public function serializeJsonResultArr($result, $schema, $spatial): array
+    {
+        $returnArr = array();
+        $idArr = array();
+        $fields = mysqli_fetch_fields($result);
+        while($row = $result->fetch_object()){
+            $occid = $row->occid;
+            foreach($fields as $val){
+                $name = $val->name;
+                $returnArr[$occid][$name] = $row->$name;
+            }
+            if(!$spatial && $schema === 'occurrence'){
+                $rareSpReader = false;
+                $localitySecurity = (int)$row->localitysecurity === 1;
+                if($localitySecurity){
+                    $rareSpReader = $this->verifyRareSpAccess($row->collid);
+                }
+                if(!$localitySecurity || $rareSpReader){
+                    $idArr[] = $occid;
+                }
+                else{
+                    $returnArr[$occid] = $this->clearSensitiveResultData($returnArr[$occid]);
+                }
+            }
+        }
+        if(!$spatial && $schema === 'occurrence' && count($idArr) > 0){
+            $returnArr = $this->setResultsImageData($returnArr, $idArr);
         }
         return $returnArr;
     }
@@ -748,6 +830,27 @@ class SearchService {
                 'LEFT JOIN taxa AS t ON o.tid = t.TID ';
         }
         return $returnStr;
+    }
+
+    public function setResultsImageData($returnArr, $idArr): array
+    {
+        $sql = 'SELECT o.collid, o.occid, i.thumbnailurl, i.url FROM omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
+            'WHERE o.occid IN(' . implode(',', $idArr) . ') ORDER BY o.occid, i.sortsequence ';
+        $rs = $this->conn->query($sql);
+        $previousOccid = 0;
+        while($r = $rs->fetch_object()){
+            if($r->occid !== $previousOccid){
+                if($r->thumbnailurl){
+                    $returnArr[$r->occid]['img'] = $r->thumbnailurl;
+                }
+                if($r->url){
+                    $returnArr[$r->occid]['hasimage'] = true;
+                }
+            }
+            $previousOccid = $r->occid;
+        }
+        $rs->free();
+        return $returnArr;
     }
 
     public function setSelectSql($schema): string
@@ -812,5 +915,23 @@ class SearchService {
             }
         }
         return $returnStr;
+    }
+
+    public function verifyRareSpAccess($collid): bool
+    {
+        $returnVal = false;
+        if($GLOBALS['USER_RIGHTS']){
+            if(
+                $GLOBALS['IS_ADMIN'] || 
+                array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || 
+                array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || 
+                array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS']) ||
+                (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array((int)$collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)) ||
+                (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array((int)$collid, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))
+            ){
+                $returnVal = true;
+            }
+        }
+        return $returnVal;
     }
 }
