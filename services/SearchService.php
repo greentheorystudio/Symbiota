@@ -23,6 +23,27 @@ class SearchService {
         }
     }
 
+    public function getOccurrenceSearchRecordCnt($searchTermsArr, $options): int
+    {
+        $returnVal = 0;
+        if($searchTermsArr && $options){
+            $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
+            if($sqlWhere){
+                $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                    'LEFT JOIN taxa AS t ON o.tid = t.TID ';
+                $sql .= $this->setTableJoinsSql($searchTermsArr);
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], ((int)$options['spatial'] === 1));
+                //echo "<div>Count sql: ".$sql."</div>";
+                $result = $this->conn->query($sql);
+                if($row = $result->fetch_object()){
+                    $returnVal = $row->cnt;
+                }
+                $result->close();
+            }
+        }
+        return $returnVal;
+    }
+
     public function prepareImageUploadDateWhereSql($searchTermsArr): string
     {
         $tempArr = array();
@@ -530,7 +551,7 @@ class SearchService {
         return count($sqlTaxaWherePartsArr) > 0 ? ('(' . implode(' OR ', $sqlTaxaWherePartsArr) . ')') : '';
     }
 
-    public function prepareOccurrenceWhereSql($searchTermsArr, $image = null): string
+    public function prepareOccurrenceWhereSql($searchTermsArr, $image = false): string
     {
         $sqlWherePartsArr = array();
         if(array_key_exists('clid', $searchTermsArr) && $searchTermsArr['clid']){
@@ -666,5 +687,130 @@ class SearchService {
             }
         }
         return count($sqlWherePartsArr) > 0 ? implode(' AND ', $sqlWherePartsArr) : '';
+    }
+
+    public function processSearch($searchTermsArr, $options): array
+    {
+        $returnArr = array();
+        if($searchTermsArr && $options){
+            $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
+            if($sqlWhere){
+                $spatial = (int)$options['spatial'] === 1;
+                $bottomLimit = ($options['index'] - 1) * $options['numRows'];
+                $sql = $this->setSelectSql($options['schema']);
+                $sql .= $this->setFromSql($options['schema']) . $this->setTableJoinsSql($searchTermsArr);
+                $sql .= $this->setTableJoinsSql($searchTermsArr);
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
+                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
+                    if($searchTermsArr['imagecount'] === 'taxon'){
+                        $sql .= 'GROUP BY t.tidaccepted ';
+                    }
+                    elseif($searchTermsArr['imagecount'] === 'specimen'){
+                        $sql .= 'GROUP BY o.occid ';
+                    }
+                }
+                if($options['schema'] === 'image'){
+                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
+                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
+                    }
+                    else{
+                        $sql .= 'ORDER BY t.sciname ';
+                    }
+                }
+                elseif($spatial){
+                    $sql .= 'ORDER BY o.sciname, o.eventdate ';
+                }
+                else{
+                    $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
+                }
+                $sql .= 'LIMIT ' . $bottomLimit . ',' . $options['numRows'];
+                //echo "<div>Count sql: ".$sql."</div>";
+                $result = $this->conn->query($sql);
+                if($row = $result->fetch_object()){
+                    $returnVal = $row->cnt;
+                }
+                $result->close();
+            }
+        }
+        return $returnArr;
+    }
+
+    public function setFromSql($schema): string
+    {
+        if($schema === 'image'){
+            $returnStr = 'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+                'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
+                'LEFT JOIN taxa AS t ON i.tid = t.tid ';
+        }
+        else{
+            $returnStr = 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                'LEFT JOIN taxa AS t ON o.tid = t.TID ';
+        }
+        return $returnStr;
+    }
+
+    public function setSelectSql($schema): string
+    {
+        if($schema === 'image'){
+            $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'u.uid', 'u.lastname',
+                'u.firstname', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber');
+        }
+        elseif($schema === 'map'){
+            $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.`year`', 'o.`month`', 'o.`day`', 'o.decimallatitude',
+                'o.decimallongitude', 'c.colltype', 'o.catalognumber', 'o.recordedby', 'o.recordnumber', 'o.eventdate');
+        }
+        else{
+            $occurrenceFields = (new Occurrences)->getOccurrenceFields();
+            unset($occurrenceFields['institutioncode'], $occurrenceFields['collectioncode'], $occurrenceFields['family']);
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($occurrenceFields, 'o');
+            $fieldNameArr[] = 'IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),"") AS date';
+        }
+        $fieldNameArr[] = 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode';
+        $fieldNameArr[] = 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode';
+        $fieldNameArr[] = 'c.collectionname';
+        $fieldNameArr[] = 'c.icon';
+        $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
+        $fieldNameArr[] = 't.tidaccepted';
+        return 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' ';
+    }
+
+    public function setTableJoinsSql($searchTermsArr): string
+    {
+        $returnStr = '';
+        if(array_key_exists('taxontype', $searchTermsArr) && ((int)$searchTermsArr['taxontype'] === 4 || (int)$searchTermsArr['taxontype'] === 5)) {
+            $returnStr .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
+        }
+        if(array_key_exists('clid', $searchTermsArr)) {
+            $returnStr .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(array_key_exists('polyArr', $searchTermsArr)) {
+            $returnStr .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
+        }
+        if(array_key_exists('phuid', $searchTermsArr) || array_key_exists('imagetag', $searchTermsArr) || array_key_exists('uploaddate1', $searchTermsArr) || array_key_exists('imagetype', $searchTermsArr)) {
+            $returnStr .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
+            $returnStr .= array_key_exists('phuid', $searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' : '';
+            $returnStr .= array_key_exists('imagetag', $searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' : '';
+        }
+        return $returnStr;
+    }
+
+    public function setWhereSql($sqlWhere, $schema, $spatial): string
+    {
+        $returnStr = 'WHERE ' . $sqlWhere;
+        if($spatial || $schema === 'image'){
+            if($spatial){
+                $returnStr .= ' AND (o.sciname IS NOT NULL AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
+            }
+            if(!array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
+                if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
+                    $returnStr .= ' AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR (o.localitysecurity = 0 OR ISNULL(o.localitysecurity))) ';
+                }
+                else{
+                    $returnStr .= ' AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
+                }
+            }
+        }
+        return $returnStr;
     }
 }
