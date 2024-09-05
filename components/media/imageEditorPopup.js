@@ -150,6 +150,8 @@ const imageEditorPopup = {
         <template v-if="showOccurrenceLinkageToolPopup">
             <occurrence-linkage-tool-popup
                 :show-popup="showOccurrenceLinkageToolPopup"
+                :current-occid="imageData.occid"
+                @update:occid="updateOccurrenceLinkage"
                 @close:popup="showOccurrenceLinkageToolPopup = false"
             ></occurrence-linkage-tool-popup>
         </template>
@@ -252,6 +254,13 @@ const imageEditorPopup = {
             }
         }
 
+        function updateOccurrenceLinkage(occid) {
+            updateData('occid', occid);
+            setTimeout(() => {
+                saveImageEdits();
+            }, 100);
+        }
+
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
@@ -272,7 +281,8 @@ const imageEditorPopup = {
             processScientificNameChange,
             removeOccurrenceLinkage,
             saveImageEdits,
-            updateData
+            updateData,
+            updateOccurrenceLinkage
         }
     }
 };

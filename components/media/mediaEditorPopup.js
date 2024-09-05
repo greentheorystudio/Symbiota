@@ -148,6 +148,8 @@ const mediaEditorPopup = {
         <template v-if="showOccurrenceLinkageToolPopup">
             <occurrence-linkage-tool-popup
                 :show-popup="showOccurrenceLinkageToolPopup"
+                :current-occid="mediaData.occid"
+                @update:occid="updateOccurrenceLinkage"
                 @close:popup="showOccurrenceLinkageToolPopup = false"
             ></occurrence-linkage-tool-popup>
         </template>
@@ -249,6 +251,13 @@ const mediaEditorPopup = {
             }
         }
 
+        function updateOccurrenceLinkage(occid) {
+            updateData('occid', occid);
+            setTimeout(() => {
+                saveMediaEdits();
+            }, 100);
+        }
+
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
@@ -269,7 +278,8 @@ const mediaEditorPopup = {
             processScientificNameChange,
             removeOccurrenceLinkage,
             saveMediaEdits,
-            updateData
+            updateData,
+            updateOccurrenceLinkage
         }
     }
 };

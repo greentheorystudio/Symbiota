@@ -138,7 +138,7 @@ class Occurrences{
         $fieldValueArr = array();
         $collId = array_key_exists('collid',$data) ? (int)$data['collid'] : 0;
         $sciname = array_key_exists('sciname',$data) ? SanitizerService::cleanInStr($this->conn, $data['sciname']) : '';
-        if($collId && $sciname){
+        if($collId){
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'occid' && array_key_exists($field, $data)){
                     if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
