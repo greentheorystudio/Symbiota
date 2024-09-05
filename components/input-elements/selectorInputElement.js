@@ -16,9 +16,17 @@ const selectorInputElement = {
             type: String,
             default: ''
         },
+        optionLabel: {
+            type: String,
+            default: 'label'
+        },
         options: {
             type: Array,
             default: []
+        },
+        optionValue: {
+            type: String,
+            default: 'value'
         },
         value: {
             type: String,
@@ -26,7 +34,7 @@ const selectorInputElement = {
         }
     },
     template: `
-        <q-select ref="selectorRef" v-model="value" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-max" :options="selectorOptions" option-value="value" option-label="label" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :disable="disabled">
+        <q-select ref="selectorRef" v-model="value" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-max" :options="selectorOptions" :option-value="optionValue" :option-label="optionLabel" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :disable="disabled">
             <template v-if="!disabled && (definition || (clearable && value))" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -131,8 +139,8 @@ const selectorInputElement = {
                     if(typeof option === 'string' || typeof option === 'number'){
                         selectorOptions.push({value: option.toString(), label: option.toString()});
                     }
-                    else if(typeof option === 'object' && option.hasOwnProperty('value') && option.hasOwnProperty('label')){
-                        selectorOptions.push({value: option.value.toString(), label: option.label.toString()});
+                    else if(typeof option === 'object' && option.hasOwnProperty(props.optionValue) && option.hasOwnProperty(props.optionLabel)){
+                        selectorOptions.push({value: option[props.optionValue].toString(), label: option[props.optionLabel].toString()});
                     }
                 });
             }

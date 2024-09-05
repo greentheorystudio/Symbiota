@@ -112,6 +112,19 @@ const useCollectionStore = Pinia.defineStore('collection', {
             this.configuredDataFieldsLayoutData = Object.assign({}, {});
             this.configuredDataLabel = 'Additional Data';
         },
+        getCollectionListByUserRights(callback) {
+            const formData = new FormData();
+            formData.append('action', 'getCollectionListByUserRights');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.json().then((resObj) => {
+                    callback(resObj);
+                });
+            });
+        },
         setCollection(collid, callback = null) {
             this.clearCollectionData();
             if(Number(collid) > 0){

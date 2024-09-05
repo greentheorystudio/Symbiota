@@ -33,22 +33,16 @@ const viewProfileOccurrenceModule = {
     components: {
         'collection-cotrol-panel-menus': collectionControlPanelMenus
     },
-    setup(props) {
-        const store = useBaseStore();
-        const clientRoot = store.getClientRoot;
+    setup() {
+        const baseStore = useBaseStore();
+        const collectionStore = useCollectionStore();
+
+        const clientRoot = baseStore.getClientRoot;
         const collectionArr = Vue.ref([]);
 
         function setAccountCollections() {
-            const formData = new FormData();
-            formData.append('action', 'getCollectionListByUserRights');
-            fetch(collectionApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.json().then((resObj) => {
-                    collectionArr.value = resObj;
-                });
+            collectionStore.getCollectionListByUserRights((collListData) => {
+                collectionArr.value = collListData;
             });
         }
 

@@ -186,35 +186,35 @@ const locationFieldModule = {
         </template>
         <template v-if="showSpatialPopup">
             <spatial-analysis-popup
-                    :coordinate-uncertainty-in-meters="coordinateUncertaintyInMetersValue"
-                    :decimal-latitude="decimalLatitudeValue"
-                    :decimal-longitude="decimalLongitudeValue"
-                    :footprint-wkt="footprintWktValue"
-                    :show-popup="showSpatialPopup"
-                    :window-type="popupWindowType"
-                    @update:spatial-data="processSpatialData"
-                    @close:popup="closeSpatialPopup();"
+                :coordinate-uncertainty-in-meters="coordinateUncertaintyInMetersValue"
+                :decimal-latitude="decimalLatitudeValue"
+                :decimal-longitude="decimalLongitudeValue"
+                :footprint-wkt="footprintWktValue"
+                :show-popup="showSpatialPopup"
+                :window-type="popupWindowType"
+                @update:spatial-data="processSpatialData"
+                @close:popup="closeSpatialPopup();"
             ></spatial-analysis-popup>
         </template>
         <template v-if="showGeoLocatePopup">
             <geo-locate-popup
-                    :country="data.country"
-                    :county="data.county"
-                    :locality="data.locality"
-                    :show-popup="showGeoLocatePopup"
-                    :state="data.stateprovince"
-                    :verbatim-coordinates="data.verbatimcoordinates"
-                    @update:geolocate-data="processGeolocateData"
-                    @close:popup="showGeoLocatePopup = false"
+                :country="data.country"
+                :county="data.county"
+                :locality="data.locality"
+                :show-popup="showGeoLocatePopup"
+                :state="data.stateprovince"
+                :verbatim-coordinates="data.verbatimcoordinates"
+                @update:geolocate-data="processGeolocateData"
+                @close:popup="showGeoLocatePopup = false"
             ></geo-locate-popup>
         </template>
         <template v-if="showCoordinateToolPopup">
             <occurrence-coordinate-tool-popup
-                    :geodetic-datum="data.geodeticdatum"
-                    :show-popup="showCoordinateToolPopup"
-                    :verbatim-coordinates="data.verbatimcoordinates"
-                    @update:coordinate-tool-data="processCoordinateToolData"
-                    @close:popup="showCoordinateToolPopup = false"
+                :geodetic-datum="data.geodeticdatum"
+                :show-popup="showCoordinateToolPopup"
+                :verbatim-coordinates="data.verbatimcoordinates"
+                @update:coordinate-tool-data="processCoordinateToolData"
+                @close:popup="showCoordinateToolPopup = false"
             ></occurrence-coordinate-tool-popup>
         </template>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>

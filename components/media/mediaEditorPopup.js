@@ -18,7 +18,7 @@ const mediaEditorPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" persistent>
+        <q-dialog class="z-top" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -118,7 +118,7 @@ const mediaEditorPopup = {
                                 <div class="row justify-between">
                                     <div class="row justify-start q-gutter-sm">
                                         <div>
-                                            <q-btn color="primary" @click="setOccurrenceLinkage();" label="Set Occurrence Linkage" dense>
+                                            <q-btn color="primary" @click="showOccurrenceLinkageToolPopup = true" label="Set Occurrence Linkage" dense>
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Link, or change linkage, to an occurrence record
                                                 </q-tooltip>
@@ -145,9 +145,16 @@ const mediaEditorPopup = {
             </q-card>
         </q-dialog>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
+        <template v-if="showOccurrenceLinkageToolPopup">
+            <occurrence-linkage-tool-popup
+                :show-popup="showOccurrenceLinkageToolPopup"
+                @close:popup="showOccurrenceLinkageToolPopup = false"
+            ></occurrence-linkage-tool-popup>
+        </template>
     `,
     components: {
         'confirmation-popup': confirmationPopup,
+        'occurrence-linkage-tool-popup': occurrenceLinkageToolPopup,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'text-field-input-element': textFieldInputElement
     },
@@ -167,6 +174,7 @@ const mediaEditorPopup = {
                 return props.newMediaData['uploadMetadata'];
             }
         });
+        const showOccurrenceLinkageToolPopup = Vue.ref(false);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -255,6 +263,7 @@ const mediaEditorPopup = {
             contentStyle,
             editsExist,
             mediaData,
+            showOccurrenceLinkageToolPopup,
             closePopup,
             processDeleteMediaRecord,
             processScientificNameChange,

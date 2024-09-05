@@ -99,6 +99,7 @@ const occurrenceEditorAdminTab = {
     setup() {
         const { showNotification } = useCore();
         const baseStore = useBaseStore();
+        const collectionStore = useCollectionStore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
         const checklistArr = Vue.computed(() => occurrenceStore.getChecklistArr);
@@ -150,25 +151,17 @@ const occurrenceEditorAdminTab = {
         }
 
         function setProfileCollectionsOptions() {
-            const formData = new FormData();
-            formData.append('action', 'getCollectionListByUserRights');
-            fetch(collectionApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.json().then((resObj) => {
-                    if(resObj.length > 0){
-                        resObj.forEach(coll => {
-                            if(Number(coll.collid) !== Number(collId.value)){
-                                profileCollectionOptions.value.push({
-                                    value: coll.collid,
-                                    label: coll.label
-                                });
-                            }
-                        });
-                    }
-                });
+            collectionStore.getCollectionListByUserRights((collListData) => {
+                if(collListData.length > 0){
+                    collListData.forEach(coll => {
+                        if(Number(coll.collid) !== Number(collId.value)){
+                            profileCollectionOptions.value.push({
+                                value: coll.collid,
+                                label: coll.label
+                            });
+                        }
+                    });
+                }
             });
         }
 
