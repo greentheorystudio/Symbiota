@@ -66,7 +66,7 @@
 									<?php 
 									$instArr = $loanManager->getInstitutionArr();
 									foreach($instArr as $k => $v){
-										echo '<option value="'.$k.'" '.($k === $exchangeArr['iid']?'SELECTED':'').'>'.$v.'</option>';
+										echo '<option value="'.$k.'" '.((int)$k === (int)$exchangeArr['iid']?'SELECTED':'').'>'.$v.'</option>';
 									}
 									?>
 								</select>
@@ -123,7 +123,7 @@
 									<?php 
 									$instArr = $loanManager->getInstitutionArr();
 									foreach($instArr as $k => $v){
-										echo '<option value="'.$k.'" '.($k === $exchangeArr['iid']?'SELECTED':'').'>'.$v.'</option>';
+										echo '<option value="'.$k.'" '.((int)$k === (int)$exchangeArr['iid']?'SELECTED':'').'>'.$v.'</option>';
 									}
 									?>
 								</select>
