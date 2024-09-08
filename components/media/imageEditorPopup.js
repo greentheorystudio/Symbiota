@@ -195,7 +195,7 @@ const imageEditorPopup = {
                 if(val){
                     imageStore.deleteImageRecord(props.collId, (res) => {
                         if(res === 0){
-                            showNotification('negative', ('An error occurred while deleting this image.'));
+                            showNotification('negative', 'An error occurred while deleting this image.');
                         }
                         else{
                             showNotification('positive','Image deleted');

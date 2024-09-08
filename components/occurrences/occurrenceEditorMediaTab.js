@@ -22,7 +22,7 @@ const occurrenceEditorMediaTab = {
                     </template>
                 </template>
                 <template v-else>
-                    <span class="text-h6 text-bold">There are no media files uploaded for this record.</span>
+                    <div class="q-mt-sm text-body1 text-bold">There are no media files associated with this record.</div>
                 </template>
             </div>
         </div>

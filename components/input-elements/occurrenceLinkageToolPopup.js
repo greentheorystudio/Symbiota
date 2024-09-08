@@ -83,7 +83,7 @@ const occurrenceLinkageToolPopup = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { showNotification } = useCore();
+        const { hideWorking, showNotification, showWorking } = useCore();
         const collectionStore = useCollectionStore();
         const occurrenceStore = useOccurrenceStore();
         const searchStore = useSearchStore();
@@ -148,6 +148,7 @@ const occurrenceLinkageToolPopup = {
         }
 
         function processSearch() {
+            showWorking();
             const options = {
                 schema: 'occurrence',
                 output: 'json'
@@ -162,6 +163,7 @@ const occurrenceLinkageToolPopup = {
                 starr['othercatnum'] = 1;
             }
             searchStore.processSimpleSearch(starr, options, (data) => {
+                hideWorking();
                 if(props.currentOccid && data.hasOwnProperty(props.currentOccid)){
                     delete data[props.currentOccid];
                 }

@@ -79,7 +79,7 @@ class Images{
         }
         $fieldNameArr[] = 'initialtimestamp';
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
-        $sql = 'INSERT IGNORE INTO images(' . implode(',', $fieldNameArr) . ') '.
+        $sql = 'INSERT INTO images(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
         //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){

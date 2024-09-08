@@ -14,7 +14,7 @@ const occurrenceEditorDeterminationsTab = {
                     </template>
                 </template>
                 <template v-else>
-                    <span class="text-h6 text-bold">There are no previous determinations for this record.</span>
+                    <span class="text-body1 text-bold">There are no previous determinations for this record.</span>
                 </template>
             </div>
         </div>
