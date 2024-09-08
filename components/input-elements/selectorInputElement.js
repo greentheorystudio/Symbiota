@@ -102,7 +102,7 @@ const selectorInputElement = {
             setSelectedOption();
         });
 
-        Vue.watch(propsRefs.options, () => {
+        Vue.watch(props.options, () => {
             setOptions();
             setSelectedOption();
         });

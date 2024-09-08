@@ -69,7 +69,7 @@ const occurrenceEditorChecklistVoucherModule = {
         const baseStore = useBaseStore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
-        const checklistOptions = Vue.ref([]);
+        const checklistOptions = Vue.shallowReactive([]);
         const confirmationPopupRef = Vue.ref(null);
         const clientRoot = baseStore.getClientRoot;
         const collId = Vue.computed(() => occurrenceStore.getCollId);
@@ -134,18 +134,13 @@ const occurrenceEditorChecklistVoucherModule = {
         }
 
         function setChecklistOptions() {
-            checklistOptions.value.length = 0;
-            if(voucherChecklistArr.value.length > 0 && userChecklistArr.value.length > 0){
-                userChecklistArr.value.forEach((checklist) => {
-                    const voucherObj = voucherChecklistArr.value.find(voucher => Number(voucher['clid']) === Number(checklist['clid']));
-                    if(!voucherObj){
-                        checklistOptions.value.push(checklist);
-                    }
-                });
-            }
-            else{
-                checklistOptions.value = userChecklistArr.value;
-            }
+            checklistOptions.length = 0;
+            userChecklistArr.value.forEach((checklist) => {
+                const voucherObj = voucherChecklistArr.value.length > 0 ? voucherChecklistArr.value.find(voucher => Number(voucher['clid']) === Number(checklist['clid'])) : null;
+                if(!voucherObj){
+                    checklistOptions.push(checklist);
+                }
+            });
         }
 
         function setAccountChecklists() {
