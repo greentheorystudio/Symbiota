@@ -70,14 +70,17 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                 </div>
             </q-card>
         </q-dialog>
+        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
+        'confirmation-popup': confirmationPopup,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const geneticLinkageData = Vue.computed(() => occurrenceStore.getGeneticLinkData);
@@ -105,15 +108,20 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
         }
 
         function deleteGeneticLinkage() {
-            occurrenceStore.deleteGeneticLinkageRecord((res) => {
-                if(res === 1){
-                    showNotification('positive','Genetic record linkage has been deleted.');
-                    context.emit('close:popup');
+            const confirmText = 'Are you sure you want to delete this genetic record linkage? This action cannot be undone.';
+            confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                if(val){
+                    occurrenceStore.deleteGeneticLinkageRecord((res) => {
+                        if(res === 1){
+                            showNotification('positive','Genetic record linkage has been deleted.');
+                            context.emit('close:popup');
+                        }
+                        else{
+                            showNotification('negative', 'There was an error deleting the genetic record linkage.');
+                        }
+                    });
                 }
-                else{
-                    showNotification('negative', 'There was an error deleting the genetic record linkage.');
-                }
-            });
+            }});
         }
 
         function saveGeneticLinkageEdits() {
@@ -148,6 +156,7 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
         });
 
         return {
+            confirmationPopupRef,
             contentRef,
             contentStyle,
             editsExist,
