@@ -7,7 +7,7 @@ const occurrenceEditorDeterminationsTab = {
                     <q-btn color="secondary" @click="openDeterminationEditorPopup(0);" label="Add New Determination" />
                 </div>
             </div>
-            <div class="q-mt-sm">
+            <div class="q-mt-sm column q-gutter-sm">
                 <template v-if="determinationArr.length > 0">
                     <template v-for="determination in determinationArr">
                         <determination-record-info-block :determination-data="determination" :editor="true"></determination-record-info-block>

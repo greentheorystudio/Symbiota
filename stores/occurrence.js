@@ -331,6 +331,15 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getGeneticLinkArr(state) {
             return state.geneticLinkStore.getGeneticLinkArr;
         },
+        getGeneticLinkData(state) {
+            return state.geneticLinkStore.getGeneticLinkData;
+        },
+        getGeneticLinkEditsExist(state) {
+            return state.geneticLinkStore.getGeneticLinkEditsExist;
+        },
+        getGeneticLinkValid(state) {
+            return state.geneticLinkStore.getGeneticLinkValid;
+        },
         getImageArr(state) {
             return state.imageStore.getImageArr;
         },
@@ -430,6 +439,26 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
             });
         },
+        createOccurrenceDeterminationRecord(callback) {
+            const newIsCurrent = Number(this.determinationStore.getDeterminationData['iscurrent']) === 1;
+            this.determinationStore.createOccurrenceDeterminationRecord(this.getCollId, this.occId, (newDetId) => {
+                callback(Number(newDetId));
+                if(newIsCurrent){
+                    this.setCurrentOccurrenceRecord(this.occId);
+                }
+                else if(newDetId && Number(newDetId) > 0){
+                    this.determinationStore.setDeterminationArr(this.occId);
+                }
+            });
+        },
+        createOccurrenceGeneticLinkageRecord(callback) {
+            this.geneticLinkStore.createOccurrenceGeneticLinkageRecord(this.getCollId, this.occId, (newLinkId) => {
+                callback(Number(newLinkId));
+                if(newLinkId && Number(newLinkId) > 0){
+                    this.geneticLinkStore.setGeneticLinkArr(this.occId);
+                }
+            });
+        },
         createOccurrenceRecord(callback) {
             const formData = new FormData();
             formData.append('collid', this.getCollId.toString());
@@ -457,20 +486,28 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 });
             });
         },
-        createOccurrenceDeterminationRecord(callback) {
-            const newIsCurrent = Number(this.determinationStore.getDeterminationData['iscurrent']) === 1;
-            this.determinationStore.createOccurrenceDeterminationRecord(this.getCollId, this.occId, (newDetId) => {
-                callback(Number(newDetId));
-                if(newIsCurrent){
-                    this.setCurrentOccurrenceRecord(this.occId);
+        deleteConfiguredDataValue(key, callback = null) {
+            this.collectingEventStore.deleteConfiguredDataValue(this.getCollId, key, this.getConfiguredDataFields, callback);
+        },
+        deleteOccurrenceDeterminationRecord(callback = null) {
+            this.determinationStore.deleteDeterminationRecord(this.getCollId, (res) => {
+                if(callback){
+                    callback(Number(res));
                 }
-                else if(newDetId && Number(newDetId) > 0){
+                if(Number(res) === 1){
                     this.determinationStore.setDeterminationArr(this.occId);
                 }
             });
         },
-        deleteConfiguredDataValue(key, callback = null) {
-            this.collectingEventStore.deleteConfiguredDataValue(this.getCollId, key, this.getConfiguredDataFields, callback);
+        deleteGeneticLinkageRecord(callback = null) {
+            this.geneticLinkStore.deleteGeneticLinkageRecord(this.getCollId, (res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.geneticLinkStore.setGeneticLinkArr(this.occId);
+                }
+            });
         },
         deleteOccurrenceRecord(occid, callback) {
             const formData = new FormData();
@@ -497,16 +534,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     }
                     callback(Number(val));
                 });
-            });
-        },
-        deleteOccurrenceDeterminationRecord(callback = null) {
-            this.determinationStore.deleteDeterminationRecord(this.getCollId, (res) => {
-                if(callback){
-                    callback(Number(res));
-                }
-                if(Number(res) === 1){
-                    this.determinationStore.setDeterminationArr(this.occId);
-                }
             });
         },
         evaluateOccurrenceForDeletion(occid, callback) {
@@ -774,6 +801,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setCurrentDeterminationRecord(detid) {
             this.determinationStore.setCurrentDeterminationRecord(detid);
         },
+        setCurrentGeneticLinkageRecord(linkid) {
+            this.geneticLinkStore.setCurrentGeneticLinkageRecord(linkid);
+        },
         setCurrentLocationRecord(locationid) {
             this.locationStore.setCurrentLocationRecord(locationid, this.getCollId, () => {
                 this.updateOccurrenceEditData('locationid', this.getLocationID.toString());
@@ -1019,6 +1049,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         updateDeterminationEditData(key, value) {
             this.determinationStore.updateDeterminationEditData(key, value);
         },
+        updateGeneticLinkageEditData(key, value) {
+            this.geneticLinkStore.updateGeneticLinkageEditData(key, value);
+        },
         updateLocationEditData(key, value) {
             this.locationStore.updateLocationEditData(key, value);
         },
@@ -1049,6 +1082,14 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['family'] = taxon ? taxon.family : null;
             this.occurrenceEditData['scientificnameauthorship'] = taxon ? taxon.author : null;
             this.occurrenceEditData['taxonData'] = taxon ? Object.assign({}, taxon) : null;
+        },
+        updateOccurrenceGeneticLinkageRecord(callback) {
+            this.geneticLinkStore.updateGeneticLinkageRecord(this.getCollId, (res) => {
+                callback(Number(res));
+                if(Number(res) === 1){
+                    this.geneticLinkStore.setGeneticLinkArr(this.occId);
+                }
+            });
         },
         updateOccurrenceRecord(callback) {
             const formData = new FormData();

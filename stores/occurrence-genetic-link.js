@@ -8,8 +8,7 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
             title: null,
             locus: null,
             resourceurl: null,
-            notes: 10,
-            initialtimestamp: 0
+            notes: null
         },
         geneticLinkArr: [],
         geneticLinkData: {},
@@ -44,7 +43,6 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
         },
         getGeneticLinkValid(state) {
             return (
-                state.geneticLinkEditData['occid'] &&
                 state.geneticLinkEditData['resourcename']
             );
         }
@@ -53,13 +51,13 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
         clearGeneticLinkArr() {
             this.geneticLinkArr.length = 0;
         },
-        createOccurrenceDeterminationRecord(collid, occid, callback) {
-            this.determinationEditData['occid'] = occid.toString();
+        createOccurrenceGeneticLinkageRecord(collid, occid, callback) {
+            this.geneticLinkEditData['occid'] = occid.toString();
             const formData = new FormData();
             formData.append('collid', collid.toString());
-            formData.append('determination', JSON.stringify(this.determinationEditData));
-            formData.append('action', 'createOccurrenceDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('linkage', JSON.stringify(this.geneticLinkEditData));
+            formData.append('action', 'createOccurrenceGeneticLinkageRecord');
+            fetch(occurrenceGeneticLinkApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -69,12 +67,12 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
                 });
             });
         },
-        deleteDeterminationRecord(collid, callback) {
+        deleteGeneticLinkageRecord(collid, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'deleteDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('idoccurgenetic', this.geneticLinkId.toString());
+            formData.append('action', 'deleteGeneticLinkageRecord');
+            fetch(occurrenceGeneticLinkApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -84,32 +82,18 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
                 });
             });
         },
-        getCurrentDeterminationData(detid) {
-            return this.determinationArr.find(det => Number(det.detid) === Number(detid));
+        getCurrentGeneticLinkageData() {
+            return this.geneticLinkArr.find(link => Number(link.idoccurgenetic) === this.geneticLinkId);
         },
-        makeDeterminationCurrent(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'makeDeterminationCurrent');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
-            });
-        },
-        setCurrentDeterminationRecord(detid) {
-            if(Number(detid) > 0){
-                this.determinationData = Object.assign({}, this.getCurrentDeterminationData(detid));
+        setCurrentGeneticLinkageRecord(linkid) {
+            this.geneticLinkId = Number(linkid);
+            if(this.geneticLinkId > 0){
+                this.geneticLinkData = Object.assign({}, this.getCurrentGeneticLinkageData());
             }
             else{
-                this.determinationData = Object.assign({}, this.blankDeterminationRecord);
+                this.geneticLinkData = Object.assign({}, this.blankGeneticLinkRecord);
             }
-            this.determinationEditData = Object.assign({}, this.determinationData);
+            this.geneticLinkEditData = Object.assign({}, this.geneticLinkData);
         },
         setGeneticLinkArr(occid) {
             const formData = new FormData();
@@ -126,16 +110,16 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
                 this.geneticLinkArr = data;
             });
         },
-        updateDeterminationEditData(key, value) {
-            this.determinationEditData[key] = value;
+        updateGeneticLinkageEditData(key, value) {
+            this.geneticLinkEditData[key] = value;
         },
-        updateDeterminationRecord(collid, callback) {
+        updateGeneticLinkageRecord(collid, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('determinationData', JSON.stringify(this.determinationUpdateData));
+            formData.append('idoccurgenetic', this.geneticLinkId.toString());
+            formData.append('linkageData', JSON.stringify(this.geneticLinkUpdateData));
             formData.append('action', 'updateDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
+            fetch(occurrenceGeneticLinkApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -143,7 +127,7 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
                 response.text().then((res) => {
                     callback(Number(res));
                     if(res && Number(res) === 1){
-                        this.determinationData = Object.assign({}, this.determinationEditData);
+                        this.geneticLinkData = Object.assign({}, this.geneticLinkEditData);
                     }
                 });
             });

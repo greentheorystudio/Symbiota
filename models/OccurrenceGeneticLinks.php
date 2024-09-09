@@ -29,13 +29,49 @@ class OccurrenceGeneticLinks{
         }
 	}
 
+    public function createOccurrenceGeneticLinkageRecord($data): int
+    {
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        $occId = array_key_exists('occid', $data) ? (int)$data['occid'] : 0;
+        $name = array_key_exists('resourcename', $data) ? SanitizerService::cleanInStr($this->conn, $data['resourcename']) : '';
+        if($occId && $name){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'idoccurgenetic' && array_key_exists($field, $data)){
+                    $fieldNameArr[] = $field;
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
+            }
+            $fieldNameArr[] = 'initialtimestamp';
+            $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+            $sql = 'INSERT INTO omoccurgenetic(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+            }
+        }
+        return $newID;
+    }
+
+    public function deleteGeneticLinkageRecord($linkId): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM omoccurgenetic WHERE idoccurgenetic = ' . (int)$linkId . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getOccurrenceGeneticLinkData($occid): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurgenetic '.
-            'WHERE occid = ' . (int)$occid . ' ';
+            'WHERE occid = ' . (int)$occid . ' ORDER BY resourcename ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);
@@ -50,5 +86,25 @@ class OccurrenceGeneticLinks{
             $rs->free();
         }
         return $retArr;
+    }
+
+    public function updateGeneticLinkageRecord($linkId, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($linkId && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'idoccurgenetic' && array_key_exists($field, $editData)){
+                    $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'UPDATE omoccurgenetic SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE idoccurgenetic = ' . (int)$linkId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 }

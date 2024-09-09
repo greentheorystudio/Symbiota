@@ -111,6 +111,7 @@ const occurrenceDeterminationEditorPopup = {
             occurrenceStore.createOccurrenceDeterminationRecord((newDetId) => {
                 if(newDetId > 0){
                     showNotification('positive','Determination added successfully.');
+                    context.emit('close:popup');
                 }
                 else{
                     showNotification('negative', 'There was an error adding the new determination.');
