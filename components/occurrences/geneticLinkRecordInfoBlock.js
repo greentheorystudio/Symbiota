@@ -31,7 +31,7 @@ const geneticLinkRecordInfoBlock = {
                     <div v-if="geneticLinkageData['locus']">
                         <span class="text-bold q-mr-sm">Locus:</span>{{ geneticLinkageData['locus'] }}
                     </div>
-                    <div v-if="geneticLinkageData['verbatimscientificname']">
+                    <div v-if="geneticLinkageData['resourceurl']">
                         <span class="text-bold q-mr-sm">URL:</span> <a :href="geneticLinkageData['resourceurl']" target="_blank">{{ geneticLinkageData['resourceurl'] }}</a>
                     </div>
                     <div v-if="geneticLinkageData['notes']">
