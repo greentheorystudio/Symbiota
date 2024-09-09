@@ -181,7 +181,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 
                     Vue.onMounted(() => {
                         if(Number(initialCollId) > 0 || Number(initialOccId) > 0){
-                            if(Number(initialCollId) > 0){
+                            if(Number(initialCollId) > 0 && Number(initialOccId) === 0){
                                 occurrenceStore.setCollection(initialCollId);
                             }
                             if(Number(initialDisplayMode) > 1){

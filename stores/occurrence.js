@@ -777,6 +777,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setCollection(collid, callback = null) {
             this.collectionStore.setCollection(collid, () => {
                 if(this.getIsEditor){
+                    this.occurrenceEntryFormat = this.getCollectionData['datarecordingmethod'];
                     if(this.occurrenceData.hasOwnProperty('occid')){
                         this.occurrenceEditData = Object.assign({}, this.occurrenceData);
                         this.setCurrentLocationRecord(this.occurrenceEditData['locationid'] ? this.occurrenceEditData['locationid'] : 0);
@@ -785,7 +786,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     if(this.getCollectingEventID === 0){
                         this.updateCollectingEventEditData('repcount', (this.getCollectionData['defaultrepcount'] ? Number(this.getCollectionData['defaultrepcount']) : 0))
                     }
-                    this.occurrenceEntryFormat = this.getCollectionData['datarecordingmethod'];
                     if(callback){
                         callback();
                     }
