@@ -24,6 +24,10 @@ const mediaFileUploadInputElement = {
             type: Number,
             default: null
         },
+        showStart: {
+            type: Boolean,
+            default: true
+        },
         taxon: {
             type: Object,
             default: null
@@ -53,7 +57,7 @@ const mediaFileUploadInputElement = {
                             </div>
                         </div>
                         <div class="row justify-end">
-                            <div>
+                            <div v-if="showStart">
                                 <q-btn color="positive" @click="uploadFiles();" label="Start Upload" :disabled="fileArr.length === 0" />
                             </div>
                         </div>
@@ -211,6 +215,7 @@ const mediaFileUploadInputElement = {
         const identifierData = Vue.ref({});
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
         const processingArr = Vue.ref([]);
+        const propsRefs = Vue.toRefs(props);
         const queueSize = Vue.ref(0);
         const queueSizeLabel = Vue.ref('');
         const selectedUploadMethod = Vue.ref('upload');
@@ -252,6 +257,10 @@ const mediaFileUploadInputElement = {
         });
         const urlMethodCopyFile = Vue.ref(true);
         const urlMethodUrl = Vue.ref(null);
+
+        Vue.watch(propsRefs.occId, () => {
+            setOccid();
+        });
 
         function cancelUpload() {
             csvFileData.length = 0;
@@ -483,6 +492,12 @@ const mediaFileUploadInputElement = {
             });
         }
 
+        function setOccid() {
+            fileArr.forEach((file) => {
+                file['uploadMetadata']['occid'] = props.occId;
+            });
+        }
+
         function setTaxaData() {
             const formData = new FormData();
             formData.append('taxa', JSON.stringify(taxaArr.value));
@@ -505,7 +520,7 @@ const mediaFileUploadInputElement = {
         function setUploaderStyle() {
             uploaderStyle.value = '';
             setTimeout(() => {
-                if(fileListRef.value.clientHeight > 0){
+                if(fileListRef.value && fileListRef.value.clientHeight > 0){
                     uploaderStyle.value = 'height: ' + (fileListRef.value.clientHeight + 50) + 'px;';
                 }
             }, 400 );
@@ -534,48 +549,50 @@ const mediaFileUploadInputElement = {
         }
 
         function uploadFiles() {
-            showWorking();
-            processingArr.value.length = 0;
-            fileArr.forEach((file) => {
-                if(!file.hasOwnProperty('height')){
-                    file['uploadMetadata']['height'] = file.hasOwnProperty('__img') ? file['__img']['height'] : null;
-                }
-                else{
-                    file['uploadMetadata']['height'] = file.height;
-                }
-                if(!file.hasOwnProperty('width')){
-                    file['uploadMetadata']['width'] = file.hasOwnProperty('__img') ? file['__img']['width'] : null;
-                }
-                else{
-                    file['uploadMetadata']['width'] = file.width;
-                }
-                if(collId.value > 0 && props.createOccurrence && !file['uploadMetadata']['occid']){
-                    const occurrenceData = {};
-                    occurrenceData['collid'] = collId.value.toString();
-                    occurrenceData[props.identifierField] = file['recordIdentifier'];
-                    occurrenceData['sciname'] = file['uploadMetadata']['sciname'];
-                    occurrenceData['tid'] = file['uploadMetadata']['tid'];
-                    const formData = new FormData();
-                    formData.append('collid', collId.value.toString());
-                    formData.append('occurrence', JSON.stringify(occurrenceData));
-                    formData.append('action', 'createOccurrenceRecord');
-                    fetch(occurrenceApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        response.text().then((res) => {
-                            if(res && Number(res) > 0){
-                                file['uploadMetadata']['occid'] = res;
-                                processUpload(file);
-                            }
-                        });
-                    });
-                }
-                else if((collId.value > 0 && Number(file['uploadMetadata']['occid']) > 0) || (collId.value === 0 && Number(file['uploadMetadata']['tid']) > 0)){
-                    processUpload(file);
-                }
-            });
+            if(fileArr.length > 0){
+                showWorking();
+                processingArr.value.length = 0;
+                fileArr.forEach((file) => {
+                    if(!file.hasOwnProperty('height')){
+                        file['uploadMetadata']['height'] = file.hasOwnProperty('__img') ? file['__img']['height'] : null;
+                    }
+                    else{
+                        file['uploadMetadata']['height'] = file.height;
+                    }
+                    if(!file.hasOwnProperty('width')){
+                        file['uploadMetadata']['width'] = file.hasOwnProperty('__img') ? file['__img']['width'] : null;
+                    }
+                    else{
+                        file['uploadMetadata']['width'] = file.width;
+                    }
+                    if(collId.value > 0 && props.createOccurrence && !file['uploadMetadata']['occid']){
+                        const occurrenceData = {};
+                        occurrenceData['collid'] = collId.value.toString();
+                        occurrenceData[props.identifierField] = file['recordIdentifier'];
+                        occurrenceData['sciname'] = file['uploadMetadata']['sciname'];
+                        occurrenceData['tid'] = file['uploadMetadata']['tid'];
+                        const formData = new FormData();
+                        formData.append('collid', collId.value.toString());
+                        formData.append('occurrence', JSON.stringify(occurrenceData));
+                        formData.append('action', 'createOccurrenceRecord');
+                        fetch(occurrenceApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then((response) => {
+                                response.text().then((res) => {
+                                    if(res && Number(res) > 0){
+                                        file['uploadMetadata']['occid'] = res;
+                                        processUpload(file);
+                                    }
+                                });
+                            });
+                    }
+                    else if((collId.value > 0 && Number(file['uploadMetadata']['occid']) > 0) || (collId.value === 0 && Number(file['uploadMetadata']['tid']) > 0)){
+                        processUpload(file);
+                    }
+                });
+            }
         }
 
         function uploadImageFile(file, action, callback) {

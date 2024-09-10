@@ -482,11 +482,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             this.occidArr.splice((this.occidArr.length - 1), 1);
                         }
                         this.occidArr.push(Number(res));
-                        if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
-                            this.setCurrentOccurrenceRecord(Number(res));
-                        }
-                        else{
-                            this.setCurrentOccurrenceRecord(0);
+                        if(this.occurrenceEntryFormat !== 'observation'){
+                            if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
+                                this.setCurrentOccurrenceRecord(Number(res));
+                            }
+                            else{
+                                this.setCurrentOccurrenceRecord(0);
+                            }
                         }
                     }
                 });
