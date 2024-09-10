@@ -146,7 +146,8 @@ class OccurrenceListManager extends OccurrenceManager{
     private function setRecordCnt($sqlWhere): void
     {
         if($sqlWhere){
-            $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID ';
+            $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                'LEFT JOIN taxa AS t ON o.tid = t.TID ';
             $sql .= $this->setTableJoins($sqlWhere);
             $sql .= $sqlWhere;
             //echo '<div>Count sql: ' .$sql. '</div>';

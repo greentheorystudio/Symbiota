@@ -80,7 +80,10 @@ class Occurrences{
         "rep" => array("dataType" => "number", "length" => 10),
         "preparations" => array("dataType" => "string", "length" => 100),
         "locationid" => array("dataType" => "number", "length" => 11),
+        "island" => array("dataType" => "string", "length" => 75),
+        "islandgroup" => array("dataType" => "string", "length" => 75),
         "waterbody" => array("dataType" => "string", "length" => 255),
+        "continent" => array("dataType" => "string", "length" => 45),
         "country" => array("dataType" => "string", "length" => 64),
         "stateprovince" => array("dataType" => "string", "length" => 255),
         "county" => array("dataType" => "string", "length" => 255),
@@ -137,8 +140,7 @@ class Occurrences{
         $fieldNameArr = array();
         $fieldValueArr = array();
         $collId = array_key_exists('collid',$data) ? (int)$data['collid'] : 0;
-        $sciname = array_key_exists('sciname',$data) ? SanitizerService::cleanInStr($this->conn, $data['sciname']) : '';
-        if($collId && $sciname){
+        if($collId){
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'occid' && array_key_exists($field, $data)){
                     if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){

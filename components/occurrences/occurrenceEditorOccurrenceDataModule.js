@@ -47,7 +47,9 @@ const occurrenceEditorOccurrenceDataModule = {
                         <occurrence-editor-form-location-element></occurrence-editor-form-location-element>
                         <occurrence-editor-form-misc-element></occurrence-editor-form-misc-element>
                         <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
-                        <occurrence-editor-record-footer-element></occurrence-editor-record-footer-element>
+                        <template v-if="occId > 0">
+                            <occurrence-editor-record-footer-element></occurrence-editor-record-footer-element>
+                        </template>
                     </q-card-section>
                 </q-card>
             </template>

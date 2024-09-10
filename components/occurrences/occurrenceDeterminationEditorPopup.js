@@ -87,9 +87,11 @@ const occurrenceDeterminationEditorPopup = {
                 </div>
             </q-card>
         </q-dialog>
+        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
+        'confirmation-popup': confirmationPopup,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'text-field-input-element': textFieldInputElement
     },
@@ -97,6 +99,7 @@ const occurrenceDeterminationEditorPopup = {
         const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const determinationData = Vue.computed(() => occurrenceStore.getDeterminationData);
@@ -111,6 +114,7 @@ const occurrenceDeterminationEditorPopup = {
             occurrenceStore.createOccurrenceDeterminationRecord((newDetId) => {
                 if(newDetId > 0){
                     showNotification('positive','Determination added successfully.');
+                    context.emit('close:popup');
                 }
                 else{
                     showNotification('negative', 'There was an error adding the new determination.');
@@ -123,15 +127,20 @@ const occurrenceDeterminationEditorPopup = {
         }
 
         function deleteDetermination() {
-            occurrenceStore.deleteOccurrenceDeterminationRecord((res) => {
-                if(res === 1){
-                    showNotification('positive','Determination has been deleted.');
-                    context.emit('close:popup');
+            const confirmText = 'Are you sure you want to delete this determination? This action cannot be undone.';
+            confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                if(val){
+                    occurrenceStore.deleteOccurrenceDeterminationRecord((res) => {
+                        if(res === 1){
+                            showNotification('positive','Determination has been deleted.');
+                            context.emit('close:popup');
+                        }
+                        else{
+                            showNotification('negative', 'There was an error deleting the determination.');
+                        }
+                    });
                 }
-                else{
-                    showNotification('negative', 'There was an error deleting the determination.');
-                }
-            });
+            }});
         }
 
         function makeDeterminationCurrent() {
@@ -186,6 +195,7 @@ const occurrenceDeterminationEditorPopup = {
         });
 
         return {
+            confirmationPopupRef,
             contentRef,
             contentStyle,
             determinationData,

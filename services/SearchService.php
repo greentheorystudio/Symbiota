@@ -47,7 +47,7 @@ class SearchService {
         return $resultObj;
     }
 
-    public function getOccurrenceSearchRecordCnt($searchTermsArr, $options): int
+    public function getSearchRecordCnt($searchTermsArr, $options): int
     {
         $returnVal = 0;
         if($searchTermsArr && $options){
@@ -301,24 +301,14 @@ class SearchService {
                 $tempInnerArr = array();
                 $collValueArr = explode(' ', trim($collectorArr[0]));
                 foreach($collValueArr as $collV){
-                    if(strlen($collV) < 4 || strtolower($collV) === 'best'){
-                        $tempInnerArr[] = '(o.recordedBy LIKE "%' . SanitizerService::cleanInStr($this->conn, $collV) . '%")';
-                    }
-                    else{
-                        $tempInnerArr[] = '(MATCH(f.recordedby) AGAINST("' . SanitizerService::cleanInStr($this->conn, $collV) . '"))';
-                    }
+                    $tempInnerArr[] = '(o.recordedBy LIKE "%' . SanitizerService::cleanInStr($this->conn, $collV) . '%")';
                 }
                 $tempArr[] = implode(' AND ', $tempInnerArr);
             }
         }
         elseif(count($collectorArr) > 1){
             $collStr = current($collectorArr);
-            if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
-                $tempArr[] = '(o.recordedby LIKE "%' . SanitizerService::cleanInStr($this->conn, $collStr) . '%")';
-            }
-            else{
-                $tempArr[] = '(MATCH(f.recordedby) AGAINST("' . SanitizerService::cleanInStr($this->conn, $collStr) . '"))';
-            }
+            $tempArr[] = '(o.recordedby LIKE "%' . SanitizerService::cleanInStr($this->conn, $collStr) . '%")';
         }
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
     }
@@ -719,8 +709,10 @@ class SearchService {
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
-                $spatial = (int)$options['spatial'] === 1;
-                $bottomLimit = ($options['index'] - 1) * $options['numRows'];
+                $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
+                $numRows = array_key_exists('numRows', $options) ? (int)$options['numRows'] : 0;
+                $index = array_key_exists('index', $options) ? (int)$options['index'] : 0;
+                $bottomLimit = $numRows > 0 ? ($index - 1) * $numRows : null;
                 $sql = $this->setSelectSql($options['schema']);
                 $sql .= $this->setFromSql($options['schema']) . $this->setTableJoinsSql($searchTermsArr);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
@@ -747,11 +739,13 @@ class SearchService {
                 else{
                     $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
-                $sql .= 'LIMIT ' . $bottomLimit . ',' . $options['numRows'];
+                if($numRows > 0){
+                    $sql .= 'LIMIT ' . $bottomLimit . ',' . $numRows;
+                }
                 //echo "<div>Count sql: ".$sql."</div>";
                 if($result = $this->conn->query($sql)){
                     if($options['output'] === 'geojson'){
-                        $returnArr = $this->serializeGeoJsonResultArr($result, $options['numRows']);
+                        $returnArr = $this->serializeGeoJsonResultArr($result, $numRows);
                     }
                     else{
                         $returnArr = $this->serializeJsonResultArr($result, $options['schema'], $spatial);

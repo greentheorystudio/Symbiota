@@ -44,6 +44,12 @@
             "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the Global Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
             "examples": "https://www.gbif.org/grscicoll/collection/fbd3ed74-5a21-4e01-b86a-33d36f032d9c"
         },
+        "continent": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:continent",
+            "definition": "The name of the continent in which the dcterms:Location occurs.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "Africa | Antarctica | Asia | Europe | North America | Oceania | South America"
+        },
         "coordinateprecision": {
             "source": "https://dwc.tdwg.org/terms/#dwc:coordinatePrecision",
             "definition": "A decimal representation of the precision of the coordinates given in the dwc:decimalLatitude and dwc:decimalLongitude.",
@@ -232,6 +238,18 @@
             "definition": "An identifier for the institution having custody of the object(s) or information referred to in the record.",
             "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the Research Organization Registry (ROR) or the Global Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
             "examples": "https://ror.org/015hz7p22 | http://grscicoll.org/institution/museum-southwestern-biology | https://www.gbif.org/grscicoll/institution/e3d4dcc4-81e2-444c-8a5c-41d1044b5381"
+        },
+        "island": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:island",
+            "definition": "The name of the island on or near which the dcterms:Location occurs.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.",
+            "examples": "Nosy Be | Bikini Atoll | Vancouver | Viti Levu | Zanzibar"
+        },
+        "islandgroup": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:islandGroup",
+            "definition": "The name of the island group in which the dcterms:Location occurs.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.",
+            "examples": "Alexander Archipelago | Archipiélago Diego Ramírez | Seychelles"
         },
         "language": {
             "source": "https://dwc.tdwg.org/terms/#dc:language",

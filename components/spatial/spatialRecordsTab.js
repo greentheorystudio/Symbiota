@@ -103,9 +103,51 @@ const spatialRecordsTab = {
             { name: 'landUnitDetail', label: 'Land Unit Detail', field: 'landunitdetail' }
         ];
         const layersObj = Vue.inject('layersObj');
-        const pagination = Vue.computed(() => searchStore.getPaginationObj);
+        const lazyLoadCnt = 100;
+        const pageNumber = Vue.ref(1);
+        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecCnt);
+        const paginationFirstRecordNumber = Vue.computed(() => {
+            let recordNumber = 1;
+            if(Number(pageNumber.value) > 1){
+                recordNumber = recordNumber + ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
+            }
+            return recordNumber;
+        });
+        const paginationLastPageNumber = Vue.computed(() => {
+            let lastPage = 1;
+            if(Number(searchRecordCount.value) > Number(lazyLoadCnt)){
+                lastPage = Math.floor(Number(searchRecordCount.value) / Number(lazyLoadCnt));
+            }
+            if(Number(searchRecordCount.value) % Number(lazyLoadCnt)){
+                lastPage++;
+            }
+            return lastPage;
+        });
+        const paginationLastRecordNumber = Vue.computed(() => {
+            let recordNumber = (Number(searchRecordCount.value) > Number(lazyLoadCnt)) ? Number(lazyLoadCnt) : Number(searchRecordCount.value);
+            if(Number(searchRecordCount.value) > Number(lazyLoadCnt) && Number(pageNumber.value) > 1){
+                if(Number(pageNumber.value) === Number(paginationLastPageNumber.value)){
+                    recordNumber = (Number(searchRecordCount.value) % Number(lazyLoadCnt)) + ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
+                }
+                else{
+                    recordNumber = Number(pageNumber.value) * Number(lazyLoadCnt);
+                }
+            }
+            return recordNumber;
+        });
+        const pagination = Vue.computed(() => {
+            return {
+                page: pageNumber.value,
+                lastPage: paginationLastPageNumber.value,
+                rowsPerPage: lazyLoadCnt,
+                firstRowNumber: paginationFirstRecordNumber.value,
+                lastRowNumber: paginationLastRecordNumber.value,
+                rowsNumber: Number(searchRecordCount.value)
+            };
+        });
         const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
         const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
+        const searchTermsPageNumber = Vue.computed(() => searchStore.getSearchTermsPageNumber);
         const selectedRecordCount = Vue.computed(() => searchStore.getSearchRecordSelectedCount);
         const selectedRecordSelectAllVal = Vue.computed(() => {
             return (selectedRecordCount.value > 0 && selectedRecordCount.value < 100) ? null : selectedRecordCount.value !== 0;
@@ -118,7 +160,7 @@ const spatialRecordsTab = {
         const updatePointStyle = Vue.inject('updatePointStyle');
 
         function changeRecordPage(props) {
-            searchStore.processGetQueryResultsRecordData(props.pagination.page);
+            setTableRecordData(props.pagination.page);
         }
 
         function processRecordSelectionChange(selected, record) {
@@ -147,8 +189,23 @@ const spatialRecordsTab = {
             showPopup(label, recordPosition, false, true);
         }
 
+        function setTableRecordData(index) {
+            const options = {
+                schema: 'map',
+                spatial: 1,
+                numRows: lazyLoadCnt,
+                index: index,
+                output: 'json'
+            };
+            searchStore.setSearchRecordData(options);
+            pageNumber.value = Number(index);
+        }
+
         Vue.onMounted(() => {
-            searchStore.processGetQueryResultsRecordData(pagination.value.page);
+            if(Number(searchTermsPageNumber.value) > Number(pageNumber.value)){
+                pageNumber.value = searchTermsPageNumber.value;
+            }
+            setTableRecordData(pagination.value.page);
         });
 
         return {

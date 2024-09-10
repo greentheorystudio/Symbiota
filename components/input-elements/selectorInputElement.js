@@ -16,9 +16,17 @@ const selectorInputElement = {
             type: String,
             default: ''
         },
+        optionLabel: {
+            type: String,
+            default: 'label'
+        },
         options: {
             type: Array,
             default: []
+        },
+        optionValue: {
+            type: String,
+            default: 'value'
         },
         value: {
             type: String,
@@ -94,7 +102,7 @@ const selectorInputElement = {
             setSelectedOption();
         });
 
-        Vue.watch(propsRefs.options, () => {
+        Vue.watch(props.options, () => {
             setOptions();
             setSelectedOption();
         });
@@ -131,8 +139,8 @@ const selectorInputElement = {
                     if(typeof option === 'string' || typeof option === 'number'){
                         selectorOptions.push({value: option.toString(), label: option.toString()});
                     }
-                    else if(typeof option === 'object' && option.hasOwnProperty('value') && option.hasOwnProperty('label')){
-                        selectorOptions.push({value: option.value.toString(), label: option.label.toString()});
+                    else if(typeof option === 'object' && option.hasOwnProperty(props.optionValue) && option.hasOwnProperty(props.optionLabel)){
+                        selectorOptions.push({value: option[props.optionValue].toString(), label: option[props.optionLabel].toString()});
                     }
                 });
             }

@@ -65,8 +65,13 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                                     </q-table>
                                 </div>
                             </div>
-                            <div class="row justify-end full-width q-pr-lg">
-                                <q-btn color="secondary" @click="preProcessEnteredData();" :label="(editMode ? 'Apply Edits' : 'Add Taxon')" :disabled="!editsExist && !taxonEditsExist" />
+                            <div class="row justify-end full-width q-pr-lg q-gutter-sm">
+                                <div v-if="editMode">
+                                    <q-btn color="negative" @click="deleteTaxon();" label="Delete Taxon" />
+                                </div>
+                                <div>
+                                    <q-btn color="secondary" @click="preProcessEnteredData();" :label="(editMode ? 'Apply Edits' : 'Add Taxon')" :disabled="!editsExist && !taxonEditsExist" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -180,6 +185,13 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
         function closePopup() {
             editTaxon.value = null;
             context.emit('close:popup');
+        }
+
+        function deleteTaxon() {
+            Object.keys(repData[0]).forEach(key => {
+                repData[0][key]['cnt'] = 0;
+            });
+            preProcessEnteredData();
         }
 
         function preProcessEnteredData() {
@@ -427,6 +439,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             taxonSciName,
             taxonTid,
             closePopup,
+            deleteTaxon,
             preProcessEnteredData,
             processTaxonAuthorChange,
             processTaxonFamilyChange,

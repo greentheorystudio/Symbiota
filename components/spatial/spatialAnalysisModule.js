@@ -56,10 +56,9 @@ const spatialAnalysisModule = {
         'spatial-side-button-tray': spatialSideButtonTray
     },
     setup(props, context) {
-        const baseStore = useBaseStore();
+        const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
-        const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
 
         const activeLayerSelectorOptions = Vue.shallowReactive([
             {value: 'none', label: 'None'}
@@ -87,6 +86,7 @@ const spatialAnalysisModule = {
         const layersConfigArr = Vue.reactive([]);
         const layersInfoObj = Vue.reactive({});
         const layersObj = Vue.shallowReactive({});
+        const lazyLoadCnt = 20000;
         let map = null;
         const mapProjection = new ol.proj.Projection({
             code: 'EPSG:3857'
@@ -107,7 +107,6 @@ const spatialAnalysisModule = {
         ]);
         const selectedPolyError = Vue.ref(false);
         const selectInteraction = Vue.computed(() => setSelectInteraction());
-        const solrMode = baseStore.getSolrMode;
         const spatialModuleInitialising = Vue.ref(false);
         let spiderCluster = false;
         const spiderFeature = Vue.shallowReactive([]);
@@ -779,8 +778,12 @@ const spatialAnalysisModule = {
                     }
                     searchStore.clearSelections();
                     showWorking('Loading...');
-                    searchStore.processGetQueryRecCnt(solrMode, () => {
-                        if(Number(searchStore.getQueryRecCnt) > 0){
+                    const options = {
+                        schema: 'map',
+                        spatial: 1
+                    };
+                    searchStore.setSearchRecCnt(options, () => {
+                        if(Number(searchStore.getSearchRecCnt) > 0){
                             loadPointsLayer();
                         }
                         else{
@@ -808,9 +811,16 @@ const spatialAnalysisModule = {
             mapSettings.pointVectorSource.clear(true);
             let processed = 0;
             let index = 0;
-            const finalIndex = searchStore.getQueryRecCnt > searchStore.getLazyLoadCnt ? Math.ceil(searchStore.getQueryRecCnt / searchStore.getLazyLoadCnt) : 0;
+            const finalIndex = searchStore.getSearchRecCnt > lazyLoadCnt ? Math.ceil(searchStore.getSearchRecCnt / lazyLoadCnt) : 0;
+            const options = {
+                schema: 'map',
+                spatial: 1,
+                numRows: finalIndex,
+                index: index,
+                output: 'geojson'
+            };
             do {
-                searchStore.processGetQueryResultsGeoJson(solrMode, index, finalIndex, (res, index, finalIndex) => {
+                searchStore.processSearch(options, (res, index, finalIndex) => {
                     if(res){
                         const format = new ol.format.GeoJSON();
                         let features = format.readFeatures(res, {
@@ -836,10 +846,10 @@ const spatialAnalysisModule = {
                         loadPointsPostrender();
                     }
                 });
-                processed = processed + searchStore.getLazyLoadCnt;
+                processed = processed + lazyLoadCnt;
                 index++;
             }
-            while(processed < searchStore.getQueryRecCnt && !mapSettings.loadPointsError);
+            while(processed < searchStore.getSearchRecCnt && !mapSettings.loadPointsError);
             sortSymbologyArr();
             updateMapSettings('clusterSource', new ol.source.PropertyCluster({
                 distance: mapSettings.clusterDistance,
@@ -1713,12 +1723,12 @@ const spatialAnalysisModule = {
                 }
             });
             layersObj['pointv'].on('postrender', () => {
-                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getQueryRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
+                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
                     loadPointsPostrender();
                 }
             });
             layersObj['heat'].on('postrender', () => {
-                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getQueryRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
+                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
                     loadPointsPostrender();
                 }
             });
