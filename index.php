@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/config/symbbase.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -11,11 +11,6 @@ include_once(__DIR__ . '/config/header-includes.php');
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link type="text/css" href="css/external/jquery-ui.css" rel="stylesheet" />
-    <script type="text/javascript" src="js/external/jquery.js"></script>
-    <script type="text/javascript" src="js/external/jquery-ui.js"></script>
-    <meta name='keywords' content='' />
-    <?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
 </head>
 <body>
 <?php

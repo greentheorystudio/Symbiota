@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/classes/Sanitizer.php');
+include_once(__DIR__ . '/services/SanitizerService.php');
 ?>
 <div id="mainContainer">
     <div id="bannerDiv">
@@ -72,7 +72,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                 <q-btn class="horizontalDropDownButton text-capitalize" @click="logout();" label="Logout" stretch flat no-wrap></q-btn>
             </template>
             <template v-else>
-                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>" label="Log In" stretch flat no-wrap></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' . SanitizerService::getCleanedRequestPath(true); ?>" label="Log In" stretch flat no-wrap></q-btn>
                 <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php" label="New Account" stretch flat no-wrap></q-btn>
             </template>
             <q-btn class="horizontalDropDownButton text-capitalize" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" label="Sitemap" stretch flat no-wrap></q-btn>
