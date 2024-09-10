@@ -104,12 +104,7 @@ const occurrenceEntryObservationFormModule = {
         }
 
         function updateDateData(dateData) {
-            updateOccurrenceData('eventdate', dateData['date']);
-            updateOccurrenceData('year', dateData['year']);
-            updateOccurrenceData('month', dateData['month']);
-            updateOccurrenceData('day', dateData['day']);
-            updateOccurrenceData('startdayofyear', dateData['startDayOfYear']);
-            updateOccurrenceData('enddayofyear', dateData['endDayOfYear']);
+            occurrenceStore.updateOccurrenceEditDataDate(dateData);
         }
 
         function updateOccurrenceData(key, value) {

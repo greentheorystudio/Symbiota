@@ -1084,6 +1084,15 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 this.updateCollectingEventEditData(key, value);
             }
         },
+        updateOccurrenceEditDataDate(dateData) {
+            this.occurrenceEditData['eventdate'] = dateData['date'];
+            this.occurrenceEditData['year'] = dateData['year'];
+            this.occurrenceEditData['month'] = dateData['month'];
+            this.occurrenceEditData['day'] = dateData['day'];
+            this.occurrenceEditData['startdayofyear'] = dateData['startDayOfYear'];
+            this.occurrenceEditData['enddayofyear'] = dateData['endDayOfYear'];
+
+        },
         updateOccurrenceEditDataTaxon(taxon) {
             this.occurrenceEditData['sciname'] = taxon ? taxon.sciname : null;
             this.occurrenceEditData['tid'] = taxon ? taxon.tid : null;
