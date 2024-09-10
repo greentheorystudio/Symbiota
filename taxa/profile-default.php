@@ -92,6 +92,7 @@
         setup() {
             const { hideWorking, showWorking } = useCore();
             const store = useBaseStore();
+
             const centralImage = Vue.ref(null);
             const clientRoot = store.getClientRoot;
             const clValue = CL_VAL;

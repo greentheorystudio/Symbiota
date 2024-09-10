@@ -1,5 +1,9 @@
 const occurrenceGeneticRecordLinkageEditorPopup = {
     props: {
+        geneticLinkageId: {
+            type: Number,
+            default: 0
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -7,7 +11,7 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
-            <q-card class="lg-popup overflow-hidden">
+            <q-card class="md-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
@@ -18,21 +22,47 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                         <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div>
-                                    <template v-if="editsExist">
+                                    <template v-if="geneticLinkageId > 0 && editsExist">
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" />
+                                    <template v-if="geneticLinkageId > 0">
+                                        <q-btn color="secondary" @click="saveGeneticLinkageEdits();" label="Save Edits" :disabled="!editsExist || !geneticLinkageValid" />
+                                    </template>
+                                    <template v-else>
+                                        <q-btn color="secondary" @click="addGeneticLinkage();" label="Add Genetic Record Linkage" :disabled="!geneticLinkageValid" />
+                                    </template>
                                 </div>
                             </div>
-                            <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
-                            <div class="row justify-between q-col-gutter-sm">
-                                <div class="col-12 col-sm-6 col-md-9">
-                                    <text-field-input-element :definition="occurrenceFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFields['eventremarks'] ? eventFields['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element label="Name" :value="geneticLinkageData['resourcename']" @update:value="(value) => updateGeneticLinkageData('resourcename', value)"></text-field-input-element>
                                 </div>
-                                <div class="col-12 col-sm-6 col-md-3">
-                                    <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['repcount']" label="Rep Count" :maxlength="eventFields['repcount'] ? eventFields['repcount']['length'] : 0" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element label="Identifier" :value="geneticLinkageData['identifier']" @update:value="(value) => updateGeneticLinkageData('identifier', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Locus" :value="geneticLinkageData['locus']" @update:value="(value) => updateGeneticLinkageData('locus', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="URL" :value="geneticLinkageData['resourceurl']" @update:value="(value) => updateGeneticLinkageData('resourceurl', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Notes" :value="geneticLinkageData['notes']" @update:value="(value) => updateGeneticLinkageData('notes', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div v-if="Number(geneticLinkageId) > 0" class="row justify-end q-gutter-md">
+                                <div>
+                                    <q-btn color="negative" @click="deleteGeneticLinkage();" label="Delete Genetic Record Linkage" />
                                 </div>
                             </div>
                         </div>
@@ -40,43 +70,69 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                 </div>
             </q-card>
         </q-dialog>
+        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
-        'collecting-event-field-module': collectingEventFieldModule,
+        'confirmation-popup': confirmationPopup,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
+        const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const editsExist = Vue.computed(() => occurrenceStore.getCollectingEventEditsExist);
-        const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
-        const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
-        const eventValid = Vue.computed(() => occurrenceStore.getCollectingEventValid);
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const geneticLinkageData = Vue.computed(() => occurrenceStore.getGeneticLinkData);
+        const geneticLinkageValid = Vue.computed(() => occurrenceStore.getGeneticLinkValid);
+        const editsExist = Vue.computed(() => occurrenceStore.getGeneticLinkEditsExist);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
+        function addGeneticLinkage() {
+            occurrenceStore.createOccurrenceGeneticLinkageRecord((newLinkId) => {
+                if(newLinkId > 0){
+                    showNotification('positive','Genetic record linkage added successfully.');
+                    context.emit('close:popup');
+                }
+                else{
+                    showNotification('negative', 'There was an error adding the new genetic record linkage.');
+                }
+            });
+        }
+
         function closePopup() {
-            if(editsExist.value){
-                occurrenceStore.revertCollectingEventEditData();
-            }
             context.emit('close:popup');
         }
 
-        function saveEventEdits() {
+        function deleteGeneticLinkage() {
+            const confirmText = 'Are you sure you want to delete this genetic record linkage? This action cannot be undone.';
+            confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                if(val){
+                    occurrenceStore.deleteGeneticLinkageRecord((res) => {
+                        if(res === 1){
+                            showNotification('positive','Genetic record linkage has been deleted.');
+                            context.emit('close:popup');
+                        }
+                        else{
+                            showNotification('negative', 'There was an error deleting the genetic record linkage.');
+                        }
+                    });
+                }
+            }});
+        }
+
+        function saveGeneticLinkageEdits() {
             showWorking('Saving edits...');
-            occurrenceStore.updateCollectingEventRecord((res) => {
+            occurrenceStore.updateOccurrenceGeneticLinkageRecord((res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
                 }
                 else{
-                    showNotification('negative', 'There was an error saving the event edits.');
+                    showNotification('negative', 'There was an error saving the genetic record linkage edits.');
                 }
                 context.emit('close:popup');
             });
@@ -89,26 +145,28 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
             }
         }
 
-        function updateCollectingEventData(key, value) {
-            occurrenceStore.updateCollectingEventEditData(key, value);
+        function updateGeneticLinkageData(key, value) {
+            occurrenceStore.updateGeneticLinkageEditData(key, value);
         }
 
         Vue.onMounted(() => {
             setContentStyle();
-            occurrenceStore.setCollectingEventFields();
+            window.addEventListener('resize', setContentStyle);
+            occurrenceStore.setCurrentGeneticLinkageRecord(props.geneticLinkageId);
         });
 
         return {
+            confirmationPopupRef,
             contentRef,
             contentStyle,
             editsExist,
-            eventData,
-            eventFields,
-            eventValid,
-            occurrenceFieldDefinitions,
+            geneticLinkageData,
+            geneticLinkageValid,
+            addGeneticLinkage,
             closePopup,
-            saveEventEdits,
-            updateCollectingEventData
+            deleteGeneticLinkage,
+            saveGeneticLinkageEdits,
+            updateGeneticLinkageData
         }
     }
 };

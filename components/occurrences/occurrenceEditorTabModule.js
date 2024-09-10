@@ -10,7 +10,7 @@ const occurrenceEditorTabModule = {
         </template>
         <template v-else>
             <div class="rounded-borders overflow-hidden">
-                <q-tabs v-model="selectedTab" active-bg-color="grey-4" align="left" class="bg-grey-3" :style="tabPanelStyle">
+                <q-tabs v-model="selectedTab" active-bg-color="grey-4" align="left" class="bg-grey-3 occurrence-tab-border" :style="tabPanelStyle">
                     <q-tab name="data" class="bg-grey-3" label="Occurrence Data" no-caps />
                     <template v-if="Object.keys(configuredDataFields).length > 0">
                         <q-tab name="configured" class="bg-grey-3" :label="configuredDataLabel" no-caps />

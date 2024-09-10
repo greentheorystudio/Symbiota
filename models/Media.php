@@ -1,5 +1,8 @@
 <?php
+include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class Media{
 
@@ -10,6 +13,7 @@ class Media{
         "tid" => array("dataType" => "number", "length" => 10),
         "occid" => array("dataType" => "number", "length" => 10),
         "accessuri" => array("dataType" => "string", "length" => 2048),
+        "sourceurl" => array("dataType" => "string", "length" => 255),
         "title" => array("dataType" => "string", "length" => 255),
         "creatoruid" => array("dataType" => "number", "length" => 10),
         "creator" => array("dataType" => "string", "length" => 45),
@@ -39,6 +43,48 @@ class Media{
             $this->conn->close();
         }
 	}
+
+    public function createMediaRecord($data): int
+    {
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'mediaid' && array_key_exists($field, $data)){
+                if($field === 'language' || $field === 'owner'){
+                    $fieldNameArr[] = '`' . $field . '`';
+                }
+                else{
+                    $fieldNameArr[] = $field;
+                }
+                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+            }
+        }
+        $fieldNameArr[] = 'initialtimestamp';
+        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+        $sql = 'INSERT INTO media(' . implode(',', $fieldNameArr) . ') '.
+            'VALUES (' . implode(',', $fieldValueArr) . ') ';
+        //echo "<div>".$sql."</div>";
+        if($this->conn->query($sql)){
+            $newID = $this->conn->insert_id;
+        }
+        return $newID;
+    }
+
+    public function deleteMediaRecord($mediaid): int
+    {
+        $retVal = 1;
+        $data = $this->getMediaData($mediaid);
+        if($data['accessuri'] && strpos($data['accessuri'], '/') === 0){
+            $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['accessuri']);
+            FileSystemService::deleteFile($urlServerPath, true);
+        }
+        $sql = 'DELETE FROM media WHERE mediaid = ' . (int)$mediaid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
 
     public function getMediaArrByProperty($property, $value, $limitFormat = null): array
     {
@@ -71,6 +117,53 @@ class Media{
             }
         }
         return $returnArr;
+    }
+
+    public function getMediaData($mediaid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM media WHERE mediaid = ' . (int)$mediaid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($rs = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($rs);
+            if($r = $rs->fetch_object()){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $r->$name;
+                }
+                $retArr['taxonData'] = (int)$retArr['tid'] > 0 ? (new Taxa)->getTaxonFromTid($retArr['tid']) : null;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function updateMediaRecord($medId, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($medId && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'mediaid' && array_key_exists($field, $editData)){
+                    if($field === 'language' || $field === 'owner'){
+                        $fieldName = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldName = $field;
+                    }
+                    $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'UPDATE media SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE mediaid = ' . (int)$medId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function updateTidFromOccurrenceRecord($occid, $tid): void

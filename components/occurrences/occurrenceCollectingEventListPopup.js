@@ -238,6 +238,7 @@ const occurrenceCollectingEventListPopup = {
 
         Vue.onMounted(() => {
             setContentStyle();
+            window.addEventListener('resize', setContentStyle);
         });
 
         return {

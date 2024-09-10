@@ -66,9 +66,6 @@ class ImageShared{
 		if(isset($GLOBALS['IMG_WEB_WIDTH'])){
 			$this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
 		}
-		if(isset($GLOBALS['IMG_LG_WIDTH'])){
-			$this->lgPixWidth = $GLOBALS['IMG_LG_WIDTH'];
-		}
 		if(isset($GLOBALS['MAX_UPLOAD_FILESIZE'])){
 			$this->webFileSizeLimit = $GLOBALS['MAX_UPLOAD_FILESIZE'];
 		}

@@ -173,7 +173,6 @@ class SOLRService extends OccurrenceManager{
             $returnArr[$occId]['country'] = ($k['country'] ?? '');
             $returnArr[$occId]['state'] = ($k['StateProvince'] ?? '');
             $returnArr[$occId]['county'] = ($k['county'] ?? '');
-            $returnArr[$occId]['assochost'] = (isset($k['assocverbatimsciname'])?$k['assocverbatimsciname'][0]:'');
             $returnArr[$occId]['observeruid'] = ($k['observeruid'] ?? '');
             $returnArr[$occId]['individualCount'] = ($k['individualCount'] ?? '');
             $returnArr[$occId]['lifeStage'] = ($k['lifeStage'] ?? '');
@@ -756,24 +755,6 @@ class SOLRService extends OccurrenceManager{
             $whereStr = 'AND ((minimumElevationInMeters:['.$elevlow.' TO *] AND maximumElevationInMeters:[* TO '.$elevhigh.']) OR '.
                 '(-maximumElevationInMeters:[* TO *] AND minimumElevationInMeters:['.$elevlow.' TO *] AND minimumElevationInMeters:[* TO '.$elevhigh.']))';
             $qArr[] = '('.$whereStr.')';
-        }
-        if(array_key_exists('assochost',$this->searchTermsArr) && $this->searchTermsArr['assochost']){
-            $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['assochost']);
-            $hostAr = explode(';',$searchStr);
-            if($hostAr){
-                $tempArr = array();
-                foreach($hostAr as $k => $value){
-                    if($value === 'NULL'){
-                        $tempArr[] = '((assocrelationship:"host") AND (-assocverbatimsciname:["" TO *]))';
-                        $hostAr[$k] = 'Host IS NULL';
-                    }
-                    else{
-                        $tempArr[] = '((assocrelationship:"host") AND (assocverbatimsciname:*'.str_replace(' ','\ ',trim($value)).'*))';
-                    }
-                }
-                $qArr[] = '('.implode(' OR ',$tempArr).')';
-                $this->localSearchArr[] = implode(' OR ',$hostAr);
-            }
         }
         if(array_key_exists('collector',$this->searchTermsArr) && $this->searchTermsArr['collector']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['collector']);

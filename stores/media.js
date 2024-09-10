@@ -3,8 +3,10 @@ const useMediaStore = Pinia.defineStore('media', {
         blankMediaRecord: {
             mediaid: 0,
             tid: null,
+            sciname: null,
             occid: null,
             accessuri: null,
+            sourceurl: null,
             title: null,
             creatoruid: null,
             creator: null,
@@ -20,14 +22,14 @@ const useMediaStore = Pinia.defineStore('media', {
             contributor: null,
             locationcreated: null,
             description: null,
-            sortsequence: null,
-            initialtimestamp: null
+            sortsequence: null
         },
         mediaArr: [],
         mediaData: {},
         mediaEditData: {},
         mediaFields: {},
         mediaId: 0,
+        mediaTaxon: {},
         mediaUpdateData: {}
     }),
     getters: {
@@ -57,6 +59,9 @@ const useMediaStore = Pinia.defineStore('media', {
         getMediaID(state) {
             return state.mediaId;
         },
+        getMediaTaxon(state) {
+            return state.mediaTaxon;
+        },
         getMediaValid(state) {
             return !!state.mediaEditData['accessuri'];
         }
@@ -65,13 +70,33 @@ const useMediaStore = Pinia.defineStore('media', {
         clearMediaArr() {
             this.mediaArr.length = 0;
         },
-        createOccurrenceDeterminationRecord(collid, occid, callback) {
-            this.determinationEditData['occid'] = occid.toString();
+        clearMediaData() {
+            this.mediaData = Object.assign({}, this.blankMediaRecord);
+            this.mediaEditData = Object.assign({}, {});
+            this.mediaTaxon = Object.assign({}, {});
+        },
+        deleteMediaRecord(collid, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
-            formData.append('determination', JSON.stringify(this.determinationEditData));
-            formData.append('action', 'createOccurrenceDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('mediaid', this.mediaId.toString());
+            formData.append('action', 'deleteMediaRecord');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((val) => {
+                    callback(Number(val));
+                });
+            });
+        },
+        resetOccurrenceLinkage(collid, occidVal, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('mediaid', this.mediaId.toString());
+            formData.append('mediaData', JSON.stringify({occid: occidVal}));
+            formData.append('action', 'updateMediaRecord');
+            fetch(mediaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -81,47 +106,12 @@ const useMediaStore = Pinia.defineStore('media', {
                 });
             });
         },
-        deleteDeterminationRecord(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'deleteDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
-            });
-        },
-        getCurrentDeterminationData(detid) {
-            return this.determinationArr.find(det => Number(det.detid) === Number(detid));
-        },
-        makeDeterminationCurrent(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'makeDeterminationCurrent');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
-            });
-        },
-        setCurrentDeterminationRecord(detid) {
-            if(Number(detid) > 0){
-                this.determinationData = Object.assign({}, this.getCurrentDeterminationData(detid));
+        setCurrentMediaRecord(medid) {
+            this.mediaId = Number(medid);
+            this.clearMediaData();
+            if(this.mediaId > 0){
+                this.setMediaData();
             }
-            else{
-                this.determinationData = Object.assign({}, this.blankDeterminationRecord);
-            }
-            this.determinationEditData = Object.assign({}, this.determinationData);
         },
         setMediaArr(property, value) {
             const formData = new FormData();
@@ -139,16 +129,37 @@ const useMediaStore = Pinia.defineStore('media', {
                 this.mediaArr = data;
             });
         },
-        updateDeterminationEditData(key, value) {
-            this.determinationEditData[key] = value;
+        setMediaData() {
+            const formData = new FormData();
+            formData.append('mediaid', this.mediaId.toString());
+            formData.append('action', 'getMediaData');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data.hasOwnProperty('mediaid') && Number(data.mediaid) > 0){
+                    data.sciname = data['taxonData'] ? data['taxonData']['sciname'] : null;
+                    this.mediaTaxon = Object.assign({}, data['taxonData']);
+                    delete data['taxonData'];
+                    this.mediaData = Object.assign({}, data);
+                    this.mediaEditData = Object.assign({}, this.mediaData);
+                }
+            });
         },
-        updateDeterminationRecord(collid, callback) {
+        updateMediaEditData(key, value) {
+            this.mediaEditData[key] = value;
+        },
+        updateMediaRecord(collid, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('determinationData', JSON.stringify(this.determinationUpdateData));
-            formData.append('action', 'updateDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('mediaid', this.mediaId.toString());
+            formData.append('mediaData', JSON.stringify(this.mediaUpdateData));
+            formData.append('action', 'updateMediaRecord');
+            fetch(mediaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -156,7 +167,7 @@ const useMediaStore = Pinia.defineStore('media', {
                 response.text().then((res) => {
                     callback(Number(res));
                     if(res && Number(res) === 1){
-                        this.determinationData = Object.assign({}, this.determinationEditData);
+                        this.mediaData = Object.assign({}, this.mediaEditData);
                     }
                 });
             });

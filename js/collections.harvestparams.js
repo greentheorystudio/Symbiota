@@ -82,9 +82,6 @@ function setHarvestParamsForm(){
         if(stArr['elevhigh']){
             document.harvestparams.elevhigh.value = stArr['elevhigh'];
         }
-        if(stArr['assochost']){
-            document.harvestparams.assochost.value = stArr['assochost'];
-        }
         if(stArr['upperlat']){
             document.harvestparams.upperlat.value = stArr['upperlat'];
             document.harvestparams.bottomlat.value = stArr['bottomlat'];
@@ -163,9 +160,6 @@ function resetHarvestParamsForm(f){
     f.local.value = '';
     f.elevlow.value = '';
     f.elevhigh.value = '';
-    if(f.assochost){
-        f.assochost.value = '';
-    }
     f.upperlat.value = '';
     f.bottomlat.value = '';
     f.leftlong.value = '';

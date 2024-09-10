@@ -4,6 +4,10 @@ const singleScientificCommonNameAutoComplete = {
             type: Boolean,
             default: false
         },
+        clearable: {
+            type: Boolean,
+            default: true
+        },
         definition: {
             type: Object,
             default: null
@@ -61,7 +65,7 @@ const singleScientificCommonNameAutoComplete = {
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon v-if="sciname" name="cancel" class="cursor-pointer" @click="clearAction();">
+                <q-icon v-if="clearable && sciname" name="cancel" class="cursor-pointer" @click="clearAction();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear value
                     </q-tooltip>

@@ -8,7 +8,7 @@ class Collections {
     private $conn;
 
     private $fields = array(
-        "colliD" => array("dataType" => "number", "length" => 10),
+        "collid" => array("dataType" => "number", "length" => 10),
         "institutioncode" => array("dataType" => "string", "length" => 45),
         "collectioncode" => array("dataType" => "string", "length" => 45),
         "collectionname" => array("dataType" => "string", "length" => 150),
@@ -245,6 +245,19 @@ class Collections {
                 }
                 $retArr[$t] = $cnt;
             }
+        }
+        $rs->free();
+        return $retArr;
+    }
+
+    public function getPublicCollections(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT collid FROM omcollections WHERE isPublic = 1 ';
+        //echo "<div>$sql</div>";
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $retArr[] = (int)$r->collid;
         }
         $rs->free();
         return $retArr;

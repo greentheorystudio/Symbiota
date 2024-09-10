@@ -3,10 +3,10 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
-$occid = array_key_exists('occid',$_REQUEST) ? (int)$_REQUEST['occid'] : 0;
-$collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
-$detid = array_key_exists('detid',$_REQUEST) ? (int)$_REQUEST['detid'] : 0;
-$action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
+$occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
+$collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
+$detid = array_key_exists('detid', $_REQUEST) ? (int)$_REQUEST['detid'] : 0;
+$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN']){

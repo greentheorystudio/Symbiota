@@ -316,7 +316,7 @@ function loadPoints(){
             taxaSymbology = [];
             selections = [];
             showWorking();
-            getQueryRecCnt(function() {
+            getSearchRecCnt(function() {
                 if(queryRecCnt > 0){
                     loadPointsLayer();
                 }

@@ -255,9 +255,6 @@ class ImageLibraryManager{
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
-        if(array_key_exists('assochost',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
-        }
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }

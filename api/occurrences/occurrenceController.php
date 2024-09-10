@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/Occurrences.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
-$occid = array_key_exists('occid',$_REQUEST) ? (int)$_REQUEST['occid'] : 0;
-$collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
-$action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
+$occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
+$collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
+$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN']){
@@ -28,7 +28,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'createOccurrenceRecord' && $isEditor){
         echo $occurrences->createOccurrenceRecord(json_decode($_POST['occurrence'], true));
     }
-    elseif($action === 'updateOccurrenceRecord' && $occid && $isEditor){
+    elseif($action === 'updateOccurrenceRecord' && $occid && $isEditor && array_key_exists('occurrenceData', $_POST)){
         echo $occurrences->updateOccurrenceRecord($occid, json_decode($_POST['occurrenceData'], true));
     }
     elseif($action === 'getOccurrenceFields'){

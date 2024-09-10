@@ -99,11 +99,11 @@ class OccurrenceDeterminations{
     {
         $retVal = 1;
         $sql = 'DELETE FROM guidoccurdeterminations WHERE detid = ' . (int)$detId . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         $sql = 'DELETE FROM omoccurdeterminations WHERE detid = ' . (int)$detId . ' ';
-        if(!$rs = $this->conn->query($sql)){
+        if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         return $retVal;

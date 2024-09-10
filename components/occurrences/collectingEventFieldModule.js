@@ -188,12 +188,7 @@ const collectingEventFieldModule = {
         }
 
         function updateDateData(dateData) {
-            updateData('eventdate', dateData['date']);
-            updateData('year', dateData['year']);
-            updateData('month', dateData['month']);
-            updateData('day', dateData['day']);
-            updateData('startdayofyear', dateData['startDayOfYear']);
-            updateData('enddayofyear', dateData['endDayOfYear']);
+            occurrenceStore.updateOccurrenceEditDataDate(dateData);
             if(props.autoSearch){
                 processCollectingEventSearch();
             }

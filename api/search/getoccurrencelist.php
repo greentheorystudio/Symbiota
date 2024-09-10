@@ -235,9 +235,6 @@ if($occurArr){
         if($fieldArr['locality']) {
             $localStr .= $fieldArr['locality'] . ', ';
         }
-        if(isset($fieldArr['assochost']) && $fieldArr['assochost']) {
-            $localStr .= $fieldArr['assochost'] . ', ';
-        }
         if(isset($fieldArr['elev']) && $fieldArr['elev']) {
             $localStr .= $fieldArr['elev'] . 'm';
         }

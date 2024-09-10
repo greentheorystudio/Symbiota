@@ -622,6 +622,12 @@ body.processing .loadingModal {
 	font-size: 1.1rem;
 	font-weight: bold;
 }
+.media-thumbnail{
+	min-height: 150px;
+	max-height: 250px;
+	min-width: 150px;
+	max-width: 150px;
+}
 .img-thumb{
 	width: 220px;
 	height: 260px;

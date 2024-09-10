@@ -1,11 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/ImageShared.php');
 include_once(__DIR__ . '/../../models/Images.php');
+include_once(__DIR__ . '/../../services/FileSystemService.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 $collid = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
+$imgid = array_key_exists('imgid',$_REQUEST) ? (int)$_REQUEST['imgid'] : 0;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN']){
@@ -25,9 +26,8 @@ elseif(array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 
 if($action && SanitizerService::validateInternalRequest()){
     $images = new Images();
-    if($action === 'addImageRecord' && $isEditor && array_key_exists('image',$_POST)){
-        $imgUtilities = new ImageShared();
-        echo json_encode($imgUtilities->addImageRecord(json_decode($_POST['image'], true)));
+    if($action === 'addImage' && $isEditor && array_key_exists('image',$_POST)){
+        echo $images->createImageRecord(json_decode($_POST['image'], true));
     }
     elseif($action === 'getImageArrByTaxonomicGroup' && array_key_exists('parenttid',$_POST)){
         $includeOccurrence = array_key_exists('includeoccurrence',$_POST) && (int)$_POST['includeoccurrence'] === 1;
@@ -37,9 +37,26 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getImageArrByProperty' && array_key_exists('property',$_POST) && array_key_exists('value',$_POST)){
         echo json_encode($images->getImageArrByProperty($_POST['property'], $_POST['value']));
     }
-    elseif($action === 'addImage' && $isEditor && array_key_exists('image',$_POST)){
-        $importExternalFiles = array_key_exists('copyToServer',$_POST) && (int)$_POST['copyToServer'] === 1;
-
-        echo $images->getImageArrByProperty($_POST['property'], $_POST['value']);
+    elseif(($action === 'addImageFromFile' || $action === 'addImageFromUrl') && $isEditor && array_key_exists('image',$_POST) && array_key_exists('uploadpath',$_POST)){
+        $imageData = json_decode($_POST['image'], true);
+        if($action === 'addImageFromFile'){
+            $imageData = FileSystemService::processUploadImageFromFile($imageData, $_POST['uploadpath']);
+        }
+        elseif($action === 'addImageFromUrl'){
+            $imageData = FileSystemService::processUploadImageFromExternalUrl($imageData, $_POST['uploadpath']);
+        }
+        echo $imageData['url'] ? $images->createImageRecord($imageData) : 0;
+    }
+    elseif($action === 'deleteImageRecord' && $imgid && $isEditor){
+        echo $images->deleteImageRecord($imgid);
+    }
+    elseif($action === 'getImageData' && $imgid){
+        echo json_encode($images->getImageData($imgid));
+    }
+    elseif($action === 'updateImageRecord' && $imgid && $isEditor && array_key_exists('imageData', $_POST)){
+        echo $images->updateImageRecord($imgid, json_decode($_POST['imageData'], true));
+    }
+    elseif($action === 'deleteImageTag' && $imgid && $isEditor && array_key_exists('tag', $_POST)){
+        echo $images->deleteImageTag($imgid, $_POST['tag']);
     }
 }

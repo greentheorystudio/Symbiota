@@ -168,6 +168,7 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
 
         Vue.onMounted(() => {
             setContentStyle();
+            window.addEventListener('resize', setContentStyle);
             if(benthicData.value){
                 setTableColumns();
                 setTableRows();

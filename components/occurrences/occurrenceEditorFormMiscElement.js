@@ -2,6 +2,9 @@ const occurrenceEditorFormMiscElement = {
     template: `
         <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
+                    Occurrence
+                </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-11">
                         <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></text-field-input-element>

@@ -35,7 +35,6 @@ class OccurrenceListManager extends OccurrenceManager{
                 'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason, IFNULL(o.habitat,"") AS habitat, '.
                 'CONCAT_WS("-",o.minimumElevationInMeters, o.maximumElevationInMeters) AS elev, o.observeruid, '.
                 'o.associatedtaxa, o.substrate, o.individualCount, o.lifeStage, o.sex, c.sortseq ';
-            $sql .= (array_key_exists('assochost',$this->searchTermsArr)?', oas.verbatimsciname ':' ');
             $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
                 'LEFT JOIN taxa AS t ON o.tid = t.TID ';
             $sql .= $this->setTableJoins($sqlWhere);
@@ -83,9 +82,6 @@ class OccurrenceListManager extends OccurrenceManager{
                 $returnArr[$occId]['country'] = $this->cleanOutStr($row->country);
                 $returnArr[$occId]['state'] = $this->cleanOutStr($row->state);
                 $returnArr[$occId]['county'] = $this->cleanOutStr($row->county);
-                if(array_key_exists('assochost',$this->searchTermsArr)) {
-                    $returnArr[$occId]['assochost'] = $this->cleanOutStr($row->verbatimsciname);
-                }
                 $returnArr[$occId]['observeruid'] = $row->observeruid;
                 $returnArr[$occId]['individualCount'] = $this->cleanOutStr($row->individualCount);
                 $returnArr[$occId]['lifeStage'] = $this->cleanOutStr($row->lifeStage);
@@ -150,7 +146,8 @@ class OccurrenceListManager extends OccurrenceManager{
     private function setRecordCnt($sqlWhere): void
     {
         if($sqlWhere){
-            $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID ';
+            $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                'LEFT JOIN taxa AS t ON o.tid = t.TID ';
             $sql .= $this->setTableJoins($sqlWhere);
             $sql .= $sqlWhere;
             //echo '<div>Count sql: ' .$sql. '</div>';

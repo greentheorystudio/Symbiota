@@ -124,15 +124,26 @@ const locationFieldModule = {
         <template v-if="!eventMode && showExtendedForm">
             <div class="row justify-between q-col-gutter-sm">
                 <div class="col-12 col-sm-6 col-md-3">
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['continent']" label="Continent" :maxlength="fields['continent'] ? fields['continent']['length'] : 0" :value="data.continent" @update:value="(value) => updateData('continent', value)"></text-field-input-element>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['island']" label="Island" :maxlength="fields['island'] ? fields['island']['length'] : 0" :value="data.island" @update:value="(value) => updateData('island', value)"></text-field-input-element>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['islandgroup']" label="Island Group" :maxlength="fields['islandgroup'] ? fields['islandgroup']['length'] : 0" :value="data.islandgroup" @update:value="(value) => updateData('islandgroup', value)"></text-field-input-element>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['waterbody']" label="Water Body" :maxlength="fields['waterbody'] ? fields['waterbody']['length'] : 0" :value="data.waterbody" @update:value="(value) => updateData('waterbody', value)"></text-field-input-element>
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
+            </div>
+            <div class="row justify-between q-col-gutter-sm">
+                <div class="col-12 col-sm-6 col-md-4">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferencedby']" label="Georeferenced By" :maxlength="fields['georeferencedby'] ? fields['georeferencedby']['length'] : 0" :value="data.georeferencedby" @update:value="(value) => updateData('georeferencedby', value)"></text-field-input-element>
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-4">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceprotocol']" label="Georeference Protocol" :maxlength="fields['georeferenceprotocol'] ? fields['georeferenceprotocol']['length'] : 0" :value="data.georeferenceprotocol" @update:value="(value) => updateData('georeferenceprotocol', value)"></text-field-input-element>
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-4">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceverificationstatus']" label="Georeference Verification Status" :maxlength="fields['georeferenceverificationstatus'] ? fields['georeferenceverificationstatus']['length'] : 0" :value="data.georeferenceverificationstatus" @update:value="(value) => updateData('georeferenceverificationstatus', value)"></text-field-input-element>
                 </div>
             </div>
@@ -186,35 +197,35 @@ const locationFieldModule = {
         </template>
         <template v-if="showSpatialPopup">
             <spatial-analysis-popup
-                    :coordinate-uncertainty-in-meters="coordinateUncertaintyInMetersValue"
-                    :decimal-latitude="decimalLatitudeValue"
-                    :decimal-longitude="decimalLongitudeValue"
-                    :footprint-wkt="footprintWktValue"
-                    :show-popup="showSpatialPopup"
-                    :window-type="popupWindowType"
-                    @update:spatial-data="processSpatialData"
-                    @close:popup="closeSpatialPopup();"
+                :coordinate-uncertainty-in-meters="coordinateUncertaintyInMetersValue"
+                :decimal-latitude="decimalLatitudeValue"
+                :decimal-longitude="decimalLongitudeValue"
+                :footprint-wkt="footprintWktValue"
+                :show-popup="showSpatialPopup"
+                :window-type="popupWindowType"
+                @update:spatial-data="processSpatialData"
+                @close:popup="closeSpatialPopup();"
             ></spatial-analysis-popup>
         </template>
         <template v-if="showGeoLocatePopup">
             <geo-locate-popup
-                    :country="data.country"
-                    :county="data.county"
-                    :locality="data.locality"
-                    :show-popup="showGeoLocatePopup"
-                    :state="data.stateprovince"
-                    :verbatim-coordinates="data.verbatimcoordinates"
-                    @update:geolocate-data="processGeolocateData"
-                    @close:popup="showGeoLocatePopup = false"
+                :country="data.country"
+                :county="data.county"
+                :locality="data.locality"
+                :show-popup="showGeoLocatePopup"
+                :state="data.stateprovince"
+                :verbatim-coordinates="data.verbatimcoordinates"
+                @update:geolocate-data="processGeolocateData"
+                @close:popup="showGeoLocatePopup = false"
             ></geo-locate-popup>
         </template>
         <template v-if="showCoordinateToolPopup">
             <occurrence-coordinate-tool-popup
-                    :geodetic-datum="data.geodeticdatum"
-                    :show-popup="showCoordinateToolPopup"
-                    :verbatim-coordinates="data.verbatimcoordinates"
-                    @update:coordinate-tool-data="processCoordinateToolData"
-                    @close:popup="showCoordinateToolPopup = false"
+                :geodetic-datum="data.geodeticdatum"
+                :show-popup="showCoordinateToolPopup"
+                :verbatim-coordinates="data.verbatimcoordinates"
+                @update:coordinate-tool-data="processCoordinateToolData"
+                @close:popup="showCoordinateToolPopup = false"
             ></occurrence-coordinate-tool-popup>
         </template>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
@@ -350,6 +361,9 @@ const locationFieldModule = {
 
         function setExtendedView() {
             if(props.data.footprintwkt ||
+                props.data.continent ||
+                props.data.island ||
+                props.data.islandgroup ||
                 props.data.waterbody ||
                 props.data.georeferencedby ||
                 props.data.georeferenceprotocol ||

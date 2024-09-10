@@ -3,13 +3,12 @@ const useImageStore = Pinia.defineStore('image', {
         blankImageRecord: {
             imgid: 0,
             tid: null,
+            sciname: null,
             url: null,
             thumbnailurl: null,
             originalurl: null,
-            archiveurl: null,
             photographer: null,
             photographeruid: null,
-            imagetype: null,
             format: null,
             caption: null,
             owner: null,
@@ -17,7 +16,6 @@ const useImageStore = Pinia.defineStore('image', {
             referenceurl: null,
             copyright: null,
             rights: null,
-            accessrights: null,
             locality: null,
             occid: null,
             notes: null,
@@ -27,13 +25,14 @@ const useImageStore = Pinia.defineStore('image', {
             mediamd5: null,
             dynamicproperties: null,
             sortsequence: null,
-            initialtimestamp: null
+            tagArr: []
         },
         imageArr: [],
         imageData: {},
         imageEditData: {},
         imageFields: {},
         imageId: 0,
+        imageTaxon: {},
         imageUpdateData: {}
     }),
     getters: {
@@ -53,9 +52,25 @@ const useImageStore = Pinia.defineStore('image', {
             let exist = false;
             state.imageUpdateData = Object.assign({}, {});
             for(let key in state.imageEditData) {
-                if(state.imageEditData.hasOwnProperty(key) && state.imageEditData[key] !== state.imageData[key]) {
-                    exist = true;
-                    state.imageUpdateData[key] = state.imageEditData[key];
+                if(key === 'tagArr'){
+                    if(state.imageEditData[key].length !== state.imageData[key].length){
+                        exist = true;
+                        state.imageUpdateData[key] = state.imageEditData[key];
+                    }
+                    else if(state.imageData[key].length > 0){
+                        state.imageData[key].forEach(tag => {
+                            if(!state.imageEditData[key].includes(tag)){
+                                exist = true;
+                                state.imageUpdateData[key] = state.imageEditData[key];
+                            }
+                        });
+                    }
+                }
+                else{
+                    if(state.imageEditData.hasOwnProperty(key) && state.imageEditData[key] !== state.imageData[key]) {
+                        exist = true;
+                        state.imageUpdateData[key] = state.imageEditData[key];
+                    }
                 }
             }
             return exist;
@@ -66,6 +81,9 @@ const useImageStore = Pinia.defineStore('image', {
         getImageID(state) {
             return state.imageId;
         },
+        getImageTaxon(state) {
+            return state.imageTaxon;
+        },
         getImageValid(state) {
             return !!state.imageEditData['url'];
         }
@@ -74,13 +92,44 @@ const useImageStore = Pinia.defineStore('image', {
         clearImageArr() {
             this.imageArr.length = 0;
         },
-        createOccurrenceDeterminationRecord(collid, occid, callback) {
-            this.determinationEditData['occid'] = occid.toString();
+        clearImageData() {
+            this.imageData = Object.assign({}, this.blankImageRecord);
+            this.imageEditData = Object.assign({}, {});
+            this.imageTaxon = Object.assign({}, {});
+        },
+        deleteImageRecord(collid, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
-            formData.append('determination', JSON.stringify(this.determinationEditData));
-            formData.append('action', 'createOccurrenceDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('imgid', this.imageId.toString());
+            formData.append('action', 'deleteImageRecord');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((val) => {
+                    callback(Number(val));
+                });
+            });
+        },
+        deleteImageTag(collid, tag) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('imgid', this.imageId.toString());
+            formData.append('tag', tag);
+            formData.append('action', 'deleteImageTag');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            });
+        },
+        resetOccurrenceLinkage(collid, occidVal, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('imgid', this.imageId.toString());
+            formData.append('imageData', JSON.stringify({occid: occidVal}));
+            formData.append('action', 'updateImageRecord');
+            fetch(imageApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -90,47 +139,12 @@ const useImageStore = Pinia.defineStore('image', {
                 });
             });
         },
-        deleteDeterminationRecord(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'deleteDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
-            });
-        },
-        getCurrentDeterminationData(detid) {
-            return this.determinationArr.find(det => Number(det.detid) === Number(detid));
-        },
-        makeDeterminationCurrent(collid, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('action', 'makeDeterminationCurrent');
-            fetch(occurrenceDeterminationApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
-            });
-        },
-        setCurrentDeterminationRecord(detid) {
-            if(Number(detid) > 0){
-                this.determinationData = Object.assign({}, this.getCurrentDeterminationData(detid));
+        setCurrentImageRecord(imgid) {
+            this.imageId = Number(imgid);
+            this.clearImageData();
+            if(this.imageId > 0){
+                this.setImageData();
             }
-            else{
-                this.determinationData = Object.assign({}, this.blankDeterminationRecord);
-            }
-            this.determinationEditData = Object.assign({}, this.determinationData);
         },
         setImageArr(property, value) {
             const formData = new FormData();
@@ -148,27 +162,64 @@ const useImageStore = Pinia.defineStore('image', {
                 this.imageArr = data;
             });
         },
-        updateDeterminationEditData(key, value) {
-            this.determinationEditData[key] = value;
-        },
-        updateDeterminationRecord(collid, callback) {
+        setImageData() {
             const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('detid', this.determinationId.toString());
-            formData.append('determinationData', JSON.stringify(this.determinationUpdateData));
-            formData.append('action', 'updateDeterminationRecord');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('imgid', this.imageId.toString());
+            formData.append('action', 'getImageData');
+            fetch(imageApiUrl, {
                 method: 'POST',
                 body: formData
             })
             .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                    if(res && Number(res) === 1){
-                        this.determinationData = Object.assign({}, this.determinationEditData);
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data.hasOwnProperty('imgid') && Number(data.imgid) > 0){
+                    data.sciname = data['taxonData'] ? data['taxonData']['sciname'] : null;
+                    this.imageTaxon = Object.assign({}, data['taxonData']);
+                    delete data['taxonData'];
+                    this.imageData = Object.assign({}, data);
+                    this.imageEditData = Object.assign({}, this.imageData);
+                }
+            });
+        },
+        updateImageEditData(key, value) {
+            this.imageEditData[key] = value;
+        },
+        updateImageRecord(collid, callback) {
+            if(this.imageUpdateData.hasOwnProperty('tagArr')){
+                this.imageData['tagArr'].forEach(tag => {
+                    if(!this.imageUpdateData['tagArr'].includes(tag)){
+                        this.deleteImageTag(collid, tag);
+                    }
+                    else{
+                        const index = this.imageUpdateData['tagArr'].indexOf(tag);
+                        this.imageUpdateData['tagArr'].splice(index,1);
                     }
                 });
-            });
+            }
+            if(!this.imageUpdateData.hasOwnProperty('tagArr') || this.imageUpdateData['tagArr'].length > 0 || Object.keys(this.imageUpdateData).length > 1){
+                const formData = new FormData();
+                formData.append('collid', collid.toString());
+                formData.append('imgid', this.imageId.toString());
+                formData.append('imageData', JSON.stringify(this.imageUpdateData));
+                formData.append('action', 'updateImageRecord');
+                fetch(imageApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    response.text().then((res) => {
+                        callback(Number(res));
+                        if(res && Number(res) === 1){
+                            this.imageData = Object.assign({}, this.imageEditData);
+                        }
+                    });
+                });
+            }
+            else{
+                callback(1);
+            }
         }
     }
 });

@@ -2,12 +2,15 @@ const occurrenceEditorFormLatestIdentificationElement = {
     template: `
         <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
+                    Determination
+                </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-4">
                         <single-scientific-common-name-auto-complete :disabled="occurrenceEntryFormat === 'benthic'" :definition="occurrenceFieldDefinitions['sciname']" :sciname="occurrenceData.sciname" label="Scientific Name" @update:sciname="updateScientificNameValue"></single-scientific-common-name-auto-complete>
                     </div>
                     <div class="col-12 col-sm-3">
-                        <text-field-input-element :disabled="occurrenceEntryFormat === 'benthic' || Number(occurrenceData.tid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFields['scientificnameauthorship'] ? occurrenceFields['scientificnameauthorship']['length'] : 0" :value="(Number(occurrenceData.tid) > 0 ? occurrenceData['taxonData'].author : occurrenceData.scientificnameauthorship)" @update:value="(value) => updateOccurrenceData('scientificnameauthorship', value)"></text-field-input-element>
+                        <text-field-input-element :disabled="occurrenceEntryFormat === 'benthic' || Number(occurrenceData.tid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFields['scientificnameauthorship'] ? occurrenceFields['scientificnameauthorship']['length'] : 0" :value="((Number(occurrenceData.tid) > 0 && occurrenceData.hasOwnProperty('taxonData')) ? occurrenceData['taxonData'].author : occurrenceData.scientificnameauthorship)" @update:value="(value) => updateOccurrenceData('scientificnameauthorship', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-2">
                         <text-field-input-element :disabled="occurrenceEntryFormat === 'benthic'" :definition="occurrenceFieldDefinitions['identificationqualifier']" label="ID Qualifier" :maxlength="occurrenceFields['identificationqualifier'] ? occurrenceFields['identificationqualifier']['length'] : 0" :value="occurrenceData.identificationqualifier" @update:value="(value) => updateOccurrenceData('identificationqualifier', value)"></text-field-input-element>

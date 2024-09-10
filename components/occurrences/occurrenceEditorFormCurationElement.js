@@ -2,6 +2,9 @@ const occurrenceEditorFormCurationElement = {
     template: `
         <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
+                    Curation
+                </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-6">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['occurrenceid']" label="Occurrence ID" :maxlength="occurrenceFields['occurrenceid'] ? occurrenceFields['occurrenceid']['length'] : 0" :value="occurrenceData.occurrenceid" @update:value="(value) => updateOccurrenceData('occurrenceid', value)"></text-field-input-element>

@@ -27,6 +27,18 @@ class ChecklistVouchers{
         }
 	}
 
+    public function addOccurrenceVoucherLinkage($clid, $occid, $tid): int
+    {
+        $newID = 0;
+        $sql = 'INSERT INTO fmvouchers(clid, occid, tid) '.
+            'VALUES (' . (int)$clid . ', ' . (int)$occid . ', ' . ($tid ? (int)$tid : 'NULL') . ') ';
+        //echo "<div>".$sql."</div>";
+        if($this->conn->query($sql)){
+            $newID = $this->conn->insert_id;
+        }
+        return $newID;
+    }
+
     public function getChecklistListByOccurrenceVoucher($occid): array
     {
         $retArr = array();
@@ -45,6 +57,19 @@ class ChecklistVouchers{
             }
         }
         return $retArr;
+    }
+
+    public function removeOccurrenceVoucherLinkage($clid, $occid): int
+    {
+        $retVal = 1;
+        if($clid && $occid){
+            $sql = 'DELETE FROM fmvouchers WHERE clid = ' . (int)$clid . ' AND occid = ' . (int)$occid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
     }
 
     public function updateTidFromOccurrenceRecord($occid, $tid): void

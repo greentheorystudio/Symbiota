@@ -131,6 +131,25 @@ class TaxonVernaculars{
         return $retVal;
     }
 
+    public function setSciNameSearchDataByVernaculars($searchData, $vernaculars): array
+    {
+        $whereStr = '';
+        $sql = 'SELECT DISTINCT t.tid, t.sciname ' .
+            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.TID = v.TID ';
+        foreach($vernaculars as $name){
+            $whereStr .= "OR v.VernacularName = '" . SanitizerService::cleanInStr($this->conn, $name) . "' ";
+        }
+        $sql .= 'WHERE ' .substr($whereStr,3). ' ';
+        //echo "<div>sql: ".$sql."</div>";
+        if($result = $this->conn->query($sql)){
+            while($row = $result->fetch_object()){
+                $searchData[$row->sciname] = $row->tid;
+            }
+        }
+        $result->free();
+        return $searchData;
+    }
+
     public function updateVernacularRecord($vid, $editData): int
     {
         $retVal = 0;

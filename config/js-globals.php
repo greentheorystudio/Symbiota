@@ -11,6 +11,7 @@
     const USER_DISPLAY_NAME = '<?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>';
     const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');
     const RIGHTS_TERMS = JSON.parse('<?php echo json_encode($GLOBALS['RIGHTS_TERMS']); ?>');
+    const IMAGE_TAG_OPTIONS = JSON.parse('<?php echo $GLOBALS['IMAGE_TAG_OPTIONS']; ?>');
 
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 
@@ -46,7 +47,7 @@
 
     const http = new XMLHttpRequest();
     let abortController;
-    const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json';
+    const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json?ver=<?php echo $GLOBALS['JS_VERSION']; ?>';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
     const checklistVoucherApiUrl = CLIENT_ROOT + '/api/checklists/checklistVoucherController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
@@ -65,7 +66,7 @@
     const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
     const projectApiUrl = CLIENT_ROOT + '/api/checklists/projectController.php';
     const proxyServiceApiUrl = CLIENT_ROOT + '/api/services/proxyServiceController.php';
-    const searchApiUrl = CLIENT_ROOT + '/api/search/searchController.php';
+    const searchServiceApiUrl = CLIENT_ROOT + '/api/services/searchServiceController.php';
     const solrConnectorUrl = CLIENT_ROOT + '/api/search/SOLRConnector.php';
     const spatialApiUrl = CLIENT_ROOT + '/api/spatial/spatialController.php';
     const taxaApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';

@@ -5,7 +5,7 @@ const occurrenceEditorOccurrenceDataControls = {
                 <template v-if="Number(occId) === 0">
                     <div class="row q-gutter-sm">
                         <occurrence-entry-follow-up-action-selector :selected-action="entryFollowUpAction" @change-occurrence-entry-follow-up-action="changeEntryFollowUpAction"></occurrence-entry-follow-up-action-selector>
-                        <div v-if="Object.keys(configuredDataFields).length === 0 && occurrenceEntryFormat !== 'benthic'">
+                        <div v-if="Object.keys(configuredDataFields).length === 0 && occurrenceEntryFormat === 'specimen'">
                             <q-toggle v-model="collectionEventAutoSearch" checked-icon="check" color="green" unchecked-icon="clear" label="Event Auto Search" @update:model-value="setCollectingEventAutoSearch"></q-toggle>
                         </div>
                     </div>
@@ -27,7 +27,7 @@ const occurrenceEditorOccurrenceDataControls = {
     components: {
         'occurrence-entry-follow-up-action-selector': occurrenceEntryFollowUpActionSelector
     },
-    setup() {
+    setup(_, context) {
         const { showNotification } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
@@ -46,6 +46,7 @@ const occurrenceEditorOccurrenceDataControls = {
         function createOccurrenceRecord() {
             occurrenceStore.createOccurrenceRecord((newOccid) => {
                 if(newOccid > 0){
+                    context.emit('occurrence:created', newOccid);
                     showNotification('positive','Occurrence record created successfully.');
                 }
                 else{
