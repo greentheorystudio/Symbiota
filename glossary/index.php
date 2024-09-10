@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $glossId = array_key_exists('glossid',$_REQUEST)?(int)$_REQUEST['glossid']:0;
@@ -143,11 +143,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		}
 
 	</script>
-	<script src="../js/glossary.index.js?ver=20230103" type="text/javascript"></script>
+	<script src="../js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
 	<?php
-    include_once(__DIR__ . '/../config/googleanalytics.php');
     include(__DIR__ . '/../header.php');
     ?>
     <div class='navpath'>
@@ -392,8 +391,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		</div>
 	</div>
 	<?php
-	include(__DIR__ . '/../footer.php');
     include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

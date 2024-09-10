@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/InventoryDynSqlManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
@@ -36,7 +36,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Flora Linkage Builder </title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<script>
+    <script type="text/javascript">
 		function updateSql(){
             const country = document.getElementById("countryinput").value;
             const state = document.getElementById("stateinput").value;
@@ -167,8 +167,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		<?php } ?>
 	</div>
 	<?php
- 	include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html> 

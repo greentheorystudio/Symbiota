@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $occId = (int)$_GET['occid'];
@@ -135,18 +135,6 @@ $specImgArr = $occManager->getImageMap();
 							$imgUrl = $imgArr['url'];
 							$origUrl = $imgArr['origurl'];
 							$tnUrl = $imgArr['tnurl'];
-							if(isset($GLOBALS['IMAGE_DOMAIN'])){
-								if(strncmp($imgUrl, '/', 1) === 0){
-									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-								}
-								if($origUrl && strncmp($origUrl, '/', 1) === 0){
-									$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
-								}
-								if($tnUrl && strncmp($tnUrl, '/', 1) === 0){
-									$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
-								}
-							}
-							
 							if($imgUrl === 'empty' && $origUrl) {
                                 $imgUrl = $origUrl;
                             }
@@ -215,11 +203,7 @@ $specImgArr = $occManager->getImageMap();
 									<b>Source Webpage:</b>
 									<a href="<?php echo $imgArr['sourceurl']; ?>" target="_blank">
 										<?php 
-										$sourceUrlDisplay = $imgArr['sourceurl'];
-										if(strlen($sourceUrlDisplay) > 60) {
-                                            $sourceUrlDisplay = '...' . substr($sourceUrlDisplay, -60);
-                                        }
-										echo $sourceUrlDisplay;
+										echo $imgArr['sourceurl'];
 										?>
 									</a>
 								</div>
@@ -227,11 +211,7 @@ $specImgArr = $occManager->getImageMap();
 									<b>Web URL: </b>
 									<a href="<?php echo $imgArr['url']; ?>" title="<?php echo $imgArr['url']; ?>" target="_blank">
 										<?php 
-										$urlDisplay = $imgArr['url'];
-										if(strlen($urlDisplay) > 60) {
-                                            $urlDisplay = '...' . substr($urlDisplay, -60);
-                                        }
-										echo $urlDisplay;
+										echo $imgArr['url'];
 										?>
 									</a>
 								</div>
@@ -239,11 +219,7 @@ $specImgArr = $occManager->getImageMap();
 									<b>Large Image URL: </b>
 									<a href="<?php echo $imgArr['origurl']; ?>" title="<?php echo $imgArr['origurl']; ?>" target="_blank">
 										<?php 
-										$origUrlDisplay = $imgArr['origurl'];
-										if(strlen($origUrlDisplay) > 60) {
-                                            $origUrlDisplay = '...' . substr($origUrlDisplay, -60);
-                                        }
-										echo $origUrlDisplay;
+										echo $imgArr['origurl'];
 										?>
 									</a>
 								</div>
@@ -251,11 +227,7 @@ $specImgArr = $occManager->getImageMap();
 									<b>Thumbnail URL: </b>
 									<a href="<?php echo $imgArr['tnurl']; ?>" title="<?php echo $imgArr['tnurl']; ?>" target="_blank">
 										<?php 
-										$tnUrlDisplay = $imgArr['tnurl'];
-										if(strlen($tnUrlDisplay) > 60) {
-                                            $tnUrlDisplay = '...' . substr($tnUrlDisplay, -60);
-                                        }
-										echo $tnUrlDisplay;
+										echo $imgArr['tnurl'];
 										?>
 									</a>
 								</div>

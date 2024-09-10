@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class InstitutionManager {
 
@@ -10,7 +10,7 @@ class InstitutionManager {
 	private $errorStr;
 	
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -31,7 +31,7 @@ class InstitutionManager {
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_assoc()){
-				$retArr = Sanitizer::cleanOutArray($row);
+				$retArr = SanitizerService::cleanOutArray($row);
 			}
 			$rs->free();
 		}
@@ -43,20 +43,20 @@ class InstitutionManager {
 		$status = true;
 		if($postData['institutioncode'] && $postData['institutionname']){
 			$sql = 'UPDATE institutions SET '.
-				'institutioncode = '.($postData['institutioncode']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutioncode']).'"':'NULL').','.
-				'institutionname = "'.Sanitizer::cleanInStr($this->conn,$postData['institutionname']).'",'.
-				'institutionname2 = '.($postData['institutionname2']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutionname2']).'"':'NULL').','.
-				'address1 = '.($postData['address1']?'"'.Sanitizer::cleanInStr($this->conn,$postData['address1']).'"':'NULL').','.
-				'address2 = '.($postData['address2']?'"'.Sanitizer::cleanInStr($this->conn,$postData['address2']).'"':'NULL').','.
-				'city = '.($postData['city']?'"'.Sanitizer::cleanInStr($this->conn,$postData['city']).'"':'NULL').','.
-				'stateprovince = '.($postData['stateprovince']?'"'.Sanitizer::cleanInStr($this->conn,$postData['stateprovince']).'"':'NULL').','.
-				'postalcode = '.($postData['postalcode']?'"'.Sanitizer::cleanInStr($this->conn,$postData['postalcode']).'"':'NULL').','.
-				'country = '.($postData['country']?'"'.Sanitizer::cleanInStr($this->conn,$postData['country']).'"':'NULL').','.
-				'phone = '.($postData['phone']?'"'.Sanitizer::cleanInStr($this->conn,$postData['phone']).'"':'NULL').','.
-				'contact = '.($postData['contact']?'"'.Sanitizer::cleanInStr($this->conn,$postData['contact']).'"':'NULL').','.
-				'email = '.($postData['email']?'"'.Sanitizer::cleanInStr($this->conn,$postData['email']).'"':'NULL').','.
-				'url = '.($postData['url']?'"'.Sanitizer::cleanInStr($this->conn,$postData['url']).'"':'NULL').','.
-				'notes = '.($postData['notes']?'"'.Sanitizer::cleanInStr($this->conn,$postData['notes']).'"':'NULL').' '.
+				'institutioncode = '.($postData['institutioncode']?'"'.SanitizerService::cleanInStr($this->conn,$postData['institutioncode']).'"':'NULL').','.
+				'institutionname = "'.SanitizerService::cleanInStr($this->conn,$postData['institutionname']).'",'.
+				'institutionname2 = '.($postData['institutionname2']?'"'.SanitizerService::cleanInStr($this->conn,$postData['institutionname2']).'"':'NULL').','.
+				'address1 = '.($postData['address1']?'"'.SanitizerService::cleanInStr($this->conn,$postData['address1']).'"':'NULL').','.
+				'address2 = '.($postData['address2']?'"'.SanitizerService::cleanInStr($this->conn,$postData['address2']).'"':'NULL').','.
+				'city = '.($postData['city']?'"'.SanitizerService::cleanInStr($this->conn,$postData['city']).'"':'NULL').','.
+				'stateprovince = '.($postData['stateprovince']?'"'.SanitizerService::cleanInStr($this->conn,$postData['stateprovince']).'"':'NULL').','.
+				'postalcode = '.($postData['postalcode']?'"'.SanitizerService::cleanInStr($this->conn,$postData['postalcode']).'"':'NULL').','.
+				'country = '.($postData['country']?'"'.SanitizerService::cleanInStr($this->conn,$postData['country']).'"':'NULL').','.
+				'phone = '.($postData['phone']?'"'.SanitizerService::cleanInStr($this->conn,$postData['phone']).'"':'NULL').','.
+				'contact = '.($postData['contact']?'"'.SanitizerService::cleanInStr($this->conn,$postData['contact']).'"':'NULL').','.
+				'email = '.($postData['email']?'"'.SanitizerService::cleanInStr($this->conn,$postData['email']).'"':'NULL').','.
+				'url = '.($postData['url']?'"'.SanitizerService::cleanInStr($this->conn,$postData['url']).'"':'NULL').','.
+				'notes = '.($postData['notes']?'"'.SanitizerService::cleanInStr($this->conn,$postData['notes']).'"':'NULL').' '.
 				'WHERE iid = '.$postData['iid'];
 			//echo "<div>$sql</div>"; exit;
 			if(!$this->conn->query($sql)){
@@ -72,20 +72,20 @@ class InstitutionManager {
 		$newIID = 0;
 		$sql = 'INSERT INTO institutions (institutioncode, institutionname, institutionname2, address1, address2, city, '.
 			'stateprovince, postalcode, country, phone, contact, email, url, notes) '.
-			'VALUES ('.($postData['institutioncode']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutioncode']).'"':'NULL').',"'.
-			Sanitizer::cleanInStr($this->conn,$postData['institutionname']).'",'.
-			($postData['institutionname2']?'"'.Sanitizer::cleanInStr($this->conn,$postData['institutionname2']).'"':'NULL').','.
-			($postData['address1']?'"'.Sanitizer::cleanInStr($this->conn,$postData['address1']).'"':'NULL').','.
-			($postData['address2']?'"'.Sanitizer::cleanInStr($this->conn,$postData['address2']).'"':'NULL').','.
-			($postData['city']?'"'.Sanitizer::cleanInStr($this->conn,$postData['city']).'"':'NULL').','.
-			($postData['stateprovince']?'"'.Sanitizer::cleanInStr($this->conn,$postData['stateprovince']).'"':'NULL').','.
-			($postData['postalcode']?'"'.Sanitizer::cleanInStr($this->conn,$postData['postalcode']).'"':'NULL').','.
-			($postData['country']?'"'.Sanitizer::cleanInStr($this->conn,$postData['country']).'"':'NULL').','.
-			($postData['phone']?'"'.Sanitizer::cleanInStr($this->conn,$postData['phone']).'"':'NULL').','.
-			($postData['contact']?'"'.Sanitizer::cleanInStr($this->conn,$postData['contact']).'"':'NULL').','.
-			($postData['email']?'"'.Sanitizer::cleanInStr($this->conn,$postData['email']).'"':'NULL').','.
+			'VALUES ('.($postData['institutioncode']?'"'.SanitizerService::cleanInStr($this->conn,$postData['institutioncode']).'"':'NULL').',"'.
+			SanitizerService::cleanInStr($this->conn,$postData['institutionname']).'",'.
+			($postData['institutionname2']?'"'.SanitizerService::cleanInStr($this->conn,$postData['institutionname2']).'"':'NULL').','.
+			($postData['address1']?'"'.SanitizerService::cleanInStr($this->conn,$postData['address1']).'"':'NULL').','.
+			($postData['address2']?'"'.SanitizerService::cleanInStr($this->conn,$postData['address2']).'"':'NULL').','.
+			($postData['city']?'"'.SanitizerService::cleanInStr($this->conn,$postData['city']).'"':'NULL').','.
+			($postData['stateprovince']?'"'.SanitizerService::cleanInStr($this->conn,$postData['stateprovince']).'"':'NULL').','.
+			($postData['postalcode']?'"'.SanitizerService::cleanInStr($this->conn,$postData['postalcode']).'"':'NULL').','.
+			($postData['country']?'"'.SanitizerService::cleanInStr($this->conn,$postData['country']).'"':'NULL').','.
+			($postData['phone']?'"'.SanitizerService::cleanInStr($this->conn,$postData['phone']).'"':'NULL').','.
+			($postData['contact']?'"'.SanitizerService::cleanInStr($this->conn,$postData['contact']).'"':'NULL').','.
+			($postData['email']?'"'.SanitizerService::cleanInStr($this->conn,$postData['email']).'"':'NULL').','.
 			($postData['url']?'"'.$postData['url'].'"':'NULL').','.
-			($postData['notes']?'"'.Sanitizer::cleanInStr($this->conn,$postData['notes']).'"':'NULL').') ';
+			($postData['notes']?'"'.SanitizerService::cleanInStr($this->conn,$postData['notes']).'"':'NULL').') ';
 		//echo "<div>$sql</div>"; exit;
 		if($this->conn->query($sql)){
 			$newIID = $this->conn->insert_id;
@@ -206,7 +206,7 @@ class InstitutionManager {
                 $retArr[$r->iid]['institutioncode'] = $r->institutioncode;
 			}
 			else{
-				$retArr[$r->iid] = Sanitizer::cleanOutArray($r);
+				$retArr[$r->iid] = SanitizerService::cleanOutArray($r);
 			}
 		}
 		$rs->free();

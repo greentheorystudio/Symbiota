@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ReferenceManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $refId = array_key_exists('refid',$_REQUEST)?(int)$_REQUEST['refid']:0;
@@ -47,7 +47,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/references.index.js?ver=20230103"></script>
+    <script type="text/javascript" src="../js/references.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 </head>
 <body>
 	<?php
@@ -172,8 +172,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		?>
 	</div>
 	<?php
-	include(__DIR__ . '/../footer.php');
     include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

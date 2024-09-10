@@ -33,24 +33,29 @@ const taxaProfileImageCarousel = {
                     </q-carousel-slide>
                 </template>
                 <template v-slot:control>
-                    <q-carousel-control position="top-right" :offset="[9, 9]">
-                        <q-btn push round dense color="red" text-color="white" icon="fas fa-times" @click="hideImageCarousel();"></q-btn>
+                    <q-carousel-control position="top-right" :offset="[0, 0]">
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="hideImageCarousel();"></q-btn>
                     </q-carousel-control>
                 </template>
             </q-carousel>
         </div>
     `,
-    data() {
-        return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+    setup(props, context) {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
+        function hideImageCarousel() {
+            context.emit('update:show-image-carousel', false);
         }
-    },
-    methods: {
-        hideImageCarousel(){
-            this.$emit('update:show-image-carousel', false);
-        },
-        updateCurrentImage(val){
-            this.$emit('update:current-image', val);
+
+        function updateCurrentImage(val) {
+            context.emit('update:current-image', val);
+        }
+
+        return {
+            clientRoot,
+            hideImageCarousel,
+            updateCurrentImage
         }
     }
 };

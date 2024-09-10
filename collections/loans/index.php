@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecLoans.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 180);
 
@@ -103,7 +103,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script type="text/javascript">
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script type="text/javascript" src="../../js/collections.loans.js?ver=20230103"></script>
+	<script type="text/javascript" src="../../js/collections.loans.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 </head>
 <body>
 	<?php
@@ -397,8 +397,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		?>
 	</div>
 	<?php
-	include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

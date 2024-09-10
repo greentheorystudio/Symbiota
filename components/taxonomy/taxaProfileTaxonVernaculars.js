@@ -1,10 +1,8 @@
 const taxaProfileTaxonVernaculars = {
-    props: [
-        'vernaculars'
-    ],
-    watch: {
-        vernaculars: function(){
-            this.processVernaculars();
+    props: {
+        vernaculars: {
+            type: Array,
+            default: []
         }
     },
     template: `
@@ -24,23 +22,31 @@ const taxaProfileTaxonVernaculars = {
             </div>
         </template>
     `,
-    data() {
-        return {
-            vernacularStr: Vue.ref(null),
-            firstVernacular: Vue.ref(null),
-            loaded: Vue.ref(false),
-            showAll: Vue.ref(false)
-        };
-    },
-    mounted(){
-        this.processVernaculars();
-    },
-    methods: {
-        processVernaculars() {
-            if(this.vernaculars.length > 0){
-                this.firstVernacular = this.vernaculars[0];
-                this.vernacularStr = this.vernaculars.join(', ');
+    setup(props) {
+        const firstVernacular = Vue.ref(null);
+        const propsRefs = Vue.toRefs(props);
+        const showAll = Vue.ref(false);
+        const vernacularStr = Vue.ref(null);
+
+        Vue.watch(propsRefs.vernaculars, () => {
+            processVernaculars();
+        });
+
+        function processVernaculars() {
+            if(props.vernaculars.length > 0){
+                firstVernacular.value = props.vernaculars[0];
+                vernacularStr.value = props.vernaculars.join(', ');
             }
+        }
+
+        Vue.onMounted(() => {
+            processVernaculars();
+        });
+
+        return {
+            firstVernacular,
+            showAll,
+            vernacularStr
         }
     }
 };

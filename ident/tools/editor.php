@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/KeyEditorManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Cache-control: private; Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Cache-control: private; Content-Type: text/html; charset=UTF-8');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
@@ -156,9 +156,9 @@ else{
 }
 ?>
 </div>
-<?php 
-include(__DIR__ . '/../../footer.php');
+<?php
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>	

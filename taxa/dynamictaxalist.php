@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonomyDynamicListManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 header('Cache-Control: no-cache, must-revalidate, max-age=0');
 
@@ -141,7 +141,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 
         function processSelection(id,value){
             document.getElementById('targettid').value = value;
-            if(id !== 'kingdomSelect'){
+            /*if(id !== 'kingdomSelect'){
                 document.getElementById('kingdomSelect').value = '';
             }
             if(id !== 'phylumSelect'){
@@ -161,7 +161,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             }
             if(id !== 'commoninput'){
                 document.getElementById('commoninput').value = '';
-            }
+            }*/
         }
 
         function verifySubmit(){
@@ -266,7 +266,7 @@ include(__DIR__ . '/../header.php');
                         </div>
                         <div style="margin-top:90px;">
                             <div style="float:left;">
-                                <input type="checkbox" name="desclimit" value="1" <?php echo (((!$_POST && !$_GET) || $descLimit)?'CHECKED':''); ?> /> Limit to species with information
+                                <input type="checkbox" name="desclimit" value="1" <?php echo ($descLimit ? 'CHECKED' : ''); ?> /> Limit to species with information
                             </div>
                             <div style="float:right;">
                                 <input name="targettid" id="targettid" type="hidden" value="<?php echo $targetTid; ?>" />
@@ -369,8 +369,8 @@ include(__DIR__ . '/../header.php');
     </div>
 </div>
 <?php
-include(__DIR__ . '/../footer.php');
 include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

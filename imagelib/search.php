@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
@@ -45,9 +45,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
-    <script src="../js/images.index.js?ver=20221115" type="text/javascript"></script>
-    <script src="../js/search.term.manager.js?ver=20221110" type="text/javascript"></script>
-	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script src="../js/images.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 	<script type="text/javascript">
         let stArr = {};
         let phArr = [];
@@ -557,9 +556,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		
 		</div>
 	</div>
-	<?php 
-	include(__DIR__ . '/../footer.php');
+	<?php
     include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/config/symbbase.php');
 include_once(__DIR__ . '/classes/SiteMapManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $smManager = new SiteMapManager();
@@ -56,6 +56,15 @@ include_once(__DIR__ . '/config/header-includes.php');
 
             <h3>Additional Resources</h3>
 			<ul>
+                <li><a href="projects/index.php">Biotic Inventory Projects</a></li>
+                <li><a href="checklists/index.php">Checklists</a></li>
+                <li><a href="checklists/dynamicmap.php?interface=checklist">Dynamic Checklist</a></li>
+                <?php
+                if(isset($GLOBALS['KEY_MOD_IS_ACTIVE']) && $GLOBALS['KEY_MOD_IS_ACTIVE']){
+                    echo '<li><a href="checklists/dynamicmap.php?interface=key">Dynamic Key</a></li>';
+                }
+                ?>
+                <li><a href="taxa/dynamictaxalist.php">Dynamic Taxonomy List</a></li>
                 <?php
                 if($smManager->hasGlossary()){
                     ?>
@@ -64,14 +73,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                 }
                 ?>
                 <li><a href="taxa/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
-                <li><a href="checklists/index.php">Checklists</a></li>
-                <li><a href="projects/index.php">Biotic Inventory Projects</a></li>
-                <li><a href="checklists/dynamicmap.php?interface=checklist">Dynamic Checklist</a></li>
-                <?php
-                if(isset($GLOBALS['KEY_MOD_IS_ACTIVE']) && $GLOBALS['KEY_MOD_IS_ACTIVE']){
-                    echo '<li><a href="checklists/dynamicmap.php?interface=key">Dynamic Key</a></li>';
-                }
-                ?>
+                <li><a href="taxa/dynamictreeviewer.php">Interactive Taxonomic Tree</a></li>
 			</ul>
 
 			<?php
@@ -179,8 +181,8 @@ include_once(__DIR__ . '/config/header-includes.php');
         </div>
 	</div>
 	<?php
-    include(__DIR__ . '/footer.php');
     include_once(__DIR__ . '/config/footer-includes.php');
+    include(__DIR__ . '/footer.php');
 	?>
 </body>
 </html>

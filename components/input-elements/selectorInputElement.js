@@ -1,0 +1,160 @@
+const selectorInputElement = {
+    props: {
+        clearable: {
+            type: Boolean,
+            default: false
+        },
+        definition: {
+            type: Object,
+            default: null
+        },
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+        label: {
+            type: String,
+            default: ''
+        },
+        options: {
+            type: Array,
+            default: []
+        },
+        value: {
+            type: String,
+            default: null
+        }
+    },
+    template: `
+        <q-select ref="selectorRef" v-model="value" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-max" :options="selectorOptions" option-value="value" option-label="label" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :disable="disabled">
+            <template v-if="!disabled && (definition || (clearable && value))" v-slot:append>
+                <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        See field definition
+                    </q-tooltip>
+                </q-icon>
+                <q-icon v-if="clearable && value" name="cancel" class="cursor-pointer" @click="clearValue();">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        Clear value
+                    </q-tooltip>
+                </q-icon>
+            </template>
+            <template v-if="selectedOption || value" v-slot:selected>
+                <template v-if="selectedOption && selectedOption.label">
+                    {{ selectedOption.label.replaceAll(' ', '&nbsp;') }}
+                </template>
+                <template v-else>
+                    {{ value.replaceAll(' ', '&nbsp;') }}
+                </template>
+            </template>
+        </q-select>
+        <template v-if="definition">
+            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
+                <q-card class="sm-popup">
+                    <div class="row justify-end items-start map-sm-popup">
+                        <div>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false"></q-btn>
+                        </div>
+                    </div>
+                    <div class="q-pa-sm column q-gutter-sm">
+                        <div class="text-h6">{{ label }}</div>
+                        <template v-if="definition.definition">
+                            <div>
+                                <span class="text-bold">Definition: </span>{{ definition.definition }}
+                            </div>
+                        </template>
+                        <template v-if="definition.comments">
+                            <div>
+                                <span class="text-bold">Comments: </span>{{ definition.comments }}
+                            </div>
+                        </template>
+                        <template v-if="definition.examples">
+                            <div>
+                                <span class="text-bold">Examples: </span>{{ definition.examples }}
+                            </div>
+                        </template>
+                        <template v-if="definition.source">
+                            <div>
+                                <a :href="definition.source" target="_blank"><span class="text-bold">Go to source</span></a>
+                            </div>
+                        </template>
+                    </div>
+                </q-card>
+            </q-dialog>
+        </template>
+    `,
+    setup(props, context) {
+        const clearing = Vue.ref(false);
+        const displayDefinitionPopup = Vue.ref(false);
+        const propsRefs = Vue.toRefs(props);
+        const selectedOption = Vue.ref(null);
+        const selectorOptions = Vue.shallowReactive([]);
+
+        Vue.watch(propsRefs.value, () => {
+            setSelectedOption();
+        });
+
+        Vue.watch(propsRefs.options, () => {
+            setOptions();
+            setSelectedOption();
+        });
+
+        function checkFilter(input, proceed, abort) {
+            if(displayDefinitionPopup.value || clearing.value){
+                abort();
+            }
+            else{
+                proceed();
+            }
+        }
+
+        function clearValue() {
+            clearing.value = true;
+            processValueChange(null);
+            setTimeout(() => {
+                clearing.value = false;
+            }, 500);
+        }
+
+        function openDefinitionPopup() {
+            displayDefinitionPopup.value = true;
+        }
+
+        function processValueChange(selectedObj) {
+            context.emit('update:value', (selectedObj ? selectedObj.value : null));
+        }
+
+        function setOptions() {
+            selectorOptions.length = 0;
+            if(props.options.length > 0){
+                props.options.forEach(option => {
+                    if(typeof option === 'string' || typeof option === 'number'){
+                        selectorOptions.push({value: option.toString(), label: option.toString()});
+                    }
+                    else if(typeof option === 'object' && option.hasOwnProperty('value') && option.hasOwnProperty('label')){
+                        selectorOptions.push({value: option.value.toString(), label: option.label.toString()});
+                    }
+                });
+            }
+        }
+
+        function setSelectedOption() {
+            selectedOption.value = selectorOptions.find(opt => opt['value'] === props.value);
+        }
+
+        Vue.onMounted(() => {
+            setOptions();
+            setSelectedOption();
+        });
+
+        return {
+            displayDefinitionPopup,
+            selectedOption,
+            selectorOptions,
+            checkFilter,
+            clearValue,
+            openDefinitionPopup,
+            processValueChange
+        }
+    }
+};

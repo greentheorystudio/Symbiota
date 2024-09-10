@@ -1,8 +1,8 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
 
 class ChecklistLoaderManager {
 
@@ -14,7 +14,7 @@ class ChecklistLoaderManager {
 	private $errorStr = '';
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -28,7 +28,6 @@ class ChecklistLoaderManager {
 	{
 		set_time_limit(300);
 		ini_set('max_input_time',300);
-		ini_set('auto_detect_line_endings', true);
 		$successCnt = 0;
 
 		$fh = fopen($_FILES['uploadfile']['tmp_name'], 'rb') or die("Can't open file. File may be too large. Try uploading file in sections.");
@@ -50,12 +49,12 @@ class ChecklistLoaderManager {
 			flush();
 			while($valueArr = fgetcsv($fh)){
 				if($valueArr){
-                    $sciNameStr = Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['sciname']]);
+                    $sciNameStr = SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['sciname']]);
                     if($sciNameStr){
                         $tid = 0;
                         $rankId = 0;
                         $family = '';
-                        $sciNameArr = (new TaxonomyUtilities)->parseScientificName($sciNameStr);
+                        $sciNameArr = (new TaxonomyService)->parseScientificName($sciNameStr);
                         $sql = 'SELECT tid, sciname, family, rankid FROM taxa ';
                         $cleanSciName = $this->encodeString($sciNameArr['sciname']);
                         $sql .= 'WHERE (sciname IN("'.$sciNameStr.'"'.($cleanSciName?',"'.$cleanSciName.'"':'').'))';
@@ -78,31 +77,31 @@ class ChecklistLoaderManager {
                                 $sqlInsert = '';
                                 $sqlValues = '';
                                 if(array_key_exists('family',$headerArr) && $valueArr[$headerArr['family']]){
-                                    $famValue = Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['family']]);
+                                    $famValue = SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['family']]);
                                     if(strcasecmp($family, $famValue)){
                                         $sqlInsert .= ',familyoverride';
-                                        $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['family']]).'"';
+                                        $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['family']]).'"';
                                     }
                                 }
                                 if(array_key_exists('habitat',$headerArr) && $valueArr[$headerArr['habitat']]){
                                     $sqlInsert .= ',habitat';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['habitat']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['habitat']]).'"';
                                 }
                                 if(array_key_exists('abundance',$headerArr) && $valueArr[$headerArr['abundance']]){
                                     $sqlInsert .= ',abundance';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['abundance']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['abundance']]).'"';
                                 }
                                 if(array_key_exists('notes',$headerArr) && $valueArr[$headerArr['notes']]){
                                     $sqlInsert .= ',notes';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['notes']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['notes']]).'"';
                                 }
                                 if(array_key_exists('internalnotes',$headerArr) && $valueArr[$headerArr['internalnotes']]){
                                     $sqlInsert .= ',internalnotes';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['internalnotes']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['internalnotes']]).'"';
                                 }
                                 if(array_key_exists('source',$headerArr) && $valueArr[$headerArr['source']]){
                                     $sqlInsert .= ',source';
-                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($this->conn,$valueArr[$headerArr['source']]).'"';
+                                    $sqlValues .= ',"'.SanitizerService::cleanInStr($this->conn,$valueArr[$headerArr['source']]).'"';
                                 }
 
                                 $sql = 'INSERT INTO fmchklsttaxalink (tid,clid'.$sqlInsert.') VALUES ('.$tid.', '.$this->clid.$sqlValues.')';
@@ -208,23 +207,8 @@ class ChecklistLoaderManager {
 
 	private function encodeString($inStr): string
 	{
-		$retStr = $inStr;
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
 		$replace = array("'","'",'"','"','*','-','-');
-		$inStr= str_replace($search, $replace, $inStr);
-
-		if($inStr){
-			if(in_array(strtolower($GLOBALS['CHARSET']), array('utf-8', 'utf8'))){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-					$retStr = utf8_encode($inStr);
-				}
-			}
-			elseif(strtolower($GLOBALS['CHARSET']) === 'iso-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-					$retStr = utf8_decode($inStr);
-				}
-			}
- 		}
-		return $retStr;
+		return str_replace($search, $replace, $inStr);
 	}
 }

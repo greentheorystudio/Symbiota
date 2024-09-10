@@ -10,7 +10,7 @@ const viewProfileOccurrenceModule = {
             <q-list bordered class="rounded-borders q-mt-md">
                 <template v-for="collection in collectionArr">
                     <q-expansion-item expand-separator group="collectionGroup" :label="collection.label" header-class="text-h6">
-                        <collection-cotrol-panel-menus :user-name="accountInfo.username" :collection-id="collection.collid" :coll-type="collection.colltype" :occ-count="collection.occCount" :coll-access-level="collection.accesslevel"></collection-cotrol-panel-menus>
+                        <collection-cotrol-panel-menus :user-name="accountInfo.username" :collection-id="collection.collid" :collection-type="collection.colltype" :collection-permissions="collection.collectionpermissions"></collection-cotrol-panel-menus>
                     </q-expansion-item>
                 </template>
             </q-list>
@@ -30,32 +30,35 @@ const viewProfileOccurrenceModule = {
             </q-card-section>
         </q-card>
     `,
-    data() {
-        return {
-            clientRoot: Vue.ref(CLIENT_ROOT),
-            collectionArr: Vue.ref([])
-        }
-    },
     components: {
         'collection-cotrol-panel-menus': collectionControlPanelMenus
     },
-    mounted() {
-        this.setAccountCollections();
-    },
-    methods: {
-        setAccountCollections(){
+    setup(props) {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+        const collectionArr = Vue.ref([]);
+
+        function setAccountCollections() {
             const formData = new FormData();
-            formData.append('uid', this.uid);
-            formData.append('action', 'getAccountCollections');
-            fetch(profileApiUrl, {
+            formData.append('action', 'getCollectionListByUserRights');
+            fetch(collectionApiUrl, {
                 method: 'POST',
                 body: formData
             })
             .then((response) => {
                 response.json().then((resObj) => {
-                    this.collectionArr = resObj;
+                    collectionArr.value = resObj;
                 });
             });
+        }
+
+        Vue.onMounted(() => {
+            setAccountCollections();
+        });
+
+        return {
+            clientRoot,
+            collectionArr
         }
     }
 };

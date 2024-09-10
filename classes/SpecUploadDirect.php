@@ -44,7 +44,7 @@ class SpecUploadDirect extends SpecUploadBase {
 			$this->prepUploadData();
 			echo "<li style='font-weight:bold;'>Connected to Source Database</li>";
 			set_time_limit(800);
-			$sourceConn->query('SET NAMES ' .str_replace('-','',strtolower($GLOBALS['CHARSET'])). ';');
+			$sourceConn->query('SET NAMES utf8;');
 			if($result = $sourceConn->query($this->queryStr)){
 				echo "<li style='font-weight:bold;'>Results obtained from Source Connection, now reading Resultset... </li>";
 				$this->transferCount = 0;

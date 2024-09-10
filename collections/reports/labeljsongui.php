@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ?>
 <!DOCTYPE html>
@@ -374,14 +374,14 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('qrcodeoptions');">Close</button>
     </div>
 </div>
-<script src="../../js/collections.labeljsongui.js?ver=26"></script>
+<script src="../../js/collections.labeljsongui.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 <script type="text/javascript">
     createFields(fieldProps, fieldListDiv);
     refreshLineState();
 </script>
 <?php
-include(__DIR__ . '/../../footer.php');
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

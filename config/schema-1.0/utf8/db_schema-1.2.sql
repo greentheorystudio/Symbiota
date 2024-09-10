@@ -642,6 +642,8 @@ CREATE TABLE `omcollections` (
     `icon` varchar(250) DEFAULT NULL,
     `CollType` varchar(45) NOT NULL DEFAULT 'PreservedSpecimen' COMMENT 'PreservedSpecimen, HumanObservation, FossilSpecimen, LivingSpecimen, MaterialSample',
     `ManagementType` varchar(45) DEFAULT 'Snapshot' COMMENT 'Snapshot, Live Data',
+    `DataRecordingMethod` varchar(45) NULL DEFAULT 'specimen',
+    `defaultRepCount` int(10) DEFAULT NULL,
     `PublicEdits` int(1) unsigned NOT NULL DEFAULT '1',
     `collectionguid` varchar(45) DEFAULT NULL,
     `securitykey` varchar(45) DEFAULT NULL,
@@ -657,10 +659,12 @@ CREATE TABLE `omcollections` (
     `accessrights` varchar(1000) DEFAULT NULL,
     `dynamicProperties` text,
     `SortSeq` int(10) unsigned DEFAULT NULL,
+    `isPublic` smallint(1) NOT NULL DEFAULT 1,
     `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`CollID`),
     UNIQUE KEY `Index_inst` (`InstitutionCode`,`CollectionCode`),
     KEY `FK_collid_iid_idx` (`iid`),
+    KEY `isPublic` (`isPublic`),
     CONSTRAINT `FK_collid_iid` FOREIGN KEY (`iid`) REFERENCES `institutions` (`iid`) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -815,6 +819,20 @@ CREATE TABLE `omoccuraccessstats` (
     CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE `omoccuradditionaldata` (
+    `adddataID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `eventID` int(11) unsigned NOT NULL,
+    `field` varchar(250) NOT NULL,
+    `datavalue` varchar(1000) DEFAULT NULL,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`adddataID`),
+    UNIQUE KEY `INDEX_UNIQUE_event_field` (`eventID`,`field`),
+    KEY `field` (`field`),
+    KEY `datavalue` (`datavalue`),
+    KEY `FK_event` (`eventID`),
+    CONSTRAINT `FK_event` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`) ON UPDATE NO ACTION
+);
+
 CREATE TABLE `omoccurassociations` (
     `associd` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `occid` int(10) unsigned NOT NULL,
@@ -848,19 +866,59 @@ CREATE TABLE `omoccurassociations` (
     CONSTRAINT `FK_occurassoc_uidmodified` FOREIGN KEY (`modifieduid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-CREATE TABLE `omoccurcomments` (
-    `comid` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `comment` text NOT NULL,
-    `uid` int(10) unsigned NOT NULL,
-    `reviewstatus` int(10) unsigned NOT NULL DEFAULT '0',
-    `parentcomid` int(10) unsigned DEFAULT NULL,
+CREATE TABLE `omoccurcollectingevents` (
+    `eventID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `collid` int(10) unsigned DEFAULT NULL,
+    `locationID` int(11) DEFAULT NULL,
+    `eventType` varchar(255) DEFAULT NULL,
+    `fieldNotes` text,
+    `fieldnumber` varchar(45) DEFAULT NULL,
+    `recordedBy` varchar(255) DEFAULT NULL,
+    `recordNumber` varchar(45) DEFAULT NULL,
+    `recordedbyid` bigint(20) DEFAULT NULL,
+    `associatedCollectors` varchar(255) DEFAULT NULL,
+    `eventDate` date DEFAULT NULL,
+    `latestDateCollected` date DEFAULT NULL,
+    `eventTime` time DEFAULT NULL,
+    `year` int(10) DEFAULT NULL,
+    `month` int(10) DEFAULT NULL,
+    `day` int(10) DEFAULT NULL,
+    `startDayOfYear` int(10) DEFAULT NULL,
+    `endDayOfYear` int(10) DEFAULT NULL,
+    `verbatimEventDate` varchar(255) DEFAULT NULL,
+    `habitat` text,
+    `substrate` varchar(500) DEFAULT NULL,
+    `localitySecurity` int(10) DEFAULT NULL,
+    `localitySecurityReason` varchar(100) DEFAULT NULL,
+    `decimalLatitude` double DEFAULT NULL,
+    `decimalLongitude` double DEFAULT NULL,
+    `geodeticDatum` varchar(255) DEFAULT NULL,
+    `coordinateUncertaintyInMeters` int(10) DEFAULT NULL,
+    `footprintWKT` text,
+    `eventRemarks` text,
+    `georeferencedBy` varchar(255) DEFAULT NULL,
+    `georeferenceProtocol` varchar(255) DEFAULT NULL,
+    `georeferenceSources` varchar(255) DEFAULT NULL,
+    `georeferenceVerificationStatus` varchar(32) DEFAULT NULL,
+    `georeferenceRemarks` varchar(500) DEFAULT NULL,
+    `minimumDepthInMeters` double DEFAULT NULL,
+    `maximumDepthInMeters` double DEFAULT NULL,
+    `verbatimDepth` varchar(50) DEFAULT NULL,
+    `samplingProtocol` varchar(100) DEFAULT NULL,
+    `samplingEffort` varchar(200) DEFAULT NULL,
+    `repCount` int(10) DEFAULT NULL,
+    `labelProject` varchar(250) DEFAULT NULL,
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`comid`),
-    KEY `fk_omoccurcomments_occid` (`occid`),
-    KEY `fk_omoccurcomments_uid` (`uid`),
-    CONSTRAINT `fk_omoccurcomments_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_omoccurcomments_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+    PRIMARY KEY (`eventID`),
+    KEY `eventType` (`eventType`),
+    KEY `eventDate` (`eventDate`),
+    KEY `eventTime` (`eventTime`),
+    KEY `localitySecurity` (`localitySecurity`),
+    KEY `decimalLatitude` (`decimalLatitude`),
+    KEY `decimalLongitude` (`decimalLongitude`),
+    KEY `FK_eventcollid` (`collid`),
+    KEY `locationID` (`locationID`),
+    CONSTRAINT `FK_eventcollid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `omoccurdatasetlink` (
@@ -919,30 +977,6 @@ CREATE TABLE `omoccurdeterminations` (
     CONSTRAINT `FK_omoccurdets_idby` FOREIGN KEY (`idbyid`) REFERENCES `omcollectors` (`recordedById`) ON DELETE SET NULL ON UPDATE SET NULL,
     CONSTRAINT `FK_omoccurdets_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `FK_omoccurdets_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
-);
-
-CREATE TABLE `omoccurduplicatelink` (
-    `occid` int(10) unsigned NOT NULL,
-    `duplicateid` int(11) NOT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `modifiedUid` int(10) unsigned DEFAULT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`occid`,`duplicateid`),
-    KEY `FK_omoccurdupelink_occid_idx` (`occid`),
-    KEY `FK_omoccurdupelink_dupeid_idx` (`duplicateid`),
-    CONSTRAINT `FK_omoccurdupelink_dupeid` FOREIGN KEY (`duplicateid`) REFERENCES `omoccurduplicates` (`duplicateid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurdupelink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `omoccurduplicates` (
-    `duplicateid` int(11) NOT NULL AUTO_INCREMENT,
-    `title` varchar(50) NOT NULL,
-    `description` varchar(255) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `dupeType` varchar(45) NOT NULL DEFAULT 'Exact Duplicate',
-    `initialTimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`duplicateid`)
 );
 
 CREATE TABLE `omoccureditlocks` (
@@ -1106,6 +1140,51 @@ CREATE TABLE `omoccurloanslink` (
     CONSTRAINT `FK_occurloanlink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE `omoccurlocations` (
+    `locationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `collid` int(10) unsigned NOT NULL,
+    `locationName` varchar(255) DEFAULT NULL,
+    `locationCode` varchar(50) DEFAULT NULL,
+    `waterBody` varchar(255) DEFAULT NULL,
+    `country` varchar(64) DEFAULT NULL,
+    `stateProvince` varchar(255) DEFAULT NULL,
+    `county` varchar(255) DEFAULT NULL,
+    `municipality` varchar(255) DEFAULT NULL,
+    `locality` text,
+    `localitySecurity` int(10) DEFAULT NULL,
+    `localitySecurityReason` varchar(100) DEFAULT NULL,
+    `decimalLatitude` double DEFAULT NULL,
+    `decimalLongitude` double DEFAULT NULL,
+    `geodeticDatum` varchar(255) DEFAULT NULL,
+    `coordinateUncertaintyInMeters` int(10) DEFAULT NULL,
+    `footprintWKT` text,
+    `coordinatePrecision` decimal(9,0) DEFAULT NULL,
+    `locationRemarks` text,
+    `verbatimCoordinates` varchar(255) DEFAULT NULL,
+    `verbatimCoordinateSystem` varchar(255) DEFAULT NULL,
+    `georeferencedBy` varchar(255) DEFAULT NULL,
+    `georeferenceProtocol` varchar(255) DEFAULT NULL,
+    `georeferenceSources` varchar(255) DEFAULT NULL,
+    `georeferenceVerificationStatus` varchar(32) DEFAULT NULL,
+    `georeferenceRemarks` varchar(500) DEFAULT NULL,
+    `minimumElevationInMeters` int(6) DEFAULT NULL,
+    `maximumElevationInMeters` int(6) DEFAULT NULL,
+    `verbatimElevation` varchar(255) DEFAULT NULL,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`locationID`),
+    KEY `locationName` (`locationName`),
+    KEY `locationCode` (`locationCode`),
+    KEY `waterBody` (`waterBody`),
+    KEY `country` (`country`),
+    KEY `stateProvince` (`stateProvince`),
+    KEY `county` (`county`),
+    KEY `localitySecurity` (`localitySecurity`),
+    KEY `decimalLatitude` (`decimalLatitude`),
+    KEY `decimalLongitude` (`decimalLongitude`),
+    KEY `FK_collid` (`collid`),
+    CONSTRAINT `FK_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 CREATE TABLE `omoccurpaleo` (
     `paleoID` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `occid` int(10) unsigned NOT NULL,
@@ -1197,6 +1276,7 @@ CREATE TABLE `omoccurrences` (
     `associatedCollectors` varchar(255) DEFAULT NULL COMMENT 'not DwC',
     `eventDate` date DEFAULT NULL,
     `latestDateCollected` date DEFAULT NULL,
+    `eventTime` time DEFAULT NULL,
     `year` int(10) DEFAULT NULL,
     `month` int(10) DEFAULT NULL,
     `day` int(10) DEFAULT NULL,
@@ -1207,7 +1287,8 @@ CREATE TABLE `omoccurrences` (
     `substrate` varchar(500) DEFAULT NULL,
     `fieldNotes` text,
     `fieldnumber` varchar(45) DEFAULT NULL,
-    `eventID` varchar(45) DEFAULT NULL,
+    `eventID` int(11) UNSIGNED NULL DEFAULT NULL,
+    `eventRemarks` text,
     `occurrenceRemarks` text COMMENT 'General Notes',
     `informationWithheld` varchar(250) DEFAULT NULL,
     `dataGeneralizations` varchar(250) DEFAULT NULL,
@@ -1224,8 +1305,9 @@ CREATE TABLE `omoccurrences` (
     `individualCount` varchar(45) DEFAULT NULL,
     `samplingProtocol` varchar(100) DEFAULT NULL,
     `samplingEffort` varchar(200) DEFAULT NULL,
+    `rep` int(10) DEFAULT NULL,
     `preparations` varchar(100) DEFAULT NULL,
-    `locationID` varchar(100) DEFAULT NULL,
+    `locationID` int(11) UNSIGNED NULL DEFAULT NULL,
     `waterBody` varchar(255) DEFAULT NULL,
     `country` varchar(64) DEFAULT NULL,
     `stateProvince` varchar(255) DEFAULT NULL,
@@ -1251,8 +1333,8 @@ CREATE TABLE `omoccurrences` (
     `minimumElevationInMeters` int(6) DEFAULT NULL,
     `maximumElevationInMeters` int(6) DEFAULT NULL,
     `verbatimElevation` varchar(255) DEFAULT NULL,
-    `minimumDepthInMeters` int(11) DEFAULT NULL,
-    `maximumDepthInMeters` int(11) DEFAULT NULL,
+    `minimumDepthInMeters` double DEFAULT NULL,
+    `maximumDepthInMeters` double DEFAULT NULL,
     `verbatimDepth` varchar(50) DEFAULT NULL,
     `previousIdentifications` text,
     `disposition` varchar(250) DEFAULT NULL,
@@ -1267,6 +1349,7 @@ CREATE TABLE `omoccurrences` (
     `duplicateQuantity` int(10) unsigned DEFAULT NULL,
     `labelProject` varchar(250) DEFAULT NULL,
     `dynamicFields` text,
+    `isPublic` smallint(1) NOT NULL DEFAULT 1,
     `dateEntered` datetime DEFAULT NULL,
     `dateLastModified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`occid`),
@@ -1299,14 +1382,16 @@ CREATE TABLE `omoccurrences` (
     KEY `Index_latestDateCollected` (`latestDateCollected`),
     KEY `Index_occurrenceRemarks` (`occurrenceRemarks`(100)),
     KEY `Index_locationID` (`locationID`),
-    KEY `Index_eventID` (`eventID`),
     KEY `Index_occur_localitySecurity` (`localitySecurity`),
     KEY `Index_latlng` (`decimalLatitude`,`decimalLongitude`),
     KEY `Index_ labelProject` (`labelProject`),
     KEY `Index_verbatimScientificName` (`verbatimScientificName`),
+    KEY `isPublic` (`isPublic`),
+    KEY `rep` (`rep`),
     CONSTRAINT `FK_omoccurrences_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `FK_omoccurrences_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurrences_uid` FOREIGN KEY (`observeruid`) REFERENCES `users` (`uid`)
+    CONSTRAINT `FK_omoccurrences_uid` FOREIGN KEY (`observeruid`) REFERENCES `users` (`uid`),
+    CONSTRAINT `FK_eventID` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`) ON DELETE RESTRICT ON UPDATE NO ACTION
 );
 
 CREATE TABLE `omoccurrencesfulltext` (
@@ -1366,24 +1451,6 @@ CREATE TABLE `omoccurrevisions` (
     KEY `Index_omrevisions_editor` (`externalEditor`),
     CONSTRAINT `fk_omrevisions_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_omrevisions_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
-CREATE TABLE `omoccurverification` (
-    `ovsid` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `category` varchar(45) NOT NULL,
-    `ranking` int(11) NOT NULL,
-    `protocol` varchar(100) DEFAULT NULL,
-    `source` varchar(45) DEFAULT NULL,
-    `uid` int(10) unsigned DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`ovsid`),
-    UNIQUE KEY `UNIQUE_omoccurverification` (`occid`,`category`),
-    KEY `FK_omoccurverification_occid_idx` (`occid`),
-    KEY `FK_omoccurverification_uid_idx` (`uid`),
-    CONSTRAINT `FK_omoccurverification_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurverification_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `paleochronostratigraphy` (
@@ -1585,7 +1652,7 @@ CREATE TABLE `taxa` (
     `modifiedTimeStamp` datetime DEFAULT NULL,
     `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`TID`),
-    UNIQUE KEY `sciname_unique` (`SciName`,`kingdomId`),
+    UNIQUE KEY `sciname_unique` (`SciName`,`kingdomId`,`RankId`),
     KEY `rankid_index` (`RankId`),
     KEY `unitname1_index` (`UnitName1`,`UnitName2`),
     KEY `FK_taxa_uid_idx` (`modifiedUid`),

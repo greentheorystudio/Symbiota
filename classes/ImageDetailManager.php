@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/ImageShared.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageDetailManager {
 	
@@ -9,7 +9,7 @@ class ImageDetailManager {
 	private $imgId;
 
 	public function __construct($id){
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
  		if(is_numeric($id)){
 	 		$this->imgId = $id;
@@ -38,21 +38,21 @@ class ImageDetailManager {
 			if($row = $rs->fetch_object()){
 				$retArr['tid'] = $row->tid;
 				$retArr['sciname'] = $row->sciname;
-				$retArr['author'] = Sanitizer::cleanOutStr($row->author);
+				$retArr['author'] = SanitizerService::cleanOutStr($row->author);
 				$retArr['rankid'] = $row->rankid;
-				$retArr['url'] = $row->url;
-				$retArr['thumbnailurl'] = $row->thumbnailurl;
-				$retArr['originalurl'] = $row->originalurl;
-				$retArr['photographer'] = Sanitizer::cleanOutStr($row->photographer);
+				$retArr['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+				$retArr['thumbnailurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+				$retArr['originalurl'] = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
+				$retArr['photographer'] = SanitizerService::cleanOutStr($row->photographer);
 				$retArr['photographerdisplay'] = $row->photographerdisplay;
 				$retArr['photographeruid'] = $row->photographeruid;
-				$retArr['caption'] = Sanitizer::cleanOutStr($row->caption);
-				$retArr['owner'] = Sanitizer::cleanOutStr($row->owner);
-				$retArr['sourceurl'] = Sanitizer::cleanOutStr($row->sourceurl);
-				$retArr['copyright'] = Sanitizer::cleanOutStr($row->copyright);
-				$retArr['rights'] = Sanitizer::cleanOutStr($row->rights);
-				$retArr['locality'] = Sanitizer::cleanOutStr($row->locality);
-				$retArr['notes'] = Sanitizer::cleanOutStr($row->notes);
+				$retArr['caption'] = SanitizerService::cleanOutStr($row->caption);
+				$retArr['owner'] = SanitizerService::cleanOutStr($row->owner);
+				$retArr['sourceurl'] = SanitizerService::cleanOutStr($row->sourceurl);
+				$retArr['copyright'] = SanitizerService::cleanOutStr($row->copyright);
+				$retArr['rights'] = SanitizerService::cleanOutStr($row->rights);
+				$retArr['locality'] = SanitizerService::cleanOutStr($row->locality);
+				$retArr['notes'] = SanitizerService::cleanOutStr($row->notes);
 				$retArr['sortsequence'] = $row->sortsequence;
 				$retArr['occid'] = $row->occid;
 				$retArr['username'] = $row->username;
@@ -130,16 +130,16 @@ class ImageDetailManager {
 				 }
 	 		}
 		}
-	 	$caption = Sanitizer::cleanInStr($this->conn,$postArr['caption']);
-		$photographer = Sanitizer::cleanInStr($this->conn,$postArr['photographer']);
+	 	$caption = SanitizerService::cleanInStr($this->conn,$postArr['caption']);
+		$photographer = SanitizerService::cleanInStr($this->conn,$postArr['photographer']);
 		$photographerUid = $postArr['photographeruid'];
-		$owner = Sanitizer::cleanInStr($this->conn,$postArr['owner']);
-		$locality = Sanitizer::cleanInStr($this->conn,$postArr['locality']);
+		$owner = SanitizerService::cleanInStr($this->conn,$postArr['owner']);
+		$locality = SanitizerService::cleanInStr($this->conn,$postArr['locality']);
 		$occId = $postArr['occid'];
-		$notes = Sanitizer::cleanInStr($this->conn,$postArr['notes']);
-		$sourceUrl = Sanitizer::cleanInStr($this->conn,$postArr['sourceurl']);
-		$copyRight = Sanitizer::cleanInStr($this->conn,$postArr['copyright']);
-		$rights = Sanitizer::cleanInStr($this->conn,$postArr['rights']);
+		$notes = SanitizerService::cleanInStr($this->conn,$postArr['notes']);
+		$sourceUrl = SanitizerService::cleanInStr($this->conn,$postArr['sourceurl']);
+		$copyRight = SanitizerService::cleanInStr($this->conn,$postArr['copyright']);
+		$rights = SanitizerService::cleanInStr($this->conn,$postArr['rights']);
 		$sortSequence = (array_key_exists('sortsequence',$postArr)?$postArr['sortsequence']:0);
 		
 		$sql = 'UPDATE images '.

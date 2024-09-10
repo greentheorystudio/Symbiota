@@ -1,14 +1,23 @@
 const taxaProfileCentralImage = {
-    props: [
-        'taxon',
-        'central-image',
-        'is-editor'
-    ],
+    props: {
+        centralImage: {
+            type: Object,
+            default: {}
+        },
+        isEditor: {
+            type: Boolean,
+            default: false
+        },
+        taxon: {
+            type: Object,
+            default: {}
+        }
+    },
     template: `
         <q-card class="overflow-hidden">
             <template v-if="centralImage">
                 <div id="central-image">
-                    <a :href="centralImage.anchorUrl">
+                    <a @click="toggleImageCarousel(centralImage.url);" class="cursor-pointer">
                         <q-img :src="centralImage.url" :fit="contain" :title="centralImage.caption" :alt="centralImage.sciname"></q-img>
                         <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">
@@ -33,9 +42,17 @@ const taxaProfileCentralImage = {
             </template>
         </q-card>
     `,
-    data() {
+    setup(props, context) {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
+        function toggleImageCarousel(index) {
+            context.emit('update:set-image-carousel', index);
+        }
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            clientRoot,
+            toggleImageCarousel
         }
     }
 };

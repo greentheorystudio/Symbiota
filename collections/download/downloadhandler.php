@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 
 $schema = array_key_exists('schema',$_REQUEST)?htmlspecialchars($_REQUEST['schema']):'native';
@@ -13,7 +13,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $dlManager = new OccurrenceDownload();
 $dwcaHandler = new DwcArchiverCore();
 $occurManager = new OccurrenceManager();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 $occWhereStr = '';
 
@@ -105,7 +105,6 @@ else{
 		}
 		$dlManager->setSchemaType($schema);
 		$dlManager->setExtended($extended);
-		$dlManager->setCharSetOut($cSet);
 		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
 		$dlManager->addCondition('decimalLatitude','NOTNULL');
@@ -126,7 +125,6 @@ else{
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
 		$dlManager->setSchemaType($schema);
-		$dlManager->setCharSetOut($cSet);
 		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
 		$dlManager->downloadData();
@@ -236,10 +234,10 @@ else{
 				header('Content-Type: application/zip');
 			}
 			elseif($format === 'csv'){
-				header('Content-Type: text/csv; charset='.$GLOBALS['CHARSET']);
+				header('Content-Type: text/csv; charset=UTF-8');
 			}
 			else{
-				header('Content-Type: text/html; charset='.$GLOBALS['CHARSET']);
+				header('Content-Type: text/html; charset=UTF-8' );
 			}
 
 			header('Content-Disposition: attachment; filename='.basename($outputFile));

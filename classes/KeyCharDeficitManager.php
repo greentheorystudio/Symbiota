@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class KeyCharDeficitManager{
 	
@@ -10,7 +10,7 @@ class KeyCharDeficitManager{
 	private $language = 'English';
 	
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->con = $connection->getConnection();
 	}
 	
@@ -22,12 +22,12 @@ class KeyCharDeficitManager{
 	
 	public function setLanguage($lang): void
 	{
-		$this->language = Sanitizer::cleanInStr($this->con,$lang);
+		$this->language = SanitizerService::cleanInStr($this->con,$lang);
 	}
 	
 	public function setProject($proj): void
 	{
-		$this->project = Sanitizer::cleanInStr($this->con,$proj);
+		$this->project = SanitizerService::cleanInStr($this->con,$proj);
 	}
 	
 	public function getClQueryList(): array

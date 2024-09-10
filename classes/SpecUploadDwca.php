@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/SpecUploadBase.php');
-include_once(__DIR__ . '/Utilities.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 
 class SpecUploadDwca extends SpecUploadBase{
 
@@ -408,7 +408,7 @@ class SpecUploadDwca extends SpecUploadBase{
                         $this->getRecordArr($fh);
                     }
 
-                    $cset = strtolower(str_replace('-','',$GLOBALS['CHARSET']));
+                    $cset = 'utf8';
                     $this->sourceArr = array();
                     foreach($this->metaArr['occur']['fields'] as $k => $v){
                         $this->sourceArr[$k] = strtolower($v);
@@ -531,7 +531,7 @@ class SpecUploadDwca extends SpecUploadBase{
             closedir($handle);
         }
         if(stripos($dirPath,$this->uploadTargetPath) === 0){
-            (new Utilities)->deleteDirectory($dirPath);
+            FileSystemService::deleteDirectory($dirPath);
         }
     }
 
@@ -565,7 +565,7 @@ class SpecUploadDwca extends SpecUploadBase{
                 if($this->metaArr[$targetStr]['ignoreHeaderLines'] === '1'){
                     $this->getRecordArr($fh);
                 }
-                $cset = strtolower(str_replace('-','',$GLOBALS['CHARSET']));
+                $cset = 'utf8';
 
                 $fieldMap['dbpk']['field'] = 'coreid';
                 while($recordArr = $this->getRecordArr($fh)){

@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $datasetId = array_key_exists('datasetid',$_REQUEST)?(int)$_REQUEST['datasetid']:0;
@@ -10,7 +10,7 @@ $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $datasetManager = new OccurrenceDataset();
@@ -134,7 +134,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script type="text/javascript" src="../../js/external/jquery.js"></script>
     <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/external/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../../js/search.term.manager.js?ver=20221110"></script>
+    <script type="text/javascript" src="../../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <script type="text/javascript">
         let stArr = {};
         document.addEventListener("DOMContentLoaded", function() {
@@ -529,13 +529,12 @@ include(__DIR__ . '/../../header.php');
         <input id="imagescsv" name="imagescsv" type="hidden" />
         <input id="formatcsv" name="formatcsv" type="hidden" />
         <input id="zipcsv" name="zipcsv" type="hidden" />
-        <input id="csetcsv" name="csetcsv" type="hidden" />
         <input type="hidden" id="queryId" name="queryId" value='0' />
     </form>
 </div>
 <?php
-include(__DIR__ . '/../../footer.php');
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

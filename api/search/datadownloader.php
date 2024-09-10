@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 
 $fileType = array_key_exists('dh-type',$_REQUEST)?$_REQUEST['dh-type']:'';
@@ -16,14 +16,13 @@ $images = array_key_exists('imagescsv',$_REQUEST)?(int)$_REQUEST['imagescsv']:0;
 $rows = array_key_exists('dh-rows',$_REQUEST)?(int)$_REQUEST['dh-rows']:0;
 $format = array_key_exists('formatcsv',$_REQUEST)?$_REQUEST['formatcsv']:'';
 $zip = array_key_exists('zipcsv',$_REQUEST)?$_REQUEST['zipcsv']:'';
-$cset = array_key_exists('csetcsv',$_REQUEST)?$_REQUEST['csetcsv']:'';
 $stArrJson = array_key_exists('starrjson',$_REQUEST)?$_REQUEST['starrjson']:'';
 
 $spatialManager = new SpatialModuleManager();
 $dwcaHandler = new DwcArchiverCore();
 $occManager = new OccurrenceManager();
 $dlManager = new OccurrenceDownload();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 $jsonContent = '';
 $spatial = false;
@@ -122,7 +121,6 @@ else if($schema === 'checklist'){
     $occManager->setSearchTermsArr($stArr);
     $dlManager->setSqlWhere($occManager->getSqlWhere());
     $dlManager->setSchemaType($schema);
-    $dlManager->setCharSetOut($cset);
     $dlManager->setDelimiter($fileType);
     $dlManager->setZipFile($zip);
     $dlManager->downloadData();
@@ -138,7 +136,7 @@ else{
         }
         $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
     }
-    $dwcaHandler->setCharSetOut($cset);
+    $dwcaHandler->setCharSetOut('UTF-8');
     $dwcaHandler->setSchemaType($schema);
     $dwcaHandler->setDelimiter($format);
     $dwcaHandler->setVerboseMode(0);

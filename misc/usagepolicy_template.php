@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ?>
 <!DOCTYPE html>
@@ -27,7 +27,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <div class="pmargin">
                 <?php
                 echo $GLOBALS['DEFAULT_TITLE'].'. '.date('Y').'. ';
-                echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php. ';
+                echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/index.php. ';
                 echo 'Accessed on '.date('F d').'. ';
                 ?>
             </div>
@@ -36,12 +36,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <div class="pmargin">
                 Biodiversity occurrence data published by: &lt;List of Collections&gt;
                 (Accessed through <?php echo $GLOBALS['DEFAULT_TITLE']; ?> Data Portal,
-                <?php echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php'; ?>, YYYY-MM-DD)<br/><br/>
+                <?php echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/index.php'; ?>, YYYY-MM-DD)<br/><br/>
                 <b>For example:</b><br/>
                 Biodiversity occurrence data published by:
                 Field Museum of Natural History, Museum of Vertebrate Zoology, and New York Botanical Garden
                 (Accessed through <?php echo $GLOBALS['DEFAULT_TITLE']; ?> Data Portal,
-                <?php echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php, '.date('Y-m-d').')'; ?>
+                <?php echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/index.php, '.date('Y-m-d').')'; ?>
             </div>
         </div>
 
@@ -94,8 +94,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
         </div>
     </div>
     <?php
-    include(__DIR__ . '/../footer.php');
     include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
     ?>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
@@ -51,9 +51,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/external/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../js/collections.search.js?ver=20221025"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20221110"></script>
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script type="text/javascript" src="../js/collections.search.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <script type="text/javascript">
         let stArr = {};
         let listPage = <?php echo $pageNumber; ?>;
@@ -114,7 +113,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             http.onreadystatechange = function() {
                 if(http.readyState === 4 && http.status === 200) {
-                    if(http.responseText === "1"){
+                    if(Number(http.responseText) === 1){
                         alert("Success! All vouchers added to checklist.");
                     }
                     else{
@@ -194,12 +193,11 @@ echo '</div>';
         <input id="imagescsv" name="imagescsv" type="hidden" />
         <input id="formatcsv" name="formatcsv" type="hidden" />
         <input id="zipcsv" name="zipcsv" type="hidden" />
-        <input id="csetcsv" name="csetcsv" type="hidden" />
     </form>
 </div>
 <?php
-include(__DIR__ . '/../footer.php');
 include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

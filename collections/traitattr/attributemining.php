@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
@@ -164,7 +164,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             toggle("displayDiv");
         }
     </script>
-    <script src="../../js/collections.traitattr.js?ver=20230103" type="text/javascript"></script>
+    <script src="../../js/collections.traitattr.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body style="width:900px">
     <?php

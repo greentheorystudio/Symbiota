@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/MediaShared.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceEditorMedia extends OccurrenceEditorManager {
 
@@ -23,28 +23,24 @@ class OccurrenceEditorMedia extends OccurrenceEditorManager {
 	 	$url = $_REQUEST['accessuri'];
 	 	$occId = $_REQUEST['occid'];
         $tId = $this->occurrenceMap[$this->occid]['tid'];
-		$title = Sanitizer::cleanInStr($this->conn,$_REQUEST['title']);
-		$creator = Sanitizer::cleanInStr($this->conn,$_REQUEST['creator']);
+		$title = SanitizerService::cleanInStr($this->conn,$_REQUEST['title']);
+		$creator = SanitizerService::cleanInStr($this->conn,$_REQUEST['creator']);
 		$creatoruid = (array_key_exists('creatoruid',$_REQUEST)?(int)$_REQUEST['creatoruid']:'');
-		$description = Sanitizer::cleanInStr($this->conn,$_REQUEST['description']);
-		$locationcreated = Sanitizer::cleanInStr($this->conn,$_REQUEST['locationcreated']);
-        $language = Sanitizer::cleanInStr($this->conn,$_REQUEST['language']);
-        $type = Sanitizer::cleanInStr($this->conn,$_REQUEST['type']);
-        $format = Sanitizer::cleanInStr($this->conn,$_REQUEST['format']);
-        $usageterms = Sanitizer::cleanInStr($this->conn,$_REQUEST['usageterms']);
-        $rights = Sanitizer::cleanInStr($this->conn,$_REQUEST['rights']);
-        $owner = Sanitizer::cleanInStr($this->conn,$_REQUEST['owner']);
-        $publisher = Sanitizer::cleanInStr($this->conn,$_REQUEST['publisher']);
-        $contributor = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributor']);
-        $bibliographiccitation = Sanitizer::cleanInStr($this->conn,$_REQUEST['bibliographiccitation']);
-        $furtherinformationurl = Sanitizer::cleanInStr($this->conn,$_REQUEST['furtherinformationurl']);
+		$description = SanitizerService::cleanInStr($this->conn,$_REQUEST['description']);
+		$locationcreated = SanitizerService::cleanInStr($this->conn,$_REQUEST['locationcreated']);
+        $language = SanitizerService::cleanInStr($this->conn,$_REQUEST['language']);
+        $type = SanitizerService::cleanInStr($this->conn,$_REQUEST['type']);
+        $format = SanitizerService::cleanInStr($this->conn,$_REQUEST['format']);
+        $usageterms = SanitizerService::cleanInStr($this->conn,$_REQUEST['usageterms']);
+        $rights = SanitizerService::cleanInStr($this->conn,$_REQUEST['rights']);
+        $owner = SanitizerService::cleanInStr($this->conn,$_REQUEST['owner']);
+        $publisher = SanitizerService::cleanInStr($this->conn,$_REQUEST['publisher']);
+        $contributor = SanitizerService::cleanInStr($this->conn,$_REQUEST['contributor']);
+        $bibliographiccitation = SanitizerService::cleanInStr($this->conn,$_REQUEST['bibliographiccitation']);
+        $furtherinformationurl = SanitizerService::cleanInStr($this->conn,$_REQUEST['furtherinformationurl']);
 		$sortsequence = (is_numeric($_REQUEST['sortsequence'])?(int)$_REQUEST['sortsequence']:'');
 
-		if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($url, '/', 1) === 0) {
-            $url = 'http://'.$_SERVER['HTTP_HOST'].$url;
-        }
-
-	    $sql = 'UPDATE media '.
+		$sql = 'UPDATE media '.
 			'SET accessuri = "'.$url.'", occid = '.$occId.', tid = '.($tId ?: 'NULL').','.
             'title = '.($title?'"'.$title.'"':'NULL').','.
 			'creator = '.($creator?'"'.$creator.'"': 'NULL').','.
@@ -225,7 +221,7 @@ class OccurrenceEditorMedia extends OccurrenceEditorManager {
                 'FROM users u ORDER BY u.lastname, u.firstname ';
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
-				$this->photographerArr[$row->uid] = Sanitizer::cleanOutStr($row->fullname);
+				$this->photographerArr[$row->uid] = SanitizerService::cleanOutStr($row->fullname);
 			}
 			$result->close();
 		}

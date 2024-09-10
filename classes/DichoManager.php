@@ -1,11 +1,11 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class DichoManager{
 
     private function getConnection(): mysqli
     {
-        $connection = new DbConnection();
+        $connection = new DbService();
         return $connection->getConnection();
     }
 

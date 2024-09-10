@@ -413,9 +413,9 @@ function primeSymbologyData(features){
 
 function refreshLayerOrder(){
     const layerCount = map.getLayers().getArray().length;
-    layersObj['dragdrop1'].setZIndex(layerCount-8);
-    layersObj['dragdrop2'].setZIndex(layerCount-7);
-    layersObj['dragdrop3'].setZIndex(layerCount-6);
+    layersObj['dragDrop1'].setZIndex(layerCount-8);
+    layersObj['dragDrop2'].setZIndex(layerCount-7);
+    layersObj['dragDrop3'].setZIndex(layerCount-6);
     layersObj['uncertainty'].setZIndex(layerCount-5);
     layersObj['select'].setZIndex(layerCount-4);
     layersObj['pointv'].setZIndex(layerCount-3);
@@ -499,10 +499,10 @@ function setClusterSymbol(feature) {
             clusterindex = feature.get('identifiers');
             const cKey = feature.get('clusterkey');
             if(mapSymbology === 'coll'){
-                hexcolor = '#'+collSymbology[cKey]['color'];
+                hexcolor = collSymbology[cKey]['color'];
             }
             else if(mapSymbology === 'taxa'){
-                hexcolor = '#'+taxaSymbology[cKey]['color'];
+                hexcolor = taxaSymbology[cKey]['color'];
             }
             const colorArr = hexToRgb(hexcolor);
             if(size < 10) {
@@ -525,7 +525,7 @@ function setClusterSymbol(feature) {
             }
 
             if(selected) {
-                stroke = new ol.style.Stroke({color: ('#' + SPATIAL_POINT_SELECTIONS_BORDER_COLOR), width: SPATIAL_POINT_SELECTIONS_BORDER_WIDTH})
+                stroke = new ol.style.Stroke({color: (SPATIAL_POINT_SELECTIONS_BORDER_COLOR), width: SPATIAL_POINT_SELECTIONS_BORDER_WIDTH})
             }
 
             style = new ol.style.Style({
@@ -648,18 +648,18 @@ function setSymbol(feature){
         }
     }
     if(mapSymbology === 'coll'){
-        color = '#'+collSymbology[cKey]['color'];
+        color = collSymbology[cKey]['color'];
     }
     else if(mapSymbology === 'taxa'){
-        color = '#' + taxaSymbology[cKey]['color'];
+        color = taxaSymbology[cKey]['color'];
     }
 
     if(showPoint){
         if(selected) {
-            stroke = new ol.style.Stroke({color: ('#' + SPATIAL_POINT_SELECTIONS_BORDER_COLOR), width: SPATIAL_POINT_SELECTIONS_BORDER_WIDTH});
+            stroke = new ol.style.Stroke({color: (SPATIAL_POINT_SELECTIONS_BORDER_COLOR), width: SPATIAL_POINT_SELECTIONS_BORDER_WIDTH});
         }
         else {
-            stroke = new ol.style.Stroke({color: ('#' + SPATIAL_POINT_BORDER_COLOR), width: SPATIAL_POINT_BORDER_WIDTH});
+            stroke = new ol.style.Stroke({color: (SPATIAL_POINT_BORDER_COLOR), width: SPATIAL_POINT_BORDER_WIDTH});
         }
         fill = new ol.style.Fill({color: color});
     }

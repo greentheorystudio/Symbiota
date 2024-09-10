@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -18,6 +18,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Management Module</title>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <script type="text/javascript">
+            const COLLID = <?php echo $collid; ?>;
+        </script>
     </head>
     <body>
         <?php
@@ -35,7 +38,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         <template v-if="collInfo && collInfo.collectionname">{{ collInfo.collectionname }}</template>
                         <template v-if="collInfo && (collInfo.institutioncode || collInfo.collectioncode)"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
                     </div>
-                    <div onclick="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=<?php echo $collid; ?>');" title="Open Tutorial Window">
+                    <div onclick="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" title="Open Tutorial Window">
                         <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
                     </div>
                 </div>
@@ -292,157 +295,143 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
             </template>
         </div>
         <?php
-        include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
+        include(__DIR__ . '/../../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaKingdomSelector.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js" type="text/javascript"></script>
-        <script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script type="text/javascript">
             const occurrenceTaxonomyManagementModule = Vue.createApp({
-                data() {
-                    return {
-                        changedCurrentSciname: Vue.ref(''),
-                        changedParsedSciname: Vue.ref(''),
-                        colInitialSearchResults: Vue.ref([]),
-                        collId: Vue.ref(<?php echo $collid; ?>),
-                        collInfo: Vue.ref(null),
-                        currentSciname: Vue.ref(null),
-                        dataSource: Vue.ref('col'),
-                        isEditor: Vue.ref(false),
-                        itisInitialSearchResults: Vue.ref([]),
-                        levValue: Vue.ref('2'),
-                        nameSearchResults: Vue.ref([]),
-                        nameTidIndex: Vue.ref({}),
-                        newTidArr: Vue.ref([]),
-                        processCancelling: Vue.ref(false),
-                        processingArr: Vue.ref([]),
-                        processingLimit: Vue.ref(null),
-                        processingStartIndex: Vue.ref(null),
-                        processorDisplayArr: Vue.ref([]),
-                        processorDisplayDataArr: Vue.ref([]),
-                        processorDisplayCurrentIndex: Vue.ref(0),
-                        processorDisplayIndex: Vue.ref(0),
-                        rankArr: Vue.ref(null),
-                        rebuildHierarchyLoop: Vue.ref(0),
-                        selectedKingdom: Vue.ref(null),
-                        selectedKingdomId: Vue.ref(null),
-                        selectedKingdomName: Vue.ref(null),
-                        taxaLoaded: Vue.ref(0),
-                        taxaToAddArr: Vue.ref([]),
-                        undoButtonsDisabled: Vue.ref(true),
-                        undoId: Vue.ref(''),
-                        unlinkedLoading: Vue.ref(false),
-                        unlinkedNamesArr: Vue.ref([]),
-                        unlinkedOccCnt: Vue.ref(null),
-                        unlinkedTaxaCnt: Vue.ref(null),
-                        updatedet: Vue.ref(false),
-                        uppercontrolsdisabled: Vue.ref(false)
-                    }
-                },
                 components: {
                     'taxa-kingdom-selector': taxaKingdomSelector,
                     'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector
                 },
                 setup() {
-                    let currentProcess = Vue.ref(null);
-                    let procDisplayScrollAreaRef = Vue.ref(null);
-                    let procDisplayScrollHeight = Vue.ref(0);
-                    let scrollProcess = Vue.ref(null);
-                    return {
-                        currentProcess,
-                        procDisplayScrollAreaRef,
-                        scrollProcess,
-                        setScroller(info) {
-                            if((currentProcess.value || scrollProcess.value) && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
-                                procDisplayScrollHeight.value = info.verticalSize;
-                                if(scrollProcess.value === 'scrollDown'){
-                                    procDisplayScrollAreaRef.value.setScrollPosition('vertical', 0);
-                                }
-                                else{
-                                    procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
-                                }
-                            }
+                    const { getErrorResponseText, openTutorialWindow, showNotification } = useCore();
+                    const store = useBaseStore();
+                    const collectionStore = useCollectionStore();
+
+                    let abortController = null;
+                    const changedCurrentSciname = Vue.ref('');
+                    const changedParsedSciname = Vue.ref('');
+                    const colInitialSearchResults = [];
+                    const collId = COLLID;
+                    const collInfo = Vue.computed(() => collectionStore.getCollectionData);
+                    const currentProcess = Vue.ref(null);
+                    const currentSciname = Vue.ref(null);
+                    const dataSource = Vue.ref('col');
+                    const isEditor = Vue.computed(() => {
+                        return collectionStore.getCollectionPermissions.includes('CollAdmin');
+                    });
+                    const itisInitialSearchResults = [];
+                    const levValue = Vue.ref(2);
+                    let nameSearchResults = [];
+                    let nameTidIndex = {};
+                    const newTidArr = [];
+                    const procDisplayScrollAreaRef = Vue.ref(null);
+                    const procDisplayScrollHeight = Vue.ref(0);
+                    const processCancelling = Vue.ref(false);
+                    let processingArr = [];
+                    const processingLimit = Vue.ref(null);
+                    const processingStartIndex = Vue.ref(null);
+                    const processorDisplayArr = Vue.reactive([]);
+                    let processorDisplayDataArr = [];
+                    const processorDisplayCurrentIndex = Vue.ref(0);
+                    const processorDisplayIndex = Vue.ref(0);
+                    let rankArr = {};
+                    let rebuildHierarchyLoop = 0;
+                    let scrollProcess = null;
+                    const selectedKingdom = Vue.ref(null);
+                    const selectedKingdomId = Vue.ref(null);
+                    const selectedKingdomName = Vue.ref(null);
+                    let taxaLoaded = 0;
+                    let taxaToAddArr = [];
+                    const taxonomicRanks = store.getTaxonomicRanks;
+                    const undoButtonsDisabled = Vue.ref(true);
+                    const undoId = Vue.ref(null);
+                    const unlinkedLoading = Vue.ref(false);
+                    let unlinkedNamesArr = [];
+                    const unlinkedOccCnt = Vue.ref(0);
+                    const unlinkedTaxaCnt = Vue.ref(0);
+                    const updatedet = Vue.ref(false);
+                    const uppercontrolsdisabled = Vue.ref(false);
+
+                    function addProcessToProcessorDisplay(processObj) {
+                        processorDisplayArr.push(processObj);
+                        if(processorDisplayArr.length > 100){
+                            const precessorArrSegment = processorDisplayArr.slice(0, 100);
+                            processorDisplayDataArr = processorDisplayDataArr.concat(precessorArrSegment);
+                            processorDisplayArr.splice(0, 100);
+                            processorDisplayIndex.value++;
+                            processorDisplayCurrentIndex.value = processorDisplayIndex.value;
                         }
                     }
-                },
-                mounted() {
-                    this.setEditor();
-                    this.setCollInfo();
-                    this.setUnlinkedRecordCounts();
-                },
-                methods: {
-                    addProcessToProcessorDisplay(processObj){
-                        this.processorDisplayArr.push(processObj);
-                        if(this.processorDisplayArr.length > 100){
-                            const precessorArrSegment = this.processorDisplayArr.slice(0, 100);
-                            this.processorDisplayDataArr = this.processorDisplayDataArr.concat(precessorArrSegment);
-                            this.processorDisplayArr.splice(0, 100);
-                            this.processorDisplayIndex++;
-                            this.processorDisplayCurrentIndex = this.processorDisplayIndex;
-                        }
-                    },
-                    addSubprocessToProcessorDisplay(id,type,text){
-                        const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
-                        parentProcObj['subs'].push(this.getNewSubprocessObject(this.currentSciname,type,text));
-                        const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+
+                    function addSubprocessToProcessorDisplay(id, type, text) {
+                        const parentProcObj = processorDisplayArr.find(proc => proc['id'] === id);
+                        parentProcObj['subs'].push(getNewSubprocessObject(currentSciname.value, type, text));
+                        const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === id);
                         if(dataParentProcObj){
-                            dataParentProcObj['subs'].push(this.getNewSubprocessObject(this.currentSciname,type,text));
+                            dataParentProcObj['subs'].push(getNewSubprocessObject(currentSciname.value, type, text));
                         }
-                    },
-                    adjustUIEnd(){
-                        this.processCancelling = false;
-                        this.unlinkedNamesArr = [];
-                        this.currentSciname = null;
-                        this.setUnlinkedRecordCounts();
-                        this.currentProcess = null;
-                        this.undoButtonsDisabled = false;
-                        this.uppercontrolsdisabled = false;
-                        this.processorDisplayDataArr = this.processorDisplayDataArr.concat(this.processorDisplayArr);
-                    },
-                    adjustUIStart(id){
-                        this.processorDisplayArr = [];
-                        this.processorDisplayDataArr = [];
-                        this.processorDisplayCurrentIndex = 0;
-                        this.processorDisplayIndex = 0;
-                        this.scrollProcess = null;
-                        this.currentProcess = id;
-                        this.uppercontrolsdisabled = true;
-                        this.undoButtonsDisabled = true;
-                    },
-                    callCleaningController(step){
+                    }
+
+                    function adjustUIEnd() {
+                        processCancelling.value = false;
+                        unlinkedNamesArr = [];
+                        currentSciname.value = null;
+                        setUnlinkedRecordCounts();
+                        currentProcess.value = null;
+                        undoButtonsDisabled.value = false;
+                        uppercontrolsdisabled.value = false;
+                        processorDisplayDataArr = processorDisplayDataArr.concat(processorDisplayArr);
+                    }
+
+                    function adjustUIStart(id) {
+                        processorDisplayArr.length = 0;
+                        processorDisplayDataArr = [];
+                        processorDisplayCurrentIndex.value = 0;
+                        processorDisplayIndex.value = 0;
+                        scrollProcess = null;
+                        currentProcess.value = id;
+                        uppercontrolsdisabled.value = true;
+                        undoButtonsDisabled.value = true;
+                    }
+
+                    function callCleaningController(step) {
                         abortController = new AbortController();
                         const formData = new FormData();
-                        formData.append('collid', this.collId);
+                        formData.append('collid', collId);
                         if(step === 'question-marks'){
-                            this.adjustUIStart('cleanProcesses');
+                            adjustUIStart('cleanProcesses');
                             const text = 'Cleaning question marks from scientific names';
-                            this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanQuestionMarks','single',text));
+                            addProcessToProcessorDisplay(getNewProcessObject('cleanQuestionMarks', 'single', text));
                             formData.append('action', 'cleanQuestionMarks');
                         }
-                        if(!this.processCancelling){
+                        if(!processCancelling.value){
                             if(step === 'clean-sp'){
                                 const text = 'Cleaning scientific names ending in sp., sp. nov., spp., or group';
-                                this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanSpNames','single',text));
+                                addProcessToProcessorDisplay(getNewProcessObject('cleanSpNames', 'single', text));
                                 formData.append('action', 'cleanSpNames');
                             }
                             else if(step === 'clean-infra'){
                                 const text = 'Normalizing infraspecific rank abbreviations';
-                                this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanInfra','single',text));
+                                addProcessToProcessorDisplay(getNewProcessObject('cleanInfra', 'single', text));
                                 formData.append('action', 'cleanInfra');
                             }
                             else if(step === 'clean-qualifier'){
                                 const text = 'Cleaning scientific names containing cf. or aff.';
-                                this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanQualifierNames','single',text));
+                                addProcessToProcessorDisplay(getNewProcessObject('cleanQualifierNames', 'single', text));
                                 formData.append('action', 'cleanQualifierNames');
                             }
                             else if(step === 'double-spaces'){
                                 const text = 'Cleaning scientific names containing double spaces';
-                                this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanDoubleSpaces','single',text));
+                                addProcessToProcessorDisplay(getNewProcessObject('cleanDoubleSpaces', 'single', text));
                                 formData.append('action', 'cleanDoubleSpaces');
                             }
                             else if(step === 'leading-trailing-spaces'){
                                 const text = 'Cleaning leading and trailing spaces in scientific names';
-                                this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanTrimNames','single',text));
+                                addProcessToProcessorDisplay(getNewProcessObject('cleanTrimNames', 'single', text));
                                 formData.append('action', 'cleanTrimNames');
                             }
                             fetch(occurrenceTaxonomyApiUrl, {
@@ -453,54 +442,55 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             .then((response) => {
                                 if(response.status === 200){
                                     response.text().then((text) => {
-                                        this.processSuccessResponse(true,'Complete: ' + text + ' records cleaned');
+                                        processSuccessResponse(true, 'Complete: ' + text + ' records cleaned');
                                         if(step === 'question-marks'){
-                                            this.callCleaningController('clean-sp');
+                                            callCleaningController('clean-sp');
                                         }
                                         else if(step === 'clean-sp'){
-                                            this.callCleaningController('clean-infra');
+                                            callCleaningController('clean-infra');
                                         }
                                         else if(step === 'clean-infra'){
-                                            this.callCleaningController('clean-qualifier');
+                                            callCleaningController('clean-qualifier');
                                         }
                                         else if(step === 'clean-qualifier'){
-                                            this.callCleaningController('double-spaces');
+                                            callCleaningController('double-spaces');
                                         }
                                         else if(step === 'double-spaces'){
-                                            this.callCleaningController('leading-trailing-spaces');
+                                            callCleaningController('leading-trailing-spaces');
                                         }
                                         else if(step === 'leading-trailing-spaces'){
-                                            this.adjustUIEnd();
+                                            adjustUIEnd();
                                         }
                                     });
                                 }
                                 else{
-                                    const text = getErrorResponseText(response.status,response.statusText);
-                                    this.processErrorResponse(true,text);
+                                    const text = getErrorResponseText(response.status, response.statusText);
+                                    processErrorResponse(true, text);
                                 }
                             })
                             .catch((err) => {});
                         }
                         else{
-                            this.adjustUIEnd();
+                            adjustUIEnd();
                         }
-                    },
-                    callTaxThesaurusLinkController(step = ''){
-                        if(this.selectedKingdomId){
+                    }
+
+                    function callTaxThesaurusLinkController(step = '') {
+                        if(selectedKingdomId.value){
                             abortController = new AbortController();
                             const formData = new FormData();
-                            formData.append('collid', this.collId);
-                            formData.append('kingdomid', this.selectedKingdomId);
+                            formData.append('collid', collId);
+                            formData.append('kingdomid', selectedKingdomId.value);
                             if(!step){
-                                this.adjustUIStart('updateWithTaxThesaurus');
+                                adjustUIStart('updateWithTaxThesaurus');
                                 const text = 'Updating linkages of occurrence records to the Taxonomic Thesaurus';
-                                this.addProcessToProcessorDisplay(this.getNewProcessObject('updateOccThesaurusLinkages','single',text));
+                                addProcessToProcessorDisplay(getNewProcessObject('updateOccThesaurusLinkages','single',text));
                                 formData.append('action', 'updateOccThesaurusLinkages');
                             }
-                            if(!this.processCancelling){
+                            if(!processCancelling.value){
                                 if(step === 'update-det-linkages'){
                                     const text = 'Updating linkages of associated determination records to the Taxonomic Thesaurus';
-                                    this.addProcessToProcessorDisplay(this.getNewProcessObject('updateDetThesaurusLinkages','single',text));
+                                    addProcessToProcessorDisplay(getNewProcessObject('updateDetThesaurusLinkages','single',text));
                                     formData.append('action', 'updateDetThesaurusLinkages');
                                 }
                                 fetch(occurrenceTaxonomyApiUrl, {
@@ -511,35 +501,40 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 .then((response) => {
                                     if(response.status === 200){
                                         response.text().then((text) => {
-                                            this.processSuccessResponse(true,'Complete: ' + text + ' records updated');
-                                            if(!step && this.updatedet){
-                                                this.callTaxThesaurusLinkController('update-det-linkages');
+                                            processSuccessResponse(true, 'Complete: ' + text + ' records updated');
+                                            if(!step && updatedet.value){
+                                                callTaxThesaurusLinkController('update-det-linkages');
                                             }
                                             else{
-                                                this.adjustUIEnd();
+                                                adjustUIEnd();
                                             }
                                         });
                                     }
                                     else{
-                                        const text = getErrorResponseText(response.status,response.statusText);
-                                        this.processErrorResponse(true,text);
+                                        const text = getErrorResponseText(response.status, response.statusText);
+                                        processErrorResponse(true, text);
                                     }
                                 })
                                 .catch((err) => {});
                             }
                             else{
-                                this.adjustUIEnd();
+                                adjustUIEnd();
                             }
                         }
                         else{
-                            alert('Please select a Target Kingdom from the dropdown menu above.');
+                            showNotification('negative', 'Please select a Target Kingdom from the dropdown menu above.');
                         }
-                    },
-                    cancelProcess(){
-                        this.processCancelling = true;
-                        if(this.currentProcess === 'taxThesaurusFuzzyMatch' || !this.currentSciname){
+                    }
+
+                    function cancelAPIRequest(){
+                        abortController.abort();
+                    }
+
+                    function cancelProcess() {
+                        processCancelling.value = true;
+                        if(currentProcess.value === 'taxThesaurusFuzzyMatch' || !currentSciname.value){
                             cancelAPIRequest();
-                            const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
+                            const procObj = processorDisplayArr.find(proc => proc['current'] === true);
                             if(procObj){
                                 let subProcObj;
                                 procObj['current'] = false;
@@ -557,41 +552,45 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                     procObj['resultText'] = 'Cancelled';
                                 }
                             }
-                            this.adjustUIEnd();
+                            adjustUIEnd();
                         }
-                    },
-                    clearSubprocesses(id){
-                        const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
+                    }
+
+                    function clearSubprocesses(id) {
+                        const parentProcObj = processorDisplayArr.find(proc => proc['id'] === id);
                         parentProcObj['subs'] = [];
-                        const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                        const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === id);
                         if(dataParentProcObj){
                             dataParentProcObj['subs'] = [];
                         }
-                    },
-                    getDataSourceName(){
-                        if(this.dataSource === 'col'){
+                    }
+
+                    function getDataSourceName() {
+                        if(dataSource.value === 'col'){
                             return 'Catalogue of Life';
                         }
-                        else if(this.dataSource === 'itis'){
+                        else if(dataSource.value === 'itis'){
                             return 'Integrated Taxonomic Information System';
                         }
-                        else if(this.dataSource === 'worms'){
+                        else if(dataSource.value === 'worms'){
                             return 'World Register of Marine Species';
                         }
-                    },
-                    getITISNameSearchResultsHierarchy(){
+                    }
+
+                    function getITISNameSearchResultsHierarchy() {
                         let id;
-                        if(this.nameSearchResults[0]['accepted']){
-                            id = this.nameSearchResults[0]['id'];
+                        if(nameSearchResults[0]['accepted']){
+                            id = nameSearchResults[0]['id'];
                         }
                         else{
-                            id = this.nameSearchResults[0]['accepted_id'];
+                            id = nameSearchResults[0]['accepted_id'];
                         }
                         const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -601,16 +600,16 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                     const resArr = resObj['hierarchyList'];
                                     const hierarchyArr = [];
                                     if(resArr && resArr.length > 0){
-                                        let foundNameRank = this.nameSearchResults[0]['rankid'];
-                                        if(!this.nameSearchResults[0]['accepted']){
-                                            const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === this.nameSearchResults[0]['accepted_sciname']);
-                                            foundNameRank = Number(this.rankArr[acceptedObj['rankName'].toLowerCase()]);
+                                        let foundNameRank = nameSearchResults[0]['rankid'];
+                                        if(!nameSearchResults[0]['accepted']){
+                                            const acceptedObj = resArr.find(rettaxon => rettaxon['taxonName'] === nameSearchResults[0]['accepted_sciname']);
+                                            foundNameRank = Number(rankArr[acceptedObj['rankName'].toLowerCase()]);
                                         }
                                         resArr.forEach((taxResult) => {
-                                            if(taxResult['taxonName'] !== this.nameSearchResults[0]['sciname']){
+                                            if(taxResult['taxonName'] !== nameSearchResults[0]['sciname']){
                                                 const rankname = taxResult['rankName'].toLowerCase();
-                                                const rankid = Number(this.rankArr[rankname]);
-                                                if(rankid <= foundNameRank && TAXONOMIC_RANKS.includes(rankid)){
+                                                const rankid = Number(rankArr[rankname]);
+                                                if(rankid <= foundNameRank && taxonomicRanks.includes(rankid)){
                                                     const resultObj = {};
                                                     resultObj['id'] = taxResult['tsn'];
                                                     resultObj['sciname'] = taxResult['taxonName'];
@@ -618,31 +617,33 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                                     resultObj['rankname'] = rankname;
                                                     resultObj['rankid'] = rankid;
                                                     if(rankname === 'family'){
-                                                        this.nameSearchResults[0]['family'] = resultObj['sciname'];
+                                                        nameSearchResults[0]['family'] = resultObj['sciname'];
                                                     }
                                                     hierarchyArr.push(resultObj);
                                                 }
                                             }
                                         });
                                     }
-                                    this.nameSearchResults[0]['hierarchy'] = hierarchyArr;
-                                    this.processSuccessResponse(false);
-                                    this.validateNameSearchResults();
+                                    nameSearchResults[0]['hierarchy'] = hierarchyArr;
+                                    processSuccessResponse(false);
+                                    validateNameSearchResults();
                                 });
                             }
                             else{
-                                this.processErrorResponse(false,'Unable to retrieve taxon hierarchy');
-                                this.runScinameDataSourceSearch();
+                                processErrorResponse(false, 'Unable to retrieve taxon hierarchy');
+                                runScinameDataSourceSearch();
                             }
                         });
-                    },
-                    getITISNameSearchResultsRecord(){
-                        const id = this.nameSearchResults[0]['id'];
+                    }
+
+                    function getITISNameSearchResultsRecord() {
+                        const id = nameSearchResults[0]['id'];
                         const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -651,43 +652,44 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 response.json().then((resObj) => {
                                     const taxonRankData = resObj['taxRank'];
                                     if(taxonRankData && taxonRankData.hasOwnProperty('rankName')){
-                                        this.nameSearchResults[0]['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
-                                        this.nameSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
+                                        nameSearchResults[0]['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
+                                        nameSearchResults[0]['rankid'] = Number(taxonRankData['rankId']);
                                         const coreMetadata = resObj['coreMetadata'];
                                         const namestatus = coreMetadata['taxonUsageRating'];
                                         if(namestatus === 'accepted' || namestatus === 'valid'){
-                                            this.nameSearchResults[0]['accepted'] = true;
-                                            this.getITISNameSearchResultsHierarchy();
+                                            nameSearchResults[0]['accepted'] = true;
+                                            getITISNameSearchResultsHierarchy();
                                         }
                                         else{
-                                            this.nameSearchResults[0]['accepted'] = false;
+                                            nameSearchResults[0]['accepted'] = false;
                                             const acceptedNameList = resObj['acceptedNameList'];
                                             const acceptedNameArr = acceptedNameList['acceptedNames'];
                                             if(acceptedNameArr.length > 0){
                                                 const acceptedName = acceptedNameArr[0];
-                                                this.nameSearchResults[0]['accepted_id'] = acceptedName['acceptedTsn'];
-                                                this.nameSearchResults[0]['accepted_sciname'] = acceptedName['acceptedName'];
-                                                this.getITISNameSearchResultsHierarchy();
+                                                nameSearchResults[0]['accepted_id'] = acceptedName['acceptedTsn'];
+                                                nameSearchResults[0]['accepted_sciname'] = acceptedName['acceptedName'];
+                                                getITISNameSearchResultsHierarchy();
                                             }
                                             else{
-                                                this.processErrorResponse(false,'Unable to distinguish taxon by name');
-                                                this.runScinameDataSourceSearch();
+                                                processErrorResponse(false, 'Unable to distinguish taxon by name');
+                                                runScinameDataSourceSearch();
                                             }
                                         }
                                     }
                                     else{
-                                        this.processErrorResponse(false,'Unable to distinguish taxon by name');
-                                        this.runScinameDataSourceSearch();
+                                        processErrorResponse(false, 'Unable to distinguish taxon by name');
+                                        runScinameDataSourceSearch();
                                     }
                                 });
                             }
                             else{
-                                this.processErrorResponse(false,'Unable to retrieve taxon record');
-                                this.runScinameDataSourceSearch();
+                                processErrorResponse(false, 'Unable to retrieve taxon record');
+                                runScinameDataSourceSearch();
                             }
                         });
-                    },
-                    getNewProcessObject(id,type,text){
+                    }
+
+                    function getNewProcessObject(id, type, text) {
                         const procObj = {
                             id: id,
                             procText: text,
@@ -701,8 +703,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             procObj['subs'] = [];
                         }
                         return procObj;
-                    },
-                    getNewSubprocessObject(id,type,text){
+                    }
+
+                    function getNewSubprocessObject(id, type, text) {
                         return {
                             id: id,
                             procText: text,
@@ -714,53 +717,57 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             changedTid: 0,
                             resultText: ''
                         };
-                    },
-                    getWoRMSAddTaxonAuthor(){
-                        if(!this.processCancelling){
-                            const id = this.processingArr[0]['id'];
+                    }
+
+                    function getWoRMSAddTaxonAuthor() {
+                        if(!processCancelling.value){
+                            const id = processingArr[0]['id'];
                             const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                             const formData = new FormData();
                             formData.append('url', url);
-                            formData.append('action', 'get');
-                            fetch(proxyApiUrl, {
+                            formData.append('action', 'getExternalData');
+                            formData.append('requestType', 'get');
+                            fetch(proxyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
                             .then((response) => {
                                 if(response.status === 200){
                                     response.json().then((resObj) => {
-                                        const currentTaxon = this.processingArr[0];
+                                        const currentTaxon = processingArr[0];
                                         currentTaxon['author'] = resObj['authority'] ? resObj['authority'] : '';
-                                        this.taxaToAddArr.push(currentTaxon);
-                                        this.processingArr.splice(0, 1);
-                                        this.setTaxaToAdd();
+                                        taxaToAddArr.push(currentTaxon);
+                                        processingArr.splice(0, 1);
+                                        setTaxaToAdd();
                                     });
                                 }
                                 else{
-                                    const currentTaxon = this.processingArr[0];
-                                    this.taxaToAddArr.push(currentTaxon);
-                                    this.processingArr.splice(0, 1);
-                                    this.setTaxaToAdd();
+                                    const currentTaxon = processingArr[0];
+                                    taxaToAddArr.push(currentTaxon);
+                                    processingArr.splice(0, 1);
+                                    setTaxaToAdd();
                                 }
                             });
                         }
                         else{
-                            this.adjustUIEnd();
+                            adjustUIEnd();
                         }
-                    },
-                    getWoRMSNameSearchResultsHierarchy(){
+                    }
+
+                    function getWoRMSNameSearchResultsHierarchy() {
                         let id;
-                        if(this.nameSearchResults[0]['accepted']){
-                            id = this.nameSearchResults[0]['id'];
+                        if(nameSearchResults[0]['accepted']){
+                            id = nameSearchResults[0]['id'];
                         }
                         else{
-                            id = this.nameSearchResults[0]['accepted_id'];
+                            id = nameSearchResults[0]['accepted_id'];
                         }
                         const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -768,13 +775,13 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             if(response.status === 200){
                                 response.json().then((resObj) => {
                                     const hierarchyArr = [];
-                                    const foundNameRank = this.nameSearchResults[0]['rankid'];
+                                    const foundNameRank = nameSearchResults[0]['rankid'];
                                     let childObj = resObj['child'];
                                     if(childObj){
                                         const firstObj = {};
                                         const firstrankname = childObj['rank'].toLowerCase();
-                                        const firstrankid = Number(this.rankArr[firstrankname]);
-                                        const newTaxonAccepted = this.nameSearchResults[0]['accepted'];
+                                        const firstrankid = Number(rankArr[firstrankname]);
+                                        const newTaxonAccepted = nameSearchResults[0]['accepted'];
                                         firstObj['id'] = childObj['AphiaID'];
                                         firstObj['sciname'] = childObj['scientificname'];
                                         firstObj['author'] = '';
@@ -783,10 +790,10 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                         hierarchyArr.push(firstObj);
                                         let stopLoop = false;
                                         while((childObj = childObj['child']) && !stopLoop){
-                                            if(childObj['scientificname'] !== this.nameSearchResults[0]['sciname']){
+                                            if(childObj['scientificname'] !== nameSearchResults[0]['sciname']){
                                                 const rankname = childObj['rank'].toLowerCase();
-                                                const rankid = Number(this.rankArr[rankname]);
-                                                if((newTaxonAccepted && rankid < foundNameRank && TAXONOMIC_RANKS.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'] || TAXONOMIC_RANKS.includes(rankid)))){
+                                                const rankid = Number(rankArr[rankname]);
+                                                if((newTaxonAccepted && rankid < foundNameRank && taxonomicRanks.includes(rankid)) || (!newTaxonAccepted && (childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'] || taxonomicRanks.includes(rankid)))){
                                                     const resultObj = {};
                                                     resultObj['id'] = childObj['AphiaID'];
                                                     resultObj['sciname'] = childObj['scientificname'];
@@ -794,40 +801,42 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                                     resultObj['rankname'] = rankname;
                                                     resultObj['rankid'] = rankid;
                                                     if(rankname === 'family'){
-                                                        this.nameSearchResults[0]['family'] = resultObj['sciname'];
+                                                        nameSearchResults[0]['family'] = resultObj['sciname'];
                                                     }
                                                     hierarchyArr.push(resultObj);
                                                 }
-                                                if((newTaxonAccepted && rankid === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === this.nameSearchResults[0]['accepted_sciname'])){
+                                                if((newTaxonAccepted && rankid === foundNameRank) || (!newTaxonAccepted && childObj['scientificname'] === nameSearchResults[0]['accepted_sciname'])){
                                                     stopLoop = true;
                                                 }
                                             }
                                         }
-                                        this.nameSearchResults[0]['hierarchy'] = hierarchyArr;
+                                        nameSearchResults[0]['hierarchy'] = hierarchyArr;
                                     }
-                                    this.processSuccessResponse(false);
-                                    this.validateNameSearchResults();
+                                    processSuccessResponse(false);
+                                    validateNameSearchResults();
                                 });
                             }
                             else{
-                                this.processErrorResponse(false,'Unable to retrieve taxon hierarchy');
-                                this.runScinameDataSourceSearch();
+                                processErrorResponse(false, 'Unable to retrieve taxon hierarchy');
+                                runScinameDataSourceSearch();
                             }
                         });
-                    },
-                    getWoRMSNameSearchResultsRecord(id){
+                    }
+
+                    function getWoRMSNameSearchResultsRecord(id) {
                         const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
                             if(response.status === 200){
                                 response.json().then((resObj) => {
-                                    if(resObj.hasOwnProperty('kingdom') && resObj['kingdom'] && resObj.hasOwnProperty('scientificname') && resObj['scientificname'] && (resObj['kingdom'].toLowerCase() === this.selectedKingdomName.toLowerCase() || resObj['scientificname'].toLowerCase() === this.selectedKingdomName.toLowerCase())){
+                                    if(resObj.hasOwnProperty('kingdom') && resObj['kingdom'] && resObj.hasOwnProperty('scientificname') && resObj['scientificname'] && (resObj['kingdom'].toLowerCase() === selectedKingdomName.value.toLowerCase() || resObj['scientificname'].toLowerCase() === selectedKingdomName.value.toLowerCase())){
                                         const resultObj = {};
                                         resultObj['id'] = resObj['AphiaID'];
                                         resultObj['sciname'] = resObj['scientificname'];
@@ -843,28 +852,29 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                             resultObj['accepted_id'] = resObj['valid_AphiaID'];
                                             resultObj['accepted_sciname'] = resObj['valid_name'];
                                         }
-                                        this.nameSearchResults.push(resultObj);
-                                        this.getWoRMSNameSearchResultsHierarchy();
+                                        nameSearchResults.push(resultObj);
+                                        getWoRMSNameSearchResultsHierarchy();
                                     }
                                     else{
-                                        this.processErrorResponse(false,'Not found');
-                                        this.runScinameDataSourceSearch();
+                                        processErrorResponse(false, 'Not found');
+                                        runScinameDataSourceSearch();
                                     }
                                 });
                             }
                             else{
-                                this.processErrorResponse(false,'Unable to retrieve taxon record');
-                                this.runScinameDataSourceSearch();
+                                processErrorResponse(false, 'Unable to retrieve taxon record');
+                                runScinameDataSourceSearch();
                             }
                         });
-                    },
-                    initializeCleanScinameAuthor(){
-                        this.adjustUIStart('cleanScinameAuthor');
+                    }
+
+                    function initializeCleanScinameAuthor() {
+                        adjustUIStart('cleanScinameAuthor');
                         const text = 'Getting unlinked occurrence record scientific names';
-                        this.addProcessToProcessorDisplay(this.getNewProcessObject('cleanScinameAuthor','multi',text));
+                        addProcessToProcessorDisplay(getNewProcessObject('cleanScinameAuthor', 'multi', text));
                         abortController = new AbortController();
                         const formData = new FormData();
-                        formData.append('collid', this.collId);
+                        formData.append('collid', collId);
                         formData.append('action', 'getUnlinkedOccSciNames');
                         fetch(occurrenceTaxonomyApiUrl, {
                             method: 'POST',
@@ -874,27 +884,28 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         .then((response) => {
                             if(response.status === 200){
                                 response.json().then((resObj) => {
-                                    this.processSuccessResponse(true,'Complete');
-                                    this.unlinkedNamesArr = this.processUnlinkedNamesArr(resObj);
-                                    this.runCleanScinameAuthorProcess();
+                                    processSuccessResponse(true, 'Complete');
+                                    unlinkedNamesArr = processUnlinkedNamesArr(resObj);
+                                    runCleanScinameAuthorProcess();
                                 });
                             }
                             else{
-                                const text = getErrorResponseText(response.status,response.statusText);
-                                this.processErrorResponse(true,text);
+                                const text = getErrorResponseText(response.status, response.statusText);
+                                processErrorResponse(true, text);
                             }
                         })
                         .catch((err) => {});
-                    },
-                    initializeDataSourceSearch(){
-                        if(this.selectedKingdomId){
-                            this.nameTidIndex = {};
-                            this.taxaLoaded = 0;
-                            this.newTidArr = [];
-                            this.adjustUIStart('resolveFromTaxaDataSource');
+                    }
+
+                    function initializeDataSourceSearch() {
+                        if(selectedKingdomId.value){
+                            nameTidIndex = Object.assign({}, {});
+                            taxaLoaded = 0;
+                            newTidArr.length = 0;
+                            adjustUIStart('resolveFromTaxaDataSource');
                             const text = 'Setting rank data for processing search returns';
-                            this.addProcessToProcessorDisplay(this.getNewProcessObject('resolveFromTaxaDataSource','multi',text));
-                            const url = taxonomyApiUrl + '?action=getRankNameArr'
+                            addProcessToProcessorDisplay(getNewProcessObject('resolveFromTaxaDataSource', 'multi', text));
+                            const url = taxonRankApiUrl + '?action=getRankNameArr'
                             abortController = new AbortController();
                             fetch(url, {
                                 signal: abortController.signal
@@ -902,29 +913,30 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             .then((response) => {
                                 if(response.status === 200){
                                     response.json().then((resObj) => {
-                                        this.processSuccessResponse(true, 'Complete');
-                                        this.rankArr = resObj;
-                                        this.setUnlinkedTaxaList();
+                                        processSuccessResponse(true, 'Complete');
+                                        rankArr = Object.assign({}, resObj);
+                                        setUnlinkedTaxaList();
                                     });
                                 }
                                 else{
-                                    const text = getErrorResponseText(response.status,response.statusText);
-                                    this.processErrorResponse(true,text);
+                                    const text = getErrorResponseText(response.status, response.statusText);
+                                    processErrorResponse(true, text);
                                 }
                             });
                         }
                         else{
-                            alert('Please select a Target Kingdom from the dropdown menu above.');
+                            showNotification('negative', 'Please select a Target Kingdom from the dropdown menu above.');
                         }
-                    },
-                    initializeTaxThesaurusFuzzyMatch(){
-                        if(this.selectedKingdomId && this.levValue && Number(this.levValue) > 0){
-                            this.adjustUIStart('taxThesaurusFuzzyMatch');
+                    }
+
+                    function initializeTaxThesaurusFuzzyMatch() {
+                        if(selectedKingdomId.value && levValue.value && Number(levValue.value) > 0){
+                            adjustUIStart('taxThesaurusFuzzyMatch');
                             const text = 'Getting unlinked occurrence record scientific names';
-                            this.addProcessToProcessorDisplay(this.getNewProcessObject('taxThesaurusFuzzyMatch','multi',text));
+                            addProcessToProcessorDisplay(getNewProcessObject('taxThesaurusFuzzyMatch', 'multi', text));
                             abortController = new AbortController();
                             const formData = new FormData();
-                            formData.append('collid', this.collId);
+                            formData.append('collid', collId);
                             formData.append('action', 'getUnlinkedOccSciNames');
                             fetch(occurrenceTaxonomyApiUrl, {
                                 method: 'POST',
@@ -934,30 +946,31 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             .then((response) => {
                                 if(response.status === 200){
                                     response.json().then((resObj) => {
-                                        this.processSuccessResponse(true,'Complete');
-                                        this.unlinkedNamesArr = this.processUnlinkedNamesArr(resObj);
-                                        this.runTaxThesaurusFuzzyMatchProcess();
+                                        processSuccessResponse(true,'Complete');
+                                        unlinkedNamesArr = processUnlinkedNamesArr(resObj);
+                                        runTaxThesaurusFuzzyMatchProcess();
                                     });
                                 }
                                 else{
-                                    const text = getErrorResponseText(response.status,response.statusText);
-                                    this.processErrorResponse(true,text);
+                                    const text = getErrorResponseText(response.status, response.statusText);
+                                    processErrorResponse(true, text);
                                 }
                             })
                             .catch((err) => {});
                         }
-                        else if(!this.selectedKingdomId){
-                            alert('Please select a Target Kingdom from the dropdown menu above.');
+                        else if(!selectedKingdomId.value){
+                            showNotification('negative', 'Please select a Target Kingdom from the dropdown menu above.');
                         }
                         else{
-                            alert('Please select a character difference tolerance value greater than zero.');
+                            showNotification('negative', 'Please select a character difference tolerance value greater than zero.');
                         }
-                    },
-                    populateTaxonomicHierarchy(){
-                        if(this.rebuildHierarchyLoop < 40){
+                    }
+
+                    function populateTaxonomicHierarchy() {
+                        if(rebuildHierarchyLoop < 40){
                             const formData = new FormData();
                             formData.append('action', 'populateHierarchyTable');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxonHierarchyApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -965,34 +978,35 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 if(response.status === 200){
                                     response.text().then((res) => {
                                         if(Number(res) > 0){
-                                            this.rebuildHierarchyLoop++;
-                                            this.populateTaxonomicHierarchy();
+                                            rebuildHierarchyLoop++;
+                                            populateTaxonomicHierarchy();
                                         }
                                         else{
-                                            this.processSuccessResponse(true,'Complete');
-                                            this.adjustUIEnd();
+                                            processSuccessResponse(true, 'Complete');
+                                            adjustUIEnd();
                                         }
                                     });
                                 }
                                 else{
-                                    this.processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
-                                    this.adjustUIEnd();
+                                    processErrorResponse(false, 'Error rebuilding the taxonomic hierarchy');
+                                    adjustUIEnd();
                                 }
                             });
                         }
                         else{
-                            this.processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
-                            this.adjustUIEnd();
+                            processErrorResponse(false, 'Error rebuilding the taxonomic hierarchy');
+                            adjustUIEnd();
                         }
-                    },
-                    primeTaxonomicHierarchy(){
-                        this.rebuildHierarchyLoop = 0;
+                    }
+
+                    function primeTaxonomicHierarchy() {
+                        rebuildHierarchyLoop = 0;
                         const text = 'Populating taxonomic hierarchy with new taxa';
-                        this.addProcessToProcessorDisplay(this.getNewProcessObject('primeHierarchyTable','multi',text));
+                        addProcessToProcessorDisplay(getNewProcessObject('primeHierarchyTable', 'multi', text));
                         const formData = new FormData();
-                        formData.append('tidarr', JSON.stringify(this.newTidArr));
+                        formData.append('tidarr', JSON.stringify(newTidArr));
                         formData.append('action', 'primeHierarchyTable');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonHierarchyApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -1000,41 +1014,42 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             if(response.status === 200){
                                 response.text().then((res) => {
                                     if(Number(res) > 0){
-                                        this.rebuildHierarchyLoop++;
-                                        this.populateTaxonomicHierarchy();
+                                        rebuildHierarchyLoop++;
+                                        populateTaxonomicHierarchy();
                                     }
                                     else{
-                                        this.adjustUIEnd();
+                                        adjustUIEnd();
                                     }
                                 });
                             }
                             else{
-                                this.processErrorResponse(false,'Error rebuilding the taxonomic hierarchy');
-                                this.adjustUIEnd();
+                                processErrorResponse(false, 'Error rebuilding the taxonomic hierarchy');
+                                adjustUIEnd();
                             }
                         });
-                    },
-                    processAddTaxaArr(){
-                        if(this.taxaToAddArr.length > 0){
-                            const taxonToAdd = this.taxaToAddArr[0];
+                    }
+
+                    function processAddTaxaArr() {
+                        if(taxaToAddArr.length > 0){
+                            const taxonToAdd = taxaToAddArr[0];
                             const text = 'Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus';
-                            this.addSubprocessToProcessorDisplay(this.currentSciname,'text',text);
+                            addSubprocessToProcessorDisplay(currentSciname.value, 'text', text);
                             const newTaxonObj = {};
                             newTaxonObj['sciname'] = taxonToAdd['sciname'];
                             newTaxonObj['author'] = taxonToAdd['author'];
-                            newTaxonObj['kingdomid'] = this.selectedKingdomId;
+                            newTaxonObj['kingdomid'] = selectedKingdomId.value;
                             newTaxonObj['rankid'] = taxonToAdd['rankid'];
                             newTaxonObj['acceptstatus'] = 1;
                             newTaxonObj['tidaccepted'] = '';
-                            newTaxonObj['parenttid'] = this.nameTidIndex[taxonToAdd['parentName']];
+                            newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
                             newTaxonObj['family'] = taxonToAdd['family'];
-                            newTaxonObj['source'] = this.getDataSourceName();
-                            newTaxonObj['source-name'] = this.dataSource;
+                            newTaxonObj['source'] = getDataSourceName();
+                            newTaxonObj['source-name'] = dataSource.value;
                             newTaxonObj['source-id'] = taxonToAdd['id'];
                             const formData = new FormData();
                             formData.append('taxon', JSON.stringify(newTaxonObj));
                             formData.append('action', 'addTaxon');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxaApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1042,48 +1057,49 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 response.text().then((res) => {
                                     if(res && Number(res) > 0){
                                         const newTid = Number(res);
-                                        this.nameTidIndex[this.taxaToAddArr[0]['sciname']] = newTid;
-                                        this.newTidArr.push(newTid);
-                                        this.taxaToAddArr.splice(0, 1);
-                                        this.processSubprocessSuccessResponse(this.currentSciname,false);
-                                        this.processAddTaxaArr();
+                                        nameTidIndex[taxaToAddArr[0]['sciname']] = newTid;
+                                        newTidArr.push(newTid);
+                                        taxaToAddArr.splice(0, 1);
+                                        processSubprocessSuccessResponse(currentSciname.value, false);
+                                        processAddTaxaArr();
                                     }
                                     else{
-                                        this.processSubprocessErrorResponse(this.currentSciname,false,'Error loading taxon');
-                                        this.runScinameDataSourceSearch();
+                                        processSubprocessErrorResponse(currentSciname.value, false, 'Error loading taxon');
+                                        runScinameDataSourceSearch();
                                     }
                                 });
                             });
                         }
                         else{
-                            this.processAddTaxon();
+                            processAddTaxon();
                         }
-                    },
-                    processAddTaxon(){
-                        const taxonToAdd = this.nameSearchResults[0];
+                    }
+
+                    function processAddTaxon() {
+                        const taxonToAdd = nameSearchResults[0];
                         const text = 'Adding ' + taxonToAdd['sciname'] + ' to the Taxonomic Thesaurus';
-                        this.addSubprocessToProcessorDisplay(this.currentSciname,'text',text);
-                        if(this.nameTidIndex.hasOwnProperty(taxonToAdd['sciname'])){
-                            this.processSubprocessSuccessResponse(this.currentSciname,false,this.nameSearchResults[0]['sciname'] + ' already added');
-                            this.updateOccurrenceLinkages();
+                        addSubprocessToProcessorDisplay(currentSciname.value, 'text', text);
+                        if(nameTidIndex.hasOwnProperty(taxonToAdd['sciname'])){
+                            processSubprocessSuccessResponse(currentSciname.value, false, nameSearchResults[0]['sciname'] + ' already added');
+                            updateOccurrenceLinkages();
                         }
                         else{
                             const newTaxonObj = {};
                             newTaxonObj['sciname'] = taxonToAdd['sciname'];
                             newTaxonObj['author'] = taxonToAdd['author'];
-                            newTaxonObj['kingdomid'] = this.selectedKingdomId;
+                            newTaxonObj['kingdomid'] = selectedKingdomId.value;
                             newTaxonObj['rankid'] = taxonToAdd['rankid'];
                             newTaxonObj['acceptstatus'] = taxonToAdd['accepted'] ? 1 : 0;
-                            newTaxonObj['tidaccepted'] = !taxonToAdd['accepted'] ? this.nameTidIndex[taxonToAdd['accepted_sciname']] : '';
-                            newTaxonObj['parenttid'] = this.nameTidIndex[taxonToAdd['parentName']];
+                            newTaxonObj['tidaccepted'] = !taxonToAdd['accepted'] ? nameTidIndex[taxonToAdd['accepted_sciname']] : '';
+                            newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
                             newTaxonObj['family'] = taxonToAdd['family'];
-                            newTaxonObj['source'] = this.getDataSourceName();
-                            newTaxonObj['source-name'] = this.dataSource;
+                            newTaxonObj['source'] = getDataSourceName();
+                            newTaxonObj['source-name'] = dataSource.value;
                             newTaxonObj['source-id'] = taxonToAdd['id'];
                             const formData = new FormData();
                             formData.append('taxon', JSON.stringify(newTaxonObj));
                             formData.append('action', 'addTaxon');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxaApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1091,21 +1107,21 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 response.text().then((res) => {
                                     if(res && Number(res) > 0){
                                         const newTid = Number(res);
-                                        this.nameTidIndex[this.nameSearchResults[0]['sciname']] = newTid;
-                                        this.newTidArr.push(newTid);
-                                        this.processSubprocessSuccessResponse(this.currentSciname,false,'Successfully added ' + this.nameSearchResults[0]['sciname']);
-                                        if(this.currentSciname === this.nameSearchResults[0]['sciname']){
-                                            this.updateOccurrenceLinkages();
+                                        nameTidIndex[nameSearchResults[0]['sciname']] = newTid;
+                                        newTidArr.push(newTid);
+                                        processSubprocessSuccessResponse(currentSciname.value, false, 'Successfully added ' + nameSearchResults[0]['sciname']);
+                                        if(currentSciname.value === nameSearchResults[0]['sciname']){
+                                            updateOccurrenceLinkages();
                                         }
                                         else{
                                             const text = 'Updating occurrence records with cleaned scientific name';
-                                            this.addSubprocessToProcessorDisplay(this.currentSciname,'undo',text);
-                                            this.changedCurrentSciname = this.currentSciname;
-                                            this.changedParsedSciname = this.nameSearchResults[0]['sciname'];
+                                            addSubprocessToProcessorDisplay(currentSciname.value, 'undo', text);
+                                            changedCurrentSciname.value = currentSciname.value;
+                                            changedParsedSciname.value = nameSearchResults[0]['sciname'];
                                             const formData = new FormData();
-                                            formData.append('collid', this.collId);
-                                            formData.append('sciname', this.currentSciname);
-                                            formData.append('cleanedsciname', this.nameSearchResults[0]['sciname']);
+                                            formData.append('collid', collId);
+                                            formData.append('sciname', currentSciname.value);
+                                            formData.append('cleanedsciname', nameSearchResults[0]['sciname']);
                                             formData.append('tid', newTid.toString());
                                             formData.append('action', 'updateOccWithCleanedName');
                                             fetch(occurrenceTaxonomyApiUrl, {
@@ -1115,28 +1131,29 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                             .then((response) => {
                                                 if(response.status === 200){
                                                     response.text().then((resp) => {
-                                                        this.setSubprocessUndoNames(this.currentSciname,this.changedCurrentSciname,this.changedParsedSciname);
-                                                        this.processSubprocessSuccessResponse(this.currentSciname,false,(resp + ' records updated'));
-                                                        this.updateOccurrenceLinkages();
+                                                        setSubprocessUndoNames(currentSciname.value, changedCurrentSciname.value, changedParsedSciname.value);
+                                                        processSubprocessSuccessResponse(currentSciname.value, false, (resp + ' records updated'));
+                                                        updateOccurrenceLinkages();
                                                     });
                                                 }
                                                 else{
-                                                    this.processSubprocessErrorResponse(this.currentSciname,true,'Error updating occurrence records');
-                                                    this.updateOccurrenceLinkages();
+                                                    processSubprocessErrorResponse(currentSciname.value, true, 'Error updating occurrence records');
+                                                    updateOccurrenceLinkages();
                                                 }
                                             });
                                         }
                                     }
                                     else{
-                                        this.processSubprocessErrorResponse(this.currentSciname,false,'Error loading taxon');
-                                        this.runScinameDataSourceSearch();
+                                        processSubprocessErrorResponse(currentSciname.value, false, 'Error loading taxon');
+                                        runScinameDataSourceSearch();
                                     }
                                 });
                             });
                         }
-                    },
-                    processErrorResponse(setCounts,text){
-                        const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
+                    }
+
+                    function processErrorResponse(setCounts, text) {
+                        const procObj = processorDisplayArr.find(proc => proc['current'] === true);
                         if(procObj){
                             procObj['current'] = false;
                             if(procObj['loading'] === true){
@@ -1146,150 +1163,145 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             }
                         }
                         if(setCounts){
-                            this.adjustUIEnd();
+                            adjustUIEnd();
                         }
-                    },
-                    processFuzzyMatches(fuzzyMatches){
+                    }
+
+                    function processFuzzyMatches(fuzzyMatches) {
                         fuzzyMatches.forEach((match) => {
                             const fuzzyMatchName = match['sciname'];
                             const text = 'Match: ' + fuzzyMatchName;
-                            this.addSubprocessToProcessorDisplay(this.currentSciname,'fuzzy',text);
-                            this.setSubprocessUndoNames(this.currentSciname,this.currentSciname,fuzzyMatchName,match['tid']);
-                            this.processSubprocessSuccessResponse(this.currentSciname,false);
+                            addSubprocessToProcessorDisplay(currentSciname.value, 'fuzzy', text);
+                            setSubprocessUndoNames(currentSciname.value, currentSciname.value, fuzzyMatchName,match['tid']);
+                            processSubprocessSuccessResponse(currentSciname.value, false);
                         });
                         const text = 'skip';
-                        this.addSubprocessToProcessorDisplay(this.currentSciname,'fuzzy',text);
-                        this.processSubprocessSuccessResponse(this.currentSciname,true);
-                    },
-                    processGetCOLTaxonByScinameResponse(resObj){
-                        if(resObj['total_number_of_results'] > 0){
+                        addSubprocessToProcessorDisplay(currentSciname.value, 'fuzzy', text);
+                        processSubprocessSuccessResponse(currentSciname.value, true);
+                    }
+
+                    function processGetCOLTaxonByScinameResponse(resObj) {
+                        if(resObj['total'] > 0){
                             const resultArr = resObj['result'];
                             resultArr.forEach((taxResult) => {
-                                const status = taxResult['name_status'];
-                                if(status !== 'common name'){
-                                    const resultObj = {};
-                                    resultObj['id'] = taxResult['id'];
-                                    resultObj['author'] = taxResult.hasOwnProperty('author') ? taxResult['author'] : '';
-                                    let rankName = taxResult['rank'].toLowerCase();
-                                    if(rankName === 'infraspecies'){
-                                        resultObj['sciname'] = taxResult['genus'] + ' ' + taxResult['species'] + ' ' + ((taxResult['infraspeciesMarker'] && taxResult['infraspeciesMarker'] !== 'undefined') ? (taxResult['infraspeciesMarker'] + ' ') : '') + taxResult['infraspecies'];
-                                        if(taxResult['infraspeciesMarker'] === 'var.'){
-                                            rankName = 'variety';
+                                const usageData = taxResult.hasOwnProperty('usage') ? taxResult['usage'] : null;
+                                if(usageData){
+                                    const status = usageData['status'];
+                                    if(status !== 'common name' && usageData.hasOwnProperty('name')){
+                                        const resultObj = {};
+                                        resultObj['id'] = taxResult['id'];
+                                        resultObj['author'] = usageData['name'].hasOwnProperty('authorship') ? usageData['name']['authorship'] : '';
+                                        resultObj['sciname'] = usageData['name']['scientificName'];
+                                        resultObj['rankname'] = usageData['name']['rank'].toLowerCase();
+                                        resultObj['rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
+                                        if(status === 'accepted'){
+                                            resultObj['accepted'] = true;
                                         }
-                                        else if(taxResult['infraspeciesMarker'] === 'subsp.'){
-                                            rankName = 'subspecies';
-                                        }
-                                        else if(taxResult['infraspeciesMarker'] === 'f.'){
-                                            rankName = 'form';
-                                        }
-                                    }
-                                    else{
-                                        resultObj['sciname'] = taxResult['name'];
-                                    }
-                                    resultObj['rankname'] = rankName;
-                                    resultObj['rankid'] = this.rankArr.hasOwnProperty(resultObj['rankname']) ? this.rankArr[resultObj['rankname']] : null;
-                                    if(status === 'accepted name'){
-                                        resultObj['accepted'] = true;
-                                    }
-                                    else if(status === 'synonym'){
-                                        const hierarchyArr = [];
-                                        const resultHObj = {};
-                                        const acceptedObj = taxResult['accepted_name'];
-                                        resultObj['accepted'] = false;
-                                        resultObj['accepted_id'] = acceptedObj['id'];
-                                        resultHObj['id'] = acceptedObj['id'];
-                                        resultHObj['author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
-                                        let rankName = acceptedObj['rank'].toLowerCase();
-                                        if(rankName === 'infraspecies'){
-                                            resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + ((acceptedObj['infraspeciesMarker'] && acceptedObj['infraspeciesMarker'] !== 'undefined') ? (acceptedObj['infraspeciesMarker'] + ' ') : '') + acceptedObj['infraspecies'];
-                                            if(acceptedObj['infraspeciesMarker'] === 'var.'){
-                                                rankName = 'variety';
+                                        else if(status === 'synonym'){
+                                            const hierarchyArr = [];
+                                            const resultHObj = {};
+                                            const acceptedObj = usageData['accepted'];
+                                            if(acceptedObj.hasOwnProperty('name')){
+                                                resultObj['accepted'] = false;
+                                                resultObj['accepted_id'] = acceptedObj['id'];
+                                                resultHObj['id'] = acceptedObj['id'];
+                                                resultHObj['author'] = acceptedObj['name'].hasOwnProperty('authorship') ? acceptedObj['name']['authorship'] : '';
+                                                resultHObj['sciname'] = acceptedObj['name']['scientificName'];
+                                                resultObj['accepted_sciname'] = resultHObj['sciname'];
+                                                resultHObj['rankname'] = acceptedObj['name']['rank'].toLowerCase();
+                                                resultHObj['rankid'] = rankArr.hasOwnProperty(resultHObj['rankname']) ? rankArr[resultHObj['rankname']] : null;
+                                                hierarchyArr.push(resultHObj);
+                                                resultObj['hierarchy'] = hierarchyArr;
                                             }
-                                            else if(acceptedObj['infraspeciesMarker'] === 'subsp.'){
-                                                rankName = 'subspecies';
-                                            }
-                                            else if(acceptedObj['infraspeciesMarker'] === 'f.'){
-                                                rankName = 'form';
+                                        }
+                                        const existingObj = colInitialSearchResults.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
+                                        if(existingObj){
+                                            if(Number(existingObj['rankid']) < Number(resultObj['rankid'])){
+                                                const index = colInitialSearchResults.indexOf(existingObj);
+                                                colInitialSearchResults.splice(index, 1);
+                                                colInitialSearchResults.push(resultObj);
                                             }
                                         }
                                         else{
-                                            resultHObj['sciname'] = acceptedObj['name'];
+                                            colInitialSearchResults.push(resultObj);
                                         }
-                                        resultObj['accepted_sciname'] = resultHObj['sciname'];
-                                        resultHObj['rankname'] = rankName;
-                                        resultHObj['rankid'] = this.rankArr.hasOwnProperty(resultHObj['rankname']) ? this.rankArr[resultHObj['rankname']] : null;
-                                        hierarchyArr.push(resultHObj);
-                                        resultObj['hierarchy'] = hierarchyArr;
-                                    }
-                                    const existingObj = this.colInitialSearchResults.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
-                                    if(!existingObj){
-                                        this.colInitialSearchResults.push(resultObj);
                                     }
                                 }
                             });
-                            if(this.colInitialSearchResults.length > 0){
-                                this.validateCOLInitialNameSearchResults();
+                            if(colInitialSearchResults.length > 0){
+                                validateCOLInitialNameSearchResults();
                             }
                             else{
-                                this.processErrorResponse(false,'Not found');
-                                this.runScinameDataSourceSearch();
+                                processErrorResponse(false, 'Not found');
+                                runScinameDataSourceSearch();
                             }
                         }
                         else{
-                            this.processErrorResponse(false,'Not found');
-                            this.runScinameDataSourceSearch();
+                            processErrorResponse(false, 'Not found');
+                            runScinameDataSourceSearch();
                         }
-                    },
-                    processGetITISTaxonByScinameResponse(resObj){
-                        this.itisInitialSearchResults = [];
+                    }
+
+                    function processGetITISTaxonByScinameResponse(resObj) {
+                        itisInitialSearchResults.length = 0;
                         const resultArr = resObj['scientificNames'];
                         if(resultArr && resultArr.length > 0 && resultArr[0]){
                             resultArr.forEach((taxResult) => {
-                                if(taxResult['combinedName'] === this.currentSciname && (taxResult['kingdom'].toLowerCase() === this.selectedKingdomName.toLowerCase() || taxResult['combinedName'].toLowerCase() === this.selectedKingdomName.toLowerCase())){
+                                if(taxResult['combinedName'] === currentSciname.value && (taxResult['kingdom'].toLowerCase() === selectedKingdomName.value.toLowerCase() || taxResult['combinedName'].toLowerCase() === selectedKingdomName.value.toLowerCase())){
                                     const resultObj = {};
                                     resultObj['id'] = taxResult['tsn'];
                                     resultObj['sciname'] = taxResult['combinedName'];
                                     resultObj['author'] = taxResult['author'];
-                                    this.itisInitialSearchResults.push(resultObj);
+                                    itisInitialSearchResults.push(resultObj);
                                 }
                             });
-                            if(this.itisInitialSearchResults.length === 1){
-                                this.nameSearchResults = this.itisInitialSearchResults;
-                                this.getITISNameSearchResultsRecord();
+                            if(itisInitialSearchResults.length === 1){
+                                nameSearchResults = itisInitialSearchResults;
+                                getITISNameSearchResultsRecord();
                             }
-                            else if(this.itisInitialSearchResults.length === 0){
-                                this.processErrorResponse(false,'Not found');
-                                this.runScinameDataSourceSearch();
+                            else if(itisInitialSearchResults.length === 0){
+                                processErrorResponse(false, 'Not found');
+                                runScinameDataSourceSearch();
                             }
-                            else if(this.itisInitialSearchResults.length > 1){
-                                this.validateITISInitialNameSearchResults();
+                            else if(itisInitialSearchResults.length > 1){
+                                validateITISInitialNameSearchResults();
                             }
                         }
                         else{
-                            this.processErrorResponse(false,'Not found');
-                            this.runScinameDataSourceSearch();
+                            processErrorResponse(false, 'Not found');
+                            runScinameDataSourceSearch();
                         }
-                    },
-                    processingBatchLimitChange(value) {
+                    }
+
+                    function processingBatchLimitChange(value) {
                         if(value && (isNaN(value) || Number(value) <= 0)){
-                            alert('Processing batch limit must be a number greater than zero.');
-                            this.processingLimit = null;
+                            showNotification('negative', 'Processing batch limit must be a number greater than zero.');
+                            processingLimit.value = null;
                         }
-                    },
-                    processorDisplayScrollDown(){
-                        this.scrollProcess = 'scrollDown';
-                        this.processorDisplayCurrentIndex++;
-                        this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
-                        this.resetScrollProcess();
-                    },
-                    processorDisplayScrollUp(){
-                        this.scrollProcess = 'scrollUp';
-                        this.processorDisplayCurrentIndex--;
-                        this.processorDisplayArr = this.processorDisplayDataArr.slice((this.processorDisplayCurrentIndex * 100), ((this.processorDisplayCurrentIndex + 1) * 100));
-                        this.resetScrollProcess();
-                    },
-                    processSubprocessErrorResponse(id,setCounts,text){
-                        const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
+                    }
+
+                    function processorDisplayScrollDown() {
+                        scrollProcess = 'scrollDown';
+                        processorDisplayCurrentIndex.value++;
+                        const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
+                        newData.forEach((data) => {
+                            processorDisplayArr.push(data);
+                        });
+                        resetScrollProcess();
+                    }
+
+                    function processorDisplayScrollUp() {
+                        scrollProcess = 'scrollUp';
+                        processorDisplayCurrentIndex.value--;
+                        const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
+                        newData.forEach((data) => {
+                            processorDisplayArr.push(data);
+                        });
+                        resetScrollProcess();
+                    }
+
+                    function processSubprocessErrorResponse(id, setCounts, text) {
+                        const parentProcObj = processorDisplayArr.find(proc => proc['id'] === id);
                         if(parentProcObj){
                             parentProcObj['current'] = false;
                             const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
@@ -1299,7 +1311,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 subProcObj['resultText'] = text;
                             }
                         }
-                        const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                        const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === id);
                         if(dataParentProcObj){
                             dataParentProcObj['current'] = false;
                             const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
@@ -1310,11 +1322,12 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             }
                         }
                         if(setCounts){
-                            this.adjustUIEnd();
+                            adjustUIEnd();
                         }
-                    },
-                    processSubprocessSuccessResponse(id,complete,text = null){
-                        const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
+                    }
+
+                    function processSubprocessSuccessResponse(id, complete, text = null) {
+                        const parentProcObj = processorDisplayArr.find(proc => proc['id'] === id);
                         if(parentProcObj){
                             parentProcObj['current'] = !complete;
                             const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
@@ -1324,7 +1337,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 subProcObj['resultText'] = text;
                             }
                         }
-                        const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                        const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === id);
                         if(dataParentProcObj){
                             dataParentProcObj['current'] = !complete;
                             const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
@@ -1334,9 +1347,10 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 dataSubProcObj['resultText'] = text;
                             }
                         }
-                    },
-                    processSuccessResponse(complete,text = null){
-                        const procObj = this.processorDisplayArr.find(proc => proc['current'] === true);
+                    }
+
+                    function processSuccessResponse(complete, text = null) {
+                        const procObj = processorDisplayArr.find(proc => proc['current'] === true);
                         if(procObj){
                             procObj['current'] = !complete;
                             if(procObj['loading'] === true){
@@ -1345,14 +1359,15 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 procObj['resultText'] = text;
                             }
                         }
-                    },
-                    processUnlinkedNamesArr(inArr){
+                    }
+
+                    function processUnlinkedNamesArr(inArr) {
                         if(Array.isArray(inArr) && inArr.length > 0){
-                            if(this.processingStartIndex){
+                            if(processingStartIndex.value){
                                 let nameArrLength = inArr.length;
                                 let startIndexVal = null;
                                 for(let i = 0 ; i < nameArrLength; i++) {
-                                    if(inArr.hasOwnProperty(i) && inArr[i].toLowerCase() > this.processingStartIndex.toLowerCase()){
+                                    if(inArr.hasOwnProperty(i) && inArr[i].toLowerCase() > processingStartIndex.value.toLowerCase()){
                                         startIndexVal = i;
                                         break;
                                     }
@@ -1362,27 +1377,29 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 }
                                 inArr = inArr.splice(startIndexVal, (nameArrLength - startIndexVal));
                             }
-                            if(this.processingLimit){
-                                inArr = inArr.splice(0, this.processingLimit);
+                            if(processingLimit.value){
+                                inArr = inArr.splice(0, processingLimit.value);
                             }
                         }
                         return inArr;
-                    },
-                    resetScrollProcess(){
+                    }
+
+                    function resetScrollProcess() {
                         setTimeout(() => {
-                            this.scrollProcess = null;
+                            scrollProcess = null;
                         }, 200);
-                    },
-                    runCleanScinameAuthorProcess(){
-                        if(!this.processCancelling && this.unlinkedNamesArr.length > 0){
-                            this.currentSciname = this.unlinkedNamesArr[0];
-                            this.unlinkedNamesArr.splice(0, 1);
-                            const text = 'Attempting to parse author name from: ' + this.currentSciname;
-                            this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
+                    }
+
+                    function runCleanScinameAuthorProcess() {
+                        if(!processCancelling.value && unlinkedNamesArr.length > 0){
+                            currentSciname.value = unlinkedNamesArr[0];
+                            unlinkedNamesArr.splice(0, 1);
+                            const text = 'Attempting to parse author name from: ' + currentSciname.value;
+                            addProcessToProcessorDisplay(getNewProcessObject(currentSciname.value, 'multi', text));
                             const formData = new FormData();
-                            formData.append('sciname', this.currentSciname);
+                            formData.append('sciname', currentSciname.value);
                             formData.append('action', 'parseSciName');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxonomyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1390,14 +1407,14 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 if(response.status === 200){
                                     response.json().then((parsedName) => {
                                         if(parsedName.hasOwnProperty('author') && parsedName['author'] !== ''){
-                                            this.processSuccessResponse(false,'Parsed author: ' + parsedName['author'] + '; Cleaned scientific name: ' + parsedName['sciname']);
+                                            processSuccessResponse(false, 'Parsed author: ' + parsedName['author'] + '; Cleaned scientific name: ' + parsedName['sciname']);
                                             const text = 'Updating occurrence records with cleaned scientific name';
-                                            this.addSubprocessToProcessorDisplay(this.currentSciname,'undo',text);
-                                            this.changedCurrentSciname = this.currentSciname;
-                                            this.changedParsedSciname = parsedName['sciname'];
+                                            addSubprocessToProcessorDisplay(currentSciname.value, 'undo', text);
+                                            changedCurrentSciname.value = currentSciname.value;
+                                            changedParsedSciname.value = parsedName['sciname'];
                                             const formData = new FormData();
-                                            formData.append('collid', this.collId);
-                                            formData.append('sciname', this.currentSciname);
+                                            formData.append('collid', collId);
+                                            formData.append('sciname', currentSciname.value);
                                             formData.append('cleanedsciname', parsedName['sciname']);
                                             formData.append('tid', null);
                                             formData.append('action', 'updateOccWithCleanedName');
@@ -1408,92 +1425,96 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                             .then((response) => {
                                                 if(response.status === 200){
                                                     response.text().then((res) => {
-                                                        this.setSubprocessUndoNames(this.currentSciname,this.changedCurrentSciname,this.changedParsedSciname);
-                                                        this.processSubprocessSuccessResponse(this.currentSciname,true,(res + ' records updated'));
-                                                        this.runCleanScinameAuthorProcess();
+                                                        setSubprocessUndoNames(currentSciname.value, changedCurrentSciname.value, changedParsedSciname.value);
+                                                        processSubprocessSuccessResponse(currentSciname.value, true, (res + ' records updated'));
+                                                        runCleanScinameAuthorProcess();
                                                     });
                                                 }
                                                 else{
-                                                    this.processSubprocessErrorResponse(this.currentSciname,false,'Error updating occurrence records');
-                                                    this.runCleanScinameAuthorProcess();
+                                                    processSubprocessErrorResponse(currentSciname.value, false, 'Error updating occurrence records');
+                                                    runCleanScinameAuthorProcess();
                                                 }
                                             });
                                         }
                                         else{
-                                            this.processErrorResponse(false,'No author found in scientific name');
-                                            this.runCleanScinameAuthorProcess();
+                                            processErrorResponse(false, 'No author found in scientific name');
+                                            runCleanScinameAuthorProcess();
                                         }
                                     });
                                 }
                             });
                         }
                         else{
-                            this.adjustUIEnd();
+                            adjustUIEnd();
                         }
-                    },
-                    runScinameDataSourceSearch(){
-                        if(!this.processCancelling && this.unlinkedNamesArr.length > 0){
-                            this.nameSearchResults = [];
-                            this.currentSciname = this.unlinkedNamesArr[0];
-                            this.unlinkedNamesArr.splice(0, 1);
-                            if(this.dataSource === 'col'){
-                                this.colInitialSearchResults = [];
-                                const text = 'Searching the Catalogue of Life (COL) for ' + this.currentSciname;
-                                this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
-                                const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + this.currentSciname;
+                    }
+
+                    function runScinameDataSourceSearch() {
+                        if(!processCancelling.value && unlinkedNamesArr.length > 0){
+                            nameSearchResults.length = 0;
+                            currentSciname.value = unlinkedNamesArr[0];
+                            unlinkedNamesArr.splice(0, 1);
+                            if(dataSource.value === 'col'){
+                                colInitialSearchResults.length = 0;
+                                const text = 'Searching the Catalogue of Life (COL) for ' + currentSciname.value;
+                                addProcessToProcessorDisplay(getNewProcessObject(currentSciname.value, 'multi', text));
+                                const url = 'https://api.checklistbank.org/dataset/3/nameusage/search?content=SCIENTIFIC_NAME&q=' + currentSciname.value + '&offset=0&limit=100';
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
                                 .then((response) => {
                                     if(response.status === 200){
                                         response.json().then((res) => {
-                                            this.processGetCOLTaxonByScinameResponse(res);
+                                            processGetCOLTaxonByScinameResponse(res);
                                         });
                                     }
                                     else{
-                                        const text = getErrorResponseText(response.status,response.statusText);
-                                        this.processErrorResponse(false,text);
-                                        this.runScinameDataSourceSearch();
+                                        const text = getErrorResponseText(response.status, response.statusText);
+                                        processErrorResponse(false, text);
+                                        runScinameDataSourceSearch();
                                     }
                                 });
                             }
-                            else if(this.dataSource === 'itis'){
-                                this.itisInitialSearchResults = [];
-                                const text = 'Searching the Integrated Taxonomic Information System (ITIS) for ' + this.currentSciname;
-                                this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
-                                const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + this.currentSciname;
+                            else if(dataSource.value === 'itis'){
+                                itisInitialSearchResults.length = 0;
+                                const text = 'Searching the Integrated Taxonomic Information System (ITIS) for ' + currentSciname.value;
+                                addProcessToProcessorDisplay(getNewProcessObject(currentSciname.value, 'multi', text));
+                                const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + currentSciname.value;
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
                                 .then((response) => {
                                     if(response.status === 200){
                                         response.json().then((res) => {
-                                            this.processGetITISTaxonByScinameResponse(res);
+                                            processGetITISTaxonByScinameResponse(res);
                                         });
                                     }
                                     else{
-                                        const text = getErrorResponseText(response.status,response.statusText);
-                                        this.processErrorResponse(false,text);
-                                        this.runScinameDataSourceSearch();
+                                        const text = getErrorResponseText(response.status, response.statusText);
+                                        processErrorResponse(false, text);
+                                        runScinameDataSourceSearch();
                                     }
                                 });
                             }
-                            else if(this.dataSource === 'worms'){
-                                const text = 'Searching the World Register of Marine Species (WoRMS) for ' + this.currentSciname;
-                                this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
-                                const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + this.currentSciname + '?marine_only=false';
+                            else if(dataSource.value === 'worms'){
+                                const text = 'Searching the World Register of Marine Species (WoRMS) for ' + currentSciname.value;
+                                addProcessToProcessorDisplay(getNewProcessObject(currentSciname.value, 'multi', text));
+                                const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + currentSciname.value + '?marine_only=false';
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -1501,46 +1522,47 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                     if(response.status === 200){
                                         response.text().then((res) => {
                                             if(res && Number(res) > 0){
-                                                this.getWoRMSNameSearchResultsRecord(res);
+                                                getWoRMSNameSearchResultsRecord(res);
                                             }
                                             else{
-                                                this.processErrorResponse(false,'Not found');
-                                                this.runScinameDataSourceSearch();
+                                                processErrorResponse(false, 'Not found');
+                                                runScinameDataSourceSearch();
                                             }
                                         });
                                     }
                                     else if(response.status === 204){
-                                        this.processErrorResponse(false,'Not found');
-                                        this.runScinameDataSourceSearch();
+                                        processErrorResponse(false, 'Not found');
+                                        runScinameDataSourceSearch();
                                     }
                                     else{
-                                        const text = getErrorResponseText(response.status,response.statusText);
-                                        this.processErrorResponse(false,text);
-                                        this.runScinameDataSourceSearch();
+                                        const text = getErrorResponseText(response.status, response.statusText);
+                                        processErrorResponse(false, text);
+                                        runScinameDataSourceSearch();
                                     }
                                 });
                             }
                         }
-                        else if(this.newTidArr.length > 0){
-                            this.primeTaxonomicHierarchy();
+                        else if(newTidArr.length > 0){
+                            primeTaxonomicHierarchy();
                         }
                         else{
-                            this.adjustUIEnd();
+                            adjustUIEnd();
                         }
-                    },
-                    runTaxThesaurusFuzzyMatchProcess(){
-                        this.changedCurrentSciname = '';
-                        this.changedParsedSciname = '';
-                        if(!this.processCancelling && this.unlinkedNamesArr.length > 0){
-                            this.currentSciname = this.unlinkedNamesArr[0];
-                            this.unlinkedNamesArr.splice(0, 1);
-                            const text = 'Finding fuzzy matches for ' + this.currentSciname;
-                            this.addProcessToProcessorDisplay(this.getNewProcessObject(this.currentSciname,'multi',text));
+                    }
+
+                    function runTaxThesaurusFuzzyMatchProcess() {
+                        changedCurrentSciname.value = '';
+                        changedParsedSciname.value = '';
+                        if(!processCancelling.value && unlinkedNamesArr.length > 0){
+                            currentSciname.value = unlinkedNamesArr[0];
+                            unlinkedNamesArr.splice(0, 1);
+                            const text = 'Finding fuzzy matches for ' + currentSciname.value;
+                            addProcessToProcessorDisplay(getNewProcessObject(currentSciname.value, 'multi', text));
                             const formData = new FormData();
-                            formData.append('sciname', this.currentSciname);
-                            formData.append('lev', this.levValue);
+                            formData.append('sciname', currentSciname.value);
+                            formData.append('lev', levValue.value);
                             formData.append('action', 'getSciNameFuzzyMatches');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxaApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1548,29 +1570,30 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 if(response.status === 200){
                                     response.json().then((fuzzyMatches) => {
                                         if(fuzzyMatches.length > 0){
-                                            this.processSuccessResponse(false);
-                                            this.processFuzzyMatches(fuzzyMatches);
+                                            processSuccessResponse(false);
+                                            processFuzzyMatches(fuzzyMatches);
                                         }
                                         else{
-                                            this.processErrorResponse(false,'No fuzzy matches found');
-                                            this.runTaxThesaurusFuzzyMatchProcess();
+                                            processErrorResponse(false, 'No fuzzy matches found');
+                                            runTaxThesaurusFuzzyMatchProcess();
                                         }
                                     });
                                 }
                             });
                         }
                         else{
-                            this.adjustUIEnd();
+                            adjustUIEnd();
                         }
-                    },
-                    selectFuzzyMatch(sciName,newName,newtid){
-                        this.changedCurrentSciname = sciName;
-                        this.changedParsedSciname = newName;
-                        this.clearSubprocesses(this.currentSciname);
+                    }
+
+                    function selectFuzzyMatch(sciName, newName, newtid) {
+                        changedCurrentSciname.value = sciName;
+                        changedParsedSciname.value = newName;
+                        clearSubprocesses(currentSciname.value);
                         const text = 'Updating occurrence records with selected scientific name';
-                        this.addSubprocessToProcessorDisplay(this.currentSciname,'undo',text);
+                        addSubprocessToProcessorDisplay(currentSciname.value, 'undo', text);
                         const formData = new FormData();
-                        formData.append('collid', this.collId);
+                        formData.append('collid', collId);
                         formData.append('sciname', sciName);
                         formData.append('cleanedsciname', newName);
                         formData.append('tid', newtid);
@@ -1582,57 +1605,39 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         .then((response) => {
                             if(response.status === 200){
                                 response.text().then((res) => {
-                                    this.setSubprocessUndoNames(this.currentSciname,this.changedCurrentSciname,this.changedParsedSciname);
-                                    this.processSubprocessSuccessResponse(this.currentSciname,true,(res + ' records updated'));
-                                    this.runTaxThesaurusFuzzyMatchProcess();
+                                    setSubprocessUndoNames(currentSciname.value, changedCurrentSciname.value, changedParsedSciname.value);
+                                    processSubprocessSuccessResponse(currentSciname.value, true, (res + ' records updated'));
+                                    runTaxThesaurusFuzzyMatchProcess();
                                 });
                             }
                             else{
-                                this.processSubprocessErrorResponse(this.currentSciname,false,'Error updating occurrence records');
-                                this.runTaxThesaurusFuzzyMatchProcess();
+                                processSubprocessErrorResponse(currentSciname.value, false, 'Error updating occurrence records');
+                                runTaxThesaurusFuzzyMatchProcess();
                             }
                         });
-                    },
-                    setCollInfo(){
-                        if(this.collId){
-                            const formData = new FormData();
-                            formData.append('collid', this.collId);
-                            formData.append('action', 'getCollectionInfoArr');
-                            fetch(collectionApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                response.json().then((resObj) => {
-                                    this.collInfo = resObj;
-                                });
-                            });
+                    }
+
+                    function setScroller(info) {
+                        if((currentProcess.value || scrollProcess) && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
+                            procDisplayScrollHeight.value = info.verticalSize;
+                            if(scrollProcess === 'scrollDown'){
+                                procDisplayScrollAreaRef.value.setScrollPosition('vertical', 0);
+                            }
+                            else{
+                                procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
+                            }
                         }
-                    },
-                    setEditor(){
-                        const formData = new FormData();
-                        formData.append('permission', 'CollAdmin');
-                        formData.append('key', this.collId);
-                        formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            response.text().then((res) => {
-                                this.isEditor = Number(res) === 1;
-                            });
-                        });
-                    },
-                    setSubprocessUndoNames(id,origName,newName,tid = null){
-                        const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
+                    }
+
+                    function setSubprocessUndoNames(id, origName, newName, tid = null) {
+                        const parentProcObj = processorDisplayArr.find(proc => proc['id'] === id);
                         const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
                         subProcObj['undoOrigName'] = origName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
                         subProcObj['undoChangedName'] = newName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
                         if(tid){
                             subProcObj['changedTid'] = tid;
                         }
-                        const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                        const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === id);
                         if(dataParentProcObj){
                             const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
                             dataSubProcObj['undoOrigName'] = origName.replaceAll("'",'%squot;').replaceAll('"','%dquot;');
@@ -1641,56 +1646,60 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 dataSubProcObj['changedTid'] = tid;
                             }
                         }
-                    },
-                    setTaxaToAdd(){
-                        if(this.processingArr.length > 0){
-                            const sciname = this.processingArr[0]['sciname'];
-                            if(!this.nameTidIndex.hasOwnProperty(sciname)){
-                                const url = CLIENT_ROOT + '/api/taxa/gettid.php';
+                    }
+
+                    function setTaxaToAdd() {
+                        if(processingArr.length > 0){
+                            const sciname = processingArr[0]['sciname'];
+                            const rankid = processingArr[0]['rankid'];
+                            if(!nameTidIndex.hasOwnProperty(sciname)){
                                 const formData = new FormData();
                                 formData.append('sciname', sciname);
-                                formData.append('kingdomid', this.selectedKingdomId);
-                                fetch(url, {
+                                formData.append('rankid', rankid);
+                                formData.append('kingdomid', selectedKingdomId.value);
+                                formData.append('action', 'getTid');
+                                fetch(taxaApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
                                 .then((response) => {
                                     if(response.status === 200){
                                         response.text().then((res) => {
-                                            if(this.dataSource === 'worms' && !res){
-                                                this.getWoRMSAddTaxonAuthor();
+                                            if(dataSource.value === 'worms' && Number(res) === 0){
+                                                getWoRMSAddTaxonAuthor();
                                             }
                                             else{
-                                                const currentTaxon = this.processingArr[0];
-                                                if(res){
-                                                    this.nameTidIndex[currentTaxon['sciname']] = Number(res);
+                                                const currentTaxon = processingArr[0];
+                                                if(Number(res) > 0){
+                                                    nameTidIndex[currentTaxon['sciname']] = Number(res);
                                                 }
                                                 else{
-                                                    this.taxaToAddArr.push(currentTaxon);
+                                                    taxaToAddArr.push(currentTaxon);
                                                 }
-                                                this.processingArr.splice(0, 1);
-                                                this.setTaxaToAdd();
+                                                processingArr.splice(0, 1);
+                                                setTaxaToAdd();
                                             }
                                         });
                                     }
                                 });
                             }
                             else{
-                                this.processingArr.splice(0, 1);
-                                this.setTaxaToAdd();
+                                processingArr.splice(0, 1);
+                                setTaxaToAdd();
                             }
                         }
                         else{
-                            this.processSubprocessSuccessResponse(this.currentSciname,false);
-                            this.processAddTaxaArr();
+                            processSubprocessSuccessResponse(currentSciname.value, false);
+                            processAddTaxaArr();
                         }
-                    },
-                    setUnlinkedRecordCounts(){
-                        this.unlinkedOccCnt = null;
-                        this.unlinkedTaxaCnt = null;
-                        this.unlinkedLoading = true;
+                    }
+
+                    function setUnlinkedRecordCounts() {
+                        unlinkedOccCnt.value = 0;
+                        unlinkedTaxaCnt.value = 0;
+                        unlinkedLoading.value = true;
                         const formData = new FormData();
-                        formData.append('collid', this.collId);
+                        formData.append('collid', collId);
                         formData.append('action', 'getUnlinkedScinameCounts');
                         fetch(occurrenceTaxonomyApiUrl, {
                             method: 'POST',
@@ -1699,21 +1708,22 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         .then((response) => response.json())
                         .then((result) => {
                             if(result.hasOwnProperty('occCnt')){
-                                this.unlinkedOccCnt = result['occCnt'];
+                                unlinkedOccCnt.value = Number(result['occCnt']);
                             }
                             if(result.hasOwnProperty('taxaCnt')){
-                                this.unlinkedTaxaCnt = result['taxaCnt'];
+                                unlinkedTaxaCnt.value = Number(result['taxaCnt']);
                             }
-                            this.unlinkedLoading = false;
+                            unlinkedLoading.value = false;
                         });
-                    },
-                    setUnlinkedTaxaList(){
-                        if(!this.processCancelling){
+                    }
+
+                    function setUnlinkedTaxaList() {
+                        if(!processCancelling.value){
                             const text = 'Getting unlinked occurrence record scientific names';
-                            this.addProcessToProcessorDisplay(this.getNewProcessObject('getUnlinkedOccSciNames','multi',text));
+                            addProcessToProcessorDisplay(getNewProcessObject('getUnlinkedOccSciNames', 'multi', text));
                             abortController = new AbortController();
                             const formData = new FormData();
-                            formData.append('collid', this.collId);
+                            formData.append('collid', collId);
                             formData.append('action', 'getUnlinkedOccSciNames');
                             fetch(occurrenceTaxonomyApiUrl, {
                                 method: 'POST',
@@ -1723,36 +1733,37 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             .then((response) => {
                                 if(response.status === 200){
                                     response.json().then((resObj) => {
-                                        this.processSuccessResponse(true,'Complete');
-                                        this.unlinkedNamesArr = this.processUnlinkedNamesArr(resObj);
-                                        this.runScinameDataSourceSearch();
+                                        processSuccessResponse(true,'Complete');
+                                        unlinkedNamesArr = processUnlinkedNamesArr(resObj);
+                                        runScinameDataSourceSearch();
                                     });
                                 }
                                 else{
-                                    const text = getErrorResponseText(response.status,response.statusText);
-                                    this.processErrorResponse(true,text);
+                                    const text = getErrorResponseText(response.status, response.statusText);
+                                    processErrorResponse(true, text);
                                 }
                             })
                             .catch((err) => {});
                         }
                         else{
-                            this.adjustUIEnd();
+                            adjustUIEnd();
                         }
-                    },
-                    undoChangedSciname(id,oldName,newName){
-                        const parentProcObj = this.processorDisplayArr.find(proc => proc['id'] === id);
+                    }
+
+                    function undoChangedSciname(id, oldName, newName) {
+                        const parentProcObj = processorDisplayArr.find(proc => proc['id'] === id);
                         const subProcObj = parentProcObj['subs'].find(subproc => subproc['undoChangedName'] === newName);
                         subProcObj['type'] = 'text';
-                        const dataParentProcObj = this.processorDisplayDataArr.find(proc => proc['id'] === id);
+                        const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === id);
                         if(dataParentProcObj){
                             const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['undoChangedName'] === newName);
                             dataSubProcObj['type'] = 'text';
                         }
                         const text = 'Reverting scientific name change from ' + oldName.replaceAll('%squot;',"'").replaceAll('%dquot;','"') + ' to ' + newName.replaceAll('%squot;',"'").replaceAll('%dquot;','"');
-                        this.addSubprocessToProcessorDisplay(id,'text',text);
-                        this.undoId = id;
+                        addSubprocessToProcessorDisplay(id, 'text', text);
+                        undoId.value = id;
                         const formData = new FormData();
-                        formData.append('collid', this.collId);
+                        formData.append('collid', collId);
                         formData.append('oldsciname', oldName);
                         formData.append('newsciname', newName);
                         formData.append('action', 'undoOccScinameChange');
@@ -1763,21 +1774,22 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         .then((response) => {
                             if(response.status === 200){
                                 response.text().then((res) => {
-                                    this.processSubprocessSuccessResponse(this.undoId,true,(res + ' records reverted'));
+                                    processSubprocessSuccessResponse(undoId.value, true, (res + ' records reverted'));
                                 });
                             }
                             else{
-                                this.processSubprocessErrorResponse(this.undoId,false,'Error undoing name change');
+                                processSubprocessErrorResponse(undoId.value, false, 'Error undoing name change');
                             }
                         });
-                    },
-                    updateOccLocalitySecurity(){
-                        this.adjustUIStart('updateOccLocalitySecurity');
+                    }
+
+                    function updateOccLocalitySecurity() {
+                        adjustUIStart('updateOccLocalitySecurity');
                         const text = 'Updating the locality security settings for occurrence records of protected species';
-                        this.addProcessToProcessorDisplay(this.getNewProcessObject('updateLocalitySecurity','single',text));
+                        addProcessToProcessorDisplay(getNewProcessObject('updateLocalitySecurity', 'single', text));
                         abortController = new AbortController();
                         const formData = new FormData();
-                        formData.append('collid', this.collId);
+                        formData.append('collid', collId);
                         formData.append('action', 'updateLocalitySecurity');
                         fetch(occurrenceTaxonomyApiUrl, {
                             method: 'POST',
@@ -1787,27 +1799,28 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         .then((response) => {
                             if(response.status === 200){
                                 response.text().then((res) => {
-                                    this.processSuccessResponse(true,'Complete: ' + res + ' records updated');
-                                    this.adjustUIEnd();
+                                    processSuccessResponse(true, 'Complete: ' + res + ' records updated');
+                                    adjustUIEnd();
                                 });
                             }
                             else{
-                                const text = getErrorResponseText(response.status,response.statusText);
-                                this.processErrorResponse(true,text);
+                                const text = getErrorResponseText(response.status, response.statusText);
+                                processErrorResponse(true, text);
                             }
                         })
                         .catch((err) => {});
-                    },
-                    updateOccurrenceLinkages(){
-                        const newSciname = this.nameSearchResults[0]['sciname'];
-                        const newScinameTid = this.nameTidIndex[this.nameSearchResults[0]['sciname']];
+                    }
+
+                    function updateOccurrenceLinkages() {
+                        const newSciname = nameSearchResults[0]['sciname'];
+                        const newScinameTid = nameTidIndex[nameSearchResults[0]['sciname']];
                         const text = 'Updating linkages of occurrence records to ' + newSciname;
-                        this.addSubprocessToProcessorDisplay(this.currentSciname,'text',text);
+                        addSubprocessToProcessorDisplay(currentSciname.value, 'text', text);
                         const formData = new FormData();
-                        formData.append('collid', this.collId);
+                        formData.append('collid', collId);
                         formData.append('sciname', newSciname);
                         formData.append('tid', newScinameTid);
-                        formData.append('kingdomid', this.selectedKingdomId);
+                        formData.append('kingdomid', selectedKingdomId.value);
                         formData.append('action', 'updateOccWithNewSciname');
                         fetch(occurrenceTaxonomyApiUrl, {
                             method: 'POST',
@@ -1816,51 +1829,55 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         .then((response) => {
                             if(response.status === 200){
                                 response.text().then((res) => {
-                                    this.processSubprocessSuccessResponse(this.currentSciname,true,res + ' records updated');
-                                    this.taxaLoaded++;
-                                    if(this.taxaLoaded > 30){
-                                        this.setUnlinkedRecordCounts();
-                                        this.taxaLoaded = 0;
+                                    processSubprocessSuccessResponse(currentSciname.value, true, res + ' records updated');
+                                    taxaLoaded++;
+                                    if(taxaLoaded > 30){
+                                        setUnlinkedRecordCounts();
+                                        taxaLoaded = 0;
                                     }
-                                    this.runScinameDataSourceSearch();
+                                    runScinameDataSourceSearch();
                                 });
                             }
                             else{
-                                const text = getErrorResponseText(response.status,response.statusText);
-                                this.processSubprocessErrorResponse(this.currentSciname,true,text);
-                                this.taxaLoaded++;
-                                if(this.taxaLoaded > 30){
-                                    this.setUnlinkedRecordCounts();
-                                    this.taxaLoaded = 0;
+                                const text = getErrorResponseText(response.status, response.statusText);
+                                processSubprocessErrorResponse(currentSciname.value, true, text);
+                                taxaLoaded++;
+                                if(taxaLoaded > 30){
+                                    setUnlinkedRecordCounts();
+                                    taxaLoaded = 0;
                                 }
-                                this.runScinameDataSourceSearch();
+                                runScinameDataSourceSearch();
                             }
                         });
-                    },
-                    updateSelectedDataSource(dataSourceObj) {
-                        this.dataSource = dataSourceObj;
-                    },
-                    updateSelectedKingdom(kingdomObj) {
-                        this.selectedKingdom = kingdomObj;
-                        this.selectedKingdomId = kingdomObj.id;
-                        this.selectedKingdomName = kingdomObj.name;
-                    },
-                    validateCOLInitialNameSearchResults(){
-                        if(this.colInitialSearchResults.length > 0){
+                    }
+
+                    function updateSelectedDataSource(dataSourceObj) {
+                        dataSource.value = dataSourceObj;
+                    }
+
+                    function updateSelectedKingdom(kingdomObj) {
+                        selectedKingdom.value = kingdomObj;
+                        selectedKingdomId.value = kingdomObj.id;
+                        selectedKingdomName.value = kingdomObj.name;
+                    }
+
+                    function validateCOLInitialNameSearchResults() {
+                        if(colInitialSearchResults.length > 0){
                             let id;
-                            const taxon = this.colInitialSearchResults[0];
-                            this.colInitialSearchResults.splice(0, 1);
+                            const taxon = colInitialSearchResults[0];
+                            colInitialSearchResults.splice(0, 1);
                             if(taxon['accepted']){
                                 id = taxon['id'];
                             }
                             else{
                                 id = taxon['accepted_id'];
                             }
-                            const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/classification';
+                            const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + id + '/classification';
                             const formData = new FormData();
                             formData.append('url', url);
-                            formData.append('action', 'get');
-                            fetch(proxyApiUrl, {
+                            formData.append('action', 'getExternalData');
+                            formData.append('requestType', 'get');
+                            fetch(proxyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1878,7 +1895,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                                     kingdomName = kingdomObj['name'];
                                                 }
                                             }
-                                            if(kingdomName.toLowerCase() === this.selectedKingdomName.toLowerCase()){
+                                            if(kingdomName.toLowerCase() === selectedKingdomName.value.toLowerCase()){
                                                 let hierarchyArr = [];
                                                 if(taxon.hasOwnProperty('hierarchy')){
                                                     hierarchyArr = taxon['hierarchy'];
@@ -1886,8 +1903,8 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                                 resArr.forEach((taxResult) => {
                                                     if(taxResult['name'] !== taxon['sciname']){
                                                         const rankname = taxResult['rank'].toLowerCase();
-                                                        const rankid = Number(this.rankArr[rankname]);
-                                                        if(TAXONOMIC_RANKS.includes(rankid) || (!taxon['accepted'] && taxon['accepted_sciname'] === taxResult['name'])){
+                                                        const rankid = Number(rankArr[rankname]);
+                                                        if(taxonomicRanks.includes(rankid) || (!taxon['accepted'] && taxon['accepted_sciname'] === taxResult['name'])){
                                                             const resultObj = {};
                                                             resultObj['id'] = taxResult['id'];
                                                             resultObj['sciname'] = taxResult['name'];
@@ -1902,40 +1919,42 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                                     }
                                                 });
                                                 taxon['hierarchy'] = hierarchyArr;
-                                                this.nameSearchResults.push(taxon);
+                                                nameSearchResults.push(taxon);
                                             }
                                         }
-                                        this.validateCOLInitialNameSearchResults();
+                                        validateCOLInitialNameSearchResults();
                                     });
                                 }
                                 else{
-                                    this.validateCOLInitialNameSearchResults();
+                                    validateCOLInitialNameSearchResults();
                                 }
                             });
                         }
-                        else if(this.nameSearchResults.length === 1){
-                            this.processSuccessResponse(false);
-                            this.validateNameSearchResults();
+                        else if(nameSearchResults.length === 1){
+                            processSuccessResponse(false);
+                            validateNameSearchResults();
                         }
-                        else if(this.nameSearchResults.length === 0){
-                            this.processErrorResponse(false,'Not found');
-                            this.runScinameDataSourceSearch();
+                        else if(nameSearchResults.length === 0){
+                            processErrorResponse(false, 'Not found');
+                            runScinameDataSourceSearch();
                         }
-                        else if(this.nameSearchResults.length > 1){
-                            this.processErrorResponse(false,'Unable to distinguish taxon by name');
-                            this.runScinameDataSourceSearch();
+                        else if(nameSearchResults.length > 1){
+                            processErrorResponse(false, 'Unable to distinguish taxon by name');
+                            runScinameDataSourceSearch();
                         }
-                    },
-                    validateITISInitialNameSearchResults(){
-                        if(this.itisInitialSearchResults.length > 0){
-                            const taxon = this.itisInitialSearchResults[0];
-                            this.itisInitialSearchResults.splice(0, 1);
+                    }
+
+                    function validateITISInitialNameSearchResults() {
+                        if(itisInitialSearchResults.length > 0){
+                            const taxon = itisInitialSearchResults[0];
+                            itisInitialSearchResults.splice(0, 1);
                             const id = taxon['id'];
                             const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
                             const formData = new FormData();
                             formData.append('url', url);
-                            formData.append('action', 'get');
-                            fetch(proxyApiUrl, {
+                            formData.append('action', 'getExternalData');
+                            formData.append('requestType', 'get');
+                            fetch(proxyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1950,40 +1969,51 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                                 taxon['rankname'] = taxonRankData['rankName'].toLowerCase().trim();
                                                 taxon['rankid'] = Number(taxonRankData['rankId']);
                                                 taxon['accepted'] = true;
-                                                this.nameSearchResults.push(taxon);
+                                                const existingObj = nameSearchResults.find(nSTaxon => (nSTaxon['sciname'] === taxon['sciname']));
+                                                if(existingObj){
+                                                    if(Number(existingObj['rankid']) < Number(taxon['rankid'])){
+                                                        const index = nameSearchResults.indexOf(existingObj);
+                                                        nameSearchResults.splice(index, 1);
+                                                        nameSearchResults.push(taxon);
+                                                    }
+                                                }
+                                                else{
+                                                    nameSearchResults.push(taxon);
+                                                }
                                             }
                                         }
-                                        this.validateITISInitialNameSearchResults();
+                                        validateITISInitialNameSearchResults();
                                     });
                                 }
                                 else{
-                                    this.processErrorResponse(false,'Unable to retrieve taxon record');
-                                    this.runScinameDataSourceSearch();
+                                    processErrorResponse(false, 'Unable to retrieve taxon record');
+                                    runScinameDataSourceSearch();
                                 }
                             });
                         }
-                        else if(this.nameSearchResults.length === 1){
-                            this.getITISNameSearchResultsHierarchy();
+                        else if(nameSearchResults.length === 1){
+                            getITISNameSearchResultsHierarchy();
                         }
-                        else if(this.nameSearchResults.length === 0){
-                            this.processErrorResponse(false,'Not found');
-                            this.runScinameDataSourceSearch();
+                        else if(nameSearchResults.length === 0){
+                            processErrorResponse(false, 'Not found');
+                            runScinameDataSourceSearch();
                         }
-                        else if(this.nameSearchResults.length > 1){
-                            this.processErrorResponse(false,'Unable to distinguish taxon by name');
-                            this.runScinameDataSourceSearch();
+                        else if(nameSearchResults.length > 1){
+                            processErrorResponse(false, 'Unable to distinguish taxon by name');
+                            runScinameDataSourceSearch();
                         }
-                    },
-                    validateNameSearchResults(){
-                        this.processingArr = [];
-                        this.taxaToAddArr = [];
-                        if(this.nameSearchResults.length === 1){
-                            if(!this.nameSearchResults[0]['accepted'] && !this.nameSearchResults[0]['accepted_sciname']){
-                                this.processErrorResponse(false,'Unable to distinguish accepted name');
-                                this.runScinameDataSourceSearch();
+                    }
+
+                    function validateNameSearchResults() {
+                        processingArr = [];
+                        taxaToAddArr = [];
+                        if(nameSearchResults.length === 1){
+                            if(!nameSearchResults[0]['accepted'] && !nameSearchResults[0]['accepted_sciname']){
+                                processErrorResponse(false, 'Unable to distinguish accepted name');
+                                runScinameDataSourceSearch();
                             }
-                            else if(this.nameSearchResults[0]['hierarchy'].length > 0){
-                                const addHierchyTemp = this.nameSearchResults[0]['hierarchy'];
+                            else if(nameSearchResults[0]['hierarchy'].length > 0){
+                                const addHierchyTemp = nameSearchResults[0]['hierarchy'];
                                 addHierchyTemp.sort((a, b) => {
                                     return a.rankid - b.rankid;
                                 });
@@ -1991,37 +2021,86 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 addHierchyTemp.forEach((taxon) => {
                                     if(taxon['sciname'] !== parentName){
                                         taxon['parentName'] = parentName;
-                                        taxon['family'] = taxon['rankid'] >= 140 ? this.nameSearchResults[0]['family'] : null;
+                                        taxon['family'] = taxon['rankid'] >= 140 ? nameSearchResults[0]['family'] : null;
                                         parentName = taxon['sciname'];
-                                        if(!this.nameSearchResults[0]['accepted'] && taxon['sciname'] === this.nameSearchResults[0]['accepted_sciname']){
-                                            this.nameSearchResults[0]['parentName'] = taxon['parentName'];
+                                        if(!nameSearchResults[0]['accepted'] && taxon['sciname'] === nameSearchResults[0]['accepted_sciname']){
+                                            nameSearchResults[0]['parentName'] = taxon['parentName'];
                                         }
                                     }
                                 });
-                                if(!this.nameSearchResults[0].hasOwnProperty('parentName') || this.nameSearchResults[0]['parentName'] === ''){
-                                    this.nameSearchResults[0]['parentName'] = parentName;
+                                if(!nameSearchResults[0].hasOwnProperty('parentName') || nameSearchResults[0]['parentName'] === ''){
+                                    nameSearchResults[0]['parentName'] = parentName;
                                 }
-                                this.processingArr = addHierchyTemp;
+                                processingArr = addHierchyTemp;
                                 const text = 'Matching parent and accepted taxa to the Taxonomic Thesaurus';
-                                this.addSubprocessToProcessorDisplay(this.currentSciname,'text',text);
-                                this.setTaxaToAdd();
+                                addSubprocessToProcessorDisplay(currentSciname.value, 'text', text);
+                                setTaxaToAdd();
                             }
                             else{
-                                this.processErrorResponse(false,'Unable to distinguish taxon by name');
-                                this.runScinameDataSourceSearch();
+                                processErrorResponse(false, 'Unable to distinguish taxon by name');
+                                runScinameDataSourceSearch();
                             }
                         }
                         else{
-                            this.processErrorResponse(false,'Unable to distinguish taxon by name');
-                            this.runScinameDataSourceSearch();
+                            processErrorResponse(false, 'Unable to distinguish taxon by name');
+                            runScinameDataSourceSearch();
                         }
-                    },
-                    cancelAPIRequest,
-                    getErrorResponseText,
-                    openTutorialWindow
+                    }
+
+                    Vue.onMounted(() => {
+                        collectionStore.setCollection(collId, () => {
+                            if(isEditor.value){
+                                setUnlinkedRecordCounts();
+                            }
+                            else{
+                                window.location.href = store.getClientRoot + '/index.php';
+                            }
+                        });
+                    });
+                    
+                    return {
+                        collId,
+                        collInfo,
+                        currentProcess,
+                        currentSciname,
+                        dataSource,
+                        isEditor,
+                        levValue,
+                        procDisplayScrollAreaRef,
+                        processCancelling,
+                        processingLimit,
+                        processingStartIndex,
+                        processorDisplayArr,
+                        processorDisplayCurrentIndex,
+                        processorDisplayIndex,
+                        selectedKingdom,
+                        undoButtonsDisabled,
+                        unlinkedLoading,
+                        unlinkedOccCnt,
+                        unlinkedTaxaCnt,
+                        updatedet,
+                        uppercontrolsdisabled,
+                        callCleaningController,
+                        callTaxThesaurusLinkController,
+                        cancelProcess,
+                        initializeCleanScinameAuthor,
+                        initializeDataSourceSearch,
+                        initializeTaxThesaurusFuzzyMatch,
+                        openTutorialWindow,
+                        processingBatchLimitChange,
+                        processorDisplayScrollDown,
+                        processorDisplayScrollUp,
+                        selectFuzzyMatch,
+                        setScroller,
+                        undoChangedSciname,
+                        updateOccLocalitySecurity,
+                        updateSelectedDataSource,
+                        updateSelectedKingdom
+                    }
                 }
             });
             occurrenceTaxonomyManagementModule.use(Quasar, { config: {} });
+            occurrenceTaxonomyManagementModule.use(Pinia.createPinia());
             occurrenceTaxonomyManagementModule.mount('#innertext');
         </script>
     </body>

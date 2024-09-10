@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']:0;
@@ -99,7 +99,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
 
@@ -427,6 +426,9 @@ echo '</div>';
     }
     else{
         $projectArr = $projManager->getProjectList();
+        if($GLOBALS['VALID_USER']){
+            echo '<div><b><a href="index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></b></div>';
+        }
         if($projectArr){
             echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Biotic Inventory Projects</h1>';
             foreach($projectArr as $pid => $projList){
@@ -441,16 +443,13 @@ echo '</div>';
         }
         else{
             echo '<div><b>There are no biotic inventory projects available at this time.</b></div>';
-            if($GLOBALS['VALID_USER']){
-                echo '<div><a href="index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></div>';
-            }
         }
     }
     ?>
 </div>
 <?php
-include(__DIR__ . '/../footer.php');
 include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
 ?>
 
 <div id="infobox" data-role="popup" class="well" style="width:400px;height:300px;">

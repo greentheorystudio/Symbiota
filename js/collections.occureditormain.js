@@ -108,61 +108,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	}
 
-	if(localityAutoLookup){
-		$("#fflocality").autocomplete({ 
-			source: function( request, response ) {
-				$.getJSON( "../../api/occurrenceduplicates/getlocality.php", { recordedby: $( "input[name=recordedby]" ).val(), eventdate: $( "input[name=eventdate]" ).val(), locality: request.term }, response );
-			},
-			minLength: 4,
-			select: function( event, ui ) {
-				$.each(ui.item, function(k, v) {
-					if($( "input[name="+k+"]" ).val() === ""){
-						$( "input[name="+k+"]" ).val(v);
-						$( "input[name="+k+"]" ).css("backgroundColor","lightblue");
-						fieldChanged(k);
-					}
-				});
-			}
-		});
-		if($( "input[name=localautodeactivated]" ).is(':checked')){
-			$( "#fflocality" ).autocomplete( "option", "disabled", true );
-			$( "#fflocality" ).attr('autocomplete','on');
-		}
-	}
-
-	$("#ffcountry").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupCountry.php", { term: request.term }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		select: function(){
-			fieldChanged("country");
-		}
-	});
-
-	$("#ffstate").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupState.php", { term: request.term, "country": document.fullform.country.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		select: function(){
-			fieldChanged("stateprovince");
-		}
-	});
-
-	$("#ffcounty").autocomplete({ 
-		source: function( request, response ) {
-			$.getJSON( "../../api/geography/lookupCounty.php", { term: request.term, "state": document.fullform.stateprovince.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		select: function(){
-			fieldChanged("county");
-		}
-	});
-
 	$("textarea[name=associatedtaxa]").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "../../api/taxa/getassocspp.php", { term: request.term.split( /,\s*/ ).pop() }, response );
@@ -186,12 +131,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	},{autoFocus: true});
 
 
-	$("#catalognumber").keydown(function(event){
-		if ((event.keyCode == 13)) {
-			return false;
-		}
-	});
-	
 	const apstatus = getCookie("autopstatus");
 	if(getCookie("autopstatus")) {
 		document.fullform.autoprocessingstatus.value = apstatus;
@@ -204,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function() {
 function toggleStyle(){
 	const cssObj = document.getElementById('editorCssLink');
 	if(cssObj.href === "../../css/occureditorcrowdsource.css?ver=20221204"){
-		cssObj.href = "../../css/occureditor.css?ver=20221204";
+		cssObj.href = "../../css/occureditor.css?ver=20240405";
 	}
 	else{
 		cssObj.href = "../../css/occureditorcrowdsource.css?ver=20221204";
@@ -249,7 +188,6 @@ function verifyFullFormSciName(id = null){
 				}
 			}
 			else{
-				$( 'select[name=confidenceranking]' ).val(5);
 				alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
 			}
 		}
@@ -278,19 +216,6 @@ function localitySecurityCheck(){
 	}
 }
 
-function localAutoChanged(cbObj){
-	if(cbObj.checked == true){
-		$( "#fflocality" ).autocomplete( "option", "disabled", true );
-		$( "#fflocality" ).attr('autocomplete','on');
-		document.cookie = "localauto=1";
-	}
-	else{
-		$( "#fflocality" ).autocomplete( "option", "disabled", false );
-		$( "#fflocality" ).attr('autocomplete','off');
-		document.cookie = "localauto=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-	}
-}
-
 function fieldChanged(fieldName){
 	try{
 		document.fullform.editedfields.value = document.fullform.editedfields.value + fieldName + ";";
@@ -301,7 +226,6 @@ function fieldChanged(fieldName){
 
 function recordNumberChanged(){
 	fieldChanged('recordnumber');
-	autoDupeSearch();
 }
 
 function stateProvinceChanged(stateVal){ 
@@ -589,9 +513,6 @@ function verifyFullForm(f){
 		return true;
 	}
 
-	if(searchDupesCatalogNumber(f,false)) {
-		return false;
-	}
 	const validformat1 = /^\d{4}-[0][0-9]-\d{1,2}$/;
 	const validformat2 = /^\d{4}-[1][0-2]-\d{1,2}$/;
 	if(f.eventdate.value && !(validformat1.test(f.eventdate.value) || validformat2.test(f.eventdate.value))){
@@ -858,9 +779,6 @@ function eventDateChanged(eventDateInput){
 	}
 	fieldChanged('eventdate');
 	const f = eventDateInput.form;
-	if(!eventDateInput.form.recordnumber.value && f.recordedby.value) {
-		autoDupeSearch();
-	}
 	return true;
 }
 
@@ -1124,7 +1042,7 @@ function dwcDoc(dcTag){
 }
 
 function openOccurrenceSearch(target) {
-	collId = document.fullform.collid.value;
+	let collId = document.fullform.collid.value;
 	let occWindow = open("../misc/occurrencesearch.php?targetid=" + target + "&collid=" + collId, "occsearch", "resizable=1,scrollbars=1,toolbar=1,width=750,height=600,left=20,top=20");
 	occWindow.focus();
 	if (occWindow.opener == null) {

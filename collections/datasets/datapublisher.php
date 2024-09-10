@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverPublisher.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -58,12 +58,6 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
     $datasetKey = $collManager->getDatasetKey();
     $endpointKey = $collManager->getEndpointKey();
     $idigbioKey = $collManager->getIdigbioKey();
-	if($publishIDIGBIO && !$idigbioKey){
-        $idigbioKey = $collManager->findIdigbioKey($collPubArr[$collId]['collectionguid']);
-        if($idigbioKey){
-            $collManager->updateAggKeys($collId);
-        }
-    }
 }
 
 $isEditor = 0;
@@ -98,7 +92,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=20221025"></script>
+	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <script type="text/javascript">
 		function verifyDwcaAdminForm(){
             const dbElements = document.getElementsByName("coll[]");
@@ -203,9 +197,9 @@ include(__DIR__ . '/../../header.php');
 	<div style="margin:20px;">
 		<b>RSS Feed:</b>
 		<?php
-		$urlPrefix = $dwcaManager->getServerDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
+		$urlPrefix = $dwcaManager->getServerDomain().$GLOBALS['CLIENT_ROOT'];
 		if(file_exists('../../webservices/dwc/rss.xml')){
-			$feedLink = $urlPrefix.'webservices/dwc/rss.xml';
+			$feedLink = $urlPrefix.'/webservices/dwc/rss.xml';
 			echo '<a href="'.$feedLink.'" target="_blank">'.$feedLink.'</a>';
 		}
 		else{
@@ -489,8 +483,8 @@ include(__DIR__ . '/../../header.php');
 	?>
 </div>
 <?php
-include(__DIR__ . '/../../footer.php');
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

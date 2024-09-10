@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/TPEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPDescEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
@@ -349,7 +349,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 					<h2>You must be logged in and authorized to taxon data.</h2>
 					<h3>
 						<?php
-							echo "Click <a href='".$GLOBALS['CLIENT_ROOT']. '/profile/index.php?tid=' .$tEditor->getTid(). '&refurl=' .$GLOBALS['CLIENT_ROOT']."/taxa/admin/tpeditor.php'>here</a> to login";
+							echo "Click <a href='".$GLOBALS['CLIENT_ROOT']. '/profile/index.php?tid=' .$tEditor->getTid(). '&refurl=' .$GLOBALS['CLIENT_ROOT']."/taxa/profile/tpeditor.php'>here</a> to login";
 						?>
 					</h3>
 				</div>
@@ -380,8 +380,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		?>
 	</div>
 	<?php
-	include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

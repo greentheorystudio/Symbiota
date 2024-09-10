@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ObservationSubmitManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
@@ -20,7 +20,7 @@ if(!is_numeric($clid)) {
 }
 
 $obsManager = new ObservationSubmitManager();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 $obsManager->setCollid($collId);
 $collMap = $obsManager->getCollMap(); 
 if(!$collId && $collMap) {
@@ -73,8 +73,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script src="../../js/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
-	<script src="../../js/collections.observationsubmit.js?ver=20230103" type="text/javascript"></script>
+    <script src="../../js/collections.coordinateValidation.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+	<script src="../../js/collections.observationsubmit.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
@@ -453,9 +453,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		}
 		?>
 	</div>
-<?php 	
-include(__DIR__ . '/../../footer.php');
+<?php
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

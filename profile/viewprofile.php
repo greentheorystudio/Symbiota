@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ?>
 <!DOCTYPE html>
@@ -44,96 +44,114 @@ header('X-Frame-Options: SAMEORIGIN');
                             <view-profile-occurrence-module :account-info="accountInfo"></view-profile-occurrence-module>
                         </q-tab-panel>
                         <q-tab-panel name="account">
-                            <view-profile-account-module :account-info="accountInfo" :checklist-arr="checklistArr" :project-arr="projectArr" :uid="uid"  @update:account-information="updateAccountObj"></view-profile-account-module>
+                            <view-profile-account-module :account-info="accountInfo" :checklist-arr="checklistArr" :project-arr="projectArr" :uid="uid" @update:account-information="updateAccountObj"></view-profile-account-module>
                         </q-tab-panel>
                     </q-tab-panels>
                 </q-card>
             </template>
         </div>
         <?php
-        include(__DIR__ . '/../footer.php');
         include_once(__DIR__ . '/../config/footer-includes.php');
+        include(__DIR__ . '/../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/pwdInput.js?ver=20230702" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=20230707" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileAccountModule.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountChecklistProjectList.js?ver=20230709" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionControlPanelMenus.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileOccurrenceModule.js" type="text/javascript"></script>
-        <script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionCatalogNumberQuickSearch.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileAccountModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountChecklistProjectList.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionControlPanelMenus.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileOccurrenceModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script type="text/javascript">
             const viewProfileModule = Vue.createApp({
-                data() {
-                    return {
-                        accountInfo: Vue.ref(null),
-                        checklistArr: Vue.ref([]),
-                        clientRoot: Vue.ref(CLIENT_ROOT),
-                        projectArr: Vue.ref([]),
-                        solrMode: Vue.ref(SOLR_MODE),
-                        uid: Vue.ref(SYMB_UID)
-                    }
-                },
                 components: {
                     'view-profile-account-module': viewProfileAccountModule,
                     'account-checklist-project-list': accountChecklistProjectList,
                     'view-profile-occurrence-module': viewProfileOccurrenceModule
                 },
-                setup () {
-                    const validUser = Vue.ref(VALID_USER);
-                    const tab = validUser ? Vue.ref('checklists') : Vue.ref('account');
-                    return {
-                        validUser,
-                        tab
-                    }
-                },
-                mounted() {
-                    if(Number(this.uid) > 0){
-                        this.setAccountInfo();
-                        this.setAccountChecklistsProjects();
-                    }
-                    else{
-                        window.location.href = CLIENT_ROOT + '/index.php';
-                    }
-                },
-                methods: {
-                    setAccountChecklistsProjects(){
+                setup() {
+                    const store = useBaseStore();
+                    const accountInfo = Vue.ref(null);
+                    const checklistArr = Vue.ref([]);
+                    const clientRoot = store.getClientRoot;
+                    const projectArr = Vue.ref([]);
+                    const tab = Vue.ref('account');
+                    const uid = store.getSymbUid;
+                    const validUser = store.getValidUser;
+
+                    function setAccountChecklists() {
                         const formData = new FormData();
-                        formData.append('uid', this.uid);
-                        formData.append('action', 'getChecklistsProjectsByUid');
+                        formData.append('action', 'getChecklistListByUserRights');
                         fetch(checklistApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
                             response.json().then((resObj) => {
-                                if(resObj.hasOwnProperty('cl')){
-                                    this.checklistArr = resObj['cl'];
-                                }
-                                if(resObj.hasOwnProperty('proj')){
-                                    this.projectArr = resObj['proj'];
-                                }
+                                checklistArr.value = resObj;
                             });
                         });
-                    },
-                    setAccountInfo(){
+                    }
+
+                    function setAccountInfo() {
                         const formData = new FormData();
-                        formData.append('uid', this.uid);
-                        formData.append('action', 'getAccountInfoByUid');
+                        formData.append('uid', uid);
+                        formData.append('action', 'getUserByUid');
                         fetch(profileApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
                             response.json().then((resObj) => {
-                                this.accountInfo = resObj;
+                                accountInfo.value = resObj;
                             });
                         });
-                    },
-                    updateAccountObj(obj) {
-                        this.accountInfo = Object.assign({}, obj);
+                    }
+
+                    function setAccountProjects() {
+                        const formData = new FormData();
+                        formData.append('action', 'getProjectListByUserRights');
+                        fetch(projectApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            response.json().then((resObj) => {
+                                projectArr.value = resObj;
+                            });
+                        });
+                    }
+
+                    function updateAccountObj(obj) {
+                        accountInfo.value = Object.assign({}, obj);
+                    }
+
+                    Vue.onMounted(() => {
+                        if(validUser){
+                            tab.value = 'checklists';
+                        }
+                        if(Number(uid) > 0){
+                            setAccountInfo();
+                            setAccountChecklists();
+                            setAccountProjects();
+                        }
+                        else{
+                            window.location.href = clientRoot + '/index.php';
+                        }
+                    });
+
+                    return {
+                        accountInfo,
+                        checklistArr,
+                        projectArr,
+                        tab,
+                        uid,
+                        validUser,
+                        updateAccountObj
                     }
                 }
             });
             viewProfileModule.use(Quasar, { config: {} });
+            viewProfileModule.use(Pinia.createPinia());
             viewProfileModule.mount('#innertext');
         </script>
     </body>

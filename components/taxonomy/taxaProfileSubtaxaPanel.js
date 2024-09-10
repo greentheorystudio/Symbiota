@@ -1,14 +1,30 @@
 const taxaProfileSubtaxaPanel = {
-    props: [
-        'subtaxa-arr',
-        'subtaxa-label',
-        'subtaxa-expansion-label',
-        'is-editor'
-    ],
+    props: {
+        collapsible: {
+            type: Boolean,
+            default: true
+        },
+        isEditor: {
+            type: Boolean,
+            default: false
+        },
+        subtaxaArr: {
+            type: Array,
+            default: []
+        },
+        subtaxaExpansionLabel: {
+            type: String,
+            default: ''
+        },
+        subtaxaLabel: {
+            type: String,
+            default: ''
+        }
+    },
     template: `
         <template v-if="subtaxaArr.length">
             <div class="expansion-container">
-                <template v-if="subtaxaArr.length < 5">
+                <template v-if="!collapsible || subtaxaArr.length < 5">
                     <q-card>
                         <div class="q-pt-sm q-pl-md text-h6 text-weight-bold taxon-profile-subtaxa-panel-label">
                             {{ subtaxaLabel }}
@@ -102,9 +118,12 @@ const taxaProfileSubtaxaPanel = {
             </div>
         </template>
     `,
-    data() {
+    setup() {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            clientRoot
         }
     }
 };

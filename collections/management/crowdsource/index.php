@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $catid = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
@@ -129,7 +129,7 @@ include_once(__DIR__ . '/../../../config/header-includes.php');
 					echo '<td>'.number_format((array_key_exists(5,$cntArr)?$cntArr[5]:0)+(array_key_exists(10,$cntArr)?$cntArr[10]:0)).'</td>';
 					echo '<td>'.number_format(array_key_exists(5,$pointArr)?$pointArr[5]:0).'</td>';
 					echo '<td>'.number_format(array_key_exists(10,$pointArr)?$pointArr[10]:0).'</td>';
-					echo '<td><a href="../../editor/occurrencetabledisplay.php?csmode=1&occindex=0&displayquery=1&reset=1&collid='.$collId.'" target="_blank">'.number_format(array_key_exists(0,$cntArr)?$cntArr[0]:0).'</a></td>';
+					echo '<td><a href="../../editor/occurrencetabledisplay.php?csmode=1&occindex=0&displayquery=1&collid='.$collId.'" target="_blank">'.number_format(array_key_exists(0,$cntArr)?$cntArr[0]:0).'</a></td>';
 					echo '</tr>';
 				}
 				?>
@@ -149,8 +149,8 @@ include_once(__DIR__ . '/../../../config/header-includes.php');
 		?>
 	</div>
 	<?php
-	include(__DIR__ . '/../../../footer.php');
     include_once(__DIR__ . '/../../../config/footer-includes.php');
-	?>
+	include(__DIR__ . '/../../../footer.php');
+    ?>
 </body>
 </html>

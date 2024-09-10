@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/DbConnection.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/DbService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 
-$connection = new DbConnection();
+$connection = new DbService();
 $con = $connection->getConnection();
 $queryString = $con->real_escape_string($_REQUEST['term']);
 $retStr = '';

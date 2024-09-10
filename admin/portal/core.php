@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
+include_once(__DIR__ . '/../../models/Configurations.php');
 
 if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../../index.php');
 }
 
-$confManager = new ConfigurationManager();
+$confManager = new Configurations();
 
 $fullConfArr = $confManager->getConfigurationsArr();
 $coreConfArr = $fullConfArr['core'];
@@ -15,15 +15,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
 <div id="coreconfig">
     <fieldset style="margin: 10px 0;">
         <legend><b>Server - <span style="color:red;">Do Not Change Unless You Know What You're Doing</span></b></legend>
-        <div class="field-block">
-            <span class="field-label">Portal Character Set:  <button type="button" onclick="enableProtectedEditing('CHARSET');">Edit</button></span>
-            <span class="field-elem">
-                <select id="CHARSET" style="width:600px;" onchange="sendAPIRequest('update','CHARSET',this.value);" disabled>
-                    <option value="UTF-8" <?php echo (array_key_exists('CHARSET',$coreConfArr)&&$coreConfArr['CHARSET'] === 'UTF-8'?'selected':''); ?>>UTF-8</option>
-                    <option value="ISO-8859-1" <?php echo (array_key_exists('CHARSET',$coreConfArr)&&$coreConfArr['CHARSET'] === 'ISO-8859-1'?'selected':''); ?>>ISO-8859-1</option>
-                </select>
-            </span>
-        </div>
         <div class="field-block">
             <span class="field-label">Maximum Upload Filesize (Mb):  <button type="button" onclick="enableProtectedEditing('MAX_UPLOAD_FILESIZE');">Edit</button></span>
             <span class="field-elem">
@@ -102,12 +93,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             </span>
         </div>
         <div class="field-block">
-            <span class="field-label">Google Analytics Key:</span>
-            <span class="field-elem">
-                <input type="text" id="GOOGLE_ANALYTICS_KEY" value="<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GOOGLE_ANALYTICS_KEY','<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>',false);" />
-            </span>
-        </div>
-        <div class="field-block">
             <span class="field-label">Default Collection Category:</span>
             <span class="field-elem">
                 <select id="DEFAULTCATID" style="width:600px;" onchange="processTextConfigurationChange('DEFAULTCATID','<?php echo (array_key_exists('DEFAULTCATID',$coreConfArr)?$coreConfArr['DEFAULTCATID']:''); ?>',false);" >
@@ -120,12 +105,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
                     }
                     ?>
                 </select>
-            </span>
-        </div>
-        <div class="field-block">
-            <span class="field-label">Display Common Names:</span>
-            <span class="field-elem">
-                <input type="checkbox" id="DISPLAY_COMMON_NAMES" value="1" onchange="processCheckConfigurationChange('DISPLAY_COMMON_NAMES');" <?php echo (array_key_exists('DISPLAY_COMMON_NAMES',$coreConfArr) && $coreConfArr['DISPLAY_COMMON_NAMES']?'CHECKED':''); ?> />
             </span>
         </div>
         <div class="field-block">
@@ -192,12 +171,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
     <fieldset style="margin: 10px 0;">
         <legend><b>Media/Images</b></legend>
         <div class="field-block">
-            <span class="field-label">External Media Domain:</span>
-            <span class="field-elem">
-                <input type="text" id="IMAGE_DOMAIN" value="<?php echo (array_key_exists('IMAGE_DOMAIN',$coreConfArr)?$coreConfArr['IMAGE_DOMAIN']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('IMAGE_DOMAIN','<?php echo (array_key_exists('IMAGE_DOMAIN',$coreConfArr)?$coreConfArr['IMAGE_DOMAIN']:''); ?>',false);" />
-            </span>
-        </div>
-        <div class="field-block">
             <span class="field-label">Web Image Width (px):</span>
             <span class="field-elem">
                 <input type="text" id="IMG_WEB_WIDTH" value="<?php echo (array_key_exists('IMG_WEB_WIDTH',$coreConfArr)?$coreConfArr['IMG_WEB_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_WEB_WIDTH','<?php echo (array_key_exists('IMG_WEB_WIDTH',$coreConfArr)?$coreConfArr['IMG_WEB_WIDTH']:''); ?>',true);" />
@@ -207,12 +180,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             <span class="field-label">Thumbnail Image Width (px):</span>
             <span class="field-elem">
                 <input type="text" id="IMG_TN_WIDTH" value="<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_TN_WIDTH','<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>',true);" />
-            </span>
-        </div>
-        <div class="field-block">
-            <span class="field-label">Large Image Width (px):</span>
-            <span class="field-elem">
-                <input type="text" id="IMG_LG_WIDTH" value="<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_LG_WIDTH','<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>',true);" />
             </span>
         </div>
     </fieldset>

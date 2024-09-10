@@ -3,13 +3,13 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/ImageLocalProcessor.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 3600);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
@@ -74,35 +74,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     $logFile .= '-' . $specManager->getCollectionCode();
                 }
                 $imageProcessor->initProcessor($logFile);
-                $imageProcessor->setCollArr(array($collid => array('pmterm' => $specManager->getSpecKeyPattern(),'prpatt' => $specManager->getPatternReplace(),'prrepl' => $specManager->getReplaceStr())));
+                $imageProcessor->setCollArr(array($collid => array('pmterm' => $specManager->getSpecKeyPattern())));
                 $imageProcessor->setMatchCatalogNumber((array_key_exists('matchcatalognumber', $_POST)?1:0));
                 $imageProcessor->setMatchOtherCatalogNumbers((array_key_exists('matchothercatalognumbers', $_POST)?1:0));
-                $imageProcessor->setDbMetadata(1);
                 $imageProcessor->setSourcePathBase($specManager->getSourcePath());
-                $imageProcessor->setTargetPathBase($specManager->getTargetPath());
-                $imageProcessor->setImgUrlBase($specManager->getImgUrlBase());
-                $imageProcessor->setServerRoot($GLOBALS['SERVER_ROOT']);
-                if($specManager->getWebPixWidth()) {
-                    $imageProcessor->setWebPixWidth($specManager->getWebPixWidth());
-                }
-                if($specManager->getTnPixWidth()) {
-                    $imageProcessor->setTnPixWidth($specManager->getTnPixWidth());
-                }
-                if($specManager->getLgPixWidth()) {
-                    $imageProcessor->setLgPixWidth($specManager->getLgPixWidth());
-                }
-                if($specManager->getWebMaxFileSize()) {
-                    $imageProcessor->setWebFileSizeLimit($specManager->getWebMaxFileSize());
-                }
-                if($specManager->getLgMaxFileSize()) {
-                    $imageProcessor->setLgFileSizeLimit($specManager->getLgMaxFileSize());
-                }
-                if($specManager->getJpgQuality()) {
-                    $imageProcessor->setJpgQuality($specManager->getJpgQuality());
-                }
-                $imageProcessor->setWebImg($_POST['webimg']);
-                $imageProcessor->setTnImg($_POST['createtnimg']);
-                $imageProcessor->setLgImg($_POST['createlgimg']);
+                $imageProcessor->setTnImg((int)$_POST['createtnimg']);
+                $imageProcessor->setLgImg((int)$_POST['createlgimg']);
                 $imageProcessor->setCreateNewRec($_POST['createnewrec']);
                 $imageProcessor->setImgExists($_POST['imgexists']);
                 $imageProcessor->setKeepOrig(0);
@@ -134,8 +111,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <div style="font-weight:bold;"><a href="../upload/index.php?collid=<?php echo $collid.'&tabindex='.$tabIndex; ?>"><b>Return to Occurrence Data Upload Module</b></a></div>
     </div>
     <?php
-    include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
     ?>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/VoucherManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']: '';
@@ -254,7 +254,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </div>
                 <div id="voucherdiv">
                     <div style="float:right;margin-top:10px;">
-                        <a href="../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $vManager->getTaxonName(). '&targetclid=' .$vManager->getClid(). '&targettid=' .$tid;?>">
+                        <a href='../collections/list.php?starr={"usethes":true,"taxa":"<?php echo $vManager->getTaxonName(); ?>","targetclid":"<?php echo $vManager->getClid(); ?>"}&targettid=<?php echo $vManager->getTaxonName(); ?>'>
                             <i style='width:15px;height:15px;' class="fas fa-link"></i>
                         </a>
                     </div>

@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 require_once __DIR__ . '/../vendor/autoload.php';
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 ini_set('max_execution_time', 240);
 
 use PhpOffice\PhpWord\PhpWord;
@@ -186,7 +186,7 @@ if($showImages){
         if($imageCnt % 4 === 1) {
             $table->addRow();
         }
-        if($imgSrc && !isset($GLOBALS['IMAGE_DOMAIN']) && $imgSrc[0] === '/'){
+        if($imgSrc && $imgSrc[0] === '/'){
             $cell = $table->addCell(null,$imageCellStyle);
             $textrun = $cell->addTextRun('imagePara');
             $textrun->addImage(($GLOBALS['SERVER_ROOT'] . $imgSrc),array('width'=>160,'height'=>160));

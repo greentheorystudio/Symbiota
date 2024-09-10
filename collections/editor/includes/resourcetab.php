@@ -1,8 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $occid = (int)$_GET['occid'];
@@ -15,9 +14,6 @@ $oArr = $occManager->getOccurMap();
 $occArr = $oArr[$occid];
 
 $genticArr = $occManager->getGeneticArr();
-
-$dupManager = new OccurrenceDuplicate();
-$dupClusterArr = $dupManager->getClusterArr($occid);
 ?>
 <script>
 	function validateVoucherAddForm(f){
@@ -30,32 +26,6 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			return false;
 		}
 		return true;
-	}
-
-	function openDupeWindow(){
-        const url = "dupelist.php?curoccid=<?php echo $occid . '&recordedby=' . urlencode($occArr['recordedby']) . '&recordnumber=' . $occArr['recordnumber'] . '&eventdate=' . $occArr['eventdate']; ?>";
-        const dupeWindow = open(url, "dupelist", "resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
-        if (dupeWindow.opener == null) {
-            dupeWindow.opener = self;
-        }
-	}
-
-	function deleteDuplicateLink(dupid, occid){
-		if(confirm("Are you sure you want to unlink the record as a duplicate?")){
-			$.ajax({
-				type: "POST",
-				url: "../../api/occurrenceduplicates/dupedelete.php",
-				dataType: "json",
-				data: { dupid: dupid, occid: occid }
-			}).done(function( retStr ) {
-				if(retStr === "1"){
-					$("#dupediv-"+occid).hide();
-				}
-				else{
-					alert("ERROR deleting duplicate: "+retStr);
-				}
-			});
-		}
 	}
 
 	function openIndividual(target) {
@@ -142,110 +112,6 @@ if($userChecklists || $checklistArr){
     <?php
 }
 ?>
-<div id="duplicatediv" style="margin-top:20px;width:795px;">
-	<fieldset>
-		<legend><b>Duplicate Occurrences</b></legend>
-		<div style="float:right;margin-right:15px;">
-			<button onclick="openDupeWindow();return false;">Search for Records to Link</button>
-		</div>
-		<div style="clear:both;">
-			<form id="dupeRefreshForm" name="dupeRefreshForm" method="post" target="occurrenceeditor.php">
-				<input name="tabtarget" type="hidden" value="3" />
-				<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-			</form>
-			<?php
-			if($dupClusterArr){
-				foreach($dupClusterArr as $dupid => $dupArr){
-					echo '<div id="dupediv-'.$occid.'">';
-					echo '<div style="padding:15px;"><b>Cluster Title:</b> '.$dupArr['title'];
-					echo '<div style="float:right" title="Unlink this occurrences from duplicate cluster but maintain other records as a valid duplicate cluster">';
-					echo '<button name="unlinkthisdupebutton" onclick="deleteDuplicateLink('.$dupid.','.$occid.')">Remove this Occurrence from Cluster</button>';
-					echo '</div>';
-					$note = trim($dupArr['description'].'; '.$dupArr['notes'],' ;');
-					if($note) {
-                        echo ' - ' . $note;
-                    }
-					echo '</div>';
-					echo '<div style="20px 0px"><hr/><hr/></div>';
-					$innerDupArr = $dupArr['o'];
-					foreach($innerDupArr as $dupeOccid => $dArr){
-						if($occid !== $dupeOccid){
-							$collCode = '';
-                            if($dArr['instcode']){
-                                $collCode .= $dArr['instcode'];
-                            }
-                            if($dArr['collcode']){
-                                $collCode .= ($collCode?':':'') . $dArr['collcode'];
-                            }
-                            ?>
-							<div id="dupediv-<?php echo $dupeOccid; ?>" style="clear:both;margin:15px;">
-								<div style="font-weight:bold;">
-									<?php echo $dArr['collname'].($collCode?' ('.$collCode.')':''); ?>
-								</div>
-								<div style="float:right;">
-									<button name="unlinkdupebut" onclick="deleteDuplicateLink(<?php echo $dupid.','.$dupeOccid; ?>)">Unlink</button>
-								</div>
-								<?php
-								echo '<div style="float:left;margin:5px 15px">';
-								if($dArr['recordedby']) {
-                                    echo '<div>' . $dArr['recordedby'] . ' ' . $dArr['recordnumber'] . '<span style="margin-left:40px;">' . $dArr['eventdate'] . '</span></div>';
-                                }
-								if($dArr['catnum']) {
-                                    echo '<div><b>Catalog Number:</b> ' . $dArr['catnum'] . '</div>';
-                                }
-								if($dArr['occurrenceid']) {
-                                    echo '<div><b>GUID:</b> ' . $dArr['occurrenceid'] . '</div>';
-                                }
-								if($dArr['sciname']) {
-                                    echo '<div><b>Latest Identification:</b> ' . $dArr['sciname'] . '</div>';
-                                }
-								if($dArr['identifiedby']) {
-                                    echo '<div><b>Identified by:</b> ' . $dArr['identifiedby'] . '<span style="margin-left:30px;">' . $dArr['dateidentified'] . '</span></div>';
-                                }
-								if($dArr['notes']) {
-                                    echo '<div>' . $dArr['notes'] . '</div>';
-                                }
-								echo '<div><a href="#" onclick="openIndividual('.$dupeOccid.')">Show Full Details</a></div>';
-								echo '</div>';
-								if($dArr['url']){
-									$url = $dArr['url'];
-									$tnUrl = $dArr['tnurl'];
-									if(!$tnUrl) {
-                                        $tnUrl = $url;
-                                    }
-									if(isset($GLOBALS['IMAGE_DOMAIN'])){
-										if(strncmp($url, '/', 1) === 0) {
-                                            $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
-                                        }
-										if(strncmp($tnUrl, '/', 1) === 0) {
-                                            $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
-                                        }
-									}
-									echo '<div style="float:left;margin:10px;">';
-									echo '<a href="'.$url.'" target="_blank">';
-									echo '<img src="'.$tnUrl.'" style="width:100px;border:1px solid grey" />';
-									echo '</a>';
-									echo '</div>';
-								}
-								echo '<div style="margin:10px 0;clear:both"><hr/></div>';
-								?>
-							</div>
-							<?php
-						}
-					}
-					echo '</div>';
-				}
-			}
-			elseif($dupClusterArr !== false) {
-                echo '<div style="font-weight:bold;margin:15px 0;">No Linked Duplicate Records</div>';
-            }
-            else {
-                echo $dupManager->getErrorStr();
-            }
-			?>
-		</div>
-	</fieldset>
-</div>
 <div id="geneticdiv" style="margin-top:20px;">
 	<fieldset>
 		<legend><b>Genetic Resources</b></legend>

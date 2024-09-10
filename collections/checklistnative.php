@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/OccurrenceChecklistManager.php');
-include_once(__DIR__ . '/../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../services/SOLRService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 $checklistManager = new OccurrenceChecklistManager();
 
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?(int)$_REQUEST['taxonfilter']:1;

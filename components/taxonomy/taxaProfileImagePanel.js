@@ -1,8 +1,14 @@
 const taxaProfileImagePanel = {
-    props: [
-        'taxon',
-        'imageExpansionLabel'
-    ],
+    props: {
+        imageExpansionLabel: {
+            type: String,
+            default: ''
+        },
+        taxon: {
+            type: Object,
+            default: {}
+        }
+    },
     template: `
         <template v-if="taxon.images.length > 0">
             <div class="expansion-container">
@@ -48,14 +54,17 @@ const taxaProfileImagePanel = {
             </div>
         </template>
     `,
-    data() {
-        return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+    setup(props, context) {
+        const store = useBaseStore();
+        const clientRoot = store.getClientRoot;
+
+        function toggleImageCarousel(index) {
+            context.emit('update:set-image-carousel', index);
         }
-    },
-    methods: {
-        toggleImageCarousel(index){
-            this.$emit('update:set-image-carousel', index);
+
+        return {
+            clientRoot,
+            toggleImageCarousel
         }
     }
 };

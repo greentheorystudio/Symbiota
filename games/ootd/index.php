@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/GamesManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']:0;
@@ -44,7 +44,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../../js/games.ootd.js?ver=20230103"></script>
+    <script type="text/javascript" src="../../js/games.ootd.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <script type="text/javascript">
 		$(function() {
             const dialogArr = new Array("game");
@@ -362,8 +362,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		</div>
 	</div>
     <?php
-	include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

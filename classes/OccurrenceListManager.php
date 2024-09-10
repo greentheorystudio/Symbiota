@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/OccurrenceManager.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceListManager extends OccurrenceManager{
 
@@ -35,7 +35,6 @@ class OccurrenceListManager extends OccurrenceManager{
                 'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason, IFNULL(o.habitat,"") AS habitat, '.
                 'CONCAT_WS("-",o.minimumElevationInMeters, o.maximumElevationInMeters) AS elev, o.observeruid, '.
                 'o.associatedtaxa, o.substrate, o.individualCount, o.lifeStage, o.sex, c.sortseq ';
-            $sql .= (array_key_exists('assochost',$this->searchTermsArr)?', oas.verbatimsciname ':' ');
             $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
                 'LEFT JOIN taxa AS t ON o.tid = t.TID ';
             $sql .= $this->setTableJoins($sqlWhere);
@@ -73,7 +72,7 @@ class OccurrenceListManager extends OccurrenceManager{
                 $returnArr[$occId]['institutioncode'] = $this->cleanOutStr($row->institutioncode);
                 $returnArr[$occId]['collectioncode'] = $this->cleanOutStr($row->collectioncode);
                 $returnArr[$occId]['collectionname'] = $this->cleanOutStr($row->collectionname);
-                $returnArr[$occId]['collicon'] = $row->icon;
+                $returnArr[$occId]['collicon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
                 $returnArr[$occId]['accession'] = $this->cleanOutStr($row->catalognumber);
                 $returnArr[$occId]['family'] = $this->cleanOutStr($row->family);
                 $returnArr[$occId]['sciname'] = $this->cleanOutStr($row->sciname);
@@ -83,9 +82,6 @@ class OccurrenceListManager extends OccurrenceManager{
                 $returnArr[$occId]['country'] = $this->cleanOutStr($row->country);
                 $returnArr[$occId]['state'] = $this->cleanOutStr($row->state);
                 $returnArr[$occId]['county'] = $this->cleanOutStr($row->county);
-                if(array_key_exists('assochost',$this->searchTermsArr)) {
-                    $returnArr[$occId]['assochost'] = $this->cleanOutStr($row->verbatimsciname);
-                }
                 $returnArr[$occId]['observeruid'] = $row->observeruid;
                 $returnArr[$occId]['individualCount'] = $this->cleanOutStr($row->individualCount);
                 $returnArr[$occId]['lifeStage'] = $this->cleanOutStr($row->lifeStage);
@@ -94,7 +90,7 @@ class OccurrenceListManager extends OccurrenceManager{
                 if(!$localitySecurity || $canReadRareSpp
                     || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($row->CollID, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
                     || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($row->CollID, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
-                    $returnArr[$occId]['locality'] = $this->cleanOutStr(str_replace('.,',',',$row->locality));
+                    $returnArr[$occId]['locality'] = $row->locality ? $this->cleanOutStr(str_replace('.,',',',$row->locality)) : '';
                     $returnArr[$occId]['collnumber'] = $this->cleanOutStr($row->recordnumber);
                     $returnArr[$occId]['habitat'] = $this->cleanOutStr($row->habitat);
                     $returnArr[$occId]['date'] = $row->date;
@@ -128,11 +124,8 @@ class OccurrenceListManager extends OccurrenceManager{
             $previousOccid = 0;
             while($r = $rs->fetch_object()){
                 if($r->occid !== $previousOccid){
-                    $tnUrl = $r->thumbnailurl;
+                    $tnUrl = ($r->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->thumbnailurl) : $r->thumbnailurl;
                     if($tnUrl){
-                        if(isset($GLOBALS['IMAGE_DOMAIN']) && $tnUrl && strncmp($tnUrl, '/', 1) === 0) {
-                            $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
-                        }
                         $returnArr[$r->occid]['img'] = $tnUrl;
                     }
                     if($r->url){
@@ -181,7 +174,7 @@ class OccurrenceListManager extends OccurrenceManager{
     public function getCloseTaxaMatch($name): array
     {
         $retArr = array();
-        $searchName = Sanitizer::cleanInStr($this->conn,$name);
+        $searchName = SanitizerService::cleanInStr($this->conn,$name);
         $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex(?)';
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('s', $searchName);

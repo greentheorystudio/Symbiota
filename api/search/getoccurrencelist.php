@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = $_REQUEST['starr'] ?? '';
@@ -17,7 +17,7 @@ $occurArr = array();
 $isEditor = false;
 
 if(isset($GLOBALS['SOLR_MODE']) && $GLOBALS['SOLR_MODE']){
-    $collManager = new SOLRManager();
+    $collManager = new SOLRService();
     if($collManager->validateSearchTermsArr($stArr)){
         $collManager->setSearchTermsArr($stArr);
         $solrArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
@@ -41,7 +41,7 @@ if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
 $htmlStr = '<div style="float:right;">';
 $targetClid = $collManager->getSearchTerm('targetclid');
 if($targetTid && $collManager->getClName()){
-    $htmlStr .= '<div style="cursor:pointer;margin:8px 8px 0px 0px;" onclick="addAllVouchersToCl('.$targetTid.')" title="Link All Vouchers on Page">';
+    $htmlStr .= '<div style="cursor:pointer;margin:8px 8px 0px 0px;" onclick="addAllVouchersToCl('.$targetClid.')" title="Link All Vouchers on Page">';
     $htmlStr .= '<i style="width:15px;height:15px;margin-right:5px;" class="fas fa-folder-plus"></i></div>';
 }
 $htmlStr .= '</div><div style="margin:5px;">';
@@ -198,8 +198,8 @@ if($occurArr){
             $htmlStr .= '<i style="width:15px;height:15px;" class="far fa-edit"></i></a></div>';
         }
         if($targetTid && $collManager->getClName()){
-            $htmlStr .= '<div style="float:right;" >';
-            $htmlStr .= '<a href="#" onclick="addVoucherToCl('.$occid.','.$targetClid.','.$targetTid.')" title="Link occurrence voucher to '.$collManager->getClName().';return false;">';
+            $htmlStr .= '<div style="float:right;margin-right:8px;" >';
+            $htmlStr .= '<a href="#" onclick="addVoucherToCl('.$occid.','.$targetClid.','.$targetTid.')" title="Link occurrence voucher to '.$collManager->getClName().'">';
             $htmlStr .= '<i style="width:15px;height:15px;" class="fas fa-folder-plus"></i></a></div>';
         }
         if(isset($fieldArr['img'])){
@@ -234,9 +234,6 @@ if($occurArr){
         }
         if($fieldArr['locality']) {
             $localStr .= $fieldArr['locality'] . ', ';
-        }
-        if(isset($fieldArr['assochost']) && $fieldArr['assochost']) {
-            $localStr .= $fieldArr['assochost'] . ', ';
         }
         if(isset($fieldArr['elev']) && $fieldArr['elev']) {
             $localStr .= $fieldArr['elev'] . 'm';
