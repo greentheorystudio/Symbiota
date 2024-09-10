@@ -1,7 +1,7 @@
 const occurrenceEditorSingleDisplay = {
     template: `
         <div class="row justify-center">
-            <div ref="moduleContainerRef" class="editor-inner-container rounded-borders shadow-5 q-pa-md column q-gutter-y-sm self-center">
+            <div ref="moduleContainerRef" class="editor-inner-container rounded-borders shadow-5 q-pa-md column q-gutter-y-sm self-center bg-white">
                 <div class="row justify-between">
                     <div class="row justify-start">
                         <a :href="clientRoot + '/index.php'">Home</a> &gt;&gt;
