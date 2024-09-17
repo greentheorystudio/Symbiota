@@ -1003,7 +1003,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         transferEditLocationDataToOccurrenceData() {
             this.occurrenceData['locationid'] = this.occurrenceEditData['locationid'];
+            this.occurrenceData['island'] = this.occurrenceEditData['island'];
+            this.occurrenceData['islandgroup'] = this.occurrenceEditData['islandgroup'];
             this.occurrenceData['waterbody'] = this.occurrenceEditData['waterbody'];
+            this.occurrenceData['continent'] = this.occurrenceEditData['continent'];
             this.occurrenceData['country'] = this.occurrenceEditData['country'];
             this.occurrenceData['stateprovince'] = this.occurrenceEditData['stateprovince'];
             this.occurrenceData['county'] = this.occurrenceEditData['county'];
