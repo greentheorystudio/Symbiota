@@ -1074,3 +1074,21 @@ body.processing .loadingModal {
 #map.input-window .ol-zoomslider {
 	top: 8.2em;
 }
+.editor-inner-container {
+	width: 80%;
+}
+.occurrence-entry-format-selector {
+	min-width: 125px;
+}
+.black-border {
+	border-color: black;
+}
+.occurrence-tab-border {
+	border-bottom: 1px solid black;
+}
+.occurrence-editor-preview-image-carousel {
+	min-height: 400px;
+}
+.occurrence-editor-image-transcriber-image {
+	border-left: 2px solid black;
+}

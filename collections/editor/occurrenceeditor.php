@@ -24,23 +24,6 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <style>
-            .editor-inner-container {
-                width: 80%;
-            }
-            .occurrence-entry-format-selector {
-                min-width: 125px;
-            }
-            .black-border {
-                border-color: black;
-            }
-            .occurrence-tab-border {
-                border-bottom: 1px solid black;
-            }
-            .occurrence-editor-preview-image-carousel {
-                min-height: 400px;
-            }
-        </style>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
@@ -52,6 +35,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/panzoom.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collId; ?>;
             const DISPLAY_MODE = <?php echo $displayMode; ?>;
@@ -68,6 +52,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
             </template>
             <occurrence-editor-query-popup :show-popup="displayQueryPopup"></occurrence-editor-query-popup>
             <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup"></occurrence-editor-batch-update-popup>
+            <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
@@ -146,16 +131,19 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
         <script type="text/javascript">
             const occurrenceEditorControllerModule = Vue.createApp({
                 components: {
+                    'confirmation-popup': confirmationPopup,
                     'occurrence-editor-batch-update-popup': occurrenceEditorBatchUpdatePopup,
                     'occurrence-editor-query-popup': occurrenceEditorQueryPopup,
                     'occurrence-editor-single-display': occurrenceEditorSingleDisplay,
                     'occurrence-editor-table-display': occurrenceEditorTableDisplay
                 },
                 setup() {
+                    const { showNotification } = useCore();
                     const baseStore = useBaseStore();
                     const occurrenceStore = useOccurrenceStore();
 
                     const clientRoot = baseStore.getClientRoot;
+                    const confirmationPopupRef = Vue.ref(null);
                     const displayBatchUpdateButton = Vue.ref(true);
                     const displayBatchUpdatePopup = Vue.ref(false);
                     const displayQueryPopup = Vue.ref(false);
@@ -173,11 +161,30 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                         displayQueryPopup.value = value;
                     }
 
+                    function validateCoordinates() {
+                        occurrenceStore.getCoordinateVerificationData((data) => {
+                            if(data.address){
+                                if(!data.valid){
+                                    let alertText = 'Are those coordinates accurate? They currently map to: ' + data.country + ', ' + data.state;
+                                    if(data.county) {
+                                        alertText += ', ' + data.county;
+                                    }
+                                    alertText += ', which differs from what you have entered.';
+                                    confirmationPopupRef.value.openPopup(alertText);
+                                }
+                            }
+                            else{
+                                showNotification('negative', 'Unable to identify a country from the coordinates entered. Are they accurate?');
+                            }
+                        });
+                    }
+
                     Vue.provide('changeBatchUpdatePopupDisplay', changeBatchUpdatePopupDisplay);
                     Vue.provide('changeQueryPopupDisplay', changeQueryPopupDisplay);
                     Vue.provide('displayBatchUpdateButton', displayBatchUpdateButton);
                     Vue.provide('displayQueryPopupButton', displayQueryPopupButton);
                     Vue.provide('occurrenceStore', occurrenceStore);
+                    Vue.provide('validateCoordinates', validateCoordinates);
 
                     Vue.onMounted(() => {
                         if(Number(initialCollId) > 0 || Number(initialOccId) > 0){
@@ -199,6 +206,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                     });
 
                     return {
+                        confirmationPopupRef,
                         displayBatchUpdatePopup,
                         displayMode,
                         displayQueryPopup

@@ -158,19 +158,6 @@ function useCore() {
         });
     }
 
-    function getCoordinateVerificationData(decimalLat, decimalLong, callback) {
-        if(decimalLat && decimalLong){
-            const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + decimalLat.toString() + '&lon=' + decimalLong.toString() + '&format=json';
-            fetch(url)
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                callback(data);
-            });
-        }
-    }
-
     function getErrorResponseText(status, statusText){
         let text;
         if(status === 0){
@@ -428,7 +415,6 @@ function useCore() {
         convertUtmToDecimalDegrees,
         generateRandHexColor,
         getArrayBuffer,
-        getCoordinateVerificationData,
         getErrorResponseText,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,

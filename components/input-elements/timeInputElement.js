@@ -85,14 +85,19 @@ const timeInputElement = {
         }
 
         function processValueChange(value) {
-            if((value + ':00') !== props.value){
-                let timeTokens = value.split(':');
-                if(Number(timeTokens[0]) >= 0 && Number(timeTokens[0]) <= 23 && Number(timeTokens[1]) >= 0 && Number(timeTokens[1]) <= 59){
-                    context.emit('update:value', value);
+            if(value){
+                if((value + ':00') !== props.value){
+                    let timeTokens = value.split(':');
+                    if(Number(timeTokens[0]) >= 0 && Number(timeTokens[0]) <= 23 && Number(timeTokens[1]) >= 0 && Number(timeTokens[1]) <= 59){
+                        context.emit('update:value', value);
+                    }
+                    else{
+                        showNotification('negative', 'Time value must be a valid time.');
+                    }
                 }
-                else{
-                    showNotification('negative', 'Time value must be a valid time.');
-                }
+            }
+            else{
+                context.emit('update:value', null);
             }
         }
 
