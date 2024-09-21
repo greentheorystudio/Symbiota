@@ -144,7 +144,6 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 
                     const clientRoot = baseStore.getClientRoot;
                     const confirmationPopupRef = Vue.ref(null);
-                    const displayBatchUpdateButton = Vue.ref(true);
                     const displayBatchUpdatePopup = Vue.ref(false);
                     const displayQueryPopup = Vue.ref(false);
                     const displayQueryPopupButton = Vue.ref(true);
@@ -181,7 +180,6 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 
                     Vue.provide('changeBatchUpdatePopupDisplay', changeBatchUpdatePopupDisplay);
                     Vue.provide('changeQueryPopupDisplay', changeQueryPopupDisplay);
-                    Vue.provide('displayBatchUpdateButton', displayBatchUpdateButton);
                     Vue.provide('displayQueryPopupButton', displayQueryPopupButton);
                     Vue.provide('occurrenceStore', occurrenceStore);
                     Vue.provide('validateCoordinates', validateCoordinates);
@@ -196,8 +194,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                             }
                             occurrenceStore.setCurrentOccurrenceRecord(initialOccId);
                             if(Number(initialOccId) > 0){
-                                displayBatchUpdateButton.value = true;
-                                displayQueryPopupButton.value = true;
+                                displayQueryPopupButton.value = false;
                             }
                         }
                         else{

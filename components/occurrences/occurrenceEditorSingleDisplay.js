@@ -53,7 +53,7 @@ const occurrenceEditorSingleDisplay = {
                                 </q-btn>
                             </div>
                         </template>
-                        <template v-if="displayBatchUpdateButton && recordCount > 1">
+                        <template v-if="recordCount > 1">
                             <div class="self-center">
                                 <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeBatchUpdatePopupDisplay(true);" icon="find_replace" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -116,7 +116,6 @@ const occurrenceEditorSingleDisplay = {
         const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
         const containerWidth = Vue.ref(0);
         const currentRecordIndex = Vue.computed(() => occurrenceStore.getCurrentRecordIndex);
-        const displayBatchUpdateButton = Vue.inject('displayBatchUpdateButton');
         const displayImageTranscriberPopup = Vue.ref(false);
         const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
         const displayQueryPopupButton = Vue.inject('displayQueryPopupButton');
@@ -176,7 +175,6 @@ const occurrenceEditorSingleDisplay = {
             collId,
             collInfo,
             currentRecordIndex,
-            displayBatchUpdateButton,
             displayImageTranscriberPopup,
             displayMode,
             displayQueryPopupButton,
