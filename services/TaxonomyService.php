@@ -11,12 +11,6 @@ class TaxonomyService {
         $this->conn = $connection->getConnection();
     }
 
-    public function __destruct(){
-        if($this->conn) {
-            $this->conn->close();
-        }
-    }
-
     public static function formatScientificName($inStr){
         $sciNameStr = trim($inStr);
         $sciNameStr = preg_replace('/\s\s+/', ' ',$sciNameStr);
@@ -67,32 +61,32 @@ class TaxonomyService {
 
     public function parseScientificName($inStr, $rankId = null): array
     {
-        $retArr = array('unitname1'=>'','unitname2'=>'','unitind3'=>'','unitname3'=>'');
+        $retArr = array('unitname1'=>'', 'unitname2'=>'', 'unitind3'=>'', 'unitname3'=>'');
         if($inStr && is_string($inStr)){
             $inStr = preg_replace('/_+/',' ',$inStr);
-            $inStr = str_replace(array('?','*'),'',$inStr);
+            $inStr = str_replace(array('?', '*'),'',$inStr);
 
             if(stripos($inStr,'cfr. ') !== false || stripos($inStr,' cfr ') !== false){
                 $retArr['identificationqualifier'] = 'cf. ';
-                $inStr = str_ireplace(array(' cfr ','cfr. '),' ',$inStr);
+                $inStr = str_ireplace(array(' cfr ', 'cfr. '),' ',$inStr);
             }
             elseif(stripos($inStr,'cf. ') !== false || stripos($inStr,'c.f. ') !== false || stripos($inStr,' cf ') !== false){
                 $retArr['identificationqualifier'] = 'cf. ';
-                $inStr = str_ireplace(array(' cf ','c.f. ','cf. '),' ',$inStr);
+                $inStr = str_ireplace(array(' cf ', 'c.f. ', 'cf. '),' ',$inStr);
             }
             elseif(stripos($inStr,'aff. ') !== false || stripos($inStr,' aff ') !== false){
                 $retArr['identificationqualifier'] = 'aff.';
-                $inStr = trim(str_ireplace(array(' aff ','aff. '),' ',$inStr));
+                $inStr = trim(str_ireplace(array(' aff ', 'aff. '),' ',$inStr));
             }
             if(stripos($inStr,' spp.')){
                 $rankId = 180;
-                $inStr = str_ireplace(' spp.','',$inStr);
+                $inStr = str_ireplace(' spp.','', $inStr);
             }
             if(stripos($inStr,' sp.')){
                 $rankId = 180;
-                $inStr = str_ireplace(' sp.','',$inStr);
+                $inStr = str_ireplace(' sp.','', $inStr);
             }
-            $inStr = preg_replace('/\s\s+/',' ',$inStr);
+            $inStr = preg_replace('/\s\s+/',' ', $inStr);
 
             $sciNameArr = explode(' ',$inStr);
             if($sciNameArr){
@@ -110,13 +104,13 @@ class TaxonomyService {
                         $retArr['unitname2'] = array_shift($sciNameArr);
                     }
                     elseif(strpos($sciNameArr[0],'.') !== false){
-                        $retArr['author'] = implode(' ',$sciNameArr);
+                        $retArr['author'] = implode(' ', $sciNameArr);
                         $retArr['author2'] = $sciNameArr[0];
                         unset($sciNameArr);
                     }
                     else{
                         if(strpos($sciNameArr[0],'(') !== false){
-                            $retArr['author'] = implode(' ',$sciNameArr);
+                            $retArr['author'] = implode(' ', $sciNameArr);
                             array_shift($sciNameArr);
                         }
                         $retArr['unitname2'] = array_shift($sciNameArr);
@@ -153,7 +147,7 @@ class TaxonomyService {
             }
             if(isset($sciNameArr) && $sciNameArr){
                 $testAuthor = implode(' ',$sciNameArr);
-                if($rankId === 220 || preg_match('~^\p{Lu}~u', $testAuthor) || $testAuthor[0] === '('){
+                if($rankId === 220 || ((preg_match('~^\p{Lu}~u', $testAuthor) || $testAuthor[0] === '(') && preg_match('( f. | fo. | forma | var. | ssp. | subsp. | x )', $testAuthor) !== 1)){
                     $retArr['author'] = $testAuthor;
                 }
                 else{

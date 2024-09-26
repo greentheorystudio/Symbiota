@@ -46,20 +46,25 @@ class Taxa{
         }
 	}
 
-    public function addTaxonIdentifier($tid, $idName, $id): bool
+    public function addTaxonIdentifier($tid, $idName, $id): int
     {
+        $returnVal = 0;
         if($tid && $idName && $id){
             $identifierName = SanitizerService::cleanInStr($this->conn, $idName);
             $identifier = SanitizerService::cleanInStr($this->conn, $id);
             $sql = 'INSERT IGNORE INTO taxaidentifiers(tid,`name`,identifier) VALUES('.
                 $tid . ',"' . $identifierName . '", "' . $identifier . '")';
-            if(!$this->conn->query($sql)){
-                $sql = 'UPDATE taxaidentifiers SET identifier = "' . $identifier . '" WHERE tid = ' . $tid . ' AND `name` = "' . $identifierName . '" ';
-                return $this->conn->query($sql);
+            if($this->conn->query($sql)){
+                $returnVal = 1;
             }
-            return true;
+            else{
+                $sql = 'UPDATE taxaidentifiers SET identifier = "' . $identifier . '" WHERE tid = ' . $tid . ' AND `name` = "' . $identifierName . '" ';
+                if($this->conn->query($sql)){
+                    $returnVal = 1;
+                }
+            }
         }
-        return false;
+        return $returnVal;
     }
 
     public function createTaxaRecord($data): int
@@ -448,12 +453,12 @@ class Taxa{
                     $name = $val->name;
                     $retArr[$name] = $r->$name;
                 }
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($tid);
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($r->tid);
                 if($includeCommonNames){
-                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($tid);
+                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($r->tid);
                 }
                 if($includeChildren){
-                    $retArr['children'] = $this->getChildTaxaFromTid($tid);
+                    $retArr['children'] = $this->getChildTaxaFromTid($r->tid);
                 }
             }
             $rs->free();
@@ -875,6 +880,20 @@ class Taxa{
             }
         }
         return $retVal;
+    }
+
+    public function updateTaxonIdentifier($tid, $idName, $id): int
+    {
+        $returnVal = 0;
+        if($tid && $idName && $id){
+            $identifierName = SanitizerService::cleanInStr($this->conn, $idName);
+            $identifier = SanitizerService::cleanInStr($this->conn, $id);
+            $sql = 'UPDATE taxaidentifiers SET identifier = "' . $identifier . '" WHERE tid = ' . $tid . ' AND `name` = "' . $identifierName . '" ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
     }
 
     public function validateNewTaxaData($dataArr): array

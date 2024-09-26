@@ -12,6 +12,18 @@ const useBaseStore = Pinia.defineStore('base', {
         solrMode: SOLR_MODE,
         symbUid: SYMB_UID,
         taxonomicRanks: TAXONOMIC_RANKS,
+        taxonomicTags: {
+            cahr: 'CA Heritage Rank',
+            carpr: 'CA Rare Plant Rank',
+            casls: 'CA State Listing Status',
+            cnddb: 'CNDDB Element Code',
+            col: 'Catalogue of Life ID',
+            itis: 'ITIS TSN',
+            iucn: 'IUCN Red List Category',
+            usda: 'USDA Symbol',
+            usfrs: 'US Federal Regulatory Status',
+            worms: 'WoRMS Aphia ID'
+        },
         userDisplayName: USER_DISPLAY_NAME,
         validUser: VALID_USER
     }),
@@ -51,6 +63,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getTaxonomicRanks(state) {
             return state.taxonomicRanks;
+        },
+        getTaxonomicTags(state) {
+            return state.taxonomicTags;
         },
         getUserDisplayName(state) {
             return state.userDisplayName;

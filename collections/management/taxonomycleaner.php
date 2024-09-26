@@ -1282,6 +1282,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 
                     function processorDisplayScrollDown() {
                         scrollProcess = 'scrollDown';
+                        processorDisplayArr.length = 0;
                         processorDisplayCurrentIndex.value++;
                         const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
                         newData.forEach((data) => {
@@ -1292,6 +1293,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 
                     function processorDisplayScrollUp() {
                         scrollProcess = 'scrollUp';
+                        processorDisplayArr.length = 0;
                         processorDisplayCurrentIndex.value--;
                         const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
                         newData.forEach((data) => {

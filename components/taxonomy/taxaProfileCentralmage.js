@@ -16,7 +16,7 @@ const taxaProfileCentralImage = {
     template: `
         <q-card class="overflow-hidden">
             <template v-if="centralImage">
-                <div id="central-image">
+                <div class="taxon-profile-central-image">
                     <a @click="toggleImageCarousel(centralImage.url);" class="cursor-pointer">
                         <q-img :src="centralImage.url" :fit="contain" :title="centralImage.caption" :alt="centralImage.sciname"></q-img>
                         <template v-if="centralImage.photographer || centralImage.caption">

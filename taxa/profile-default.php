@@ -4,6 +4,7 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonNotes.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonFamily.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonVernaculars.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonIdentifiers.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -53,6 +54,9 @@
                             </div>
                         </div>
                     </div>
+                    <div class="q-mt-md">
+                        <taxa-profile-taxon-identifiers :identifiers="taxon.identifiers"></taxa-profile-taxon-identifiers>
+                    </div>
                     <div class="profile-center-row">
                         <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel" @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
                     </div>
@@ -78,6 +82,7 @@
             'taxa-profile-taxon-notes': taxaProfileTaxonNotes,
             'taxa-profile-taxon-family': taxaProfileTaxonFamily,
             'taxa-profile-taxon-vernaculars': taxaProfileTaxonVernaculars,
+            'taxa-profile-taxon-identifiers': taxaProfileTaxonIdentifiers,
             'taxa-profile-taxon-synonyms': taxaProfileTaxonSynonyms,
             'taxa-profile-central-image': taxaProfileCentralImage,
             'taxa-profile-description-tabs': taxaProfileDescriptionTabs,

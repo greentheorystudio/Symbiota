@@ -121,9 +121,12 @@ function useCore() {
             if(row){
                 const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 return headers.reduce((object, header, index) => {
-                    const fieldName = header.trim();
+                    let fieldName = header.trim();
+                    if(fieldName.indexOf('"') > -1){
+                        fieldName = fieldName.replaceAll('"', '');
+                    }
                     let fieldValue = values[index] ? values[index].replace('\r', '') : '';
-                    if(fieldValue.startsWith('"')){
+                    if(fieldValue.indexOf('"') > -1){
                         fieldValue = fieldValue.replaceAll('"','');
                     }
                     object[fieldName] = fieldValue;

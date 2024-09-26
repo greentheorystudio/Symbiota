@@ -50,7 +50,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
             <template v-else>
                 <occurrence-editor-table-display></occurrence-editor-table-display>
             </template>
-            <occurrence-editor-query-popup :show-popup="displayQueryPopup"></occurrence-editor-query-popup>
+            <search-criteria-popup :show-popup="displayQueryPopup"></search-criteria-popup>
             <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup"></occurrence-editor-batch-update-popup>
             <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
         </div>
@@ -123,7 +123,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorResourcesTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorAdminTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorTabModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorQueryPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorBatchUpdatePopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorImageTranscriberPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorSingleDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -133,9 +133,9 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                 components: {
                     'confirmation-popup': confirmationPopup,
                     'occurrence-editor-batch-update-popup': occurrenceEditorBatchUpdatePopup,
-                    'occurrence-editor-query-popup': occurrenceEditorQueryPopup,
                     'occurrence-editor-single-display': occurrenceEditorSingleDisplay,
-                    'occurrence-editor-table-display': occurrenceEditorTableDisplay
+                    'occurrence-editor-table-display': occurrenceEditorTableDisplay,
+                    'search-criteria-popup': searchCriteriaPopup
                 },
                 setup() {
                     const { showNotification } = useCore();

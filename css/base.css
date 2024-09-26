@@ -537,15 +537,15 @@ body.processing .loadingModal {
 .expansion-element{
 	border-radius: 5px;
 }
-#sciname{
+.taxon-profile-sciname{
 	font-weight: bold;
 	font-size: 1.2rem;
 }
-#sciname.species{
+.taxon-profile-sciname span.species{
 	color: #990000;
 	font-style: italic;
 }
-#sciname.genus{
+.taxon-profile-sciname span.genus{
 	font-style: italic;
 }
 .parent-link{
@@ -567,7 +567,7 @@ body.processing .loadingModal {
 	justify-content: flex-end;
 	margin-top: 10px;
 }
-#central-image div.photographer{
+.taxon-profile-central-image div.photographer{
 	text-align: right;
 	padding: 5px;
 	font-size: 75%;
