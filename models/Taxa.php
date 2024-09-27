@@ -761,8 +761,8 @@ class Taxa{
             $sql4 = 'UPDATE taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
                 'LEFT JOIN taxaenumtree AS te ON t2.TID = te.tid '.
                 'LEFT JOIN taxa AS t3 ON te.parenttid = t3.TID '.
-                'SET t.family = t2.SciName '.
-                'WHERE t.RankId >= 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR t.TID = '.$parentTid.') AND (t3.RankId = 140 OR ISNULL(t3.RankId)) ';
+                'SET t.family = t3.SciName '.
+                'WHERE t.RankId >= 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR t.TID = '.$parentTid.') AND t3.RankId = 140 ';
             //echo $sql4;
             if($this->conn->query($sql4)){
                 $retCnt += $this->conn->affected_rows;
