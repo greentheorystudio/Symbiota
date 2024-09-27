@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once($GLOBALS['SERVER_ROOT'].'/classes/DynamicChecklistManager.php');
+include_once(__DIR__ . '/../classes/DynamicChecklistManager.php');
 header('Content-Type: text/html; charset=UTF-8' );
 
 $tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
