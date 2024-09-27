@@ -53,7 +53,7 @@ const occurrenceEditorSingleDisplay = {
                                 </q-btn>
                             </div>
                         </template>
-                        <template v-if="displayBatchUpdateButton && recordCount > 1">
+                        <template v-if="recordCount > 1">
                             <div class="self-center">
                                 <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeBatchUpdatePopupDisplay(true);" icon="find_replace" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -62,9 +62,9 @@ const occurrenceEditorSingleDisplay = {
                                 </q-btn>
                             </div>
                         </template>
-                        <template v-if="imageCount > 0">
+                        <template v-if="(occurrenceEntryFormat === 'specimen' || occurrenceEntryFormat === 'skeletal') && imageCount > 0">
                             <div class="self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeImageTranscriberPopupDisplay(true);" icon="image_search" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayImageTranscriberPopup = true" icon="image_search" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Display image transcription window
                                     </q-tooltip>
@@ -96,7 +96,7 @@ const occurrenceEditorSingleDisplay = {
                     </q-card>
                 </template>
             </div>
-            <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup"></occurrence-editor-image-transcriber-popup>
+            <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup" @close:popup="displayImageTranscriberPopup = false"></occurrence-editor-image-transcriber-popup>
         </div>
     `,
     components: {
@@ -116,7 +116,6 @@ const occurrenceEditorSingleDisplay = {
         const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
         const containerWidth = Vue.ref(0);
         const currentRecordIndex = Vue.computed(() => occurrenceStore.getCurrentRecordIndex);
-        const displayBatchUpdateButton = Vue.inject('displayBatchUpdateButton');
         const displayImageTranscriberPopup = Vue.ref(false);
         const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
         const displayQueryPopupButton = Vue.inject('displayQueryPopupButton');
@@ -132,10 +131,6 @@ const occurrenceEditorSingleDisplay = {
 
         const changeBatchUpdatePopupDisplay = Vue.inject('changeBatchUpdatePopupDisplay');
         const changeQueryPopupDisplay = Vue.inject('changeQueryPopupDisplay');
-
-        function changeImageTranscriberPopupDisplay(value) {
-            displayImageTranscriberPopup.value = value;
-        }
 
         function changeOccurrenceEntryFormat(value) {
             occurrenceStore.setOccurrenceEntryFormat(value);
@@ -165,7 +160,6 @@ const occurrenceEditorSingleDisplay = {
             containerWidth.value = moduleContainerRef.value.clientWidth;
         }
 
-        Vue.provide('changeImageTranscriberPopupDisplay', changeImageTranscriberPopupDisplay);
         Vue.provide('containerWidth', containerWidth);
         Vue.provide('occurrenceFields', occurrenceFields);
         Vue.provide('occurrenceFieldDefinitions', occurrenceFieldDefinitions);
@@ -181,7 +175,6 @@ const occurrenceEditorSingleDisplay = {
             collId,
             collInfo,
             currentRecordIndex,
-            displayBatchUpdateButton,
             displayImageTranscriberPopup,
             displayMode,
             displayQueryPopupButton,
@@ -193,7 +186,6 @@ const occurrenceEditorSingleDisplay = {
             occurrenceEntryFormat,
             recordCount,
             changeBatchUpdatePopupDisplay,
-            changeImageTranscriberPopupDisplay,
             changeQueryPopupDisplay,
             goToFirstRecord,
             goToLastRecord,

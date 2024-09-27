@@ -59,7 +59,7 @@ const configuredDataFieldRow = {
     setup(props) {
         const configuredEditData = Vue.inject('configuredEditData');
         const configuredDataFields = Vue.inject('configuredDataFields');
-        const dataFieldRefObject = Vue.ref({});
+        const dataFieldRefObject = {};
 
         const updateConfiguredEditData = Vue.inject('updateConfiguredEditData');
 
@@ -102,7 +102,6 @@ const configuredDataFieldRow = {
         return {
             configuredEditData,
             configuredDataFields,
-            dataFieldRefObject,
             setElementRef,
             updateConfiguredEditData
         }

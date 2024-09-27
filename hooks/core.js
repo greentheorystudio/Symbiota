@@ -121,9 +121,12 @@ function useCore() {
             if(row){
                 const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 return headers.reduce((object, header, index) => {
-                    const fieldName = header.trim();
+                    let fieldName = header.trim();
+                    if(fieldName.indexOf('"') > -1){
+                        fieldName = fieldName.replaceAll('"', '');
+                    }
                     let fieldValue = values[index] ? values[index].replace('\r', '') : '';
-                    if(fieldValue.startsWith('"')){
+                    if(fieldValue.indexOf('"') > -1){
                         fieldValue = fieldValue.replaceAll('"','');
                     }
                     object[fieldName] = fieldValue;
@@ -156,19 +159,6 @@ function useCore() {
                 resolve(bytes);
             };
         });
-    }
-
-    function getCoordinateVerificationData(decimalLat, decimalLong, callback) {
-        if(decimalLat && decimalLong){
-            const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + decimalLat.toString() + '&lon=' + decimalLong.toString() + '&format=json';
-            fetch(url)
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                callback(data);
-            });
-        }
     }
 
     function getErrorResponseText(status, statusText){
@@ -428,7 +418,6 @@ function useCore() {
         convertUtmToDecimalDegrees,
         generateRandHexColor,
         getArrayBuffer,
-        getCoordinateVerificationData,
         getErrorResponseText,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,

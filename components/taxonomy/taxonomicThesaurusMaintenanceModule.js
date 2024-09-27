@@ -803,6 +803,7 @@ const taxonomicThesaurusMaintenanceModule = {
 
         function processorDisplayScrollDown() {
             scrollProcess.value = 'scrollDown';
+            processorDisplayArr.length = 0;
             processorDisplayCurrentIndex.value++;
             const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
             newData.forEach((data) => {
@@ -813,6 +814,7 @@ const taxonomicThesaurusMaintenanceModule = {
 
         function processorDisplayScrollUp() {
             scrollProcess.value = 'scrollUp';
+            processorDisplayArr.length = 0;
             processorDisplayCurrentIndex.value--;
             const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
             newData.forEach((data) => {

@@ -559,6 +559,58 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 });
             });
         },
+        getCoordinateVerificationData(callback) {
+            if(this.occurrenceEditData['decimallatitude'] && this.occurrenceEditData['decimallongitude']){
+                const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + this.occurrenceEditData['decimallatitude'].toString() + '&lon=' + this.occurrenceEditData['decimallongitude'].toString() + '&format=json';
+                fetch(url)
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    const returnData = {
+                        valid: false,
+                        address: false,
+                        country: null,
+                        state: null,
+                        county: null
+                    };
+                    if(data.hasOwnProperty('address')){
+                        returnData.address = true;
+                        returnData.country = data.address.country;
+                        returnData.state = data.address.state;
+                        returnData.valid = true;
+                        if((!this.occurrenceEditData['country'] || this.occurrenceEditData['country'] === '') && returnData.country && returnData.country !== ''){
+                            this.updateOccurrenceEditData('country', returnData.country);
+                        }
+                        if(this.occurrenceEditData['country'] && returnData.country && this.occurrenceEditData['country'] !== '' && this.occurrenceEditData['country'].toLowerCase() !== returnData.country.toLowerCase()){
+                            if(this.occurrenceEditData['country'].toLowerCase() !== 'usa' && this.occurrenceEditData['country'].toLowerCase() !== 'united states of america' && returnData.country.toLowerCase() !== 'united states'){
+                                returnData.valid = false;
+                            }
+                        }
+                        if(returnData.state && returnData.state !== ''){
+                            if(this.occurrenceEditData['stateprovince'] && this.occurrenceEditData['stateprovince'] !== '' && this.occurrenceEditData['stateprovince'].toLowerCase() !== returnData.state.toLowerCase()){
+                                returnData.valid = false;
+                            }
+                            else{
+                                this.updateOccurrenceEditData('stateprovince', returnData.state);
+                            }
+                        }
+                        if(data.address.county && data.address.county !== ''){
+                            let coordCountyIn = data.address.county.replace(' County', '');
+                            coordCountyIn = coordCountyIn.replace(' Parish', '');
+                            returnData.county = coordCountyIn;
+                            if(this.occurrenceEditData['county'] && this.occurrenceEditData['county'] !== '' && this.occurrenceEditData['county'].toLowerCase() !== coordCountyIn.toLowerCase()){
+                                returnData.valid = false;
+                            }
+                            else{
+                                this.updateOccurrenceEditData('county', coordCountyIn);
+                            }
+                        }
+                    }
+                    callback(returnData);
+                });
+            }
+        },
         getNearbyLocations(callback) {
             this.locationStore.getNearbyLocations(this.getCollId, callback);
         },

@@ -7,7 +7,7 @@ const taxaProfileTaxonVernaculars = {
     },
     template: `
         <template v-if="vernaculars.length">
-            <div id="vernaculars">
+            <div>
                 <template v-if="vernaculars.length > 1">
                     <template v-if="!showAll">
                         {{ firstVernacular }}<span @click="showAll = true" class="cursor-pointer" title="Click here to show more common names">&nbsp;&nbsp;[more...]</span>

@@ -140,10 +140,11 @@ const taxonomyDataSourceImportUpdateModule = {
     },
     setup(props, context) {
         const { getErrorResponseText, showNotification } = useCore();
-        const store = useBaseStore();
+        const baseStore = useBaseStore();
+
         let abortController = null;
         const childrenSearchPrimingArr = Vue.ref([]);
-        const clientRoot = store.getClientRoot;
+        const clientRoot = baseStore.getClientRoot;
         const colInitialSearchResults = Vue.ref([]);
         const commonNameFormattingOptions = [
             { label: 'First letter of each word uppercase', value: 'upper-each' },
@@ -501,7 +502,7 @@ const taxonomyDataSourceImportUpdateModule = {
             if(currentTaxonExternal.value['tid']){
                 const dataSourceIdObj = currentTaxonLocal.value['identifiers'].find(obj => obj['name'] === dataSource.value);
                 if(!dataSourceIdObj){
-                    addTaxonIdentifier(currentTaxonLocal.value['tid'],currentTaxonExternal.value['id']);
+                    addTaxonIdentifier(currentTaxonLocal.value['tid'], currentTaxonExternal.value['id']);
                 }
                 currentTaxonProcessMetadata();
             }
@@ -509,7 +510,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 if(importTaxa.value){
                     const subtext = 'Adding taxon to the Taxonomic Thesaurus';
                     addSubprocessToProcessorDisplay('text',subtext);
-                    addTaxonToThesaurus(Object.assign({}, currentTaxonExternal.value),(newTaxon,errorText = null) => {
+                    addTaxonToThesaurus(Object.assign({}, currentTaxonExternal.value),(newTaxon, errorText = null) => {
                         if(errorText){
                             processSubprocessErrorResponse(errorText);
                             updateTaxonomicHierarchy(() => {
@@ -1441,14 +1442,14 @@ const taxonomyDataSourceImportUpdateModule = {
             currentProcess.value = currentTaxonExternal.value['sciname'];
             addProcessToProcessorDisplay(getNewProcessObject('multi',text));
             processSuccessResponse();
-            const callbackFunction = (resObj,errorText = null) => {
+            const callbackFunction = (resObj, errorText = null) => {
                 if(errorText){
                     updateTaxonomicHierarchy(() => {
                         adjustUIEnd();
                     });
                 }
                 else{
-                    if(resObj){
+                    if(resObj && resObj.hasOwnProperty('tid')){
                         currentTaxonLocal.value = Object.assign({}, resObj);
                         currentTaxonExternal.value['tid'] = resObj['tid'];
                         currentTaxonExternal.value['tidaccepted'] = resObj['tidaccepted'];
@@ -1459,10 +1460,10 @@ const taxonomyDataSourceImportUpdateModule = {
                 }
             };
             if(currentTaxonExternal.value['tid']){
-                findTaxonByTid(currentTaxonExternal.value['tid'],callbackFunction);
+                findTaxonByTid(currentTaxonExternal.value['tid'], callbackFunction);
             }
             else{
-                findTaxonBySciname(currentTaxonExternal.value['sciname'],callbackFunction);
+                findTaxonBySciname(currentTaxonExternal.value['sciname'], callbackFunction);
             }
         }
 
@@ -1471,8 +1472,8 @@ const taxonomyDataSourceImportUpdateModule = {
                 adjustUIStart();
                 const text = 'Setting rank data';
                 currentProcess.value = 'setRankArr';
-                addProcessToProcessorDisplay(getNewProcessObject('single',text));
-                const url = taxonRankApiUrl + '?action=getRankNameArr'
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                const url = taxonRankApiUrl + '?action=getRankNameArr';
                 abortController = new AbortController();
                 fetch(url, {
                     signal: abortController.signal
@@ -1733,6 +1734,7 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function processorDisplayScrollDown() {
             scrollProcess.value = 'scrollDown';
+            processorDisplayArr.length = 0;
             processorDisplayCurrentIndex.value++;
             const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
             newData.forEach((data) => {
@@ -1743,6 +1745,7 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function processorDisplayScrollUp() {
             scrollProcess.value = 'scrollUp';
+            processorDisplayArr.length = 0;
             processorDisplayCurrentIndex.value--;
             const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
             newData.forEach((data) => {

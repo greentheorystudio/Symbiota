@@ -538,9 +538,7 @@ const mediaFileUploadInputElement = {
         function updateQueueSize() {
             let size = 0;
             fileArr.forEach((file) => {
-                if(file.hasOwnProperty('size')){
-                    size += file.size;
-                }
+                size += file.size;
             });
             const sizeMb = (Math.round((size / 1000000) * 10 ) / 100);
             queueSize.value = size;
@@ -654,7 +652,7 @@ const mediaFileUploadInputElement = {
                     });
                 }
                 else if(!existingData){
-                    const fileSizeMb = Number(file.size) > 0 ? Math.round((file.size / 1000000) * 10 ) / 100 : 0;
+                    const fileSizeMb = Number(file.size) > 0 ? Math.round((file.size / 1000000) * 10) / 100 : 0;
                     if(fileSizeMb <= Number(maxUploadFilesize)){
                         const mediaTypeInfo = acceptedMediaTypes.find((mType) => mType.extension === file.name.split('.').pop().toLowerCase());
                         if(mediaTypeInfo){

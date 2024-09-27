@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
@@ -58,6 +59,7 @@ class TaxonProfileManager {
             if($this->taxon['securityStatus'] === 0 || $this->teReader){
                 $this->displayLocality = true;
             }
+            $this->taxon['identifiers'] = (new Taxa)->getTaxonIdentifiersFromTid($this->taxon['tid']);
             $this->taxon['vernaculars'] = array();
             $this->taxon['synonyms'] = array();
             $this->taxon['imageCnt'] = array();

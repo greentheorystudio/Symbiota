@@ -74,7 +74,7 @@
     const taxonDescriptionApiUrl = CLIENT_ROOT + '/api/taxa/taxonDescriptionController.php';
     const taxonHierarchyApiUrl = CLIENT_ROOT + '/api/taxa/taxonHierarchyController.php';
     const taxonKingdomApiUrl = CLIENT_ROOT + '/api/taxa/taxonKingdomController.php';
-    const taxonomyServiceApiUrl = CLIENT_ROOT + '/api/taxa/taxonomyServiceController.php';
+    const taxonomyServiceApiUrl = CLIENT_ROOT + '/api/services/taxonomyServiceController.php';
     const taxonRankApiUrl = CLIENT_ROOT + '/api/taxa/taxonRankController.php';
     const taxonVernacularApiUrl = CLIENT_ROOT + '/api/taxa/taxonVernacularController.php';
 </script>

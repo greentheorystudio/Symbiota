@@ -228,11 +228,9 @@ const locationFieldModule = {
                 @close:popup="showCoordinateToolPopup = false"
             ></occurrence-coordinate-tool-popup>
         </template>
-        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
-        'confirmation-popup': confirmationPopup,
         'geo-locate-popup': geoLocatePopup,
         'occurrence-coordinate-tool-popup': occurrenceCoordinateToolPopup,
         'occurrence-footprint-wkt-input-element': occurrenceFootprintWktInputElement,
@@ -245,10 +243,9 @@ const locationFieldModule = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { getCoordinateVerificationData, showNotification } = useCore();
+        const { showNotification } = useCore();
         const occurrenceStore = Vue.inject('occurrenceStore');
 
-        const confirmationPopupRef = Vue.ref(null);
         const coordinateUncertaintyInMetersValue = Vue.ref(null);
         const decimalLatitudeValue = Vue.ref(null);
         const decimalLongitudeValue = Vue.ref(null);
@@ -260,6 +257,8 @@ const locationFieldModule = {
         const showExtendedForm = Vue.ref(false);
         const showGeoLocatePopup = Vue.ref(false);
         const showSpatialPopup = Vue.ref(false);
+
+        const validateCoordinates = Vue.inject('validateCoordinates');
 
         Vue.watch(propsRefs.data, () => {
             if((!props.disabled && !props.eventMode) || imageCount.value > 0){
@@ -401,55 +400,6 @@ const locationFieldModule = {
             }
         }
 
-        function validateCoordinates() {
-            getCoordinateVerificationData(props.data['decimallatitude'], props.data['decimallongitude'], (data) => {
-                if(data.hasOwnProperty('address')){
-                    const addressArr = data.address;
-                    let coordCountry = addressArr.country;
-                    let coordState = addressArr.state;
-                    let coordCounty = addressArr.county;
-                    let coordValid = true;
-                    if((!props.data['country'] || props.data['country'] === '') && coordCountry && coordCountry !== ''){
-                        updateData('country', coordCountry);
-                    }
-                    if(props.data['country'] && coordCountry && props.data['country'] !== '' && props.data['country'].toLowerCase() !== coordCountry.toLowerCase()){
-                        if(props.data['country'].toLowerCase() !== 'usa' && props.data['country'].toLowerCase() !== 'united states of america' && coordCountry.toLowerCase() !== 'united states'){
-                            coordValid = false;
-                        }
-                    }
-                    if(coordState && coordState !== ''){
-                        if(props.data['stateprovince'] && props.data['stateprovince'] !== '' && props.data['stateprovince'].toLowerCase() !== coordState.toLowerCase()){
-                            coordValid = false;
-                        }
-                        else{
-                            updateData('stateprovince', coordState);
-                        }
-                    }
-                    if(coordCounty && coordCounty !== ''){
-                        let coordCountyIn = coordCounty.replace(' County', '');
-                        coordCountyIn = coordCountyIn.replace(' Parish', '');
-                        if(props.data['county'] && props.data['county'] !== '' && props.data['county'].toLowerCase() !== coordCountyIn.toLowerCase()){
-                            coordValid = false;
-                        }
-                        else{
-                            updateData('county', coordCountyIn);
-                        }
-                    }
-                    if(!coordValid){
-                        let alertText = 'Are those coordinates accurate? They currently map to: ' + coordCountry + ', ' + coordState;
-                        if(coordCounty) {
-                            alertText += ', ' + coordCounty;
-                        }
-                        alertText += ', which differs from what you have entered.';
-                        confirmationPopupRef.value.openPopup(alertText);
-                    }
-                }
-                else{
-                    showNotification('negative', 'Unable to identify a country from the coordinates entered. Are they accurate?');
-                }
-            });
-        }
-
         Vue.provide('openSpatialPopup', openSpatialPopup);
 
         Vue.onMounted(() => {
@@ -459,7 +409,6 @@ const locationFieldModule = {
         });
 
         return {
-            confirmationPopupRef,
             coordinateUncertaintyInMetersValue,
             decimalLatitudeValue,
             decimalLongitudeValue,
