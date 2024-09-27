@@ -232,6 +232,9 @@ if(!$GLOBALS['SYMB_UID']) {
                         if(sciname.includes(' ×')){
                             sciname = sciname.replace(' ×', ' x ');
                         }
+                        if(sciname.includes(' auct. non ')){
+                            sciname = sciname.replace(' auct. non ', ' ');
+                        }
                         if(sciname.endsWith(' f., orth. var.')){
                             sciname = sciname.replace(' f., orth. var.', '');
                         }
