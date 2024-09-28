@@ -63,32 +63,33 @@ class TaxonomyService {
     {
         $retArr = array('unitname1'=>'', 'unitname2'=>'', 'unitind3'=>'', 'unitname3'=>'');
         if($inStr && is_string($inStr)){
-            $inStr = preg_replace('/_+/',' ',$inStr);
-            $inStr = str_replace(array('?', '*'),'',$inStr);
-
-            if(stripos($inStr,'cfr. ') !== false || stripos($inStr,' cfr ') !== false){
-                $retArr['identificationqualifier'] = 'cf. ';
-                $inStr = str_ireplace(array(' cfr ', 'cfr. '),' ',$inStr);
+            $inStr = preg_replace('/_+/',' ', $inStr);
+            $inStr = $inStr ? str_replace(array('?', '*'),'', $inStr) : '';
+            if($inStr){
+                if(strpos($inStr,'cfr. ') !== false || strpos($inStr,' cfr ') !== false){
+                    $retArr['identificationqualifier'] = 'cf. ';
+                    $inStr = str_ireplace(array(' cfr ', 'cfr. '),' ', $inStr);
+                }
+                elseif(strpos($inStr,'cf. ') !== false || strpos($inStr,'c.f. ') !== false || strpos($inStr,' cf ') !== false){
+                    $retArr['identificationqualifier'] = 'cf. ';
+                    $inStr = str_ireplace(array(' cf ', 'c.f. ', 'cf. '),' ', $inStr);
+                }
+                elseif(strpos($inStr,'aff. ') !== false || strpos($inStr,' aff ') !== false){
+                    $retArr['identificationqualifier'] = 'aff.';
+                    $inStr = trim(str_ireplace(array(' aff ', 'aff. '),' ', $inStr));
+                }
             }
-            elseif(stripos($inStr,'cf. ') !== false || stripos($inStr,'c.f. ') !== false || stripos($inStr,' cf ') !== false){
-                $retArr['identificationqualifier'] = 'cf. ';
-                $inStr = str_ireplace(array(' cf ', 'c.f. ', 'cf. '),' ',$inStr);
-            }
-            elseif(stripos($inStr,'aff. ') !== false || stripos($inStr,' aff ') !== false){
-                $retArr['identificationqualifier'] = 'aff.';
-                $inStr = trim(str_ireplace(array(' aff ', 'aff. '),' ',$inStr));
-            }
-            if(stripos($inStr,' spp.')){
+            if($inStr && strpos($inStr,' spp.') !== false){
                 $rankId = 180;
                 $inStr = str_ireplace(' spp.','', $inStr);
             }
-            if(stripos($inStr,' sp.')){
+            if($inStr && strpos($inStr,' sp.') !== false){
                 $rankId = 180;
                 $inStr = str_ireplace(' sp.','', $inStr);
             }
-            $inStr = preg_replace('/\s\s+/',' ', $inStr);
+            $inStr = $inStr ? preg_replace('/\s\s+/',' ', $inStr) : '';
 
-            $sciNameArr = explode(' ',$inStr);
+            $sciNameArr = $inStr ? explode(' ', $inStr) : array();
             if($sciNameArr){
                 if(strtolower($sciNameArr[0]) === 'x'){
                     $retArr['unitind1'] = array_shift($sciNameArr);
@@ -128,7 +129,7 @@ class TaxonomyService {
                             }
                         }
                         else{
-                            $retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+                            $retArr['author'] = trim($retArr['unitname2'] . ' ' . implode(' ', $sciNameArr));
                             $retArr['unitname2'] = '';
                             unset($sciNameArr);
                         }
@@ -138,7 +139,7 @@ class TaxonomyService {
                     if(isset($sciNameArr) && $retArr['unitname2']){
                         $retArr['unitname2'] = strtolower($retArr['unitname2']);
                         if(!preg_match('/^[\-\'a-z]+$/',$retArr['unitname2'])){
-                            $retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+                            $retArr['author'] = trim($retArr['unitname2'] . ' ' . implode(' ', $sciNameArr));
                             $retArr['unitname2'] = '';
                             unset($sciNameArr);
                         }
@@ -154,7 +155,7 @@ class TaxonomyService {
                     $authorArr = array();
                     while($sciStr = array_shift($sciNameArr)){
                         $sciStrTest = strtolower($sciStr);
-                        if(stripos($sciStrTest,' x ') === false && strpos($sciStrTest,'"') === false && substr_count($sciStrTest,"'") < 2){
+                        if(strpos($sciStrTest,' x ') === false && strpos($sciStrTest,'"') === false && substr_count($sciStrTest,"'") < 2){
                             if($sciStrTest === 'f.' || $sciStrTest === 'fo.' || $sciStrTest === 'fo' || $sciStrTest === 'forma'){
                                 self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'f.');
                             }
@@ -202,7 +203,6 @@ class TaxonomyService {
                                 }
                             }
                             $rs->free();
-                            $this->conn->close();
                         }
                     }
                 }
@@ -210,9 +210,9 @@ class TaxonomyService {
             if(array_key_exists('unitind3',$retArr) && $retArr['unitind3'] === 'ssp.'){
                 $retArr['unitind3'] = 'subsp.';
             }
-            $sciname = ((isset($retArr['unitind1']) && $retArr['unitind1'])?$retArr['unitind1'].' ':'').$retArr['unitname1'].' ';
-            $sciname .= ((isset($retArr['unitind2']) && $retArr['unitind2'])?$retArr['unitind2'].' ':'').$retArr['unitname2'].' ';
-            $sciname .= ((isset($retArr['unitind3']) && $retArr['unitind3'])?$retArr['unitind3'].' ':'').$retArr['unitname3'];
+            $sciname = ((isset($retArr['unitind1']) && $retArr['unitind1']) ? $retArr['unitind1'] . ' ' : '') . $retArr['unitname1'] . ' ';
+            $sciname .= ((isset($retArr['unitind2']) && $retArr['unitind2']) ? $retArr['unitind2'] . ' ' : '') . $retArr['unitname2'] . ' ';
+            $sciname .= ((isset($retArr['unitind3']) && $retArr['unitind3']) ? $retArr['unitind3'] . ' ' : '') . $retArr['unitname3'];
             $retArr['sciname'] = trim($sciname);
             if($rankId && is_numeric($rankId)){
                 $retArr['rankid'] = $rankId;
