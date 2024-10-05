@@ -150,4 +150,81 @@ ALTER TABLE `media`
 ALTER TABLE `images`
     ADD INDEX `sourceurl`(`sourceurl`);
 
+CREATE TABLE `keycharacterheadings` (
+    `chid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `headingname` varchar(255) NOT NULL,
+    `language` varchar(45) NOT NULL DEFAULT 'English',
+    `langid` int(11) DEFAULT NULL,
+    `sortsequence` int(11) DEFAULT NULL,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`chid`),
+    KEY `headingname` (`headingname`),
+    KEY `FK_kmcharheading_lang_idx` (`langid`),
+    KEY `language` (`language`),
+    CONSTRAINT `keycharacterheadings_ibfk_1` FOREIGN KEY (`langid`) REFERENCES `adminlanguages` (`langid`)
+);
+
+CREATE TABLE `keycharacters` (
+    `cid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `chid` int(10) unsigned NOT NULL,
+    `charactername` varchar(150) NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `infourl` varchar(500) DEFAULT NULL,
+    `language` varchar(45) NOT NULL DEFAULT 'English',
+    `langid` int(11) DEFAULT NULL,
+    `sortsequence` int(11) DEFAULT NULL,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`cid`),
+    KEY `charactername` (`charactername`),
+    KEY `language` (`language`),
+    KEY `chid` (`chid`),
+    KEY `langid` (`langid`),
+    CONSTRAINT `chid` FOREIGN KEY (`chid`) REFERENCES `keycharacterheadings` (`chid`) ON UPDATE CASCADE,
+    CONSTRAINT `langid` FOREIGN KEY (`langid`) REFERENCES `adminlanguages` (`langid`)
+);
+
+CREATE TABLE `keycharacterstates` (
+    `csid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `cid` int(10) unsigned NOT NULL,
+    `characterstatename` varchar(255) NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `infourl` varchar(500) DEFAULT NULL,
+    `language` varchar(45) NOT NULL DEFAULT 'English',
+    `langid` int(11) DEFAULT NULL,
+    `sortsequence` int(11) DEFAULT NULL,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`csid`),
+    KEY `cid` (`cid`),
+    KEY `characterstatename` (`characterstatename`),
+    KEY `language` (`language`),
+    KEY `kcs_langid` (`langid`),
+    CONSTRAINT `cid` FOREIGN KEY (`cid`) REFERENCES `keycharacters` (`cid`) ON UPDATE CASCADE,
+    CONSTRAINT `kcs_langid` FOREIGN KEY (`langid`) REFERENCES `adminlanguages` (`langid`)
+);
+
+CREATE TABLE `keycharacterdependence` (
+    `cdid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `cid` int(10) unsigned NOT NULL,
+    `dcid` int(10) unsigned NOT NULL,
+    `dcsid` int(10) unsigned DEFAULT NULL,
+    PRIMARY KEY (`cdid`),
+    KEY `kcd_cid` (`cid`),
+    KEY `kcd_dcid` (`dcid`),
+    KEY `kcd_dcsid` (`dcsid`),
+    CONSTRAINT `kcd_cid` FOREIGN KEY (`cid`) REFERENCES `keycharacters` (`cid`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `kcd_dcid` FOREIGN KEY (`dcid`) REFERENCES `keycharacters` (`cid`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `kcd_dcsid` FOREIGN KEY (`dcsid`) REFERENCES `keycharacterstates` (`csid`) ON DELETE CASCADE ON UPDATE NO ACTION
+);
+
+CREATE TABLE `keycharacterstatetaxalink` (
+    `cstlid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `csid` int(10) unsigned NOT NULL,
+    `tid` int(10) unsigned NOT NULL,
+    PRIMARY KEY (`cstlid`),
+    KEY `kcstl_csid` (`csid`),
+    KEY `kcstl_tid` (`tid`),
+    CONSTRAINT `kcstl_csid` FOREIGN KEY (`csid`) REFERENCES `keycharacterstates` (`csid`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `kcstl_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE NO ACTION
+);
+
 SET FOREIGN_KEY_CHECKS = 1;
