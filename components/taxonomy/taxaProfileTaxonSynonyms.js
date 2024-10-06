@@ -7,7 +7,7 @@ const taxaProfileTaxonSynonyms = {
     },
     template: `
         <template v-if="synonyms.length">
-            <div id="synonyms">
+            <div>
                 <template v-if="synonyms.length > 1">
                     <template v-if="!showAll">
                         <span class="text-italic">{{ synonyms[0].sciname }}</span><template v-if="synonyms[0].author">&nbsp;{{ synonyms[0].author }}</template>

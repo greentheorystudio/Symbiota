@@ -537,15 +537,15 @@ body.processing .loadingModal {
 .expansion-element{
 	border-radius: 5px;
 }
-#sciname{
+.taxon-profile-sciname{
 	font-weight: bold;
 	font-size: 1.2rem;
 }
-#sciname.species{
+.taxon-profile-sciname span.species{
 	color: #990000;
 	font-style: italic;
 }
-#sciname.genus{
+.taxon-profile-sciname span.genus{
 	font-style: italic;
 }
 .parent-link{
@@ -567,7 +567,7 @@ body.processing .loadingModal {
 	justify-content: flex-end;
 	margin-top: 10px;
 }
-#central-image div.photographer{
+.taxon-profile-central-image div.photographer{
 	text-align: right;
 	padding: 5px;
 	font-size: 75%;
@@ -1073,4 +1073,22 @@ body.processing .loadingModal {
 }
 #map.input-window .ol-zoomslider {
 	top: 8.2em;
+}
+.editor-inner-container {
+	width: 80%;
+}
+.occurrence-entry-format-selector {
+	min-width: 125px;
+}
+.black-border {
+	border-color: black;
+}
+.occurrence-tab-border {
+	border-bottom: 1px solid black;
+}
+.occurrence-editor-preview-image-carousel {
+	min-height: 400px;
+}
+.occurrence-editor-image-transcriber-image {
+	border-left: 2px solid black;
 }

@@ -100,4 +100,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($isEditor && $action === 'deleteTaxonByTid' && $tId){
         echo $taxa->deleteTaxon($tId);
     }
+    elseif($isEditor && $action === 'updateTaxonIdentifier' && $tId && array_key_exists('idname',$_POST) && array_key_exists('id',$_POST)){
+        echo $taxa->updateTaxonIdentifier($tId, $_POST['idname'], $_POST['id']);
+    }
 }

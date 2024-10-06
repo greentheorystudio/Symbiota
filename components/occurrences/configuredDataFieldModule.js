@@ -11,16 +11,16 @@ const configuredDataFieldModule = {
                     <q-btn color="secondary" @click="saveConfiguredEditDataEdits();" :label="('Save ' + configuredDataLabel + ' Edits')" :disabled="!editsExist" />
                 </div>
             </div>
-            <template v-if="configuredDataFieldsLayoutData.length > 0">
+            <div v-if="configuredDataFieldsLayoutData.length > 0" class="q-mt-sm column q-gutter-sm">
                 <template v-for="layoutElement in configuredDataFieldsLayoutData">
                     <template v-if="layoutElement.type === 'dataFieldRow'">
                         <configured-data-field-row :fields="layoutElement.fields"></configured-data-field-row>
                     </template>
                     <template v-else-if="layoutElement.type === 'dataFieldRowGroup'">
-                        <configured-data-field-row :label="layoutElement.label" :rows="layoutElement.rows"></configured-data-field-row>
+                        <configured-data-field-row-group :label="layoutElement.label" :rows="layoutElement.rows" :expansion="layoutElement.expansion"></configured-data-field-row-group>
                     </template>
                 </template>
-            </template>
+            </div>
         </div>
     `,
     components: {

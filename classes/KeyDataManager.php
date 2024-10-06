@@ -444,7 +444,7 @@ class KeyDataManager extends Manager{
         if(!$this->sql){
             $sqlBase = 'SELECT DISTINCT t.tid, t.family, ' .($this->commonDisplay?'IFNULL(v.VernacularName,t.SciName)':'t.SciName'). ' AS DisplayName, t.parenttid ';
             if($this->dynClid){
-                $sqlFromBase = 'INNER JOIN fmdyncltaxalink AS clk ON t.tid = clk.tid ';
+                $sqlFromBase = 'LEFT JOIN fmdyncltaxalink AS clk ON t.tid = clk.tid ';
                 $sqlWhere = 'WHERE clk.dynclid = ' .$this->dynClid. ' AND t.RankId = 220 ';
             }
             else{

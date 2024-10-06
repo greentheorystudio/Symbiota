@@ -1,5 +1,9 @@
-const timeInputElement = {
+const filePickerInputElement = {
     props: {
+        acceptedTypes: {
+            type: Array,
+            default: []
+        },
         definition: {
             type: Object,
             default: null
@@ -10,37 +14,35 @@ const timeInputElement = {
         },
         label: {
             type: String,
-            default: null
+            default: 'Choose File'
+        },
+        validateFileSize: {
+            type: Boolean,
+            default: true
         },
         value: {
-            type: String,
+            type: Object,
             default: null
         }
     },
     template: `
-        <q-input outlined v-model="value" mask="time" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" dense>
+        <q-file ref="pickerRef" outlined bg-color="white" v-model="value" :label="label" :disable="disabled" :filter="validateFiles" dense>
+            <template v-slot:prepend>
+                <q-icon name="upload_file" class="cursor-pointer" @click="pickerRef.pickFiles();"></q-icon>
+            </template>
             <template v-if="!disabled" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="clearValue();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                        Clear value
+                        Clear File
                     </q-tooltip>
                 </q-icon>
-                <q-icon name="access_time" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">
-                        <q-time v-model="value" @update:model-value="processValueChange" format24h>
-                            <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat></q-btn>
-                            </div>
-                        </q-time>
-                    </q-popup-proxy>
-                </q-icon>
             </template>
-        </q-input>
+        </q-file>
         <template v-if="definition">
             <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
                 <q-card class="sm-popup">
@@ -78,33 +80,46 @@ const timeInputElement = {
     `,
     setup(props, context) {
         const { showNotification } = useCore();
+        const baseStore = useBaseStore();
+
         const displayDefinitionPopup = Vue.ref(false);
+        const maxUploadFilesize = baseStore.getMaxUploadFilesize;
+        const pickerRef = Vue.ref(null);
+
+        function clearValue() {
+            context.emit('update:file', null);
+        }
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
         }
 
-        function processValueChange(value) {
-            if(value){
-                if((value + ':00') !== props.value){
-                    let timeTokens = value.split(':');
-                    if(Number(timeTokens[0]) >= 0 && Number(timeTokens[0]) <= 23 && Number(timeTokens[1]) >= 0 && Number(timeTokens[1]) <= 59){
-                        context.emit('update:value', value);
+        function validateFiles(files) {
+            const fileArr = [];
+            files.forEach((file) => {
+                const fileSizeMb = Number(file.size) > 0 ? Math.round((file.size / 1000000) * 10) / 100 : 0;
+                if(!props.validateFileSize || fileSizeMb <= Number(maxUploadFilesize)){
+                    if(props.acceptedTypes.includes(file.name.split('.').pop().toLowerCase())){
+                        fileArr.push(file);
                     }
                     else{
-                        showNotification('negative', 'Time value must be a valid time.');
+                        showNotification('negative', (file.name + ' cannot be uploaded because it is not one of the following file types: ' + props.acceptedTypes.join(', ')));
                     }
                 }
-            }
-            else{
-                context.emit('update:value', null);
-            }
+                else{
+                    showNotification('negative', (file.name + ' cannot be uploaded because it is ' + fileSizeMb.toString() + 'MB, which exceeds the server limit of ' + maxUploadFilesize.toString() + 'MB for uploads.'));
+                }
+            });
+            context.emit('update:file', (fileArr.length > 0 ? fileArr : null));
+            return fileArr;
         }
 
         return {
             displayDefinitionPopup,
+            pickerRef,
+            clearValue,
             openDefinitionPopup,
-            processValueChange
+            validateFiles
         }
     }
 };

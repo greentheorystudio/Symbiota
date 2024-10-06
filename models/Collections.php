@@ -163,7 +163,7 @@ class Collections {
         }
         $rs->free();
         if(file_exists($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collId . 'occurrencedatafields.json')) {
-            $retArr['configuredData'] = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/collection'.$collId.'occurrencedatafields.json'), true);
+            $retArr['configuredData'] = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collId . 'occurrencedatafields.json'), true);
         }
         return $retArr;
     }

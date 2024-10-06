@@ -122,6 +122,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                             if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
                                 ?>
                                 <li><a href="taxa/thesaurus/index.php">Taxonomic Thesaurus Manager</a></li>
+                                <li><a href="taxa/thesaurus/identifiermanager.php">Taxonomic Identifier Manager</a></li>
                                 <li><a href="taxa/taxonomy/index.php">Taxonomy Editor</a></li>
                                 <?php
                             }

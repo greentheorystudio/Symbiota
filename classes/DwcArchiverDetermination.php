@@ -80,22 +80,22 @@ class DwcArchiverDetermination{
                 'INNER JOIN guidoccurdeterminations AS g ON d.detid = g.detid '.
                 'INNER JOIN guidoccurrences AS og ON o.occid = og.occid '.
                 'LEFT JOIN taxa AS t ON d.tid = t.tid ';
-            if(stripos($conditionSql,' te.')){
+            if(strpos($conditionSql,' te.') !== false){
                 $sql .= 'LEFT JOIN taxaenumtree AS te ON d.tid = te.tid ';
             }
-            if(strpos($conditionSql,'v.clid')){
+            if(strpos($conditionSql,'v.clid') !== false){
                 $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             }
-            if(strpos($conditionSql,'p.point')){
+            if(strpos($conditionSql,'p.point') !== false){
                 $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
             }
-            if(strpos($conditionSql,'MATCH(f.recordedby)') || strpos($conditionSql,'MATCH(f.locality)')){
+            if(strpos($conditionSql,'MATCH(f.recordedby)') !== false || strpos($conditionSql,'MATCH(f.locality)') !== false){
                 $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
             }
-            if(stripos($conditionSql,'a.stateid')){
+            if(strpos($conditionSql,'a.stateid') !== false){
                 $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid ';
             }
-            elseif(stripos($conditionSql,'s.traitid')){
+            elseif(strpos($conditionSql,'s.traitid') !== false){
                 $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid '.
                     'INNER JOIN tmstates AS s ON a.stateid = s.stateid ';
             }

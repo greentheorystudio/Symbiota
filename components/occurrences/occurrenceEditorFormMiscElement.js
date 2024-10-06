@@ -90,9 +90,9 @@ const occurrenceEditorFormMiscElement = {
         </q-card>
         <template v-if="showAssociatedTaxaToolPopup">
             <occurrence-editor-associated-taxa-tool-popup
-                    :associated-taxa-value="occurrenceData.associatedtaxa"
-                    :show-popup="showAssociatedTaxaToolPopup"
-                    @close:popup="showAssociatedTaxaToolPopup = false"
+                :associated-taxa-value="occurrenceData.associatedtaxa"
+                :show-popup="showAssociatedTaxaToolPopup"
+                @close:popup="showAssociatedTaxaToolPopup = false"
             ></occurrence-editor-associated-taxa-tool-popup>
         </template>
     `,

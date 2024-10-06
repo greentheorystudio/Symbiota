@@ -27,6 +27,14 @@ const configuredDataFieldRow = {
                             @update:value="(value) => updateConfiguredEditData(field.fieldName, value)"
                         ></selector-input-element>
                     </template>
+                    <template v-if="configuredDataFields[field.fieldName]['dataType'] === 'date'">
+                        <date-input-element 
+                            :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
+                            :label="configuredDataFields[field.fieldName]['label']" 
+                            :value="configuredEditData[field.fieldName]" 
+                            @update:value="(value) => updateConfiguredEditData(field.fieldName, value.date)"
+                        ></date-input-element>
+                    </template>
                     <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'int' || configuredDataFields[field.fieldName]['dataType'] === 'number' || configuredDataFields[field.fieldName]['dataType'] === 'string'">
                         <text-field-input-element 
                             :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
@@ -44,13 +52,14 @@ const configuredDataFieldRow = {
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
+        'date-input-element': dateInputElement,
         'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
     },
     setup(props) {
         const configuredEditData = Vue.inject('configuredEditData');
         const configuredDataFields = Vue.inject('configuredDataFields');
-        const dataFieldRefObject = Vue.ref({});
+        const dataFieldRefObject = {};
 
         const updateConfiguredEditData = Vue.inject('updateConfiguredEditData');
 
@@ -93,7 +102,6 @@ const configuredDataFieldRow = {
         return {
             configuredEditData,
             configuredDataFields,
-            dataFieldRefObject,
             setElementRef,
             updateConfiguredEditData
         }
