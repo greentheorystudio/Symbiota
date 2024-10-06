@@ -188,9 +188,14 @@ const collectingEventFieldModule = {
         }
 
         function updateDateData(dateData) {
-            occurrenceStore.updateOccurrenceEditDataDate(dateData);
-            if(props.autoSearch){
-                processCollectingEventSearch();
+            if(props.eventMode){
+                occurrenceStore.updateCollectingEventEditDataDate(dateData);
+            }
+            else{
+                occurrenceStore.updateOccurrenceEditDataDate(dateData);
+                if(props.autoSearch){
+                    processCollectingEventSearch();
+                }
             }
         }
 

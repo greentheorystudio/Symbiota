@@ -1103,6 +1103,14 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         updateCollectingEventEditData(key, value) {
             this.collectingEventStore.updateCollectingEventEditData(key, value);
         },
+        updateCollectingEventEditDataDate(dateData) {
+            this.collectingEventStore.updateCollectingEventEditData('eventdate', dateData['date']);
+            this.collectingEventStore.updateCollectingEventEditData('year', dateData['year']);
+            this.collectingEventStore.updateCollectingEventEditData('month', dateData['month']);
+            this.collectingEventStore.updateCollectingEventEditData('day', dateData['day']);
+            this.collectingEventStore.updateCollectingEventEditData('startdayofyear', dateData['startDayOfYear']);
+            this.collectingEventStore.updateCollectingEventEditData('enddayofyear', dateData['endDayOfYear']);
+        },
         updateCollectingEventRecord(callback) {
             this.collectingEventStore.updateCollectingEventRecord(this.getCollId, callback);
         },
