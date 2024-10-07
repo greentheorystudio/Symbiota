@@ -218,11 +218,14 @@ CREATE TABLE `keycharacterdependence` (
 
 CREATE TABLE `keycharacterstatetaxalink` (
     `cstlid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `cid` int(10) unsigned NOT NULL,
     `csid` int(10) unsigned NOT NULL,
     `tid` int(10) unsigned NOT NULL,
     PRIMARY KEY (`cstlid`),
+    KEY `kcstl_cid` (`cid`),
     KEY `kcstl_csid` (`csid`),
     KEY `kcstl_tid` (`tid`),
+    CONSTRAINT `kcstl_cid` FOREIGN KEY (`cid`) REFERENCES `keycharacters` (`cid`) ON DELETE CASCADE ON UPDATE NO ACTION,
     CONSTRAINT `kcstl_csid` FOREIGN KEY (`csid`) REFERENCES `keycharacterstates` (`csid`) ON DELETE CASCADE ON UPDATE NO ACTION,
     CONSTRAINT `kcstl_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE NO ACTION
 );
