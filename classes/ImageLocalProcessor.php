@@ -170,7 +170,7 @@ class ImageLocalProcessor {
                 while($fileName = readdir($dirFH)){
                     if($fileName !== '.' && $fileName !== '..' && $fileName !== '.svn'){
                         if(is_file($this->sourcePathBase.$pathFrag.$fileName)){
-                            if(strpos($fileName,$this->tnSourceSuffix.'.jpg') === false && strpos($fileName,$this->lgSourceSuffix.'.jpg') === false){
+                            if(!stripos($fileName,$this->tnSourceSuffix.'.jpg') && !stripos($fileName,$this->lgSourceSuffix.'.jpg')){
                                 $this->logOrEcho('Processing File (' .date('Y-m-d h:i:s A'). '): ' .$fileName);
                                 $fileExt = strtolower(substr($fileName,strrpos($fileName,'.')));
                                 if($fileExt === '.jpg'){
@@ -250,7 +250,7 @@ class ImageLocalProcessor {
                         $fileExt = strtolower(substr($fileName, strrpos($fileName, '.') + 1));
                     }
                     if($fileExt){
-                        if(strpos($fileName,$this->tnSourceSuffix.'.jpg') === false && strpos($fileName,$this->lgSourceSuffix.'.jpg') === false){
+                        if(!stripos($fileName,$this->tnSourceSuffix.'.jpg') && !stripos($fileName,$this->lgSourceSuffix.'.jpg')){
                             $this->logOrEcho('Processing File (' .date('Y-m-d h:i:s A'). '): ' .$fileName);
                             if($fileExt === 'jpg'){
                                 if($this->processImageFile($fileName,$pathFrag)){

@@ -144,10 +144,10 @@ class OccurrenceManager{
         $collArr = array();
         while($r = $result->fetch_object()){
             $collType = '';
-            if(strpos($r->colltype, 'observation') !== false) {
+            if(stripos($r->colltype, 'observation') !== false) {
                 $collType = 'obs';
             }
-            if(strpos($r->colltype, 'specimen') !== false) {
+            if(stripos($r->colltype, 'specimen')) {
                 $collType = 'spec';
             }
             if($collType){

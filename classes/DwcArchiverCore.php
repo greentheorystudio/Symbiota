@@ -216,7 +216,7 @@ class DwcArchiverCore extends Manager{
             }
             unset($this->conditionArr['collid']);
         }
-        else if($this->collArr && (!$this->conditionSql || strpos($this->conditionSql,'collid in(') === false)){
+        else if($this->collArr && (!$this->conditionSql || !stripos($this->conditionSql,'collid in('))){
             $this->conditionSql .= 'AND (o.collid IN('.implode(',',array_keys($this->collArr)).')) ';
         }
         $sqlFrag = '';
@@ -289,31 +289,31 @@ class DwcArchiverCore extends Manager{
     {
         $sql = '';
         if($this->conditionSql){
-            if(strpos($this->conditionSql,' te.') !== false){
+            if(stripos($this->conditionSql,' te.')){
                 $sql .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
             }
-            if(strpos($this->conditionSql,'v.clid') !== false){
+            if(stripos($this->conditionSql,'v.clid')){
                 $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             }
-            if(strpos($this->conditionSql,'p.point') !== false){
+            if(stripos($this->conditionSql,'p.point')){
                 $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
             }
             if(strpos($this->conditionSql,'MATCH(f.recordedby)') || strpos($this->conditionSql,'MATCH(f.locality)')){
                 $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
             }
-            if(strpos($this->conditionSql,'(i.') !== false || strpos($this->conditionSql,'(it.') !== false || strpos($this->conditionSql,'(ik.') !== false){
+            if(stripos($this->conditionSql,'(i.') || stripos($this->conditionSql,'(it.') || stripos($this->conditionSql,'(ik.')){
                 $sql .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
-                if(strpos($this->conditionSql,'(it.') !== false){
+                if(stripos($this->conditionSql,'(it.')){
                     $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
                 }
-                if(strpos($this->conditionSql,'(ik.') !== false){
+                if(stripos($this->conditionSql,'(ik.')){
                     $sql .= 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
                 }
             }
-            if(strpos($this->conditionSql,'a.stateid') !== false){
+            if(stripos($this->conditionSql,'a.stateid')){
                 $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid ';
             }
-            elseif(strpos($this->conditionSql,'s.traitid') !== false){
+            elseif(stripos($this->conditionSql,'s.traitid')){
                 $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid '.
                     'INNER JOIN tmstates AS s ON a.stateid = s.stateid ';
             }
@@ -418,7 +418,7 @@ class DwcArchiverCore extends Manager{
                                 break;
                             }
 
-                            if(strpos($typeValue, $testStr) !== false) {
+                            if(stripos($typeValue, $testStr)) {
                                 $invalidText = $r['typeStatus'];
                                 $r['typeStatus'] = $testStr;
                                 $typeInvalid = false;
@@ -1315,7 +1315,7 @@ class DwcArchiverCore extends Manager{
                                     break;
                                 }
 
-                                if(strpos($typeValue, $testStr) !== false) {
+                                if(stripos($typeValue, $testStr)) {
                                     $invalidText = $r['typeStatus'];
                                     $r['typeStatus'] = $testStr;
                                     $typeInvalid = false;
