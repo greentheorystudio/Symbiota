@@ -1,7 +1,8 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/PermissionsManager.php');
-include_once(__DIR__ . '/../classes/ProfileManager.php');
+include_once(__DIR__ . '/../models/Permissions.php');
+include_once(__DIR__ . '/../models/Users.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -14,18 +15,18 @@ $listType = array_key_exists('listType',$_REQUEST)?$_REQUEST['listType']:'all';
 $tablePk = array_key_exists('tablepk',$_REQUEST)?(int)$_REQUEST['tablepk']:0;
 
 $userManager = new PermissionsManager();
-$pHandler = new ProfileManager();
+$permissions = new Permissions();
+$users = new Users();
 
 $newPw = '';
 
 if($GLOBALS['IS_ADMIN']){
 	if($loginAs){
-		$pHandler->setUserName($loginAs);
-		$pHandler->authenticate();
+		$users->loginAsUser($loginAs);
 		header('Location: ../index.php');
 	}
 	elseif($delRole){
-		$userManager->deletePermission($userId,$delRole,$tablePk);
+		$permissions->deletePermission($userId, $delRole, $tablePk);
 	}
 	elseif(array_key_exists('apsubmit',$_POST)){
 		foreach($_POST['p'] as $pname){
@@ -38,22 +39,22 @@ if($GLOBALS['IS_ADMIN']){
                     $tablePk = $tok[1];
                 }
 			}
-			$userManager->addPermission($userId, $role, $tablePk);
+            $permissions->addPermission($userId, $role, $tablePk);
 		}
 	}
     if($action){
         if($action === 'validate'){
-            $pHandler->validateUser($userId);
+            $users->validateUser($userId);
         }
         elseif($action === 'pwreset'){
-            $newPw = $pHandler->resetPassword($userId,true);
+            $newPw = $users->resetPassword($userId,true);
         }
         elseif($action === 'validateallunconfirmed'){
-            $pHandler->validateAllUnconfirmedUsers();
+            $users->validateAllUnconfirmedUsers();
             $listType = 'all';
         }
         elseif($action === 'deleteallunconfirmed'){
-            $pHandler->deleteAllUnconfirmedUsers();
+            $users->deleteAllUnconfirmedUsers();
             $listType = 'all';
         }
     }
@@ -96,7 +97,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		<?php 
 		if($GLOBALS['IS_ADMIN']){
 			if($userId){
-				$user = $userManager->getUser($userId);
+				$user = $users->getUserByUid($userId);
 				?>
 				<h1>
 					<?php 
@@ -636,9 +637,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
 			}
 			else{
                 if($GLOBALS['EMAIL_CONFIGURED']){
-                    $pHandler->clearOldUnregisteredUsers();
+                    $users->clearOldUnregisteredUsers();
                 }
-                $users = $userManager->getUsers($listType, $searchTerm);
+                $userList = $userManager->getUsers($listType, $searchTerm);
 				?>
                 <h1>Users</h1>
                 <div style="height:30px;display:flex;gap:20px;">
@@ -666,7 +667,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     ?>
                 </div>
                 <?php
-				foreach($users as $id => $name){
+				foreach($userList as $id => $name){
 					echo "<div><a href='usermanagement.php?userid=".$id."'>".$name. '</a></div>';
 				}
 			}
@@ -677,8 +678,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		?>
 	</div>
 	<?php
-	include(__DIR__ . '/../footer.php');
     include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

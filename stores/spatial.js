@@ -30,7 +30,6 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             heatMapRadius: SPATIAL_POINT_HEAT_MAP_RADIUS,
             initialMapCenter: SPATIAL_INITIAL_CENTER,
             initialMapZoom: SPATIAL_INITIAL_ZOOM,
-            inputPointUncertainty: 0,
             layerQuerySelectorId: null,
             loadPointsError: false,
             loadPointsEvent: false,

@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ObservationSubmitManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
@@ -20,7 +20,7 @@ if(!is_numeric($clid)) {
 }
 
 $obsManager = new ObservationSubmitManager();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 $obsManager->setCollid($collId);
 $collMap = $obsManager->getCollMap(); 
 if(!$collId && $collMap) {
@@ -453,9 +453,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		}
 		?>
 	</div>
-<?php 	
-include(__DIR__ . '/../../footer.php');
+<?php
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

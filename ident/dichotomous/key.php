@@ -1,6 +1,6 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../services/DbService.php');
 include_once(__DIR__ . '/../../classes/DichoKeyManager.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
@@ -33,9 +33,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		?>	
 	
 	</div>
-	<?php 
-    include(__DIR__ . '/../../footer.php');
+	<?php
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

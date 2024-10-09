@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = $_REQUEST['starr'];
@@ -16,7 +16,7 @@ $copyURL = '';
 $recArr = array();
 
 if($GLOBALS['SOLR_MODE']){
-    $collManager = new SOLRManager();
+    $collManager = new SOLRService();
     if($collManager->validateSearchTermsArr($stArr)){
         $collManager->setSearchTermsArr($stArr);
         $collManager->setSorting($sortField1,$sortField2,$sortOrder);
@@ -195,20 +195,20 @@ if($recArr){
         $recordListHtml .= '<td>'.(array_key_exists('decimallatitude',$occArr)?$occArr['decimallatitude']: '').'</td>'."\n";
         $recordListHtml .= '<td>'.(array_key_exists('decimallongitude',$occArr)?$occArr['decimallongitude']: '').'</td>'."\n";
         if(array_key_exists('habitat',$occArr)){
-            $recordListHtml .= '<td>'.((strlen($occArr['habitat'])>80)?substr($occArr['habitat'],0,80).'...':$occArr['habitat']).'</td>'."\n";
+            $recordListHtml .= '<td>'.(($occArr['habitat'] && strlen($occArr['habitat'])>80)?substr($occArr['habitat'],0,80).'...':$occArr['habitat']).'</td>'."\n";
         }
         else{
             $recordListHtml .= '<td></td>'."\n";
         }
         if(array_key_exists('substrate',$occArr)){
-            $recordListHtml .= '<td>'.((strlen($occArr['substrate'])>80)?substr($occArr['substrate'],0,80).'...':$occArr['substrate']).'</td>'."\n";
+            $recordListHtml .= '<td>'.(($occArr['substrate'] && strlen($occArr['substrate']) > 80)?substr($occArr['substrate'],0,80).'...':$occArr['substrate']).'</td>'."\n";
         }
         else{
             $recordListHtml .= '<td></td>'."\n";
         }
         $recordListHtml .= '<td>'.(array_key_exists('elev',$occArr)?$occArr['elev']: '').'</td>'."\n";
         if(array_key_exists('associatedtaxa',$occArr)){
-            $recordListHtml .= '<td>'.((strlen($occArr['associatedtaxa'])>80)?substr($occArr['associatedtaxa'],0,80).'...':$occArr['associatedtaxa']).'</td>'."\n";
+            $recordListHtml .= '<td>'.(($occArr['associatedtaxa'] && strlen($occArr['associatedtaxa'])>80)?substr($occArr['associatedtaxa'],0,80).'...':$occArr['associatedtaxa']).'</td>'."\n";
         }
         else{
             $recordListHtml .= '<td></td>'."\n";

@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
@@ -168,10 +168,12 @@ if($clid && $isEditor){
 									<option value="">Search All Collections</option>
 									<option value="">-------------------------------------</option>
 									<?php
-									$selCollid = $termArr['collid'] ? (int)$termArr['collid'] : 0;
-									foreach($collList as $id => $name){
-										echo '<option value="'.$id.'" '.($selCollid === (int)$id?'SELECTED':'').'>'.$name.'</option>';
-									}
+									if($termArr){
+                                        $selCollid = $termArr['collid'] ? (int)$termArr['collid'] : 0;
+                                        foreach($collList as $id => $name){
+                                            echo '<option value="'.$id.'" '.($selCollid === (int)$id?'SELECTED':'').'>'.$name.'</option>';
+                                        }
+                                    }
 									?>
 								</select>
 							</div>
@@ -434,8 +436,8 @@ else {
 ?>
 </div>
 <?php
-include(__DIR__ . '/../footer.php');
 include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

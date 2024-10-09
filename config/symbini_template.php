@@ -23,7 +23,6 @@ $GLOBALS['IMAGE_ROOT_PATH'] = $GLOBALS['SERVER_ROOT'].'/content/imglib';			//Wri
 
 $GLOBALS['IMG_WEB_WIDTH'] = 1400;
 $GLOBALS['IMG_TN_WIDTH'] = 200;
-$GLOBALS['IMG_LG_WIDTH'] = 3200;
 
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
@@ -40,7 +39,6 @@ $GLOBALS['GBIF_ORG_KEY'] = '';                 //GBIF organization key for organ
 $GLOBALS['SPATIAL_INITIAL_CENTER'] = '';	    //Initial map center for Spatial Module. Default: '[-110.90713, 32.21976]'
 $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '';			//Initial zoom for Spatial Module. Default: 7
 $GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS'] = false;			//Allow Batch Georeference module to georeference records without locality description, but with county
-$GLOBALS['GOOGLE_ANALYTICS_KEY'] = '';			//Needed for setting up Google Analytics
 $GLOBALS['GOOGLE_TAG_MANAGER_ID'] = '';			//Needed for setting up Google Tag Manager
 $GLOBALS['EOL_KEY'] = '';						//Not required, but good to add a key if you plan to do a lot of EOL mapping
 $GLOBALS['PORTAL_TAXA_DESC'] = '';				//Preferred taxa descriptions for the portal.

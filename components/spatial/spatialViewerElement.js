@@ -292,7 +292,7 @@ const spatialViewerElement = {
             });
             map.addControl(new ol.control.FullScreen());
             map.getViewport().addEventListener('drop', () => {
-                showWorking();
+                showWorking('Loading...');
             });
             map.on('singleclick', (evt) => {
                 let infoHTML;
@@ -323,24 +323,24 @@ const spatialViewerElement = {
                 zIndex: 0
             });
             layersArr.push(layersObj['base']);
-            layersObj['dragdrop1'] = new ol.layer.Vector({
+            layersObj['dragDrop1'] = new ol.layer.Vector({
                 zIndex: 1,
                 source: mapSettings.blankDragDropSource,
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
-            layersArr.push(layersObj['dragdrop1']);
-            layersObj['dragdrop2'] = new ol.layer.Vector({
+            layersArr.push(layersObj['dragDrop1']);
+            layersObj['dragDrop2'] = new ol.layer.Vector({
                 zIndex: 2,
                 source: mapSettings.blankDragDropSource,
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
-            layersArr.push(layersObj['dragdrop2']);
-            layersObj['dragdrop3'] = new ol.layer.Vector({
+            layersArr.push(layersObj['dragDrop2']);
+            layersObj['dragDrop3'] = new ol.layer.Vector({
                 zIndex: 3,
                 source: mapSettings.blankDragDropSource,
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
-            layersArr.push(layersObj['dragdrop3']);
+            layersArr.push(layersObj['dragDrop3']);
             layersObj['radius'] = new ol.layer.Vector({
                 zIndex: 4,
                 source: mapSettings.radiusCircleSource,
@@ -531,7 +531,7 @@ const spatialViewerElement = {
             updateMapSettings('dragDropTarget', '');
             if(!mapSettings.dragDrop4){
                 updateMapSettings('dragDrop4', true);
-                updateMapSettings('dragDropTarget', 'dragdrop4');
+                updateMapSettings('dragDropTarget', 'dragDrop4');
                 return true;
             }
             else if(!mapSettings.dragDrop5){

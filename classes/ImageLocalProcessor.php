@@ -1,10 +1,10 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/OccurrenceUtilities.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class ImageLocalProcessor {
 
@@ -35,8 +35,7 @@ class ImageLocalProcessor {
 
     public function __construct(){
         ini_set('memory_limit','1024M');
-        ini_set('auto_detect_line_endings', true);
-        $connection = new DbConnection();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
         if($GLOBALS['LOG_PATH']) {
             $this->logPath = $GLOBALS['LOG_PATH'];
@@ -335,32 +334,11 @@ class ImageLocalProcessor {
                     $fileExists = true;
                 }
                 if($fileExists){
-                    if($this->imgExists === 2){
-                        unlink($targetPath.$targetFileName);
-                        if(file_exists($targetPath.substr($targetFileName,0, -4). 'tn.jpg')){
-                            unlink($targetPath.substr($targetFileName,0, -4). 'tn.jpg');
-                        }
-                        if(file_exists($targetPath.substr($targetFileName,0, -4). '_tn.jpg')){
-                            unlink($targetPath.substr($targetFileName,0, -4). '_tn.jpg');
-                        }
-                        if(file_exists($targetPath.substr($targetFileName,0, -4). 'lg.jpg')){
-                            unlink($targetPath.substr($targetFileName,0, -4). 'lg.jpg');
-                        }
-                        if(file_exists($targetPath.substr($targetFileName,0, -4). '_lg.jpg')){
-                            unlink($targetPath.substr($targetFileName,0, -4). '_lg.jpg');
-                        }
-                    }
-                    elseif($this->imgExists === 1){
-                        $cnt = 1;
-                        $tempFileName = $targetFileName;
-                        while(file_exists($targetPath.$targetFileName)){
-                            $targetFileName = str_ireplace('.jpg', '_' .$cnt. '.jpg',$tempFileName);
-                            $cnt++;
-                        }
-                    }
-                    else{
-                        $this->logOrEcho('NOTICE: image import skipped because image file already exists ',1);
-                        $retVal = false;
+                    $cnt = 1;
+                    $tempFileName = $targetFileName;
+                    while(file_exists($targetPath.$targetFileName)){
+                        $targetFileName = str_ireplace('.jpg', '_' .$cnt. '.jpg',$tempFileName);
+                        $cnt++;
                     }
                 }
                 if(!$fileExists || $this->imgExists !== 0){
@@ -395,13 +373,7 @@ class ImageLocalProcessor {
                         $lgUrlFrag = '';
                         if($this->lgImg){
                             $lgTargetFileName = substr($targetFileName,0,-4). '_lg.jpg';
-                            if($fileSize && $fileSize > $GLOBALS['MAX_UPLOAD_FILESIZE']){
-                                if($this->createNewImage($sourcePath.$fileName,$targetPath.$lgTargetFileName,$GLOBALS['IMG_LG_WIDTH'],round($GLOBALS['IMG_LG_WIDTH'] * ($height / $width)),$width,$height)){
-                                    $lgUrlFrag = $GLOBALS['IMAGE_ROOT_URL'].'/'.$targetFrag.$lgTargetFileName;
-                                    $this->logOrEcho('Resized source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
-                                }
-                            }
-                            else if(copy($sourcePath.$fileName,$targetPath.$lgTargetFileName)){
+                            if($fileSize && $fileSize < $GLOBALS['MAX_UPLOAD_FILESIZE'] && copy($sourcePath.$fileName,$targetPath.$lgTargetFileName)){
                                 $lgUrlFrag = $GLOBALS['IMAGE_ROOT_URL'].'/'.$targetFrag.$lgTargetFileName;
                                 $this->logOrEcho('Imported source as large derivative (' .date('Y-m-d h:i:s A'). ') ',1);
                             }
@@ -751,7 +723,7 @@ class ImageLocalProcessor {
                                 $recMap['sciname'] = $sn;
                             }
                             elseif(array_key_exists('scientificname',$recMap) && $recMap['scientificname']){
-                                $recMap['sciname'] = (new TaxonomyUtilities)->formatScientificName($recMap['scientificname']);
+                                $recMap['sciname'] = TaxonomyService::formatScientificName($recMap['scientificname']);
                             }
                             if(array_key_exists('sciname',$recMap)){
                                 $symbMap['sciname']['type'] = 'string';
@@ -874,7 +846,7 @@ class ImageLocalProcessor {
                                         $updateValueArr = array();
                                         $occRemarkArr = array();
                                         foreach($activeFields as $activeField){
-                                            $activeValue = Sanitizer::cleanInStr($this->conn,$recMap[$activeField]);
+                                            $activeValue = SanitizerService::cleanInStr($this->conn,$recMap[$activeField]);
                                             if(!trim($r[$activeField])){
                                                 $type = (array_key_exists('type',$symbMap[$activeField])?$symbMap[$activeField]['type']:'string');
                                                 $size = (array_key_exists('size',$symbMap[$activeField])?$symbMap[$activeField]['size']:0);
@@ -928,7 +900,7 @@ class ImageLocalProcessor {
                                 $sqlIns2 = 'VALUES ('.$this->activeCollid.',"'.$catNum.'","unprocessed","'.date('Y-m-d H:i:s').'"';
                                 foreach($activeFields as $aField){
                                     $sqlIns1 .= ','.$aField;
-                                    $value = Sanitizer::cleanInStr($this->conn,$recMap[$aField]);
+                                    $value = SanitizerService::cleanInStr($this->conn,$recMap[$aField]);
                                     $type = (array_key_exists('type',$symbMap[$aField])?$symbMap[$aField]['type']:'string');
                                     $size = (array_key_exists('size',$symbMap[$aField])?$symbMap[$aField]['size']:0);
                                     if($type === 'numeric'){
@@ -1043,7 +1015,7 @@ class ImageLocalProcessor {
         $occurMain->__destruct();
 
         $this->logOrEcho('Populating global unique identifiers (GUIDs) for all records...');
-        $uuidManager = new UuidFactory($this->conn);
+        $uuidManager = new GUIDManager($this->conn);
         $uuidManager->setSilent(1);
         $uuidManager->populateGuids();
         $uuidManager->__destruct();
@@ -1159,15 +1131,9 @@ class ImageLocalProcessor {
 
     private function encodeString($inStr): string
     {
-        $retStr = trim($inStr);
         $search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
         $replace = array("'","'",'"','"','*','-','-');
-        $inStr= str_replace($search, $replace, $inStr);
-
-        if($inStr && mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
-            $retStr = utf8_encode($inStr);
-        }
-        return $retStr;
+        return str_replace($search, $replace, $inStr);
     }
 
     protected function logOrEcho($str,$indent = null): void

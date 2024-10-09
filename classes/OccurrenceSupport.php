@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class OccurrenceSupport {
 
@@ -7,7 +7,7 @@ class OccurrenceSupport {
 	private $errorMessage;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -15,109 +15,6 @@ class OccurrenceSupport {
 		if($this->conn) {
 			$this->conn->close();
 		}
-	}
-
-	public function getComments($collid, $start, $limit, $tsStart, $tsEnd, $uid, $reviewStatus): array
-	{
-		$retArr = array();
-		if(is_numeric($collid)){
-			if(!is_numeric($start)) {
-				$start = 0;
-			}
-			if(!is_numeric($limit)) {
-				$limit = 100;
-			}
-			$sqlBase = 'FROM omoccurcomments c INNER JOIN omoccurrences o ON c.occid = o.occid '.
-				'WHERE o.collid = '.$collid;
-			if(is_numeric($uid) && $uid){
-				$sqlBase .= ' AND c.uid = '.$uid;
-			}
-			if(is_numeric($reviewStatus) && $reviewStatus){
-				$sqlBase .= ' AND c.reviewstatus IN('.($reviewStatus === 2?$reviewStatus.',0':$reviewStatus).') ';
-			}
-			if(preg_match('/^\d{4}-\d{2}-\d{2}/', $tsStart)){
-				$sqlBase .= ' AND initialtimestamp >= "'.$tsStart.'"';
-			}
-			if(preg_match('/^\d{4}-\d{2}-\d{2}/', $tsEnd)){
-				$sqlBase .= ' AND initialtimestamp < "'.$tsEnd.'"';
-			}
-			$sqlCnt = 'SELECT count(c.comid) as cnt '.$sqlBase;
-			$rsCnt = $this->conn->query($sqlCnt);
-			while($rCnt = $rsCnt->fetch_object()){
-				$retArr['cnt'] = $rCnt->cnt;
-			}
-			$rsCnt->free();
-			
-			//Get records
-			$sql = 'SELECT c.comid, c.occid, c.comment, c.uid, c.reviewstatus, c.parentcomid, c.initialtimestamp, '.
-				'IFNULL(o.catalognumber, o.othercatalognumbers) AS catnum, o.recordedby, o.recordnumber, o.eventdate '.$sqlBase.
-				' ORDER BY initialtimestamp DESC LIMIT '.$start.','.$limit;
-			//echo $sql;
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->comid]['str'] = $r->comment;
-				$retArr[$r->comid]['uid'] = $r->uid;
-				$retArr[$r->comid]['rs'] = $r->reviewstatus;
-				$retArr[$r->comid]['ts'] = $r->initialtimestamp;
-				$retArr[$r->comid]['occid'] = $r->occid;
-				$retArr[$r->comid]['occurstr'] = '<b>'.$r->catnum.'</b> <span style="margin:20px">'.$r->recordedby.' '.($r->recordnumber?' #'.$r->recordnumber:'').'</span> '.$r->eventdate;
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-
-	public function setReviewStatus($comid,$reviewStatus): bool
-	{
-		$status = true;
-		if(is_numeric($comid) && is_numeric($reviewStatus)){
-			$sql = 'UPDATE omoccurcomments SET reviewstatus = '.$reviewStatus.' WHERE comid = '.$comid;
-			//echo $sql;
-			if(!$this->conn->query($sql)){
-				$statusStr = 'Public';
-				if($reviewStatus === 2) {
-					$statusStr = 'Non-public';
-				}
-				elseif($reviewStatus === 3) {
-					$statusStr = 'Reviewed';
-				}
-				$this->errorMessage = 'ERROR changing comment status to '.$statusStr.'.';
-				$status = false;
-			}
-		}
-		return $status;
-	}
-
-	public function deleteComment($comid): bool
-	{
-		$status = true;
-		if(is_numeric($comid)){
-			$sql = 'DELETE FROM omoccurcomments WHERE comid = '.$comid;
-			if(!$this->conn->query($sql)){
-				$status = false;
-				$this->errorMessage = 'ERROR deleting comment.';
-			}
-		}
-		return $status;
-	}
-	
-	public function getCommentUsers($collid): array
-	{
-		$retArr = array();
-		if($collid){
-			$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname) as userstr  '.
-				'FROM omoccurcomments c INNER JOIN omoccurrences o ON c.occid = o.occid '.
-				'INNER JOIN users u ON c.uid = u.uid '.
-				'WHERE o.collid = '.$collid;
-			//echo $sql; exit;
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->uid] = $r->userstr;
-			}
-			$rs->free();
-			asort($retArr);
-		}
-		return $retArr;
 	}
 
 	public function getOccurrenceList($collid, $catalogNumber, $otherCatalogNumbers, $recordedBy, $recordNumber): array

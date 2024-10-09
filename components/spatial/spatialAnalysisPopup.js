@@ -20,7 +20,7 @@ const spatialAnalysisPopup = {
             type: Number,
             default: null
         },
-        footprintWKT: {
+        footprintWkt: {
             type: String,
             default: null
         },
@@ -67,7 +67,7 @@ const spatialAnalysisPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
-            <q-card class="lg-map-popup">
+            <q-card class="lg-popup overflow-hidden">
                 <spatial-analysis-module ref="spatialModuleRef" :input-window-mode="true" :input-window-tools-arr="inputWindowToolsArr" @update:spatial-data="emitSpatialData" @close:spatial-popup="closePopup();"></spatial-analysis-module>
             </q-card>
         </q-dialog>
@@ -100,7 +100,7 @@ const spatialAnalysisPopup = {
             loadInputParentParams();
         });
 
-        Vue.watch(propsRefs.footprintWKT, () => {
+        Vue.watch(propsRefs.footprintWkt, () => {
             loadInputParentParams();
         });
 
@@ -166,7 +166,7 @@ const spatialAnalysisPopup = {
             if(props.decimalLatitude && props.decimalLongitude && inputWindowToolsArr.includes('point')){
                 processInputParentPointParams();
             }
-            if(props.footprintWKT && inputWindowToolsArr.includes('polygon') && inputWindowToolsArr.includes('wkt')){
+            if(props.footprintWkt && inputWindowToolsArr.includes('polygon') && inputWindowToolsArr.includes('wkt')){
                 processInputParentPolyWKTParams();
             }
         }
@@ -198,7 +198,7 @@ const spatialAnalysisPopup = {
                     openerRadius = props.pointRadiusMeters;
                 }
                 if(openerRadius > 0){
-                    spatialModuleRef.value.updateMapSettings('inputPointUncertainty', openerRadius);
+                    spatialModuleRef.value.updateMapSettings('uncertaintyRadiusValue', openerRadius);
                     const pointRadius = {};
                     pointRadius.pointlat = Number(props.decimalLatitude);
                     pointRadius.pointlong = Number(props.decimalLongitude);
@@ -226,8 +226,8 @@ const spatialAnalysisPopup = {
         }
 
         function processInputParentPolyWKTParams() {
-            if(props.footprintWKT && (props.footprintWKT.startsWith("POLYGON") || props.footprintWKT.startsWith("MULTIPOLYGON"))){
-                spatialModuleRef.value.createPolysFromFootprintWKT(props.footprintWKT);
+            if(props.footprintWkt && (props.footprintWkt.startsWith("POLYGON") || props.footprintWkt.startsWith("MULTIPOLYGON"))){
+                spatialModuleRef.value.createPolysFromFootprintWKT(props.footprintWkt);
             }
         }
 

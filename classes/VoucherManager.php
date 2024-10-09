@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
  
 class VoucherManager {
 
@@ -11,7 +11,7 @@ class VoucherManager {
 	private $clName;
 
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
  	}
 	
@@ -62,19 +62,19 @@ class VoucherManager {
 			'WHERE ((cllink.TID = ' .$this->tid. ') AND (cllink.CLID = ' .$this->clid. '))';
  		$result = $this->conn->query($sql);
 		if($row = $result->fetch_object()){
-			$checklistData['habitat'] = Sanitizer::cleanOutStr($row->Habitat);
-			$checklistData['abundance'] = Sanitizer::cleanOutStr($row->Abundance);
-			$checklistData['notes'] = Sanitizer::cleanOutStr($row->Notes);
-			$checklistData['internalnotes'] = Sanitizer::cleanOutStr($row->internalnotes);
-			$checklistData['source'] = Sanitizer::cleanOutStr($row->source);
-			$checklistData['familyoverride'] = Sanitizer::cleanOutStr($row->familyoverride);
+			$checklistData['habitat'] = SanitizerService::cleanOutStr($row->Habitat);
+			$checklistData['abundance'] = SanitizerService::cleanOutStr($row->Abundance);
+			$checklistData['notes'] = SanitizerService::cleanOutStr($row->Notes);
+			$checklistData['internalnotes'] = SanitizerService::cleanOutStr($row->internalnotes);
+			$checklistData['source'] = SanitizerService::cleanOutStr($row->source);
+			$checklistData['familyoverride'] = SanitizerService::cleanOutStr($row->familyoverride);
 			$checklistData['cltype'] = $row->type;
 			$checklistData['locality'] = $row->locality;
 			if(!$this->clName) {
-				$this->clName = Sanitizer::cleanOutStr($row->Name);
+				$this->clName = SanitizerService::cleanOutStr($row->Name);
 			}
 			if(!$this->taxonName) {
-				$this->taxonName = Sanitizer::cleanOutStr($row->SciName);
+				$this->taxonName = SanitizerService::cleanOutStr($row->SciName);
 			}
 		}
 		$result->close();
@@ -87,7 +87,7 @@ class VoucherManager {
 		$innerSql = '';
 		foreach($eArr as $k => $v){
 			$valStr = trim($v);
-			$innerSql .= ',' .$k. '=' .($valStr?'"'.Sanitizer::cleanInStr($this->conn,$valStr).'" ':'NULL');
+			$innerSql .= ',' .$k. '=' .($valStr?'"'.SanitizerService::cleanInStr($this->conn,$valStr).'" ':'NULL');
 		}
 		$sqlClUpdate = 'UPDATE fmchklsttaxalink SET '.substr($innerSql,1).
 			' WHERE (tid = '.$this->tid.') AND (clid = '.$this->clid.')';
@@ -119,12 +119,12 @@ class VoucherManager {
 					'FROM fmchklsttaxalink cllink WHERE (TID = ' .$nTaxon. ') AND (CLID = ' .$this->clid.')';
 				$rsTarget = $this->conn->query($sqlTarget);
 				if($row = $rsTarget->fetch_object()){
-					$habitatTarget = Sanitizer::cleanInStr($this->conn,$row->Habitat);
-					$abundTarget = Sanitizer::cleanInStr($this->conn,$row->Abundance);
-					$notesTarget = Sanitizer::cleanInStr($this->conn,$row->Notes);
-					$internalNotesTarget = Sanitizer::cleanInStr($this->conn,$row->internalnotes);
-					$sourceTarget = Sanitizer::cleanInStr($this->conn,$row->source);
-					$nativeTarget = Sanitizer::cleanInStr($this->conn,$row->Nativity);
+					$habitatTarget = SanitizerService::cleanInStr($this->conn,$row->Habitat);
+					$abundTarget = SanitizerService::cleanInStr($this->conn,$row->Abundance);
+					$notesTarget = SanitizerService::cleanInStr($this->conn,$row->Notes);
+					$internalNotesTarget = SanitizerService::cleanInStr($this->conn,$row->internalnotes);
+					$sourceTarget = SanitizerService::cleanInStr($this->conn,$row->source);
+					$nativeTarget = SanitizerService::cleanInStr($this->conn,$row->Nativity);
 				
 					$sqlVouch = 'UPDATE IGNORE fmvouchers SET TID = '.$nTaxon.' '.
 						'WHERE (TID = '.$this->tid.') AND (CLID = '.$this->clid.')';
@@ -141,12 +141,12 @@ class VoucherManager {
 						'FROM fmchklsttaxalink ctl WHERE (ctl.TID = ' .$this->tid. ') AND (ctl.CLID = ' .$this->clid.')';
 					$rsSourceCl =  $this->conn->query($sqlSourceCl);
 					if($row = $rsSourceCl->fetch_object()){
-						$habitatSource = Sanitizer::cleanInStr($this->conn,$row->Habitat);
-						$abundSource = Sanitizer::cleanInStr($this->conn,$row->Abundance);
-						$notesSource = Sanitizer::cleanInStr($this->conn,$row->Notes);
-						$internalNotesSource = Sanitizer::cleanInStr($this->conn,$row->internalnotes);
-						$sourceSource = Sanitizer::cleanInStr($this->conn,$row->source);
-						$nativeSource = Sanitizer::cleanInStr($this->conn,$row->Nativity);
+						$habitatSource = SanitizerService::cleanInStr($this->conn,$row->Habitat);
+						$abundSource = SanitizerService::cleanInStr($this->conn,$row->Abundance);
+						$notesSource = SanitizerService::cleanInStr($this->conn,$row->Notes);
+						$internalNotesSource = SanitizerService::cleanInStr($this->conn,$row->internalnotes);
+						$sourceSource = SanitizerService::cleanInStr($this->conn,$row->source);
+						$nativeSource = SanitizerService::cleanInStr($this->conn,$row->Nativity);
 					}
 					$rsSourceCl->close();
 					$habitatStr = $habitatTarget.(($habitatTarget && $habitatSource)? '; ' : '').$habitatSource;
@@ -155,10 +155,10 @@ class VoucherManager {
 					$internalNotesStr = $internalNotesTarget.(($internalNotesTarget && $internalNotesSource)? '; ' : '').$internalNotesSource;
 					$sourceStr = $sourceTarget.(($sourceTarget && $sourceSource)? '; ' : '').$sourceSource;
 					$nativeStr = $nativeTarget.(($nativeTarget && $nativeSource)? '; ' : '').$nativeSource;
-					$sqlCl = 'UPDATE fmchklsttaxalink SET Habitat = "'.Sanitizer::cleanInStr($this->conn,$habitatStr).'", '. 
-						'Abundance = "'.Sanitizer::cleanInStr($this->conn,$abundStr).'", Notes = "'.Sanitizer::cleanInStr($this->conn,$notesStr).
-						'", internalnotes = "'.Sanitizer::cleanInStr($this->conn,$internalNotesStr).'", source = "'.
-						Sanitizer::cleanInStr($this->conn,$sourceStr).'", Nativity = "'.Sanitizer::cleanInStr($this->conn,$nativeStr).'" '.
+					$sqlCl = 'UPDATE fmchklsttaxalink SET Habitat = "'.SanitizerService::cleanInStr($this->conn,$habitatStr).'", '.
+						'Abundance = "'.SanitizerService::cleanInStr($this->conn,$abundStr).'", Notes = "'.SanitizerService::cleanInStr($this->conn,$notesStr).
+						'", internalnotes = "'.SanitizerService::cleanInStr($this->conn,$internalNotesStr).'", source = "'.
+						SanitizerService::cleanInStr($this->conn,$sourceStr).'", Nativity = "'.SanitizerService::cleanInStr($this->conn,$nativeStr).'" '.
 						'WHERE (TID = '.$nTaxon.') AND (CLID = '.$this->clid.')';
 					if($this->conn->query($sqlCl)){
 						$sqlDel = 'DELETE FROM fmchklsttaxalink WHERE (CLID = '.$this->clid.') AND (TID = '.$this->tid.')';
@@ -247,8 +247,8 @@ class VoucherManager {
 		$statusStr = '';
 		if($this->tid && $this->clid && is_numeric($occid)){
 			$sql = 'UPDATE fmvouchers SET '.
-				'notes = '.($notes?'"'.Sanitizer::cleanInStr($this->conn,$notes).'"':'NULL').
-				',editornotes = '.($editorNotes?'"'.Sanitizer::cleanInStr($this->conn,$editorNotes).'"':'NULL').
+				'notes = '.($notes?'"'.SanitizerService::cleanInStr($this->conn,$notes).'"':'NULL').
+				',editornotes = '.($editorNotes?'"'.SanitizerService::cleanInStr($this->conn,$editorNotes).'"':'NULL').
 				' WHERE (occid = '.$occid.') AND (tid = '.$this->tid.') AND (clid = '.$this->clid.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
@@ -261,8 +261,8 @@ class VoucherManager {
 	public function addVoucher($vOccId, $vNotes, $vEditNotes): ?string
 	{
 		$returnStr = '';
-	    $vNotes = Sanitizer::cleanInStr($this->conn,$vNotes);
-		$vEditNotes = Sanitizer::cleanInStr($this->conn,$vEditNotes);
+	    $vNotes = SanitizerService::cleanInStr($this->conn,$vNotes);
+		$vEditNotes = SanitizerService::cleanInStr($this->conn,$vEditNotes);
 		if(is_numeric($vOccId) && $vOccId && $this->clid) {
             $status = $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
             if($status){
@@ -291,8 +291,8 @@ class VoucherManager {
 		$rs = $this->conn->query($sql);
 		if($row = $rs->fetch_object()){
 			$occId = $row->occid;
-			$notes = Sanitizer::cleanInStr($this->conn,$row->Notes);
-			$editNotes = Sanitizer::cleanInStr($this->conn,$row->editnotes);
+			$notes = SanitizerService::cleanInStr($this->conn,$row->Notes);
+			$editNotes = SanitizerService::cleanInStr($this->conn,$row->editnotes);
 			
 			$sqlInsert = 'INSERT INTO fmvouchers ( occid, TID, CLID, Notes, editornotes ) '.
 				'VALUES ('.$occId.','.$row->tid.','.$row->clid.',"'.

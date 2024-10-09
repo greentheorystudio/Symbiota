@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageProcessor {
 
@@ -23,7 +23,7 @@ class ImageProcessor {
             $this->destructConn = false;
         }
         else{
-            $connection = new DbConnection();
+            $connection = new DbService();
             $this->conn = $connection->getConnection();
             if(!$this->conn) {
                 exit('ABORT: Image upload aborted: Unable to establish connection to database');
@@ -137,10 +137,10 @@ class ImageProcessor {
                 fgetcsv($fh);
                 while($recordArr = fgetcsv($fh)){
                     if($recordArr){
-                        $catalogNumber = (isset($fieldMap['catalognumber'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['catalognumber']]):'');
-                        $originalUrl = (isset($fieldMap['originalurl'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['originalurl']]):'');
-                        $url = (isset($fieldMap['url'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['url']]):'');
-                        $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['thumbnailurl']]):'');
+                        $catalogNumber = (isset($fieldMap['catalognumber'])?SanitizerService::cleanInStr($this->conn,$recordArr[$fieldMap['catalognumber']]):'');
+                        $originalUrl = (isset($fieldMap['originalurl'])?SanitizerService::cleanInStr($this->conn,$recordArr[$fieldMap['originalurl']]):'');
+                        $url = (isset($fieldMap['url'])?SanitizerService::cleanInStr($this->conn,$recordArr[$fieldMap['url']]):'');
+                        $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?SanitizerService::cleanInStr($this->conn,$recordArr[$fieldMap['thumbnailurl']]):'');
                         if($catalogNumber && $originalUrl){
                             echo '<li>Processing catalogNumber: '.$catalogNumber.'</li>';
                             $occArr = array();
@@ -319,8 +319,8 @@ class ImageProcessor {
             $format = 'image/jpeg';
             $sql = 'INSERT INTO images(occid,url,thumbnailurl,originalurl,archiveurl,owner,sourceIdentifier,format) '.
                 'VALUES ('.$occid.',"'.$webUrl.'",'.($tnUrl?'"'.$tnUrl.'"':'NULL').','.($lgUrl?'"'.$lgUrl.'"':'NULL').','.
-                ($archiveUrl?'"'.$archiveUrl.'"':'NULL').','.($ownerStr?'"'.Sanitizer::cleanInStr($this->conn,$ownerStr).'"':'NULL').','.
-                ($sourceIdentifier?'"'.Sanitizer::cleanInStr($this->conn,$sourceIdentifier).'"':'NULL').',"'.$format.'")';
+                ($archiveUrl?'"'.$archiveUrl.'"':'NULL').','.($ownerStr?'"'.SanitizerService::cleanInStr($this->conn,$ownerStr).'"':'NULL').','.
+                ($sourceIdentifier?'"'.SanitizerService::cleanInStr($this->conn,$sourceIdentifier).'"':'NULL').',"'.$format.'")';
             if($this->conn->query($sql)){
                 $status = true;
             }
@@ -355,7 +355,7 @@ class ImageProcessor {
         $occurMain->__destruct();
 
         $this->logOrEcho('Populating global unique identifiers (GUIDs) for all records...',2);
-        $uuidManager = new UuidFactory($this->conn);
+        $uuidManager = new GUIDManager($this->conn);
         $uuidManager->setSilent(1);
         $uuidManager->populateGuids();
         $uuidManager->__destruct();

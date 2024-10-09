@@ -17,7 +17,7 @@ const taxonomyDataSourceImportUpdateModule = {
             default: 0
         },
         taxonomicGroup: {
-            type: Object,
+            type: String,
             default: null
         },
         taxonomicGroupTid: {
@@ -140,10 +140,11 @@ const taxonomyDataSourceImportUpdateModule = {
     },
     setup(props, context) {
         const { getErrorResponseText, showNotification } = useCore();
-        const store = useBaseStore();
+        const baseStore = useBaseStore();
+
         let abortController = null;
         const childrenSearchPrimingArr = Vue.ref([]);
-        const clientRoot = store.getClientRoot;
+        const clientRoot = baseStore.getClientRoot;
         const colInitialSearchResults = Vue.ref([]);
         const commonNameFormattingOptions = [
             { label: 'First letter of each word uppercase', value: 'upper-each' },
@@ -161,9 +162,8 @@ const taxonomyDataSourceImportUpdateModule = {
         const dataSource = Vue.ref('col');
         const familyArr = Vue.ref([]);
         const importCommonNames = Vue.ref(false);
-        const importTaxa = Vue.ref(false);
+        const importTaxa = Vue.ref(true);
         const itisInitialSearchResults = Vue.ref([]);
-        const kingdomName = Vue.ref(null);
         const languageArr = Vue.ref([]);
         const nameTidIndex = Vue.ref({});
         const newEditedTidArr = Vue.ref([]);
@@ -171,7 +171,7 @@ const taxonomyDataSourceImportUpdateModule = {
         const procDisplayScrollHeight = Vue.ref(0);
         const processCancelling = Vue.ref(false);
         const processingArr = Vue.ref([]);
-        const processorDisplayArr = Vue.shallowReactive([]);
+        const processorDisplayArr = Vue.reactive([]);
         let processorDisplayDataArr = [];
         const processorDisplayCurrentIndex = Vue.ref(0);
         const processorDisplayIndex = Vue.ref(0);
@@ -181,6 +181,7 @@ const taxonomyDataSourceImportUpdateModule = {
         const scrollProcess = Vue.ref(null);
         const selectedCommonNameFormatting = Vue.ref('upper-each');
         const setAddTaxaArr = Vue.ref([]);
+        const targetKingdomName = Vue.ref(null);
         const targetTaxonIdentifier = Vue.ref(null);
         const targetTaxonLocal = Vue.ref(null);
         const taxaToAddArr = Vue.ref([]);
@@ -223,7 +224,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('tid', tid);
             formData.append('name', name);
             formData.append('langid', langid);
-            fetch(taxonomyApiUrl, {
+            fetch(taxonVernacularApiUrl, {
                 method: 'POST',
                 body: formData
             });
@@ -235,7 +236,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('tid', tid);
             formData.append('idname', dataSource.value);
             formData.append('id', identifier);
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             });
@@ -258,7 +259,7 @@ const taxonomyDataSourceImportUpdateModule = {
             const formData = new FormData();
             formData.append('taxon', JSON.stringify(newTaxonObj));
             formData.append('action', 'addTaxon');
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -501,7 +502,7 @@ const taxonomyDataSourceImportUpdateModule = {
             if(currentTaxonExternal.value['tid']){
                 const dataSourceIdObj = currentTaxonLocal.value['identifiers'].find(obj => obj['name'] === dataSource.value);
                 if(!dataSourceIdObj){
-                    addTaxonIdentifier(currentTaxonLocal.value['tid'],currentTaxonExternal.value['id']);
+                    addTaxonIdentifier(currentTaxonLocal.value['tid'], currentTaxonExternal.value['id']);
                 }
                 currentTaxonProcessMetadata();
             }
@@ -509,7 +510,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 if(importTaxa.value){
                     const subtext = 'Adding taxon to the Taxonomic Thesaurus';
                     addSubprocessToProcessorDisplay('text',subtext);
-                    addTaxonToThesaurus(Object.assign({}, currentTaxonExternal.value),(newTaxon,errorText = null) => {
+                    addTaxonToThesaurus(Object.assign({}, currentTaxonExternal.value),(newTaxon, errorText = null) => {
                         if(errorText){
                             processSubprocessErrorResponse(errorText);
                             updateTaxonomicHierarchy(() => {
@@ -543,17 +544,17 @@ const taxonomyDataSourceImportUpdateModule = {
                 formData.append('tid', tid);
                 formData.append('taxonData', JSON.stringify(taxonData));
                 formData.append('action', 'editTaxon');
-                fetch(taxonomyApiUrl, {
+                fetch(taxaApiUrl, {
                     method: 'POST',
                     body: formData
                 })
                 .then((response) => {
                     response.text().then((res) => {
-                        if(res && res !== ''){
-                            callback(res);
+                        if(Number(res) === 1){
+                            callback();
                         }
                         else{
-                            callback();
+                            callback('An error occurred while saving taxon edits.');
                         }
                     });
                 });
@@ -567,11 +568,12 @@ const taxonomyDataSourceImportUpdateModule = {
             if(childrenSearchPrimingArr.value.length > 0){
                 const currentId = childrenSearchPrimingArr.value[0];
                 childrenSearchPrimingArr.value.splice(0, 1);
-                const url = 'https://api.catalogueoflife.org/dataset/9840/tree/' + currentId + '/children?limit=100000';
+                const url = 'https://api.catalogueoflife.org/dataset/3/tree/' + currentId + '/children?limit=100000';
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -617,11 +619,12 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function findCOLTaxonById(id, callback) {
             colInitialSearchResults.value = [];
-            const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/info';
+            const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + id + '/info';
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -640,23 +643,29 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function findCOLTaxonBySciname(sciname, callback) {
             colInitialSearchResults.value = [];
-            const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + sciname;
+            const url = 'https://api.checklistbank.org/dataset/3/nameusage/search?content=SCIENTIFIC_NAME&q=' + sciname + '&offset=0&limit=100';
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
             .then((response) => {
                 if(response.status === 200){
                     response.json().then((res) => {
-                        processGetCOLTaxonByScinameResponse(res,callback);
+                        if(res.hasOwnProperty('total')){
+                            processGetCOLTaxonByScinameResponse(res,callback);
+                        }
+                        else{
+                            callback('Not found');
+                        }
                     });
                 }
                 else{
                     const text = getErrorResponseText(response.status,response.statusText);
-                    callback(text);
+                    callback(text ? text : 'Not found');
                 }
             });
         }
@@ -680,8 +689,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://www.itis.gov/ITISWebService/jsonservice/getHierarchyDownFromTSN?tsn=' + currentId;
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -730,8 +740,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + sciname;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -760,7 +771,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('kingdomid', props.kingdomId);
             formData.append('includeCommonNames', (importCommonNames.value ? '1' : '0'));
             formData.append('includeChildren', '1');
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -783,7 +794,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('tid', tid);
             formData.append('includeCommonNames', (importCommonNames.value ? '1' : '0'));
             formData.append('includeChildren', '1');
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -807,8 +818,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://www.marinespecies.org/rest/AphiaChildrenByAphiaID/' + currentId + '?marine_only=false';
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -854,8 +866,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + sciname + '?marine_only=false';
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -881,11 +894,12 @@ const taxonomyDataSourceImportUpdateModule = {
         }
 
         function getCOLExternalTaxonCommonNames(callback) {
-            const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + currentTaxonExternal.value['id'] + '/vernacular';
+            const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + currentTaxonExternal.value['id'] + '/vernacular';
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -981,8 +995,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getCommonNamesFromTSN?tsn=' + currentTaxonExternal.value['id'];
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1034,8 +1049,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1086,8 +1102,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1201,8 +1218,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -1240,8 +1258,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.marinespecies.org/rest/AphiaVernacularsByAphiaID/' + currentTaxonExternal.value['id'];
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1292,8 +1311,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1355,15 +1375,16 @@ const taxonomyDataSourceImportUpdateModule = {
             const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('action', 'get');
-            fetch(proxyApiUrl, {
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
             .then((response) => {
                 if(response.status === 200){
                     response.json().then((resObj) => {
-                        if(resObj['kingdom'].toLowerCase() === kingdomName.value.toLowerCase() || resObj['scientificname'].toLowerCase() === kingdomName.value.toLowerCase()){
+                        if(resObj['kingdom'].toLowerCase() === targetKingdomName.value.toLowerCase() || resObj['scientificname'].toLowerCase() === targetKingdomName.value.toLowerCase()){
                             const resultObj = {};
                             resultObj['id'] = resObj['AphiaID'];
                             resultObj['sciname'] = resObj['scientificname'];
@@ -1421,14 +1442,14 @@ const taxonomyDataSourceImportUpdateModule = {
             currentProcess.value = currentTaxonExternal.value['sciname'];
             addProcessToProcessorDisplay(getNewProcessObject('multi',text));
             processSuccessResponse();
-            const callbackFunction = (resObj,errorText = null) => {
+            const callbackFunction = (resObj, errorText = null) => {
                 if(errorText){
                     updateTaxonomicHierarchy(() => {
                         adjustUIEnd();
                     });
                 }
                 else{
-                    if(resObj){
+                    if(resObj && resObj.hasOwnProperty('tid')){
                         currentTaxonLocal.value = Object.assign({}, resObj);
                         currentTaxonExternal.value['tid'] = resObj['tid'];
                         currentTaxonExternal.value['tidaccepted'] = resObj['tidaccepted'];
@@ -1439,10 +1460,10 @@ const taxonomyDataSourceImportUpdateModule = {
                 }
             };
             if(currentTaxonExternal.value['tid']){
-                findTaxonByTid(currentTaxonExternal.value['tid'],callbackFunction);
+                findTaxonByTid(currentTaxonExternal.value['tid'], callbackFunction);
             }
             else{
-                findTaxonBySciname(currentTaxonExternal.value['sciname'],callbackFunction);
+                findTaxonBySciname(currentTaxonExternal.value['sciname'], callbackFunction);
             }
         }
 
@@ -1451,8 +1472,8 @@ const taxonomyDataSourceImportUpdateModule = {
                 adjustUIStart();
                 const text = 'Setting rank data';
                 currentProcess.value = 'setRankArr';
-                addProcessToProcessorDisplay(getNewProcessObject('single',text));
-                const url = taxonomyApiUrl + '?action=getRankNameArr'
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                const url = taxonRankApiUrl + '?action=getRankNameArr';
                 abortController = new AbortController();
                 fetch(url, {
                     signal: abortController.signal
@@ -1488,7 +1509,7 @@ const taxonomyDataSourceImportUpdateModule = {
             if(rebuildHierarchyLoop.value < 40){
                 const formData = new FormData();
                 formData.append('action', 'populateHierarchyTable');
-                fetch(taxonomyApiUrl, {
+                fetch(taxonHierarchyApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -1522,7 +1543,7 @@ const taxonomyDataSourceImportUpdateModule = {
             const formData = new FormData();
             formData.append('tidarr', JSON.stringify(newEditedTidArr.value));
             formData.append('action', 'primeHierarchyTable');
-            fetch(taxonomyApiUrl, {
+            fetch(taxonHierarchyApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -1602,85 +1623,65 @@ const taxonomyDataSourceImportUpdateModule = {
         }
 
         function processGetCOLTaxonByIdResponse(resObj, callback) {
-            const taxResult = resObj['taxon'];
-            const nameData = taxResult['name'];
-            const resultObj = {};
-            resultObj['id'] = taxResult['id'];
-            resultObj['author'] = nameData.hasOwnProperty('authorship') ? nameData['authorship'] : '';
-            resultObj['rankname'] = nameData['rank'].toLowerCase();
-            resultObj['sciname'] = nameData['scientificName'];
-            resultObj['rankid'] = rankArr.value.hasOwnProperty(resultObj['rankname']) ? rankArr.value[resultObj['rankname']] : null;
-            resultObj['accepted'] = (taxResult['status'] === 'accepted');
-            colInitialSearchResults.value.push(resultObj);
+            const taxResult = resObj['usage'];
+            if(taxResult.hasOwnProperty('name')){
+                const nameData = taxResult['name'];
+                const resultObj = {};
+                resultObj['id'] = taxResult['id'];
+                resultObj['author'] = nameData.hasOwnProperty('authorship') ? nameData['authorship'] : '';
+                resultObj['rankname'] = nameData['rank'].toLowerCase();
+                resultObj['sciname'] = nameData['scientificName'];
+                resultObj['rankid'] = rankArr.value.hasOwnProperty(resultObj['rankname']) ? rankArr.value[resultObj['rankname']] : null;
+                resultObj['accepted'] = (taxResult['status'] === 'accepted');
+                colInitialSearchResults.value.push(resultObj);
+            }
             validateCOLNameSearchResults(callback);
         }
 
         function processGetCOLTaxonByScinameResponse(resObj, callback) {
-            if(resObj['total_number_of_results'] > 0){
+            if(resObj['total'] > 0){
                 const resultArr = resObj['result'];
                 resultArr.forEach((taxResult) => {
-                    const status = taxResult['name_status'];
-                    if(status !== 'common name'){
-                        const resultObj = {};
-                        resultObj['id'] = taxResult['id'];
-                        resultObj['author'] = taxResult.hasOwnProperty('author') ? taxResult['author'] : '';
-                        let rankName = taxResult['rank'].toLowerCase();
-                        if(rankName === 'infraspecies'){
-                            resultObj['sciname'] = taxResult['genus'] + ' ' + taxResult['species'] + ' ' + taxResult['infraspeciesMarker'] + ' ' + taxResult['infraspecies'];
-                            if(taxResult['infraspeciesMarker'] === 'var.'){
-                                rankName = 'variety';
+                    const usageData = taxResult.hasOwnProperty('usage') ? taxResult['usage'] : null;
+                    if(usageData){
+                        const status = usageData['status'];
+                        if(status !== 'common name' && usageData.hasOwnProperty('name')){
+                            const resultObj = {};
+                            let validatedTaxon = false;
+                            resultObj['id'] = taxResult['id'];
+                            resultObj['author'] = usageData['name'].hasOwnProperty('authorship') ? usageData['name']['authorship'] : '';
+                            resultObj['rankname'] = usageData['name']['rank'].toLowerCase();
+                            resultObj['sciname'] = usageData['name']['scientificName'];
+                            resultObj['rankid'] = rankArr.value.hasOwnProperty(resultObj['rankname']) ? rankArr.value[resultObj['rankname']] : null;
+                            if(status === 'accepted'){
+                                resultObj['accepted'] = true;
+                                validatedTaxon = true;
                             }
-                            else if(taxResult['infraspeciesMarker'] === 'subsp.'){
-                                rankName = 'subspecies';
-                            }
-                            else if(taxResult['infraspeciesMarker'] === 'f.'){
-                                rankName = 'form';
-                            }
-                        }
-                        else{
-                            resultObj['sciname'] = taxResult['name'];
-                        }
-                        resultObj['rankname'] = rankName;
-                        resultObj['rankid'] = rankArr.value.hasOwnProperty(resultObj['rankname']) ? rankArr.value[resultObj['rankname']] : null;
-                        if(status === 'accepted name'){
-                            resultObj['accepted'] = true;
-                        }
-                        else if(status === 'synonym'){
-                            const hierarchyArr = [];
-                            const resultHObj = {};
-                            const acceptedObj = taxResult['accepted_name'];
-                            const acceptedAuthor = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
-                            resultObj['accepted'] = false;
-                            resultObj['accepted_id'] = acceptedObj['id'];
-                            resultObj['accepted_author'] = acceptedAuthor;
-                            resultHObj['id'] = acceptedObj['id'];
-                            resultHObj['author'] = acceptedAuthor;
-                            let rankName = acceptedObj['rank'].toLowerCase();
-                            if(rankName === 'infraspecies'){
-                                resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + acceptedObj['infraspeciesMarker'] + ' ' + acceptedObj['infraspecies'];
-                                if(acceptedObj['infraspeciesMarker'] === 'var.'){
-                                    rankName = 'variety';
-                                }
-                                else if(acceptedObj['infraspeciesMarker'] === 'subsp.'){
-                                    rankName = 'subspecies';
-                                }
-                                else if(acceptedObj['infraspeciesMarker'] === 'f.'){
-                                    rankName = 'form';
+                            else if(status === 'synonym'){
+                                const hierarchyArr = [];
+                                const resultHObj = {};
+                                const acceptedObj = usageData['accepted'];
+                                if(acceptedObj.hasOwnProperty('name')){
+                                    validatedTaxon = true;
+                                    const acceptedAuthor = acceptedObj['name'].hasOwnProperty('authorship') ? acceptedObj['name']['authorship'] : '';
+                                    resultObj['accepted'] = false;
+                                    resultObj['accepted_id'] = acceptedObj['id'];
+                                    resultObj['accepted_author'] = acceptedAuthor;
+                                    resultHObj['id'] = acceptedObj['id'];
+                                    resultHObj['author'] = acceptedAuthor;
+                                    resultHObj['sciname'] = acceptedObj['name']['scientificName'];
+                                    resultObj['accepted_sciname'] = resultHObj['sciname'];
+                                    resultHObj['rankname'] = acceptedObj['name']['rank'].toLowerCase();
+                                    resultHObj['rankid'] = rankArr.value.hasOwnProperty(resultHObj['rankname']) ? rankArr.value[resultHObj['rankname']] : null;
+                                    resultObj['accepted_rankid'] = resultHObj['rankid'];
+                                    hierarchyArr.push(resultHObj);
+                                    resultObj['hierarchy'] = hierarchyArr;
                                 }
                             }
-                            else{
-                                resultHObj['sciname'] = acceptedObj['name'];
+                            const existingObj = colInitialSearchResults.value.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
+                            if(validatedTaxon && !existingObj){
+                                colInitialSearchResults.value.push(resultObj);
                             }
-                            resultObj['accepted_sciname'] = resultHObj['sciname'];
-                            resultHObj['rankname'] = rankName;
-                            resultHObj['rankid'] = rankArr.value.hasOwnProperty(resultHObj['rankname']) ? rankArr.value[resultHObj['rankname']] : null;
-                            resultObj['accepted_rankid'] = resultHObj['rankid'];
-                            hierarchyArr.push(resultHObj);
-                            resultObj['hierarchy'] = hierarchyArr;
-                        }
-                        const existingObj = colInitialSearchResults.value.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
-                        if(!existingObj){
-                            colInitialSearchResults.value.push(resultObj);
                         }
                     }
                 });
@@ -1701,7 +1702,7 @@ const taxonomyDataSourceImportUpdateModule = {
             const resultArr = resObj['scientificNames'];
             if(resultArr && resultArr.length > 0 && resultArr[0]){
                 resultArr.forEach((taxResult) => {
-                    if(taxResult['combinedName'] === props.taxonomicGroup.name && (taxResult['kingdom'].toLowerCase() === kingdomName.value.toLowerCase() || taxResult['combinedName'].toLowerCase() === kingdomName.value.toLowerCase())){
+                    if(taxResult['combinedName'] === props.taxonomicGroup && (taxResult['kingdom'].toLowerCase() === targetKingdomName.value.toLowerCase() || taxResult['combinedName'].toLowerCase() === targetKingdomName.value.toLowerCase())){
                         const resultObj = {};
                         resultObj['id'] = taxResult['tsn'];
                         resultObj['sciname'] = taxResult['combinedName'];
@@ -1733,6 +1734,7 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function processorDisplayScrollDown() {
             scrollProcess.value = 'scrollDown';
+            processorDisplayArr.length = 0;
             processorDisplayCurrentIndex.value++;
             const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
             newData.forEach((data) => {
@@ -1743,6 +1745,7 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function processorDisplayScrollUp() {
             scrollProcess.value = 'scrollUp';
+            processorDisplayArr.length = 0;
             processorDisplayCurrentIndex.value--;
             const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
             newData.forEach((data) => {
@@ -1911,7 +1914,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         if(resObj){
                             currentTaxonLocal.value = Object.assign({}, resObj);
                             props.kingdomId = currentTaxonLocal.value['kingdomid'];
-                            kingdomName.value = currentTaxonLocal.value['kingdom'];
+                            targetKingdomName.value = currentTaxonLocal.value['kingdom'];
                             currentTaxonExternal.value['tid'] = resObj['tid'];
                             currentTaxonExternal.value['parenttid'] = resObj['parenttid'];
                             currentTaxonExternal.value['tidaccepted'] = resObj['tidaccepted'];
@@ -1995,13 +1998,13 @@ const taxonomyDataSourceImportUpdateModule = {
                 }
                 else{
                     targetTaxonLocal.value = Object.assign({}, resObj);
-                    kingdomName.value = targetTaxonLocal.value['kingdom'];
+                    targetKingdomName.value = targetTaxonLocal.value['kingdom'];
                     processSuccessResponse('Complete');
                     const text = 'Finding the parent taxon for the taxonomic group from the selected Data Source';
                     currentProcess.value = 'setTargetTaxonExternal';
                     addProcessToProcessorDisplay(getNewProcessObject('single',text));
                     const dataSourceIdObj = targetTaxonLocal.value['identifiers'].find(obj => obj['name'] === dataSource.value);
-                    if(dataSourceIdObj){
+                    if(dataSource.value !== 'col' && dataSourceIdObj){
                         targetTaxonIdentifier.value = dataSourceIdObj['identifier'];
                         if(dataSource.value === 'col'){
                             findCOLTaxonById(targetTaxonIdentifier.value,(res,errorText = null) => {
@@ -2022,7 +2025,7 @@ const taxonomyDataSourceImportUpdateModule = {
                                         });
                                     }
                                     else{
-                                        findExternalTaxonBySciname(props.taxonomicGroup.name,(errorText = null) => {
+                                        findExternalTaxonBySciname(props.taxonomicGroup,(errorText = null) => {
                                             if(errorText){
                                                 processErrorResponse(errorText);
                                                 adjustUIEnd();
@@ -2038,7 +2041,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         else if(dataSource.value === 'itis'){
                             const resultObj = {};
                             resultObj['id'] = targetTaxonIdentifier.value;
-                            resultObj['sciname'] = props.taxonomicGroup.name;
+                            resultObj['sciname'] = props.taxonomicGroup;
                             taxonSearchResults.value.push(resultObj);
                             getITISNameSearchResultsRecord((errorText = null) => {
                                 if(errorText){
@@ -2063,7 +2066,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         }
                     }
                     else{
-                        findExternalTaxonBySciname(props.taxonomicGroup.name,(errorText = null) => {
+                        findExternalTaxonBySciname(props.taxonomicGroup,(errorText = null) => {
                             if(errorText){
                                 processErrorResponse(errorText);
                                 adjustUIEnd();
@@ -2136,7 +2139,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 const formData = new FormData();
                 formData.append('tidarr', JSON.stringify(newEditedTidArr.value));
                 formData.append('action', 'clearHierarchyTable');
-                fetch(taxonomyApiUrl, {
+                fetch(taxonHierarchyApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -2160,7 +2163,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('action', 'editTaxonParent');
             formData.append('tid', tid);
             formData.append('parenttid', parenttid);
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -2190,7 +2193,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('tid', taxon['tid']);
             formData.append('tidaccepted', taxon['tidaccepted']);
             formData.append('kingdom', (kingdom ? '1' : '0'));
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -2223,11 +2226,12 @@ const taxonomyDataSourceImportUpdateModule = {
                 else{
                     id = taxon['accepted_id'];
                 }
-                const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/classification';
+                const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + id + '/classification';
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -2244,7 +2248,7 @@ const taxonomyDataSourceImportUpdateModule = {
                                     kingdomName = kingdomObj['name'];
                                 }
                             }
-                            if(kingdomName.toLowerCase() === kingdomName.value.toLowerCase()){
+                            if(kingdomName.toLowerCase() === targetKingdomName.value.toLowerCase()){
                                 let hierarchyArr = [];
                                 if(taxon.hasOwnProperty('hierarchy')){
                                     hierarchyArr = taxon['hierarchy'];
@@ -2385,8 +2389,9 @@ const taxonomyDataSourceImportUpdateModule = {
                 const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
                 const formData = new FormData();
                 formData.append('url', url);
-                formData.append('action', 'get');
-                fetch(proxyApiUrl, {
+                formData.append('action', 'getExternalData');
+                formData.append('requestType', 'get');
+                fetch(proxyServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })

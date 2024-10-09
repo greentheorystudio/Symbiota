@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
+include_once(__DIR__ . '/../../models/Configurations.php');
 
 if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../../index.php');
 }
 
-$confManager = new ConfigurationManager();
+$confManager = new Configurations();
 
 $fullConfArr = $confManager->getConfigurationsArr();
 $coreConfArr = $fullConfArr['core'];
@@ -90,12 +90,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             <span class="field-label">Admin Email:</span>
             <span class="field-elem">
                 <input type="text" id="ADMIN_EMAIL" value="<?php echo (array_key_exists('ADMIN_EMAIL',$coreConfArr)?$coreConfArr['ADMIN_EMAIL']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('ADMIN_EMAIL','<?php echo (array_key_exists('ADMIN_EMAIL',$coreConfArr)?$coreConfArr['ADMIN_EMAIL']:''); ?>',false);" />
-            </span>
-        </div>
-        <div class="field-block">
-            <span class="field-label">Google Analytics Key:</span>
-            <span class="field-elem">
-                <input type="text" id="GOOGLE_ANALYTICS_KEY" value="<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GOOGLE_ANALYTICS_KEY','<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>',false);" />
             </span>
         </div>
         <div class="field-block">
@@ -186,12 +180,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             <span class="field-label">Thumbnail Image Width (px):</span>
             <span class="field-elem">
                 <input type="text" id="IMG_TN_WIDTH" value="<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_TN_WIDTH','<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>',true);" />
-            </span>
-        </div>
-        <div class="field-block">
-            <span class="field-label">Large Image Width (px):</span>
-            <span class="field-elem">
-                <input type="text" id="IMG_LG_WIDTH" value="<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_LG_WIDTH','<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>',true);" />
             </span>
         </div>
     </fieldset>

@@ -7,7 +7,7 @@ const taxaProfileTaxonNotes = {
     },
     template: `
         <template v-if="taxon.taxonNotes">
-            <div id="taxonnotes">
+            <div>
                 <span class="text-weight-bold">Notes:</span> {{ taxon.taxonNotes }}
             </div>
         </template>

@@ -8,10 +8,6 @@
 //Uncomment to turn duplicate occurrence search function on/off (on by default)
 //define('DUPESEARCH',false);
 
-//Uncomment to turn locality event auto-lookup (locality field autocomplete) function on/off (on by default)
-//0 = off, permanently deactivated, 1 = activated by default (Default), 2 = deactivated by default
-//define('LOCALITYAUTOLOOKUP',1);
-
 //$ACTIVATEASSOCTAXAAID = false;
 
 //FieldLabel text: uncomment variables and value to modify field labels

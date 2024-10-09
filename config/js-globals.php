@@ -1,5 +1,6 @@
 <script type="text/javascript">
     const DEFAULT_LANG = '<?php echo $GLOBALS['DEFAULT_LANG']; ?>';
+    const DEFAULT_TITLE = '<?php echo $GLOBALS['DEFAULT_TITLE']; ?>';
     const CLIENT_ROOT = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>';
     const SOLR_MODE = <?php echo ($GLOBALS['SOLR_MODE'] ? 'true' : 'false'); ?>;
     const MAX_UPLOAD_FILESIZE = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
@@ -8,6 +9,9 @@
     const VALID_USER = <?php echo ($GLOBALS['VALID_USER'] ? 'true' : 'false'); ?>;
     const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;
     const USER_DISPLAY_NAME = '<?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>';
+    const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');
+    const RIGHTS_TERMS = JSON.parse('<?php echo json_encode($GLOBALS['RIGHTS_TERMS']); ?>');
+    const IMAGE_TAG_OPTIONS = JSON.parse('<?php echo $GLOBALS['IMAGE_TAG_OPTIONS']; ?>');
 
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
 
@@ -43,19 +47,34 @@
 
     const http = new XMLHttpRequest();
     let abortController;
+    const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json?ver=<?php echo $GLOBALS['JS_VERSION']; ?>';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
+    const checklistVoucherApiUrl = CLIENT_ROOT + '/api/checklists/checklistVoucherController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
+    const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
-    const languageApiUrl = CLIENT_ROOT + '/api/misc/languageController.php';
+    const languageApiUrl = CLIENT_ROOT + '/api/languages/languageController.php';
     const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
     const occurrenceApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceController.php';
+    const occurrenceCollectingEventApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceCollectingEventController.php';
+    const occurrenceDeterminationApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceDeterminationController.php';
+    const occurrenceGeneticLinkApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceGeneticLinkController.php';
+    const occurrenceLocationApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceLocationController.php';
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
+    const permissionApiUrl = CLIENT_ROOT + '/api/profile/permissionController.php';
     const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';
-    const proxyApiUrl = CLIENT_ROOT + '/api/proxy.php';
-    const searchApiUrl = CLIENT_ROOT + '/api/search/searchController.php';
+    const projectApiUrl = CLIENT_ROOT + '/api/checklists/projectController.php';
+    const proxyServiceApiUrl = CLIENT_ROOT + '/api/services/proxyServiceController.php';
+    const searchServiceApiUrl = CLIENT_ROOT + '/api/services/searchServiceController.php';
     const solrConnectorUrl = CLIENT_ROOT + '/api/search/SOLRConnector.php';
     const spatialApiUrl = CLIENT_ROOT + '/api/spatial/spatialController.php';
+    const taxaApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
     const taxaProfileApiUrl = CLIENT_ROOT + '/api/taxa/taxaProfileController.php';
-    const taxonomyApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
+    const taxonDescriptionApiUrl = CLIENT_ROOT + '/api/taxa/taxonDescriptionController.php';
+    const taxonHierarchyApiUrl = CLIENT_ROOT + '/api/taxa/taxonHierarchyController.php';
+    const taxonKingdomApiUrl = CLIENT_ROOT + '/api/taxa/taxonKingdomController.php';
+    const taxonomyServiceApiUrl = CLIENT_ROOT + '/api/services/taxonomyServiceController.php';
+    const taxonRankApiUrl = CLIENT_ROOT + '/api/taxa/taxonRankController.php';
+    const taxonVernacularApiUrl = CLIENT_ROOT + '/api/taxa/taxonVernacularController.php';
 </script>

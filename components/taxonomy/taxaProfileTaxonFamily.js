@@ -7,7 +7,7 @@ const taxaProfileTaxonFamily = {
     },
     template: `
         <template v-if="taxon.rankId > 140 && taxon.family">
-            <div id="family">
+            <div>
                 <span class="text-weight-bold">Family:</span> {{ taxon.family }}
             </div>
         </template>

@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ?>
@@ -66,9 +66,9 @@ header('X-Frame-Options: SAMEORIGIN');
         include_once(__DIR__ . '/../footer.php');
         include_once(__DIR__ . '/../config/footer-includes.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/humanValidator.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/humanValidator.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const createAccountModule = Vue.createApp({
                 components: {
@@ -107,14 +107,14 @@ header('X-Frame-Options: SAMEORIGIN');
                         return new Promise((resolve) => {
                             const formData = new FormData();
                             formData.append('username', val);
-                            formData.append('action', 'getUidFromUsername');
+                            formData.append('action', 'getUserFromUsername');
                             fetch(profileApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
                             .then((response) => {
-                                response.text().then((res) => {
-                                    resolve(Number(res) === 0 || 'Username is already associated with another account');
+                                response.json().then((resObj) => {
+                                    resolve((!resObj.hasOwnProperty('uid') || Number(resObj['uid']) === 0) || 'Username is already associated with another account');
                                 });
                             });
                         });
@@ -142,7 +142,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             })
                             .then((response) => {
                                 response.text().then((res) => {
-                                    if(Number(res) === 1){
+                                    if(Number(res) > 0){
                                         window.location.href = clientRoot + '/profile/viewprofile.php';
                                     }
                                     else{

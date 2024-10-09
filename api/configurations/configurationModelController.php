@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
+include_once(__DIR__ . '/../../models/Configurations.php');
 header('Content-Type: text/html; charset=UTF-8' );
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $jsonData = array_key_exists('data',$_REQUEST)?$_REQUEST['data']:'';
 
 $dataArr = array();
-$confManager = new ConfigurationManager();
+$confManager = new Configurations();
 
 if($jsonData){
     $dataArr = json_decode($jsonData, true);

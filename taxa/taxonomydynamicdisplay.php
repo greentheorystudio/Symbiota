@@ -49,7 +49,7 @@ header('X-Frame-Options: SAMEORIGIN');
             <q-card class="target-taxon-card">
                 <q-card-section>
                     <div class="q-my-sm">
-                        <single-scientific-common-name-auto-complete :sciname="targetTaxon" :disable="loading" label="Find a taxon" limit-to-thesaurus="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
+                        <single-scientific-common-name-auto-complete :sciname="(targetTaxon ? targetTaxon.sciname : null)" :disabled="loading" label="Find a taxon" limit-to-thesaurus="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
                     </div>
                     <div class="button-div">
                         <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense />
@@ -76,10 +76,10 @@ header('X-Frame-Options: SAMEORIGIN');
             </q-card>
         </div>
         <?php
-        include(__DIR__ . '/../footer.php');
         include_once(__DIR__ . '/../config/footer-includes.php');
+        include(__DIR__ . '/../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const taxonomyDynamicDisplayModule = Vue.createApp({
                 components: {
@@ -103,7 +103,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         const formData = new FormData();
                         formData.append('tid', selectedTid.value);
                         formData.append('action', 'getTaxonomicTreeTaxonPath');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonHierarchyApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -119,7 +119,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         const formData = new FormData();
                         formData.append('tid', key);
                         formData.append('action', 'getTaxonomicTreeChildNodes');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -190,13 +190,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         const formData = new FormData();
                         formData.append('permission', 'Taxonomy');
                         formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
+                        fetch(permissionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
-                            response.text().then((res) => {
-                                isEditor.value = Number(res) === 1;
+                            response.json().then((resData) => {
+                                isEditor.value = resData.includes('Taxonomy');
                             });
                         });
                     }
@@ -204,7 +204,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     function setKingdomNodes() {
                         const formData = new FormData();
                         formData.append('action', 'getTaxonomicTreeKingdomNodes');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             body: formData
                         })

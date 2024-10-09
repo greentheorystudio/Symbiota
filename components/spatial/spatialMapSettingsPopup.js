@@ -1,8 +1,8 @@
 const spatialMapSettingsPopup = {
     template: `
         <q-dialog class="z-top" v-model="mapSettings.showMapSettings" persistent>
-            <q-card class="sm-map-popup">
-                <div class="row justify-end items-start map-popup-header">
+            <q-card class="sm-popup">
+                <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="updateMapSettings('showMapSettings', false);"></q-btn>
                     </div>
@@ -31,6 +31,8 @@ const spatialMapSettingsPopup = {
         </q-dialog>
     `,
     setup() {
+        const { getPlatformProperty } = useCore();
+
         const layersObj = Vue.inject('layersObj');
         const mapSettings = Vue.inject('mapSettings');
         const windowWidth = Vue.inject('windowWidth');
@@ -61,14 +63,9 @@ const spatialMapSettingsPopup = {
         }
 
         function changeFreehandMode(val) {
-            if(windowWidth < 875){
-                showNotification('negative','Draw Tool must be set to Freehand Mode when being used on mobile devices.');
-            }
-            else{
-                updateMapSettings('drawToolFreehandMode', val);
-                if(val === false && windowWidth < 1220){
-                    showNotification('negative','WARNING: Draw Tool must be set to Freehand Mode when being used on touch screens.');
-                }
+            updateMapSettings('drawToolFreehandMode', val);
+            if(val === false && getPlatformProperty('has.touch')){
+                showNotification('negative','WARNING: Draw Tool must be set to Freehand Mode when being used on touch screens.');
             }
         }
 

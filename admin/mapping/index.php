@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
+include_once(__DIR__ . '/../../models/Configurations.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -8,7 +8,7 @@ if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../../index.php');
 }
 
-$confManager = new ConfigurationManager();
+$confManager = new Configurations();
 
 $fullConfArr = $confManager->getConfigurationsArr();
 ?>
@@ -615,8 +615,8 @@ include(__DIR__ . '/../../header.php');
     </div>
 </div>
 <?php
-include(__DIR__ . '/../../footer.php');
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 <div class="loadingModal">
     <div class="vine-native-spinner" style="width:200px;height:200px;"></div>

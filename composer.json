@@ -3,7 +3,7 @@
   "description": "Green Theory Studio's version of the Symbiota biodiversity data management system.",
   "license": "proprietary",
   "require": {
-    "phpoffice/phpword": "^0.18.0",
+    "phpoffice/phpword": "^1.2",
     "ext-calendar": "*",
     "ext-ctype": "*",
     "ext-curl": "*",
@@ -18,8 +18,8 @@
     "ext-simplexml": "*",
     "ext-xml": "*",
     "ext-zip": "*",
-    "phpmailer/phpmailer": "^6.2",
-    "phpoffice/phpspreadsheet": "^1.23"
+    "phpmailer/phpmailer": "v6.9.1",
+    "phpoffice/phpspreadsheet": "^1.29"
   },
   "scripts": {
     "pre-update-cmd": [

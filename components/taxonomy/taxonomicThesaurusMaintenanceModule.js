@@ -268,7 +268,7 @@ const taxonomicThesaurusMaintenanceModule = {
         const processingCommonNameArr = Vue.ref([]);
         const processingRankArr = Vue.ref([]);
         const processingTaxaArr = Vue.ref([]);
-        const processorDisplayArr = Vue.shallowReactive([]);
+        const processorDisplayArr = Vue.reactive([]);
         let processorDisplayDataArr = [];
         const processorDisplayCurrentIndex = Vue.ref(0);
         const processorDisplayIndex = Vue.ref(0);
@@ -323,7 +323,7 @@ const taxonomicThesaurusMaintenanceModule = {
             const formData = new FormData();
             formData.append('tid', currentTaxon.value['tid']);
             formData.append('action', 'deleteTaxonByTid');
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -337,8 +337,8 @@ const taxonomicThesaurusMaintenanceModule = {
             addSubprocessToProcessorDisplay(currentTaxon.value['sciname'], 'text', text);
             const formData = new FormData();
             formData.append('tid', currentTaxon.value['tid']);
-            formData.append('action', 'checkTidForDataLinkages');
-            fetch(taxonomyApiUrl, {
+            formData.append('action', 'evaluateTaxonForDeletion');
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -371,7 +371,7 @@ const taxonomicThesaurusMaintenanceModule = {
                 formData.append('parenttid', props.taxonomicGroupTid);
                 formData.append('index', getTaxaImportIndex.value);
                 formData.append('action', 'getCommonNamesByTaxonomicGroup');
-                fetch(taxonomyApiUrl, {
+                fetch(taxonVernacularApiUrl, {
                     method: 'POST',
                     signal: abortController.signal,
                     body: formData
@@ -440,7 +440,7 @@ const taxonomicThesaurusMaintenanceModule = {
             const formData = new FormData();
             formData.append('parenttid', props.taxonomicGroupTid);
             formData.append('action', 'getRankArrForTaxonomicGroup');
-            fetch(taxonomyApiUrl, {
+            fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -479,7 +479,7 @@ const taxonomicThesaurusMaintenanceModule = {
                 else{
                     formData.append('action', 'getAcceptedTaxaByTaxonomicGroup');
                 }
-                fetch(taxonomyApiUrl, {
+                fetch(taxaApiUrl, {
                     method: 'POST',
                     signal: abortController.signal,
                     body: formData
@@ -547,7 +547,7 @@ const taxonomicThesaurusMaintenanceModule = {
                     const formData = new FormData();
                     formData.append('tidarr', JSON.stringify(hierarchyTidArr.value));
                     formData.append('action', 'clearHierarchyTable');
-                    fetch(taxonomyApiUrl, {
+                    fetch(taxonHierarchyApiUrl, {
                         method: 'POST',
                         body: formData
                     })
@@ -576,7 +576,7 @@ const taxonomicThesaurusMaintenanceModule = {
                 const formData = new FormData();
                 formData.append('parenttid', props.taxonomicGroupTid);
                 formData.append('action', 'removeCommonNamesInTaxonomicGroup');
-                fetch(taxonomyApiUrl, {
+                fetch(taxonVernacularApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -646,7 +646,7 @@ const taxonomicThesaurusMaintenanceModule = {
                         addProcessToProcessorDisplay(getNewProcessObject('setUpdateFamiliesUnaccepted','single',text));
                         formData.append('action', 'setUpdateFamiliesUnaccepted');
                     }
-                    fetch(taxonomyApiUrl, {
+                    fetch(taxaApiUrl, {
                         method: 'POST',
                         body: formData
                     })
@@ -678,7 +678,7 @@ const taxonomicThesaurusMaintenanceModule = {
             if(rebuildHierarchyLoop.value < 40){
                 const formData = new FormData();
                 formData.append('action', 'populateHierarchyTable');
-                fetch(taxonomyApiUrl, {
+                fetch(taxonHierarchyApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -716,7 +716,7 @@ const taxonomicThesaurusMaintenanceModule = {
                 formData.append('tidarr', JSON.stringify(hierarchyTidArr.value));
             }
             formData.append('action', 'primeHierarchyTable');
-            fetch(taxonomyApiUrl, {
+            fetch(taxonHierarchyApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -765,7 +765,7 @@ const taxonomicThesaurusMaintenanceModule = {
                 formData.append('vid', currentCommonName.value['vid']);
                 formData.append('commonNameData', JSON.stringify(commonNameData));
                 formData.append('action', 'editCommonName');
-                fetch(taxonomyApiUrl, {
+                fetch(taxonVernacularApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -803,6 +803,7 @@ const taxonomicThesaurusMaintenanceModule = {
 
         function processorDisplayScrollDown() {
             scrollProcess.value = 'scrollDown';
+            processorDisplayArr.length = 0;
             processorDisplayCurrentIndex.value++;
             const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
             newData.forEach((data) => {
@@ -813,6 +814,7 @@ const taxonomicThesaurusMaintenanceModule = {
 
         function processorDisplayScrollUp() {
             scrollProcess.value = 'scrollUp';
+            processorDisplayArr.length = 0;
             processorDisplayCurrentIndex.value--;
             const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
             newData.forEach((data) => {
@@ -913,7 +915,7 @@ const taxonomicThesaurusMaintenanceModule = {
             formData.append('tid', currentTaxon.value['tid']);
             formData.append('parenttid', currentTaxon.value['parenttid']);
             formData.append('action', 'removeTaxonFromTaxonomicHierarchy');
-            fetch(taxonomyApiUrl, {
+            fetch(taxonHierarchyApiUrl, {
                 method: 'POST',
                 body: formData
             })

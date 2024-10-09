@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../services/DbService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 
 $clid = (int)$_REQUEST['cl'];
 
 $returnArr = array();
 if(is_numeric($clid)){
-	$connection = new DbConnection();
+	$connection = new DbService();
 	$conn = $connection->getConnection();
 	$clid = $conn->real_escape_string($clid);
 	$queryString = $conn->real_escape_string($_REQUEST['term']);

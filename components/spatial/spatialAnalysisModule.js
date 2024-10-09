@@ -56,10 +56,10 @@ const spatialAnalysisModule = {
         'spatial-side-button-tray': spatialSideButtonTray
     },
     setup(props, context) {
-        const baseStore = useBaseStore();
+        const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
-        const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
+
         const activeLayerSelectorOptions = Vue.shallowReactive([
             {value: 'none', label: 'None'}
         ]);
@@ -83,9 +83,10 @@ const spatialAnalysisModule = {
         const inputResponseData = Vue.ref({});
         const layerOrderArr = Vue.shallowReactive([]);
         const layersArr = Vue.shallowReactive([]);
-        const layersConfigArr = Vue.ref([]);
-        const layersInfoObj = Vue.shallowReactive({});
+        const layersConfigArr = Vue.reactive([]);
+        const layersInfoObj = Vue.reactive({});
         const layersObj = Vue.shallowReactive({});
+        const lazyLoadCnt = 20000;
         let map = null;
         const mapProjection = new ol.proj.Projection({
             code: 'EPSG:3857'
@@ -106,7 +107,6 @@ const spatialAnalysisModule = {
         ]);
         const selectedPolyError = Vue.ref(false);
         const selectInteraction = Vue.computed(() => setSelectInteraction());
-        const solrMode = baseStore.getSolrMode;
         const spatialModuleInitialising = Vue.ref(false);
         let spiderCluster = false;
         const spiderFeature = Vue.shallowReactive([]);
@@ -225,11 +225,11 @@ const spatialAnalysisModule = {
                             mapSettings.selectedFeatures.push(evt.feature);
                             processInputSelections();
                             if(props.inputWindowToolsArr.includes('uncertainty') || props.inputWindowToolsArr.includes('radius')){
-                                if(mapSettings.inputPointUncertainty > 0){
+                                if(mapSettings.uncertaintyRadiusValue > 0){
                                     const pointRadius = {};
                                     pointRadius.pointlat = pointCoords[1];
                                     pointRadius.pointlong = pointCoords[0];
-                                    pointRadius.radius = mapSettings.inputPointUncertainty;
+                                    pointRadius.radius = mapSettings.uncertaintyRadiusValue;
                                     createUncertaintyCircleFromPointRadius(pointRadius);
                                 }
                             }
@@ -374,12 +374,16 @@ const spatialAnalysisModule = {
             mapSettings.selectSource.addFeature(pointFeature);
             mapSettings.selectedFeatures.push(pointFeature);
             processInputSelections();
-            const selectextent = mapSettings.selectSource.getExtent();
+            let selectextent;
+            if(mapSettings.uncertaintyCircleSource.getFeatures().length > 0){
+                selectextent = mapSettings.uncertaintyCircleSource.getExtent();
+            }
+            else{
+                selectextent = mapSettings.selectSource.getExtent();
+            }
             map.getView().fit(selectextent, map.getSize());
             let fittedZoom = map.getView().getZoom();
-            if(fittedZoom > 10){
-                map.getView().setZoom(fittedZoom - 8);
-            }
+            map.getView().setZoom(fittedZoom - 2);
         }
 
         function createPolygonFromBoundingBox(bbox, selected) {
@@ -415,9 +419,7 @@ const spatialAnalysisModule = {
             const selectextent = mapSettings.selectSource.getExtent();
             map.getView().fit(selectextent, map.getSize());
             let fittedZoom = map.getView().getZoom();
-            if(fittedZoom > 10){
-                map.getView().setZoom(fittedZoom - 8);
-            }
+            map.getView().setZoom(fittedZoom - 2);
         }
 
         function createPolysFromPolyArr(polyArr, selected) {
@@ -753,9 +755,6 @@ const spatialAnalysisModule = {
         function handleWindowResize() {
             windowWidth.value = window.innerWidth;
             updateMapSettings('showControlPanelTop', ((windowWidth.value >= 875 && !propsRefs.inputWindowMode.value) || (windowWidth.value >= 600 && propsRefs.inputWindowMode.value)));
-            if(windowWidth.value < 1050){
-                updateMapSettings('drawToolFreehandMode', true);
-            }
         }
 
         function hideFeature(feature) {
@@ -778,9 +777,13 @@ const spatialAnalysisModule = {
                         delete symbologyArr[key];
                     }
                     searchStore.clearSelections();
-                    showWorking();
-                    searchStore.processGetQueryRecCnt(solrMode, () => {
-                        if(Number(searchStore.getQueryRecCnt) > 0){
+                    showWorking('Loading...');
+                    const options = {
+                        schema: 'map',
+                        spatial: 1
+                    };
+                    searchStore.setSearchRecCnt(options, () => {
+                        if(Number(searchStore.getSearchRecCnt) > 0){
                             loadPointsLayer();
                         }
                         else{
@@ -808,9 +811,16 @@ const spatialAnalysisModule = {
             mapSettings.pointVectorSource.clear(true);
             let processed = 0;
             let index = 0;
-            const finalIndex = searchStore.getQueryRecCnt > searchStore.getLazyLoadCnt ? Math.ceil(searchStore.getQueryRecCnt / searchStore.getLazyLoadCnt) : 0;
+            const finalIndex = searchStore.getSearchRecCnt > lazyLoadCnt ? Math.ceil(searchStore.getSearchRecCnt / lazyLoadCnt) : 0;
+            const options = {
+                schema: 'map',
+                spatial: 1,
+                numRows: finalIndex,
+                index: index,
+                output: 'geojson'
+            };
             do {
-                searchStore.processGetQueryResultsGeoJson(solrMode, index, finalIndex, (res, index, finalIndex) => {
+                searchStore.processSearch(options, (res, index, finalIndex) => {
                     if(res){
                         const format = new ol.format.GeoJSON();
                         let features = format.readFeatures(res, {
@@ -836,10 +846,10 @@ const spatialAnalysisModule = {
                         loadPointsPostrender();
                     }
                 });
-                processed = processed + searchStore.getLazyLoadCnt;
+                processed = processed + lazyLoadCnt;
                 index++;
             }
-            while(processed < searchStore.getQueryRecCnt && !mapSettings.loadPointsError);
+            while(processed < searchStore.getSearchRecCnt && !mapSettings.loadPointsError);
             sortSymbologyArr();
             updateMapSettings('clusterSource', new ol.source.PropertyCluster({
                 distance: mapSettings.clusterDistance,
@@ -940,7 +950,7 @@ const spatialAnalysisModule = {
                             const pointRadius = {};
                             pointRadius.pointlat = pointCoords[1];
                             pointRadius.pointlong = pointCoords[0];
-                            pointRadius.radius = mapSettings.inputPointUncertainty;
+                            pointRadius.radius = mapSettings.uncertaintyRadiusValue;
                             createUncertaintyCircleFromPointRadius(pointRadius);
                         }
                     }
@@ -1066,7 +1076,12 @@ const spatialAnalysisModule = {
             if(props.inputWindowMode && ((props.inputWindowToolsArr.length === 0) || (props.inputWindowToolsArr.length > 0 && selectInteraction.value.getFeatures().getLength() === 1))){
                 if(geoPolyArr.value.length > 0){
                     submitReady = true;
-                    inputResponseData.value['polyArr'] = geoPolyArr.value;
+                    if(props.inputWindowToolsArr.includes('wkt')){
+                        inputResponseData.value['footprintWKT'] = geoPolyArr.value[0];
+                    }
+                    else{
+                        inputResponseData.value['polyArr'] = geoPolyArr.value;
+                    }
                 }
                 if(geoCircleArr.value.length > 0){
                     submitReady = true;
@@ -1079,6 +1094,11 @@ const spatialAnalysisModule = {
                 if(geoPointArr.value.length > 0){
                     submitReady = true;
                     inputResponseData.value['pointArr'] = geoPointArr.value;
+                    if(geoPointArr.value.length === 1){
+                        inputResponseData.value['decimalLatitude'] = geoPointArr.value[0]['decimalLatitude'];
+                        inputResponseData.value['decimalLongitude'] = geoPointArr.value[0]['decimalLongitude'];
+                        inputResponseData.value['coordinateUncertaintyInMeters'] = mapSettings.uncertaintyRadiusValue;
+                    }
                 }
             }
             updateMapSettings('submitButtonDisabled', !submitReady);
@@ -1190,34 +1210,34 @@ const spatialAnalysisModule = {
                 updateMapSettings('pointActive', false);
             }
             else{
-                if(layerID === 'dragdrop1' || layerID === 'dragdrop2' || layerID === 'dragdrop3'){
+                if(layerID === 'dragDrop1' || layerID === 'dragDrop2' || layerID === 'dragDrop3'){
                     layersObj[layerID].setSource(mapSettings.blankDragDropSource);
                     const sourceIndex = mapSettings.dragDropTarget + 'Source';
                     delete layersObj[sourceIndex];
-                    if(layerID === 'dragdrop1') {
+                    if(layerID === 'dragDrop1') {
                         updateMapSettings('dragDrop1', false);
                     }
-                    else if(layerID === 'dragdrop2') {
-                        updateMapSettings('dragdrop2', false);
+                    else if(layerID === 'dragDrop2') {
+                        updateMapSettings('dragDrop2', false);
                     }
-                    else if(layerID === 'dragdrop3') {
+                    else if(layerID === 'dragDrop3') {
                         updateMapSettings('dragDrop3', false);
                     }
                 }
-                else if(layerID === 'dragdrop4' || layerID === 'dragdrop5' || layerID === 'dragdrop6') {
+                else if(layerID === 'dragDrop4' || layerID === 'dragDrop5' || layerID === 'dragDrop6') {
                     map.removeLayer(layersObj[layerID]);
                     layersObj[layerID].setSource(null);
                     const sourceIndex = mapSettings.dragDropTarget + 'Source';
                     const dataIndex = mapSettings.dragDropTarget + 'Data';
                     delete layersObj[sourceIndex];
                     delete layersObj[dataIndex];
-                    if(layerID === 'dragdrop4') {
+                    if(layerID === 'dragDrop4') {
                         updateMapSettings('dragDrop4', false);
                     }
-                    else if(layerID === 'dragdrop5') {
+                    else if(layerID === 'dragDrop5') {
                         updateMapSettings('dragDrop5', false);
                     }
-                    else if(layerID === 'dragdrop6') {
+                    else if(layerID === 'dragDrop6') {
                         updateMapSettings('dragDrop6', false);
                     }
                     rasterLayersArr.value = rasterLayersArr.value.filter((obj) => {
@@ -1346,8 +1366,10 @@ const spatialAnalysisModule = {
                 if(response.status === 200){
                     response.json().then((layerArrObject) => {
                         if(layerArrObject.hasOwnProperty('layerConfig') && layerArrObject['layerConfig'].length > 0){
-                            layersConfigArr.value = layerArrObject['layerConfig'];
-                            layersConfigArr.value.forEach((object) => {
+                            layerArrObject['layerConfig'].forEach((object) => {
+                                layersConfigArr.push(object);
+                            });
+                            layersConfigArr.forEach((object) => {
                                 if(object['type'] === 'layer'){
                                     processAddedLayer(object,false);
                                 }
@@ -1429,7 +1451,7 @@ const spatialAnalysisModule = {
                 }
             });
             map.getViewport().addEventListener('drop', () => {
-                showWorking();
+                showWorking('Loading...');
             });
             map.on('singleclick', (evt) => {
                 let infoHTML;
@@ -1459,7 +1481,7 @@ const spatialAnalysisModule = {
                         }
                         clickedFeatures.length = 0;
                     }
-                    else if(mapSettings.activeLayer === 'dragdrop4' || mapSettings.activeLayer === 'dragdrop5' || mapSettings.activeLayer === 'dragdrop6' || layersObj[mapSettings.activeLayer] instanceof ol.layer.Image){
+                    else if(mapSettings.activeLayer === 'dragDrop4' || mapSettings.activeLayer === 'dragDrop5' || mapSettings.activeLayer === 'dragDrop6' || layersObj[mapSettings.activeLayer] instanceof ol.layer.Image){
                         infoHTML = '';
                         const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
                         const dataIndex = mapSettings.activeLayer + 'Data';
@@ -1574,31 +1596,31 @@ const spatialAnalysisModule = {
                 zIndex: 0
             });
             layersArr.push(layersObj['base']);
-            layersObj['dragdrop1'] = new ol.layer.Vector({
+            layersObj['dragDrop1'] = new ol.layer.Vector({
                 zIndex: 1,
                 source: mapSettings.blankDragDropSource,
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
-            layersArr.push(layersObj['dragdrop1']);
-            layersObj['dragdrop2'] = new ol.layer.Vector({
+            layersArr.push(layersObj['dragDrop1']);
+            layersObj['dragDrop2'] = new ol.layer.Vector({
                 zIndex: 2,
                 source: mapSettings.blankDragDropSource,
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
-            layersArr.push(layersObj['dragdrop2']);
-            layersObj['dragdrop3'] = new ol.layer.Vector({
+            layersArr.push(layersObj['dragDrop2']);
+            layersObj['dragDrop3'] = new ol.layer.Vector({
                 zIndex: 3,
                 source: mapSettings.blankDragDropSource,
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
-            layersArr.push(layersObj['dragdrop3']);
-            layersObj['dragdrop4'] = new ol.layer.Image({
+            layersArr.push(layersObj['dragDrop3']);
+            layersObj['dragDrop4'] = new ol.layer.Image({
                 zIndex: 4,
             });
-            layersObj['dragdrop5'] = new ol.layer.Image({
+            layersObj['dragDrop5'] = new ol.layer.Image({
                 zIndex: 5,
             });
-            layersObj['dragdrop6'] = new ol.layer.Image({
+            layersObj['dragDrop6'] = new ol.layer.Image({
                 zIndex: 6,
             });
             layersObj['uncertainty'] = new ol.layer.Vector({
@@ -1670,17 +1692,17 @@ const spatialAnalysisModule = {
                 })
             });
             layersArr.push(layersObj['rasteranalysis']);
-            layersObj['dragdrop1'].on('postrender', () => {
+            layersObj['dragDrop1'].on('postrender', () => {
                 if(!mapSettings.loadPointsEvent){
                     hideWorking();
                 }
             });
-            layersObj['dragdrop2'].on('postrender', () => {
+            layersObj['dragDrop2'].on('postrender', () => {
                 if(!mapSettings.loadPointsEvent){
                     hideWorking();
                 }
             });
-            layersObj['dragdrop3'].on('postrender', () => {
+            layersObj['dragDrop3'].on('postrender', () => {
                 if(!mapSettings.loadPointsEvent){
                     hideWorking();
                 }
@@ -1692,21 +1714,21 @@ const spatialAnalysisModule = {
             });
             layersObj['pointv'].on('prerender', () => {
                 if(mapSettings.loadPointsEvent){
-                    showWorking();
+                    showWorking('Loading...');
                 }
             });
             layersObj['heat'].on('prerender', () => {
                 if(mapSettings.loadPointsEvent){
-                    showWorking();
+                    showWorking('Loading...');
                 }
             });
             layersObj['pointv'].on('postrender', () => {
-                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getQueryRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
+                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
                     loadPointsPostrender();
                 }
             });
             layersObj['heat'].on('postrender', () => {
-                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getQueryRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
+                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
                     loadPointsPostrender();
                 }
             });
@@ -2098,7 +2120,7 @@ const spatialAnalysisModule = {
             updateMapSettings('dragDropTarget', '');
             if(!mapSettings.dragDrop4){
                 updateMapSettings('dragDrop4', true);
-                updateMapSettings('dragDropTarget', 'dragdrop4');
+                updateMapSettings('dragDropTarget', 'dragDrop4');
                 return true;
             }
             else if(!mapSettings.dragDrop5){
@@ -2462,6 +2484,7 @@ const spatialAnalysisModule = {
                     loadPoints();
                 }
             }
+            updateMapSettings('drawToolFreehandMode', getPlatformProperty('has.touch'));
             changeDraw();
             controlPanelRef.value.changeBaseMap();
             spatialModuleInitialising.value = false;

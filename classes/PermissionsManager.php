@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 /*
 SuperAdmin			Edit all data and assign new permissions
@@ -25,7 +25,7 @@ class PermissionsManager{
 	private $conn;
 
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -33,38 +33,6 @@ class PermissionsManager{
  		if($this->conn) {
 			$this->conn->close();
 		}
-	}
-
-	public function getUser($uid): array
-	{
-		$returnArr = array();
-		if(is_numeric($uid)){
-			$sql = 'SELECT u.uid, u.firstname, u.lastname, u.title, u.institution, u.city, u.state, u.validated, ' .
-				'u.zip, u.country, u.email, u.url, u.notes, u.username, IFNULL(u.lastlogindate,u.initialTimestamp) AS lastlogindate ' .
-				'FROM users AS u ' .
-				'WHERE (u.uid = ' .$uid.')';
-			//echo "<div>$sql</div>";
-			$result = $this->conn->query($sql);
-			if($row = $result->fetch_object()){
-				$returnArr['uid'] = $row->uid;
-				$returnArr['firstname'] = $row->firstname;
-				$returnArr['lastname'] = $row->lastname;
-				$returnArr['title'] = $row->title;
-				$returnArr['institution'] = $row->institution;
-				$returnArr['city'] = $row->city;
-				$returnArr['state'] = $row->state;
-				$returnArr['zip'] = $row->zip;
-				$returnArr['country'] = $row->country;
-				$returnArr['email'] = $row->email;
-				$returnArr['url'] = $row->url;
-				$returnArr['notes'] = $row->notes;
-				$returnArr['username'] = $row->username;
-				$returnArr['lastlogindate'] = $row->lastlogindate;
-                $returnArr['validated'] = $row->validated;
-			}
-			$result->free();
-		}
-		return $returnArr;
 	}
 
 	public function getUserPermissions($uid): array
@@ -261,7 +229,7 @@ class PermissionsManager{
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->collid]['collectionname'] = Sanitizer::cleanOutStr($r->collectionname);
+			$retArr[$r->collid]['collectionname'] = SanitizerService::cleanOutStr($r->collectionname);
 			$retArr[$r->collid]['institutioncode'] = $r->institutioncode;
 			$retArr[$r->collid]['collectioncode'] = $r->collectioncode;
 			$retArr[$r->collid]['colltype'] = $r->colltype;
@@ -290,7 +258,7 @@ class PermissionsManager{
 				elseif($r->role === 'CollEditor') {
 					$pGroup = 'editor';
 				}
-				$outStr = '<span title="assigned by: '.($r->assignedby?$r->assignedby.' ('.$r->initialtimestamp.')':'unknown').'">'.Sanitizer::cleanOutStr($r->uname).'</span>';
+				$outStr = '<span title="assigned by: '.($r->assignedby?$r->assignedby.' ('.$r->initialtimestamp.')':'unknown').'">'.SanitizerService::cleanOutStr($r->uname).'</span>';
 				$returnArr[$pGroup][$r->uid] = $outStr;
 			}
 			$rs->free();
@@ -316,7 +284,7 @@ class PermissionsManager{
             else{
                 $sql .= 'WHERE (';
             }
-            $searchTerm = Sanitizer::cleanInStr($this->conn,$searchTermIn);
+            $searchTerm = SanitizerService::cleanInStr($this->conn,$searchTermIn);
 			$sql .= '(lastname LIKE "'.$searchTerm.'%") ';
 			if(strlen($searchTerm) > 1) {
 				$sql .= "OR (username LIKE '" . $searchTerm . "%') ";
@@ -327,7 +295,7 @@ class PermissionsManager{
 		//echo "<div>".$sql."</div>";
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->uid] = Sanitizer::cleanOutStr($r->uname.($r->username?' ('.$r->username.')':''));
+			$retArr[$r->uid] = SanitizerService::cleanOutStr($r->uname.($r->username?' ('.$r->username.')':''));
 		}
 		$rs->free();
 		return $retArr;
@@ -382,15 +350,24 @@ class PermissionsManager{
         return $retVal;
     }
 
-    public function validatePermission($permission, $key): int
+    public function validatePermission($permissions, $key): array
     {
-        $returnVal = 0;
-        if($GLOBALS['IS_ADMIN']){
-            $returnVal = 1;
+        $returnArr = array();
+        if(is_array($permissions)){
+            if($GLOBALS['IS_ADMIN']){
+                $returnArr = $permissions;
+            }
+            else{
+                foreach($permissions as $permission){
+                    if(array_key_exists($permission, $GLOBALS['USER_RIGHTS']) && (!$key || !is_array($GLOBALS['USER_RIGHTS'][$permission]) || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permission], true))){
+                        $returnArr[] = $permission;
+                    }
+                }
+            }
         }
-        else if(array_key_exists($permission,$GLOBALS['USER_RIGHTS']) && (!$key || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permission], true))){
-            $returnVal = 1;
+        elseif($GLOBALS['IS_ADMIN'] || (array_key_exists($permissions, $GLOBALS['USER_RIGHTS']) && (!$key || !is_array($GLOBALS['USER_RIGHTS'][$permissions]) || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permissions], true)))){
+            $returnArr[] = $permissions;
         }
-        return $returnVal;
+        return $returnArr;
     }
 }

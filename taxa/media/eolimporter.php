@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -34,7 +34,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         <q-card class="processor-control-card">
                             <q-card-section>
                                 <div class="q-my-sm">
-                                    <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disable="loading" label="Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                                    <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                                 </div>
                                 <q-card class="q-my-sm" flat bordered>
                                     <q-card-section>
@@ -144,12 +144,12 @@ if(!$GLOBALS['SYMB_UID']) {
             </template>
         </div>
         <?php
-        include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
+        include(__DIR__ . '/../../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/singleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const eolMediaImporterModule = Vue.createApp({
                 components: {
@@ -187,7 +187,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     const procDisplayScrollAreaRef = Vue.ref(null);
                     const procDisplayScrollHeight = Vue.ref(0);
                     const processCancelling = Vue.ref(false);
-                    const processorDisplayArr = Vue.shallowReactive([]);
+                    const processorDisplayArr = Vue.reactive([]);
                     let processorDisplayDataArr = [];
                     const processorDisplayCurrentIndex = Vue.ref(0);
                     const processorDisplayIndex = Vue.ref(0);
@@ -226,7 +226,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('statement', JSON.stringify(statement));
                         formData.append('action', 'addTaxonDescriptionStatement');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonDescriptionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -244,7 +244,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('description', JSON.stringify(descTab));
                         formData.append('action', 'addTaxonDescriptionTab');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonDescriptionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -374,7 +374,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         formData.append('source', 'eol');
                         formData.append('index', identifierImportIndex.value);
                         formData.append('action', 'getIdentifiersForTaxonomicGroup');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -386,7 +386,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                     }
                                     if(resObj.length < 50000){
                                         processSuccessResponse(true,'Complete');
-                                        const text = 'Getting taxa and ' + selectedMediaType.value + ' counts for taxa within ' + taxonomicGroup.value.name;
+                                        const text = 'Getting taxa and ' + selectedMediaType.value + ' counts for taxa within ' + taxonomicGroup.value;
                                         addProcessToProcessorDisplay(getNewProcessObject('setTaxaMediaArr','single',text));
                                         getTaxaMediaCounts();
                                     }
@@ -420,7 +420,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         else if(selectedMediaType.value === 'description'){
                             formData.append('action', 'getDescriptionCountsForTaxonomicGroup');
                         }
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             signal: abortController.signal,
                             body: formData
@@ -452,7 +452,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     function initializeEOLImport() {
                         if(taxonomicGroupTid.value){
                             adjustUIStart();
-                            const text = 'Getting stored Encyclopedia of Life identifiers for taxa within ' + taxonomicGroup.value.name;
+                            const text = 'Getting stored Encyclopedia of Life identifiers for taxa within ' + taxonomicGroup.value;
                             addProcessToProcessorDisplay(getNewProcessObject('setIdentifierArr','single',text));
                             getStoredIdentifiers();
                         }
@@ -550,7 +550,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                 newImageObj['sortsequence'] = '20';
                                 const formData = new FormData();
                                 formData.append('image', JSON.stringify(newImageObj));
-                                formData.append('action', 'addImageRecord');
+                                formData.append('action', 'addImage');
                                 fetch(imageApiUrl, {
                                     method: 'POST',
                                     body: formData
@@ -594,7 +594,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                 newMediaObj['sortsequence'] = '20';
                                 const formData = new FormData();
                                 formData.append('media', JSON.stringify(newMediaObj));
-                                formData.append('action', 'addMediaRecord');
+                                formData.append('action', 'addMedia');
                                 fetch(mediaApiUrl, {
                                     method: 'POST',
                                     body: formData
@@ -634,6 +634,7 @@ if(!$GLOBALS['SYMB_UID']) {
 
                     function processorDisplayScrollDown() {
                         scrollProcess.value = 'scrollDown';
+                        processorDisplayArr.length = 0;
                         processorDisplayCurrentIndex.value++;
                         const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
                         newData.forEach((data) => {
@@ -644,6 +645,7 @@ if(!$GLOBALS['SYMB_UID']) {
 
                     function processorDisplayScrollUp() {
                         scrollProcess.value = 'scrollUp';
+                        processorDisplayArr.length = 0;
                         processorDisplayCurrentIndex.value--;
                         const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
                         newData.forEach((data) => {
@@ -724,8 +726,9 @@ if(!$GLOBALS['SYMB_UID']) {
                                 const url = 'https://eol.org/api/search/1.0.json?q=' + currentTaxon.value['sciname'];
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -742,7 +745,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     formData.append('idname', 'eol');
                                                     formData.append('id', taxonResObj['id']);
                                                     formData.append('action', 'addTaxonIdentifier');
-                                                    fetch(taxonomyApiUrl, {
+                                                    fetch(taxaApiUrl, {
                                                         method: 'POST',
                                                         body: formData
                                                     })
@@ -782,13 +785,13 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('permission', 'TaxonProfile');
                         formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
+                        fetch(permissionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
-                            response.text().then((res) => {
-                                isEditor.value = Number(res) === 1;
+                            response.json().then((resData) => {
+                                isEditor.value = resData.includes('TaxonProfile');
                             });
                         });
                     }
@@ -811,8 +814,9 @@ if(!$GLOBALS['SYMB_UID']) {
                         }
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -862,39 +866,50 @@ if(!$GLOBALS['SYMB_UID']) {
 
                     function setTaxonMediaArr() {
                         if(Number(currentTaxon.value['cnt']) > 0){
+                            let dataSource = null;
                             const text = 'Getting existing ' + selectedMediaType.value + 's';
                             addSubprocessToProcessorDisplay(currentTaxon.value['sciname'],'text',text);
                             const formData = new FormData();
-                            formData.append('tid', currentTaxon.value['tid']);
-                            if(selectedMediaType.value === 'image'){
-                                formData.append('action', 'getTaxonImages');
-                            }
-                            else if(selectedMediaType.value === 'video'){
-                                formData.append('action', 'getTaxonVideos');
-                            }
-                            else if(selectedMediaType.value === 'audio'){
-                                formData.append('action', 'getTaxonAudios');
-                            }
-                            else if(selectedMediaType.value === 'description'){
+                            if(selectedMediaType.value === 'description'){
+                                formData.append('tid', currentTaxon.value['tid']);
                                 formData.append('action', 'getTaxonDescriptions');
+                                dataSource = taxonDescriptionApiUrl;
                             }
-                            fetch(taxonomyApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                if(response.status === 200){
-                                    response.json().then((resObj) => {
-                                        taxonMediaArr.value = resObj;
-                                        processSubprocessSuccessResponse(false);
-                                        setEOLMediaArr();
-                                    });
+                            else{
+                                formData.append('property', 'tid');
+                                formData.append('value', currentTaxon.value['tid']);
+                                if(selectedMediaType.value === 'image'){
+                                    formData.append('action', 'getImageArrByProperty');
+                                    dataSource = imageApiUrl;
                                 }
-                                else{
-                                    processSubprocessErrorResponse(currentTaxon.value['sciname'],'Error getting records');
-                                    setCurrentTaxon();
+                                else if(selectedMediaType.value === 'audio' || selectedMediaType.value === 'video'){
+                                    formData.append('limitFormat', selectedMediaType.value);
+                                    formData.append('action', 'getMediaArrByProperty');
+                                    dataSource = mediaApiUrl;
                                 }
-                            });
+                            }
+                            if(dataSource){
+                                fetch(dataSource, {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then((response) => {
+                                    if(response.status === 200){
+                                        response.json().then((resObj) => {
+                                            taxonMediaArr.value = resObj;
+                                            processSubprocessSuccessResponse(false);
+                                            setEOLMediaArr();
+                                        });
+                                    }
+                                    else{
+                                        processSubprocessErrorResponse(currentTaxon.value['sciname'],'Error getting records');
+                                        setCurrentTaxon();
+                                    }
+                                });
+                            }
+                            else{
+                                setEOLMediaArr();
+                            }
                         }
                         else{
                             setEOLMediaArr();
@@ -910,7 +925,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     }
 
                     function updateTaxonomicGroup(taxonObj) {
-                        taxonomicGroup.value = taxonObj;
+                        taxonomicGroup.value = taxonObj.sciname;
                         taxonomicGroupTid.value = taxonObj ? taxonObj.tid : null;
                         kingdomId.value = taxonObj ? taxonObj.kingdomid : null;
                     }

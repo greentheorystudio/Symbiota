@@ -201,7 +201,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         <?php
         if($clid) {
@@ -795,6 +794,7 @@ if(!$printMode){
 <div style="clear:both;"></div>
 <?php
 if(!$printMode) {
+    include_once(__DIR__ . '/../config/footer-includes.php');
     include(__DIR__ . '/../footer.php');
 }
 
@@ -903,7 +903,6 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']){
     </div>
     <?php
 }
-include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>

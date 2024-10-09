@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -295,11 +295,11 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
             </template>
         </div>
         <?php
-        include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
+        include(__DIR__ . '/../../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const occurrenceTaxonomyManagementModule = Vue.createApp({
                 components: {
@@ -309,16 +309,20 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                 setup() {
                     const { getErrorResponseText, openTutorialWindow, showNotification } = useCore();
                     const store = useBaseStore();
+                    const collectionStore = useCollectionStore();
+
                     let abortController = null;
                     const changedCurrentSciname = Vue.ref('');
                     const changedParsedSciname = Vue.ref('');
                     const colInitialSearchResults = [];
                     const collId = COLLID;
-                    const collInfo = Vue.ref(null);
+                    const collInfo = Vue.computed(() => collectionStore.getCollectionData);
                     const currentProcess = Vue.ref(null);
                     const currentSciname = Vue.ref(null);
                     const dataSource = Vue.ref('col');
-                    const isEditor = Vue.ref(false);
+                    const isEditor = Vue.computed(() => {
+                        return collectionStore.getCollectionPermissions.includes('CollAdmin');
+                    });
                     const itisInitialSearchResults = [];
                     const levValue = Vue.ref(2);
                     let nameSearchResults = [];
@@ -330,7 +334,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     let processingArr = [];
                     const processingLimit = Vue.ref(null);
                     const processingStartIndex = Vue.ref(null);
-                    const processorDisplayArr = Vue.shallowReactive([]);
+                    const processorDisplayArr = Vue.reactive([]);
                     let processorDisplayDataArr = [];
                     const processorDisplayCurrentIndex = Vue.ref(0);
                     const processorDisplayIndex = Vue.ref(0);
@@ -584,8 +588,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/getFullHierarchyFromTSN?tsn=' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -636,8 +641,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -719,8 +725,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                             const formData = new FormData();
                             formData.append('url', url);
-                            formData.append('action', 'get');
-                            fetch(proxyApiUrl, {
+                            formData.append('action', 'getExternalData');
+                            formData.append('requestType', 'get');
+                            fetch(proxyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -758,8 +765,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const url = 'https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -819,8 +827,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
                         const formData = new FormData();
                         formData.append('url', url);
-                        formData.append('action', 'get');
-                        fetch(proxyApiUrl, {
+                        formData.append('action', 'getExternalData');
+                        formData.append('requestType', 'get');
+                        fetch(proxyServiceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -896,7 +905,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             adjustUIStart('resolveFromTaxaDataSource');
                             const text = 'Setting rank data for processing search returns';
                             addProcessToProcessorDisplay(getNewProcessObject('resolveFromTaxaDataSource', 'multi', text));
-                            const url = taxonomyApiUrl + '?action=getRankNameArr'
+                            const url = taxonRankApiUrl + '?action=getRankNameArr'
                             abortController = new AbortController();
                             fetch(url, {
                                 signal: abortController.signal
@@ -961,7 +970,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         if(rebuildHierarchyLoop < 40){
                             const formData = new FormData();
                             formData.append('action', 'populateHierarchyTable');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxonHierarchyApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -997,7 +1006,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         const formData = new FormData();
                         formData.append('tidarr', JSON.stringify(newTidArr));
                         formData.append('action', 'primeHierarchyTable');
-                        fetch(taxonomyApiUrl, {
+                        fetch(taxonHierarchyApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -1040,7 +1049,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const formData = new FormData();
                             formData.append('taxon', JSON.stringify(newTaxonObj));
                             formData.append('action', 'addTaxon');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxaApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1090,7 +1099,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const formData = new FormData();
                             formData.append('taxon', JSON.stringify(newTaxonObj));
                             formData.append('action', 'addTaxon');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxaApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1172,75 +1181,50 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     }
 
                     function processGetCOLTaxonByScinameResponse(resObj) {
-                        if(resObj['total_number_of_results'] > 0){
+                        if(resObj['total'] > 0){
                             const resultArr = resObj['result'];
                             resultArr.forEach((taxResult) => {
-                                const status = taxResult['name_status'];
-                                if(status !== 'common name'){
-                                    const resultObj = {};
-                                    resultObj['id'] = taxResult['id'];
-                                    resultObj['author'] = taxResult.hasOwnProperty('author') ? taxResult['author'] : '';
-                                    let rankName = taxResult['rank'].toLowerCase();
-                                    if(rankName === 'infraspecies'){
-                                        resultObj['sciname'] = taxResult['genus'] + ' ' + taxResult['species'] + ' ' + ((taxResult['infraspeciesMarker'] && taxResult['infraspeciesMarker'] !== 'undefined') ? (taxResult['infraspeciesMarker'] + ' ') : '') + taxResult['infraspecies'];
-                                        if(taxResult['infraspeciesMarker'] === 'var.'){
-                                            rankName = 'variety';
+                                const usageData = taxResult.hasOwnProperty('usage') ? taxResult['usage'] : null;
+                                if(usageData){
+                                    const status = usageData['status'];
+                                    if(status !== 'common name' && usageData.hasOwnProperty('name')){
+                                        const resultObj = {};
+                                        resultObj['id'] = taxResult['id'];
+                                        resultObj['author'] = usageData['name'].hasOwnProperty('authorship') ? usageData['name']['authorship'] : '';
+                                        resultObj['sciname'] = usageData['name']['scientificName'];
+                                        resultObj['rankname'] = usageData['name']['rank'].toLowerCase();
+                                        resultObj['rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
+                                        if(status === 'accepted'){
+                                            resultObj['accepted'] = true;
                                         }
-                                        else if(taxResult['infraspeciesMarker'] === 'subsp.'){
-                                            rankName = 'subspecies';
-                                        }
-                                        else if(taxResult['infraspeciesMarker'] === 'f.'){
-                                            rankName = 'form';
-                                        }
-                                    }
-                                    else{
-                                        resultObj['sciname'] = taxResult['name'];
-                                    }
-                                    resultObj['rankname'] = rankName;
-                                    resultObj['rankid'] = rankArr.hasOwnProperty(resultObj['rankname']) ? rankArr[resultObj['rankname']] : null;
-                                    if(status === 'accepted name'){
-                                        resultObj['accepted'] = true;
-                                    }
-                                    else if(status === 'synonym'){
-                                        const hierarchyArr = [];
-                                        const resultHObj = {};
-                                        const acceptedObj = taxResult['accepted_name'];
-                                        resultObj['accepted'] = false;
-                                        resultObj['accepted_id'] = acceptedObj['id'];
-                                        resultHObj['id'] = acceptedObj['id'];
-                                        resultHObj['author'] = acceptedObj.hasOwnProperty('author') ? acceptedObj['author'] : '';
-                                        let rankName = acceptedObj['rank'].toLowerCase();
-                                        if(rankName === 'infraspecies'){
-                                            resultHObj['sciname'] = acceptedObj['genus'] + ' ' + acceptedObj['species'] + ' ' + ((acceptedObj['infraspeciesMarker'] && acceptedObj['infraspeciesMarker'] !== 'undefined') ? (acceptedObj['infraspeciesMarker'] + ' ') : '') + acceptedObj['infraspecies'];
-                                            if(acceptedObj['infraspeciesMarker'] === 'var.'){
-                                                rankName = 'variety';
+                                        else if(status === 'synonym'){
+                                            const hierarchyArr = [];
+                                            const resultHObj = {};
+                                            const acceptedObj = usageData['accepted'];
+                                            if(acceptedObj.hasOwnProperty('name')){
+                                                resultObj['accepted'] = false;
+                                                resultObj['accepted_id'] = acceptedObj['id'];
+                                                resultHObj['id'] = acceptedObj['id'];
+                                                resultHObj['author'] = acceptedObj['name'].hasOwnProperty('authorship') ? acceptedObj['name']['authorship'] : '';
+                                                resultHObj['sciname'] = acceptedObj['name']['scientificName'];
+                                                resultObj['accepted_sciname'] = resultHObj['sciname'];
+                                                resultHObj['rankname'] = acceptedObj['name']['rank'].toLowerCase();
+                                                resultHObj['rankid'] = rankArr.hasOwnProperty(resultHObj['rankname']) ? rankArr[resultHObj['rankname']] : null;
+                                                hierarchyArr.push(resultHObj);
+                                                resultObj['hierarchy'] = hierarchyArr;
                                             }
-                                            else if(acceptedObj['infraspeciesMarker'] === 'subsp.'){
-                                                rankName = 'subspecies';
-                                            }
-                                            else if(acceptedObj['infraspeciesMarker'] === 'f.'){
-                                                rankName = 'form';
+                                        }
+                                        const existingObj = colInitialSearchResults.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
+                                        if(existingObj){
+                                            if(Number(existingObj['rankid']) < Number(resultObj['rankid'])){
+                                                const index = colInitialSearchResults.indexOf(existingObj);
+                                                colInitialSearchResults.splice(index, 1);
+                                                colInitialSearchResults.push(resultObj);
                                             }
                                         }
                                         else{
-                                            resultHObj['sciname'] = acceptedObj['name'];
-                                        }
-                                        resultObj['accepted_sciname'] = resultHObj['sciname'];
-                                        resultHObj['rankname'] = rankName;
-                                        resultHObj['rankid'] = rankArr.hasOwnProperty(resultHObj['rankname']) ? rankArr[resultHObj['rankname']] : null;
-                                        hierarchyArr.push(resultHObj);
-                                        resultObj['hierarchy'] = hierarchyArr;
-                                    }
-                                    const existingObj = colInitialSearchResults.find(taxon => (taxon['sciname'] === resultObj['sciname'] && taxon['accepted_sciname'] === resultObj['accepted_sciname']));
-                                    if(existingObj){
-                                        if(Number(existingObj['rankid']) < Number(resultObj['rankid'])){
-                                            const index = colInitialSearchResults.indexOf(existingObj);
-                                            colInitialSearchResults.splice(index, 1);
                                             colInitialSearchResults.push(resultObj);
                                         }
-                                    }
-                                    else{
-                                        colInitialSearchResults.push(resultObj);
                                     }
                                 }
                             });
@@ -1298,6 +1282,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 
                     function processorDisplayScrollDown() {
                         scrollProcess = 'scrollDown';
+                        processorDisplayArr.length = 0;
                         processorDisplayCurrentIndex.value++;
                         const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
                         newData.forEach((data) => {
@@ -1308,6 +1293,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 
                     function processorDisplayScrollUp() {
                         scrollProcess = 'scrollUp';
+                        processorDisplayArr.length = 0;
                         processorDisplayCurrentIndex.value--;
                         const newData = processorDisplayDataArr.slice((processorDisplayCurrentIndex.value * 100), ((processorDisplayCurrentIndex.value + 1) * 100));
                         newData.forEach((data) => {
@@ -1415,7 +1401,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const formData = new FormData();
                             formData.append('sciname', currentSciname.value);
                             formData.append('action', 'parseSciName');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxonomyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1474,11 +1460,12 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 colInitialSearchResults.length = 0;
                                 const text = 'Searching the Catalogue of Life (COL) for ' + currentSciname.value;
                                 addProcessToProcessorDisplay(getNewProcessObject(currentSciname.value, 'multi', text));
-                                const url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name=' + currentSciname.value;
+                                const url = 'https://api.checklistbank.org/dataset/3/nameusage/search?content=SCIENTIFIC_NAME&q=' + currentSciname.value + '&offset=0&limit=100';
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -1502,8 +1489,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 const url = 'https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=' + currentSciname.value;
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -1526,8 +1514,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 const url = 'https://www.marinespecies.org/rest/AphiaIDByName/' + currentSciname.value + '?marine_only=false';
                                 const formData = new FormData();
                                 formData.append('url', url);
-                                formData.append('action', 'get');
-                                fetch(proxyApiUrl, {
+                                formData.append('action', 'getExternalData');
+                                formData.append('requestType', 'get');
+                                fetch(proxyServiceApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -1575,7 +1564,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             formData.append('sciname', currentSciname.value);
                             formData.append('lev', levValue.value);
                             formData.append('action', 'getSciNameFuzzyMatches');
-                            fetch(taxonomyApiUrl, {
+                            fetch(taxaApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1630,39 +1619,6 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                         });
                     }
 
-                    function setCollInfo() {
-                        if(collId){
-                            const formData = new FormData();
-                            formData.append('collid', collId);
-                            formData.append('action', 'getCollectionInfoArr');
-                            fetch(collectionApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                response.json().then((resObj) => {
-                                    collInfo.value = resObj;
-                                });
-                            });
-                        }
-                    }
-
-                    function setEditor() {
-                        const formData = new FormData();
-                        formData.append('permission', 'CollAdmin');
-                        formData.append('key', collId);
-                        formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            response.text().then((res) => {
-                                isEditor.value = Number(res) === 1;
-                            });
-                        });
-                    }
-
                     function setScroller(info) {
                         if((currentProcess.value || scrollProcess) && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
                             procDisplayScrollHeight.value = info.verticalSize;
@@ -1704,7 +1660,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 formData.append('rankid', rankid);
                                 formData.append('kingdomid', selectedKingdomId.value);
                                 formData.append('action', 'getTid');
-                                fetch(taxonomyApiUrl, {
+                                fetch(taxaApiUrl, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -1918,11 +1874,12 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             else{
                                 id = taxon['accepted_id'];
                             }
-                            const url = 'https://api.catalogueoflife.org/dataset/9840/taxon/' + id + '/classification';
+                            const url = 'https://api.catalogueoflife.org/dataset/3/taxon/' + id + '/classification';
                             const formData = new FormData();
                             formData.append('url', url);
-                            formData.append('action', 'get');
-                            fetch(proxyApiUrl, {
+                            formData.append('action', 'getExternalData');
+                            formData.append('requestType', 'get');
+                            fetch(proxyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -1997,8 +1954,9 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                             const url = 'https://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn=' + id;
                             const formData = new FormData();
                             formData.append('url', url);
-                            formData.append('action', 'get');
-                            fetch(proxyApiUrl, {
+                            formData.append('action', 'getExternalData');
+                            formData.append('requestType', 'get');
+                            fetch(proxyServiceApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
@@ -2092,9 +2050,14 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     }
 
                     Vue.onMounted(() => {
-                        setEditor();
-                        setCollInfo();
-                        setUnlinkedRecordCounts();
+                        collectionStore.setCollection(collId, () => {
+                            if(isEditor.value){
+                                setUnlinkedRecordCounts();
+                            }
+                            else{
+                                window.location.href = store.getClientRoot + '/index.php';
+                            }
+                        });
                     });
                     
                     return {

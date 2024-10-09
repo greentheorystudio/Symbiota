@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -41,9 +41,6 @@ if(!$GLOBALS['SYMB_UID']) {
             .uploader {
                 width: 100%;
                 min-height: 150px;
-            }
-            .q-uploader {
-                max-height: none;
             }
         </style>
         <script src="../../js/external/all.min.js" type="text/javascript"></script>
@@ -98,7 +95,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                 {{ file.name }}
                                             </q-item-label>
                                             <q-item-label class="full-width">
-                                                <media-scientific-name-auto-complete :sciname="file.scientificname ? {tid: file.tid, label: file.scientificname, name: file.scientificname} : null" label="Scientific Name" :filename="file.name" limit-to-thesaurus="true" accepted-taxa-only="true" @update:mediataxon="updateMediaScientificName"></media-scientific-name-auto-complete>
+                                                <media-scientific-name-auto-complete :sciname="file.scientificname ? file.scientificname : null" label="Scientific Name" :filename="file.name" limit-to-thesaurus="true" accepted-taxa-only="true" @update:mediataxon="updateMediaScientificName"></media-scientific-name-auto-complete>
                                             </q-item-label>
                                             <q-item-label v-if="file.errorMessage" class="full-width text-bold text-red">
                                                 {{ file.errorMessage }}
@@ -141,10 +138,10 @@ if(!$GLOBALS['SYMB_UID']) {
             </template>
         </div>
         <?php
-        include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
+        include(__DIR__ . '/../../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const mediaScientificNameAutoComplete = {
                 props: {
@@ -165,7 +162,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         default: false
                     },
                     sciname: {
-                        type: Object,
+                        type: String,
                         default: null
                     }
                 },
@@ -179,7 +176,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     function updateMediaTaxon(taxonObj) {
                         const resObj = {};
                         resObj['filename'] = props.filename;
-                        resObj['sciname'] = taxonObj ? taxonObj.name : null;
+                        resObj['sciname'] = taxonObj ? taxonObj.sciname : null;
                         resObj['tid'] = taxonObj ? taxonObj.tid : null;
                         context.emit('update:mediataxon', resObj);
                     }
@@ -203,13 +200,13 @@ if(!$GLOBALS['SYMB_UID']) {
                     const queueSize = Vue.ref(0);
                     const queueSizeLabel = Vue.ref('');
                     const systemProperties = Vue.ref(['format','type']);
-                    const taxaDataArr = Vue.ref([]);
+                    const taxaDataArr = Vue.ref({});
                     const uploaderRef = Vue.ref(null);
 
                     function cancelUpload() {
                         csvFileData.value = [];
                         fileArr.value = [];
-                        taxaDataArr.value = [];
+                        taxaDataArr.value = Object.assign({}, {});
                         updateQueueSize();
                         uploaderRef.value.reset();
                     }
@@ -386,13 +383,13 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('permission', 'TaxonProfile');
                         formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
+                        fetch(permissionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
-                            response.text().then((res) => {
-                                isEditor.value = Number(res) === 1;
+                            response.json().then((resData) => {
+                                isEditor.value = resData.includes('TaxonProfile');
                             });
                         });
                     }
@@ -400,14 +397,16 @@ if(!$GLOBALS['SYMB_UID']) {
                     function setTaxaData(nameArr, fileName = null) {
                         const formData = new FormData();
                         formData.append('taxa', JSON.stringify(nameArr));
-                        formData.append('action', 'getTaxaArrFromNameArr');
-                        fetch(taxonomyApiUrl, {
+                        formData.append('action', 'getTaxaIdDataFromNameArr');
+                        fetch(taxaApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
                             response.json().then((resObj) => {
-                                taxaDataArr.value = taxaDataArr.value.concat(resObj);
+                                Object.keys(resObj).forEach((key) => {
+                                    taxaDataArr.value[key] = Object.assign({}, resObj[key]);
+                                });
                                 if(fileName && resObj.length === 1){
                                     const file = fileArr.value.find((obj) => obj.name.toLowerCase() === fileName.toLowerCase());
                                     file['scientificname'] = resObj[0]['sciname'];
@@ -424,9 +423,8 @@ if(!$GLOBALS['SYMB_UID']) {
                             if(!file.hasOwnProperty('tid') || !file.tid || file.tid === ''){
                                 const sciname = file.scientificname;
                                 if(sciname){
-                                    const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
-                                    if(taxonData){
-                                        file.tid = taxonData['tid'];
+                                    if(taxaDataArr.value.hasOwnProperty(sciname.toLowerCase())){
+                                        file.tid = taxaDataArr[sciname.toLowerCase()]['tid'];
                                         file.errorMessage = '';
                                     }
                                     else{
@@ -508,9 +506,8 @@ if(!$GLOBALS['SYMB_UID']) {
                                 }
                                 const sciname = (csvData && csvData.hasOwnProperty('scientificname')) ? csvData['scientificname'] : null;
                                 if(sciname){
-                                    const taxonData = taxaDataArr.value.find((obj) => obj.sciname.toLowerCase() === sciname.toLowerCase());
-                                    if(taxonData){
-                                        tid = taxonData['tid'];
+                                    if(taxaDataArr.value.hasOwnProperty(sciname.toLowerCase())){
+                                        tid = taxaDataArr[sciname.toLowerCase()]['tid'];
                                     }
                                 }
                                 file['scientificname'] = sciname;

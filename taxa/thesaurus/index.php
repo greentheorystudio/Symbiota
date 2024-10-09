@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -37,7 +37,7 @@ if(!$GLOBALS['SYMB_UID']) {
                 <q-card class="top-tool-container q-mb-md">
                     <q-card-section>
                         <div class="q-my-sm">
-                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disable="loading" label="Enter Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Enter Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                         </div>
                         <div class="q-my-sm q-mt-md">
                             <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :required-ranks="requiredRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import or update" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
@@ -69,13 +69,13 @@ if(!$GLOBALS['SYMB_UID']) {
             </template>
         </div>
         <?php
-        include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
+        include(__DIR__ . '/../../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/multipleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusMaintenanceModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
@@ -102,13 +102,13 @@ if(!$GLOBALS['SYMB_UID']) {
                         const formData = new FormData();
                         formData.append('permission', 'Taxonomy');
                         formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
+                        fetch(permissionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
-                            response.text().then((res) => {
-                                isEditor.value = Number(res) === 1;
+                            response.json().then((resData) => {
+                                isEditor.value = resData.includes('Taxonomy');
                             });
                         });
                     }
@@ -132,7 +132,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     }
 
                     function updateTaxonomicGroup(taxonObj) {
-                        taxonomicGroup.value = taxonObj;
+                        taxonomicGroup.value = taxonObj ? taxonObj.sciname : null;
                         taxonomicGroupTid.value = taxonObj ? taxonObj.tid : null;
                         kingdomId.value = taxonObj ? taxonObj.kingdomid : null;
                     }

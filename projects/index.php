@@ -99,7 +99,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
 
@@ -449,8 +448,8 @@ echo '</div>';
     ?>
 </div>
 <?php
-include(__DIR__ . '/../footer.php');
 include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
 ?>
 
 <div id="infobox" data-role="popup" class="well" style="width:400px;height:300px;">

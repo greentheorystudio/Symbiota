@@ -2,7 +2,7 @@
 /** @var array $dupArr */
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -11,7 +11,7 @@ $obsUid = array_key_exists('obsuid',$_REQUEST)?(int)$_REQUEST['obsuid']:0;
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']):'';
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
@@ -101,9 +101,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	</div>
 <?php 	
 if(!$dupArr){
-	include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 }
-include_once(__DIR__ . '/../../config/footer-includes.php');
 ?>
 </body>
 </html>

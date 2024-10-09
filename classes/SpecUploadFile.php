@@ -10,7 +10,6 @@ class SpecUploadFile extends SpecUploadBase{
     public function __construct() {
         parent::__construct();
         $this->setUploadTargetPath();
-        ini_set('auto_detect_line_endings', true);
     }
 
     public function uploadFile(){

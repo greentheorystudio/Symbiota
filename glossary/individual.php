@@ -59,8 +59,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 </head>
 <body style="overflow-x:hidden;overflow-y:auto;width:700px;margin-left:auto;margin-right:auto;">
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	<div id="innertext" style="width:680px;margin-left:0;margin-right:0;">
+    <div id="innertext" style="width:680px;margin-left:0;margin-right:0;">
 		<div id="tabs" style="padding:10px;margin:0;">
 			<div style="clear:both;">
 				<?php

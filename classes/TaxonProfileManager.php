@@ -1,6 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../models/Taxa.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TaxonProfileManager {
 
@@ -10,7 +11,7 @@ class TaxonProfileManager {
     private $teReader = false;
 
     public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
         if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
             $this->teReader = true;
@@ -58,6 +59,7 @@ class TaxonProfileManager {
             if($this->taxon['securityStatus'] === 0 || $this->teReader){
                 $this->displayLocality = true;
             }
+            $this->taxon['identifiers'] = (new Taxa)->getTaxonIdentifiersFromTid($this->taxon['tid']);
             $this->taxon['vernaculars'] = array();
             $this->taxon['synonyms'] = array();
             $this->taxon['imageCnt'] = array();
@@ -255,13 +257,13 @@ class TaxonProfileManager {
                 $imageArr['id'] = $row->imgid;
                 $imageArr['url'] = $imgUrl;
                 $imageArr['thumbnailurl'] = $imgThumbnail ?: $imgUrl;
-                $imageArr['photographer'] = Sanitizer::cleanOutStr($row->photographer);
-                $imageArr['caption'] = Sanitizer::cleanOutStr($row->caption);
+                $imageArr['photographer'] = SanitizerService::cleanOutStr($row->photographer);
+                $imageArr['caption'] = SanitizerService::cleanOutStr($row->caption);
                 $imageArr['occid'] = $row->occid;
                 $imageArr['catalognumber'] = $row->catalogNumber;
                 $imageArr['othercatalognumbers'] = $row->otherCatalogNumbers;
                 $imageArr['basisofrecord'] = $row->basisOfRecord;
-                $imageArr['owner'] = Sanitizer::cleanOutStr($row->owner);
+                $imageArr['owner'] = SanitizerService::cleanOutStr($row->owner);
                 $imageArr['sciname'] = $row->sciname;
                 $imageArr['tid'] = $row->tid;
                 $returnArr['images'][] = $imageArr;

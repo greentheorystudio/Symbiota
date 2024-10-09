@@ -537,15 +537,15 @@ body.processing .loadingModal {
 .expansion-element{
 	border-radius: 5px;
 }
-#sciname{
+.taxon-profile-sciname{
 	font-weight: bold;
 	font-size: 1.2rem;
 }
-#sciname.species{
+.taxon-profile-sciname span.species{
 	color: #990000;
 	font-style: italic;
 }
-#sciname.genus{
+.taxon-profile-sciname span.genus{
 	font-style: italic;
 }
 .parent-link{
@@ -567,7 +567,7 @@ body.processing .loadingModal {
 	justify-content: flex-end;
 	margin-top: 10px;
 }
-#central-image div.photographer{
+.taxon-profile-central-image div.photographer{
 	text-align: right;
 	padding: 5px;
 	font-size: 75%;
@@ -621,6 +621,12 @@ body.processing .loadingModal {
 .map-thumb-spatial-link, .all-images-link, .occurrences-link{
 	font-size: 1.1rem;
 	font-weight: bold;
+}
+.media-thumbnail{
+	min-height: 150px;
+	max-height: 250px;
+	min-width: 150px;
+	max-width: 150px;
 }
 .img-thumb{
 	width: 220px;
@@ -741,6 +747,17 @@ body.processing .loadingModal {
 	width: 100vw;
 	height: 100vh;
 }
+.q-uploader {
+	max-height: none;
+	border: 1px solid #616161;
+}
+.q-uploader-thumbnail {
+	max-height: 120px;
+	max-width: 120px;
+}
+.q-checkbox__bg{
+	background-color: white;
+}
 
 /* Spatial styles */
 #mapbody {
@@ -779,17 +796,38 @@ body.processing .loadingModal {
 	background-color: #3c668d;
 	color: white;
 }
-.sm-map-popup {
+.sm-popup {
 	width: 45%;
 	border: 1px solid black;
 	min-width: 325px;
 }
-.lg-map-popup {
+.md-square-popup {
+	width: 60%;
+	height: 60%;
+	border: 1px solid black;
+	min-width: 500px;
+	min-height: 500px;
+}
+.md-popup {
+	max-width: 75% !important;
+	width: 75% !important;
+	height: 70% !important;
+	border: 1px solid black;
+	min-width: 500px;
+}
+.lg-popup {
 	max-width: 90% !important;
 	width: 90% !important;
 	height: 85% !important;
 	border: 1px solid black;
-	min-width: 325px;
+	min-width: 700px;
+}
+.xl-popup {
+	max-width: 98% !important;
+	width: 98% !important;
+	height: 95% !important;
+	border: 1px solid black;
+	min-width: 700px;
 }
 .layer-controller-element {
 	width: 95%;
@@ -808,7 +846,7 @@ body.processing .loadingModal {
 .black-border {
 	border: 1px solid black;
 }
-.map-popup-header {
+.map-sm-popup {
 	background-color: #BDBDBD;
 }
 .map-popup {
@@ -1035,4 +1073,22 @@ body.processing .loadingModal {
 }
 #map.input-window .ol-zoomslider {
 	top: 8.2em;
+}
+.editor-inner-container {
+	width: 80%;
+}
+.occurrence-entry-format-selector {
+	min-width: 125px;
+}
+.black-border {
+	border-color: black;
+}
+.occurrence-tab-border {
+	border-bottom: 1px solid black;
+}
+.occurrence-editor-preview-image-carousel {
+	min-height: 400px;
+}
+.occurrence-editor-image-transcriber-image {
+	border-left: 2px solid black;
 }

@@ -3,11 +3,27 @@ const useBaseStore = Pinia.defineStore('base', {
         adminEmail: ADMIN_EMAIL,
         clientRoot: CLIENT_ROOT,
         defaultLanguage: DEFAULT_LANG,
+        defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
+        imageTagOptions: IMAGE_TAG_OPTIONS,
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
+        occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
+        rightsTerms: RIGHTS_TERMS,
         solrMode: SOLR_MODE,
         symbUid: SYMB_UID,
         taxonomicRanks: TAXONOMIC_RANKS,
+        taxonomicTags: {
+            cahr: 'CA Heritage Rank',
+            carpr: 'CA Rare Plant Rank',
+            casls: 'CA State Listing Status',
+            cnddb: 'CNDDB Element Code',
+            col: 'Catalogue of Life ID',
+            itis: 'ITIS TSN',
+            iucn: 'IUCN Red List Category',
+            usda: 'USDA Symbol',
+            usfrs: 'US Federal Regulatory Status',
+            worms: 'WoRMS Aphia ID'
+        },
         userDisplayName: USER_DISPLAY_NAME,
         validUser: VALID_USER
     }),
@@ -21,20 +37,35 @@ const useBaseStore = Pinia.defineStore('base', {
         getDefaultLanguage(state) {
             return state.defaultLanguage;
         },
+        getDefaultTitle(state) {
+            return state.defaultTitle;
+        },
         getEmailConfigured(state) {
             return state.emailConfigured;
+        },
+        getImageTagOptions(state) {
+            return state.imageTagOptions;
         },
         getMaxUploadFilesize(state) {
             return state.maxUploadFilesize;
         },
+        getOccurrenceProcessingStatusOptions(state) {
+            return state.occurrenceProcessingStatusOptions;
+        },
         getSolrMode(state) {
             return state.solrMode;
+        },
+        getRightsTerms(state) {
+            return state.rightsTerms;
         },
         getSymbUid(state) {
             return state.symbUid;
         },
         getTaxonomicRanks(state) {
             return state.taxonomicRanks;
+        },
+        getTaxonomicTags(state) {
+            return state.taxonomicTags;
         },
         getUserDisplayName(state) {
             return state.userDisplayName;

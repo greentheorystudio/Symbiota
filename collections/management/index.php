@@ -2,12 +2,12 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCrowdSource.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
@@ -108,13 +108,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             <div id="tabs" class="taxondisplaydiv">
                 <ul>
                     <li><a href="crowdsource/controlpanel.php?collid=<?php echo $collid; ?>">Crowdsourcing</a></li>
-                    <li><a href="#dupmanager">Duplicate Clustering</a></li>
                     <li><a href="reports.php?<?php echo str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'])); ?>">Reports</a></li>
                 </ul>
 
-                <div id="dupmanager">
-                    <?php include_once(__DIR__ . '/duplicatemanager.php'); ?>
-                </div>
             </div>
             <?php
         }
@@ -128,8 +124,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         ?>
     </div>
     <?php
-    include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
     ?>
 </body>
 </html>

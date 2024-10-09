@@ -53,7 +53,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/collections.search.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <script type="text/javascript" src="../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
         let listPage = <?php echo $pageNumber; ?>;
@@ -197,8 +196,8 @@ echo '</div>';
     </form>
 </div>
 <?php
-include(__DIR__ . '/../footer.php');
 include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

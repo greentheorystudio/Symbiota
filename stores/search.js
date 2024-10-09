@@ -1,15 +1,20 @@
 const useSearchStore = Pinia.defineStore('search', {
     state: () => ({
+        baseStore: useBaseStore(),
         dateId: null,
         queryId: 0,
         queryRecCnt: 0,
-        lazyLoadCnt: 20000,
-        recordsLazyLoadCnt: 100,
-        recordsPageNumber: 1,
         searchRecordData: [],
         searchTerms: {
-            surveyonly: false
+            othercatnum: true,
+            typestatus: false,
+            hasaudio: false,
+            hasimages: false,
+            hasvideo: false,
+            hasmedia: false,
+            hasgenetic: false
         },
+        searchTermsPageNumber: 0,
         selections: [],
         selectionsIds: [],
         solrFields: 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tid,scientificNameAuthorship,identifiedBy,' +
@@ -37,52 +42,10 @@ const useSearchStore = Pinia.defineStore('search', {
             dateTimeString += ((now.getSeconds() < 10)?'0':'')+now.getSeconds().toString();
             return dateTimeString;
         },
-        getLazyLoadCnt(state) {
-            return state.lazyLoadCnt;
-        },
-        getPaginationFirstRecordNumber(state) {
-            let recordNumber = 1;
-            if(Number(state.recordsPageNumber) > 1){
-                recordNumber = recordNumber + ((Number(state.recordsPageNumber) - 1) * Number(state.recordsLazyLoadCnt));
-            }
-            return recordNumber;
-        },
-        getPaginationLastPageNumber(state) {
-            let lastPage = 1;
-            if(Number(state.queryRecCnt) > Number(state.recordsLazyLoadCnt)){
-                lastPage = Math.floor(Number(state.queryRecCnt) / Number(state.recordsLazyLoadCnt));
-            }
-            if(Number(state.queryRecCnt) % Number(state.recordsLazyLoadCnt)){
-                lastPage++;
-            }
-            return lastPage;
-        },
-        getPaginationLastRecordNumber(state) {
-            let recordNumber = (Number(state.queryRecCnt) > Number(state.recordsLazyLoadCnt)) ? Number(state.recordsLazyLoadCnt) : Number(state.queryRecCnt);
-            if(Number(state.queryRecCnt) > Number(state.recordsLazyLoadCnt) && Number(state.recordsPageNumber) > 1){
-                if(Number(state.recordsPageNumber) === Number(state.getPaginationLastPageNumber)){
-                    recordNumber = (Number(state.queryRecCnt) % Number(state.recordsLazyLoadCnt)) + ((Number(state.recordsPageNumber) - 1) * Number(state.recordsLazyLoadCnt));
-                }
-                else{
-                    recordNumber = Number(state.recordsPageNumber) * Number(state.recordsLazyLoadCnt);
-                }
-            }
-            return recordNumber;
-        },
-        getPaginationObj(state) {
-            return {
-                page: state.recordsPageNumber,
-                lastPage: state.getPaginationLastPageNumber,
-                rowsPerPage: state.recordsLazyLoadCnt,
-                firstRowNumber: state.getPaginationFirstRecordNumber,
-                lastRowNumber: state.getPaginationLastRecordNumber,
-                rowsNumber: Number(state.queryRecCnt)
-            };
-        },
         getQueryId(state) {
             return state.queryId;
         },
-        getQueryRecCnt(state) {
+        getSearchRecCnt(state) {
             return Number(state.queryRecCnt);
         },
         getSearchRecordData(state) {
@@ -91,7 +54,7 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchRecordDataIdArr(state) {
             const returnArr = [];
             state.searchRecordData.forEach((record) => {
-                returnArr.push(Number(record.siteid));
+                returnArr.push(Number(record.occid));
             });
             return returnArr;
         },
@@ -106,37 +69,42 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchTermsJson(state) {
             return JSON.stringify(state.searchTerms);
         },
+        getSearchTermsPageNumber(state) {
+            return state.searchTermsPageNumber;
+        },
         getSearchTermsValid(state) {
             let populated = false;
-            if(state.searchTerms.hasOwnProperty('surveyonly') ||
-                state.searchTerms.hasOwnProperty('springid') ||
-                state.searchTerms.hasOwnProperty('springname') ||
-                state.searchTerms.hasOwnProperty('LandManagerID') ||
-                state.searchTerms.hasOwnProperty('LCC') ||
-                state.searchTerms.hasOwnProperty('AKA') ||
-                state.searchTerms.hasOwnProperty('project') ||
-                state.searchTerms.hasOwnProperty('datepicker1') ||
-                state.searchTerms.hasOwnProperty('datepicker2') ||
-                state.searchTerms.hasOwnProperty('springtype') ||
-                state.searchTerms.hasOwnProperty('Country') ||
-                state.searchTerms.hasOwnProperty('StateProvince') ||
+            if(state.searchTerms.hasOwnProperty('db') ||
+                state.searchTerms.hasOwnProperty('clid') ||
+                state.searchTerms.hasOwnProperty('taxa') ||
+                state.searchTerms.hasOwnProperty('country') ||
+                state.searchTerms.hasOwnProperty('state') ||
                 state.searchTerms.hasOwnProperty('county') ||
-                state.searchTerms.hasOwnProperty('TreatmentAreaID') ||
-                state.searchTerms.hasOwnProperty('LandUnit') ||
-                state.searchTerms.hasOwnProperty('ProclaimedNF') ||
-                state.searchTerms.hasOwnProperty('landunitdetail') ||
-                state.searchTerms.hasOwnProperty('quad') ||
-                state.searchTerms.hasOwnProperty('huc') ||
-                state.searchTerms.hasOwnProperty('distFromMe') ||
+                state.searchTerms.hasOwnProperty('local') ||
+                state.searchTerms.hasOwnProperty('elevlow') ||
+                state.searchTerms.hasOwnProperty('elevhigh') ||
+                state.searchTerms.hasOwnProperty('collector') ||
+                state.searchTerms.hasOwnProperty('collnum') ||
+                state.searchTerms.hasOwnProperty('eventdate1') ||
+                state.searchTerms.hasOwnProperty('eventdate2') ||
+                state.searchTerms.hasOwnProperty('occurrenceRemarks') ||
+                state.searchTerms.hasOwnProperty('catnum') ||
+                state.searchTerms.hasOwnProperty('othercatnum') ||
+                state.searchTerms.hasOwnProperty('typestatus') ||
+                state.searchTerms.hasOwnProperty('hasaudio') ||
+                state.searchTerms.hasOwnProperty('hasimages') ||
+                state.searchTerms.hasOwnProperty('hasvideo') ||
+                state.searchTerms.hasOwnProperty('hasmedia') ||
+                state.searchTerms.hasOwnProperty('hasgenetic') ||
                 state.searchTerms.hasOwnProperty('upperlat') ||
                 state.searchTerms.hasOwnProperty('pointlat') ||
                 state.searchTerms.hasOwnProperty('circleArr') ||
-                state.searchTerms.hasOwnProperty('polyArr') ||
-                state.searchTerms.hasOwnProperty('distFromMeRadiusTemp') ||
-                state.searchTerms.hasOwnProperty('distFromMeRadius') ||
-                state.searchTerms.hasOwnProperty('distFromMeGroundRadius') ||
-                state.searchTerms.hasOwnProperty('distFromMeLat') ||
-                state.searchTerms.hasOwnProperty('distFromMeLong')
+                state.searchTerms.hasOwnProperty('phuid') ||
+                state.searchTerms.hasOwnProperty('imagetag') ||
+                state.searchTerms.hasOwnProperty('imagekeyword') ||
+                state.searchTerms.hasOwnProperty('uploaddate1') ||
+                state.searchTerms.hasOwnProperty('uploaddate2') ||
+                state.searchTerms.hasOwnProperty('polyArr')
             ){
                 populated = true;
             }
@@ -158,8 +126,8 @@ const useSearchStore = Pinia.defineStore('search', {
     actions: {
         addRecordToSelections(record) {
             this.selections.push(record);
-            this.selectionsIds.push(Number(record.siteid));
-            const currentRecord = this.searchRecordData.find(obj => Number(obj['siteid']) === Number(record.siteid));
+            this.selectionsIds.push(Number(record.occid));
+            const currentRecord = this.searchRecordData.find(obj => Number(obj['occid']) === Number(record.occid));
             if(currentRecord){
                 currentRecord.selected = true;
             }
@@ -171,7 +139,13 @@ const useSearchStore = Pinia.defineStore('search', {
             for(const key in this.searchTerms){
                 delete this.searchTerms[key];
             }
-            this.searchTerms['surveyonly'] = false;
+            this.searchTerms['othercatnum'] = true;
+            this.searchTerms['typestatus'] = false;
+            this.searchTerms['hasaudio'] = false;
+            this.searchTerms['hasimages'] = false;
+            this.searchTerms['hasvideo'] = false;
+            this.searchTerms['hasmedia'] = false;
+            this.searchTerms['hasgenetic'] = false;
             this.updateLocalStorageSearchTerms();
         },
         clearSelections() {
@@ -181,17 +155,17 @@ const useSearchStore = Pinia.defineStore('search', {
                 record.selected = false;
             });
         },
-        copySearchUrlToClipboard(){
+        copySearchUrlToClipboard(index){
             const currentSearchTerms = Object.assign({}, this.getSearchTerms);
-            currentSearchTerms.recordPage = this.recordsPageNumber;
+            currentSearchTerms.recordPage = index;
             const searchTermsJson = JSON.stringify(currentSearchTerms);
             let copyUrl = window.location.href + '?starr=' + searchTermsJson.replaceAll("'", '%squot;');
             navigator.clipboard.writeText(copyUrl).then();
         },
         deselectAllCurrentRecords() {
             this.searchRecordData.forEach((record) => {
-                if(this.selectionsIds.indexOf(Number(record.siteid)) > -1){
-                    this.removeRecordFromSelections(Number(record.siteid));
+                if(this.selectionsIds.indexOf(Number(record.occid)) > -1){
+                    this.removeRecordFromSelections(Number(record.occid));
                 }
             });
         },
@@ -224,7 +198,7 @@ const useSearchStore = Pinia.defineStore('search', {
             const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
             const newSearchTerms = JSON.parse(json);
             if(newSearchTerms.hasOwnProperty('recordPage')){
-                this.recordsPageNumber = newSearchTerms.recordPage;
+                this.searchTermsPageNumber = newSearchTerms.recordPage;
                 delete newSearchTerms['recordPage'];
             }
             this.searchTerms = Object.assign({}, newSearchTerms);
@@ -258,7 +232,7 @@ const useSearchStore = Pinia.defineStore('search', {
                     formData.append('dh-taxatype', settings.taxaType.toString());
                 }
                 formData.append('action', 'downloadsearchdata');
-                fetch(searchApiUrl, {
+                fetch(searchServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -278,11 +252,97 @@ const useSearchStore = Pinia.defineStore('search', {
                 });
             }
         },
-        processGetQueryRecCnt(solrMode, callback){
+        processSearch(options, callback){
+            const formData = new FormData();
+            formData.append('starr', this.getSearchTermsJson);
+            if(this.baseStore.getSolrMode){
+                let startindex = 0;
+                if(index > 0) {
+                    startindex = index * options.numRows;
+                }
+                formData.append('rows', options.numRows.toString());
+                formData.append('start', startindex.toString());
+                formData.append('fl', this.getSOLRFields);
+                formData.append('wt', 'geojson');
+                fetch(solrConnectorUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    callback(data, options.index, options.numRows);
+                });
+            }
+            else{
+                formData.append('options', JSON.stringify(options));
+                formData.append('action', 'processSearch');
+                fetch(searchServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    callback(data, options.index, options.numRows);
+                });
+            }
+        },
+        processSimpleSearch(starr, options, callback){
+            const formData = new FormData();
+            formData.append('starr', JSON.stringify(starr));
+            formData.append('options', JSON.stringify(options));
+            formData.append('action', 'processSearch');
+            fetch(searchServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
+        },
+        redirectWithQueryId(url) {
+            const baseStore = useBaseStore();
+            window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId;
+        },
+        removeRecordFromSelections(id) {
+            const selObj = this.selections.find(obj => Number(obj['occid']) === Number(id));
+            const selObjIndex = this.selections.indexOf(selObj);
+            this.selections.splice(selObjIndex, 1);
+            const selObjIdIndex = this.selectionsIds.indexOf(Number(id));
+            this.selectionsIds.splice(selObjIdIndex, 1);
+            const currentRecord = this.searchRecordData.find(obj => Number(obj['occid']) === Number(id));
+            if(currentRecord){
+                currentRecord.selected = false;
+            }
+        },
+        selectAllCurrentRecords() {
+            this.searchRecordData.forEach((record) => {
+                if(this.selectionsIds.indexOf(Number(record.occid)) < 0){
+                    this.addRecordToSelections(record);
+                }
+            });
+        },
+        setLocalStorageSearchTerms() {
+            const blankSearchTerms = {};
+            blankSearchTerms[this.dateId.toString()] = {};
+            localStorage.setItem('searchTermsArr', JSON.stringify(blankSearchTerms));
+        },
+        setQueryIdInLocalStorageSearchTerms(queryId) {
+            const stArr = JSON.parse(localStorage['searchTermsArr']);
+            stArr[this.dateId.toString()][queryId.toString()] = {};
+            localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
+        },
+        setSearchRecCnt(options, callback){
             this.queryRecCnt = 0;
             const formData = new FormData();
             formData.append('starr', this.getSearchTermsJson);
-            if(solrMode){
+            if(this.baseStore.getSolrMode){
                 formData.append('rows', '0');
                 formData.append('start', '0');
                 formData.append('wt', 'json');
@@ -299,8 +359,9 @@ const useSearchStore = Pinia.defineStore('search', {
                 });
             }
             else{
-                formData.append('action', 'getQueryRecCnt');
-                fetch(searchApiUrl, {
+                formData.append('options', JSON.stringify(options));
+                formData.append('action', 'getSearchRecCnt(');
+                fetch(searchServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -313,100 +374,14 @@ const useSearchStore = Pinia.defineStore('search', {
                 });
             }
         },
-        processGetQueryResultsGeoJson(solrMode, index, finalIndex, callback){
-            let startindex = 0;
-            if(index > 0) {
-                startindex = index * this.lazyLoadCnt;
-            }
-            const formData = new FormData();
-            formData.append('starr', this.getSearchTermsJson);
-            formData.append('rows', this.lazyLoadCnt.toString());
-            formData.append('start', startindex.toString());
-            if(solrMode){
-                formData.append('fl', this.getSOLRFields);
-                formData.append('wt', 'geojson');
-                fetch(solrConnectorUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    callback(res, index, finalIndex);
-                });
-            }
-            else{
-                formData.append('action', 'getQueryResultsGeoJson');
-                fetch(searchApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    callback(res, index, finalIndex);
-                });
-            }
-        },
-        processGetQueryResultsRecordData(index){
-            this.searchRecordData = [];
-            const formData = new FormData();
-            formData.append('starr', this.getSearchTermsJson);
-            formData.append('cntperpage', this.recordsLazyLoadCnt.toString());
-            formData.append('index', index.toString());
-            formData.append('action', 'getQueryResultsRecordData');
-            fetch(searchApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.searchRecordData = this.setSelectedRecords(data);
-                this.recordsPageNumber = Number(index);
+        setSearchRecordData(options) {
+            this.processSearch(options, (res) => {
+                this.searchRecordData = this.setSelectedRecords(res);
             });
-        },
-        redirectWithQueryId(url) {
-            const baseStore = useBaseStore();
-            window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId;
-        },
-        removeRecordFromSelections(id) {
-            const selObj = this.selections.find(obj => Number(obj['siteid']) === Number(id));
-            const selObjIndex = this.selections.indexOf(selObj);
-            this.selections.splice(selObjIndex, 1);
-            const selObjIdIndex = this.selectionsIds.indexOf(Number(id));
-            this.selectionsIds.splice(selObjIdIndex, 1);
-            const currentRecord = this.searchRecordData.find(obj => Number(obj['siteid']) === Number(id));
-            if(currentRecord){
-                currentRecord.selected = false;
-            }
-        },
-        selectAllCurrentRecords() {
-            this.searchRecordData.forEach((record) => {
-                if(this.selectionsIds.indexOf(Number(record.siteid)) < 0){
-                    this.addRecordToSelections(record);
-                }
-            });
-        },
-        setLocalStorageSearchTerms() {
-            const blankSearchTerms = {};
-            blankSearchTerms[this.dateId.toString()] = {};
-            localStorage.setItem('searchTermsArr', JSON.stringify(blankSearchTerms));
-        },
-        setQueryIdInLocalStorageSearchTerms(queryId) {
-            const stArr = JSON.parse(localStorage['searchTermsArr']);
-            stArr[this.dateId.toString()][queryId.toString()] = {};
-            localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
-        },
-        setRecordsLazyLoadCnt(val) {
-            this.recordsLazyLoadCnt = Number(val);
         },
         setSelectedRecords(recordArr) {
             recordArr.forEach((record) => {
-                record.selected = (this.selectionsIds.indexOf(Number(record.siteid)) > -1);
+                record.selected = (this.selectionsIds.indexOf(Number(record.occid)) > -1);
             });
             return recordArr;
         },

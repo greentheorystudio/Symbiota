@@ -1,9 +1,8 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
-include_once(__DIR__ . '/OccurrenceDuplicate.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
-include_once(__DIR__ . '/Mailer.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/MailerService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceIndividualManager extends Manager{
 
@@ -22,7 +21,7 @@ class OccurrenceIndividualManager extends Manager{
     {
         if($this->collid){
             $sql = 'SELECT institutioncode, collectioncode, collectionname, homepage, individualurl, contact, email, icon, '.
-                'publicedits, rights, rightsholder, accessrights, guidtarget '.
+                'rights, rightsholder, accessrights, guidtarget '.
                 'FROM omcollections WHERE collid = '.$this->collid;
             $rs = $this->conn->query($sql);
             if($rs){
@@ -38,7 +37,7 @@ class OccurrenceIndividualManager extends Manager{
     }
 
     public function setGuid($guid){
-        $guid = Sanitizer::cleanInStr($this->conn,$guid);
+        $guid = SanitizerService::cleanInStr($this->conn,$guid);
         if(!$this->occid){
             $sql = 'SELECT occid FROM guidoccurrences WHERE guid = "'.$guid.'"';
             $rs = $this->conn->query($sql);
@@ -220,7 +219,7 @@ class OccurrenceIndividualManager extends Manager{
             'FROM users u ORDER BY u.lastname, u.firstname ';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $retArr[$row->uid] = Sanitizer::cleanOutStr($row->fullname);
+            $retArr[$row->uid] = SanitizerService::cleanOutStr($row->fullname);
         }
         $result->close();
         return $retArr;
@@ -231,7 +230,7 @@ class OccurrenceIndividualManager extends Manager{
         $sql = 'SELECT detid, dateidentified, identifiedby, sciname, scientificnameauthorship, identificationqualifier, '.
             'identificationreferences, identificationremarks '.
             'FROM omoccurdeterminations '.
-            'WHERE (occid = '.$this->occid.') AND appliedstatus = 1 '.
+            'WHERE (occid = '.$this->occid.') '.
             'ORDER BY sortsequence';
         $result = $this->conn->query($sql);
         if($result){
@@ -280,121 +279,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $rs->free();
         }
-    }
-
-    public function getDuplicateArr(){
-        $dupManager = new OccurrenceDuplicate();
-        $retArr = $dupManager->getClusterArr($this->occid);
-        if($retArr){
-            unset($retArr[$this->occid]);
-        }
-        return $retArr;
-    }
-
-    public function getCommentArr($isEditor): array
-    {
-        $retArr = array();
-        $sql = 'SELECT c.comid, c.comment, u.username, c.reviewstatus, c.initialtimestamp '.
-            'FROM omoccurcomments c INNER JOIN users u ON c.uid = u.uid '.
-            'WHERE (c.occid = '.$this->occid.') ';
-        if(!$isEditor) {
-            $sql .= 'AND c.reviewstatus IN(1,3) ';
-        }
-        $sql .= 'ORDER BY c.initialtimestamp';
-        //echo $sql.'<br/><br/>';
-        $result = $this->conn->query($sql);
-        if($result){
-            while($row = $result->fetch_object()){
-                $comId = $row->comid;
-                $retArr[$comId]['comment'] = $row->comment;
-                $retArr[$comId]['reviewstatus'] = $row->reviewstatus;
-                $retArr[$comId]['username'] = $row->username;
-                $retArr[$comId]['initialtimestamp'] = $row->initialtimestamp;
-            }
-            $result->free();
-        }
-        return $retArr;
-    }
-
-    public function addComment($commentStr): bool
-    {
-        $status = false;
-        if($GLOBALS['SYMB_UID']){
-            $sql = 'INSERT INTO omoccurcomments(occid,comment,uid,reviewstatus) '.
-                'VALUES('.$this->occid.',"'.Sanitizer::cleanInStr($this->conn,$commentStr).'",'.$GLOBALS['SYMB_UID'].',1)';
-            //echo 'sql: '.$sql;
-            if($this->conn->query($sql)){
-                $status = true;
-            }
-            else{
-                $status = false;
-                $this->errorMessage = 'ERROR adding comment.';
-            }
-            $this->conn->close();
-        }
-        return $status;
-    }
-
-    public function deleteComment($comId): bool
-    {
-        $status = true;
-        if(is_numeric($comId)){
-            $sql = 'DELETE FROM omoccurcomments WHERE comid = '.$comId;
-            if(!$this->conn->query($sql)){
-                $status = false;
-                $this->errorMessage = 'ERROR deleting comment.';
-            }
-        }
-        $this->conn->close();
-        return $status;
-    }
-
-    public function reportComment($repComId): bool
-    {
-        if($GLOBALS['EMAIL_CONFIGURED'] && isset($GLOBALS['ADMIN_EMAIL']) && $GLOBALS['ADMIN_EMAIL']){
-            $status = true;
-            if(!is_numeric($repComId)) {
-                return false;
-            }
-            if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 2 WHERE comid = '.$repComId)){
-                $this->errorMessage = 'ERROR changing comment status to needing review.';
-                $status = false;
-            }
-            $this->conn->close();
-
-            $emailAddr = $GLOBALS['ADMIN_EMAIL'];
-            $comUrl = $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
-            $subject = $GLOBALS['DEFAULT_TITLE'].' inappropriate comment reported<br/>';
-            $bodyStr = 'The following comment has been reported as inappropriate:<br/> '.
-                '<a href="'.$comUrl.'">'.$comUrl.'</a>';
-            $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
-            if($mailerResult !== 'Sent'){
-                $this->errorMessage = 'ERROR sending email to portal manager, error unknown';
-                $status = false;
-            }
-        }
-        else{
-            $this->errorMessage = 'Email has not been configured on this portal. ';
-            if(isset($GLOBALS['ADMIN_EMAIL']) && $GLOBALS['ADMIN_EMAIL']){
-                $this->errorMessage .= 'Please contact portal administrator at: ' . $GLOBALS['ADMIN_EMAIL'];
-            }
-            $status = false;
-        }
-        return $status;
-    }
-
-    public function makeCommentPublic($comId): bool
-    {
-        $status = true;
-        if(!is_numeric($comId)) {
-            return false;
-        }
-        if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 1 WHERE comid = '.$comId)){
-            $this->errorMessage = 'ERROR making comment public.';
-            $status = false;
-        }
-        $this->conn->close();
-        return $status;
     }
 
     public function getGeneticArr(): array
@@ -528,8 +412,8 @@ class OccurrenceIndividualManager extends Manager{
         if($this->occid && $postArr['vtid'] && is_numeric($postArr['vclid']) && is_numeric($postArr['vtid'])){
             $sql = 'INSERT INTO fmvouchers(occid,clid,tid,notes,editornotes) '.
                 'VALUES('.$this->occid.','.(int)$postArr['vclid'].','.($postArr['vtid']?(int)$postArr['vtid']:'NULL').','.
-                ($postArr['vnotes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['vnotes']).'"':'NULL').','.
-                ($postArr['veditnotes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['veditnotes']).'"':'NULL').')';
+                ($postArr['vnotes']?'"'.SanitizerService::cleanInStr($this->conn,$postArr['vnotes']).'"':'NULL').','.
+                ($postArr['veditnotes']?'"'.SanitizerService::cleanInStr($this->conn,$postArr['veditnotes']).'"':'NULL').')';
             if(!$this->conn->query($sql)){
                 $this->errorMessage = 'ERROR linking voucher to checklist.';
                 $status = false;
@@ -623,7 +507,7 @@ class OccurrenceIndividualManager extends Manager{
                     $dsName = substr($dsName, 0, 100);
                 }
                 $sql1 = 'INSERT INTO omoccurdatasets(name,uid,collid) '.
-                    'VALUES("'.Sanitizer::cleanInStr($this->conn,$dsName).'",'.$GLOBALS['SYMB_UID'].','.$this->collid.')';
+                    'VALUES("'.SanitizerService::cleanInStr($this->conn,$dsName).'",'.$GLOBALS['SYMB_UID'].','.$this->collid.')';
                 if($this->conn->query($sql1)){
                     $dsid = $this->conn->insert_id;
                 }
@@ -634,7 +518,7 @@ class OccurrenceIndividualManager extends Manager{
             }
             if($dsid && is_numeric($dsid)){
                 $sql2 = 'INSERT INTO omoccurdatasetlink(datasetid,occid,notes) '.
-                    'VALUES('.$dsid.','.$this->occid.',"'.Sanitizer::cleanInStr($this->conn,$notes).'")';
+                    'VALUES('.$dsid.','.$this->occid.',"'.SanitizerService::cleanInStr($this->conn,$notes).'")';
                 if(!$this->conn->query($sql2)){
                     $this->errorMessage = 'ERROR linking to dataset.';
                     $status = false;
@@ -730,10 +614,10 @@ class OccurrenceIndividualManager extends Manager{
                     if($tok && (count($tok) > 1) && strlen($tok[0]) > 2) {
                         $taxon = $tok[0];
                     }
-                    $sql .= 'AND (t.sciname = "'.Sanitizer::cleanInStr($this->conn,$taxon).'") ';
+                    $sql .= 'AND (t.sciname = "'.SanitizerService::cleanInStr($this->conn,$taxon).'") ';
                 }
                 elseif($this->occArr['family']){
-                    $sql .= 'AND (t.sciname = "'.Sanitizer::cleanInStr($this->conn,$this->occArr['family']).'") ';
+                    $sql .= 'AND (t.sciname = "'.SanitizerService::cleanInStr($this->conn,$this->occArr['family']).'") ';
                 }
             }
             if($sql){
