@@ -465,8 +465,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                     <select name="datarecordingmethod" id="datarecordingmethod" onchange="processDataCollectionMethodChange();">
                                         <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'specimen'?'SELECTED':''); ?>>Specimen</option>
                                         <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'observation'?'SELECTED':''); ?>>Observation</option>
-                                        <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'image'?'SELECTED':''); ?>>Image</option>
                                         <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'skeletal'?'SELECTED':''); ?>>Skeletal</option>
+                                        <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'lot'?'SELECTED':''); ?>>Lot</option>
                                         <option value="benthic" <?php echo ($collid && $collData['datarecordingmethod'] === 'benthic'?'SELECTED':''); ?>>Benthic</option>
                                     </select>
                                 </span>

@@ -13,6 +13,7 @@ const occurrenceEntryFormatSelector = {
             {value: 'specimen', label: 'Specimen'},
             {value: 'observation', label: 'Observation'},
             {value: 'skeletal', label: 'Skeletal'},
+            {value: 'lot', label: 'Lot'},
             {value: 'benthic', label: 'Benthic'}
         ];
         const propsRefs = Vue.toRefs(props);
