@@ -15,7 +15,7 @@ const copyURLButton = {
         </div>
     `,
     setup() {
-        const searchStore = Vue.inject('searchStore');
+        const searchStore = useSearchStore();
 
         return {
             copySearchUrlToClipboard: searchStore.copySearchUrlToClipboard

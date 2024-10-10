@@ -249,7 +249,7 @@ const occurrenceEditorImageTranscriberPopup = {
     },
     setup(props, context) {
         const baseStore = useBaseStore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const clientRoot = baseStore.getClientRoot;
         const contentRef = Vue.ref(null);

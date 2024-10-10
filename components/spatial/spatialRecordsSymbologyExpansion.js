@@ -31,7 +31,8 @@ const spatialRecordsSymbologyExpansion = {
         'spatial-symbology-tab': spatialSymbologyTab
     },
     setup() {
-        const searchStore = Vue.inject('searchStore');
+        const searchStore = useSearchStore();
+
         const mapSettings = Vue.inject('mapSettings');
         const selections = searchStore.getSelections;
 

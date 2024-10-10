@@ -206,7 +206,7 @@ const occurrenceCollectingEventListPopup = {
         </q-dialog>
     `,
     setup(props, context) {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);

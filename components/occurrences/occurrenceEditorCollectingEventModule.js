@@ -85,7 +85,7 @@ const occurrenceEditorCollectingEventModule = {
     },
     setup() {
         const { showNotification } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const collectingEventBenthicData = Vue.computed(() => occurrenceStore.getCollectingEventBenthicData);
         const collectingEventBenthicTaxaCnt = Vue.computed(() => occurrenceStore.getCollectingEventBenthicTaxaCnt);

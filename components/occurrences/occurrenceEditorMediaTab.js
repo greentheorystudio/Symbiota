@@ -33,7 +33,7 @@ const occurrenceEditorMediaTab = {
         'media-file-upload-input-element': mediaFileUploadInputElement
     },
     setup() {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const collectionData = Vue.computed(() => occurrenceStore.getCollectionData);
         const collId = Vue.computed(() => occurrenceStore.getCollId);

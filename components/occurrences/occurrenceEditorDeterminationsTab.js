@@ -31,7 +31,7 @@ const occurrenceEditorDeterminationsTab = {
         'occurrence-determination-editor-popup': occurrenceDeterminationEditorPopup
     },
     setup() {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const determinationArr = Vue.computed(() => occurrenceStore.getDeterminationArr);
         const editDeterminationId = Vue.ref(0);

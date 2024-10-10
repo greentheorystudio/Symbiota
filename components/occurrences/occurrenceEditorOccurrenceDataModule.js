@@ -69,7 +69,7 @@ const occurrenceEditorOccurrenceDataModule = {
         'occurrence-editor-record-footer-element': occurrenceEditorRecordFooterElement
     },
     setup() {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);

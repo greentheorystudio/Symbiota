@@ -149,7 +149,7 @@ const collectingEventFieldModule = {
         'time-input-element': timeInputElement
     },
     setup(props, context) {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
         const propsRefs = Vue.toRefs(props);

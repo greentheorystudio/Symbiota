@@ -51,7 +51,7 @@ const occurrenceEditorAssociatedTaxaToolPopup = {
         </q-dialog>
     `,
     setup(props, context) {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const associatedTaxaStr = Vue.ref(null);
         const contentRef = Vue.ref(null);

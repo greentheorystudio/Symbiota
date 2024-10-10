@@ -64,7 +64,7 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
         </q-dialog>
     `,
     setup(props, context) {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const benthicData = Vue.computed(() => occurrenceStore.getCollectingEventBenthicData);
         const contentRef = Vue.ref(null);

@@ -244,7 +244,7 @@ const locationFieldModule = {
     },
     setup(props, context) {
         const { showNotification } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const coordinateUncertaintyInMetersValue = Vue.ref(null);
         const decimalLatitudeValue = Vue.ref(null);

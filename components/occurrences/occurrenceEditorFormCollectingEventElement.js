@@ -29,7 +29,7 @@ const occurrenceEditorFormCollectingEventElement = {
     },
     setup() {
         const { showNotification } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const collectingEventArr = Vue.ref([]);
         const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectingEventAutoSearch);

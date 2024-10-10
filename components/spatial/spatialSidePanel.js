@@ -71,7 +71,7 @@ const spatialSidePanel = {
     },
     setup(props) {
         const { height } = Quasar.dom;
-        const searchStore = Vue.inject('searchStore');
+        const searchStore = useSearchStore();
         const contentContainerRef = Vue.ref(null);
         const criteriaExpanded = Vue.ref(false);
         const expansionCardStyle = Vue.ref('');

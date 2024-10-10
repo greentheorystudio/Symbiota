@@ -9,7 +9,7 @@ const listDisplayButton = {
         </div>
     `,
     setup() {
-        const searchStore = Vue.inject('searchStore');
+        const searchStore = useSearchStore();
 
         return {
             redirectWithQueryId: searchStore.redirectWithQueryId

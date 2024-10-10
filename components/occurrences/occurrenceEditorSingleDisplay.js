@@ -109,7 +109,7 @@ const occurrenceEditorSingleDisplay = {
     },
     setup() {
         const baseStore = useBaseStore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const clientRoot = baseStore.getClientRoot;
         const collId = Vue.computed(() => occurrenceStore.getCollId);
