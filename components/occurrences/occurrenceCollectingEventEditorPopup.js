@@ -47,7 +47,7 @@ const occurrenceCollectingEventEditorPopup = {
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);

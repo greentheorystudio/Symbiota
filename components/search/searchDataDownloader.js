@@ -24,7 +24,8 @@ const searchDataDownloader = {
         </div>
     `,
     setup(props) {
-        const searchStore = Vue.inject('searchStore');
+        const searchStore = useSearchStore();
+
         const selectedOption = Vue.ref(null);
         const selectorOptions = [
             {value: 'csv', label: 'CSV'},

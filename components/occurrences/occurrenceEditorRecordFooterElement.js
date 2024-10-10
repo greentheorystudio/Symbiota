@@ -22,7 +22,7 @@ const occurrenceEditorRecordFooterElement = {
         </div>
     `,
     setup() {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
 

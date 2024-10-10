@@ -2448,11 +2448,9 @@ const spatialAnalysisModule = {
         Vue.provide('removeLayerFromRasterLayersArr', removeLayerFromRasterLayersArr);
         Vue.provide('removeUserLayer', removeUserLayer);
         Vue.provide('resetSymbology', resetSymbology);
-        Vue.provide('searchStore', searchStore);
         Vue.provide('selectInteraction', selectInteraction);
         Vue.provide('setLayersOrder', setLayersOrder);
         Vue.provide('showPopup', showPopup);
-        Vue.provide('spatialStore', spatialStore);
         Vue.provide('symbologyArr', symbologyArr);
         Vue.provide('updateMapSettings', updateMapSettings);
         Vue.provide('updatePointStyle', updatePointStyle);

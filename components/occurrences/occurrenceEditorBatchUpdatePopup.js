@@ -20,7 +20,7 @@ const occurrenceEditorBatchUpdatePopup = {
         </q-dialog>
     `,
     setup() {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const changeBatchUpdatePopupDisplay = Vue.inject('changeBatchUpdatePopupDisplay');
         

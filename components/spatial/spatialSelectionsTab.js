@@ -75,7 +75,7 @@ const spatialSelectionsTab = {
         'table-display-button': tableDisplayButton
     },
     setup() {
-        const searchStore = Vue.inject('searchStore');
+        const searchStore = useSearchStore();
 
         const checkboxValue = Vue.ref(true);
         const columns = [

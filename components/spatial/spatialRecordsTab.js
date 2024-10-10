@@ -95,7 +95,7 @@ const spatialRecordsTab = {
         'table-display-button': tableDisplayButton
     },
     setup() {
-        const searchStore = Vue.inject('searchStore');
+        const searchStore = useSearchStore();
 
         const columns = [
             { name: 'siteId', label: 'Site ID', field: 'siteid' },

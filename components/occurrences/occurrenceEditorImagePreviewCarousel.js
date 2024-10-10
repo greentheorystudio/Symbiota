@@ -12,7 +12,7 @@ const occurrenceEditorImagePreviewCarousel = {
     `,
     setup() {
         const baseStore = useBaseStore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const clientRoot = baseStore.getClientRoot;
         const currentImage = Vue.ref(null);

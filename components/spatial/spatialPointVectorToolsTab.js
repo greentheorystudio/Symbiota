@@ -56,7 +56,8 @@ const spatialPointVectorToolsTab = {
             {value: 'selected', label: 'Selected Points'}
         ];
 
-        const searchStore = Vue.inject('searchStore');
+        const searchStore = useSearchStore();
+
         const searchRecordCnt = Vue.computed(() => searchStore.getSearchRecCnt);
         const selectedScope = Vue.ref({value: 'all', label: 'All Points'});
         const selections = searchStore.getSelections;

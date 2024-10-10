@@ -78,7 +78,7 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);

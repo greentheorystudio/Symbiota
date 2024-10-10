@@ -36,7 +36,7 @@ const spatialSymbologyTab = {
         'color-picker': colorPicker
     },
     setup() {
-        const spatialStore = Vue.inject('spatialStore');
+        const spatialStore = useSpatialStore();
 
         const mapSettings = Vue.inject('mapSettings');
         const selectedSymbologyOption = Vue.ref(null);

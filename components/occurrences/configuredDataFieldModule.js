@@ -29,7 +29,7 @@ const configuredDataFieldModule = {
     },
     setup() {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const configuredData = Vue.computed(() => occurrenceStore.getConfiguredData);
         const configuredEditData = Vue.ref({});

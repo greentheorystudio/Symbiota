@@ -52,7 +52,7 @@ const occurrenceEditorFormCurationElement = {
     },
     setup() {
         const baseStore = useBaseStore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceFields = Vue.inject('occurrenceFields');

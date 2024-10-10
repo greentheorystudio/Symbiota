@@ -87,7 +87,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const benthicData = Vue.computed(() => occurrenceStore.getCollectingEventBenthicData);
         const confirmationPopupRef = Vue.ref(null);

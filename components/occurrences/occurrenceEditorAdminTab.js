@@ -100,7 +100,7 @@ const occurrenceEditorAdminTab = {
         const { showNotification } = useCore();
         const baseStore = useBaseStore();
         const collectionStore = useCollectionStore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const checklistArr = Vue.computed(() => occurrenceStore.getChecklistArr);
         const clientRoot = baseStore.getClientRoot;

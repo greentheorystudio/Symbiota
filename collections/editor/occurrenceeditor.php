@@ -181,7 +181,6 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                     Vue.provide('changeBatchUpdatePopupDisplay', changeBatchUpdatePopupDisplay);
                     Vue.provide('changeQueryPopupDisplay', changeQueryPopupDisplay);
                     Vue.provide('displayQueryPopupButton', displayQueryPopupButton);
-                    Vue.provide('occurrenceStore', occurrenceStore);
                     Vue.provide('validateCoordinates', validateCoordinates);
 
                     Vue.onMounted(() => {

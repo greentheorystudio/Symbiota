@@ -35,7 +35,7 @@ const occurrenceEditorGeneticLinkModule = {
         'occurrence-genetic-record-linkage-editor-popup': occurrenceGeneticRecordLinkageEditorPopup
     },
     setup() {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const geneticLinkageArr = Vue.computed(() => occurrenceStore.getGeneticLinkArr);
         const editGeneticLinkageId = Vue.ref(0);
