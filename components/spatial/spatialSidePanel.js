@@ -2,7 +2,7 @@ const spatialSidePanel = {
     props: {
         expandedElement: {
             type: String,
-            default: 'criteria'
+            default: 'vector'
         },
         showPanel: {
             type: Boolean,
@@ -20,13 +20,6 @@ const spatialSidePanel = {
                     </template>
                     <template v-else>
                         <q-list bordered>
-                            <q-expansion-item v-model="criteriaExpanded" group="sidepanelexpansiongroup" label="Search Criteria" header-class="bg-grey-3 text-bold" @before-show="() => processExpand('criteria')">
-                                <q-card class="scroll" :style="expansionCardStyle">
-                                    <q-card-section class="q-pa-none">
-                                        <spatial-search-criteria-expansion></spatial-search-criteria-expansion>
-                                    </q-card-section>
-                                </q-card>
-                            </q-expansion-item>
                             <template v-if="searchRecordCnt > 0">
                                 <q-separator ></q-separator>
                                 <q-expansion-item v-model="recordsExpanded" group="sidepanelexpansiongroup" label="Records and Symbology" header-class="bg-grey-3 text-bold" @before-show="() => processExpand('records')">
@@ -65,7 +58,6 @@ const spatialSidePanel = {
     components: {
         'spatial-raster-tools-expansion': spatialRasterToolsExpansion,
         'spatial-records-symbology-expansion': spatialRecordsSymbologyExpansion,
-        'spatial-search-criteria-expansion': spatialSearchCriteriaExpansion,
         'spatial-vector-tools-expansion': spatialVectorToolsExpansion,
         'spatial-vector-tools-tab': spatialVectorToolsTab
     },
@@ -73,7 +65,6 @@ const spatialSidePanel = {
         const { height } = Quasar.dom;
         const searchStore = useSearchStore();
         const contentContainerRef = Vue.ref(null);
-        const criteriaExpanded = Vue.ref(false);
         const expansionCardStyle = Vue.ref('');
         const expansionTabCardStyle = Vue.ref('');
         const inputWindowMode = Vue.inject('inputWindowMode');
@@ -100,7 +91,6 @@ const spatialSidePanel = {
         }
 
         function setExpandedElement() {
-            criteriaExpanded.value = (mapSettings.sidePanelExpandedElement === 'criteria');
             recordsExpanded.value = (mapSettings.sidePanelExpandedElement === 'records');
             vectorExpanded.value = (mapSettings.sidePanelExpandedElement === 'vector');
             rasterExpanded.value = (mapSettings.sidePanelExpandedElement === 'raster');
@@ -141,7 +131,6 @@ const spatialSidePanel = {
 
         return {
             contentContainerRef,
-            criteriaExpanded,
             expansionCardStyle,
             expansionTabCardStyle,
             inputWindowMode,

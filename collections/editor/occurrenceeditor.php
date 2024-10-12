@@ -50,7 +50,6 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
             <template v-else>
                 <occurrence-editor-table-display></occurrence-editor-table-display>
             </template>
-            <search-criteria-popup :show-popup="displayQueryPopup"></search-criteria-popup>
             <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup"></occurrence-editor-batch-update-popup>
             <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
         </div>
@@ -134,8 +133,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                     'confirmation-popup': confirmationPopup,
                     'occurrence-editor-batch-update-popup': occurrenceEditorBatchUpdatePopup,
                     'occurrence-editor-single-display': occurrenceEditorSingleDisplay,
-                    'occurrence-editor-table-display': occurrenceEditorTableDisplay,
-                    'search-criteria-popup': searchCriteriaPopup
+                    'occurrence-editor-table-display': occurrenceEditorTableDisplay
                 },
                 setup() {
                     const { showNotification } = useCore();
@@ -145,7 +143,6 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                     const clientRoot = baseStore.getClientRoot;
                     const confirmationPopupRef = Vue.ref(null);
                     const displayBatchUpdatePopup = Vue.ref(false);
-                    const displayQueryPopup = Vue.ref(false);
                     const displayQueryPopupButton = Vue.ref(true);
                     const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
                     const initialCollId = COLLID;
@@ -154,10 +151,6 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 
                     function changeBatchUpdatePopupDisplay(value) {
                         displayBatchUpdatePopup.value = value;
-                    }
-
-                    function changeQueryPopupDisplay(value) {
-                        displayQueryPopup.value = value;
                     }
 
                     function validateCoordinates() {
@@ -179,7 +172,6 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                     }
 
                     Vue.provide('changeBatchUpdatePopupDisplay', changeBatchUpdatePopupDisplay);
-                    Vue.provide('changeQueryPopupDisplay', changeQueryPopupDisplay);
                     Vue.provide('displayQueryPopupButton', displayQueryPopupButton);
                     Vue.provide('validateCoordinates', validateCoordinates);
 
@@ -204,8 +196,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
                     return {
                         confirmationPopupRef,
                         displayBatchUpdatePopup,
-                        displayMode,
-                        displayQueryPopup
+                        displayMode
                     }
                 }
             });

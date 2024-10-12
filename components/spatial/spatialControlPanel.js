@@ -24,7 +24,14 @@ const spatialControlPanel = {
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                 </div>
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="exportMapPNG();" label="Download Map Image" dense />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search Records" dense />
+                                </div>
+                                <div>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="image" dense @click="exportMapPNG();">
+                                        <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Download Map Image
+                                        </q-tooltip>
+                                    </q-btn>
                                 </div>
                                 <template v-if="!inputWindowMode">
                                     <div>
@@ -102,7 +109,14 @@ const spatialControlPanel = {
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="exportMapPNG();" label="Download Map Image" dense />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search Records" dense />
+                                    </div>
+                                    <div>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="image" dense @click="exportMapPNG();">
+                                            <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                Download Map Image
+                                            </q-tooltip>
+                                        </q-btn>
                                     </div>
                                     <div>
                                         <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');"></q-btn>
@@ -135,6 +149,9 @@ const spatialControlPanel = {
                                 <spatial-active-layer-selector></spatial-active-layer-selector>
                             </div>
                             <template v-if="!inputWindowMode">
+                                <div>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search Records" dense />
+                                </div>
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense />
                                 </div>
@@ -171,11 +188,12 @@ const spatialControlPanel = {
                 </div>
             </div>
         </template>
-
         <spatial-map-settings-popup></spatial-map-settings-popup>
         <spatial-info-window-popup></spatial-info-window-popup>
+        <search-criteria-popup :show-popup="displayQueryPopup" @close:popup="displayQueryPopup = false"></search-criteria-popup>
     `,
     components: {
+        'search-criteria-popup': searchCriteriaPopup,
         'spatial-active-layer-selector': spatialActiveLayerSelector,
         'spatial-base-layer-selector': spatialBaseLayerSelector,
         'spatial-control-panel-top-show-button': spatialControlPanelTopShowButton,
@@ -184,6 +202,7 @@ const spatialControlPanel = {
         'spatial-map-settings-popup': spatialMapSettingsPopup
     },
     setup() {
+        const displayQueryPopup = Vue.ref(false);
         const inputWindowMode = Vue.inject('inputWindowMode');
         const inputWindowToolsArr = Vue.inject('inputWindowToolsArr');
         const map = Vue.inject('map');
@@ -358,6 +377,7 @@ const spatialControlPanel = {
         }
 
         return {
+            displayQueryPopup,
             inputWindowMode,
             inputWindowToolsArr,
             mapSettings,
