@@ -30,14 +30,8 @@ const collectingEventFieldModule = {
             <div class="col-12 col-sm-6 col-md-grow">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordedby']" label="Collector/Observer" :maxlength="fields['recordedby'] ? fields['recordedby']['length'] : 0" :value="data.recordedby" @update:value="(value) => updateData('recordedby', value)"></text-field-input-element>
             </div>
-            <div class="col-12 col-sm-6 col-md-2">
+            <div class="col-12 col-sm-6 col-md-3">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordnumber']" label="Number" :maxlength="fields['recordnumber'] ? fields['recordnumber']['length'] : 0" :value="data.recordnumber" @update:value="(value) => updateData('recordnumber', value)"></text-field-input-element>
-            </div>
-            <div class="col-12 col-sm-6 col-md-2">
-                <date-input-element :disabled="disabled" :definition="fieldDefinitions['eventdate']" label="Date" :value="data.eventdate" @update:value="updateDateData"></date-input-element>
-            </div>
-            <div class="col-12 col-sm-6 col-md-2">
-                <time-input-element :disabled="disabled" :definition="fieldDefinitions['eventtime']" label="Time" :value="data.eventtime" @update:value="(value) => updateData('eventtime', value)"></time-input-element>
             </div>
             <div v-if="!eventMode && !autoSearch" class="row justify-end self-center">
                 <div>
@@ -46,10 +40,18 @@ const collectingEventFieldModule = {
             </div>
         </div>
         <div class="row justify-between q-col-gutter-sm">
-            <div class="col-12 col-sm-grow">
+            <div class="col-grow">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['associatedcollectors']" label="Associated Collectors" :maxlength="fields['associatedcollectors'] ? fields['associatedcollectors']['length'] : 0" :value="data.associatedcollectors" @update:value="(value) => updateData('associatedcollectors', value)"></text-field-input-element>
             </div>
-            <div class="col-10 col-sm-3">
+        </div>
+        <div class="row justify-between q-col-gutter-sm">
+            <div class="col-12 col-sm-6 col-md-4">
+                <date-input-element :disabled="disabled" :definition="fieldDefinitions['eventdate']" label="Date" :value="data.eventdate" @update:value="updateDateData"></date-input-element>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <time-input-element :disabled="disabled" :definition="fieldDefinitions['eventtime']" label="Time" :value="data.eventtime" @update:value="(value) => updateData('eventtime', value)"></time-input-element>
+            </div>
+            <div class="col-10 col-sm-6 col-md-3">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimeventdate']" label="Verbatim Date" :maxlength="fields['verbatimeventdate'] ? fields['verbatimeventdate']['length'] : 0" :value="data.verbatimeventdate" @update:value="(value) => updateData('verbatimeventdate', value)"></text-field-input-element>
             </div>
             <div class="col-2 row justify-end q-col-gutter-sm self-center">

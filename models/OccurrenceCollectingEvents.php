@@ -157,7 +157,8 @@ class OccurrenceCollectingEvents{
     {
         $retArr = array();
         $sql = 'SELECT occid, sciname, identificationremarks, identificationqualifier, family, associatedtaxa, individualcount, '.
-            'lifestage, sex, occurrenceremarks, typestatus, reproductivecondition, establishmentmeans, dynamicproperties '.
+            'lifestage, sex, occurrenceremarks, typestatus, reproductivecondition, establishmentmeans, dynamicproperties, '.
+            'catalognumber, othercatalognumbers, basisofrecord, verbatimattributes '.
             'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
