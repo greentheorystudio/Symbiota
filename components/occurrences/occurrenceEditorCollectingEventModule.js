@@ -42,35 +42,35 @@ const occurrenceEditorCollectingEventModule = {
         </q-card>
         <template v-if="showCollectionListPopup">
             <occurrence-collection-list-popup
-                    :collection-arr="collectingEventCollectionArr"
-                    :show-popup="showCollectionListPopup"
-                    @close:popup="showCollectionListPopup = false"
+                :collection-arr="collectingEventCollectionArr"
+                :show-popup="showCollectionListPopup"
+                @close:popup="showCollectionListPopup = false"
             ></occurrence-collection-list-popup>
         </template>
         <template v-if="showBenthicTaxaListPopup">
             <occurrence-collecting-event-benthic-taxa-list-popup
-                    :show-popup="showBenthicTaxaListPopup"
-                    @update:edit-taxon="processEditTaxonRequest"
-                    @close:popup="showBenthicTaxaListPopup = false"
+                :show-popup="showBenthicTaxaListPopup"
+                @update:edit-taxon="processEditTaxonRequest"
+                @close:popup="showBenthicTaxaListPopup = false"
             ></occurrence-collecting-event-benthic-taxa-list-popup>
         </template>
         <template v-if="showBenthicTaxaEditorPopup">
             <occurrence-collecting-event-benthic-taxa-editor-popup
-                    :edit-taxon="editTaxonPopupTaxonData"
-                    :show-popup="showBenthicTaxaEditorPopup"
-                    @close:popup="closeBenthicTaxaEditorPopup();"
+                :edit-taxon="editTaxonPopupTaxonData"
+                :show-popup="showBenthicTaxaEditorPopup"
+                @close:popup="closeBenthicTaxaEditorPopup();"
             ></occurrence-collecting-event-benthic-taxa-list-popup>
         </template>
         <template v-if="showEventEditorPopup">
             <occurrence-collecting-event-editor-popup
-                    :show-popup="showEventEditorPopup"
-                    @close:popup="showEventEditorPopup = false"
+                :show-popup="showEventEditorPopup"
+                @close:popup="showEventEditorPopup = false"
             ></occurrence-collecting-event-editor-popup>
         </template>
         <template v-if="showConfiguredDataEditorPopup">
             <configured-data-editor-popup
-                    :show-popup="showConfiguredDataEditorPopup"
-                    @close:popup="showConfiguredDataEditorPopup = false"
+                :show-popup="showConfiguredDataEditorPopup"
+                @close:popup="showConfiguredDataEditorPopup = false"
             ></configured-data-editor-popup>
         </template>
     `,
