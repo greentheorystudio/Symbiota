@@ -96,6 +96,7 @@ const spatialSymbologyTab = {
         'color-picker': colorPicker
     },
     setup() {
+        const { hideWorking, showWorking } = useCore();
         const spatialStore = useSpatialStore();
 
         const mapSettings = Vue.inject('mapSettings');
@@ -122,16 +123,22 @@ const spatialSymbologyTab = {
         }
 
         function saveSymbologyImage() {
+            showWorking();
             const keyClone = symbologyRef.value.cloneNode(true);
+            keyClone.childNodes[0].classList.remove('text-h6');
             keyClone.style.backgroundColor = 'white';
+            keyClone.style.padding = '20px';
+            keyClone.style.fontSize = '26px';
             const keyNodes = keyClone.childNodes[1].childNodes;
             keyNodes.forEach(node => {
                 if(node.childNodes.length > 0){
                     if(Number(node.childNodes[0].childNodes[0].nodeType) === 1){
+                        node.childNodes[1].classList.remove('text-body1');
                         const button = node.childNodes[0].childNodes[0];
                         button.innerHTML = '';
                     }
                     else{
+                        node.childNodes[0].classList.remove('text-body1');
                         const taxaKeyNodes = node.childNodes[1].childNodes;
                         taxaKeyNodes.forEach(node => {
                             if(node.childNodes.length > 0){
@@ -147,6 +154,7 @@ const spatialSymbologyTab = {
             document.body.appendChild(keyClone);
             html2canvas(keyClone).then((canvas) => {
                 canvas.toBlob((blob) => {
+                    hideWorking();
                     saveAs(blob,'map-symbology.png');
                     document.body.removeChild(keyClone);
                 });
