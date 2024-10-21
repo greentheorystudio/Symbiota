@@ -24,10 +24,10 @@ const spatialControlPanel = {
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                 </div>
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search Records" dense />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
                                 </div>
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="image" dense @click="exportMapPNG();">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();">
                                         <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Download Map Image
                                         </q-tooltip>
@@ -109,10 +109,10 @@ const spatialControlPanel = {
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search Records" dense />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="image" dense @click="exportMapPNG();">
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();">
                                             <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Download Map Image
                                             </q-tooltip>
@@ -150,7 +150,7 @@ const spatialControlPanel = {
                             </div>
                             <template v-if="!inputWindowMode">
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search Records" dense />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
                                 </div>
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense />
@@ -190,10 +190,8 @@ const spatialControlPanel = {
         </template>
         <spatial-map-settings-popup></spatial-map-settings-popup>
         <spatial-info-window-popup></spatial-info-window-popup>
-        <search-criteria-popup :show-popup="displayQueryPopup" @close:popup="displayQueryPopup = false"></search-criteria-popup>
     `,
     components: {
-        'search-criteria-popup': searchCriteriaPopup,
         'spatial-active-layer-selector': spatialActiveLayerSelector,
         'spatial-base-layer-selector': spatialBaseLayerSelector,
         'spatial-control-panel-top-show-button': spatialControlPanelTopShowButton,
@@ -202,7 +200,8 @@ const spatialControlPanel = {
         'spatial-map-settings-popup': spatialMapSettingsPopup
     },
     setup() {
-        const displayQueryPopup = Vue.ref(false);
+        const { openTutorialWindow } = useCore();
+
         const inputWindowMode = Vue.inject('inputWindowMode');
         const inputWindowToolsArr = Vue.inject('inputWindowToolsArr');
         const map = Vue.inject('map');
@@ -211,8 +210,8 @@ const spatialControlPanel = {
 
         const processInputSubmit = Vue.inject('processInputSubmit');
         const processInputPointUncertaintyChange = Vue.inject('processInputPointUncertaintyChange');
+        const setQueryPopupDisplay = Vue.inject('setQueryPopupDisplay');
         const updateMapSettings = Vue.inject('updateMapSettings');
-        const { openTutorialWindow } = useCore();
 
         function changeBaseMap(){
             let blsource;
@@ -377,7 +376,6 @@ const spatialControlPanel = {
         }
 
         return {
-            displayQueryPopup,
             inputWindowMode,
             inputWindowToolsArr,
             mapSettings,
@@ -388,6 +386,7 @@ const spatialControlPanel = {
             exportMapPNG,
             openTutorialWindow,
             processChangeBaseLayer,
+            setQueryPopupDisplay,
             updateMapSettings
         }
     }

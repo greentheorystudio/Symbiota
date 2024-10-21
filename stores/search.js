@@ -1,11 +1,9 @@
 const useSearchStore = Pinia.defineStore('search', {
     state: () => ({
         baseStore: useBaseStore(),
-        dateId: null,
-        queryId: 0,
-        queryRecCnt: 0,
-        searchRecordData: [],
-        searchTerms: {
+        blankSearchTerms: {
+            taxontype: '1',
+            usethes: true,
             othercatnum: true,
             typestatus: false,
             hasaudio: false,
@@ -14,6 +12,11 @@ const useSearchStore = Pinia.defineStore('search', {
             hasmedia: false,
             hasgenetic: false
         },
+        dateId: null,
+        queryId: 0,
+        queryRecCnt: 0,
+        searchRecordData: [],
+        searchTerms: {},
         searchTermsPageNumber: 0,
         selections: [],
         selectionsIds: [],
@@ -136,16 +139,7 @@ const useSearchStore = Pinia.defineStore('search', {
             localStorage.removeItem('searchTermsArr');
         },
         clearSearchTerms() {
-            for(const key in this.searchTerms){
-                delete this.searchTerms[key];
-            }
-            this.searchTerms['othercatnum'] = true;
-            this.searchTerms['typestatus'] = false;
-            this.searchTerms['hasaudio'] = false;
-            this.searchTerms['hasimages'] = false;
-            this.searchTerms['hasvideo'] = false;
-            this.searchTerms['hasmedia'] = false;
-            this.searchTerms['hasgenetic'] = false;
+            this.searchTerms = Object.assign({}, this.blankSearchTerms);
             this.updateLocalStorageSearchTerms();
         },
         clearSelections() {
@@ -172,6 +166,7 @@ const useSearchStore = Pinia.defineStore('search', {
         initializeSearchStorage(queryId) {
             this.dateId = this.getDateIdValue;
             this.queryId = queryId.toString();
+            this.searchTerms = Object.assign({}, this.blankSearchTerms);
             if(localStorage.hasOwnProperty('searchTermsArr')){
                 const stArr = JSON.parse(localStorage['searchTermsArr']);
                 if(!stArr.hasOwnProperty(this.dateId.toString())){
@@ -329,9 +324,9 @@ const useSearchStore = Pinia.defineStore('search', {
             });
         },
         setLocalStorageSearchTerms() {
-            const blankSearchTerms = {};
-            blankSearchTerms[this.dateId.toString()] = {};
-            localStorage.setItem('searchTermsArr', JSON.stringify(blankSearchTerms));
+            const newBlankSearchTerms = {};
+            newBlankSearchTerms[this.dateId.toString()] = {};
+            localStorage.setItem('searchTermsArr', JSON.stringify(newBlankSearchTerms));
         },
         setQueryIdInLocalStorageSearchTerms(queryId) {
             const stArr = JSON.parse(localStorage['searchTermsArr']);

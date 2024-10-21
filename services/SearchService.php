@@ -767,6 +767,8 @@ class SearchService {
             $geoArr['type'] = 'Feature';
             $geoArr['geometry']['type'] = 'Point';
             $geoArr['geometry']['coordinates'] = [$row->decimallongitude, $row->decimallatitude];
+            $geoArr['properties'] = array();
+            $geoArr['properties']['id'] = $row->occid;
             foreach($fields as $val){
                 $name = $val->name;
                 $geoArr['properties'][$name] = $row->$name;
@@ -783,13 +785,14 @@ class SearchService {
     public function serializeJsonResultArr($result, $schema, $spatial): array
     {
         $returnArr = array();
+        $returnData = array();
         $idArr = array();
         $fields = mysqli_fetch_fields($result);
         while($row = $result->fetch_object()){
             $occid = $row->occid;
             foreach($fields as $val){
                 $name = $val->name;
-                $returnArr[$occid][$name] = $row->$name;
+                $returnData[$occid][$name] = $row->$name;
             }
             if(!$spatial && $schema === 'occurrence'){
                 $rareSpReader = false;
@@ -801,12 +804,15 @@ class SearchService {
                     $idArr[] = $occid;
                 }
                 else{
-                    $returnArr[$occid] = $this->clearSensitiveResultData($returnArr[$occid]);
+                    $returnData[$occid] = $this->clearSensitiveResultData($returnData[$occid]);
                 }
             }
         }
         if(!$spatial && $schema === 'occurrence' && count($idArr) > 0){
-            $returnArr = $this->setResultsImageData($returnArr, $idArr);
+            $returnData = $this->setResultsImageData($returnData, $idArr);
+        }
+        foreach($returnData as $data){
+            $returnArr[] = $data;
         }
         return $returnArr;
     }
@@ -826,7 +832,7 @@ class SearchService {
         return $returnStr;
     }
 
-    public function setResultsImageData($returnArr, $idArr): array
+    public function setResultsImageData($returnData, $idArr): array
     {
         $sql = 'SELECT o.collid, o.occid, i.thumbnailurl, i.url FROM omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
             'WHERE o.occid IN(' . implode(',', $idArr) . ') ORDER BY o.occid, i.sortsequence ';
@@ -835,16 +841,16 @@ class SearchService {
         while($r = $rs->fetch_object()){
             if($r->occid !== $previousOccid){
                 if($r->thumbnailurl){
-                    $returnArr[$r->occid]['img'] = $r->thumbnailurl;
+                    $returnData[$r->occid]['img'] = $r->thumbnailurl;
                 }
                 if($r->url){
-                    $returnArr[$r->occid]['hasimage'] = true;
+                    $returnData[$r->occid]['hasimage'] = true;
                 }
             }
             $previousOccid = $r->occid;
         }
         $rs->free();
-        return $returnArr;
+        return $returnData;
     }
 
     public function setSelectSql($schema): string
@@ -855,7 +861,9 @@ class SearchService {
         }
         elseif($schema === 'map'){
             $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.`year`', 'o.`month`', 'o.`day`', 'o.decimallatitude',
-                'o.decimallongitude', 'c.colltype', 'o.catalognumber', 'o.recordedby', 'o.recordnumber', 'o.eventdate');
+                'o.decimallongitude', 'c.colltype', 'o.catalognumber', 'o.othercatalognumbers', 'o.habitat', 'o.associatedtaxa',
+                'o.country', 'o.stateprovince', 'o.county', 'o.locality', 'o.recordedby', 'o.recordnumber', 'o.eventdate', 'o.basisofrecord');
+            $fieldNameArr[] = 'CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector';
         }
         else{
             $occurrenceFields = (new Occurrences)->getOccurrenceFields();

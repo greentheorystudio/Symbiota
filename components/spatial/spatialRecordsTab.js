@@ -44,13 +44,13 @@ const spatialRecordsTab = {
                             <q-td>
                                 <q-checkbox v-model="props.row.selected" @update:model-value="(val) => processRecordSelectionChange(val, props.row)" dense />
                             </q-td>
-                            <q-td key="siteId" :props="props">
-                                {{ props.row.siteid }}
+                            <q-td key="catalognumber" :props="props">
+                                {{ props.row.catalognumber }}
                             </q-td>
-                            <q-td key="siteName" :props="props">
+                            <q-td key="collector" :props="props">
                                 <div class="column q-gutter-xs">
                                     <div class="fit text-left">
-                                        <a class="cursor-pointer" @click="openRecordInfoWindow(props.row.siteid);">{{ props.row.name }}</a>
+                                        <a class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);">{{ props.row.collector }}</a>
                                     </div>
                                     <div class="row justify-end">
                                         <q-btn color="grey-4" size="xs" text-color="black" class="q-ml-sm black-border" icon="fas fa-search-location" @click="setMapFinderPopup(props.row);" dense>
@@ -61,8 +61,16 @@ const spatialRecordsTab = {
                                     </div>
                                 </div>
                             </q-td>
-                            <q-td key="landUnitDetail" :props="props">
-                                {{ props.row.landunitdetail }}
+                            <q-td key="eventdate" :props="props">
+                                {{ props.row.eventdate }}
+                            </q-td>
+                            <q-td key="sciname" :props="props">
+                                <template v-if="Number(props.row.tid) > 0">
+                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">{{ props.row.sciname }}</a>
+                                </template>
+                                <template v-else>
+                                    {{ props.row.sciname }}
+                                </template>
                             </q-td>
                         </q-tr>
                     </template>
@@ -95,12 +103,15 @@ const spatialRecordsTab = {
         'table-display-button': tableDisplayButton
     },
     setup() {
+        const baseStore = useBaseStore();
         const searchStore = useSearchStore();
 
+        const clientRoot = baseStore.getClientRoot;
         const columns = [
-            { name: 'siteId', label: 'Site ID', field: 'siteid' },
-            { name: 'siteName', label: 'Site Name', field: 'name' },
-            { name: 'landUnitDetail', label: 'Land Unit Detail', field: 'landunitdetail' }
+            { name: 'catalognumber', label: 'Catalog #', field: 'catalognumber' },
+            { name: 'collector', label: 'Collector', field: 'collector' },
+            { name: 'eventdate', label: 'Date', field: 'eventdate' },
+            { name: 'sciname', label: 'Scientific Name', field: 'sciname' }
         ];
         const layersObj = Vue.inject('layersObj');
         const lazyLoadCnt = 100;
@@ -168,9 +179,9 @@ const spatialRecordsTab = {
                 searchStore.addRecordToSelections(record);
             }
             else{
-                searchStore.removeRecordFromSelections(record.siteid);
+                searchStore.removeRecordFromSelections(record.occid);
             }
-            updatePointStyle(record.siteid);
+            updatePointStyle(record.occid);
         }
 
         function processSelectAllChange(selected) {
@@ -184,8 +195,8 @@ const spatialRecordsTab = {
         }
 
         function setMapFinderPopup(record) {
-            const label = record.name ? record.name : record.siteid.toString();
-            const recordPosition = findRecordClusterPosition(record.siteid);
+            const label = record.collector ? record.collector : record.occid.toString();
+            const recordPosition = findRecordClusterPosition(record.occid);
             showPopup(label, recordPosition, false, true);
         }
 
@@ -209,6 +220,7 @@ const spatialRecordsTab = {
         });
 
         return {
+            clientRoot,
             searchTermsJson,
             columns,
             pagination,
