@@ -26,62 +26,66 @@ const spatialSymbologyTab = {
                 </div>
             </div>
             <q-separator ></q-separator>
-            <div ref="symbologyRef" v-if="selectedSymbologyOption" class="q-py-sm">
+            <div v-if="selectedSymbologyOption" class="q-py-sm">
                 <template v-if="selectedSymbologyOption.field !== 'sciname'">
-                    <div class="text-h6">
-                        {{ selectedSymbologyOption.label + '   [' + symbologyArr[selectedSymbologyOption.field].length + ']' }}
-                    </div>
-                    <div class="q-mt-sm column q-gutter-xs">
-                        <template v-for="key in symbologyArr[selectedSymbologyOption.field]">
-                            <div class="row justify-start">
-                                <div class="q-mr-lg">
-                                    <color-picker :color-value="key.color" @update:color-picker="(value) => processSymbologyKeyColorChange(value, key.value)"></color-picker>
+                    <div ref="symbologyRef">
+                        <div class="text-h6">
+                            {{ selectedSymbologyOption.label + '   [' + symbologyArr[selectedSymbologyOption.field].length + ']' }}
+                        </div>
+                        <div class="q-mt-sm column q-gutter-xs">
+                            <template v-for="key in symbologyArr[selectedSymbologyOption.field]">
+                                <div class="row justify-start">
+                                    <div class="q-mr-lg">
+                                        <color-picker :color-value="key.color" @update:color-picker="(value) => processSymbologyKeyColorChange(value, key.value)"></color-picker>
+                                    </div>
+                                    <div class="text-bold self-center">
+                                        {{ key.value }}
+                                    </div>
                                 </div>
-                                <div class="text-bold self-center">
-                                    {{ key.value }}
-                                </div>
-                            </div>
-                        </template>
+                            </template>
+                        </div>
                     </div>
                 </template>
                 <template v-else>
-                    <div class="text-h6">
-                        {{ 'Taxa   [' + symbologyArr['sciname'].length + ']' }}
-                    </div>
-                    <div class="column q-gutter-xs">
-                        <template v-for="key in symbologyArr['taxonomy']">
-                            <template v-if="!key.hasOwnProperty('taxa')">
-                                <div class="q-mt-sm row justify-start">
-                                    <div class="q-mr-lg">
-                                        <color-picker :color-value="symbologyArr['sciname'].find(kObj => kObj['value'] === key.value).color" @update:color-picker="(value) => processSymbologyKeyColorChange(value, key.value)"></color-picker>
+                    <div ref="symbologyRef">
+                        <div class="text-h6">
+                            {{ 'Taxa   [' + symbologyArr['sciname'].length + ']' }}
+                        </div>
+                        <div class="column q-gutter-xs">
+                            <template v-for="key in symbologyArr['taxonomy']">
+                                <template v-if="!key.hasOwnProperty('taxa')">
+                                    <div class="q-mt-sm row justify-start">
+                                        <div class="q-mr-lg">
+                                            <color-picker :color-value="symbologyArr['sciname'].find(kObj => kObj['value'] === key.value).color" @update:color-picker="(value) => processSymbologyKeyColorChange(value, key.value)"></color-picker>
+                                        </div>
+                                        <div class="text-body1 text-bold self-center">
+                                            {{ key.value }}
+                                        </div>
                                     </div>
-                                    <div class="text-body1 text-bold self-center">
-                                        {{ key.value }}
-                                    </div>
-                                </div>
+                                </template>
                             </template>
-                        </template>
-                        <template v-for="key in symbologyArr['taxonomy']">
-                            <template v-if="key.hasOwnProperty('taxa')">
-                                <div class="q-mt-sm">
-                                    <div class="text-body1 text-bold">
-                                        {{ key.value }}
-                                    </div>
-                                    <div class="q-ml-md column q-gutter-xs">
-                                        <template v-for="taxon in key['taxa']">
-                                            <div class="row justify-start">
-                                                <div class="q-mr-lg">
-                                                    <color-picker :color-value="symbologyArr['sciname'].find(key => key['value'] === taxon.value).color" @update:color-picker="(value) => processSymbologyKeyColorChange(value, taxon.value)"></color-picker>
+                            <template v-for="key in symbologyArr['taxonomy']">
+                                <template v-if="key.hasOwnProperty('taxa')">
+                                    <div class="q-mt-sm">
+                                        <div class="text-body1 text-bold">
+                                            {{ key.value }}
+                                        </div>
+                                        <div class="q-ml-md column q-gutter-xs">
+                                            <template v-for="taxon in key['taxa']">
+                                                <div class="row justify-start">
+                                                    <div class="q-mr-lg">
+                                                        <color-picker :color-value="symbologyArr['sciname'].find(key => key['value'] === taxon.value).color" @update:color-picker="(value) => processSymbologyKeyColorChange(value, taxon.value)"></color-picker>
+                                                    </div>
+                                                    <div class="text-bold self-center">
+                                                        {{ taxon.value }}
+                                                    </div>
                                                 </div>
-                                                <div class="text-bold self-center">
-                                                    {{ taxon.value }}
-                                                </div>
-                                            </div>
-                                        </template>
+                                            </template>
+                                        </div>
                                     </div>
-                                </div>
+                                </template>
                             </template>
-                        </template>
+                        </div>
                     </div>
                 </template>
             </div>
@@ -123,8 +127,21 @@ const spatialSymbologyTab = {
             const keyNodes = keyClone.childNodes[1].childNodes;
             keyNodes.forEach(node => {
                 if(node.childNodes.length > 0){
-                    const button = node.childNodes[0].childNodes[0];
-                    button.innerHTML = '';
+                    if(Number(node.childNodes[0].childNodes[0].nodeType) === 1){
+                        const button = node.childNodes[0].childNodes[0];
+                        button.innerHTML = '';
+                    }
+                    else{
+                        const taxaKeyNodes = node.childNodes[1].childNodes;
+                        taxaKeyNodes.forEach(node => {
+                            if(node.childNodes.length > 0){
+                                if(Number(node.childNodes[0].childNodes[0].nodeType) === 1){
+                                    const button = node.childNodes[0].childNodes[0];
+                                    button.innerHTML = '';
+                                }
+                            }
+                        });
+                    }
                 }
             });
             document.body.appendChild(keyClone);
