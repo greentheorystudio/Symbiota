@@ -50,6 +50,18 @@ const spatialSymbologyTab = {
                     </div>
                     <div class="column q-gutter-xs">
                         <template v-for="key in symbologyArr['taxonomy']">
+                            <template v-if="!key.hasOwnProperty('taxa')">
+                                <div class="q-mt-sm row justify-start">
+                                    <div class="q-mr-lg">
+                                        <color-picker :color-value="symbologyArr['sciname'].find(kObj => kObj['value'] === key.value).color" @update:color-picker="(value) => processSymbologyKeyColorChange(value, key.value)"></color-picker>
+                                    </div>
+                                    <div class="text-body1 text-bold self-center">
+                                        {{ key.value }}
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                        <template v-for="key in symbologyArr['taxonomy']">
                             <template v-if="key.hasOwnProperty('taxa')">
                                 <div class="q-mt-sm">
                                     <div class="text-body1 text-bold">
@@ -66,16 +78,6 @@ const spatialSymbologyTab = {
                                                 </div>
                                             </div>
                                         </template>
-                                    </div>
-                                </div>
-                            </template>
-                            <template v-else>
-                                <div class="q-mt-sm row justify-start">
-                                    <div class="q-mr-lg">
-                                        <color-picker :color-value="symbologyArr['sciname'].find(kObj => kObj['value'] === key.value).color" @update:color-picker="(value) => processSymbologyKeyColorChange(value, key.value)"></color-picker>
-                                    </div>
-                                    <div class="text-body1 text-bold self-center">
-                                        {{ key.value }}
                                     </div>
                                 </div>
                             </template>
