@@ -45,8 +45,8 @@ class DataDownloadService {
             'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="springsdata.org">';
         foreach($occArr as $data){
             $returnStr .= '<wpt lat="' . $data['decimallatitude'] . '" lon="' . $data['decimallongitude'] . '">';
-            $returnStr .= '<name>' . $data['recordedby'] . ' ' . $data['recordnumber'] . '</name>';
-            $returnStr .= '<desc>' . $data['sciname'] . '</desc>';
+            $returnStr .= '<name>' . ($data['recordedby'] ? htmlspecialchars($data['recordedby']) : '') . ' ' . ($data['recordnumber'] ? htmlspecialchars($data['recordnumber']) : '') . '</name>';
+            $returnStr .= '<desc>' . ($data['sciname'] ? htmlspecialchars($data['sciname']) : '') . '</desc>';
             $returnStr .= '</wpt>';
         }
         $returnStr .= '</gpx>';
@@ -59,11 +59,11 @@ class DataDownloadService {
         $returnStr .= '<Document>';
         foreach($occArr as $data){
             $returnStr .= '<Placemark>';
-            $returnStr .= '<name>' . ($data['recordedby'] . ' ' . $data['recordnumber']) . '</name>';
+            $returnStr .= '<name>' . ($data['recordedby'] ? htmlspecialchars($data['recordedby']) : '') . ' ' . ($data['recordnumber'] ? htmlspecialchars($data['recordnumber']) : '') . '</name>';
             $returnStr .= '<ExtendedData>';
             foreach($data as $field => $value) {
                 $returnStr .= '<Data name="' . $field . '">';
-                $returnStr .= '<value>' . $value . '</value>';
+                $returnStr .= '<value>' . ($value ? htmlspecialchars($value) : '') . '</value>';
                 $returnStr .= '</Data>';
             }
             $returnStr .= '</ExtendedData>';
