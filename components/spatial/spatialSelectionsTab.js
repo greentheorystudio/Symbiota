@@ -3,7 +3,7 @@ const spatialSelectionsTab = {
         <div class="column">
             <div class="q-px-sm q-mb-xs row justify-start">
                 <div class="row q-gutter-sm">
-                    <search-data-downloader :selection="true"></search-data-downloader>
+                    <search-data-downloader :selections="true"></search-data-downloader>
                 </div>
             </div>
             <div class="q-px-sm q-mb-xs row justify-between q-gutter-sm">

@@ -105,7 +105,6 @@ else{
 		}
 		$dlManager->setSchemaType($schema);
 		$dlManager->setExtended($extended);
-		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
 		$dlManager->addCondition('decimalLatitude','NOTNULL');
 		$dlManager->addCondition('decimalLongitude','NOTNULL');
@@ -125,7 +124,6 @@ else{
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
 		$dlManager->setSchemaType($schema);
-		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
 		$dlManager->downloadData();
 	}
@@ -136,7 +134,6 @@ else{
 			$dwcaHandler->setCharSetOut('UTF-8');
 			$dwcaHandler->setSchemaType('coge');
 			$dwcaHandler->setExtended(false);
-			$dwcaHandler->setDelimiter('csv');
 			$dwcaHandler->setRedactLocalities(0);
 			$dwcaHandler->setIncludeDets(0);
 			$dwcaHandler->setIncludeImgs(0);
@@ -159,7 +156,6 @@ else{
 			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setSchemaType($schema);
 			$dwcaHandler->setExtended($extended);
-			$dwcaHandler->setDelimiter($format);
 			$dwcaHandler->setRedactLocalities($redactLocalities);
 			if($rareReaderArr) {
 				$dwcaHandler->setRareReaderArr($rareReaderArr);

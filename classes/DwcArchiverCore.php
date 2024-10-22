@@ -25,7 +25,6 @@ class DwcArchiverCore extends Manager{
     private $schemaType = 'dwc';
     private $limitToGuids = false;
     private $extended = 0;
-    private $delimiter = ',';
     private $fileExt = '.csv';
     private $occurrenceFieldArr = array();
     private $determinationFieldArr = array();
@@ -216,7 +215,7 @@ class DwcArchiverCore extends Manager{
             }
             unset($this->conditionArr['collid']);
         }
-        else if($this->collArr && (!$this->conditionSql || !stripos($this->conditionSql,'collid in('))){
+        else if($this->collArr && (!$this->conditionSql || strpos($this->conditionSql,'collid in(') === false)){
             $this->conditionSql .= 'AND (o.collid IN('.implode(',',array_keys($this->collArr)).')) ';
         }
         $sqlFrag = '';
@@ -289,31 +288,31 @@ class DwcArchiverCore extends Manager{
     {
         $sql = '';
         if($this->conditionSql){
-            if(stripos($this->conditionSql,' te.')){
+            if(strpos($this->conditionSql,' te.') !== false){
                 $sql .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
             }
-            if(stripos($this->conditionSql,'v.clid')){
+            if(strpos($this->conditionSql,'v.clid') !== false){
                 $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             }
-            if(stripos($this->conditionSql,'p.point')){
+            if(strpos($this->conditionSql,'p.point') !== false){
                 $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
             }
             if(strpos($this->conditionSql,'MATCH(f.recordedby)') || strpos($this->conditionSql,'MATCH(f.locality)')){
                 $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
             }
-            if(stripos($this->conditionSql,'(i.') || stripos($this->conditionSql,'(it.') || stripos($this->conditionSql,'(ik.')){
+            if(strpos($this->conditionSql,'(i.') !== false || strpos($this->conditionSql,'(it.') !== false || strpos($this->conditionSql,'(ik.') !== false){
                 $sql .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
-                if(stripos($this->conditionSql,'(it.')){
+                if(strpos($this->conditionSql,'(it.') !== false){
                     $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
                 }
-                if(stripos($this->conditionSql,'(ik.')){
+                if(strpos($this->conditionSql,'(ik.') !== false){
                     $sql .= 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
                 }
             }
-            if(stripos($this->conditionSql,'a.stateid')){
+            if(strpos($this->conditionSql,'a.stateid') !== false){
                 $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid ';
             }
-            elseif(stripos($this->conditionSql,'s.traitid')){
+            elseif(strpos($this->conditionSql,'s.traitid') !== false){
                 $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid '.
                     'INNER JOIN tmstates AS s ON a.stateid = s.stateid ';
             }
@@ -418,7 +417,7 @@ class DwcArchiverCore extends Manager{
                                 break;
                             }
 
-                            if(stripos($typeValue, $testStr)) {
+                            if(strpos($typeValue, $testStr) !== false) {
                                 $invalidText = $r['typeStatus'];
                                 $r['typeStatus'] = $testStr;
                                 $typeInvalid = false;
@@ -611,7 +610,7 @@ class DwcArchiverCore extends Manager{
         $coreElem = $newDoc->createElement('core');
         $coreElem->setAttribute('dateFormat','YYYY-MM-DD');
         $coreElem->setAttribute('encoding',$this->charSetOut);
-        $coreElem->setAttribute('fieldsTerminatedBy',$this->delimiter);
+        $coreElem->setAttribute('fieldsTerminatedBy',',');
         $coreElem->setAttribute('linesTerminatedBy','\n');
         $coreElem->setAttribute('fieldsEnclosedBy','"');
         $coreElem->setAttribute('ignoreHeaderLines','1');
@@ -645,7 +644,7 @@ class DwcArchiverCore extends Manager{
         if($this->includeDets){
             $extElem1 = $newDoc->createElement('extension');
             $extElem1->setAttribute('encoding',$this->charSetOut);
-            $extElem1->setAttribute('fieldsTerminatedBy',$this->delimiter);
+            $extElem1->setAttribute('fieldsTerminatedBy',',');
             $extElem1->setAttribute('linesTerminatedBy','\n');
             $extElem1->setAttribute('fieldsEnclosedBy','"');
             $extElem1->setAttribute('ignoreHeaderLines','1');
@@ -674,7 +673,7 @@ class DwcArchiverCore extends Manager{
         if($this->includeImgs){
             $extElem2 = $newDoc->createElement('extension');
             $extElem2->setAttribute('encoding',$this->charSetOut);
-            $extElem2->setAttribute('fieldsTerminatedBy',$this->delimiter);
+            $extElem2->setAttribute('fieldsTerminatedBy',',');
             $extElem2->setAttribute('linesTerminatedBy','\n');
             $extElem2->setAttribute('fieldsEnclosedBy','"');
             $extElem2->setAttribute('ignoreHeaderLines','1');
@@ -703,7 +702,7 @@ class DwcArchiverCore extends Manager{
         if($this->includeAttributes){
             $extElem3 = $newDoc->createElement('extension');
             $extElem3->setAttribute('encoding',$this->charSetOut);
-            $extElem3->setAttribute('fieldsTerminatedBy',$this->delimiter);
+            $extElem3->setAttribute('fieldsTerminatedBy',',');
             $extElem3->setAttribute('linesTerminatedBy','\n');
             $extElem3->setAttribute('fieldsEnclosedBy','"');
             $extElem3->setAttribute('ignoreHeaderLines','1');
@@ -1191,7 +1190,7 @@ class DwcArchiverCore extends Manager{
 
     private function writeOccurrenceFile(){
         $this->logOrEcho('Creating occurrence file (' .date('h:i:s A'). ')... ');
-        $filePath = $this->targetPath.$this->ts.'-occur'.$this->fileExt;
+        $filePath = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
         $fh = fopen($filePath, 'wb');
         if($fh){
             $hasRecords = false;
@@ -1315,7 +1314,7 @@ class DwcArchiverCore extends Manager{
                                     break;
                                 }
 
-                                if(stripos($typeValue, $testStr)) {
+                                if(strpos($typeValue, $testStr) !== false) {
                                     $invalidText = $r['typeStatus'];
                                     $r['typeStatus'] = $testStr;
                                     $typeInvalid = false;
@@ -1573,15 +1572,7 @@ class DwcArchiverCore extends Manager{
 
     private function writeOutRecord($fh,$outputArr): void
     {
-        if($this->delimiter === ','){
-            fputcsv($fh, $outputArr);
-        }
-        else{
-            foreach($outputArr as $k => $v){
-                $outputArr[$k] = str_replace($this->delimiter,'',$v);
-            }
-            fwrite($fh, implode($this->delimiter,$outputArr)."\n");
-        }
+        fputcsv($fh, $outputArr);
     }
 
     public function deleteArchive($collID): bool
@@ -1688,22 +1679,6 @@ class DwcArchiverCore extends Manager{
     public function setExtended($e): void
     {
         $this->extended = $e;
-    }
-
-    public function setDelimiter($d): void
-    {
-        if($d === 'tab' || $d === "\t"){
-            $this->delimiter = "\t";
-            $this->fileExt = '.tab';
-        }
-        elseif($d === 'csv' || $d === 'comma' || $d === ','){
-            $this->delimiter = ',';
-            $this->fileExt = '.csv';
-        }
-        else{
-            $this->delimiter = $d;
-            $this->fileExt = '.txt';
-        }
     }
 
     public function setIncludeDets($includeDets): void

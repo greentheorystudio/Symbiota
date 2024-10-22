@@ -201,6 +201,7 @@ const spatialControlPanel = {
     },
     setup() {
         const { openTutorialWindow } = useCore();
+        const searchStore = useSearchStore();
 
         const inputWindowMode = Vue.inject('inputWindowMode');
         const inputWindowToolsArr = Vue.inject('inputWindowToolsArr');
@@ -321,7 +322,7 @@ const spatialControlPanel = {
         }
 
         function exportMapPNG(){
-            const filename = 'map_' + getDateTimeString() + '.png';
+            const filename = 'map_' + searchStore.getDateTimeString + '.png';
             let mapCanvas = document.createElement('canvas');
             const size = map.value.getSize();
             mapCanvas.width = size[0];

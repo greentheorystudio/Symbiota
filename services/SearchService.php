@@ -568,6 +568,9 @@ class SearchService {
     public function prepareOccurrenceWhereSql($searchTermsArr, $image = false): string
     {
         $sqlWherePartsArr = array();
+        if(array_key_exists('occid', $searchTermsArr) && count($searchTermsArr['occid']) > 0){
+            $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['occid']) . '))';
+        }
         if(array_key_exists('clid', $searchTermsArr) && $searchTermsArr['clid']){
             $sqlWherePartsArr[] = '(v.clid IN(' . $searchTermsArr['clid'] . '))';
         }
@@ -763,17 +766,24 @@ class SearchService {
         $featuresArr = array();
         $fields = mysqli_fetch_fields($result);
         while($row = $result->fetch_object()){
-            $geoArr = array();
-            $geoArr['type'] = 'Feature';
-            $geoArr['geometry']['type'] = 'Point';
-            $geoArr['geometry']['coordinates'] = [$row->decimallongitude, $row->decimallatitude];
-            $geoArr['properties'] = array();
-            $geoArr['properties']['id'] = $row->occid;
-            foreach($fields as $val){
-                $name = $val->name;
-                $geoArr['properties'][$name] = $row->$name;
+            $rareSpReader = false;
+            $localitySecurity = (int)$row->localitysecurity === 1;
+            if($localitySecurity){
+                $rareSpReader = $this->verifyRareSpAccess($row->collid);
             }
-            $featuresArr[] = $geoArr;
+            if(!$localitySecurity || $rareSpReader){
+                $geoArr = array();
+                $geoArr['type'] = 'Feature';
+                $geoArr['geometry']['type'] = 'Point';
+                $geoArr['geometry']['coordinates'] = [$row->decimallongitude, $row->decimallatitude];
+                $geoArr['properties'] = array();
+                $geoArr['properties']['id'] = $row->occid;
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $geoArr['properties'][$name] = $row->$name;
+                }
+                $featuresArr[] = $geoArr;
+            }
         }
         $returnArr['type'] = 'FeatureCollection';
         $returnArr['numFound'] = $numRows;
@@ -789,22 +799,24 @@ class SearchService {
         $idArr = array();
         $fields = mysqli_fetch_fields($result);
         while($row = $result->fetch_object()){
+            $rareSpReader = false;
             $occid = $row->occid;
-            foreach($fields as $val){
-                $name = $val->name;
-                $returnData[$occid][$name] = $row->$name;
+            $localitySecurity = (int)$row->localitysecurity === 1;
+            if($localitySecurity){
+                $rareSpReader = $this->verifyRareSpAccess($row->collid);
             }
-            if(!$spatial && $schema === 'occurrence'){
-                $rareSpReader = false;
-                $localitySecurity = (int)$row->localitysecurity === 1;
-                if($localitySecurity){
-                    $rareSpReader = $this->verifyRareSpAccess($row->collid);
+            if(!$localitySecurity || $rareSpReader || !$spatial){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $returnData[$occid][$name] = $row->$name;
                 }
-                if(!$localitySecurity || $rareSpReader){
-                    $idArr[] = $occid;
-                }
-                else{
-                    $returnData[$occid] = $this->clearSensitiveResultData($returnData[$occid]);
+                if(!$spatial){
+                    if(!$localitySecurity || $rareSpReader){
+                        $idArr[] = $occid;
+                    }
+                    else{
+                        $returnData[$occid] = $this->clearSensitiveResultData($returnData[$occid]);
+                    }
                 }
             }
         }
@@ -857,12 +869,13 @@ class SearchService {
     {
         if($schema === 'image'){
             $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'u.uid', 'u.lastname',
-                'u.firstname', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber');
+                'u.firstname', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber', 'o.localitysecurity');
         }
         elseif($schema === 'map'){
             $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.`year`', 'o.`month`', 'o.`day`', 'o.decimallatitude',
                 'o.decimallongitude', 'c.colltype', 'o.catalognumber', 'o.othercatalognumbers', 'o.habitat', 'o.associatedtaxa',
-                'o.country', 'o.stateprovince', 'o.county', 'o.locality', 'o.recordedby', 'o.recordnumber', 'o.eventdate', 'o.basisofrecord');
+                'o.country', 'o.stateprovince', 'o.county', 'o.locality', 'o.recordedby', 'o.recordnumber', 'o.eventdate', 'o.basisofrecord',
+                'o.localitysecurity');
             $fieldNameArr[] = 'CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector';
         }
         else{

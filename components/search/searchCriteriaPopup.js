@@ -16,7 +16,7 @@ const searchCriteriaPopup = {
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
-                <div ref="topBarRef" class="row justify-end items-start map-sm-popup">
+                <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
                     </div>

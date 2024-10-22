@@ -31,7 +31,6 @@ else{
 $dwcaHandler->setVerboseMode(0);
 $dwcaHandler->setSchemaType($schema);
 $dwcaHandler->setCharSetOut($cSet);
-$dwcaHandler->setDelimiter($format);
 $dwcaHandler->setRedactLocalities($redactLocalities);
 if($rareReaderArr) {
     $dwcaHandler->setRareReaderArr($rareReaderArr);

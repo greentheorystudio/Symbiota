@@ -3,7 +3,7 @@ const spatialRecordsTab = {
         <div class="column">
             <div class="q-px-sm q-py-md row justify-between q-gutter-xs">
                 <div class="row q-gutter-sm">
-                    <search-data-downloader></search-data-downloader>
+                    <search-data-downloader :spatial="true"></search-data-downloader>
                 </div>
                 <div class="row q-gutter-sm">
                     <list-display-button></list-display-button>

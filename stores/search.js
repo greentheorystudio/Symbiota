@@ -200,52 +200,28 @@ const useSearchStore = Pinia.defineStore('search', {
             searchTermsArr[this.dateId.toString()][this.queryId.toString()] = Object.assign({}, newSearchTerms);
             localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
         },
-        processDownloadRequest(settings){
-            if(settings.hasOwnProperty('dlType') && settings.dlType){
-                const selection = !!(settings.hasOwnProperty('selection') && settings.selection);
-                const filename = 'springdata_' + this.getDateTimeString;
-                let contentType = '';
-                if(settings.dlType === 'kml') {
-                    contentType = 'application/vnd.google-earth.kml+xml';
-                }
-                else if(settings.dlType === 'geojson') {
-                    contentType = 'application/vnd.geo+json';
-                }
-                else if(settings.dlType === 'gpx') {
-                    contentType = 'application/gpx+xml';
-                }
-                const formData = new FormData();
-                formData.append('dh-type', settings.dlType);
-                formData.append('dh-filename', filename);
-                formData.append('dh-contentType', (settings.dlType === 'csv' ? 'text/csv; charset=utf-8' : contentType));
-                formData.append('starrjson', this.getSearchTermsJson);
-                if(selection) {
-                    formData.append('dh-selections', this.getSelectionsIds.join());
-                }
-                if(settings.hasOwnProperty('taxaId') && settings.hasOwnProperty('taxaType') && Number(settings.taxaId) > 0 && Number(settings.taxaType) > 0) {
-                    formData.append('dh-taxaid', settings.taxaId.toString());
-                    formData.append('dh-taxatype', settings.taxaType.toString());
-                }
-                formData.append('action', 'downloadsearchdata');
-                fetch(searchServiceApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.blob() : null;
-                })
-                .then((blob) => {
-                    if(blob !== null){
-                        const objectUrl = window.URL.createObjectURL(blob);
-                        const anchor = document.createElement('a');
-                        anchor.href = objectUrl;
-                        anchor.download = filename;
-                        document.body.appendChild(anchor);
-                        anchor.click();
-                        anchor.remove();
-                    }
-                });
+        processDownloadRequest(options, callback){
+            options.filename = 'occurrence_data_' + (options.type === 'zip' ? 'DwCA_' : '') + this.getDateTimeString + '.' + options.type;
+            const formData = new FormData();
+            if(options.selections){
+                formData.append('starr', JSON.stringify({
+                    occid: this.getSelectionsIds
+                }));
             }
+            else{
+                formData.append('starr', this.getSearchTermsJson);
+            }
+            formData.append('options', JSON.stringify(options));
+            fetch(dataDownloadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
+                callback(options.filename, blob);
+            });
         },
         processSearch(options, callback){
             const formData = new FormData();

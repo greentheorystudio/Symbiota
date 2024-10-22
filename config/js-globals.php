@@ -51,6 +51,7 @@
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
     const checklistVoucherApiUrl = CLIENT_ROOT + '/api/checklists/checklistVoucherController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
+    const dataDownloadServiceApiUrl = CLIENT_ROOT + '/api/services/dataDownloadServiceController.php';
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
