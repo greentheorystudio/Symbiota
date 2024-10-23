@@ -10,7 +10,7 @@ const occurrenceEditorDeterminationsTab = {
             <div class="q-mt-sm column q-gutter-sm">
                 <template v-if="determinationArr.length > 0">
                     <template v-for="determination in determinationArr">
-                        <determination-record-info-block :determination-data="determination" :editor="true"></determination-record-info-block>
+                        <determination-record-info-block :determination-data="determination" :editor="true" @open:determination-editor="openDeterminationEditorPopup"></determination-record-info-block>
                     </template>
                 </template>
                 <template v-else>
