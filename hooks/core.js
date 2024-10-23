@@ -317,23 +317,32 @@ function useCore() {
     function processCsvDownload(csvDataArr, filename) {
         if(typeof csvDataArr === 'object' && csvDataArr.length > 0 && typeof filename === 'string' && filename.length > 0){
             let csvContent = '';
+            let headersSaved = false;
+            const headerArr = [];
             csvDataArr.forEach(row => {
                 const fixedRow = [];
                 if(Array.isArray(row)){
                     row.forEach(val => {
                         if(val){
-                            val = '\"' + val + '\"';
+                            val = '\"' + (val ? val : '') + '\"';
                         }
                         fixedRow.push(val);
                     });
                 }
                 else{
                     for(let key in row) {
+                        if(!headersSaved){
+                            headerArr.push('\"' + key + '\"');
+                        }
                         if(row.hasOwnProperty(key)){
-                            const val = '\"' + row[key] + '\"';
+                            const val = '\"' + (row[key] ? row[key] : '') + '\"';
                             fixedRow.push(val);
                         }
                     }
+                }
+                if(!headersSaved && headerArr.length > 0){
+                    csvContent += headerArr.join(',') + '\n';
+                    headersSaved = true;
                 }
                 csvContent += fixedRow.join(',') + '\n';
             });

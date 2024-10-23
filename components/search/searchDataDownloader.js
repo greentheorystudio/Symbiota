@@ -27,7 +27,7 @@ const searchDataDownloader = {
         'selector-input-element': selectorInputElement,
     },
     setup(props) {
-        const { hideWorking, showNotification, showWorking } = useCore();
+        const { hideWorking, processCsvDownload, showNotification, showWorking } = useCore();
         const searchStore = useSearchStore();
 
         const displayOptionsPopup = Vue.ref(false);
@@ -51,6 +51,9 @@ const searchDataDownloader = {
             if(selectedDownloadType.value){
                 if(selectedDownloadType.value === 'csv'){
                     displayOptionsPopup.value = true;
+                }
+                else if(selectedDownloadType.value === 'taxa'){
+                    processTaxaDownload();
                 }
                 else{
                     processDownload();
@@ -84,6 +87,15 @@ const searchDataDownloader = {
             requestOptions.images = options['includeImage'];
             displayOptionsPopup.value = false;
             processDownload();
+        }
+
+        function processTaxaDownload(){
+            showWorking();
+            const filename = 'occurrence_search_taxa_list_' + searchStore.getDateTimeString + '.csv';
+            searchStore.processSearch(requestOptions, (res) => {
+                hideWorking();
+                processCsvDownload(res, filename);
+            });
         }
 
         function updateSelectedDownloadType(value) {

@@ -798,24 +798,36 @@ class SearchService {
         $returnData = array();
         $idArr = array();
         $fields = mysqli_fetch_fields($result);
-        while($row = $result->fetch_object()){
-            $rareSpReader = false;
-            $occid = $row->occid;
-            $localitySecurity = (int)$row->localitysecurity === 1;
-            if($localitySecurity){
-                $rareSpReader = $this->verifyRareSpAccess($row->collid);
-            }
-            if(!$localitySecurity || $rareSpReader || !$spatial){
+        if($schema === 'taxa'){
+            while($row = $result->fetch_object()){
+                $recordArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $returnData[$occid][$name] = $row->$name;
+                    $recordArr[$name] = $row->$name;
                 }
-                if(!$spatial){
-                    if(!$localitySecurity || $rareSpReader){
-                        $idArr[] = $occid;
+                $returnArr[] = $recordArr;
+            }
+        }
+        else{
+            while($row = $result->fetch_object()){
+                $rareSpReader = false;
+                $occid = $row->occid;
+                $localitySecurity = (int)$row->localitysecurity === 1;
+                if($localitySecurity){
+                    $rareSpReader = $this->verifyRareSpAccess($row->collid);
+                }
+                if(!$localitySecurity || $rareSpReader || !$spatial){
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $returnData[$occid][$name] = $row->$name;
                     }
-                    else{
-                        $returnData[$occid] = $this->clearSensitiveResultData($returnData[$occid]);
+                    if(!$spatial){
+                        if(!$localitySecurity || $rareSpReader){
+                            $idArr[] = $occid;
+                        }
+                        else{
+                            $returnData[$occid] = $this->clearSensitiveResultData($returnData[$occid]);
+                        }
                     }
                 }
             }
@@ -823,8 +835,10 @@ class SearchService {
         if(!$spatial && $schema === 'occurrence' && count($idArr) > 0){
             $returnData = $this->setResultsImageData($returnData, $idArr);
         }
-        foreach($returnData as $data){
-            $returnArr[] = $data;
+        if($schema !== 'taxa'){
+            foreach($returnData as $data){
+                $returnArr[] = $data;
+            }
         }
         return $returnArr;
     }
@@ -871,6 +885,16 @@ class SearchService {
             $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'u.uid', 'u.lastname',
                 'u.firstname', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber', 'o.localitysecurity');
         }
+        elseif($schema === 'taxa'){
+            $fieldNameArr = array();
+            $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
+            $fieldNameArr[] = 'o.sciname';
+            $fieldNameArr[] = 'CONCAT_WS(" ", t.unitind1, t.unitname1) AS genus';
+            $fieldNameArr[] = 'CONCAT_WS(" ", t.unitind2, t.unitname2) AS specificEpithet';
+            $fieldNameArr[] = 't.unitind3 AS infraSpecificRank';
+            $fieldNameArr[] = 't.unitname3 AS infraSpecificEpithet';
+            $fieldNameArr[] = 't.author AS scientificNameAuthorship';
+        }
         elseif($schema === 'map'){
             $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.`year`', 'o.`month`', 'o.`day`', 'o.decimallatitude',
                 'o.decimallongitude', 'c.colltype', 'o.catalognumber', 'o.othercatalognumbers', 'o.habitat', 'o.associatedtaxa',
@@ -884,12 +908,14 @@ class SearchService {
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($occurrenceFields, 'o');
             $fieldNameArr[] = 'IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),"") AS date';
         }
-        $fieldNameArr[] = 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode';
-        $fieldNameArr[] = 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode';
-        $fieldNameArr[] = 'c.collectionname';
-        $fieldNameArr[] = 'c.icon';
-        $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
-        $fieldNameArr[] = 't.tidaccepted';
+        if($schema !== 'taxa'){
+            $fieldNameArr[] = 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode';
+            $fieldNameArr[] = 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode';
+            $fieldNameArr[] = 'c.collectionname';
+            $fieldNameArr[] = 'c.icon';
+            $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
+            $fieldNameArr[] = 't.tidaccepted';
+        }
         return 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' ';
     }
 
