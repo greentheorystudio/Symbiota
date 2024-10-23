@@ -89,7 +89,6 @@ const spatialSymbologyTab = {
                     </div>
                 </template>
             </div>
-            <q-separator ></q-separator>
         </div>
     `,
     components: {

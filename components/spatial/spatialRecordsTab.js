@@ -8,6 +8,7 @@ const spatialRecordsTab = {
                 <div class="row q-gutter-sm">
                     <list-display-button></list-display-button>
                     <table-display-button></table-display-button>
+                    <image-display-button></image-display-button>
                     <template v-if="searchTermsJson.length <= 1800">
                         <copy-url-button :page-number="pagination.page"></copy-url-button>
                     </template>
@@ -50,7 +51,7 @@ const spatialRecordsTab = {
                             <q-td key="collector" :props="props">
                                 <div class="column q-gutter-xs">
                                     <div class="fit text-left">
-                                        <a class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);">{{ props.row.collector }}</a>
+                                        <a class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);">{{ (props.row.collector ? props.row.collector : '[No data]') }}</a>
                                     </div>
                                     <div class="row justify-end">
                                         <q-btn color="grey-4" size="xs" text-color="black" class="q-ml-sm black-border" icon="fas fa-search-location" @click="setMapFinderPopup(props.row);" dense>
@@ -93,11 +94,11 @@ const spatialRecordsTab = {
                     </template>
                 </q-table>
             </div>
-            <q-separator ></q-separator>
         </div>
     `,
     components: {
         'copy-url-button': copyURLButton,
+        'image-display-button': imageDisplayButton,
         'list-display-button': listDisplayButton,
         'search-data-downloader': searchDataDownloader,
         'table-display-button': tableDisplayButton

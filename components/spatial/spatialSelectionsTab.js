@@ -1,22 +1,18 @@
 const spatialSelectionsTab = {
     template: `
         <div class="column">
-            <div class="q-px-sm q-mb-xs row justify-start">
-                <div class="row q-gutter-sm">
-                    <search-data-downloader :selections="true"></search-data-downloader>
+            <div class="row justify-between">
+                <div class="q-px-sm q-mb-sm column q-gutter-xs">
+                    <div class="row q-gutter-sm">
+                        <search-data-downloader :selections="true"></search-data-downloader>
+                    </div>
+                    <div class="row q-gutter-sm">
+                        <q-checkbox v-model="mapSettings.toggleSelectedPoints" label="Show Only Selected Points" @update:model-value="processToggleSelectedPoints"></q-checkbox>
+                    </div>
                 </div>
-            </div>
-            <div class="q-px-sm q-mb-xs row justify-between q-gutter-sm">
-                <div>
+                <div class="q-px-sm q-mb-sm column q-gutter-xs">
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processClearSelections();" label="Clear Selections" dense />
-                </div>
-                <div>
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="zoomToSelections();" label="Zoom to Selections" dense />
-                </div>
-            </div>
-            <div class="q-px-sm q-mb-sm row justify-start">
-                <div class="row q-gutter-sm">
-                    <q-checkbox v-model="mapSettings.toggleSelectedPoints" label="Show Only Selected Points" @update:model-value="processToggleSelectedPoints"></q-checkbox>
                 </div>
             </div>
             <q-separator ></q-separator>
@@ -41,7 +37,7 @@ const spatialSelectionsTab = {
                             <q-td key="collector" :props="props">
                                 <div class="column q-gutter-xs">
                                     <div class="fit text-left">
-                                        <a class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);">{{ props.row.collector }}</a>
+                                        <a class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);">{{ (props.row.collector ? props.row.collector : '[No data]') }}</a>
                                     </div>
                                     <div class="row justify-end">
                                         <q-btn color="grey-4" size="xs" text-color="black" class="q-ml-sm black-border" icon="fas fa-search-location" @click="setMapFinderPopup(props.row);" dense>
@@ -73,14 +69,10 @@ const spatialSelectionsTab = {
                     </template>
                 </q-table>
             </div>
-            <q-separator ></q-separator>
         </div>
     `,
     components: {
-        'copy-url-button': copyURLButton,
-        'list-display-button': listDisplayButton,
-        'search-data-downloader': searchDataDownloader,
-        'table-display-button': tableDisplayButton
+        'search-data-downloader': searchDataDownloader
     },
     setup() {
         const baseStore = useBaseStore();
