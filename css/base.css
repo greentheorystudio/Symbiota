@@ -1086,9 +1086,12 @@ body.processing .loadingModal {
 .occurrence-tab-border {
 	border-bottom: 1px solid black;
 }
-.occurrence-editor-preview-image-carousel {
+.preview-image-carousel {
 	min-height: 400px;
 }
 .occurrence-editor-image-transcriber-image {
 	border-left: 2px solid black;
+}
+.coll-icon-occurrence-info-popup {
+	height: 50px;
 }

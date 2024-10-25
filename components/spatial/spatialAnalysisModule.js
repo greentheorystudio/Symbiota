@@ -24,7 +24,9 @@ const spatialAnalysisModule = {
     template: `
         <spatial-layer-controller-popup :layers-info-obj="layersInfoObj"></spatial-layer-controller-popup>
         <spatial-layer-query-selector-popup :layer-id="mapSettings.layerQuerySelectorId"></spatial-layer-query-selector-popup>
-        <record-info-window-popup :record-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></record-info-window-popup>
+        <template v-if="mapSettings.recordInfoWindowId">
+            <occurrence-info-window-popup :occurrence-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
+        </template>
         <search-criteria-popup :show-popup="displayQueryPopup" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
 
         <div id="map" :class="inputWindowMode ? 'input-window analysis' : 'analysis'">
@@ -49,7 +51,7 @@ const spatialAnalysisModule = {
         </div>
     `,
     components: {
-        'record-info-window-popup': recordInfoWindowPopup,
+        'occurrence-info-window-popup': occurrenceInfoWindowPopup,
         'search-criteria-popup': searchCriteriaPopup,
         'spatial-side-panel': spatialSidePanel,
         'spatial-control-panel': spatialControlPanel,

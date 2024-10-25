@@ -1,4 +1,4 @@
-const occurrenceEditorImagePreviewCarousel = {
+const imageCarousel = {
     props: {
         imageArr: {
             type: Array,
@@ -6,7 +6,7 @@ const occurrenceEditorImagePreviewCarousel = {
         }
     },
     template: `
-        <q-card flat bordered class="fit occurrence-editor-preview-image-carousel">
+        <q-card flat bordered class="fit preview-image-carousel">
             <q-card-section class="fit">
                 <q-carousel ref="carousel" swipeable animated v-model="currentImage" :arrows="(imageArr.length > 1)" control-color="black" infinite class="fit">
                     <template v-for="image in imageArr" :key="image">

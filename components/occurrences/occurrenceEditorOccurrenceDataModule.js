@@ -9,7 +9,7 @@ const occurrenceEditorOccurrenceDataModule = {
                                 <occurrence-editor-location-module></occurrence-editor-location-module>
                             </div>
                             <div v-if="imageArr.length > 0" class="gt-md col-4">
-                                <occurrence-editor-image-preview-carousel :image-arr="imageArr"></occurrence-editor-image-preview-carousel>
+                                <image-carousel :image-arr="imageArr"></image-carousel>
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@ const occurrenceEditorOccurrenceDataModule = {
                                 <occurrence-editor-form-collecting-event-element></occurrence-editor-form-collecting-event-element>
                             </div>
                             <div v-if="imageArr.length > 0" class="gt-md col-4">
-                                <occurrence-editor-image-preview-carousel></occurrence-editor-image-preview-carousel>
+                                <image-carousel :image-arr="imageArr"></image-carousel>
                             </div>
                         </div>
                         <occurrence-editor-form-latest-identification-element></occurrence-editor-form-latest-identification-element>
@@ -56,6 +56,7 @@ const occurrenceEditorOccurrenceDataModule = {
         </div>
     `,
     components: {
+        'image-carousel': imageCarousel,
         'occurrence-editor-form-collecting-event-element': occurrenceEditorFormCollectingEventElement,
         'occurrence-editor-form-curation-element': occurrenceEditorFormCurationElement,
         'occurrence-editor-form-identifier-element': occurrenceEditorFormIdentifierElement,
@@ -63,7 +64,6 @@ const occurrenceEditorOccurrenceDataModule = {
         'occurrence-editor-form-location-element': occurrenceEditorFormLocationElement,
         'occurrence-editor-form-misc-element': occurrenceEditorFormMiscElement,
         'occurrence-editor-collecting-event-module': occurrenceEditorCollectingEventModule,
-        'occurrence-editor-image-preview-carousel': occurrenceEditorImagePreviewCarousel,
         'occurrence-editor-location-module': occurrenceEditorLocationModule,
         'occurrence-editor-occurrence-data-controls': occurrenceEditorOccurrenceDataControls,
         'occurrence-editor-record-footer-element': occurrenceEditorRecordFooterElement
