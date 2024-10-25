@@ -829,6 +829,13 @@ body.processing .loadingModal {
 	border: 1px solid black;
 	min-width: 700px;
 }
+.search-criteria-popup {
+	max-width: 90% !important;
+	width: 90% !important;
+	height: 85% !important;
+	border: 1px solid black;
+	min-width: 300px;
+}
 .layer-controller-element {
 	width: 95%;
 }

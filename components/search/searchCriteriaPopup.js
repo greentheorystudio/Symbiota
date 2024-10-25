@@ -15,30 +15,32 @@ const searchCriteriaPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
-            <q-card class="lg-popup overflow-hidden">
+            <q-card class="search-criteria-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
                     </div>
                 </div>
-                <div ref="contentRef" class="fit">
-                    <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
-                        <q-tab name="criteria" label="Criteria" no-caps></q-tab>
-                        <q-tab v-if="!collectionId" name="collections" label="Collections" no-caps></q-tab>
-                        <q-tab name="advanced" label="Advanced" no-caps></q-tab>
-                    </q-tabs>
-                    <q-separator></q-separator>
-                    <q-tab-panels v-model="tab">
-                        <q-tab-panel class="q-pa-none" name="criteria">
-                            <search-criteria-tab :collection-id="collectionId" :show-spatial="showSpatial"></search-criteria-tab>
-                        </q-tab-panel>
-                        <q-tab-panel v-if="!collectionId" name="collections">
-                            <search-collections-tab></search-collections-tab>
-                        </q-tab-panel>
-                        <q-tab-panel name="advanced">
-                            <search-advanced-tab></search-advanced-tab>
-                        </q-tab-panel>
-                    </q-tab-panels>
+                <div ref="contentRef" class="fit overflow-auto">
+                    <div :style="contentStyle" class="overflow-auto">
+                        <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
+                            <q-tab name="criteria" label="Criteria" no-caps></q-tab>
+                            <q-tab v-if="!collectionId" name="collections" label="Collections" no-caps></q-tab>
+                            <q-tab name="advanced" label="Advanced" no-caps></q-tab>
+                        </q-tabs>
+                        <q-separator></q-separator>
+                        <q-tab-panels v-model="tab">
+                            <q-tab-panel class="q-pa-none" name="criteria">
+                                <search-criteria-tab :collection-id="collectionId" :show-spatial="showSpatial"></search-criteria-tab>
+                            </q-tab-panel>
+                            <q-tab-panel v-if="!collectionId" name="collections">
+                                <search-collections-tab></search-collections-tab>
+                            </q-tab-panel>
+                            <q-tab-panel name="advanced">
+                                <search-advanced-tab></search-advanced-tab>
+                            </q-tab-panel>
+                        </q-tab-panels>
+                    </div>
                 </div>
             </q-card>
         </q-dialog>
@@ -53,6 +55,10 @@ const searchCriteriaPopup = {
         const contentStyle = Vue.ref(null);
         const tab = Vue.ref('criteria');
 
+        Vue.watch(contentRef, () => {
+            setContentStyle();
+        });
+
         function closePopup() {
             context.emit('close:popup');
         }
@@ -60,7 +66,7 @@ const searchCriteriaPopup = {
         function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
-                contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
+                contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 10) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
             }
         }
 

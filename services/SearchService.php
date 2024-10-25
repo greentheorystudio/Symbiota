@@ -107,7 +107,7 @@ class SearchService {
         $tempArr = array();
         $catStr = $searchTermsArr['catnum'];
         $includeOtherCatNum = array_key_exists('othercatnum', $searchTermsArr);
-        $catArr = explode(',', str_replace(';',',', $catStr));
+        $catArr = explode(';', $catStr);
         $betweenFrag = array();
         $inFrag = array();
         foreach($catArr as $v){

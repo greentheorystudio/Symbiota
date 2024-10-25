@@ -27,7 +27,7 @@ const spatialAnalysisModule = {
         <template v-if="mapSettings.recordInfoWindowId">
             <occurrence-info-window-popup :occurrence-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
         </template>
-        <search-criteria-popup :show-popup="displayQueryPopup" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
+        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
 
         <div id="map" :class="inputWindowMode ? 'input-window analysis' : 'analysis'">
             <spatial-side-panel :show-panel="mapSettings.showSidePanel" :expanded-element="mapSettings.sidePanelExpandedElement"></spatial-side-panel>

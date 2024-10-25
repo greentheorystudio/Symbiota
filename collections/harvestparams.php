@@ -415,7 +415,7 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
         <script>
             const textSearchModule = Vue.createApp({
                 components: {
-                    'spatial-analysis-popup': spatialAnalysisPopup
+                    'spatial-analysis-popup': componentRegistry.hasOwnProperty('spatialAnalysisPopup') ? componentRegistry['spatialAnalysisPopup'] : null,
                 },
                 setup() {
                     const bottomLatValue = Vue.ref(null);

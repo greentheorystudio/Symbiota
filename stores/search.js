@@ -92,7 +92,6 @@ const useSearchStore = Pinia.defineStore('search', {
                 state.searchTerms.hasOwnProperty('eventdate2') ||
                 state.searchTerms.hasOwnProperty('occurrenceRemarks') ||
                 state.searchTerms.hasOwnProperty('catnum') ||
-                state.searchTerms.hasOwnProperty('othercatnum') ||
                 state.searchTerms.hasOwnProperty('typestatus') ||
                 state.searchTerms.hasOwnProperty('hasaudio') ||
                 state.searchTerms.hasOwnProperty('hasimages') ||
