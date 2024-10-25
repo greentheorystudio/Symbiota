@@ -10,15 +10,17 @@ const searchDataDownloader = {
         }
     },
     template: `
-        <div class="download-type-dropdown">
-            <selector-input-element :options="downloadTypeOptions" label="Download Type" :value="selectedDownloadType" @update:value="updateSelectedDownloadType"></selector-input-element>
-        </div>
-        <div class="self-center">
-            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="initializeDownload();" icon="fas fa-download" dense>
-                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                    Download Records
-                </q-tooltip>
-            </q-btn>
+        <div class="row">
+            <div class="download-type-dropdown self-center">
+                <selector-input-element :options="downloadTypeOptions" label="Download Type" :value="selectedDownloadType" @update:value="updateSelectedDownloadType"></selector-input-element>
+            </div>
+            <div class="q-ml-sm self-center">
+                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="initializeDownload();" icon="fas fa-download" dense>
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        Download Records
+                    </q-tooltip>
+                </q-btn>
+            </div>
         </div>
         <search-download-options-popup :show-popup="displayOptionsPopup" @update:download-options="processDownloadOptions" @close:popup="displayOptionsPopup = false"></search-download-options-popup>
     `,

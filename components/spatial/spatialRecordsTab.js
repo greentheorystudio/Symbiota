@@ -1,22 +1,24 @@
 const spatialRecordsTab = {
     template: `
         <div class="column">
-            <div class="q-px-sm q-py-md row justify-between q-gutter-xs">
-                <div class="row q-gutter-sm">
+            <div class="q-pa-sm full-width row justify-between q-col-gutter-xs">
+                <div class="col-12 col-md-8">
                     <search-data-downloader :spatial="true"></search-data-downloader>
                 </div>
-                <div class="row q-gutter-sm">
-                    <list-display-button></list-display-button>
-                    <table-display-button></table-display-button>
-                    <image-display-button></image-display-button>
-                    <template v-if="searchTermsJson.length <= 1800">
-                        <copy-url-button :page-number="pagination.page"></copy-url-button>
-                    </template>
+                <div class="col-12 col-md-4 offset-md-grow">
+                    <div class="row q-gutter-sm">
+                        <list-display-button></list-display-button>
+                        <table-display-button></table-display-button>
+                        <image-display-button></image-display-button>
+                        <template v-if="searchTermsJson.length <= 1800">
+                            <copy-url-button :page-number="pagination.page"></copy-url-button>
+                        </template>
+                    </div>
                 </div>
             </div>
             <q-separator ></q-separator>
-            <div class="q-py-md">
-                <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" :columns="columns" row-key="name" :loading="tableLoading" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells>
+            <div>
+                <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" :columns="columns" row-key="name" :loading="tableLoading" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
                     <template v-slot:top="scope">
                         <div class="spatial-record-table-top-pagination row justify-end">
                             <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>

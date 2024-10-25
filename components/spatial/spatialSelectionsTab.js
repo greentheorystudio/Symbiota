@@ -1,8 +1,8 @@
 const spatialSelectionsTab = {
     template: `
         <div class="column">
-            <div class="row justify-between">
-                <div class="q-px-sm q-mb-sm column q-gutter-xs">
+            <div class="q-pa-md row justify-between">
+                <div class="column q-gutter-xs">
                     <div class="row q-gutter-sm">
                         <search-data-downloader :selections="true"></search-data-downloader>
                     </div>
@@ -10,14 +10,14 @@ const spatialSelectionsTab = {
                         <q-checkbox v-model="mapSettings.toggleSelectedPoints" label="Show Only Selected Points" @update:model-value="processToggleSelectedPoints"></q-checkbox>
                     </div>
                 </div>
-                <div class="q-px-sm q-mb-sm column q-gutter-xs">
+                <div class="column q-gutter-xs">
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processClearSelections();" label="Clear Selections" dense />
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="zoomToSelections();" label="Zoom to Selections" dense />
                 </div>
             </div>
             <q-separator ></q-separator>
-            <div class="q-py-md">
-                <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" :columns="columns" row-key="name" :loading="tableLoading" separator="cell" selection="multiple" :rows-per-page-options="[0]" wrap-cells hide-pagination>
+            <div>
+                <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" :columns="columns" row-key="name" :loading="tableLoading" separator="cell" selection="multiple" :rows-per-page-options="[0]" wrap-cells hide-pagination dense>
                     <template v-slot:header="props">
                         <q-tr :props='props' class="bg-blue-grey-2">
                             <q-th></q-th>
