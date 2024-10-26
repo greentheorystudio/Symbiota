@@ -31,13 +31,13 @@ const searchCriteriaPopup = {
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
                             <q-tab-panel class="q-pa-none" name="criteria">
-                                <search-criteria-tab :collection-id="collectionId" :show-spatial="showSpatial"></search-criteria-tab>
+                                <search-criteria-tab :collection-id="collectionId" :show-spatial="showSpatial" @reset:search-criteria="resetCriteria"></search-criteria-tab>
                             </q-tab-panel>
                             <q-tab-panel v-if="!collectionId" name="collections">
-                                <search-collections-tab></search-collections-tab>
+                                <search-collections-tab @reset:search-criteria="resetCriteria"></search-collections-tab>
                             </q-tab-panel>
                             <q-tab-panel name="advanced">
-                                <search-advanced-tab></search-advanced-tab>
+                                <search-advanced-tab @reset:search-criteria="resetCriteria"></search-advanced-tab>
                             </q-tab-panel>
                         </q-tab-panels>
                     </div>
@@ -63,6 +63,10 @@ const searchCriteriaPopup = {
             context.emit('close:popup');
         }
 
+        function resetCriteria() {
+            context.emit('reset:search-criteria');
+        }
+
         function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
@@ -80,7 +84,8 @@ const searchCriteriaPopup = {
             contentRef,
             contentStyle,
             tab,
-            closePopup
+            closePopup,
+            resetCriteria
         }
     }
 };

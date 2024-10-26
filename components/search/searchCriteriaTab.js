@@ -228,7 +228,7 @@ const searchCriteriaTab = {
         'spatial-analysis-popup': componentRegistry.hasOwnProperty('spatialAnalysisPopup') ? componentRegistry['spatialAnalysisPopup'] : null,
         'text-field-input-element': textFieldInputElement
     },
-    setup() {
+    setup(_, context) {
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
 
@@ -351,6 +351,7 @@ const searchCriteriaTab = {
 
         function resetCriteria() {
             searchStore.clearSearchTerms();
+            context.emit('reset:search-criteria');
         }
 
         function updateDateData(prop, dateData) {
