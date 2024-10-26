@@ -319,7 +319,7 @@ class SearchService {
         $searchStr = str_replace('%apos;', "'", $searchTermsArr['country']);
         $countryArr = explode(';', $searchStr);
         if($countryArr){
-            foreach($countryArr as $k => $value){
+            foreach($countryArr as $value){
                 if($value === 'NULL'){
                     $tempArr[] = '(ISNULL(o.country))';
                 }
@@ -337,7 +337,7 @@ class SearchService {
         $searchStr = str_replace('%apos;',"'", $searchTermsArr['county']);
         $countyArr = explode(';', $searchStr);
         if($countyArr){
-            foreach($countyArr as $k => $value){
+            foreach($countyArr as $value){
                 if($value === 'NULL'){
                     $tempArr[] = '(ISNULL(o.county))';
                 }
@@ -348,6 +348,38 @@ class SearchService {
             }
         }
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+    }
+
+    public function prepareOccurrenceDateEnteredWhereSql($searchTermsArr): string
+    {
+        $returnStr = '';
+        $searchStr = str_replace('%apos;',"'", $searchTermsArr['dateentered']);
+        if($searchStr){
+            $value = trim($searchStr);
+            if($value === 'NULL'){
+                $returnStr = '(ISNULL(o.dateentered))';
+            }
+            else{
+                $returnStr = '(o.dateentered LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . ' %")';
+            }
+        }
+        return $returnStr;
+    }
+
+    public function prepareOccurrenceDateModifiedWhereSql($searchTermsArr): string
+    {
+        $returnStr = '';
+        $searchStr = str_replace('%apos;',"'", $searchTermsArr['datemodified']);
+        if($searchStr){
+            $value = trim($searchStr);
+            if($value === 'NULL'){
+                $returnStr = '(ISNULL(o.datelastmodified))';
+            }
+            else{
+                $returnStr = '(o.datelastmodified LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . ' %")';
+            }
+        }
+        return $returnStr;
     }
 
     public function prepareOccurrenceElevationWhereSql($searchTermsArr): string
@@ -362,6 +394,22 @@ class SearchService {
         }
         return '(' . '(minimumelevationinmeters >= ' . $elevlow . ' AND maximumelevationinmeters <= ' . $elevhigh . ') OR ' .
             '(ISNULL(maximumelevationinmeters) AND minimumelevationinmeters >= ' . $elevlow . ' AND minimumelevationinmeters <= ' . $elevhigh . ')' . ')';
+    }
+
+    public function prepareOccurrenceEnteredByWhereSql($searchTermsArr): string
+    {
+        $returnStr = '';
+        $searchStr = str_replace('%apos;',"'", $searchTermsArr['enteredby']);
+        if($searchStr){
+            $value = trim($searchStr);
+            if($value === 'NULL'){
+                $returnStr = '(ISNULL(o.recordenteredby))';
+            }
+            else{
+                $returnStr = '(o.recordenteredby = "' . SanitizerService::cleanInStr($this->conn, $value) . '")';
+            }
+        }
+        return $returnStr;
     }
 
     public function prepareOccurrenceEventDateWhereSql($searchTermsArr): string
@@ -409,7 +457,7 @@ class SearchService {
         $searchStr = str_replace('%apos;',"'", $searchTermsArr['local']);
         $localArr = explode(';', $searchStr);
         if($localArr){
-            foreach($localArr as $k => $value){
+            foreach($localArr as $value){
                 $value = trim($value);
                 if($value === 'NULL'){
                     $tempArr[] = '(ISNULL(o.locality))';
@@ -428,7 +476,7 @@ class SearchService {
         $searchStr = str_replace('%apos;',"'", $searchTermsArr['occurrenceRemarks']);
         $remarksArr = explode(';', $searchStr);
         if($remarksArr){
-            foreach($remarksArr as $k => $value){
+            foreach($remarksArr as $value){
                 $value = trim($value);
                 if($value === 'NULL'){
                     $tempArr[] = '(ISNULL(o.occurrenceremarks))';
@@ -439,6 +487,22 @@ class SearchService {
             }
         }
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+    }
+
+    public function prepareOccurrenceProcessingStatusWhereSql($searchTermsArr): string
+    {
+        $returnStr = '';
+        $searchStr = str_replace('%apos;',"'", $searchTermsArr['processingstatus']);
+        if($searchStr){
+            $value = trim($searchStr);
+            if($value === 'NULL'){
+                $returnStr = '(ISNULL(o.processingstatus))';
+            }
+            else{
+                $returnStr = '(o.processingstatus = "' . SanitizerService::cleanInStr($this->conn, $value) . '")';
+            }
+        }
+        return $returnStr;
     }
 
     public function prepareOccurrenceSpatialWhereSql($searchTermsArr): string
@@ -459,7 +523,7 @@ class SearchService {
                 $objArr = json_decode($objArr, true);
             }
             if($objArr){
-                foreach($objArr as $obj => $oArr){
+                foreach($objArr as $oArr){
                     $radius = $oArr['groundradius'] * 0.621371192;
                     $sqlFragArr[] = '((3959 * ACOS(COS(RADIANS(o.decimallatitude)) * COS(RADIANS(' . $oArr['pointlat'] . ')) * COS(RADIANS(' . $oArr['pointlong'] . ') - RADIANS(o.decimallongitude)) + SIN(RADIANS(o.decimallatitude)) * SIN(RADIANS(' . $oArr['pointlat'] . ')))) <= ' . $radius . ')';
                 }
@@ -488,7 +552,7 @@ class SearchService {
         $searchStr = str_replace('%apos;',"'", $searchTermsArr['state']);
         $stateAr = explode(';', $searchStr);
         if($stateAr){
-            foreach($stateAr as $k => $value){
+            foreach($stateAr as $value){
                 if($value === 'NULL'){
                     $tempArr[] = '(ISNULL(o.stateprovince))';
                 }
@@ -662,6 +726,9 @@ class SearchService {
         if(array_key_exists('hasimages',$searchTermsArr) && $searchTermsArr['hasimages']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM images))';
         }
+        if(array_key_exists('withoutimages',$searchTermsArr) && $searchTermsArr['withoutimages']){
+            $sqlWherePartsArr[] = '(o.occid NOT IN(SELECT occid FROM images))';
+        }
         if(array_key_exists('hasvideo',$searchTermsArr) && $searchTermsArr['hasvideo']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format LIKE "video/%"))';
         }
@@ -703,6 +770,30 @@ class SearchService {
                 $sqlWherePartsArr[] = '(i.imgid IS NOT NULL AND (ISNULL(i.occid) OR o.basisofrecord LIKE "%observation%"))';
             }
         }
+        if(array_key_exists('enteredby',$searchTermsArr) && $searchTermsArr['enteredby']){
+            $enteredByStr = $this->prepareOccurrenceEnteredByWhereSql($searchTermsArr);
+            if($enteredByStr){
+                $sqlWherePartsArr[] = $enteredByStr;
+            }
+        }
+        if(array_key_exists('dateentered',$searchTermsArr) && $searchTermsArr['dateentered']){
+            $dateEnteredStr = $this->prepareOccurrenceDateEnteredWhereSql($searchTermsArr);
+            if($dateEnteredStr){
+                $sqlWherePartsArr[] = $dateEnteredStr;
+            }
+        }
+        if(array_key_exists('datemodified',$searchTermsArr) && $searchTermsArr['datemodified']){
+            $dateModifiedStr = $this->prepareOccurrenceDateModifiedWhereSql($searchTermsArr);
+            if($dateModifiedStr){
+                $sqlWherePartsArr[] = $dateModifiedStr;
+            }
+        }
+        if(array_key_exists('processingstatus',$searchTermsArr) && $searchTermsArr['processingstatus']){
+            $processingStatusStr = $this->prepareOccurrenceProcessingStatusWhereSql($searchTermsArr);
+            if($processingStatusStr){
+                $sqlWherePartsArr[] = $processingStatusStr;
+            }
+        }
         return count($sqlWherePartsArr) > 0 ? implode(' AND ', $sqlWherePartsArr) : '';
     }
 
@@ -717,7 +808,7 @@ class SearchService {
                 $index = array_key_exists('index', $options) ? (int)$options['index'] : 0;
                 $bottomLimit = $numRows > 0 ? ($index - 1) * $numRows : null;
                 $sql = $this->setSelectSql($options['schema']);
-                $sql .= $this->setFromSql($options['schema']) . $this->setTableJoinsSql($searchTermsArr);
+                $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
                 if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
@@ -745,7 +836,7 @@ class SearchService {
                 if($numRows > 0){
                     $sql .= 'LIMIT ' . $bottomLimit . ',' . $numRows;
                 }
-                //echo "<div>Count sql: ".$sql."</div>";
+                //echo '<div>Search sql: ' . $sql . '</div>';
                 if($result = $this->conn->query($sql)){
                     if($options['output'] === 'geojson'){
                         $returnArr = $this->serializeGeoJsonResultArr($result, $numRows);

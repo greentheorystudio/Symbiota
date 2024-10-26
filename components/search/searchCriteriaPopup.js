@@ -66,7 +66,8 @@ const searchCriteriaPopup = {
         function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
-                contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 10) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
+                const heightOffset = contentRef.value.clientWidth > 700 ? 10 : 30;
+                contentStyle.value = 'height: ' + (contentRef.value.clientHeight - heightOffset) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
             }
         }
 

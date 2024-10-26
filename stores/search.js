@@ -10,7 +10,8 @@ const useSearchStore = Pinia.defineStore('search', {
             hasimages: false,
             hasvideo: false,
             hasmedia: false,
-            hasgenetic: false
+            hasgenetic: false,
+            withoutimages: false
         },
         dateId: null,
         queryId: 0,
@@ -77,7 +78,8 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getSearchTermsValid(state) {
             let populated = false;
-            if(state.searchTerms.hasOwnProperty('db') ||
+            if(
+                state.searchTerms.hasOwnProperty('db') ||
                 state.searchTerms.hasOwnProperty('clid') ||
                 state.searchTerms.hasOwnProperty('taxa') ||
                 state.searchTerms.hasOwnProperty('country') ||
@@ -92,12 +94,6 @@ const useSearchStore = Pinia.defineStore('search', {
                 state.searchTerms.hasOwnProperty('eventdate2') ||
                 state.searchTerms.hasOwnProperty('occurrenceRemarks') ||
                 state.searchTerms.hasOwnProperty('catnum') ||
-                state.searchTerms.hasOwnProperty('typestatus') ||
-                state.searchTerms.hasOwnProperty('hasaudio') ||
-                state.searchTerms.hasOwnProperty('hasimages') ||
-                state.searchTerms.hasOwnProperty('hasvideo') ||
-                state.searchTerms.hasOwnProperty('hasmedia') ||
-                state.searchTerms.hasOwnProperty('hasgenetic') ||
                 state.searchTerms.hasOwnProperty('upperlat') ||
                 state.searchTerms.hasOwnProperty('pointlat') ||
                 state.searchTerms.hasOwnProperty('circleArr') ||
@@ -106,7 +102,18 @@ const useSearchStore = Pinia.defineStore('search', {
                 state.searchTerms.hasOwnProperty('imagekeyword') ||
                 state.searchTerms.hasOwnProperty('uploaddate1') ||
                 state.searchTerms.hasOwnProperty('uploaddate2') ||
-                state.searchTerms.hasOwnProperty('polyArr')
+                state.searchTerms.hasOwnProperty('polyArr') ||
+                state.searchTerms.hasOwnProperty('enteredby') ||
+                state.searchTerms.hasOwnProperty('dateentered') ||
+                state.searchTerms.hasOwnProperty('datemodified') ||
+                state.searchTerms.hasOwnProperty('processingstatus') ||
+                state.searchTerms['typestatus'] ||
+                state.searchTerms['hasaudio'] ||
+                state.searchTerms['hasimages'] ||
+                state.searchTerms['hasvideo'] ||
+                state.searchTerms['hasmedia'] ||
+                state.searchTerms['hasgenetic'] ||
+                state.searchTerms['withoutimages']
             ){
                 populated = true;
             }

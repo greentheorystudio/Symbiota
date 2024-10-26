@@ -20,6 +20,11 @@ const searchCriteriaTab = {
                 </div>
             </div>
             <div class="column q-col-gutter-sm">
+                <template v-if="(!showSpatial && (searchTerms.upperlat || searchTerms.pointlat)) || searchTerms.circleArr || searchTerms.polyArr">
+                    <div class="text-body1 text-bold">
+                        Records will be searched within the spatial criteria
+                    </div>
+                </template>
                 <div>
                     <checkbox-input-element label="Include Synonyms from Taxonomic Thesaurus" :value="searchTerms.usethes" @update:value="(value) => updateSearchTerms('usethes', value)"></checkbox-input-element>
                 </div>
@@ -317,7 +322,7 @@ const searchCriteriaTab = {
                     updateSearchTerms('circleArr', data['circleArr']);
                 }
                 if(data.hasOwnProperty('polyArr')){
-                    updateSearchTerms('circleArr', data['polyArr']);
+                    updateSearchTerms('polyArr', data['polyArr']);
                 }
             }
         }
