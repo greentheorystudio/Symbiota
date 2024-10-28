@@ -953,6 +953,7 @@ const spatialAnalysisModule = {
                         if(!symbologyArr['taxonomy'].find(key => key['value'] === sciname)){
                             const taxonObject = {};
                             taxonObject['value'] = sciname;
+                            taxonObject['taxa'] = [];
                             symbologyArr['taxonomy'].push(Object.assign({}, taxonObject));
                             taxonObject['color'] = mapSettings.pointLayerFillColor;
                             symbologyArr['sciname'].push(taxonObject);

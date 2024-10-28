@@ -233,12 +233,11 @@ class SearchService {
     public function prepareOccurrenceCollectionWhereSql($searchTermsArr): string
     {
         $collSqlWhereStr = '';
-        if(array_key_exists('db', $searchTermsArr) && $searchTermsArr['db'] && $searchTermsArr['db'] !== 'all') {
+        if(array_key_exists('db', $searchTermsArr) && is_array($searchTermsArr['db']) && count($searchTermsArr['db']) > 0) {
             if(!$GLOBALS['IS_ADMIN']){
                 $searchCollections = array();
                 $publicCollections = (new Collections)->getPublicCollections();
-                $selectedCollections = explode(',', SanitizerService::cleanInStr($this->conn, $searchTermsArr['db']));
-                foreach($selectedCollections as $id){
+                foreach($searchTermsArr['db'] as $id){
                     if(in_array((int)$id, $publicCollections, true) || in_array((int)$id, $GLOBALS['PERMITTED_COLLECTIONS'], true)){
                         $searchCollections[] = (int)$id;
                     }
@@ -246,7 +245,7 @@ class SearchService {
                 $collIdStr = implode(',', $searchCollections);
             }
             else{
-                $collIdStr = SanitizerService::cleanInStr($this->conn, $searchTermsArr['db']);
+                $collIdStr = implode(',', $searchTermsArr['db']);
             }
             $collSqlWhereStr .= '(o.collid IN(' . $collIdStr . '))';
         }

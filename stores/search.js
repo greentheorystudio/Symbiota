@@ -2,6 +2,7 @@ const useSearchStore = Pinia.defineStore('search', {
     state: () => ({
         baseStore: useBaseStore(),
         blankSearchTerms: {
+            db: [],
             taxontype: '1',
             usethes: true,
             othercatnum: true,
@@ -79,7 +80,7 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchTermsValid(state) {
             let populated = false;
             if(
-                state.searchTerms.hasOwnProperty('db') ||
+                state.searchTerms['db'].length > 0 ||
                 state.searchTerms.hasOwnProperty('clid') ||
                 state.searchTerms.hasOwnProperty('taxa') ||
                 state.searchTerms.hasOwnProperty('country') ||

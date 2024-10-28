@@ -42,7 +42,7 @@ const occurrenceInfoWindowPopup = {
                             <q-tab-panel name="details" :style="tabPanelStyle">
                                 <div class="row justify-start q-gutter-md">
                                     <div v-if="collectionData.icon">
-                                        <img :src="collectionData.icon" class="coll-icon-occurrence-info-popup">
+                                        <q-img :src="collectionData.icon" class="coll-icon-occurrence-info-popup" :fit="contain"></q-img>
                                     </div>
                                     <div class="text-h6 text-bold">
                                         {{ collectionNameStr  }}

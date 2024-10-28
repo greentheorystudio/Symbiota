@@ -26,7 +26,7 @@ const searchCriteriaPopup = {
                         <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                             <q-tab name="criteria" label="Criteria" no-caps></q-tab>
                             <q-tab v-if="!collectionId" name="collections" label="Collections" no-caps></q-tab>
-                            <q-tab name="advanced" label="Advanced" no-caps></q-tab>
+                            <!-- <q-tab name="advanced" label="Advanced" no-caps></q-tab> -->
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
@@ -112,7 +112,7 @@ const searchCriteriaPopup = {
         function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
-                const heightOffset = contentRef.value.clientWidth > 700 ? 10 : 30;
+                const heightOffset = contentRef.value.clientWidth > 700 ? 20 : 30;
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - heightOffset) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
             }
         }
