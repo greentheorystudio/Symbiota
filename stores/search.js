@@ -263,7 +263,7 @@ const useSearchStore = Pinia.defineStore('search', {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    callback(data, options.index, options.numRows);
+                    callback(data, options.index);
                 });
             }
         },

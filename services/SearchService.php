@@ -806,7 +806,7 @@ class SearchService {
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
                 $numRows = array_key_exists('numRows', $options) ? (int)$options['numRows'] : 0;
                 $index = array_key_exists('index', $options) ? (int)$options['index'] : 0;
-                $bottomLimit = $numRows > 0 ? ($index - 1) * $numRows : null;
+                $bottomLimit = $numRows > 0 ? ($index * $numRows) : null;
                 $sql = $this->setSelectSql($options['schema']);
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);

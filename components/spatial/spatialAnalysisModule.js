@@ -789,17 +789,17 @@ const spatialAnalysisModule = {
             mapSettings.pointVectorSource.clear(true);
             let processed = 0;
             let index = 0;
-            const finalIndex = searchStore.getSearchRecCnt > lazyLoadCnt ? Math.ceil(searchStore.getSearchRecCnt / lazyLoadCnt) : 0;
-            const options = {
-                schema: 'map',
-                spatial: 1,
-                numRows: finalIndex,
-                index: index,
-                output: 'geojson'
-            };
             do {
-                searchStore.processSearch(options, (res, index, finalIndex) => {
+                const options = {
+                    schema: 'map',
+                    spatial: 1,
+                    numRows: lazyLoadCnt,
+                    index: index,
+                    output: 'geojson'
+                };
+                searchStore.processSearch(options, (res, index) => {
                     if(res){
+                        const finalIndex = searchStore.getSearchRecCnt > lazyLoadCnt ? (Math.ceil(searchStore.getSearchRecCnt / lazyLoadCnt) - 1) : 0;
                         const format = new ol.format.GeoJSON();
                         let features = format.readFeatures(res, {
                             featureProjection: 'EPSG:3857'
