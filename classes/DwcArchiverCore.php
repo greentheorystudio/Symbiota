@@ -38,8 +38,6 @@ class DwcArchiverCore extends Manager{
     private $includeAttributes = 0;
     private $redactLocalities = 1;
     private $rareReaderArr = array();
-    private $charSetSource;
-    protected $charSetOut = '';
 
     private $geolocateVariables = array();
 
@@ -52,9 +50,6 @@ class DwcArchiverCore extends Manager{
         if($this->verboseMode){
             $this->setLogFH($GLOBALS['LOG_PATH']);
         }
-
-        $this->charSetSource = 'UTF-8';
-        $this->charSetOut = $this->charSetSource;
 
         $this->securityArr = array('recordNumber','locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',
             'decimalLatitude','decimalLongitude','geodeticDatum','coordinateUncertaintyInMeters','footprintWKT',
@@ -598,7 +593,7 @@ class DwcArchiverCore extends Manager{
     {
         $this->logOrEcho('Creating meta.xml (' .date('h:i:s A'). ')... ');
 
-        $newDoc = new DOMDocument('1.0',$this->charSetOut);
+        $newDoc = new DOMDocument('1.0', 'UTF-8');
 
         $rootElem = $newDoc->createElement('archive');
         $rootElem->setAttribute('metadata','eml.xml');
@@ -609,7 +604,7 @@ class DwcArchiverCore extends Manager{
 
         $coreElem = $newDoc->createElement('core');
         $coreElem->setAttribute('dateFormat','YYYY-MM-DD');
-        $coreElem->setAttribute('encoding',$this->charSetOut);
+        $coreElem->setAttribute('encoding', 'UTF-8');
         $coreElem->setAttribute('fieldsTerminatedBy',',');
         $coreElem->setAttribute('linesTerminatedBy','\n');
         $coreElem->setAttribute('fieldsEnclosedBy','"');
@@ -632,10 +627,10 @@ class DwcArchiverCore extends Manager{
         if($this->schemaType === 'dwc' || $this->schemaType === 'backup'){
             unset($termArr['collId']);
         }
-        foreach($termArr as $k => $v){
+        foreach($termArr as $v){
             $fieldElem = $newDoc->createElement('field');
-            $fieldElem->setAttribute('index',$occCnt);
-            $fieldElem->setAttribute('term',$v);
+            $fieldElem->setAttribute('index', $occCnt);
+            $fieldElem->setAttribute('term', ($v ?: ''));
             $coreElem->appendChild($fieldElem);
             $occCnt++;
         }
@@ -643,7 +638,7 @@ class DwcArchiverCore extends Manager{
 
         if($this->includeDets){
             $extElem1 = $newDoc->createElement('extension');
-            $extElem1->setAttribute('encoding',$this->charSetOut);
+            $extElem1->setAttribute('encoding', 'UTF-8');
             $extElem1->setAttribute('fieldsTerminatedBy',',');
             $extElem1->setAttribute('linesTerminatedBy','\n');
             $extElem1->setAttribute('fieldsEnclosedBy','"');
@@ -660,10 +655,10 @@ class DwcArchiverCore extends Manager{
 
             $detCnt = 1;
             $termArr = $this->determinationFieldArr['terms'];
-            foreach($termArr as $k => $v){
+            foreach($termArr as $v){
                 $fieldElem = $newDoc->createElement('field');
-                $fieldElem->setAttribute('index',$detCnt);
-                $fieldElem->setAttribute('term',$v);
+                $fieldElem->setAttribute('index', $detCnt);
+                $fieldElem->setAttribute('term', ($v ?: ''));
                 $extElem1->appendChild($fieldElem);
                 $detCnt++;
             }
@@ -672,7 +667,7 @@ class DwcArchiverCore extends Manager{
 
         if($this->includeImgs){
             $extElem2 = $newDoc->createElement('extension');
-            $extElem2->setAttribute('encoding',$this->charSetOut);
+            $extElem2->setAttribute('encoding', 'UTF-8');
             $extElem2->setAttribute('fieldsTerminatedBy',',');
             $extElem2->setAttribute('linesTerminatedBy','\n');
             $extElem2->setAttribute('fieldsEnclosedBy','"');
@@ -689,10 +684,10 @@ class DwcArchiverCore extends Manager{
 
             $imgCnt = 1;
             $termArr = $this->imageFieldArr['terms'];
-            foreach($termArr as $k => $v){
+            foreach($termArr as $v){
                 $fieldElem = $newDoc->createElement('field');
-                $fieldElem->setAttribute('index',$imgCnt);
-                $fieldElem->setAttribute('term',$v);
+                $fieldElem->setAttribute('index', $imgCnt);
+                $fieldElem->setAttribute('term', ($v ?: ''));
                 $extElem2->appendChild($fieldElem);
                 $imgCnt++;
             }
@@ -701,7 +696,7 @@ class DwcArchiverCore extends Manager{
 
         if($this->includeAttributes){
             $extElem3 = $newDoc->createElement('extension');
-            $extElem3->setAttribute('encoding',$this->charSetOut);
+            $extElem3->setAttribute('encoding', 'UTF-8');
             $extElem3->setAttribute('fieldsTerminatedBy',',');
             $extElem3->setAttribute('linesTerminatedBy','\n');
             $extElem3->setAttribute('fieldsEnclosedBy','"');
@@ -718,10 +713,10 @@ class DwcArchiverCore extends Manager{
 
             $mofCnt = 1;
             $termArr = $this->attributeFieldArr['terms'];
-            foreach($termArr as $k => $v){
+            foreach($termArr as $v){
                 $fieldElem = $newDoc->createElement('field');
-                $fieldElem->setAttribute('index',$mofCnt);
-                $fieldElem->setAttribute('term',$v);
+                $fieldElem->setAttribute('index', $mofCnt);
+                $fieldElem->setAttribute('term', ($v ?: ''));
                 $extElem3->appendChild($fieldElem);
                 $mofCnt++;
             }
@@ -833,7 +828,6 @@ class DwcArchiverCore extends Manager{
 
             $cnt++;
         }
-        $emlArr = $this->utf8EncodeArr($emlArr);
         return $emlArr;
     }
 
@@ -861,7 +855,7 @@ class DwcArchiverCore extends Manager{
             }
         }
 
-        $newDoc = new DOMDocument('1.0',$this->charSetOut);
+        $newDoc = new DOMDocument('1.0', 'UTF-8');
 
         $rootElem = $newDoc->createElement('eml:eml');
         $rootElem->setAttribute('xmlns:eml','eml://ecoinformatics.org/eml-2.1.1');
@@ -901,7 +895,7 @@ class DwcArchiverCore extends Manager{
                     $attrArr = $childArr['attr'];
                     unset($childArr['attr']);
                     foreach($attrArr as $atKey => $atValue){
-                        $creatorElem->setAttribute($atKey,$atValue);
+                        $creatorElem->setAttribute($atKey, ($atValue ?: ''));
                     }
                 }
                 foreach($childArr as $k => $v){
@@ -1007,7 +1001,7 @@ class DwcArchiverCore extends Manager{
             $citetitleElem = $newDoc->createElement('citetitle');
             $citetitleElem->appendChild($newDoc->createTextNode((array_key_exists('title',$usageTermArr)?$usageTermArr['title']:'')));
             $ulinkElem->appendChild($citetitleElem);
-            $ulinkElem->setAttribute('url',(array_key_exists('url',$usageTermArr)?$usageTermArr['url']:$emlArr['intellectualRights']));
+            $ulinkElem->setAttribute('url', (array_key_exists('url',$usageTermArr) ? $usageTermArr['url'] : $emlArr['intellectualRights']));
             $paraElem->appendChild($ulinkElem);
             $paraElem->appendChild($newDoc->createTextNode((array_key_exists('def',$usageTermArr)?$usageTermArr['def']:'')));
             $rightsElem->appendChild($paraElem);
@@ -1021,10 +1015,10 @@ class DwcArchiverCore extends Manager{
         $id = UuidService::getUuidV4();
         $citeElem = $newDoc->createElement('citation');
         $citeElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' - '.$id));
-        $citeElem->setAttribute('identifier',$id);
+        $citeElem->setAttribute('identifier', $id);
         $symbElem->appendChild($citeElem);
         $physicalElem = $newDoc->createElement('physical');
-        $physicalElem->appendChild($newDoc->createElement('characterEncoding',$this->charSetOut));
+        $physicalElem->appendChild($newDoc->createElement('characterEncoding', 'UTF-8'));
         $dfElem = $newDoc->createElement('dataFormat');
         $edfElem = $newDoc->createElement('externallyDefinedFormat');
         $dfElem->appendChild($edfElem);
@@ -1033,13 +1027,12 @@ class DwcArchiverCore extends Manager{
         $symbElem->appendChild($physicalElem);
         if(array_key_exists('collMetadata',$emlArr)){
             foreach($emlArr['collMetadata'] as $k => $collArr){
-                $collArr = $this->utf8EncodeArr($collArr);
                 $collElem = $newDoc->createElement('collection');
                 if(isset($collArr['attr']) && $collArr['attr']){
                     $attrArr = $collArr['attr'];
                     unset($collArr['attr']);
                     foreach($attrArr as $attrKey => $attrValue){
-                        $collElem->setAttribute($attrKey,$attrValue);
+                        $collElem->setAttribute($attrKey, ($attrValue ?: ''));
                     }
                 }
                 $abstractStr = '';
@@ -1091,7 +1084,7 @@ class DwcArchiverCore extends Manager{
 
     public function getFullRss(): string
     {
-        $newDoc = new DOMDocument('1.0',$this->charSetOut);
+        $newDoc = new DOMDocument('1.0', 'UTF-8');
 
         $rootElem = $newDoc->createElement('rss');
         $rootAttr = $newDoc->createAttribute('version');
@@ -1125,8 +1118,7 @@ class DwcArchiverCore extends Manager{
             'WHERE s.recordcnt > 0 '.
             'ORDER BY c.SortSeq, c.CollectionName';
         $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_assoc()){
-            $cArr = $this->utf8EncodeArr($r);
+        while($cArr = $rs->fetch_assoc()){
             $itemElem = $newDoc->createElement('item');
             $itemAttr = $newDoc->createAttribute('collid');
             $itemAttr->value = $cArr['collid'];
@@ -1234,7 +1226,8 @@ class DwcArchiverCore extends Manager{
             }
             $this->writeOutRecord($fh,$fieldOutArr);
             if(!$this->collArr){
-                $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid ';
+                $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid '.
+                    'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
                 if($this->conditionSql){
                     $sql1 .= $this->getTableJoins().$this->conditionSql;
                 }
@@ -1370,7 +1363,6 @@ class DwcArchiverCore extends Manager{
                             $r['t_kingdom'] = $this->upperTaxonomy[$phyStr]['k'];
                         }
                     }
-                    $this->encodeArr($r);
                     $this->addcslashesArr($r);
                     $this->writeOutRecord($fh,$r);
                 }
@@ -1419,7 +1411,6 @@ class DwcArchiverCore extends Manager{
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             while($r = $rs->fetch_assoc()){
                 $r['recordId'] = 'urn:uuid:'.$r['recordId'];
-                $this->encodeArr($r);
                 $this->addcslashesArr($r);
                 $this->writeOutRecord($fh,$r);
             }
@@ -1555,7 +1546,6 @@ class DwcArchiverCore extends Manager{
         //echo $sql; exit;
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             while($r = $rs->fetch_assoc()){
-                $this->encodeArr($r);
                 $this->addcslashesArr($r);
                 $this->writeOutRecord($fh,$r);
             }
@@ -1716,14 +1706,6 @@ class DwcArchiverCore extends Manager{
         $this->isPublicDownload = true;
     }
 
-    public function setCharSetOut($cs): void
-    {
-        $cs = strtoupper($cs);
-        if($cs === 'ISO-8859-1' || $cs === 'UTF-8'){
-            $this->charSetOut = $cs;
-        }
-    }
-
     public function setGeolocateVariables($geolocateArr): void
     {
         $this->geolocateVariables = $geolocateArr;
@@ -1751,30 +1733,6 @@ class DwcArchiverCore extends Manager{
     public function getServerDomain(){
         $this->setServerDomain();
         return $this->serverDomain;
-    }
-
-    protected function utf8EncodeArr($inArr){
-        $retArr = $inArr;
-        if($this->charSetSource === 'ISO-8859-1'){
-            foreach($retArr as $k => $v){
-                if(is_array($v)){
-                    $retArr[$k] = $this->utf8EncodeArr($v);
-                }
-                else{
-                    $retArr[$k] = $v;
-                }
-            }
-        }
-        return $retArr;
-    }
-
-    private function encodeArr(&$inArr): void
-    {
-        if($this->charSetSource && $this->charSetOut !== $this->charSetSource){
-            foreach($inArr as $k => $v){
-                $inArr[$k] = $v ? $this->encodeStr($v) : '';
-            }
-        }
     }
 
     private function encodeStr($inStr): string

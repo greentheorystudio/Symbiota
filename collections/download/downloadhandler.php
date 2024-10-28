@@ -47,7 +47,6 @@ if($schema === 'backup'){
 	if($collid){
 		if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 			$dwcaHandler->setSchemaType('backup');
-			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setVerboseMode(0);
 			$dwcaHandler->setIncludeDets(1);
 			$dwcaHandler->setIncludeImgs(1);
@@ -131,7 +130,6 @@ else{
 		$dwcaHandler->setVerboseMode(0);
 		if($schema === 'coge'){
 			$dwcaHandler->setCollArr($_POST['collid']);
-			$dwcaHandler->setCharSetOut('UTF-8');
 			$dwcaHandler->setSchemaType('coge');
 			$dwcaHandler->setExtended(false);
 			$dwcaHandler->setRedactLocalities(0);
@@ -153,7 +151,6 @@ else{
 			}
 		}
 		else{
-			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setSchemaType($schema);
 			$dwcaHandler->setExtended($extended);
 			$dwcaHandler->setRedactLocalities($redactLocalities);

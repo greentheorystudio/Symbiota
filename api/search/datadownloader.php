@@ -133,7 +133,6 @@ else{
         }
         $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
     }
-    $dwcaHandler->setCharSetOut('UTF-8');
     $dwcaHandler->setSchemaType($schema);
     $dwcaHandler->setVerboseMode(0);
     $dwcaHandler->setRedactLocalities(0);

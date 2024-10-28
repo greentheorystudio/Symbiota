@@ -46,7 +46,6 @@ if($options && $stArr && SanitizerService::validateInternalRequest()){
             $dwcaHandler = new DwcArchiverCore();
             $sqlWhereCriteria = $searchService->prepareOccurrenceWhereSql($stArr);
             $sqlWhere = $searchService->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
-            $dwcaHandler->setCharSetOut('UTF-8');
             $dwcaHandler->setSchemaType($options['schema']);
             $dwcaHandler->setVerboseMode(0);
             $dwcaHandler->setRedactLocalities(0);

@@ -30,7 +30,6 @@ else{
 
 $dwcaHandler->setVerboseMode(0);
 $dwcaHandler->setSchemaType($schema);
-$dwcaHandler->setCharSetOut($cSet);
 $dwcaHandler->setRedactLocalities($redactLocalities);
 if($rareReaderArr) {
     $dwcaHandler->setRareReaderArr($rareReaderArr);
