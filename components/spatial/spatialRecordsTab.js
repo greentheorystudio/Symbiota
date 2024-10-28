@@ -208,7 +208,7 @@ const spatialRecordsTab = {
                 schema: 'map',
                 spatial: 1,
                 numRows: lazyLoadCnt,
-                index: index,
+                index: (index - 1),
                 output: 'json'
             };
             searchStore.setSearchRecordData(options);
