@@ -1,19 +1,24 @@
 const useSearchStore = Pinia.defineStore('search', {
     state: () => ({
         baseStore: useBaseStore(),
-        dateId: null,
-        queryId: 0,
-        queryRecCnt: 0,
-        searchRecordData: [],
-        searchTerms: {
+        blankSearchTerms: {
+            db: [],
+            taxontype: '1',
+            usethes: true,
             othercatnum: true,
             typestatus: false,
             hasaudio: false,
             hasimages: false,
             hasvideo: false,
             hasmedia: false,
-            hasgenetic: false
+            hasgenetic: false,
+            withoutimages: false
         },
+        dateId: null,
+        queryId: 0,
+        queryRecCnt: 0,
+        searchRecordData: [],
+        searchTerms: {},
         searchTermsPageNumber: 0,
         selections: [],
         selectionsIds: [],
@@ -74,7 +79,8 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getSearchTermsValid(state) {
             let populated = false;
-            if(state.searchTerms.hasOwnProperty('db') ||
+            if(
+                state.searchTerms['db'].length > 0 ||
                 state.searchTerms.hasOwnProperty('clid') ||
                 state.searchTerms.hasOwnProperty('taxa') ||
                 state.searchTerms.hasOwnProperty('country') ||
@@ -89,13 +95,6 @@ const useSearchStore = Pinia.defineStore('search', {
                 state.searchTerms.hasOwnProperty('eventdate2') ||
                 state.searchTerms.hasOwnProperty('occurrenceRemarks') ||
                 state.searchTerms.hasOwnProperty('catnum') ||
-                state.searchTerms.hasOwnProperty('othercatnum') ||
-                state.searchTerms.hasOwnProperty('typestatus') ||
-                state.searchTerms.hasOwnProperty('hasaudio') ||
-                state.searchTerms.hasOwnProperty('hasimages') ||
-                state.searchTerms.hasOwnProperty('hasvideo') ||
-                state.searchTerms.hasOwnProperty('hasmedia') ||
-                state.searchTerms.hasOwnProperty('hasgenetic') ||
                 state.searchTerms.hasOwnProperty('upperlat') ||
                 state.searchTerms.hasOwnProperty('pointlat') ||
                 state.searchTerms.hasOwnProperty('circleArr') ||
@@ -104,7 +103,18 @@ const useSearchStore = Pinia.defineStore('search', {
                 state.searchTerms.hasOwnProperty('imagekeyword') ||
                 state.searchTerms.hasOwnProperty('uploaddate1') ||
                 state.searchTerms.hasOwnProperty('uploaddate2') ||
-                state.searchTerms.hasOwnProperty('polyArr')
+                state.searchTerms.hasOwnProperty('polyArr') ||
+                state.searchTerms.hasOwnProperty('enteredby') ||
+                state.searchTerms.hasOwnProperty('dateentered') ||
+                state.searchTerms.hasOwnProperty('datemodified') ||
+                state.searchTerms.hasOwnProperty('processingstatus') ||
+                state.searchTerms['typestatus'] ||
+                state.searchTerms['hasaudio'] ||
+                state.searchTerms['hasimages'] ||
+                state.searchTerms['hasvideo'] ||
+                state.searchTerms['hasmedia'] ||
+                state.searchTerms['hasgenetic'] ||
+                state.searchTerms['withoutimages']
             ){
                 populated = true;
             }
@@ -136,16 +146,7 @@ const useSearchStore = Pinia.defineStore('search', {
             localStorage.removeItem('searchTermsArr');
         },
         clearSearchTerms() {
-            for(const key in this.searchTerms){
-                delete this.searchTerms[key];
-            }
-            this.searchTerms['othercatnum'] = true;
-            this.searchTerms['typestatus'] = false;
-            this.searchTerms['hasaudio'] = false;
-            this.searchTerms['hasimages'] = false;
-            this.searchTerms['hasvideo'] = false;
-            this.searchTerms['hasmedia'] = false;
-            this.searchTerms['hasgenetic'] = false;
+            this.searchTerms = Object.assign({}, this.blankSearchTerms);
             this.updateLocalStorageSearchTerms();
         },
         clearSelections() {
@@ -172,6 +173,7 @@ const useSearchStore = Pinia.defineStore('search', {
         initializeSearchStorage(queryId) {
             this.dateId = this.getDateIdValue;
             this.queryId = queryId.toString();
+            this.searchTerms = Object.assign({}, this.blankSearchTerms);
             if(localStorage.hasOwnProperty('searchTermsArr')){
                 const stArr = JSON.parse(localStorage['searchTermsArr']);
                 if(!stArr.hasOwnProperty(this.dateId.toString())){
@@ -205,52 +207,28 @@ const useSearchStore = Pinia.defineStore('search', {
             searchTermsArr[this.dateId.toString()][this.queryId.toString()] = Object.assign({}, newSearchTerms);
             localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
         },
-        processDownloadRequest(settings){
-            if(settings.hasOwnProperty('dlType') && settings.dlType){
-                const selection = !!(settings.hasOwnProperty('selection') && settings.selection);
-                const filename = 'springdata_' + this.getDateTimeString;
-                let contentType = '';
-                if(settings.dlType === 'kml') {
-                    contentType = 'application/vnd.google-earth.kml+xml';
-                }
-                else if(settings.dlType === 'geojson') {
-                    contentType = 'application/vnd.geo+json';
-                }
-                else if(settings.dlType === 'gpx') {
-                    contentType = 'application/gpx+xml';
-                }
-                const formData = new FormData();
-                formData.append('dh-type', settings.dlType);
-                formData.append('dh-filename', filename);
-                formData.append('dh-contentType', (settings.dlType === 'csv' ? 'text/csv; charset=utf-8' : contentType));
-                formData.append('starrjson', this.getSearchTermsJson);
-                if(selection) {
-                    formData.append('dh-selections', this.getSelectionsIds.join());
-                }
-                if(settings.hasOwnProperty('taxaId') && settings.hasOwnProperty('taxaType') && Number(settings.taxaId) > 0 && Number(settings.taxaType) > 0) {
-                    formData.append('dh-taxaid', settings.taxaId.toString());
-                    formData.append('dh-taxatype', settings.taxaType.toString());
-                }
-                formData.append('action', 'downloadsearchdata');
-                fetch(searchServiceApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.blob() : null;
-                })
-                .then((blob) => {
-                    if(blob !== null){
-                        const objectUrl = window.URL.createObjectURL(blob);
-                        const anchor = document.createElement('a');
-                        anchor.href = objectUrl;
-                        anchor.download = filename;
-                        document.body.appendChild(anchor);
-                        anchor.click();
-                        anchor.remove();
-                    }
-                });
+        processDownloadRequest(options, callback){
+            options.filename = 'occurrence_data_' + (options.type === 'zip' ? 'DwCA_' : '') + this.getDateTimeString + '.' + options.type;
+            const formData = new FormData();
+            if(options.selections){
+                formData.append('starr', JSON.stringify({
+                    occid: this.getSelectionsIds
+                }));
             }
+            else{
+                formData.append('starr', this.getSearchTermsJson);
+            }
+            formData.append('options', JSON.stringify(options));
+            fetch(dataDownloadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
+                callback(options.filename, blob);
+            });
         },
         processSearch(options, callback){
             const formData = new FormData();
@@ -286,7 +264,7 @@ const useSearchStore = Pinia.defineStore('search', {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    callback(data, options.index, options.numRows);
+                    callback(data, options.index);
                 });
             }
         },
@@ -329,9 +307,9 @@ const useSearchStore = Pinia.defineStore('search', {
             });
         },
         setLocalStorageSearchTerms() {
-            const blankSearchTerms = {};
-            blankSearchTerms[this.dateId.toString()] = {};
-            localStorage.setItem('searchTermsArr', JSON.stringify(blankSearchTerms));
+            const newBlankSearchTerms = {};
+            newBlankSearchTerms[this.dateId.toString()] = {};
+            localStorage.setItem('searchTermsArr', JSON.stringify(newBlankSearchTerms));
         },
         setQueryIdInLocalStorageSearchTerms(queryId) {
             const stArr = JSON.parse(localStorage['searchTermsArr']);

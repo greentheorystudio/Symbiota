@@ -17,17 +17,18 @@ const multipleLanguageAutoComplete = {
     `,
     setup(props, context) {
         const { showNotification } = useCore();
-        const store = useBaseStore();
+        const baseStore = useBaseStore();
+
         const autocompleteOptions = Vue.ref([]);
         const clearInput = Vue.ref(false);
-        const defaultLanguage = store.getDefaultLanguage;
-        let inputRef = Vue.ref(null);
+        const defaultLanguage = baseStore.getDefaultLanguage;
+        const inputRef = Vue.ref(null);
 
         function blurAction(val) {
             if(val.target.value && !clearInput.value){
                 const optionObj = autocompleteOptions.value.find(option => option['name'].toLowerCase() === val.target.value.toLowerCase());
                 if(optionObj){
-                    const currLanguageArr = props.languageArr;
+                    const currLanguageArr = props.languageArr.slice();
                     currLanguageArr.push(optionObj);
                     processChange(currLanguageArr);
                 }

@@ -55,7 +55,7 @@ const occurrenceEditorTabModule = {
         'occurrence-editor-resources-tab': occurrenceEditorResourcesTab
     },
     setup() {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
         const configuredDataFields = Vue.computed(() => occurrenceStore.getConfiguredDataFields);

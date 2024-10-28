@@ -7,7 +7,6 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             clusterDistance: SPATIAL_POINT_CLUSTER_DISTANCE,
             clusterPoints: true,
             clusterSource: null,
-            defaultSymbology: 'taxa',
             distFromMeLat: null,
             distFromMeLong: null,
             dragDrop1: false,
@@ -33,7 +32,7 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             layerQuerySelectorId: null,
             loadPointsError: false,
             loadPointsEvent: false,
-            mapSymbology: 'InventoryLevel',
+            mapSymbology: 'collectionname',
             pointActive: false,
             pointLayerBorderColor: SPATIAL_POINT_BORDER_COLOR,
             pointLayerBorderWidth: SPATIAL_POINT_BORDER_WIDTH,
@@ -53,7 +52,6 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             selectedFeatures: null,
             selectedPointFeatures: null,
             selectedRecordsSelectionsSymbologyTab: 'records',
-            selectedSearchCriteriaTab: 'criteria',
             selectedTargetRaster: 'none',
             selectSource: null,
             shapeActive: false,
@@ -75,7 +73,7 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             showMapSettings: false,
             showRecordInfoWindow: false,
             showSidePanel: false,
-            sidePanelExpandedElement: 'criteria',
+            sidePanelExpandedElement: 'vector',
             submitButtonDisabled: true,
             submitButtonText: '',
             toggleSelectedPoints: false,
@@ -114,14 +112,8 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             {value: 'ylorrd', label: 'Ylorrd'}
         ],
         symbologyOptions: [
-            {field: 'InventoryLevel', label: 'Inventory Level'},
-            {field: 'SurveyStatus', label: 'Survey Status'},
-            {field: 'SpringType1', label: 'Spring Type'},
-            {field: 'LandUnit', label: 'Land Unit'},
-            {field: 'LandUnitDetail', label: 'Land Unit Detail'},
-            {field: 'HUC', label: 'HUC'},
-            {field: 'infoSource', label: 'Information Source'},
-            {field: 'initialtimestamp', label: 'Year Recorded'}
+            {field: 'collectionname', label: 'Collections'},
+            {field: 'sciname', label: 'Taxa'}
         ]
     }),
     getters: {

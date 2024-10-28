@@ -20,7 +20,7 @@ const occurrenceEditorFormIdentifierElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup() {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceFields = Vue.inject('occurrenceFields');

@@ -68,7 +68,6 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 
         $dwcaHandler = new DwcArchiverCore();
 		$dwcaHandler->setVerboseMode(0);
-		$dwcaHandler->setCharSetOut('ISO-8859-1');
 		$dwcaHandler->setSchemaType('pensoft');
 		$dwcaHandler->setExtended(false);
 		$dwcaHandler->setRedactLocalities(1);

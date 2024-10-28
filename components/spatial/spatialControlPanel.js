@@ -23,8 +23,15 @@ const spatialControlPanel = {
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                 </div>
+                                <div v-if="!inputWindowMode">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                </div>
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="exportMapPNG();" label="Download Map Image" dense />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();">
+                                        <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Download Map Image
+                                        </q-tooltip>
+                                    </q-btn>
                                 </div>
                                 <template v-if="!inputWindowMode">
                                     <div>
@@ -95,14 +102,21 @@ const spatialControlPanel = {
                                     </div>
                                 </div>
                                 <div class="q-mt-xs row justify-between items-center q-gutter-sm">
-                                    <div>
+                                    <div v-if="!inputWindowMode">
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense />
                                     </div>
                                     <div>
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                     </div>
+                                    <div v-if="!inputWindowMode">
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                    </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="exportMapPNG();" label="Download Map Image" dense />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();">
+                                            <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                Download Map Image
+                                            </q-tooltip>
+                                        </q-btn>
                                     </div>
                                     <div>
                                         <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');"></q-btn>
@@ -135,6 +149,9 @@ const spatialControlPanel = {
                                 <spatial-active-layer-selector></spatial-active-layer-selector>
                             </div>
                             <template v-if="!inputWindowMode">
+                                <div>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                </div>
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense />
                                 </div>
@@ -171,7 +188,6 @@ const spatialControlPanel = {
                 </div>
             </div>
         </template>
-
         <spatial-map-settings-popup></spatial-map-settings-popup>
         <spatial-info-window-popup></spatial-info-window-popup>
     `,
@@ -184,6 +200,9 @@ const spatialControlPanel = {
         'spatial-map-settings-popup': spatialMapSettingsPopup
     },
     setup() {
+        const { openTutorialWindow } = useCore();
+        const searchStore = useSearchStore();
+
         const inputWindowMode = Vue.inject('inputWindowMode');
         const inputWindowToolsArr = Vue.inject('inputWindowToolsArr');
         const map = Vue.inject('map');
@@ -192,8 +211,8 @@ const spatialControlPanel = {
 
         const processInputSubmit = Vue.inject('processInputSubmit');
         const processInputPointUncertaintyChange = Vue.inject('processInputPointUncertaintyChange');
+        const setQueryPopupDisplay = Vue.inject('setQueryPopupDisplay');
         const updateMapSettings = Vue.inject('updateMapSettings');
-        const { openTutorialWindow } = useCore();
 
         function changeBaseMap(){
             let blsource;
@@ -303,7 +322,7 @@ const spatialControlPanel = {
         }
 
         function exportMapPNG(){
-            const filename = 'map_' + getDateTimeString() + '.png';
+            const filename = 'map_' + searchStore.getDateTimeString + '.png';
             let mapCanvas = document.createElement('canvas');
             const size = map.value.getSize();
             mapCanvas.width = size[0];
@@ -368,6 +387,7 @@ const spatialControlPanel = {
             exportMapPNG,
             openTutorialWindow,
             processChangeBaseLayer,
+            setQueryPopupDisplay,
             updateMapSettings
         }
     }

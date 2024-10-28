@@ -35,7 +35,6 @@ const spatialMapSettingsPopup = {
 
         const layersObj = Vue.inject('layersObj');
         const mapSettings = Vue.inject('mapSettings');
-        const windowWidth = Vue.inject('windowWidth');
 
         const loadPointsLayer = Vue.inject('loadPointsLayer');
         const { showNotification } = useCore();

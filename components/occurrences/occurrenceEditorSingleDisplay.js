@@ -46,7 +46,7 @@ const occurrenceEditorSingleDisplay = {
                         </template>
                         <template v-if="displayQueryPopupButton">
                             <div class="self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeQueryPopupDisplay(true);" icon="filter_alt" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="filter_alt" dense>
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Filter records
                                     </q-tooltip>
@@ -96,8 +96,9 @@ const occurrenceEditorSingleDisplay = {
                     </q-card>
                 </template>
             </div>
-            <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup" @close:popup="displayImageTranscriberPopup = false"></occurrence-editor-image-transcriber-popup>
         </div>
+        <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup" @close:popup="displayImageTranscriberPopup = false"></occurrence-editor-image-transcriber-popup>
+        <search-criteria-popup :show-popup="displayQueryPopup" @close:popup="displayQueryPopup = false"></search-criteria-popup>
     `,
     components: {
         'occurrence-editor-image-transcriber-popup': occurrenceEditorImageTranscriberPopup,
@@ -105,11 +106,12 @@ const occurrenceEditorSingleDisplay = {
         'occurrence-editor-tab-module': occurrenceEditorTabModule,
         'occurrence-entry-format-selector': occurrenceEntryFormatSelector,
         'occurrence-entry-observation-form-module': occurrenceEntryObservationFormModule,
-        'occurrence-entry-skeletal-form-module': occurrenceEntrySkeletalFormModule
+        'occurrence-entry-skeletal-form-module': occurrenceEntrySkeletalFormModule,
+        'search-criteria-popup': searchCriteriaPopup
     },
     setup() {
         const baseStore = useBaseStore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const clientRoot = baseStore.getClientRoot;
         const collId = Vue.computed(() => occurrenceStore.getCollId);
@@ -118,6 +120,7 @@ const occurrenceEditorSingleDisplay = {
         const currentRecordIndex = Vue.computed(() => occurrenceStore.getCurrentRecordIndex);
         const displayImageTranscriberPopup = Vue.ref(false);
         const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
+        const displayQueryPopup = Vue.ref(false);
         const displayQueryPopupButton = Vue.inject('displayQueryPopupButton');
         const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
         const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
@@ -130,7 +133,6 @@ const occurrenceEditorSingleDisplay = {
         const recordCount = Vue.computed(() => occurrenceStore.getRecordCount);
 
         const changeBatchUpdatePopupDisplay = Vue.inject('changeBatchUpdatePopupDisplay');
-        const changeQueryPopupDisplay = Vue.inject('changeQueryPopupDisplay');
 
         function changeOccurrenceEntryFormat(value) {
             occurrenceStore.setOccurrenceEntryFormat(value);
@@ -177,6 +179,7 @@ const occurrenceEditorSingleDisplay = {
             currentRecordIndex,
             displayImageTranscriberPopup,
             displayMode,
+            displayQueryPopup,
             displayQueryPopupButton,
             imageCount,
             isEditor,
@@ -186,7 +189,6 @@ const occurrenceEditorSingleDisplay = {
             occurrenceEntryFormat,
             recordCount,
             changeBatchUpdatePopupDisplay,
-            changeQueryPopupDisplay,
             goToFirstRecord,
             goToLastRecord,
             goToNextRecord,

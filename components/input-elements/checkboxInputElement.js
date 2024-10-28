@@ -18,9 +18,9 @@ const checkboxInputElement = {
         }
     },
     template: `
-        <div class="row inline q-gutter-xs">
+        <div class="row inline q-gutter-x-xs">
             <div>
-                <q-checkbox v-model="checkboxValue" :label="label" :disable="disabled" @update:model-value="processValueChange"></q-checkbox>
+                <q-checkbox v-model="checkboxValue" :label="label" :disable="disabled" @update:model-value="processValueChange" dense></q-checkbox>
             </div>
             <div v-if="!disabled && definition" class="self-center">
                 <q-icon name="help" size="sm" class="cursor-pointer q-ma-none" color="grey-7" @click="openDefinitionPopup();"></q-icon>

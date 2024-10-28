@@ -22,6 +22,16 @@ const occurrenceCollectionListPopup = {
                         <div v-if="collectionArr.length" class="q-pa-md column q-gutter-md">
                             <q-card v-for="collection in collectionArr">
                                 <q-card-section class="q-pa-md column">
+                                    <div v-if="collection.catalognumber || collection.othercatalognumbers">
+                                        <template v-if="collection.catalognumber">
+                                            <span class="text-bold">{{ 'catalognumber: ' }}</span>
+                                            {{ collection.catalognumber + '; ' }}
+                                        </template>
+                                        <template v-if="collection.othercatalognumbers">
+                                            <span class="text-bold">{{ 'othercatalognumbers: ' }}</span>
+                                            {{ collection.othercatalognumbers + '; ' }}
+                                        </template>
+                                    </div>
                                     <div>
                                         <template v-if="collection.identificationqualifier">
                                             <span>
@@ -38,56 +48,54 @@ const occurrenceCollectionListPopup = {
                                         </template>
                                     </div>
                                     <div v-if="collection.identificationremarks">
-                                        <span>
-                                            {{ collection.identificationremarks }}
-                                        </span>
+                                        <span class="text-bold">{{ 'identificationremarks: ' }}</span>
+                                        {{ collection.identificationremarks }}
                                     </div>
                                     <div v-if="collection.individualcount || collection.lifestage || collection.sex">
                                         <template v-if="collection.individualcount">
-                                            <span>
-                                                {{ collection.individualcount }}
-                                            </span>
+                                            <span class="text-bold">{{ 'individualcount: ' }}</span>
+                                            {{ collection.individualcount + '; ' }}
                                         </template>
                                         <template v-if="collection.lifestage">
-                                            <span>
-                                                {{ (collection.individualcount ? '; ' : '') + collection.lifestage }}
-                                            </span>
+                                            <span class="text-bold">{{ 'lifestage: ' }}</span>
+                                            {{ collection.lifestage + '; ' }}
                                         </template>
                                         <template v-if="collection.sex">
-                                            <span>
-                                                {{ ((collection.individualcount || collection.lifestage) ? '; ' : '') + collection.sex }}
-                                            </span>
+                                            <span class="text-bold">{{ 'sex: ' }}</span>
+                                            {{ collection.sex + '; ' }}
                                         </template>
                                     </div>
                                     <div v-if="collection.associatedtaxa">
-                                        <span>
-                                            {{ collection.associatedtaxa }}
-                                        </span>
+                                        <span class="text-bold">{{ 'associatedtaxa: ' }}</span>
+                                        {{ collection.associatedtaxa }}
                                     </div>
                                     <div v-if="collection.typestatus">
-                                        <span>
-                                            {{ collection.typestatus }}
-                                        </span>
+                                        <span class="text-bold">{{ 'typestatus: ' }}</span>
+                                        {{ collection.typestatus }}
                                     </div>
                                     <div v-if="collection.occurrenceremarks">
-                                        <span>
-                                            {{ collection.occurrenceremarks }}
-                                        </span>
+                                        <span class="text-bold">{{ 'occurrenceremarks: ' }}</span>
+                                        {{ collection.occurrenceremarks }}
                                     </div>
                                     <div v-if="collection.reproductivecondition">
-                                        <span>
-                                            {{ collection.reproductivecondition }}
-                                        </span>
+                                        <span class="text-bold">{{ 'reproductivecondition: ' }}</span>
+                                        {{ collection.reproductivecondition }}
                                     </div>
                                     <div v-if="collection.establishmentmeans">
-                                        <span>
-                                            {{ collection.establishmentmeans }}
-                                        </span>
+                                        <span class="text-bold">{{ 'establishmentmeans: ' }}</span>
+                                        {{ collection.establishmentmeans }}
                                     </div>
                                     <div v-if="collection.dynamicproperties">
-                                        <span>
-                                            {{ collection.dynamicproperties }}
-                                        </span>
+                                        <span class="text-bold">{{ 'dynamicproperties: ' }}</span>
+                                        {{ collection.dynamicproperties }}
+                                    </div>
+                                    <div v-if="collection.verbatimattributes">
+                                        <span class="text-bold">{{ 'verbatimattributes: ' }}</span>
+                                        {{ collection.verbatimattributes }}
+                                    </div>
+                                    <div v-if="collection.basisofrecord">
+                                        <span class="text-bold">{{ 'basisofrecord: ' }}</span>
+                                        {{ collection.basisofrecord }}
                                     </div>
                                     <div class="q-mt-md q-pl-md row justify-start q-gutter-md">
                                         <q-btn color="primary" @click="processCollectionSelection(collection.occid);" label="Select Collection" dense />
@@ -101,7 +109,7 @@ const occurrenceCollectionListPopup = {
         </q-dialog>
     `,
     setup(props, context) {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);

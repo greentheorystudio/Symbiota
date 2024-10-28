@@ -104,7 +104,7 @@ const occurrenceEditorFormMiscElement = {
     },
     setup() {
         const { showNotification } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const basisOfRecordOptions = Vue.computed(() => occurrenceStore.getBasisOfRecordOptions);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);

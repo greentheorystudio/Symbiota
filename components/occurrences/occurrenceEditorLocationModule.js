@@ -64,7 +64,7 @@ const occurrenceEditorLocationModule = {
     },
     setup() {
         const { showNotification } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const collectingEventArr = Vue.computed(() => occurrenceStore.getLocationCollectingEventArr);
         const collId = Vue.computed(() => occurrenceStore.getCollId);

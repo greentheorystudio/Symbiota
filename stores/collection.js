@@ -171,17 +171,15 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     if(Number(resObj['ispublic']) === 1 || (this.collectionPermissions.includes('CollAdmin') || this.collectionPermissions.includes('CollEditor'))){
                         this.collectionData = Object.assign({}, resObj);
                         if(this.collectionData['configuredData'] && this.collectionData['configuredData'].hasOwnProperty('dataFields') && Object.keys(this.collectionData['configuredData']['dataFields']).length > 0){
-                            if(this.collectionData['configuredData'].hasOwnProperty('dataFields') && this.collectionData['configuredData']['dataFields']){
-                                this.configuredDataFields = this.collectionData['configuredData']['dataFields'];
-                                if(this.collectionData['configuredData'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['dataLayout']){
-                                    this.configuredDataFieldsLayoutData = this.collectionData['configuredData']['dataLayout'];
-                                }
-                                if(this.collectionData['configuredData'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['dataLabel']){
-                                    this.configuredDataLabel = this.collectionData['configuredData']['dataLabel'].toString();
-                                }
-                                if(this.collectionData['configuredData'].hasOwnProperty('dataDownloads') && this.collectionData['configuredData']['dataDownloads']){
-                                    this.configuredDataDownloads = this.collectionData['configuredData']['dataDownloads'];
-                                }
+                            this.configuredDataFields = this.collectionData['configuredData']['dataFields'];
+                            if(this.collectionData['configuredData'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['dataLayout']){
+                                this.configuredDataFieldsLayoutData = this.collectionData['configuredData']['dataLayout'];
+                            }
+                            if(this.collectionData['configuredData'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['dataLabel']){
+                                this.configuredDataLabel = this.collectionData['configuredData']['dataLabel'].toString();
+                            }
+                            if(this.collectionData['configuredData'].hasOwnProperty('dataDownloads') && this.collectionData['configuredData']['dataDownloads']){
+                                this.configuredDataDownloads = this.collectionData['configuredData']['dataDownloads'];
                             }
                         }
                         if(callback){

@@ -1,4 +1,5 @@
 <script type="text/javascript">
+    const DEFAULT_COLLECTION_CATEGORY_ID = '<?php echo $GLOBALS['DEFAULTCATID']; ?>';
     const DEFAULT_LANG = '<?php echo $GLOBALS['DEFAULT_LANG']; ?>';
     const DEFAULT_TITLE = '<?php echo $GLOBALS['DEFAULT_TITLE']; ?>';
     const CLIENT_ROOT = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>';
@@ -51,6 +52,8 @@
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
     const checklistVoucherApiUrl = CLIENT_ROOT + '/api/checklists/checklistVoucherController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
+    const collectionCategoryApiUrl = CLIENT_ROOT + '/api/collections/collectionCategoryController.php';
+    const dataDownloadServiceApiUrl = CLIENT_ROOT + '/api/services/dataDownloadServiceController.php';
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
@@ -77,4 +80,6 @@
     const taxonomyServiceApiUrl = CLIENT_ROOT + '/api/services/taxonomyServiceController.php';
     const taxonRankApiUrl = CLIENT_ROOT + '/api/taxa/taxonRankController.php';
     const taxonVernacularApiUrl = CLIENT_ROOT + '/api/taxa/taxonVernacularController.php';
+
+    const componentRegistry = {};
 </script>

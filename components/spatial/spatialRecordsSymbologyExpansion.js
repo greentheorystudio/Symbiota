@@ -11,11 +11,11 @@ const spatialRecordsSymbologyExpansion = {
             </q-tabs>
             <q-separator></q-separator>
             <q-tab-panels v-model="mapSettings.selectedRecordsSelectionsSymbologyTab">
-                <q-tab-panel name="records">
+                <q-tab-panel name="records" class="q-pa-none">
                     <spatial-records-tab></spatial-records-tab>
                 </q-tab-panel>
                 <template v-if="selections.length > 0">
-                    <q-tab-panel name="select">
+                    <q-tab-panel name="select" class="q-pa-none">
                         <spatial-selections-tab></spatial-selections-tab>
                     </q-tab-panel>
                 </template>
@@ -31,7 +31,8 @@ const spatialRecordsSymbologyExpansion = {
         'spatial-symbology-tab': spatialSymbologyTab
     },
     setup() {
-        const searchStore = Vue.inject('searchStore');
+        const searchStore = useSearchStore();
+
         const mapSettings = Vue.inject('mapSettings');
         const selections = searchStore.getSelections;
 

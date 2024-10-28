@@ -29,7 +29,7 @@ const occurrenceEditorOccurrenceDataControls = {
     },
     setup(_, context) {
         const { showNotification } = useCore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectingEventAutoSearch);
         const configuredDataFields = Vue.computed(() => occurrenceStore.getConfiguredDataFields);
