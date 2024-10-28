@@ -31,13 +31,41 @@ const searchCriteriaPopup = {
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
                             <q-tab-panel class="q-pa-none" name="criteria">
-                                <search-criteria-tab :collection-id="collectionId" :show-spatial="showSpatial" @reset:search-criteria="resetCriteria"></search-criteria-tab>
+                                <div class="column q-pa-sm q-col-gutter-sm">
+                                    <div class="row justify-end q-col-gutter-sm">
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Reset" dense />
+                                        </div>
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="loadRecords();" label="Search Records" :disabled="!searchTermsValid" dense>
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    {{ searchRecordsTooltip }}
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                    </div>
+                                    <search-criteria-block ref="searchCriteriaBlockRef" :collection-id="collectionId" :show-spatial="showSpatial"></search-criteria-block>
+                                </div>
                             </q-tab-panel>
-                            <q-tab-panel v-if="!collectionId" name="collections">
-                                <search-collections-tab @reset:search-criteria="resetCriteria"></search-collections-tab>
+                            <q-tab-panel class="q-pa-none" v-if="!collectionId" name="collections">
+                                <div class="column q-pa-sm q-col-gutter-sm">
+                                    <div class="row justify-end q-col-gutter-sm">
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Reset" dense />
+                                        </div>
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="loadRecords();" label="Search Records" :disabled="!searchTermsValid" dense>
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    {{ searchRecordsTooltip }}
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                    </div>
+                                    <search-collections-block></search-collections-block>
+                                </div>
                             </q-tab-panel>
-                            <q-tab-panel name="advanced">
-                                <search-advanced-tab @reset:search-criteria="resetCriteria"></search-advanced-tab>
+                            <q-tab-panel class="q-pa-none" name="advanced">
+                                <search-advanced-tab></search-advanced-tab>
                             </q-tab-panel>
                         </q-tab-panels>
                     </div>
@@ -47,13 +75,25 @@ const searchCriteriaPopup = {
     `,
     components: {
         'search-advanced-tab': searchAdvancedTab,
-        'search-collections-tab': searchCollectionsTab,
-        'search-criteria-tab': searchCriteriaTab
+        'search-collections-block': searchCollectionsBlock,
+        'search-criteria-block': searchCriteriaBlock
     },
     setup(_, context) {
+        const searchStore = useSearchStore();
+
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const searchCriteriaBlockRef = Vue.ref(null);
+        const searchRecordsTooltip = Vue.computed(() => {
+            if(!searchTermsValid.value){
+                return 'Search criteria must be entered or the collection list must be narrowed in order to Search Records';
+            }
+            return 'Search for records matching the criteria';
+        });
+        const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
         const tab = Vue.ref('criteria');
+
+        const loadRecords = Vue.inject('loadRecords');
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -64,6 +104,8 @@ const searchCriteriaPopup = {
         }
 
         function resetCriteria() {
+            searchStore.clearSearchTerms();
+            searchCriteriaBlockRef.value.resetCriteria();
             context.emit('reset:search-criteria');
         }
 
@@ -75,6 +117,12 @@ const searchCriteriaPopup = {
             }
         }
 
+        function updateSearchTerms(prop, value) {
+            searchStore.updateSearchTerms(prop, value);
+        }
+
+        Vue.provide('updateSearchTerms', updateSearchTerms);
+
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
@@ -83,8 +131,12 @@ const searchCriteriaPopup = {
         return {
             contentRef,
             contentStyle,
+            searchCriteriaBlockRef,
+            searchRecordsTooltip,
+            searchTermsValid,
             tab,
             closePopup,
+            loadRecords,
             resetCriteria
         }
     }

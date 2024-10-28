@@ -49,7 +49,7 @@ const occurrenceInfoWindowPopup = {
                                     </div>
                                 </div>
                                 <div class="q-mt-sm row justify-between q-pb-md">
-                                    <div class="col-12 col-md-grow q-pl-md column">
+                                    <div class="col-12 col-md-6 q-pl-md column">
                                         <div v-if="occurrenceData['catalognumber']">
                                             <span class="text-bold">Catalog Number:</span>
                                             <span class="q-ml-sm">{{ occurrenceData['catalognumber'] }}</span>

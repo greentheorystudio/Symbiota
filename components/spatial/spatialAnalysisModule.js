@@ -783,45 +783,6 @@ const spatialAnalysisModule = {
             feature.setStyle(invisibleStyle);
         }
 
-        function loadPoints(){
-            if(!selectedPolyError.value){
-                clearSelections(false);
-                if(searchStore.getSearchTermsValid){
-                    for(const key in symbologyArr){
-                        delete symbologyArr[key];
-                    }
-                    symbologyArr['sciname'] = [];
-                    symbologyArr['taxonomy'] = [];
-                    searchStore.clearSelections();
-                    showWorking('Loading...');
-                    const options = {
-                        schema: 'map',
-                        spatial: 1
-                    };
-                    searchStore.setSearchRecCnt(options, () => {
-                        if(Number(searchStore.getSearchRecCnt) > 0){
-                            displayQueryPopup.value = false;
-                            loadPointsLayer();
-                        }
-                        else{
-                            if(mapSettings.pointActive){
-                                removeLayerFromActiveLayerOptions('pointv');
-                                updateMapSettings('pointActive', false);
-                            }
-                            hideWorking();
-                            showNotification('negative','There were no records matching your query.');
-                        }
-                    });
-                }
-                else{
-                    showNotification('negative','Please enter search criteria.');
-                }
-            }
-            else{
-                showNotification('negative','You have too many complex polygons selected. Please deselect one or more polygons in order to Load Records.');
-            }
-        }
-
         function loadPointsLayer() {
             updateMapSettings('loadPointsEvent', true);
             updateMapSettings('loadPointsError', false);
@@ -905,6 +866,45 @@ const spatialAnalysisModule = {
             }
             updateMapSettings('loadPointsEvent', false);
             hideWorking();
+        }
+
+        function loadRecords(){
+            if(!selectedPolyError.value){
+                clearSelections(false);
+                if(searchStore.getSearchTermsValid){
+                    for(const key in symbologyArr){
+                        delete symbologyArr[key];
+                    }
+                    symbologyArr['sciname'] = [];
+                    symbologyArr['taxonomy'] = [];
+                    searchStore.clearSelections();
+                    showWorking('Loading...');
+                    const options = {
+                        schema: 'map',
+                        spatial: 1
+                    };
+                    searchStore.setSearchRecCnt(options, () => {
+                        if(Number(searchStore.getSearchRecCnt) > 0){
+                            displayQueryPopup.value = false;
+                            loadPointsLayer();
+                        }
+                        else{
+                            if(mapSettings.pointActive){
+                                removeLayerFromActiveLayerOptions('pointv');
+                                updateMapSettings('pointActive', false);
+                            }
+                            hideWorking();
+                            showNotification('negative','There were no records matching your query.');
+                        }
+                    });
+                }
+                else{
+                    showNotification('negative','Please enter search criteria.');
+                }
+            }
+            else{
+                showNotification('negative','You have too many complex polygons selected. Please deselect one or more polygons in order to Load Records.');
+            }
         }
 
         function openRecordInfoWindow(id){
@@ -2520,7 +2520,7 @@ const spatialAnalysisModule = {
         Vue.provide('layersConfigArr', layersConfigArr);
         Vue.provide('layersInfoObj', layersInfoObj);
         Vue.provide('layersObj', layersObj);
-        Vue.provide('loadPoints', loadPoints);
+        Vue.provide('loadRecords', loadRecords);
         Vue.provide('loadPointsLayer', loadPointsLayer);
         Vue.provide('map', Vue.computed(() => map));
         Vue.provide('mapSettings', mapSettings);
@@ -2569,7 +2569,7 @@ const spatialAnalysisModule = {
                 if(searchStore.getSearchTermsValid){
                     updateMapSettings('loadPointsEvent', true);
                     createShapesFromSearchTermsArr();
-                    loadPoints();
+                    loadRecords();
                 }
             }
             updateMapSettings('drawToolFreehandMode', getPlatformProperty('has.touch'));

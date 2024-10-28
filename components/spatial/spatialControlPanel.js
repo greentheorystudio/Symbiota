@@ -23,7 +23,7 @@ const spatialControlPanel = {
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                 </div>
-                                <div>
+                                <div v-if="!inputWindowMode">
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
                                 </div>
                                 <div>
@@ -102,13 +102,13 @@ const spatialControlPanel = {
                                     </div>
                                 </div>
                                 <div class="q-mt-xs row justify-between items-center q-gutter-sm">
-                                    <div>
+                                    <div v-if="!inputWindowMode">
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense />
                                     </div>
                                     <div>
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                     </div>
-                                    <div>
+                                    <div v-if="!inputWindowMode">
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
                                     </div>
                                     <div>

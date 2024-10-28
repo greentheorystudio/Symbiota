@@ -430,7 +430,7 @@ class Configurations{
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
         $GLOBALS['CSS_VERSION'] = '20240924';
-        $GLOBALS['JS_VERSION'] = '202405111111111111111111111111111122';
+        $GLOBALS['JS_VERSION'] = '20240511111111111111111111111111112222222222';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -587,6 +587,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
             $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
+        }
+        if(!isset($GLOBALS['DEFAULTCATID'])){
+            $GLOBALS['DEFAULTCATID'] = null;
         }
         if(!isset($GLOBALS['DEFAULT_LANG']) || $GLOBALS['DEFAULT_LANG'] !== 'en'){
             $GLOBALS['DEFAULT_LANG'] = 'en';
