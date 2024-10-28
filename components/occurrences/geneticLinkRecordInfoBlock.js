@@ -40,29 +40,13 @@ const geneticLinkRecordInfoBlock = {
                 </div>
             </q-card-section>
         </q-card>
-        <template v-if="editor && showGeneticLinkageEditorPopup">
-            <occurrence-genetic-record-linkage-editor-popup
-                :genetic-linkage-id="editGeneticLinkageId"
-                :show-popup="showGeneticLinkageEditorPopup"
-                @close:popup="showGeneticLinkageEditorPopup = false"
-            ></occurrence-genetic-record-linkage-editor-popup>
-        </template>
     `,
-    components: {
-        'occurrence-genetic-record-linkage-editor-popup': occurrenceGeneticRecordLinkageEditorPopup
-    },
-    setup() {
-        const editGeneticLinkageId = Vue.ref(0);
-        const showGeneticLinkageEditorPopup = Vue.ref(false);
-
+    setup(_, context) {
         function openEditorPopup(id) {
-            editGeneticLinkageId.value = id;
-            showGeneticLinkageEditorPopup.value = true;
+            context.emit('open:genetic-link-editor', id);
         }
 
         return {
-            editGeneticLinkageId,
-            showGeneticLinkageEditorPopup,
             openEditorPopup
         }
     }

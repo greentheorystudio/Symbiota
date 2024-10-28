@@ -14,8 +14,6 @@ $schema = array_key_exists('schemacsv',$_REQUEST)?$_REQUEST['schemacsv']:'';
 $identifications = array_key_exists('identificationscsv',$_REQUEST)?(int)$_REQUEST['identificationscsv']:0;
 $images = array_key_exists('imagescsv',$_REQUEST)?(int)$_REQUEST['imagescsv']:0;
 $rows = array_key_exists('dh-rows',$_REQUEST)?(int)$_REQUEST['dh-rows']:0;
-$format = array_key_exists('formatcsv',$_REQUEST)?$_REQUEST['formatcsv']:'';
-$zip = array_key_exists('zipcsv',$_REQUEST)?$_REQUEST['zipcsv']:'';
 $stArrJson = array_key_exists('starrjson',$_REQUEST)?$_REQUEST['starrjson']:'';
 
 $spatialManager = new SpatialModuleManager();
@@ -121,8 +119,7 @@ else if($schema === 'checklist'){
     $occManager->setSearchTermsArr($stArr);
     $dlManager->setSqlWhere($occManager->getSqlWhere());
     $dlManager->setSchemaType($schema);
-    $dlManager->setDelimiter($fileType);
-    $dlManager->setZipFile($zip);
+    $dlManager->setZipFile($fileType === 'zip');
     $dlManager->downloadData();
 }
 else{
@@ -136,9 +133,7 @@ else{
         }
         $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
     }
-    $dwcaHandler->setCharSetOut('UTF-8');
     $dwcaHandler->setSchemaType($schema);
-    $dwcaHandler->setDelimiter($format);
     $dwcaHandler->setVerboseMode(0);
     $dwcaHandler->setRedactLocalities(0);
     $dwcaHandler->setCustomWhereSql($mapWhere);
@@ -154,19 +149,6 @@ else{
         $outputFile = $dwcaHandler->getOccurrenceFile();
     }
 
-    $contentDesc = '';
-    if($schema === 'dwc'){
-        $contentDesc = 'Darwin Core ';
-    }
-    else{
-        $contentDesc = 'Native ';
-    }
-    $contentDesc .= 'Occurrence ';
-    if($zip){
-        $contentDesc .= 'Archive ';
-    }
-    $contentDesc .= 'File';
-    header('Content-Description: '.$contentDesc);
     header('Content-Type: '.$contentType);
     header('Content-Disposition: attachment; filename='.basename($outputFile));
     header('Content-Transfer-Encoding: binary');

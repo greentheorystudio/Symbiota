@@ -829,6 +829,13 @@ body.processing .loadingModal {
 	border: 1px solid black;
 	min-width: 700px;
 }
+.search-criteria-popup {
+	max-width: 90% !important;
+	width: 90% !important;
+	height: 85% !important;
+	border: 1px solid black;
+	min-width: 300px;
+}
 .layer-controller-element {
 	width: 95%;
 }
@@ -1086,9 +1093,15 @@ body.processing .loadingModal {
 .occurrence-tab-border {
 	border-bottom: 1px solid black;
 }
-.occurrence-editor-preview-image-carousel {
+.preview-image-carousel {
 	min-height: 400px;
 }
 .occurrence-editor-image-transcriber-image {
 	border-left: 2px solid black;
+}
+.coll-icon-occurrence-info-popup {
+	height: 50px;
+}
+.coll-icon-collection-checklist {
+	width: 30px;
 }

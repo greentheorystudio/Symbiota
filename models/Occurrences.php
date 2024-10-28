@@ -291,9 +291,11 @@ class Occurrences{
     public function getOccurrenceData($occid): array
     {
         $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'o');
+        $fieldNameArr[] = 'g.`guid`';
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
+            'FROM omoccurrences AS o LEFT JOIN guidoccurrences AS g ON o.occid = g.occid '.
+            'WHERE o.occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($rs);

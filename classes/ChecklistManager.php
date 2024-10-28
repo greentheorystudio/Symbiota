@@ -145,7 +145,7 @@ class ChecklistManager {
             }
             $result = $this->conn->query($this->basicSql);
             while($row = $result->fetch_object()){
-                $family = strtoupper($row->family);
+                $family = $row->family ? strtoupper($row->family) : null;
                 if(!$family) {
                     $family = 'Family Incertae Sedis';
                 }

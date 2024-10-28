@@ -84,7 +84,7 @@ const occurrenceEntrySkeletalFormModule = {
     },
     setup() {
         const baseStore = useBaseStore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const collectionData = Vue.computed(() => occurrenceStore.getCollectionData);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);

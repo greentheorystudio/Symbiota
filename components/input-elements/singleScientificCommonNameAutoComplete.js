@@ -179,7 +179,7 @@ const singleScientificCommonNameAutoComplete = {
                             rankLow = 10;
                             rankHigh = 130;
                         }
-                        else if(Number(props.taxonType) === 6){
+                        else if(Number(props.taxonType) === 5){
                             action = 'getAutocompleteVernacularList';
                             dataSource = taxonVernacularApiUrl;
                         }

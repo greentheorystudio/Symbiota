@@ -2,6 +2,7 @@ const useBaseStore = Pinia.defineStore('base', {
     state: () => ({
         adminEmail: ADMIN_EMAIL,
         clientRoot: CLIENT_ROOT,
+        defaultCollectionCategoryId: DEFAULT_COLLECTION_CATEGORY_ID,
         defaultLanguage: DEFAULT_LANG,
         defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
@@ -33,6 +34,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getClientRoot(state) {
             return state.clientRoot;
+        },
+        getDefaultCollectionCategoryId(state) {
+            return state.defaultCollectionCategoryId;
         },
         getDefaultLanguage(state) {
             return state.defaultLanguage;

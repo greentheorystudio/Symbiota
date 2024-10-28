@@ -67,7 +67,7 @@ const occurrenceEditorChecklistVoucherModule = {
     setup() {
         const { showNotification } = useCore();
         const baseStore = useBaseStore();
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const checklistOptions = Vue.shallowReactive([]);
         const confirmationPopupRef = Vue.ref(null);

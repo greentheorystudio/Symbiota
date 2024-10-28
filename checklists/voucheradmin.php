@@ -168,10 +168,12 @@ if($clid && $isEditor){
 									<option value="">Search All Collections</option>
 									<option value="">-------------------------------------</option>
 									<?php
-									$selCollid = $termArr['collid'] ? (int)$termArr['collid'] : 0;
-									foreach($collList as $id => $name){
-										echo '<option value="'.$id.'" '.($selCollid === (int)$id?'SELECTED':'').'>'.$name.'</option>';
-									}
+									if($termArr){
+                                        $selCollid = $termArr['collid'] ? (int)$termArr['collid'] : 0;
+                                        foreach($collList as $id => $name){
+                                            echo '<option value="'.$id.'" '.($selCollid === (int)$id?'SELECTED':'').'>'.$name.'</option>';
+                                        }
+                                    }
 									?>
 								</select>
 							</div>

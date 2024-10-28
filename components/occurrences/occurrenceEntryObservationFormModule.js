@@ -77,7 +77,7 @@ const occurrenceEntryObservationFormModule = {
         'time-input-element': timeInputElement
     },
     setup() {
-        const occurrenceStore = Vue.inject('occurrenceStore');
+        const occurrenceStore = useOccurrenceStore();
 
         const collectionData = Vue.computed(() => occurrenceStore.getCollectionData);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);

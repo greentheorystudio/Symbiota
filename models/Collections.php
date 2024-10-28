@@ -9,6 +9,7 @@ class Collections {
 
     private $fields = array(
         "collid" => array("dataType" => "number", "length" => 10),
+        "ccpk" => array("dataType" => "number", "length" => 10),
         "institutioncode" => array("dataType" => "string", "length" => 45),
         "collectioncode" => array("dataType" => "string", "length" => 45),
         "collectionname" => array("dataType" => "string", "length" => 150),
@@ -41,7 +42,6 @@ class Collections {
         "bibliographiccitation" => array("dataType" => "string", "length" => 1000),
         "accessrights" => array("dataType" => "string", "length" => 1000),
         "dynamicproperties" => array("dataType" => "text", "length" => 0),
-        "sortseq" => array("dataType" => "number", "length" => 10),
         "ispublic" => array("dataType" => "number", "length" => 6),
         "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
     );
@@ -102,7 +102,7 @@ class Collections {
                 $sql .= 'OR c.collid IN('.implode(',', $GLOBALS['PERMITTED_COLLECTIONS']).') ';
             }
         }
-        $sql .= 'ORDER BY c.sortseq, c.collectionname';
+        $sql .= 'ORDER BY c.collectionname ';
         //echo $sql;
         $rs = $this->conn->query($sql);
         $fields = mysqli_fetch_fields($rs);
