@@ -61,7 +61,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             <collection-metadata-block :collection-data="collectionData"></collection-metadata-block>
                             <template v-if="publishGBIF && datasetKey">
                                 <div class="q-mt-xs">
-                                    <span class="text-h6 text-bold">GBIF Dataset page: </span>
+                                    <span class="text-body1 text-bold">GBIF Dataset page: </span>
                                     <a :href="('https://www.gbif.org/dataset/' + datasetKey)" target="_blank">
                                         {{ ('https://www.gbif.org/dataset/' + datasetKey) }}
                                     </a>
@@ -69,7 +69,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             </template>
                             <template v-if="publishIDIGBIO && datasetKey">
                                 <div class="q-mt-xs">
-                                    <span class="text-h6 text-bold">iDigBio Dataset page: </span>
+                                    <span class="text-body1 text-bold">iDigBio Dataset page: </span>
                                     <a :href="('https://www.idigbio.org/portal/recordsets/' + idigbioKey)" target="_blank">
                                         {{ ('https://www.idigbio.org/portal/recordsets/' + idigbioKey) }}
                                     </a>
@@ -114,7 +114,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             </div>
                         </template>
                         <div class="q-ml-sm column">
-                            <div class="text-h6 text-bold">Collection Statistics:</div>
+                            <div class="text-body1 text-bold">Collection Statistics:</div>
                             <div class="q-pl-sm column">
                                 <div>
                                     {{ collectionData['recordcnt'] + ' occurrence ' + (Number(collectionData['recordcnt']) === 1 ? 'record' : 'records') }}
