@@ -103,9 +103,12 @@ const collectionCheckboxSelector = {
             }
         });
         const selectedCollectionIdArr = Vue.ref([]);
+        const valueChangeEvent = Vue.ref(false);
 
         Vue.watch(propsRefs.valueArr, () => {
-            processValueArrChange();
+            if(!valueChangeEvent.value){
+                processValueArrChange();
+            }
         });
 
         function prepareCollectionCategoryData() {
@@ -211,6 +214,7 @@ const collectionCheckboxSelector = {
         }
 
         function processSelectAllChange(val) {
+            valueChangeEvent.value = true;
             if(!val){
                 selectedCollectionIdArr.value.length = 0;
             }
@@ -218,15 +222,22 @@ const collectionCheckboxSelector = {
                 selectedCollectionIdArr.value = collectionIdArr.value.slice();
             }
             context.emit('update:value', []);
+            setTimeout(() => {
+                valueChangeEvent.value = false;
+            }, 200 );
         }
 
         function processSelectionChange() {
+            valueChangeEvent.value = true;
             if(selectedCollectionIdArr.value.length === 0 || collectionIdArr.value.every((id) => selectedCollectionIdArr.value.includes(id))){
                 context.emit('update:value', []);
             }
             else{
                 context.emit('update:value', selectedCollectionIdArr.value);
             }
+            setTimeout(() => {
+                valueChangeEvent.value = false;
+            }, 200 );
         }
 
         function processValueArrChange() {
