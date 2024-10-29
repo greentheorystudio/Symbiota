@@ -26,7 +26,7 @@ const searchCriteriaPopup = {
                         <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                             <q-tab name="criteria" label="Criteria" no-caps></q-tab>
                             <q-tab v-if="!collectionId" name="collections" label="Collections" no-caps></q-tab>
-                            <q-tab name="advanced" label="Advanced" no-caps></q-tab>
+                            <!-- <q-tab name="advanced" label="Advanced" no-caps></q-tab> -->
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
