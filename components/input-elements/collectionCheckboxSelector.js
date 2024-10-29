@@ -90,6 +90,7 @@ const collectionCheckboxSelector = {
         const collectionIdArr = Vue.ref([]);
         const collectionCategoryArr = Vue.ref([]);
         const defaultCategoryId = baseStore.getDefaultCollectionCategoryId;
+        const propsRefs = Vue.toRefs(props);
         const selectAllValue = Vue.computed(() => {
             if(selectedCollectionIdArr.value.length === collectionIdArr.value.length && collectionIdArr.value.every((id) => selectedCollectionIdArr.value.includes(id))){
                 return true;
@@ -102,6 +103,10 @@ const collectionCheckboxSelector = {
             }
         });
         const selectedCollectionIdArr = Vue.ref([]);
+
+        Vue.watch(propsRefs.valueArr, () => {
+            processValueArrChange();
+        });
 
         function prepareCollectionCategoryData() {
             collectionCategoryArr.value.forEach((cat) => {
@@ -221,6 +226,15 @@ const collectionCheckboxSelector = {
             }
             else{
                 context.emit('update:value', selectedCollectionIdArr.value);
+            }
+        }
+
+        function processValueArrChange() {
+            if(props.valueArr.length === 0){
+                selectedCollectionIdArr.value = collectionIdArr.value.slice();
+            }
+            else{
+                selectedCollectionIdArr.value = props.valueArr.slice();
             }
         }
 

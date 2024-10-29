@@ -105,7 +105,9 @@ const searchCriteriaPopup = {
 
         function resetCriteria() {
             searchStore.clearSearchTerms();
-            searchCriteriaBlockRef.value.resetCriteria();
+            if(searchCriteriaBlockRef.value){
+                searchCriteriaBlockRef.value.resetCriteria();
+            }
             context.emit('reset:search-criteria');
         }
 
