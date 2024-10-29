@@ -1,4 +1,4 @@
-const singleScientificCommonNameAutoComplete = {
+const multipleScientificCommonNameAutoComplete = {
     props: {
         acceptedTaxaOnly: {
             type: Boolean,
@@ -48,9 +48,9 @@ const singleScientificCommonNameAutoComplete = {
             type: Number,
             default: null
         },
-        sciname: {
-            type: String,
-            default: null
+        scinameArr: {
+            type: Array,
+            default: []
         },
         taxonType: {
             type: Number,
@@ -58,14 +58,14 @@ const singleScientificCommonNameAutoComplete = {
         }
     },
     template: `
-        <q-select v-model="sciname" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label" :disable="disabled">
-            <template v-if="!disabled && (sciname || definition)" v-slot:append>
+        <q-select ref="autocompleteRef" v-model="scinameArr" use-input fill-input outlined dense options-dense hide-dropdown-icon multiple use-chips popup-content-class="z-max" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label" :disable="disabled">
+            <template v-if="!disabled && (scinameArr.length > 0 || definition)" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon v-if="clearable && sciname" name="cancel" class="cursor-pointer" @click="clearAction();">
+                <q-icon v-if="clearable && scinameArr.length > 0" name="cancel" class="cursor-pointer" @click="clearAction();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear value
                     </q-tooltip>
@@ -111,22 +111,25 @@ const singleScientificCommonNameAutoComplete = {
         const { showNotification } = useCore();
 
         const autocompleteOptions = Vue.ref([]);
+        const autocompleteRef = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
 
         function blurAction(val) {
-            if(val && val.target.value !== props.sciname){
+            if(val.target.value){
                 const optionObj = autocompleteOptions.value.find(option => option['sciname'] === val.target.value);
                 if(optionObj){
                     processChange(optionObj);
                 }
                 else if(!props.limitToThesaurus){
-                    processChange({
+                    const currentScinameArr = props.scinameArr.slice();
+                    currentScinameArr.push({
                         label: val.target.value,
                         sciname: val.target.value,
                         tid: null,
                         family: null,
                         author: null
                     });
+                    processChange(currentScinameArr);
                 }
                 else{
                     showNotification('negative', 'That name was not found in the Taxonomic Thesaurus.');
@@ -135,7 +138,7 @@ const singleScientificCommonNameAutoComplete = {
         }
 
         function clearAction() {
-            processChange(null);
+            processChange([]);
         }
 
         function createValue(val, done) {
@@ -220,10 +223,12 @@ const singleScientificCommonNameAutoComplete = {
 
         function processChange(taxonObj) {
             context.emit('update:sciname', taxonObj);
+            autocompleteRef.value.updateInputValue('');
         }
 
         return {
             autocompleteOptions,
+            autocompleteRef,
             displayDefinitionPopup,
             blurAction,
             clearAction,

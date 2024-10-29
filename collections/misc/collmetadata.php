@@ -104,7 +104,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const dialogArr = ["instcode", "collcode", "pedits", "pubagg", "rights", "rightsholder", "accessrights", "guid", "colltype", "management", "icon", "collectionguid", "sourceurl", "sort", "collectionid"];
+            const dialogArr = ["instcode", "collcode", "pedits", "pubagg", "rights", "rightsholder", "accessrights", "guid", "colltype", "management", "icon", "collectionguid", "sourceurl", "collectionid"];
             let dialogStr = "";
             for(let i=0;i<dialogArr.length;i++){
 				dialogStr = dialogArr[i]+"info";
@@ -150,10 +150,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 				alert("Rights field (e.g. Creative Commons license) must have a selection");
 				return false;
 			}
-			else if(Number(f.sortseq.value) > 0){
-                alert("Sort sequence must be a number greater than zero");
-                return false;
-            }
 			return true;
 		}
 
@@ -560,24 +556,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 									<a href="#" onclick="toggle('targetelem','inline-block');return false;">Upload Local Image</a>
 								</span>
                             </div>
-                            <?php
-                            if($GLOBALS['IS_ADMIN']){
-                                ?>
-                                <div class="field-block">
-                                    <span class="field-label">Sort Sequence:</span>
-                                    <span class="field-elem">
-                                        <input type="text" name="sortseq" value="<?php echo ($collid?$collData['sortseq']:'');?>" />
-                                        <a id="sortinfo" href="#" onclick="return false" title="More information about Sorting">
-                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                        </a>
-                                        <span id="sortinfodialog">
-                                            Leave this field empty if you want the collections to sort alphabetically (default)
-                                        </span>
-                                    </span>
-                                </div>
-                                <?php
-                            }
-                            ?>
                             <div class="field-block">
                                 <span class="field-label">Collection ID (GUID):</span>
                                 <span class="field-elem">

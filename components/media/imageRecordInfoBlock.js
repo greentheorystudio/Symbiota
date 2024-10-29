@@ -1,9 +1,5 @@
 const imageRecordInfoBlock = {
     props: {
-        collId: {
-            type: Number,
-            default: null
-        },
         imageData: {
             type: Object,
             default: null
@@ -105,37 +101,14 @@ const imageRecordInfoBlock = {
                 </div>
             </q-card-section>
         </q-card>
-        <template v-if="showImageEditorPopup">
-            <image-editor-popup
-                :coll-id="collId"
-                :image-id="editImageId"
-                :show-popup="showImageEditorPopup" 
-                @image:updated="processImageUpdate" 
-                @close:popup="showImageEditorPopup = false"
-            ></image-editor-popup>
-        </template>
     `,
-    components: {
-        'image-editor-popup': imageEditorPopup
-    },
     setup(_, context) {
-        const editImageId = Vue.ref(0);
-        const showImageEditorPopup = Vue.ref(false);
-
         function openEditorPopup(id) {
-            editImageId.value = id;
-            showImageEditorPopup.value = true;
-        }
-
-        function processImageUpdate() {
-            context.emit('image:updated');
+            context.emit('open:image-editor', id);
         }
 
         return {
-            editImageId,
-            showImageEditorPopup,
-            openEditorPopup,
-            processImageUpdate
+            openEditorPopup
         }
     }
 };

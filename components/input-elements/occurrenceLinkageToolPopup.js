@@ -60,14 +60,14 @@ const occurrenceLinkageToolPopup = {
                             </div>
                         </div>
                         <q-separator></q-separator>
-                        <div v-if="recordDataIds.length" class="q-px-sm q-mt-sm column q-gutter-sm">
-                            <q-card v-for="occid in recordDataIds">
+                        <div v-if="recordData.length" class="q-px-sm q-mt-sm column q-gutter-sm">
+                            <q-card v-for="record in recordData">
                                 <q-card-section class="row justify-between q-col-gutter-sm">
                                     <div class="col-10 text-body1">
-                                        <span class="text-bold">occid: {{ occid }}</span>; {{ recordDataObject[occid]['sciname'] }}; {{ recordDataObject[occid]['recordedby'] }}, {{ recordDataObject[occid]['recordnumber'] }}; {{ recordDataObject[occid]['date'] }}; {{ recordDataObject[occid]['locality'] }}
+                                        <span class="text-bold">occid: {{ record.occid }}</span>; {{ record['sciname'] }}; {{ record['recordedby'] }}, {{ record['recordnumber'] }}; {{ record['date'] }}; {{ record['locality'] }}
                                     </div>
                                     <div class="col-2 row justify-end self-center">
-                                        <q-btn color="primary" @click="linkOccurrence(occid);" label="Link Occurrence" dense />
+                                        <q-btn color="primary" @click="linkOccurrence(record.occid);" label="Link Occurrence" dense />
                                     </div>
                                 </q-card-section>
                             </q-card>
@@ -93,8 +93,7 @@ const occurrenceLinkageToolPopup = {
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const includeOtherCatalogNumberVal = Vue.ref(false);
-        const recordDataIds = Vue.ref([]);
-        const recordDataObject = Vue.ref({});
+        const recordData = Vue.ref([]);
         const recordedByVal = Vue.ref(null);
         const recordNumberVal = Vue.ref(null);
         const searchCriteria = Vue.computed(() => {
@@ -164,12 +163,15 @@ const occurrenceLinkageToolPopup = {
             }
             searchStore.processSimpleSearch(starr, options, (data) => {
                 hideWorking();
-                if(props.currentOccid && data.hasOwnProperty(props.currentOccid)){
-                    delete data[props.currentOccid];
+                if(props.currentOccid){
+                    const currentObj = data.find(record => Number(record.occid) === Number(props.currentOccid));
+                    if(currentObj){
+                        const index = data.indexOf(currentObj);
+                        data.splice(index, 1);
+                    }
                 }
-                if(Object.keys(data).length > 0){
-                    recordDataObject.value = Object.assign({}, data);
-                    recordDataIds.value = Object.keys(data);
+                if(data.length > 0){
+                    recordData.value = data.slice();
                 }
                 else{
                     showNotification('negative', ('There were no occurrences found matching that criteria in the selected collection.'));
@@ -202,8 +204,7 @@ const occurrenceLinkageToolPopup = {
             contentRef,
             contentStyle,
             includeOtherCatalogNumberVal,
-            recordDataIds,
-            recordDataObject,
+            recordData,
             recordedByVal,
             recordNumberVal,
             searchCriteria,

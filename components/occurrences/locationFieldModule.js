@@ -239,7 +239,7 @@ const locationFieldModule = {
         'single-country-auto-complete': singleCountryAutoComplete,
         'single-county-auto-complete': singleCountyAutoComplete,
         'single-state-province-auto-complete': singleStateProvinceAutoComplete,
-        'spatial-analysis-popup': spatialAnalysisPopup,
+        'spatial-analysis-popup': componentRegistry.hasOwnProperty('spatialAnalysisPopup') ? componentRegistry['spatialAnalysisPopup'] : null,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {

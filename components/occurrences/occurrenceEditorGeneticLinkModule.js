@@ -12,7 +12,7 @@ const occurrenceEditorGeneticLinkModule = {
                     <div class="q-mt-sm column q-gutter-sm">
                         <template v-if="geneticLinkageArr.length > 0">
                             <template v-for="linkage in geneticLinkageArr">
-                                <genetic-link-record-info-block :genetic-linkage-data="linkage" :editor="true"></genetic-link-record-info-block>
+                                <genetic-link-record-info-block :genetic-linkage-data="linkage" :editor="true" @open:genetic-link-editor="openGeneticLinkageEditorPopup"></genetic-link-record-info-block>
                             </template>
                         </template>
                         <template v-else>

@@ -1,9 +1,5 @@
 const mediaRecordInfoBlock = {
     props: {
-        collId: {
-            type: Number,
-            default: null
-        },
         mediaData: {
             type: Object,
             default: null
@@ -100,37 +96,14 @@ const mediaRecordInfoBlock = {
                 </div>
             </q-card-section>
         </q-card>
-        <template v-if="showMediaEditorPopup">
-            <media-editor-popup
-                :coll-id="collId"
-                :media-id="editMediaId"
-                :show-popup="showMediaEditorPopup"
-                @media:updated="processMediaUpdate"
-                @close:popup="showMediaEditorPopup = false"
-            ></media-editor-popup>
-        </template>
     `,
-    components: {
-        'media-editor-popup': mediaEditorPopup
-    },
     setup(_, context) {
-        const editMediaId = Vue.ref(0);
-        const showMediaEditorPopup = Vue.ref(false);
-
         function openEditorPopup(id) {
-            editMediaId.value = id;
-            showMediaEditorPopup.value = true;
-        }
-
-        function processMediaUpdate() {
-            context.emit('media:updated');
+            context.emit('open:media-editor', id);
         }
 
         return {
-            editMediaId,
-            showMediaEditorPopup,
-            openEditorPopup,
-            processMediaUpdate
+            openEditorPopup
         }
     }
 };

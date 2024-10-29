@@ -24,7 +24,10 @@ const spatialAnalysisModule = {
     template: `
         <spatial-layer-controller-popup :layers-info-obj="layersInfoObj"></spatial-layer-controller-popup>
         <spatial-layer-query-selector-popup :layer-id="mapSettings.layerQuerySelectorId"></spatial-layer-query-selector-popup>
-        <record-info-window-popup :record-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></record-info-window-popup>
+        <template v-if="mapSettings.recordInfoWindowId">
+            <occurrence-info-window-popup :occurrence-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
+        </template>
+        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
 
         <div id="map" :class="inputWindowMode ? 'input-window analysis' : 'analysis'">
             <spatial-side-panel :show-panel="mapSettings.showSidePanel" :expanded-element="mapSettings.sidePanelExpandedElement"></spatial-side-panel>
@@ -48,7 +51,8 @@ const spatialAnalysisModule = {
         </div>
     `,
     components: {
-        'record-info-window-popup': recordInfoWindowPopup,
+        'occurrence-info-window-popup': occurrenceInfoWindowPopup,
+        'search-criteria-popup': searchCriteriaPopup,
         'spatial-side-panel': spatialSidePanel,
         'spatial-control-panel': spatialControlPanel,
         'spatial-layer-controller-popup': spatialLayerControllerPopup,
@@ -66,6 +70,7 @@ const spatialAnalysisModule = {
         const clickedFeatures = Vue.shallowReactive([]);
         const controlPanelRef = Vue.ref(null);
         const coreLayers = spatialStore.getCoreLayers;
+        const displayQueryPopup = Vue.ref(false);
         const dragAndDropInteraction = new ol.interaction.DragAndDrop({
             formatConstructors: [
                 ol.format.GPX,
@@ -288,6 +293,10 @@ const spatialAnalysisModule = {
                 loadPointsLayer();
             }
             layersObj['pointv'].getSource().changed();
+        }
+
+        function clearSelectedFeatures() {
+            selectInteraction.value.getFeatures().clear();
         }
 
         function clearSelections(resetToggle) {
@@ -666,24 +675,25 @@ const spatialAnalysisModule = {
 
         function getPointFeatureInfoHtml(iFeature) {
             let infoHTML = '<div style="width: 225px;">';
-            infoHTML += '<b>Spring ID:</b> '+iFeature.get('id')+'<br />';
-            infoHTML += '<b>Spring name:</b> '+(iFeature.get('SiteName')?iFeature.get('SiteName'):'')+'<br />';
-            infoHTML += '<b>Country:</b> '+(iFeature.get('Country')?iFeature.get('Country'):'')+'<br />';
-            infoHTML += '<b>State/Province:</b> '+(iFeature.get('StateProvince')?iFeature.get('StateProvince'):'')+'<br />';
-            infoHTML += '<b>County:</b> '+(iFeature.get('County')?iFeature.get('County'):'')+'<br />';
-            infoHTML += '<b>Quad:</b> '+(iFeature.get('USGS_Quad')?iFeature.get('USGS_Quad'):'')+'<br />';
-            infoHTML += '<b>HUC:</b> '+(iFeature.get('HUC')?iFeature.get('HUC'):'')+'<br />';
-            infoHTML += '<b>LCC:</b> '+(iFeature.get('LCC')?iFeature.get('LCC'):'')+'<br />';
-            infoHTML += '<b>Land Unit:</b> '+(iFeature.get('LandUnit')?iFeature.get('LandUnit'):'')+'<br />';
-            infoHTML += '<b>Land Unit Detail:</b> '+(iFeature.get('LandUnitDetail')?iFeature.get('LandUnitDetail'):'')+'<br />';
-            infoHTML += '<b>Proclaimed NF:</b> '+(iFeature.get('ProclaimedNF')?iFeature.get('ProclaimedNF'):'')+'<br />';
-            infoHTML += '<b>Land Manager ID:</b> '+(iFeature.get('LandManagerID')?iFeature.get('LandManagerID'):'')+'<br />';
-            infoHTML += '<b>Spring Type:</b> '+(iFeature.get('SpringType1')?iFeature.get('SpringType1'):'')+'<br />';
-            infoHTML += '<b>Secondary Type:</b> '+(iFeature.get('SpringType2')?iFeature.get('SpringType2'):'')+'<br />';
-            infoHTML += '<b>Inventory Level:</b> '+(iFeature.get('InventoryLevel')?iFeature.get('InventoryLevel'):'')+'<br />';
-            infoHTML += '<b>Survey Status:</b> '+(iFeature.get('SurveyStatus')?iFeature.get('SurveyStatus'):'')+'<br />';
-            infoHTML += '<b>Info Source:</b> '+(iFeature.get('infoSource')?iFeature.get('infoSource'):'')+'<br />';
-            infoHTML += '<b>Info Source Detail:</b> '+(iFeature.get('infoSourceDetail')?iFeature.get('infoSourceDetail'):'')+'<br />';
+            infoHTML += '<b>occid:</b> ' + iFeature.get('id') + '<br />';
+            infoHTML += '<b>Collection Name:</b> ' + (iFeature.get('collectionname') ? iFeature.get('collectionname') : '') + '<br />';
+            infoHTML += '<b>Catalog Number:</b> ' + (iFeature.get('catalognumber') ? iFeature.get('catalognumber') : '') + '<br />';
+            infoHTML += '<b>Other Catalog Numbers:</b> ' + (iFeature.get('othercatalognumbers') ? iFeature.get('othercatalognumbers') : '') + '<br />';
+            infoHTML += '<b>Family:</b> ' + (iFeature.get('family') ? iFeature.get('family') : '') + '<br />';
+            infoHTML += '<b>Scientific Name:</b> ' + (iFeature.get('sciname') ? iFeature.get('sciname') : '') + '<br />';
+            infoHTML += '<b>Recorded By:</b> ' + (iFeature.get('recordedby') ? iFeature.get('recordedby') : '') + '<br />';
+            infoHTML += '<b>Record Number:</b> ' + (iFeature.get('recordnumber') ? iFeature.get('recordnumber') : '') + '<br />';
+            infoHTML += '<b>Event Date:</b> ' + (iFeature.get('eventdate') ? iFeature.get('eventdate') : '') + '<br />';
+            infoHTML += '<b>Habitat:</b> ' + (iFeature.get('habitat') ? iFeature.get('habitat') : '') + '<br />';
+            infoHTML += '<b>Associated Taxa:</b> ' + (iFeature.get('associatedtaxa') ? iFeature.get('associatedtaxa') : '') + '<br />';
+            infoHTML += '<b>Country:</b> ' + (iFeature.get('country') ? iFeature.get('country') : '') + '<br />';
+            infoHTML += '<b>State/Province:</b> ' + (iFeature.get('stateprovince') ? iFeature.get('stateprovince') : '') + '<br />';
+            infoHTML += '<b>County:</b> ' + (iFeature.get('county') ? iFeature.get('county') : '') + '<br />';
+            infoHTML += '<b>Locality:</b> ' + (iFeature.get('locality') ? iFeature.get('locality') : '') + '<br />';
+            if(iFeature.get('thumbnailurl')){
+                const thumburl = iFeature.get('thumbnailurl');
+                infoHTML += '<img src="' + thumburl + '"style="height:150px" />';
+            }
             infoHTML += '</div>';
             return infoHTML;
         }
@@ -691,10 +701,14 @@ const spatialAnalysisModule = {
         function getPointInfoArr(cluster) {
             const feature = (cluster.get('features') ? cluster.get('features')[0] : cluster);
             const infoArr = [];
-            infoArr['siteid'] = Number(feature.get('id'));
-            infoArr['name'] = (feature.get('SiteName') ? feature.get('SiteName') : null);
-            infoArr['landunit'] = (feature.get('LandUnit') ? feature.get('LandUnit') : null);
-            infoArr['landunitdetail'] = (feature.get('LandUnitDetail') ? feature.get('LandUnitDetail') : null);
+            infoArr['occid'] = Number(feature.get('id'));
+            infoArr['institutioncode'] = (feature.get('institutioncode') ? feature.get('institutioncode') : '');
+            infoArr['catalognumber'] = (feature.get('catalognumber') ? feature.get('catalognumber') : '');
+            const recordedby = (feature.get('recordedby') ? feature.get('recordedby') : '');
+            const recordnumber = (feature.get('recordnumber') ? feature.get('recordnumber') : '');
+            infoArr['collector'] = (recordedby ? recordedby : '') + (recordedby && recordnumber ? ' ' : '') + (recordnumber ? recordnumber : '');
+            infoArr['eventdate'] = (feature.get('eventdate') ? feature.get('eventdate') : '');
+            infoArr['sciname'] = (feature.get('sciname') ? feature.get('sciname') : '');
             const featureClone = feature.clone();
             const featureGeometry = featureClone.getGeometry();
             const fixedFeatureGeometry = featureGeometry.transform(mapProjection, wgs84Projection);
@@ -769,59 +783,23 @@ const spatialAnalysisModule = {
             feature.setStyle(invisibleStyle);
         }
 
-        function loadPoints(){
-            if(!selectedPolyError.value){
-                clearSelections(false);
-                if(searchStore.getSearchTermsValid){
-                    for(const key in symbologyArr){
-                        delete symbologyArr[key];
-                    }
-                    searchStore.clearSelections();
-                    showWorking('Loading...');
-                    const options = {
-                        schema: 'map',
-                        spatial: 1
-                    };
-                    searchStore.setSearchRecCnt(options, () => {
-                        if(Number(searchStore.getSearchRecCnt) > 0){
-                            loadPointsLayer();
-                        }
-                        else{
-                            if(mapSettings.pointActive){
-                                removeLayerFromActiveLayerOptions('pointv');
-                                updateMapSettings('pointActive', false);
-                            }
-                            hideWorking();
-                            showNotification('negative','There were no records matching your query.');
-                        }
-                    });
-                }
-                else{
-                    showNotification('negative','Please enter search criteria.');
-                }
-            }
-            else{
-                showNotification('negative','You have too many complex polygons selected. Please deselect one or more polygons in order to Load Records.');
-            }
-        }
-
         function loadPointsLayer() {
             updateMapSettings('loadPointsEvent', true);
             updateMapSettings('loadPointsError', false);
             mapSettings.pointVectorSource.clear(true);
             let processed = 0;
             let index = 0;
-            const finalIndex = searchStore.getSearchRecCnt > lazyLoadCnt ? Math.ceil(searchStore.getSearchRecCnt / lazyLoadCnt) : 0;
-            const options = {
-                schema: 'map',
-                spatial: 1,
-                numRows: finalIndex,
-                index: index,
-                output: 'geojson'
-            };
             do {
-                searchStore.processSearch(options, (res, index, finalIndex) => {
+                const options = {
+                    schema: 'map',
+                    spatial: 1,
+                    numRows: lazyLoadCnt,
+                    index: index,
+                    output: 'geojson'
+                };
+                searchStore.processSearch(options, (res, index) => {
                     if(res){
+                        const finalIndex = searchStore.getSearchRecCnt > lazyLoadCnt ? (Math.ceil(searchStore.getSearchRecCnt / lazyLoadCnt) - 1) : 0;
                         const format = new ol.format.GeoJSON();
                         let features = format.readFeatures(res, {
                             featureProjection: 'EPSG:3857'
@@ -850,7 +828,6 @@ const spatialAnalysisModule = {
                 index++;
             }
             while(processed < searchStore.getSearchRecCnt && !mapSettings.loadPointsError);
-            sortSymbologyArr();
             updateMapSettings('clusterSource', new ol.source.PropertyCluster({
                 distance: mapSettings.clusterDistance,
                 source: mapSettings.pointVectorSource,
@@ -891,6 +868,45 @@ const spatialAnalysisModule = {
             hideWorking();
         }
 
+        function loadRecords(){
+            if(!selectedPolyError.value){
+                clearSelections(false);
+                if(searchStore.getSearchTermsValid){
+                    for(const key in symbologyArr){
+                        delete symbologyArr[key];
+                    }
+                    symbologyArr['sciname'] = [];
+                    symbologyArr['taxonomy'] = [];
+                    searchStore.clearSelections();
+                    showWorking('Loading...');
+                    const options = {
+                        schema: 'map',
+                        spatial: 1
+                    };
+                    searchStore.setSearchRecCnt(options, () => {
+                        if(Number(searchStore.getSearchRecCnt) > 0){
+                            displayQueryPopup.value = false;
+                            loadPointsLayer();
+                        }
+                        else{
+                            if(mapSettings.pointActive){
+                                removeLayerFromActiveLayerOptions('pointv');
+                                updateMapSettings('pointActive', false);
+                            }
+                            hideWorking();
+                            showNotification('negative','There were no records matching your query.');
+                        }
+                    });
+                }
+                else{
+                    showNotification('negative','Please enter search criteria.');
+                }
+            }
+            else{
+                showNotification('negative','You have too many complex polygons selected. Please deselect one or more polygons in order to Load Records.');
+            }
+        }
+
         function openRecordInfoWindow(id){
             updateMapSettings('recordInfoWindowId', id);
             updateMapSettings('showRecordInfoWindow', true);
@@ -899,20 +915,53 @@ const spatialAnalysisModule = {
         function primeSymbologyData(features) {
             const symbologyOptions = spatialStore.getSymbologyOptions;
             features.forEach((feature) => {
+                const family = feature.get('family');
+                const sciname = feature.get('sciname');
                 symbologyOptions.forEach((option) => {
-                    let field = option['field'];
-                    let featureValue = feature.get(field);
-                    if(!symbologyArr.hasOwnProperty(field)){
-                        symbologyArr[field] = [];
-                    }
-                    if(!symbologyArr[field].find(key => key['value'] === featureValue)){
-                        const keyObject = {};
-                        keyObject['value'] = featureValue;
-                        keyObject['color'] = mapSettings.pointLayerFillColor;
-                        symbologyArr[field].push(keyObject);
+                    if(option['field'] !== 'sciname'){
+                        let field = option['field'];
+                        let featureValue = feature.get(field);
+                        if(!symbologyArr.hasOwnProperty(field)){
+                            symbologyArr[field] = [];
+                        }
+                        if(!symbologyArr[field].find(key => key['value'] === featureValue)){
+                            const keyObject = {};
+                            keyObject['value'] = featureValue;
+                            keyObject['color'] = mapSettings.pointLayerFillColor;
+                            symbologyArr[field].push(keyObject);
+                        }
                     }
                 });
+                if(!symbologyArr['sciname'].find(key => key['value'] === sciname)){
+                    if(family){
+                        if(!symbologyArr['taxonomy'].find(key => key['value'] === family)){
+                            const familyObject = {};
+                            familyObject['value'] = family;
+                            familyObject['taxa'] = [];
+                            symbologyArr['taxonomy'].push(familyObject);
+                        }
+                        const familySymbology = symbologyArr['taxonomy'].find(key => key['value'] === family);
+                        if(!familySymbology['taxa'].find(key => key['value'] === sciname)){
+                            const taxonObject = {};
+                            taxonObject['value'] = sciname;
+                            familySymbology['taxa'].push(Object.assign({}, taxonObject));
+                            taxonObject['color'] = mapSettings.pointLayerFillColor;
+                            symbologyArr['sciname'].push(taxonObject);
+                        }
+                    }
+                    else{
+                        if(!symbologyArr['taxonomy'].find(key => key['value'] === sciname)){
+                            const taxonObject = {};
+                            taxonObject['value'] = sciname;
+                            taxonObject['taxa'] = [];
+                            symbologyArr['taxonomy'].push(Object.assign({}, taxonObject));
+                            taxonObject['color'] = mapSettings.pointLayerFillColor;
+                            symbologyArr['sciname'].push(taxonObject);
+                        }
+                    }
+                }
             });
+            sortSymbologyArr();
         }
 
         function processAddedLayer(layerData,active) {
@@ -1251,7 +1300,7 @@ const spatialAnalysisModule = {
 
         function resetSymbology() {
             for(let key in symbologyArr) {
-                if(symbologyArr.hasOwnProperty(key)){
+                if(key !== 'taxonomy' && symbologyArr.hasOwnProperty(key)){
                     symbologyArr[key].forEach(keyObject => {
                         keyObject['color'] = mapSettings.pointLayerFillColor;
                     });
@@ -1576,7 +1625,7 @@ const spatialAnalysisModule = {
                     }
                     else{
                         const featureHover = map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
-                            if(layer === layersObj[mapSettings.activeLayer]){
+                            if(layer === layersObj[mapSettings.activeLayer] || layer === layersObj['spider']){
                                 return true;
                             }
                         });
@@ -2095,6 +2144,10 @@ const spatialAnalysisModule = {
             });
         }
 
+        function setQueryPopupDisplay(val) {
+            displayQueryPopup.value = val;
+        }
+
         function setRasterAnalysisInteraction() {
             return new ol.interaction.Select({
                 layers: [layersObj['rasteranalysis']],
@@ -2169,13 +2222,13 @@ const spatialAnalysisModule = {
         }
 
         function setSymbol(feature) {
-            let stroke;
+            let stroke, style;
             let selected = false;
             const cKey = feature.get(mapSettings.mapSymbology);
             const selections = searchStore.getSelectionsIds;
             if(selections.length > 0){
-                const siteid = Number(feature.get('id'));
-                if(selections.indexOf(siteid) !== -1) {
+                const occid = Number(feature.get('id'));
+                if(selections.indexOf(occid) !== -1) {
                     selected = true;
                 }
             }
@@ -2188,13 +2241,26 @@ const spatialAnalysisModule = {
                 stroke = new ol.style.Stroke({color: mapSettings.pointLayerBorderColor, width: Number(mapSettings.pointLayerBorderWidth)});
             }
             const fill = new ol.style.Fill({color: color});
-            return new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: fill,
-                    stroke: stroke
-                })
-            });
+            if(feature.get('basisofrecord').toLowerCase().indexOf('observation') !== -1){
+                style = new ol.style.Style({
+                    image: new ol.style.RegularShape({
+                        fill: fill,
+                        stroke: stroke,
+                        points: 3,
+                        radius: mapSettings.pointLayerPointRadius
+                    })
+                });
+            }
+            else{
+                style = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: mapSettings.pointLayerPointRadius,
+                        fill: fill,
+                        stroke: stroke
+                    })
+                });
+            }
+            return style;
         }
 
         function setTransformHandleStyle() {
@@ -2305,11 +2371,23 @@ const spatialAnalysisModule = {
 
         function sortSymbologyArr() {
             for(let key in symbologyArr) {
-                if(symbologyArr.hasOwnProperty(key)){
+                if(key !== 'taxonomy' && key !== 'sciname' && symbologyArr.hasOwnProperty(key)){
                     symbologyArr[key].sort((a, b) => {
                         return a.value.localeCompare(b.value);
                     });
                 }
+            }
+            if(symbologyArr.hasOwnProperty('taxonomy')){
+                symbologyArr['taxonomy'].sort((a, b) => {
+                    return a.value.localeCompare(b.value);
+                });
+                symbologyArr['taxonomy'].forEach((taxon) => {
+                    if(taxon.hasOwnProperty('taxa') && taxon['taxa'].length > 0){
+                        taxon['taxa'].sort((a, b) => {
+                            return a.value.localeCompare(b.value);
+                        });
+                    }
+                });
             }
         }
 
@@ -2323,11 +2401,11 @@ const spatialAnalysisModule = {
                 if(feature.get('features')){
                     const addFeatures = feature.get('features');
                     addFeatures.forEach((aFeature) => {
-                        spiderFeature.push(aFeature);
+                        spiderFeature.push(aFeature.clone());
                     });
                 }
                 else{
-                    spiderFeature.push(feature);
+                    spiderFeature.push(feature.clone());
                 }
             });
             const source = layersObj['spider'].getSource();
@@ -2344,7 +2422,7 @@ const spatialAnalysisModule = {
                     }
                     p = [(center[0] + r * Math.sin(a)), (center[1] + r * Math.cos(a))];
                     cf = new ol.Feature({
-                        'features':[feature],
+                        'features': [feature],
                         geometry: new ol.geom.Point(p)
                     });
                     style = setClusterSymbol(cf);
@@ -2378,16 +2456,28 @@ const spatialAnalysisModule = {
         }
 
         function updatePointStyle(id) {
-            let point;
-            if(mapSettings.clusterPoints){
-                const cluster = findRecordCluster(Number(id));
-                point = findRecordPointInCluster(cluster, Number(id));
+            let point, style;
+            if(spiderCluster){
+                const spiderPoints = layersObj['spider'].getSource().getFeatures();
+                spiderPoints.forEach((feature) => {
+                    if(Number(feature.get('features')[0].get('id')) === Number(id)){
+                        style = setClusterSymbol(feature);
+                        feature.setStyle(style);
+                        layersObj['spider'].getSource().changed();
+                    }
+                });
             }
-            else{
-                point = findRecordPoint(Number(id));
+            if(!style){
+                if(mapSettings.clusterPoints){
+                    const cluster = findRecordCluster(Number(id));
+                    point = findRecordPointInCluster(cluster, Number(id));
+                }
+                else{
+                    point = findRecordPoint(Number(id));
+                }
+                style = setSymbol(point);
+                point.setStyle(style);
             }
-            const style = setSymbol(point);
-            point.setStyle(style);
         }
 
         function zoomToSelections() {
@@ -2431,7 +2521,7 @@ const spatialAnalysisModule = {
         Vue.provide('layersConfigArr', layersConfigArr);
         Vue.provide('layersInfoObj', layersInfoObj);
         Vue.provide('layersObj', layersObj);
-        Vue.provide('loadPoints', loadPoints);
+        Vue.provide('loadRecords', loadRecords);
         Vue.provide('loadPointsLayer', loadPointsLayer);
         Vue.provide('map', Vue.computed(() => map));
         Vue.provide('mapSettings', mapSettings);
@@ -2450,6 +2540,7 @@ const spatialAnalysisModule = {
         Vue.provide('resetSymbology', resetSymbology);
         Vue.provide('selectInteraction', selectInteraction);
         Vue.provide('setLayersOrder', setLayersOrder);
+        Vue.provide('setQueryPopupDisplay', setQueryPopupDisplay);
         Vue.provide('showPopup', showPopup);
         Vue.provide('symbologyArr', symbologyArr);
         Vue.provide('updateMapSettings', updateMapSettings);
@@ -2479,7 +2570,7 @@ const spatialAnalysisModule = {
                 if(searchStore.getSearchTermsValid){
                     updateMapSettings('loadPointsEvent', true);
                     createShapesFromSearchTermsArr();
-                    loadPoints();
+                    loadRecords();
                 }
             }
             updateMapSettings('drawToolFreehandMode', getPlatformProperty('has.touch'));
@@ -2492,11 +2583,13 @@ const spatialAnalysisModule = {
 
         return {
             controlPanelRef,
+            displayQueryPopup,
             layersInfoObj,
             mapSettings,
             popupCloser,
             popupContent,
             transformInteraction,
+            clearSelectedFeatures,
             closePopup,
             closeRecordInfoWindow,
             createCircleFromPointRadius,
@@ -2507,6 +2600,7 @@ const spatialAnalysisModule = {
             createPolysFromPolyArr,
             createUncertaintyCircleFromPointRadius,
             emitClosePopup,
+            setQueryPopupDisplay,
             updateMapSettings
         }
     }

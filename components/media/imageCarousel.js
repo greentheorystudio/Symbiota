@@ -1,6 +1,12 @@
-const occurrenceEditorImagePreviewCarousel = {
+const imageCarousel = {
+    props: {
+        imageArr: {
+            type: Array,
+            default: []
+        }
+    },
     template: `
-        <q-card flat bordered class="fit occurrence-editor-preview-image-carousel">
+        <q-card flat bordered class="fit preview-image-carousel">
             <q-card-section class="fit">
                 <q-carousel ref="carousel" swipeable animated v-model="currentImage" :arrows="(imageArr.length > 1)" control-color="black" infinite class="fit">
                     <template v-for="image in imageArr" :key="image">
@@ -10,21 +16,20 @@ const occurrenceEditorImagePreviewCarousel = {
             </q-card-section>
         </q-card>
     `,
-    setup() {
+    setup(props) {
         const baseStore = useBaseStore();
-        const occurrenceStore = useOccurrenceStore();
 
         const clientRoot = baseStore.getClientRoot;
         const currentImage = Vue.ref(null);
-        const imageArr = Vue.computed(() => occurrenceStore.getImageArr);
+        const propsRefs = Vue.toRefs(props);
 
-        Vue.watch(imageArr, () => {
+        Vue.watch(propsRefs.imageArr, () => {
             setCurrentImage();
         });
 
         function setCurrentImage() {
-            if(imageArr.value.length > 0){
-                currentImage.value = imageArr.value[0]['imgid'];
+            if(props.imageArr.length > 0){
+                currentImage.value = props.imageArr[0]['imgid'];
             }
         }
 
@@ -34,8 +39,7 @@ const occurrenceEditorImagePreviewCarousel = {
 
         return {
             clientRoot,
-            currentImage,
-            imageArr
+            currentImage
         }
     }
 };

@@ -56,29 +56,13 @@ const determinationRecordInfoBlock = {
                 </div>
             </q-card-section>
         </q-card>
-        <template v-if="editor && showDeterminationEditorPopup">
-            <occurrence-determination-editor-popup
-                :determination-id="editDeterminationId"
-                :show-popup="showDeterminationEditorPopup"
-                @close:popup="showDeterminationEditorPopup = false"
-            ></occurrence-determination-editor-popup>
-        </template>
     `,
-    components: {
-        'occurrence-determination-editor-popup': occurrenceDeterminationEditorPopup
-    },
-    setup() {
-        const editDeterminationId = Vue.ref(0);
-        const showDeterminationEditorPopup = Vue.ref(false);
-
+    setup(_, context) {
         function openEditorPopup(id) {
-            editDeterminationId.value = id;
-            showDeterminationEditorPopup.value = true;
+            context.emit('open:determination-editor', id);
         }
 
         return {
-            editDeterminationId,
-            showDeterminationEditorPopup,
             openEditorPopup
         }
     }
