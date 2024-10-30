@@ -6,6 +6,7 @@ header('Content-Type: text/html; charset=UTF-8' );
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Mapping Tutorial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/reset.css" rel="stylesheet" />

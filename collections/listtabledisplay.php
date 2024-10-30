@@ -33,6 +33,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search Results Table</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         table.styledtable td {
             white-space: nowrap;
