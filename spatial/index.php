@@ -16,6 +16,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Spatial Module</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver20240115" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
