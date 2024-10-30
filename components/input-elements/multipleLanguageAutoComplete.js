@@ -13,7 +13,7 @@ const multipleLanguageAutoComplete = {
         }
     },
     template: `
-        <q-select ref="inputRef" v-model="languageArr" outlined dense options-dense hide-dropdown-icon clearable use-input multiple use-chips popup-content-class="z-max" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
+        <q-select ref="inputRef" v-model="languageArr" outlined dense options-dense hide-dropdown-icon clearable use-input multiple use-chips popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
     `,
     setup(props, context) {
         const { showNotification } = useCore();

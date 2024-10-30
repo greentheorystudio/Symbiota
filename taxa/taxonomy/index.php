@@ -43,6 +43,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />

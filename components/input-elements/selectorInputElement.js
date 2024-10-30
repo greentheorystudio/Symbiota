@@ -34,7 +34,7 @@ const selectorInputElement = {
         }
     },
     template: `
-        <q-select ref="selectorRef" v-model="value" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-max" :options="selectorOptions" option-value="value" option-label="label" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :disable="disabled">
+        <q-select ref="selectorRef" v-model="value" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-top" behavior="menu" input-class="z-top" :options="selectorOptions" option-value="value" option-label="label" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :disable="disabled">
             <template v-if="!disabled && (definition || (clearable && value))" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
