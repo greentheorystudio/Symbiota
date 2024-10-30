@@ -886,6 +886,7 @@ const spatialAnalysisModule = {
                     searchStore.setSearchRecCnt(options, () => {
                         if(Number(searchStore.getSearchRecCnt) > 0){
                             displayQueryPopup.value = false;
+                            updateMapSettings('showControlPanelLeft', false);
                             loadPointsLayer();
                         }
                         else{
