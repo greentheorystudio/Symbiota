@@ -9,6 +9,7 @@ include_once(__DIR__ . '/config/header-includes.php');
 ?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 </head>
