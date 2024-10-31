@@ -109,6 +109,10 @@ const searchAdvancedBlock = {
         });
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
 
+        Vue.watch(searchTerms, () => {
+            setCriteriaArrFromSearchTerms();
+        });
+
         function addCriteriaObjToArr() {
             criteriaArr.push(Object.assign({}, blankCriteriaObj));
             setCriteriaArrIndexVals();
@@ -121,6 +125,17 @@ const searchAdvancedBlock = {
             }
             setCriteriaArrIndexVals();
             updateSearchTerms();
+        }
+
+        function setCriteriaArrFromSearchTerms() {
+            criteriaArr.length = 0;
+            searchTerms.value['advanced'].forEach((criteriaObj) => {
+                criteriaArr.push(criteriaObj);
+            });
+            if(criteriaArr.length === 0){
+                criteriaArr.push(Object.assign({}, blankCriteriaObj));
+            }
+            setCriteriaArrIndexVals();
         }
 
         function setCriteriaArrIndexVals() {
@@ -154,13 +169,7 @@ const searchAdvancedBlock = {
         }
 
         Vue.onMounted(() => {
-            searchTerms.value['advanced'].forEach((criteriaObj) => {
-                criteriaArr.push(criteriaObj);
-            });
-            if(criteriaArr.length === 0){
-                criteriaArr.push(Object.assign({}, blankCriteriaObj));
-            }
-            setCriteriaArrIndexVals();
+            setCriteriaArrFromSearchTerms();
         });
 
         return {
