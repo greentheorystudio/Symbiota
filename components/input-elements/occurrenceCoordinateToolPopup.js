@@ -40,7 +40,7 @@ const occurrenceCoordinateToolPopup = {
                                         <q-input outlined v-model="latSecondValue" label="Seconds" dense>
                                     </div>
                                     <div class="self-center">
-                                        <q-select bg-color="white" outlined v-model="latNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" dense options-dense />
+                                        <q-select bg-color="white" outlined v-model="latNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
                                     </div>
                                 </div>
                                 <div class="row justify-between q-col-gutter-xs">
@@ -57,7 +57,7 @@ const occurrenceCoordinateToolPopup = {
                                         <q-input outlined v-model="longSecondValue" label="Seconds" dense>
                                     </div>
                                     <div class="self-center">
-                                        <q-select bg-color="white" outlined v-model="longWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" dense options-dense />
+                                        <q-select bg-color="white" outlined v-model="longWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
                                     </div>
                                 </div>
                                 <div class="q-mt-md row justify-end">
@@ -79,7 +79,7 @@ const occurrenceCoordinateToolPopup = {
                                         <q-input outlined v-model="latDDMMinuteValue" label="Decimal Minutes" dense>
                                     </div>
                                     <div class="self-center">
-                                        <q-select bg-color="white" outlined v-model="latDDMNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" dense options-dense />
+                                        <q-select bg-color="white" outlined v-model="latDDMNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
                                     </div>
                                 </div>
                                 <div class="row justify-between q-col-gutter-xs">
@@ -93,7 +93,7 @@ const occurrenceCoordinateToolPopup = {
                                         <q-input outlined v-model="longDDMMinuteValue" label="Decimal Minutes" dense>
                                     </div>
                                     <div class="self-center">
-                                        <q-select bg-color="white" outlined v-model="longDDMWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" dense options-dense />
+                                        <q-select bg-color="white" outlined v-model="longDDMWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
                                     </div>
                                 </div>
                                 <div class="q-mt-md row justify-end">
@@ -116,7 +116,7 @@ const occurrenceCoordinateToolPopup = {
                                     <q-input outlined v-model="utmNorthingValue" label="UTM Northing" dense>
                                 </div>
                                 <div >
-                                    <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-max" dense options-dense />
+                                    <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-max" behavior="menu" dense options-dense />
                                 </div>
                                 <div class="q-mt-md row justify-end">
                                     <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeUTMData();" label="Process UTM Values" dense></q-btn>
@@ -133,13 +133,13 @@ const occurrenceCoordinateToolPopup = {
                                         <q-input outlined v-model="trsTownshipValue" label="Township" dense>
                                     </div>
                                     <div class="col">
-                                        <q-select bg-color="white" outlined v-model="trsTownshipNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" dense options-dense />
+                                        <q-select bg-color="white" outlined v-model="trsTownshipNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
                                     </div>
                                     <div class="col">
                                         <q-input outlined v-model="trsRangeValue" label="Range" dense>
                                     </div>
                                     <div>
-                                        <q-select bg-color="white" outlined v-model="trsRangeWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" dense options-dense />
+                                        <q-select bg-color="white" outlined v-model="trsRangeWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
                                     </div>
                                 </div>
                                 <div class="row justify-between q-col-gutter-xs">
@@ -152,7 +152,7 @@ const occurrenceCoordinateToolPopup = {
                                 </div>
                                 <div class="row justify-between q-col-gutter-xs">
                                     <div class="col-12">
-                                        <q-select bg-color="white" outlined v-model="trsMerideanValue" :options="trsMerideanOptions" :option-value="value" :option-label="label" label="Meridian Selection" popup-content-class="z-max" dense options-dense />
+                                        <q-select bg-color="white" outlined v-model="trsMerideanValue" :options="trsMerideanOptions" :option-value="value" :option-label="label" label="Meridian Selection" popup-content-class="z-max" behavior="menu" dense options-dense />
                                     </div>
                                 </div>
                                 <div class="q-mt-md row justify-end">

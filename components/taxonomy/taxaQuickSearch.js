@@ -25,7 +25,7 @@ const taxaQuickSearch = {
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <q-select v-model="selectedTaxon.label" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" input-debounce="0" bg-color="white" @new-value="createValue" :options="autoCompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="autoCompleteLabel">
+                        <q-select v-model="selectedTaxon.label" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autoCompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="autoCompleteLabel">
                             <template v-slot:append>
                                 <q-icon name="search" class="cursor-pointer" @click="processSearch();">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">

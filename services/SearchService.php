@@ -102,6 +102,75 @@ class SearchService {
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
     }
 
+    public function prepareOccurrenceAdvancedWhereSql($searchTermsArr): string
+    {
+        $advSqlWhereStr = '';
+        if(array_key_exists('advanced', $searchTermsArr) && is_array($searchTermsArr['advanced']) && count($searchTermsArr['advanced']) > 0) {
+            $fields = (new Occurrences)->getOccurrenceFields();
+            foreach($searchTermsArr['advanced'] as $criteriaArr){
+                if($criteriaArr['field'] && $criteriaArr['operator'] && array_key_exists($criteriaArr['field'], $fields)){
+                    if($criteriaArr['field'] === 'year' || $criteriaArr['field'] === 'month' || $criteriaArr['field'] === 'day'){
+                        $field = 'o.`' . $criteriaArr['field'] . '`';
+                    }
+                    else{
+                        $field = 'o.' . $criteriaArr['field'];
+                    }
+                    if(array_key_exists('concatenator', $criteriaArr) && $criteriaArr['concatenator']){
+                        $advSqlWhereStr .= ' ' . SanitizerService::cleanInStr($this->conn, $criteriaArr['concatenator']) . ' ';
+                    }
+                    if(array_key_exists('openParens', $criteriaArr) && $criteriaArr['openParens']){
+                        $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['openParens']);
+                    }
+                    if($criteriaArr['operator'] === 'IS NULL'){
+                        $advSqlWhereStr .= 'ISNULL(' . $field . ')';
+                    }
+                    elseif($criteriaArr['operator'] === 'IS NOT NULL'){
+                        $advSqlWhereStr .= $field . ' IS NOT NULL';
+                    }
+                    else{
+                        $advSqlWhereStr .= $field;
+                        if($criteriaArr['operator'] === 'EQUALS' || $criteriaArr['operator'] === 'NOT EQUALS' || $criteriaArr['operator'] === 'GREATER THAN' || $criteriaArr['operator'] === 'LESS THAN'){
+                            if($criteriaArr['operator'] === 'EQUALS'){
+                                $advSqlWhereStr .= ' = ';
+                            }
+                            elseif($criteriaArr['operator'] === 'NOT EQUALS'){
+                                $advSqlWhereStr .= ' <> ';
+                            }
+                            elseif($criteriaArr['operator'] === 'GREATER THAN'){
+                                $advSqlWhereStr .= ' > ';
+                            }
+                            else{
+                                $advSqlWhereStr .= ' < ';
+                            }
+                            if(is_numeric($criteriaArr['value'])){
+                                $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['value']);
+                            }
+                            else{
+                                $advSqlWhereStr .= '"' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            }
+                        }
+                        else if($criteriaArr['operator'] === 'STARTS WITH'){
+                            $advSqlWhereStr .= ' LIKE "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '%"';
+                        }
+                        elseif($criteriaArr['operator'] === 'ENDS WITH'){
+                            $advSqlWhereStr .= ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                        elseif($criteriaArr['operator'] === 'CONTAINS'){
+                            $advSqlWhereStr .= ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '%"';
+                        }
+                        elseif($criteriaArr['operator'] === 'DOES NOT CONTAIN'){
+                            $advSqlWhereStr .= ' NOT LIKE "%' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '%"';
+                        }
+                    }
+                    if(array_key_exists('closeParens', $criteriaArr) && $criteriaArr['closeParens']){
+                        $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['closeParens']);
+                    }
+                }
+            }
+        }
+        return '(' . $advSqlWhereStr . ')';
+    }
+
     public function prepareOccurrenceCatalogNumberWhereSql($searchTermsArr): string
     {
         $tempArr = array();
@@ -791,6 +860,12 @@ class SearchService {
             $processingStatusStr = $this->prepareOccurrenceProcessingStatusWhereSql($searchTermsArr);
             if($processingStatusStr){
                 $sqlWherePartsArr[] = $processingStatusStr;
+            }
+        }
+        if(array_key_exists('advanced', $searchTermsArr) && is_array($searchTermsArr['advanced']) && count($searchTermsArr['advanced']) > 0) {
+            $advancedStr = $this->prepareOccurrenceAdvancedWhereSql($searchTermsArr);
+            if($advancedStr){
+                $sqlWherePartsArr[] = $advancedStr;
             }
         }
         return count($sqlWherePartsArr) > 0 ? implode(' AND ', $sqlWherePartsArr) : '';
