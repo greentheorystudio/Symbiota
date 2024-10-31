@@ -689,7 +689,6 @@ const spatialAnalysisModule = {
             infoHTML += '<b>Country:</b> ' + (iFeature.get('country') ? iFeature.get('country') : '') + '<br />';
             infoHTML += '<b>State/Province:</b> ' + (iFeature.get('stateprovince') ? iFeature.get('stateprovince') : '') + '<br />';
             infoHTML += '<b>County:</b> ' + (iFeature.get('county') ? iFeature.get('county') : '') + '<br />';
-            infoHTML += '<b>Locality:</b> ' + (iFeature.get('locality') ? iFeature.get('locality') : '') + '<br />';
             if(iFeature.get('thumbnailurl')){
                 const thumburl = iFeature.get('thumbnailurl');
                 infoHTML += '<img src="' + thumburl + '"style="height:150px" />';
