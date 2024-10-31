@@ -1050,7 +1050,10 @@ class SearchService {
 
     public function setSelectSql($schema): string
     {
-        if($schema === 'image'){
+        if($schema === 'occid'){
+            $fieldNameArr = array('o.occid');
+        }
+        elseif($schema === 'image'){
             $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'u.uid', 'u.lastname',
                 'u.firstname', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber', 'o.localitysecurity');
         }
@@ -1065,8 +1068,8 @@ class SearchService {
             $fieldNameArr[] = 't.author AS scientificNameAuthorship';
         }
         elseif($schema === 'map'){
-            $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.decimallatitude',
-                'o.decimallongitude', 'c.colltype', 'o.catalognumber', 'o.othercatalognumbers',
+            $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.`year`', 'o.`month`', 'o.`day`', 'o.decimallatitude',
+                'o.decimallongitude', 'c.colltype', 'o.catalognumber', 'o.othercatalognumbers', 'o.habitat', 'o.associatedtaxa',
                 'o.country', 'o.stateprovince', 'o.county', 'o.recordedby', 'o.recordnumber', 'o.eventdate', 'o.basisofrecord',
                 'o.localitysecurity');
             $fieldNameArr[] = 'CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector';
@@ -1077,7 +1080,7 @@ class SearchService {
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($occurrenceFields, 'o');
             $fieldNameArr[] = 'IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),"") AS date';
         }
-        if($schema !== 'taxa'){
+        if($schema !== 'occid' && $schema !== 'taxa'){
             $fieldNameArr[] = 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode';
             $fieldNameArr[] = 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode';
             $fieldNameArr[] = 'c.collectionname';
