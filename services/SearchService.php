@@ -62,7 +62,7 @@ class SearchService {
                 if($row = $result->fetch_object()){
                     $returnVal = $row->cnt;
                 }
-                $result->close();
+                $result->free();
             }
         }
         return $returnVal;
@@ -90,16 +90,85 @@ class SearchService {
                 $tempArr[] = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
             }
             else if(substr($eDate1,-5) === '00-00'){
-                $tempArr[] = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
+                $tempArr[] = '(i.initialtimestamp REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '")';
             }
             elseif(substr($eDate1,-2) === '00'){
-                $tempArr[] = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%") ';
+                $tempArr[] = '(i.initialtimestamp REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '") ';
             }
             else{
-                $tempArr[] = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '%") ';
+                $tempArr[] = '(i.initialtimestamp REGEXP "^' . SanitizerService::cleanInStr($this->conn, $eDate1) . '") ';
             }
         }
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+    }
+
+    public function prepareOccurrenceAdvancedWhereSql($searchTermsArr): string
+    {
+        $advSqlWhereStr = '';
+        if(array_key_exists('advanced', $searchTermsArr) && is_array($searchTermsArr['advanced']) && count($searchTermsArr['advanced']) > 0) {
+            $fields = (new Occurrences)->getOccurrenceFields();
+            foreach($searchTermsArr['advanced'] as $criteriaArr){
+                if($criteriaArr['field'] && $criteriaArr['operator'] && array_key_exists($criteriaArr['field'], $fields)){
+                    if($criteriaArr['field'] === 'year' || $criteriaArr['field'] === 'month' || $criteriaArr['field'] === 'day'){
+                        $field = 'o.`' . $criteriaArr['field'] . '`';
+                    }
+                    else{
+                        $field = 'o.' . $criteriaArr['field'];
+                    }
+                    if(array_key_exists('concatenator', $criteriaArr) && $criteriaArr['concatenator']){
+                        $advSqlWhereStr .= ' ' . SanitizerService::cleanInStr($this->conn, $criteriaArr['concatenator']) . ' ';
+                    }
+                    if(array_key_exists('openParens', $criteriaArr) && $criteriaArr['openParens']){
+                        $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['openParens']);
+                    }
+                    if($criteriaArr['operator'] === 'IS NULL'){
+                        $advSqlWhereStr .= 'ISNULL(' . $field . ')';
+                    }
+                    elseif($criteriaArr['operator'] === 'IS NOT NULL'){
+                        $advSqlWhereStr .= $field . ' IS NOT NULL';
+                    }
+                    else{
+                        $advSqlWhereStr .= $field;
+                        if($criteriaArr['operator'] === 'EQUALS' || $criteriaArr['operator'] === 'NOT EQUALS' || $criteriaArr['operator'] === 'GREATER THAN' || $criteriaArr['operator'] === 'LESS THAN'){
+                            if($criteriaArr['operator'] === 'EQUALS'){
+                                $advSqlWhereStr .= ' = ';
+                            }
+                            elseif($criteriaArr['operator'] === 'NOT EQUALS'){
+                                $advSqlWhereStr .= ' <> ';
+                            }
+                            elseif($criteriaArr['operator'] === 'GREATER THAN'){
+                                $advSqlWhereStr .= ' > ';
+                            }
+                            else{
+                                $advSqlWhereStr .= ' < ';
+                            }
+                            if(is_numeric($criteriaArr['value'])){
+                                $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['value']);
+                            }
+                            else{
+                                $advSqlWhereStr .= '"' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            }
+                        }
+                        else if($criteriaArr['operator'] === 'STARTS WITH'){
+                            $advSqlWhereStr .= ' REGEXP "^' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                        elseif($criteriaArr['operator'] === 'ENDS WITH'){
+                            $advSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '^"';
+                        }
+                        elseif($criteriaArr['operator'] === 'CONTAINS'){
+                            $advSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                        elseif($criteriaArr['operator'] === 'DOES NOT CONTAIN'){
+                            $advSqlWhereStr .= ' NOT REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                    }
+                    if(array_key_exists('closeParens', $criteriaArr) && $criteriaArr['closeParens']){
+                        $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['closeParens']);
+                    }
+                }
+            }
+        }
+        return '(' . $advSqlWhereStr . ')';
     }
 
     public function prepareOccurrenceCatalogNumberWhereSql($searchTermsArr): string
@@ -175,7 +244,7 @@ class SearchService {
             $cArr = explode(',', $countyStr);
             $cStArr = array();
             foreach($cArr as $str){
-                $cStArr[] = '(o.county LIKE "' . SanitizerService::cleanInStr($this->conn, $str) . '%")';
+                $cStArr[] = '(o.county REGEXP "^' . SanitizerService::cleanInStr($this->conn, $str) . '")';
             }
             $tempArr[] = '(' . implode(' OR ', $cStArr) . ')';
         }
@@ -185,7 +254,7 @@ class SearchService {
             $locStArr = array();
             foreach($locArr as $str){
                 $str = SanitizerService::cleanInStr($this->conn, $str);
-                $locStArr[] = '(o.locality LIKE "%' . $str . '%")';
+                $locStArr[] = '(o.locality REGEXP "' . $str . '")';
             }
             $tempArr[] = '(' . implode(' OR ', $locStArr) . ')';
         }
@@ -223,7 +292,7 @@ class SearchService {
             $collArr = explode(';', $collStr);
             $collectorStrArr = array();
             foreach($collArr as $str => $postArr){
-                $collectorStrArr[] = '(o.recordedby LIKE "%' . SanitizerService::cleanInStr($this->conn, $voucherSearchTermsArr['recordedby']) . '%")';
+                $collectorStrArr[] = '(o.recordedby REGEXP "' . SanitizerService::cleanInStr($this->conn, $voucherSearchTermsArr['recordedby']) . '")';
             }
             $tempArr[] = '(' . implode(' OR ', $collectorStrArr) . ')';
         }
@@ -300,14 +369,14 @@ class SearchService {
                 $tempInnerArr = array();
                 $collValueArr = explode(' ', trim($collectorArr[0]));
                 foreach($collValueArr as $collV){
-                    $tempInnerArr[] = '(o.recordedBy LIKE "%' . SanitizerService::cleanInStr($this->conn, $collV) . '%")';
+                    $tempInnerArr[] = '(o.recordedBy REGEXP "' . SanitizerService::cleanInStr($this->conn, $collV) . '")';
                 }
                 $tempArr[] = implode(' AND ', $tempInnerArr);
             }
         }
         elseif(count($collectorArr) > 1){
             $collStr = current($collectorArr);
-            $tempArr[] = '(o.recordedby LIKE "%' . SanitizerService::cleanInStr($this->conn, $collStr) . '%")';
+            $tempArr[] = '(o.recordedby REGEXP "' . SanitizerService::cleanInStr($this->conn, $collStr) . '")';
         }
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
     }
@@ -342,7 +411,7 @@ class SearchService {
                 }
                 else{
                     $value = trim(str_ireplace(' county','', $value));
-                    $tempArr[] = '(o.county LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . '%")';
+                    $tempArr[] = '(o.county REGEXP "^' . SanitizerService::cleanInStr($this->conn, $value) . '")';
                 }
             }
         }
@@ -359,7 +428,7 @@ class SearchService {
                 $returnStr = '(ISNULL(o.dateentered))';
             }
             else{
-                $returnStr = '(o.dateentered LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . ' %")';
+                $returnStr = '(o.dateentered REGEXP "^' . SanitizerService::cleanInStr($this->conn, $value) . ' ")';
             }
         }
         return $returnStr;
@@ -375,7 +444,7 @@ class SearchService {
                 $returnStr = '(ISNULL(o.datelastmodified))';
             }
             else{
-                $returnStr = '(o.datelastmodified LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . ' %")';
+                $returnStr = '(o.datelastmodified REGEXP "^' . SanitizerService::cleanInStr($this->conn, $value) . ' ")';
             }
         }
         return $returnStr;
@@ -437,10 +506,10 @@ class SearchService {
                     $returnStr = '(o.eventdate BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
                 }
                 else if(substr($eDate1,-5) === '00-00'){
-                    $returnStr = '(o.eventdate LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
+                    $returnStr = '(o.eventdate REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '")';
                 }
                 elseif(substr($eDate1,-2) === '00'){
-                    $returnStr = '(o.eventdate LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
+                    $returnStr = '(o.eventdate REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '")';
                 }
                 else{
                     $returnStr = '(o.eventdate = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
@@ -462,7 +531,7 @@ class SearchService {
                     $tempArr[] = '(ISNULL(o.locality))';
                 }
                 else{
-                    $tempArr[] = '(o.municipality LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . '%" OR o.locality LIKE "%' . SanitizerService::cleanInStr($this->conn, $value) . '%")';
+                    $tempArr[] = '(o.municipality REGEXP "^' . SanitizerService::cleanInStr($this->conn, $value) . '" OR o.locality REGEXP "' . SanitizerService::cleanInStr($this->conn, $value) . '")';
                 }
             }
         }
@@ -481,7 +550,7 @@ class SearchService {
                     $tempArr[] = '(ISNULL(o.occurrenceremarks))';
                 }
                 else{
-                    $tempArr[] = '(o.occurrenceremarks LIKE "%' . SanitizerService::cleanInStr($this->conn, $value) . '%")';
+                    $tempArr[] = '(o.occurrenceremarks REGEXP "' . SanitizerService::cleanInStr($this->conn, $value) . '")';
                 }
             }
         }
@@ -614,7 +683,7 @@ class SearchService {
                 }
             }
             elseif(!$image){
-                $sqlTaxaWherePartsArr[] = '(o.sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $name) . '%")';
+                $sqlTaxaWherePartsArr[] = '(o.sciname REGEXP "^' . SanitizerService::cleanInStr($this->conn, $name) . '")';
             }
         }
         if($searchTidArr){
@@ -720,7 +789,7 @@ class SearchService {
             $sqlWherePartsArr[] = '(o.typestatus IS NOT NULL)';
         }
         if(array_key_exists('hasaudio',$searchTermsArr) && $searchTermsArr['hasaudio']){
-            $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format LIKE "audio/%"))';
+            $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format REGEXP "^audio/"))';
         }
         if(array_key_exists('hasimages',$searchTermsArr) && $searchTermsArr['hasimages']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM images))';
@@ -729,7 +798,7 @@ class SearchService {
             $sqlWherePartsArr[] = '(o.occid NOT IN(SELECT occid FROM images))';
         }
         if(array_key_exists('hasvideo',$searchTermsArr) && $searchTermsArr['hasvideo']){
-            $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format LIKE "video/%"))';
+            $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format REGEXP "^video/"))';
         }
         if(array_key_exists('hasmedia',$searchTermsArr) && $searchTermsArr['hasmedia']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM images) OR o.occid IN(SELECT occid FROM media))';
@@ -760,13 +829,13 @@ class SearchService {
         }
         if(array_key_exists('imagetype',$searchTermsArr) && $searchTermsArr['imagetype']){
             if($searchTermsArr['imagetype'] === 'specimenonly'){
-                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%specimen%")';
+                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord REGEXP "specimen")';
             }
             elseif($searchTermsArr['imagetype'] === 'observationonly'){
-                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%observation%")';
+                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord REGEXP "observation")';
             }
             elseif($searchTermsArr['imagetype'] === 'fieldonly'){
-                $sqlWherePartsArr[] = '(i.imgid IS NOT NULL AND (ISNULL(i.occid) OR o.basisofrecord LIKE "%observation%"))';
+                $sqlWherePartsArr[] = '(i.imgid IS NOT NULL AND (ISNULL(i.occid) OR o.basisofrecord REGEXP "observation"))';
             }
         }
         if(array_key_exists('enteredby',$searchTermsArr) && $searchTermsArr['enteredby']){
@@ -791,6 +860,12 @@ class SearchService {
             $processingStatusStr = $this->prepareOccurrenceProcessingStatusWhereSql($searchTermsArr);
             if($processingStatusStr){
                 $sqlWherePartsArr[] = $processingStatusStr;
+            }
+        }
+        if(array_key_exists('advanced', $searchTermsArr) && is_array($searchTermsArr['advanced']) && count($searchTermsArr['advanced']) > 0) {
+            $advancedStr = $this->prepareOccurrenceAdvancedWhereSql($searchTermsArr);
+            if($advancedStr){
+                $sqlWherePartsArr[] = $advancedStr;
             }
         }
         return count($sqlWherePartsArr) > 0 ? implode(' AND ', $sqlWherePartsArr) : '';
@@ -837,43 +912,45 @@ class SearchService {
                 }
                 //echo '<div>Search sql: ' . $sql . '</div>';
                 if($result = $this->conn->query($sql)){
+                    $fields = mysqli_fetch_fields($result);
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
                     if($options['output'] === 'geojson'){
-                        $returnArr = $this->serializeGeoJsonResultArr($result, $numRows);
+                        $returnArr = $this->serializeGeoJsonResultArr($fields, $rows, $numRows);
                     }
                     else{
-                        $returnArr = $this->serializeJsonResultArr($result, $options['schema'], $spatial);
+                        $returnArr = $this->serializeJsonResultArr($fields, $rows, $options['schema'], $spatial);
                     }
-                    $result->free();
                 }
             }
         }
         return $returnArr;
     }
 
-    public function serializeGeoJsonResultArr($result, $numRows): array
+    public function serializeGeoJsonResultArr($fields, $rows, $numRows): array
     {
         $returnArr = array();
         $featuresArr = array();
-        $fields = mysqli_fetch_fields($result);
-        while($row = $result->fetch_object()){
+        foreach($rows as $index => $row){
             $rareSpReader = false;
-            $localitySecurity = (int)$row->localitysecurity === 1;
+            $localitySecurity = (int)$row['localitysecurity'] === 1;
             if($localitySecurity){
-                $rareSpReader = $this->verifyRareSpAccess($row->collid);
+                $rareSpReader = $this->verifyRareSpAccess($row['collid']);
             }
             if(!$localitySecurity || $rareSpReader){
                 $geoArr = array();
                 $geoArr['type'] = 'Feature';
                 $geoArr['geometry']['type'] = 'Point';
-                $geoArr['geometry']['coordinates'] = [$row->decimallongitude, $row->decimallatitude];
+                $geoArr['geometry']['coordinates'] = [$row['decimallongitude'], $row['decimallatitude']];
                 $geoArr['properties'] = array();
-                $geoArr['properties']['id'] = $row->occid;
+                $geoArr['properties']['id'] = $row['occid'];
                 foreach($fields as $val){
                     $name = $val->name;
-                    $geoArr['properties'][$name] = $row->$name;
+                    $geoArr['properties'][$name] = $row[$name];
                 }
                 $featuresArr[] = $geoArr;
             }
+            unset($rows[$index]);
         }
         $returnArr['type'] = 'FeatureCollection';
         $returnArr['numFound'] = $numRows;
@@ -882,34 +959,34 @@ class SearchService {
         return $returnArr;
     }
 
-    public function serializeJsonResultArr($result, $schema, $spatial): array
+    public function serializeJsonResultArr($fields, $rows, $schema, $spatial): array
     {
         $returnArr = array();
         $returnData = array();
         $idArr = array();
-        $fields = mysqli_fetch_fields($result);
         if($schema === 'taxa'){
-            while($row = $result->fetch_object()){
+            foreach($rows as $index => $row){
                 $recordArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $recordArr[$name] = $row->$name;
+                    $recordArr[$name] = $row[$name];
                 }
                 $returnArr[] = $recordArr;
+                unset($rows[$index]);
             }
         }
         else{
-            while($row = $result->fetch_object()){
+            foreach($rows as $index => $row){
                 $rareSpReader = false;
-                $occid = $row->occid;
-                $localitySecurity = (int)$row->localitysecurity === 1;
+                $occid = $row['occid'];
+                $localitySecurity = (int)$row['localitysecurity'] === 1;
                 if($localitySecurity){
-                    $rareSpReader = $this->verifyRareSpAccess($row->collid);
+                    $rareSpReader = $this->verifyRareSpAccess($row['collid']);
                 }
                 if(!$localitySecurity || $rareSpReader || !$spatial){
                     foreach($fields as $val){
                         $name = $val->name;
-                        $returnData[$occid][$name] = $row->$name;
+                        $returnData[$occid][$name] = $row[$name];
                     }
                     if(!$spatial){
                         if(!$localitySecurity || $rareSpReader){
@@ -920,14 +997,16 @@ class SearchService {
                         }
                     }
                 }
+                unset($rows[$index]);
             }
         }
         if(!$spatial && $schema === 'occurrence' && count($idArr) > 0){
             $returnData = $this->setResultsImageData($returnData, $idArr);
         }
         if($schema !== 'taxa'){
-            foreach($returnData as $data){
+            foreach($returnData as $index => $data){
                 $returnArr[] = $data;
+                unset($returnData[$index]);
             }
         }
         return $returnArr;
@@ -986,9 +1065,9 @@ class SearchService {
             $fieldNameArr[] = 't.author AS scientificNameAuthorship';
         }
         elseif($schema === 'map'){
-            $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.`year`', 'o.`month`', 'o.`day`', 'o.decimallatitude',
-                'o.decimallongitude', 'c.colltype', 'o.catalognumber', 'o.othercatalognumbers', 'o.habitat', 'o.associatedtaxa',
-                'o.country', 'o.stateprovince', 'o.county', 'o.locality', 'o.recordedby', 'o.recordnumber', 'o.eventdate', 'o.basisofrecord',
+            $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.decimallatitude',
+                'o.decimallongitude', 'c.colltype', 'o.catalognumber', 'o.othercatalognumbers',
+                'o.country', 'o.stateprovince', 'o.county', 'o.recordedby', 'o.recordnumber', 'o.eventdate', 'o.basisofrecord',
                 'o.localitysecurity');
             $fieldNameArr[] = 'CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector';
         }
