@@ -816,6 +816,7 @@ const spatialAnalysisModule = {
                         if(index === finalIndex){
                             const pointextent = mapSettings.pointVectorSource.getExtent();
                             map.getView().fit(pointextent,map.getSize());
+                            loadPointsPostrender();
                         }
                     }
                     else{
