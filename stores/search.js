@@ -12,9 +12,93 @@ const useSearchStore = Pinia.defineStore('search', {
             hasvideo: false,
             hasmedia: false,
             hasgenetic: false,
-            withoutimages: false
+            withoutimages: false,
+            advanced: []
         },
         dateId: null,
+        queryBuilderFieldOptions: [
+            {field: 'associatedcollectors', label: 'Associated Collectors'},
+            {field: 'associatedoccurrences', label: 'Associated Occurrences'},
+            {field: 'associatedtaxa', label: 'Associated Taxa'},
+            {field: 'attributes', label: 'Attributes'},
+            {field: 'scientificnameauthorship', label: 'Author'},
+            {field: 'basisofrecord', label: 'Basis Of Record'},
+            {field: 'behavior', label: 'Behavior'},
+            {field: 'catalognumber', label: 'Catalog Number'},
+            {field: 'collectioncode', label: 'Collection Code'},
+            {field: 'recordnumber', label: 'Collection Number'},
+            {field: 'recordedby', label: 'Collector/Observer'},
+            {field: 'continent', label: 'Continent'},
+            {field: 'coordinateuncertaintyinmeters', label: 'Coordinate Uncertainty (m)'},
+            {field: 'country', label: 'Country'},
+            {field: 'county', label: 'County'},
+            {field: 'cultivationstatus', label: 'Cultivation Status'},
+            {field: 'datageneralizations', label: 'Data Generalizations'},
+            {field: 'eventdate', label: 'Date'},
+            {field: 'dateentered', label: 'Date Entered'},
+            {field: 'datelastmodified', label: 'Date Last Modified'},
+            {field: 'day', label: 'Day'},
+            {field: 'dbpk', label: 'dbpk'},
+            {field: 'decimallatitude', label: 'Decimal Latitude'},
+            {field: 'decimallongitude', label: 'Decimal Longitude'},
+            {field: 'maximumdepthinmeters', label: 'Depth Maximum (m)'},
+            {field: 'minimumdepthinmeters', label: 'Depth Minimum (m)'},
+            {field: 'verbatimattributes', label: 'Description'},
+            {field: 'disposition', label: 'Disposition'},
+            {field: 'dynamicproperties', label: 'Dynamic Properties'},
+            {field: 'maximumelevationinmeters', label: 'Elevation Maximum (m)'},
+            {field: 'minimumelevationinmeters', label: 'Elevation Minimum (m)'},
+            {field: 'establishmentmeans', label: 'Establishment Means'},
+            {field: 'family', label: 'Family'},
+            {field: 'fieldnotes', label: 'Field Notes'},
+            {field: 'fieldnumber', label: 'Field Number'},
+            {field: 'genus', label: 'Genus'},
+            {field: 'geodeticdatum', label: 'Geodetic Datum'},
+            {field: 'georeferenceprotocol', label: 'Georeference Protocol'},
+            {field: 'georeferenceremarks', label: 'Georeference Remarks'},
+            {field: 'georeferencesources', label: 'Georeference Sources'},
+            {field: 'georeferenceverificationstatus', label: 'Georeference Verification Status'},
+            {field: 'georeferencedby', label: 'Georeferenced By'},
+            {field: 'habitat', label: 'Habitat'},
+            {field: 'identificationqualifier', label: 'Identification Qualifier'},
+            {field: 'identificationreferences', label: 'Identification References'},
+            {field: 'identificationremarks', label: 'Identification Remarks'},
+            {field: 'identifiedby', label: 'Identified By'},
+            {field: 'individualcount', label: 'Individual Count'},
+            {field: 'informationwithheld', label: 'Information Withheld'},
+            {field: 'institutioncode', label: 'Institution Code'},
+            {field: 'island', label: 'Island'},
+            {field: 'islandgroup', label: 'Island Group'},
+            {field: 'labelproject', label: 'Label Project'},
+            {field: 'lifestage', label: 'Life Stage'},
+            {field: 'locality', label: 'Locality'},
+            {field: 'localitysecurity', label: 'Locality Security'},
+            {field: 'localitysecurityreason', label: 'Locality Security Reason'},
+            {field: 'locationremarks', label: 'Location Remarks'},
+            {field: 'username', label: 'Modified By'},
+            {field: 'month', label: 'Month'},
+            {field: 'municipality', label: 'Municipality'},
+            {field: 'occurrenceremarks', label: 'Occurrence Remarks'},
+            {field: 'othercatalognumbers', label: 'Other Catalog Numbers'},
+            {field: 'ownerinstitutioncode', label: 'Owner Code'},
+            {field: 'preparations', label: 'Preparations'},
+            {field: 'reproductivecondition', label: 'Reproductive Condition'},
+            {field: 'samplingeffort', label: 'Sampling Effort'},
+            {field: 'samplingprotocol', label: 'Sampling Protocol'},
+            {field: 'sciname', label: 'Scientific Name'},
+            {field: 'sex', label: 'Sex'},
+            {field: 'specificepithet', label: 'Specific Epithet'},
+            {field: 'stateprovince', label: 'State/Province'},
+            {field: 'substrate', label: 'Substrate'},
+            {field: 'tid', label: 'Taxon ID'},
+            {field: 'taxonremarks', label: 'Taxon Remarks'},
+            {field: 'typestatus', label: 'Type Status'},
+            {field: 'verbatimcoordinates', label: 'Verbatim Coordinates'},
+            {field: 'verbatimeventdate', label: 'Verbatim Date'},
+            {field: 'verbatimdepth', label: 'Verbatim Depth'},
+            {field: 'verbatimelevation', label: 'Verbatim Elevation'},
+            {field: 'year', label: 'Year'}
+        ],
         queryId: 0,
         queryRecCnt: 0,
         searchRecordData: [],
@@ -46,6 +130,9 @@ const useSearchStore = Pinia.defineStore('search', {
             dateTimeString += ((now.getMinutes() < 10)?'0':'')+now.getMinutes().toString();
             dateTimeString += ((now.getSeconds() < 10)?'0':'')+now.getSeconds().toString();
             return dateTimeString;
+        },
+        getQueryBuilderFieldOptions(state) {
+            return state.queryBuilderFieldOptions;
         },
         getQueryId(state) {
             return state.queryId;
@@ -114,7 +201,8 @@ const useSearchStore = Pinia.defineStore('search', {
                 state.searchTerms['hasvideo'] ||
                 state.searchTerms['hasmedia'] ||
                 state.searchTerms['hasgenetic'] ||
-                state.searchTerms['withoutimages']
+                state.searchTerms['withoutimages'] ||
+                state.searchTerms['advanced'].length > 0
             ){
                 populated = true;
             }
