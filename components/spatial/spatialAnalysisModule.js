@@ -92,6 +92,8 @@ const spatialAnalysisModule = {
         const layersInfoObj = Vue.reactive({});
         const layersObj = Vue.shallowReactive({});
         const lazyLoadCnt = 20000;
+        let loadPointsIndex = 0;
+        let loadPointsProcessed = 0;
         let map = null;
         const mapProjection = new ol.proj.Projection({
             code: 'EPSG:3857'
@@ -689,6 +691,7 @@ const spatialAnalysisModule = {
             infoHTML += '<b>Country:</b> ' + (iFeature.get('country') ? iFeature.get('country') : '') + '<br />';
             infoHTML += '<b>State/Province:</b> ' + (iFeature.get('stateprovince') ? iFeature.get('stateprovince') : '') + '<br />';
             infoHTML += '<b>County:</b> ' + (iFeature.get('county') ? iFeature.get('county') : '') + '<br />';
+            infoHTML += '<b>Locality:</b> ' + (iFeature.get('locality') ? iFeature.get('locality') : '') + '<br />';
             if(iFeature.get('thumbnailurl')){
                 const thumburl = iFeature.get('thumbnailurl');
                 infoHTML += '<img src="' + thumburl + '"style="height:150px" />';
@@ -883,7 +886,7 @@ const spatialAnalysisModule = {
                         schema: 'map',
                         spatial: 1
                     };
-                    searchStore.setSearchRecCnt(options, () => {
+                    searchStore.setSearchOccidArr(options, () => {
                         if(Number(searchStore.getSearchRecCnt) > 0){
                             displayQueryPopup.value = false;
                             updateMapSettings('showControlPanelLeft', false);

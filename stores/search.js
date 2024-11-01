@@ -100,7 +100,7 @@ const useSearchStore = Pinia.defineStore('search', {
             {field: 'year', label: 'Year'}
         ],
         queryId: 0,
-        queryRecCnt: 0,
+        queryOccidArr: [],
         searchRecordData: [],
         searchTerms: {},
         searchTermsPageNumber: 0,
@@ -137,8 +137,11 @@ const useSearchStore = Pinia.defineStore('search', {
         getQueryId(state) {
             return state.queryId;
         },
+        getSearchOccidArr(state) {
+            return state.queryOccidArr;
+        },
         getSearchRecCnt(state) {
-            return Number(state.queryRecCnt);
+            return state.queryOccidArr.length;
         },
         getSearchRecordData(state) {
             return state.searchRecordData;
@@ -258,6 +261,12 @@ const useSearchStore = Pinia.defineStore('search', {
                 }
             });
         },
+        getSearchOccidSubArr(options) {
+            const numRows = options.hasOwnProperty('numRows') ? Number(options['numRows']) : 0;
+            const index = options.hasOwnProperty('index') ? Number(options['index']) : 0;
+            const bottomLimit = numRows > 0 ? (index * numRows) : 0;
+            return this.queryOccidArr.slice(bottomLimit, (bottomLimit + (numRows - 1)));
+        },
         initializeSearchStorage(queryId) {
             this.dateId = this.getDateIdValue;
             this.queryId = queryId.toString();
@@ -319,8 +328,9 @@ const useSearchStore = Pinia.defineStore('search', {
             });
         },
         processSearch(options, callback){
+            const occidArr = this.getSearchOccidSubArr(options);
             const formData = new FormData();
-            formData.append('starr', this.getSearchTermsJson);
+            formData.append('starr', JSON.stringify({occidArr: occidArr}));
             if(this.baseStore.getSolrMode){
                 let startindex = 0;
                 if(index > 0) {
@@ -404,8 +414,8 @@ const useSearchStore = Pinia.defineStore('search', {
             stArr[this.dateId.toString()][queryId.toString()] = {};
             localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
         },
-        setSearchRecCnt(options, callback){
-            this.queryRecCnt = 0;
+        setSearchOccidArr(options, callback){
+            this.queryOccidArr.length = 0;
             const formData = new FormData();
             formData.append('starr', this.getSearchTermsJson);
             if(this.baseStore.getSolrMode){
@@ -426,16 +436,16 @@ const useSearchStore = Pinia.defineStore('search', {
             }
             else{
                 formData.append('options', JSON.stringify(options));
-                formData.append('action', 'getSearchRecCnt(');
+                formData.append('action', 'getSearchOccidArr');
                 fetch(searchServiceApiUrl, {
                     method: 'POST',
                     body: formData
                 })
                 .then((response) => {
-                    return response.ok ? response.text() : null;
+                    return response.ok ? response.json() : null;
                 })
-                .then((res) => {
-                    this.queryRecCnt = Number(res);
+                .then((data) => {
+                    this.queryOccidArr = data;
                     callback();
                 });
             }

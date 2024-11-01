@@ -9,8 +9,8 @@ $stArr = array_key_exists('starr', $_REQUEST) ? json_decode($_POST['starr'], tru
 
 if($action && $options && $stArr && SanitizerService::validateInternalRequest()){
     $searchService = new SearchService();
-    if($action === 'getSearchRecCnt('){
-        echo $searchService->getSearchRecordCnt($stArr, $options);
+    if($action === 'getSearchOccidArr'){
+        echo json_encode($searchService->getSearchOccidArr($stArr, $options));
     }
     elseif($action === 'processSearch'){
         echo json_encode($searchService->processSearch($stArr, $options));
