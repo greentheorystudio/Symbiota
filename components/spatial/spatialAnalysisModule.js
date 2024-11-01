@@ -92,6 +92,8 @@ const spatialAnalysisModule = {
         const layersInfoObj = Vue.reactive({});
         const layersObj = Vue.shallowReactive({});
         const lazyLoadCnt = 20000;
+        let loadPointsIndex = 0;
+        let loadPointsProcessed = 0;
         let map = null;
         const mapProjection = new ol.proj.Projection({
             code: 'EPSG:3857'
@@ -785,70 +787,10 @@ const spatialAnalysisModule = {
         function loadPointsLayer() {
             updateMapSettings('loadPointsEvent', true);
             updateMapSettings('loadPointsError', false);
+            loadPointsIndex = 0;
+            loadPointsProcessed = 0;
             mapSettings.pointVectorSource.clear(true);
-            let processed = 0;
-            let index = 0;
-            do {
-                const options = {
-                    schema: 'map',
-                    spatial: 1,
-                    numRows: lazyLoadCnt,
-                    index: index,
-                    output: 'geojson'
-                };
-                searchStore.processSearch(options, (res, index) => {
-                    if(res){
-                        const finalIndex = searchStore.getSearchRecCnt > lazyLoadCnt ? (Math.ceil(searchStore.getSearchRecCnt / lazyLoadCnt) - 1) : 0;
-                        const format = new ol.format.GeoJSON();
-                        let features = format.readFeatures(res, {
-                            featureProjection: 'EPSG:3857'
-                        });
-                        if(mapSettings.toggleSelectedPoints){
-                            const selections = searchStore.getSelectionsIds;
-                            features = features.filter((feature) => {
-                                const id = Number(feature.get('id'));
-                                return (selections.indexOf(id) !== -1);
-                            });
-                        }
-                        primeSymbologyData(features);
-                        mapSettings.pointVectorSource.addFeatures(features);
-                        if(index === finalIndex){
-                            const pointextent = mapSettings.pointVectorSource.getExtent();
-                            map.getView().fit(pointextent,map.getSize());
-                            loadPointsPostrender();
-                        }
-                    }
-                    else{
-                        updateMapSettings('loadPointsError', true);
-                        showNotification('negative','An error occurred while loading records.');
-                        loadPointsPostrender();
-                    }
-                });
-                processed = processed + lazyLoadCnt;
-                index++;
-            }
-            while(processed < searchStore.getSearchRecCnt && !mapSettings.loadPointsError);
-            updateMapSettings('clusterSource', new ol.source.PropertyCluster({
-                distance: mapSettings.clusterDistance,
-                source: mapSettings.pointVectorSource,
-                clusterkey: mapSettings.mapSymbology,
-                indexkey: 'id',
-                geometryFunction: (feature) => {
-                    return feature.getGeometry();
-                }
-            }));
-
-            layersObj['pointv'].setStyle(getPointStyle);
-            if(mapSettings.clusterPoints){
-                layersObj['pointv'].setSource(mapSettings.clusterSource);
-            }
-            else{
-                layersObj['pointv'].setSource(mapSettings.pointVectorSource);
-            }
-            layersObj['heat'].setSource(mapSettings.pointVectorSource);
-            if(mapSettings.showHeatMap){
-                layersObj['heat'].setVisible(true);
-            }
+            processLoadPointsLayer();
         }
 
         function loadPointsPostrender(){
@@ -883,7 +825,7 @@ const spatialAnalysisModule = {
                         schema: 'map',
                         spatial: 1
                     };
-                    searchStore.setSearchRecCnt(options, () => {
+                    searchStore.setSearchOccidArr(options, () => {
                         if(Number(searchStore.getSearchRecCnt) > 0){
                             displayQueryPopup.value = false;
                             updateMapSettings('showControlPanelLeft', false);
@@ -1156,6 +1098,73 @@ const spatialAnalysisModule = {
 
         function processInputSubmit() {
             context.emit('update:spatial-data', inputResponseData.value);
+        }
+
+        function processLoadPointsLayer() {
+            if(loadPointsProcessed < searchStore.getSearchRecCnt && !mapSettings.loadPointsError){
+                const options = {
+                    schema: 'map',
+                    spatial: 1,
+                    numRows: lazyLoadCnt,
+                    index: loadPointsIndex,
+                    output: 'geojson'
+                };
+                //console.log(searchStore.getSearchRecCnt);
+                //console.log(loadPointsProcessed);
+                //console.log(options);
+                searchStore.processSearch(options, (res, index) => {
+                    if(res){
+                        const finalIndex = searchStore.getSearchRecCnt > lazyLoadCnt ? (Math.ceil(searchStore.getSearchRecCnt / lazyLoadCnt) - 1) : 0;
+                        const format = new ol.format.GeoJSON();
+                        let features = format.readFeatures(res, {
+                            featureProjection: 'EPSG:3857'
+                        });
+                        if(mapSettings.toggleSelectedPoints){
+                            const selections = searchStore.getSelectionsIds;
+                            features = features.filter((feature) => {
+                                const id = Number(feature.get('id'));
+                                return (selections.indexOf(id) !== -1);
+                            });
+                        }
+                        primeSymbologyData(features);
+                        mapSettings.pointVectorSource.addFeatures(features);
+                    }
+                    else{
+                        updateMapSettings('loadPointsError', true);
+                        showNotification('negative','An error occurred while loading records.');
+                        loadPointsPostrender();
+                    }
+                    loadPointsProcessed = loadPointsProcessed + lazyLoadCnt;
+                    loadPointsIndex++;
+                    processLoadPointsLayer();
+                });
+            }
+            else{
+                const pointextent = mapSettings.pointVectorSource.getExtent();
+                map.getView().fit(pointextent,map.getSize());
+                loadPointsPostrender();
+                updateMapSettings('clusterSource', new ol.source.PropertyCluster({
+                    distance: mapSettings.clusterDistance,
+                    source: mapSettings.pointVectorSource,
+                    clusterkey: mapSettings.mapSymbology,
+                    indexkey: 'id',
+                    geometryFunction: (feature) => {
+                        return feature.getGeometry();
+                    }
+                }));
+
+                layersObj['pointv'].setStyle(getPointStyle);
+                if(mapSettings.clusterPoints){
+                    layersObj['pointv'].setSource(mapSettings.clusterSource);
+                }
+                else{
+                    layersObj['pointv'].setSource(mapSettings.pointVectorSource);
+                }
+                layersObj['heat'].setSource(mapSettings.pointVectorSource);
+                if(mapSettings.showHeatMap){
+                    layersObj['heat'].setVisible(true);
+                }
+            }
         }
 
         function processPointSelection(sFeature) {
