@@ -2245,7 +2245,7 @@ const spatialAnalysisModule = {
                 stroke = new ol.style.Stroke({color: mapSettings.pointLayerBorderColor, width: Number(mapSettings.pointLayerBorderWidth)});
             }
             const fill = new ol.style.Fill({color: color});
-            if(feature.get('basisofrecord').toLowerCase().indexOf('observation') !== -1){
+            if(feature.get('basisofrecord') && feature.get('basisofrecord').toLowerCase().indexOf('observation') !== -1){
                 style = new ol.style.Style({
                     image: new ol.style.RegularShape({
                         fill: fill,
