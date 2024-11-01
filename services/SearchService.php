@@ -47,25 +47,48 @@ class SearchService {
         return $resultObj;
     }
 
-    public function getSearchRecordCnt($searchTermsArr, $options): int
+    public function getSearchOccidArr($searchTermsArr, $options): array
     {
-        $returnVal = 0;
+        $returnArr = array();
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
-                $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-                    'LEFT JOIN taxa AS t ON o.tid = t.TID ';
+                $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
+                $sql = 'SELECT DISTINCT o.occid ';
+                $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
-                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], ((int)$options['spatial'] === 1));
-                //echo "<div>Count sql: ".$sql."</div>";
-                $result = $this->conn->query($sql);
-                if($row = $result->fetch_object()){
-                    $returnVal = $row->cnt;
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
+                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
+                    if($searchTermsArr['imagecount'] === 'taxon'){
+                        $sql .= 'GROUP BY t.tidaccepted ';
+                    }
+                    elseif($searchTermsArr['imagecount'] === 'specimen'){
+                        $sql .= 'GROUP BY o.occid ';
+                    }
                 }
-                $result->free();
+                if($options['schema'] === 'image'){
+                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
+                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
+                    }
+                    else{
+                        $sql .= 'ORDER BY t.sciname ';
+                    }
+                }
+                elseif($spatial){
+                    $sql .= 'ORDER BY o.sciname, o.eventdate ';
+                }
+                else{
+                    $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
+                }
+                //echo '<div>Occid sql: ' . $sql . '</div>';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_object()){
+                        $returnArr[] = $row->occid;
+                    }
+                }
             }
         }
-        return $returnVal;
+        return $returnArr;
     }
 
     public function prepareImageUploadDateWhereSql($searchTermsArr): string
@@ -700,8 +723,8 @@ class SearchService {
     public function prepareOccurrenceWhereSql($searchTermsArr, $image = false): string
     {
         $sqlWherePartsArr = array();
-        if(array_key_exists('occid', $searchTermsArr) && count($searchTermsArr['occid']) > 0){
-            $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['occid']) . '))';
+        if(array_key_exists('occidArr', $searchTermsArr) && count($searchTermsArr['occidArr']) > 0){
+            $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['occidArr']) . '))';
         }
         if(array_key_exists('clid', $searchTermsArr) && $searchTermsArr['clid']){
             $sqlWherePartsArr[] = '(v.clid IN(' . $searchTermsArr['clid'] . '))';
@@ -879,37 +902,9 @@ class SearchService {
             if($sqlWhere){
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
                 $numRows = array_key_exists('numRows', $options) ? (int)$options['numRows'] : 0;
-                $index = array_key_exists('index', $options) ? (int)$options['index'] : 0;
-                $bottomLimit = $numRows > 0 ? ($index * $numRows) : null;
                 $sql = $this->setSelectSql($options['schema']);
                 $sql .= $this->setFromSql($options['schema']);
-                $sql .= $this->setTableJoinsSql($searchTermsArr);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
-                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
-                    if($searchTermsArr['imagecount'] === 'taxon'){
-                        $sql .= 'GROUP BY t.tidaccepted ';
-                    }
-                    elseif($searchTermsArr['imagecount'] === 'specimen'){
-                        $sql .= 'GROUP BY o.occid ';
-                    }
-                }
-                if($options['schema'] === 'image'){
-                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
-                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
-                    }
-                    else{
-                        $sql .= 'ORDER BY t.sciname ';
-                    }
-                }
-                elseif($spatial){
-                    $sql .= 'ORDER BY o.sciname, o.eventdate ';
-                }
-                else{
-                    $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
-                }
-                if($numRows > 0){
-                    $sql .= 'LIMIT ' . $bottomLimit . ',' . $numRows;
-                }
                 //echo '<div>Search sql: ' . $sql . '</div>';
                 if($result = $this->conn->query($sql)){
                     $fields = mysqli_fetch_fields($result);
@@ -1050,10 +1045,7 @@ class SearchService {
 
     public function setSelectSql($schema): string
     {
-        if($schema === 'occid'){
-            $fieldNameArr = array('o.occid');
-        }
-        elseif($schema === 'image'){
+        if($schema === 'image'){
             $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'u.uid', 'u.lastname',
                 'u.firstname', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber', 'o.localitysecurity');
         }
