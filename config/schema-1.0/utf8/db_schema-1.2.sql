@@ -819,7 +819,7 @@ CREATE TABLE `omoccuraccessstats` (
     CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE `omoccuradditionaldata` (
+CREATE TABLE `ommofextension` (
     `adddataID` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `eventID` int(11) unsigned NOT NULL,
     `field` varchar(250) NOT NULL,

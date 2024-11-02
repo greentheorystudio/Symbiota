@@ -67,7 +67,7 @@ class OccurrenceCollectingEvents{
         $key = SanitizerService::cleanInStr($this->conn, $dataKey);
         $value = SanitizerService::cleanInStr($this->conn, $dataValue);
         if($eventId && $key && $value){
-            $sql = 'INSERT INTO omoccuradditionaldata(eventid, field, datavalue) '.
+            $sql = 'INSERT INTO ommofextension(eventid, field, datavalue) '.
                 'VALUES (' . (int)$eventId . ', '.
                 '"' . $key . '", '.
                 '"' . $value . '"'.
@@ -113,7 +113,7 @@ class OccurrenceCollectingEvents{
         $returnVal = 0;
         $key = SanitizerService::cleanInStr($this->conn, $dataKey);
         if($eventId && $key){
-            $sql = 'DELETE FROM omoccuradditionaldata '.
+            $sql = 'DELETE FROM ommofextension '.
                 'WHERE eventid = ' . (int)$eventId . ' AND field = "' . $key . '" ';
             //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
@@ -205,7 +205,7 @@ class OccurrenceCollectingEvents{
     {
         $retArr = array();
         $sql = 'SELECT a.adddataid, a.field, a.datavalue, a.initialtimestamp '.
-            'FROM omoccuradditionaldata AS a '.
+            'FROM ommofextension AS a '.
             'WHERE a.eventID = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
         if($rs = $this->conn->query($sql)){
@@ -375,7 +375,7 @@ class OccurrenceCollectingEvents{
         $key = SanitizerService::cleanInStr($this->conn, $dataKey);
         $value = SanitizerService::cleanInStr($this->conn, $dataValue);
         if($eventId && $key && $value){
-            $sql = 'UPDATE omoccuradditionaldata '.
+            $sql = 'UPDATE ommofextension '.
                 'SET datavalue = "' . $value . '" '.
                 'WHERE eventid = ' . (int)$eventId . ' AND field = "' . $key . '" ';
             //echo "<div>".$sql."</div>";
