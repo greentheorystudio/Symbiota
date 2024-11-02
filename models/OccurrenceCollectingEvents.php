@@ -204,7 +204,7 @@ class OccurrenceCollectingEvents{
     public function getConfiguredFieldData($eventid): array
     {
         $retArr = array();
-        $sql = 'SELECT a.adddataid, a.field, a.datavalue, a.initialtimestamp '.
+        $sql = 'SELECT a.mofid, a.field, a.datavalue, a.initialtimestamp '.
             'FROM ommofextension AS a '.
             'WHERE a.eventID = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
