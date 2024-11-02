@@ -1,4 +1,10 @@
-const configuredDataFieldModule = {
+const mofDataFieldModule = {
+    props: {
+        dataType: {
+            type: String,
+            default: 'event'
+        }
+    },
     template: `
         <div class="q-pa-md column q-col-gutter-sm">
             <div class="row justify-between">
@@ -14,28 +20,56 @@ const configuredDataFieldModule = {
             <div v-if="configuredDataFieldsLayoutData.length > 0" class="q-mt-sm column q-gutter-sm">
                 <template v-for="layoutElement in configuredDataFieldsLayoutData">
                     <template v-if="layoutElement.type === 'dataFieldRow'">
-                        <configured-data-field-row :fields="layoutElement.fields"></configured-data-field-row>
+                        <mof-data-field-row :fields="layoutElement.fields"></mof-data-field-row>
                     </template>
                     <template v-else-if="layoutElement.type === 'dataFieldRowGroup'">
-                        <configured-data-field-row-group :label="layoutElement.label" :rows="layoutElement.rows" :expansion="layoutElement.expansion"></configured-data-field-row-group>
+                        <mof-data-field-row-group :label="layoutElement.label" :rows="layoutElement.rows" :expansion="layoutElement.expansion"></mof-data-field-row-group>
                     </template>
                 </template>
             </div>
         </div>
     `,
     components: {
-        'configured-data-field-row': configuredDataFieldRow,
-        'configured-data-field-row-group': configuredDataFieldRowGroup
+        'mof-data-field-row': mofDataFieldRow,
+        'mof-data-field-row-group': mofDataFieldRowGroup
     },
-    setup() {
+    setup(props) {
         const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = useOccurrenceStore();
 
-        const configuredData = Vue.computed(() => occurrenceStore.getConfiguredData);
+        const configuredData = Vue.computed(() => {
+            if(props.dataType === 'event'){
+                return occurrenceStore.getEventMofData;
+            }
+            else{
+                return occurrenceStore.getOccurrenceMofData;
+            }
+        });
         const configuredEditData = Vue.ref({});
-        const configuredDataFields = Vue.computed(() => occurrenceStore.getConfiguredDataFields);
-        const configuredDataFieldsLayoutData = Vue.computed(() => occurrenceStore.getConfiguredDataFieldsLayoutData);
-        const configuredDataLabel = Vue.computed(() => occurrenceStore.getConfiguredDataLabel);
+        const configuredDataFields = Vue.computed(() => {
+            if(props.dataType === 'event'){
+                return occurrenceStore.getEventMofDataFields;
+            }
+            else{
+                return occurrenceStore.getOccurrenceMofDataFields;
+            }
+        });
+        const configuredDataFieldsLayoutData = Vue.computed(() => {
+            if(props.dataType === 'event'){
+                return occurrenceStore.getEventMofDataFieldsLayoutData;
+            }
+            else{
+                return occurrenceStore.getOccurrenceMofDataFieldsLayoutData;
+            }
+        });
+        const configuredDataLabel = Vue.computed(() => {
+            if(props.dataType === 'event'){
+                return occurrenceStore.getEventMofDataLabel;
+            }
+            else{
+                return occurrenceStore.getOccurrenceMofDataLabel;
+            }
+        });
         const configuredUpdateData = Vue.ref({});
         const editsExist = Vue.computed(() => {
             let exist = false;
@@ -54,34 +88,31 @@ const configuredDataFieldModule = {
         });
 
         function saveConfiguredEditDataEdits() {
-            const dataKeys = Object.keys(configuredUpdateData.value);
-            if(dataKeys.length > 0){
-                showWorking();
-                const callbackFunction = (res) => {
-                    if(Number(res) === 1){
-                        delete configuredUpdateData.value[dataKeys[0]];
-                        saveConfiguredEditDataEdits();
-                    }
-                    else{
-                        hideWorking();
-                        showNotification('negative', ('An error occurred while saving the ' + configuredDataFields.value[dataKeys[0]]['label'] + ' value.'));
-                    }
-                };
-                if(configuredEditData.value[dataKeys[0]] && !configuredData.value[dataKeys[0]]){
-                    occurrenceStore.addConfiguredDataValue(dataKeys[0], configuredUpdateData.value[dataKeys[0]], callbackFunction);
+            const editData = {
+                add: [],
+                delete: [],
+                update: []
+            };
+            Object.keys(configuredUpdateData.value).forEach((key) => {
+                if(configuredEditData.value[key] && !configuredData.value[key]){
+                    editData.add.push({field: key, value: configuredUpdateData.value[key]});
                 }
-                else if(!configuredEditData.value[dataKeys[0]] && configuredData.value[dataKeys[0]]){
-                    occurrenceStore.deleteConfiguredDataValue(dataKeys[0], callbackFunction);
+                else if(!configuredEditData.value[key] && configuredData.value[key]){
+                    editData.delete.push(key);
                 }
-                else if(configuredEditData.value[dataKeys[0]] !== configuredData.value[dataKeys[0]]){
-                    occurrenceStore.updateConfiguredDataValue(dataKeys[0], configuredUpdateData.value[dataKeys[0]], callbackFunction);
+                else if(configuredEditData.value[key] !== configuredData.value[key]){
+                    editData.update.push({field: key, value: configuredUpdateData.value[key]});
                 }
-            }
-            else{
-                configuredData.value = Object.assign({}, configuredEditData.value);
+            });
+            occurrenceStore.processMofEditData(props.dataType, editData, (res) => {
                 hideWorking();
-                showNotification('positive','Edits saved.');
-            }
+                if(Number(res) === 1){
+                    showNotification('positive','Edits saved.');
+                }
+                else{
+                    showNotification('negative', ('An error occurred while saving the edited data.'));
+                }
+            });
         }
 
         function setEditData() {
