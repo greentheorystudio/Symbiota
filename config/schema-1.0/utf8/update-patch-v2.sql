@@ -131,7 +131,7 @@ CREATE TABLE `omoccurlocations` (
 ALTER TABLE `omoccurrences`
     ADD CONSTRAINT `FK_eventID` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`) ON DELETE RESTRICT ON UPDATE NO ACTION;
 
-CREATE TABLE `omoccuradditionaldata` (
+CREATE TABLE `ommofextension` (
      `adddataID` int(11) unsigned NOT NULL AUTO_INCREMENT,
      `eventID` int(11) unsigned NOT NULL,
      `field` varchar(250) NOT NULL,
