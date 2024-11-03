@@ -577,14 +577,14 @@ const mediaFileUploadInputElement = {
                             method: 'POST',
                             body: formData
                         })
-                            .then((response) => {
-                                response.text().then((res) => {
-                                    if(res && Number(res) > 0){
-                                        file['uploadMetadata']['occid'] = res;
-                                        processUpload(file);
-                                    }
-                                });
+                        .then((response) => {
+                            response.text().then((res) => {
+                                if(res && Number(res) > 0){
+                                    file['uploadMetadata']['occid'] = res;
+                                    processUpload(file);
+                                }
                             });
+                        });
                     }
                     else if((collId.value > 0 && Number(file['uploadMetadata']['occid']) > 0) || (collId.value === 0 && Number(file['uploadMetadata']['tid']) > 0)){
                         processUpload(file);
