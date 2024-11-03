@@ -33,8 +33,11 @@ const occurrenceInfoWindowPopup = {
                             <template v-if="checklistArr.length > 0 || geneticLinkArr.length > 0">
                                 <q-tab class="bg-grey-3" label="Linked Resources" name="resources" no-caps />
                             </template>
-                            <template v-if="configuredDataExists">
-                                <q-tab class="bg-grey-3" :label="(configuredDataLabel ? configuredDataLabel : 'Additional Data')" name="additional" no-caps />
+                            <template v-if="eventMofDataExists">
+                                <q-tab class="bg-grey-3" :label="(eventMofDataLabel ? eventMofDataLabel : 'Event Measurements or Facts')" name="eventmof" no-caps />
+                            </template>
+                            <template v-if="occurrenceMofDataExists">
+                                <q-tab class="bg-grey-3" :label="(occurrenceMofDataLabel ? occurrenceMofDataLabel : 'Occurrence Measurements or Facts')" name="occurrencemof" no-caps />
                             </template>
                         </q-tabs>
                         <q-separator></q-separator>
@@ -299,17 +302,35 @@ const occurrenceInfoWindowPopup = {
                                     </template>
                                 </q-tab-panel>
                             </template>
-                            <template v-if="configuredDataExists">
-                                <q-tab-panel name="additional" :style="tabPanelStyle">
+                            <template v-if="eventMofDataExists">
+                                <q-tab-panel name="eventmof" :style="tabPanelStyle">
                                     <div class="column q-gutter-xs">
-                                        <template v-for="key in Object.keys(configuredDataFields)">
-                                            <template v-if="configuredData.hasOwnProperty(key) && configuredData[key]">
+                                        <template v-for="key in Object.keys(eventMofDataFields)">
+                                            <template v-if="eventMofData.hasOwnProperty(key) && eventMofData[key]">
                                                 <div class="row justify-start q-gutter-sm">
                                                     <div class="text-bold">
-                                                        {{ (configuredDataFields[key]['label'] ? configuredDataFields[key]['label'] : key) + ':' }}
+                                                        {{ (eventMofDataFields[key]['label'] ? eventMofDataFields[key]['label'] : key) + ':' }}
                                                     </div>
                                                     <div>
-                                                        {{ configuredData[key] }}
+                                                        {{ eventMofData[key] }}
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </template>
+                                    </div>
+                                </q-tab-panel>
+                            </template>
+                            <template v-if="occurrenceMofDataExists">
+                                <q-tab-panel name="occurrencemof" :style="tabPanelStyle">
+                                    <div class="column q-gutter-xs">
+                                        <template v-for="key in Object.keys(occurrenceMofDataFields)">
+                                            <template v-if="occurrenceMofData.hasOwnProperty(key) && occurrenceMofData[key]">
+                                                <div class="row justify-start q-gutter-sm">
+                                                    <div class="text-bold">
+                                                        {{ (occurrenceMofDataFields[key]['label'] ? occurrenceMofDataFields[key]['label'] : key) + ':' }}
+                                                    </div>
+                                                    <div>
+                                                        {{ occurrenceMofData[key] }}
                                                     </div>
                                                 </div>
                                             </template>
@@ -360,18 +381,6 @@ const occurrenceInfoWindowPopup = {
             return nameStr;
         });
         const collectionPermissions = Vue.ref([]);
-        const configuredData = Vue.ref({});
-        const configuredDataExists = Vue.computed(() => {
-            let exist = false;
-            Object.keys(configuredDataFields.value).forEach(key => {
-                if(configuredData.value.hasOwnProperty(key) && configuredData.value[key]){
-                    exist = true;
-                }
-            });
-            return exist;
-        });
-        const configuredDataFields = Vue.ref({});
-        const configuredDataLabel = Vue.ref(null);
         const contentContainerRef = Vue.ref(null);
         const coordinateArr = Vue.computed(() => {
             if(occurrenceData.value.hasOwnProperty('decimallatitude') && occurrenceData.value.hasOwnProperty('decimallongitude')){
@@ -380,6 +389,18 @@ const occurrenceInfoWindowPopup = {
             return[];
         });
         const determinationArr = Vue.ref([]);
+        const eventMofData = Vue.ref({});
+        const eventMofDataExists = Vue.computed(() => {
+            let exist = false;
+            Object.keys(eventMofDataFields.value).forEach(key => {
+                if(eventMofData.value.hasOwnProperty(key) && eventMofData.value[key]){
+                    exist = true;
+                }
+            });
+            return exist;
+        });
+        const eventMofDataFields = Vue.ref({});
+        const eventMofDataLabel = Vue.ref(null);
         const geneticLinkArr = Vue.ref([]);
         const imageArr = Vue.ref([]);
         const isEditor = Vue.computed(() => {
@@ -471,6 +492,18 @@ const occurrenceInfoWindowPopup = {
             }
             return returnStr;
         });
+        const occurrenceMofData = Vue.ref({});
+        const occurrenceMofDataExists = Vue.computed(() => {
+            let exist = false;
+            Object.keys(occurrenceMofDataFields.value).forEach(key => {
+                if(occurrenceMofData.value.hasOwnProperty(key) && occurrenceMofData.value[key]){
+                    exist = true;
+                }
+            });
+            return exist;
+        });
+        const occurrenceMofDataFields = Vue.ref({});
+        const occurrenceMofDataLabel = Vue.ref(null);
         const selectedTab = Vue.ref('details');
         const tabCardStyle = Vue.ref('');
         const tabPanelStyle = Vue.ref('');
@@ -512,13 +545,26 @@ const occurrenceInfoWindowPopup = {
             .then((response) => {
                 response.json().then((resObj) => {
                     collectionData.value = Object.assign({}, resObj);
-                    if(collectionData.value['configuredData'] && collectionData.value['configuredData'].hasOwnProperty('dataFields') && Object.keys(collectionData.value['configuredData']['dataFields']).length > 0){
-                        configuredDataFields.value = collectionData.value['configuredData']['dataFields'];
-                        if(collectionData.value['configuredData'].hasOwnProperty('dataLabel') && collectionData.value['configuredData']['dataLabel']){
-                            configuredDataLabel.value = collectionData.value['configuredData']['dataLabel'].toString();
+                    if(collectionData.value['configuredData']){
+                        if(collectionData.value['configuredData'].hasOwnProperty('eventMofExtension')){
+                            if(Object.keys(collectionData.value['configuredData']['eventMofExtension']['dataFields']).length > 0){
+                                eventMofDataFields.value = collectionData.value['configuredData']['eventMofExtension']['dataFields'];
+                                if(collectionData.value['configuredData']['eventMofExtension'].hasOwnProperty('dataLabel') && collectionData.value['configuredData']['eventMofExtension']['dataLabel']){
+                                    eventMofDataLabel.value = collectionData.value['configuredData']['eventMofExtension']['dataLabel'].toString();
+                                }
+                                if(Number(occurrenceData.value['eventid']) > 0){
+                                    setEventMofData();
+                                }
+                            }
                         }
-                        if(Number(occurrenceData.value['eventid']) > 0){
-                            setConfiguredData();
+                        if(collectionData.value['configuredData'].hasOwnProperty('occurrenceMofExtension')){
+                            if(Object.keys(collectionData.value['configuredData']['occurrenceMofExtension']['dataFields']).length > 0){
+                                occurrenceMofDataFields.value = collectionData.value['configuredData']['occurrenceMofExtension']['dataFields'];
+                                if(collectionData.value['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLabel') && collectionData.value['configuredData']['occurrenceMofExtension']['dataLabel']){
+                                    occurrenceMofDataLabel.value = collectionData.value['configuredData']['occurrenceMofExtension']['dataLabel'].toString();
+                                }
+                                setOccurrenceMofData();
+                            }
                         }
                     }
                 });
@@ -541,25 +587,6 @@ const occurrenceInfoWindowPopup = {
             });
         }
 
-        function setConfiguredData() {
-            const formData = new FormData();
-            formData.append('eventid', occurrenceData.value['eventid'].toString());
-            formData.append('action', 'getConfiguredFieldDataArr');
-            fetch(occurrenceCollectingEventApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                const configuredFields = Object.keys(configuredDataFields.value);
-                configuredFields.forEach(field => {
-                    configuredData.value[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
-                });
-            });
-        }
-
         function setDeterminationArr() {
             const formData = new FormData();
             formData.append('occid', props.occurrenceId.toString());
@@ -573,6 +600,25 @@ const occurrenceInfoWindowPopup = {
             })
             .then((data) => {
                 determinationArr.value = data;
+            });
+        }
+
+        function setEventMofData() {
+            const formData = new FormData();
+            formData.append('type', 'event');
+            formData.append('id', occurrenceData.value['eventid'].toString());
+            formData.append('action', 'getMofDataByTypeAndId');
+            fetch(occurrenceMeasurementOrFactApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                Object.keys(eventMofDataFields.value).forEach(field => {
+                    eventMofData.value[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
+                });
             });
         }
 
@@ -651,6 +697,25 @@ const occurrenceInfoWindowPopup = {
             });
         }
 
+        function setOccurrenceMofData() {
+            const formData = new FormData();
+            formData.append('type', 'occurrence');
+            formData.append('id', occurrenceData.value['occid'].toString());
+            formData.append('action', 'getMofDataByTypeAndId');
+            fetch(occurrenceMeasurementOrFactApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                Object.keys(occurrenceMofDataFields.value).forEach(field => {
+                    occurrenceMofData.value[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
+                });
+            });
+        }
+
         function setTabPanelHeights() {
             if(contentContainerRef.value){
                 const clientHeight = contentContainerRef.value.clientHeight;
@@ -671,13 +736,13 @@ const occurrenceInfoWindowPopup = {
             clientRoot,
             collectionData,
             collectionNameStr,
-            configuredData,
-            configuredDataExists,
-            configuredDataFields,
-            configuredDataLabel,
             contentContainerRef,
             coordinateArr,
             determinationArr,
+            eventMofData,
+            eventMofDataExists,
+            eventMofDataFields,
+            eventMofDataLabel,
             geneticLinkArr,
             imageArr,
             isEditor,
@@ -687,6 +752,10 @@ const occurrenceInfoWindowPopup = {
             occurrenceDepthStr,
             occurrenceElevationStr,
             occurrenceLocalityStr,
+            occurrenceMofData,
+            occurrenceMofDataExists,
+            occurrenceMofDataFields,
+            occurrenceMofDataLabel,
             selectedTab,
             tabCardStyle,
             tabPanelStyle,

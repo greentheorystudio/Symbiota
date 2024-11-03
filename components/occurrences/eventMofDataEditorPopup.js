@@ -1,4 +1,4 @@
-const configuredDataEditorPopup = {
+const eventMofDataEditorPopup = {
     props: {
         showPopup: {
             type: Boolean,
@@ -16,7 +16,7 @@ const configuredDataEditorPopup = {
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
                         <div>
-                            <configured-data-field-module></configured-data-field-module>
+                            <mof-data-field-module data-type="event"></mof-data-field-module>
                         </div>
                     </div>
                 </div>
@@ -24,12 +24,9 @@ const configuredDataEditorPopup = {
         </q-dialog>
     `,
     components: {
-        'configured-data-field-module': configuredDataFieldModule
+        'mof-data-field-module': mofDataFieldModule
     },
     setup(props, context) {
-        const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = useOccurrenceStore();
-
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
 

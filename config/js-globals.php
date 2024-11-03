@@ -64,6 +64,7 @@
     const occurrenceDeterminationApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceDeterminationController.php';
     const occurrenceGeneticLinkApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceGeneticLinkController.php';
     const occurrenceLocationApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceLocationController.php';
+    const occurrenceMeasurementOrFactApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceMeasurementOrFactController.php';
     const occurrenceTaxonomyApiUrl = CLIENT_ROOT + '/api/collections/occTaxonomyController.php';
     const permissionApiUrl = CLIENT_ROOT + '/api/profile/permissionController.php';
     const profileApiUrl = CLIENT_ROOT + '/api/profile/profileController.php';

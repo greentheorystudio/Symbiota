@@ -5,7 +5,7 @@ const occurrenceEditorOccurrenceDataControls = {
                 <template v-if="Number(occId) === 0">
                     <div class="row q-gutter-sm">
                         <occurrence-entry-follow-up-action-selector :selected-action="entryFollowUpAction" @change-occurrence-entry-follow-up-action="changeEntryFollowUpAction"></occurrence-entry-follow-up-action-selector>
-                        <div v-if="Object.keys(configuredDataFields).length === 0 && occurrenceEntryFormat === 'specimen'">
+                        <div v-if="Object.keys(configuredEventMofDataFields).length === 0 && occurrenceEntryFormat !== 'lot' && occurrenceEntryFormat !== 'benthic'">
                             <q-toggle v-model="collectionEventAutoSearch" checked-icon="check" color="green" unchecked-icon="clear" label="Event Auto Search" @update:model-value="setCollectingEventAutoSearch"></q-toggle>
                         </div>
                     </div>
@@ -32,7 +32,7 @@ const occurrenceEditorOccurrenceDataControls = {
         const occurrenceStore = useOccurrenceStore();
 
         const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectingEventAutoSearch);
-        const configuredDataFields = Vue.computed(() => occurrenceStore.getConfiguredDataFields);
+        const configuredEventMofDataFields = Vue.computed(() => occurrenceStore.getEventMofDataFields);
         const editsExist = Vue.computed(() => occurrenceStore.getOccurrenceEditsExist);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
@@ -72,7 +72,7 @@ const occurrenceEditorOccurrenceDataControls = {
 
         return {
             collectionEventAutoSearch,
-            configuredDataFields,
+            configuredEventMofDataFields,
             editsExist,
             entryFollowUpAction,
             occId,

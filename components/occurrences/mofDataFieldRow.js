@@ -1,4 +1,4 @@
-const configuredDataFieldRow = {
+const mofDataFieldRow = {
     props: {
         fields: {
             type: Array,
