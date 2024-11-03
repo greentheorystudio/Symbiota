@@ -394,7 +394,7 @@ class Configurations{
     public function saveMapServerConfig($json): bool
     {
         $status = true;
-        if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/json/spatiallayerconfig.json', 'wb')){
+        if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/json/portalconfig.json', 'wb')){
             if(!fwrite($fh,$json)){
                 $status = false;
             }
@@ -430,7 +430,7 @@ class Configurations{
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
         $GLOBALS['CSS_VERSION'] = '20240926';
-        $GLOBALS['JS_VERSION'] = '2024051511111111112112111';
+        $GLOBALS['JS_VERSION'] = '202405151111111111211211112';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -449,7 +449,7 @@ class Configurations{
         $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
         $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
         $GLOBALS['PORTAL_GUID'] = UuidService::getUuidV4();
-        $GLOBALS['PROCESSING_STATUS_OPTIONS'] = UuidService::getUuidV4();
+        $GLOBALS['PROCESSING_STATUS_OPTIONS'] = array('Unprocessed','Stage 1','Stage 2','Stage 3','Pending Review','Expert Required','Reviewed','Closed');
         $GLOBALS['SECURITY_KEY'] = UuidService::getUuidV4();
         $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
         $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
