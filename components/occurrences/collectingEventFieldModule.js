@@ -33,7 +33,7 @@ const collectingEventFieldModule = {
             <div class="col-12 col-sm-6 col-md-3">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordnumber']" label="Number" :maxlength="fields['recordnumber'] ? fields['recordnumber']['length'] : 0" :value="data.recordnumber" @update:value="(value) => updateData('recordnumber', value)"></text-field-input-element>
             </div>
-            <div v-if="!eventMode && !autoSearch" class="row justify-end self-center">
+            <div v-if="!eventMode && !autoSearch" class="row justify-end">
                 <div>
                     <q-btn color="secondary" size="md" @click="processCollectingEventSearch(false);" label="Search for Event" dense/>
                 </div>
