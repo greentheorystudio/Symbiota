@@ -61,25 +61,6 @@ class OccurrenceCollectingEvents{
         }
 	}
 
-    public function addConfiguredDataValue($eventId, $dataKey, $dataValue): int
-    {
-        $returnVal = 0;
-        $key = SanitizerService::cleanInStr($this->conn, $dataKey);
-        $value = SanitizerService::cleanInStr($this->conn, $dataValue);
-        if($eventId && $key && $value){
-            $sql = 'INSERT INTO ommofextension(eventid, field, datavalue) '.
-                'VALUES (' . (int)$eventId . ', '.
-                '"' . $key . '", '.
-                '"' . $value . '"'.
-                ') ';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $returnVal = 1;
-            }
-        }
-        return $returnVal;
-    }
-
     public function createCollectingEventRecord($data): int
     {
         $newID = 0;
@@ -106,21 +87,6 @@ class OccurrenceCollectingEvents{
             }
         }
         return $newID;
-    }
-
-    public function deleteConfiguredDataValue($eventId, $dataKey): int
-    {
-        $returnVal = 0;
-        $key = SanitizerService::cleanInStr($this->conn, $dataKey);
-        if($eventId && $key){
-            $sql = 'DELETE FROM ommofextension '.
-                'WHERE eventid = ' . (int)$eventId . ' AND field = "' . $key . '" ';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $returnVal = 1;
-            }
-        }
-        return $returnVal;
     }
 
     public function getCollectingEventBenthicData($eventid): array
@@ -199,22 +165,6 @@ class OccurrenceCollectingEvents{
     public function getCollectingEventFields(): array
     {
         return $this->fields;
-    }
-
-    public function getConfiguredFieldData($eventid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT a.mofid, a.field, a.datavalue, a.initialtimestamp '.
-            'FROM ommofextension AS a '.
-            'WHERE a.eventID = ' . (int)$eventid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $retArr[$r->field] = $r->datavalue;
-            }
-            $rs->free();
-        }
-        return $retArr;
     }
 
     public function getLocationCollectingEventArr($collid, $locationid): array
@@ -367,22 +317,5 @@ class OccurrenceCollectingEvents{
             }
         }
         return $retVal;
-    }
-
-    public function updateConfiguredDataValue($eventId, $dataKey, $dataValue): int
-    {
-        $returnVal = 0;
-        $key = SanitizerService::cleanInStr($this->conn, $dataKey);
-        $value = SanitizerService::cleanInStr($this->conn, $dataValue);
-        if($eventId && $key && $value){
-            $sql = 'UPDATE ommofextension '.
-                'SET datavalue = "' . $value . '" '.
-                'WHERE eventid = ' . (int)$eventId . ' AND field = "' . $key . '" ';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $returnVal = 1;
-            }
-        }
-        return $returnVal;
     }
 }
