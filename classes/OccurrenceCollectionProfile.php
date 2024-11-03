@@ -41,7 +41,7 @@ class OccurrenceCollectionProfile {
         $sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, '.
 			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, c.datarecordingmethod, c.defaultRepCount, '.
 			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.isPublic, '.
-			'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, s.uploaddate '.
+			'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.securitykey, c.collectionguid, s.uploaddate '.
 			'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid ';
 		if($this->collid){
 			$sql .= 'WHERE c.collid = '.$this->collid.' ';
@@ -81,7 +81,6 @@ class OccurrenceCollectionProfile {
                 $retArr[$row->collid]['rightsholder'] = $row->rightsholder;
                 $retArr[$row->collid]['accessrights'] = $row->accessrights;
                 $retArr[$row->collid]['dwcaurl'] = $row->dwcaurl;
-                $retArr[$row->collid]['sortseq'] = $row->sortseq;
                 $retArr[$row->collid]['skey'] = $row->securitykey;
                 $retArr[$row->collid]['guid'] = $row->collectionguid;
                 $retArr[$row->collid]['isPublic'] = $row->isPublic;
@@ -187,8 +186,7 @@ class OccurrenceCollectionProfile {
 				'individualurl = '.($indUrl?'"'.$indUrl.'"':'NULL').' ';
 			if(array_key_exists('colltype',$postArr)){
 				$sql .= ',managementtype = "'.$postArr['managementtype'].'",'.
-					'colltype = "'.$postArr['colltype'].'",'.
-					'sortseq = '.($postArr['sortseq']?:'NULL').' ';
+					'colltype = "'.$postArr['colltype'].'" ';
 			}
 			$sql .= 'WHERE (collid = '.$this->collid.')';
 			//echo $sql; exit;
@@ -246,14 +244,13 @@ class OccurrenceCollectionProfile {
 			$guid = UuidService::getUuidV4();
 		}
 		$indUrl = array_key_exists('individualurl',$postArr)?SanitizerService::cleanInStr($this->conn,$postArr['individualurl']):'';
-		$sortSeq = array_key_exists('sortseq',$postArr)?$postArr['sortseq']:'';
-        $isPublic = ((array_key_exists('isPublic',$postArr) && (int)$postArr['isPublic'] === 1)?'1':'0');
+		$isPublic = ((array_key_exists('isPublic',$postArr) && (int)$postArr['isPublic'] === 1)?'1':'0');
 
 		$sql = 'INSERT INTO omcollections(institutioncode,collectioncode,collectionname,fulldescription,collectionid,homepage,'.
 			'contact,email,latitudedecimal,longitudedecimal,publishToGbif,'.
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
             'guidtarget,rights,rightsholder,accessrights,icon,'.
-			'managementtype,datarecordingmethod,defaultRepCount,colltype,collectionguid,isPublic,individualurl,sortseq) '.
+			'managementtype,datarecordingmethod,defaultRepCount,colltype,collectionguid,isPublic,individualurl) '.
 			'VALUES ('.($instCode?'"'.$instCode.'"':'NULL').','.
 			($collCode?'"'.$collCode.'"':'NULL').','.
             '"'.$coleName.'",'.
@@ -277,8 +274,7 @@ class OccurrenceCollectionProfile {
 			($collType?'"'.$collType.'"':'PreservedSpecimen').','.
 			'"'.$guid.'",'.
             $isPublic.','.
-            ($indUrl?'"'.$indUrl.'"':'NULL').','.
-			($sortSeq?:'NULL').') ';
+            ($indUrl?'"'.$indUrl.'"':'NULL').') ';
 		//echo "<div>$sql</div>";
 		if($this->conn->query($sql)){
 			$cid = $this->conn->insert_id;
@@ -633,9 +629,8 @@ class OccurrenceCollectionProfile {
 	{
 		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
 			'cat.category, cat.icon AS caticon, cat.acronym '.
-			'FROM omcollections c LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
-			'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
-			'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
+			'FROM omcollections c LEFT JOIN omcollcategories cat ON c.ccpk = cat.ccpk '.
+			'ORDER BY cat.category, c.CollectionName ';
 		//echo "<div>SQL: ".$sql."</div>";
 		$result = $this->conn->query($sql);
 		$collArr = array();
