@@ -2,14 +2,26 @@ const occurrenceEditorFormCollectingEventElement = {
     template: `
         <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
-                <div class="full-width row justify-between">
+                <template v-if="!collectionEventAutoSearch || (occId > 0 && Object.keys(configuredDataFields).length > 0)">
+                    <div class="row justify-between">
+                        <div class="text-grey-8 text-h6 text-weight-bolder q-pl-sm">
+                            Collecting Event
+                        </div>
+                        <div class="row justify-end q-gutter-sm">
+                            <div v-if="occId > 0 && Object.keys(configuredDataFields).length > 0">
+                                <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
+                            </div>
+                            <div v-if="!collectionEventAutoSearch">
+                                <q-btn color="secondary" size="md" @click="processCollectingEventSearch(false);" label="Search for Event" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
                     <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
                         Collecting Event
                     </div>
-                    <div v-if="Object.keys(configuredEventMofDataFields).length > 0">
-                        <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
-                    </div>
-                </div>
+                </template>
                 <collecting-event-field-module
                     :auto-search="collectionEventAutoSearch"
                     :data="occurrenceData"
@@ -45,8 +57,9 @@ const occurrenceEditorFormCollectingEventElement = {
 
         const collectingEventArr = Vue.ref([]);
         const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectingEventAutoSearch);
+        const configuredDataFields = Vue.computed(() => occurrenceStore.getEventMofDataFields);
         const configuredDataLabel = Vue.computed(() => occurrenceStore.getEventMofDataLabel);
-        const configuredEventMofDataFields = Vue.computed(() => occurrenceStore.getEventMofDataFields);
+        const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
@@ -66,12 +79,12 @@ const occurrenceEditorFormCollectingEventElement = {
                         showCollectingEventListPopup.value = true;
                     }
                     else{
-                        showNotification('negative', 'There were no probable events found matching this data.');
+                        showNotification('negative', 'There were no events found matching this data.');
                     }
                 });
             }
             else if(!silent){
-                showNotification('negative', 'To search for the event a collector/observer value must be entered, as well as a numeric number value or a date.');
+                showNotification('negative', 'To search for the event, the collector/observer, number, and date values must be entered.');
             }
         }
 
@@ -97,8 +110,9 @@ const occurrenceEditorFormCollectingEventElement = {
         return {
             collectingEventArr,
             collectionEventAutoSearch,
+            configuredDataFields,
             configuredDataLabel,
-            configuredEventMofDataFields,
+            occId,
             occurrenceData,
             occurrenceFields,
             occurrenceFieldDefinitions,

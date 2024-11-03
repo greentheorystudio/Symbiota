@@ -14,10 +14,10 @@ const mofDataFieldModule = {
                     </template>
                 </div>
                 <div class="row justify-end">
-                    <q-btn color="secondary" @click="saveConfiguredEditDataEdits();" :label="('Save ' + configuredDataLabel + ' Edits')" :disabled="!editsExist" />
+                    <q-btn color="secondary" @click="processSaveDataEdits();" :label="('Save ' + configuredDataLabel + ' Edits')" :disabled="!editsExist" />
                 </div>
             </div>
-            <div v-if="configuredDataFieldsLayoutData.length > 0" class="q-mt-sm column q-gutter-sm">
+            <div v-if="configuredDataFieldsLayoutData.length > 0" class="q-mt-sm column q-col-gutter-sm">
                 <template v-for="layoutElement in configuredDataFieldsLayoutData">
                     <template v-if="layoutElement.type === 'dataFieldRow'">
                         <mof-data-field-row :fields="layoutElement.fields"></mof-data-field-row>
@@ -82,12 +82,42 @@ const mofDataFieldModule = {
             }
             return exist;
         });
+        const newEventRecord = Vue.ref(false);
+        const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
 
         Vue.watch(configuredData, () => {
-            setEditData();
+            if(!newEventRecord.value){
+                setEditData();
+            }
         });
 
-        function saveConfiguredEditDataEdits() {
+        function processSaveDataEdits() {
+            if(props.dataType === 'occurrence' || Number(occurrenceData.value['eventid']) > 0){
+                saveConfiguredDataEdits();
+            }
+            else{
+                newEventRecord.value = true;
+                occurrenceStore.setNewCollectingEventDataFromCurrentOccurrence();
+                occurrenceStore.createCollectingEventRecord(() => {
+                    if(occurrenceStore.getOccurrenceEditsExist){
+                        occurrenceStore.updateOccurrenceRecord((res) => {
+                            if(res === 1){
+                                saveConfiguredDataEdits();
+                            }
+                            else{
+                                showNotification('negative', 'There was an error setting the event data.');
+                            }
+                        });
+                    }
+                    else{
+                        showNotification('negative', 'There was an error setting the event data.');
+                    }
+                });
+            }
+        }
+
+        function saveConfiguredDataEdits() {
+            newEventRecord.value = false;
             const editData = {
                 add: [],
                 delete: [],
@@ -136,7 +166,7 @@ const mofDataFieldModule = {
             configuredDataFieldsLayoutData,
             configuredDataLabel,
             editsExist,
-            saveConfiguredEditDataEdits
+            processSaveDataEdits
         }
     }
 };
