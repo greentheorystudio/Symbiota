@@ -83,9 +83,13 @@ const useBaseStore = Pinia.defineStore('base', {
             const url = this.clientRoot + '/content/json/portalconfig.json';
             fetch(url)
             .then((response) => {
-                return response.status === 200 ? response.json() : null;
+                return response.ok ? response.text() : null;
             })
-            .then((data) => {
+            .then((jsonStr) => {
+                let data = null;
+                if(jsonStr.startsWith('{')){
+                    data = JSON.parse(jsonStr);
+                }
                 callback((data && data.hasOwnProperty(congifProp)) ? data[congifProp] : null);
             }).catch();
         },
