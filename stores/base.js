@@ -79,13 +79,22 @@ const useBaseStore = Pinia.defineStore('base', {
         }
     },
     actions: {
+        getPortalConfiguration(congifProp, callback) {
+            const url = this.clientRoot + '/content/json/portalconfig.json';
+            fetch(url)
+            .then((response) => {
+                return response.status === 200 ? response.json() : null;
+            })
+            .then((data) => {
+                callback((data && data.hasOwnProperty(congifProp)) ? data[congifProp] : null);
+            }).catch();
+        },
         async logout() {
             const url = profileApiUrl + '?action=logout';
             fetch(url)
             .then(() => {
                 window.location.href = this.clientRoot + '/index.php';
-                this.userRights = Object.assign({}, {});
             })
-        }
+        },
     }
 });

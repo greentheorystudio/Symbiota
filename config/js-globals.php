@@ -72,7 +72,6 @@
     const proxyServiceApiUrl = CLIENT_ROOT + '/api/services/proxyServiceController.php';
     const searchServiceApiUrl = CLIENT_ROOT + '/api/services/searchServiceController.php';
     const solrConnectorUrl = CLIENT_ROOT + '/api/search/SOLRConnector.php';
-    const spatialApiUrl = CLIENT_ROOT + '/api/spatial/spatialController.php';
     const taxaApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
     const taxaProfileApiUrl = CLIENT_ROOT + '/api/taxa/taxaProfileController.php';
     const taxonDescriptionApiUrl = CLIENT_ROOT + '/api/taxa/taxonDescriptionController.php';
