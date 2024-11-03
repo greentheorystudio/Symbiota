@@ -1193,8 +1193,11 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             this.determinationStore.setDeterminationArr(this.occId);
                         }
                         this.occurrenceData = Object.assign({}, this.occurrenceEditData);
+                        if(this.getCollectingEventID === 0 && Number(this.occurrenceData['eventid']) > 0){
+                            this.setCurrentCollectingEventRecord(this.occurrenceData['eventid']);
+                        }
                     }
-                    if(this.getCollectingEventID > 0 && (this.occurrenceUpdateData.hasOwnProperty('locationid') || this.getEmbeddedOccurrenceRecord) && this.getCollectingEventEditsExist){
+                    if(Number(res) === 1 && this.getCollectingEventID > 0 && (this.occurrenceUpdateData.hasOwnProperty('locationid') || this.getEmbeddedOccurrenceRecord) && this.getCollectingEventEditsExist){
                         this.updateCollectingEventRecord(callback);
                     }
                     else{
