@@ -34,9 +34,6 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getCollectingEventFields'){
         echo json_encode($occurrenceCollectingEvents->getCollectingEventFields());
     }
-    elseif($action === 'getConfiguredFieldDataArr' && $eventid){
-        echo json_encode($occurrenceCollectingEvents->getConfiguredFieldData($eventid));
-    }
     elseif($action === 'getLocationCollectingEventArr' && $collid && array_key_exists('locationid', $_POST)){
         $locationid = (int)$_POST['locationid'];
         echo json_encode($occurrenceCollectingEvents->getLocationCollectingEventArr($collid, $locationid));
@@ -55,14 +52,5 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getCollectingEventCollectionsArr' && $eventid){
         echo json_encode($occurrenceCollectingEvents->getCollectingEventCollectionsArr($eventid));
-    }
-    elseif($action === 'addConfiguredDataValue' && $isEditor && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
-        echo $occurrenceCollectingEvents->addConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
-    }
-    elseif($action === 'deleteConfiguredDataValue' && $isEditor && $eventid && array_key_exists('datakey', $_POST)){
-        echo $occurrenceCollectingEvents->deleteConfiguredDataValue($eventid, $_POST['datakey']);
-    }
-    elseif($action === 'updateConfiguredDataValue' && $isEditor && $eventid && array_key_exists('datakey', $_POST) && array_key_exists('datavalue', $_POST)){
-        echo $occurrenceCollectingEvents->updateConfiguredDataValue($eventid, $_POST['datakey'], $_POST['datavalue']);
     }
 }

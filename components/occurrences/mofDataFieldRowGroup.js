@@ -1,4 +1,4 @@
-const configuredDataFieldRowGroup = {
+const mofDataFieldRowGroup = {
     props: {
         expansion: {
             type: Boolean,
@@ -18,7 +18,7 @@ const configuredDataFieldRowGroup = {
             <q-expansion-item class="shadow-1 overflow-hidden expansion-element" :label="label" header-class="bg-grey-3 text-grey-8 text-h6 text-weight-bolder q-pl-md" expand-icon-class="text-bold">
                 <div class="q-pa-sm column q-col-gutter-sm">
                     <template v-for="row in rows">
-                        <configured-data-field-row :fields="row.fields"></configured-data-field-row>
+                        <mof-data-field-row :fields="row.fields"></mof-data-field-row>
                     </template>
                 </div>
             </q-expansion-item>
@@ -30,13 +30,13 @@ const configuredDataFieldRowGroup = {
                         {{ label }}
                     </div>
                     <template v-for="row in rows">
-                        <configured-data-field-row :fields="row.fields"></configured-data-field-row>
+                        <mof-data-field-row :fields="row.fields"></mof-data-field-row>
                     </template>
                 </q-card-section>
             </q-card>
         </template>
     `,
     components: {
-        'configured-data-field-row': configuredDataFieldRow
+        'mof-data-field-row': mofDataFieldRow
     }
 };

@@ -5,9 +5,14 @@ const useCollectionStore = Pinia.defineStore('collection', {
         collectionId: 0,
         collectionPermissions: [],
         configuredDataDownloads: [],
-        configuredDataFields: {},
-        configuredDataFieldsLayoutData: {},
-        configuredDataLabel: 'Additional Data'
+        eventMofData: {},
+        eventMofDataFields: {},
+        eventMofDataFieldsLayoutData: {},
+        eventMofDataLabel: 'Measurement or Fact Data',
+        occurrenceMofData: {},
+        occurrenceMofDataFields: {},
+        occurrenceMofDataFieldsLayoutData: {},
+        occurrenceMofDataLabel: 'Measurement or Fact Data'
     }),
     getters: {
         getClientRoot() {
@@ -29,20 +34,23 @@ const useCollectionStore = Pinia.defineStore('collection', {
         getConfiguredDataDownloads(state) {
             return state.configuredDataDownloads;
         },
-        getConfiguredDataFields(state) {
-            return state.configuredDataFields;
-        },
-        getConfiguredDataFieldsLayoutData(state) {
-            return state.configuredDataFieldsLayoutData;
-        },
-        getConfiguredDataLabel(state) {
-            return state.configuredDataLabel;
-        },
         getDatasetKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('datasetKey')) ? state.collectionData['aggkeysstr']['datasetKey'] : null);
         },
         getEndpointKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('endpointKey')) ? state.collectionData['aggkeysstr']['endpointKey'] : null);
+        },
+        getEventMofData(state) {
+            return state.eventMofData;
+        },
+        getEventMofDataFields(state) {
+            return state.eventMofDataFields;
+        },
+        getEventMofDataFieldsLayoutData(state) {
+            return state.eventMofDataFieldsLayoutData;
+        },
+        getEventMofDataLabel(state) {
+            return state.eventMofDataLabel;
         },
         getGeoreferencedPercent(state) {
             let percent = 0;
@@ -65,6 +73,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getInstallationKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('installationKey')) ? state.collectionData['aggkeysstr']['installationKey'] : null);
+        },
+        getOccurrenceMofData(state) {
+            return state.occurrenceMofData;
+        },
+        getOccurrenceMofDataFields(state) {
+            return state.occurrenceMofDataFields;
+        },
+        getOccurrenceMofDataFieldsLayoutData(state) {
+            return state.occurrenceMofDataFieldsLayoutData;
+        },
+        getOccurrenceMofDataLabel(state) {
+            return state.occurrenceMofDataLabel;
         },
         getOrganizationKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('organizationKey')) ? state.collectionData['aggkeysstr']['organizationKey'] : null);
@@ -108,9 +128,14 @@ const useCollectionStore = Pinia.defineStore('collection', {
             this.collectionData = Object.assign({}, {});
             this.collectionPermissions.length = 0;
             this.configuredDataDownloads.length = 0;
-            this.configuredDataFields = Object.assign({}, {});
-            this.configuredDataFieldsLayoutData = Object.assign({}, {});
-            this.configuredDataLabel = 'Additional Data';
+            this.eventMofData = Object.assign({}, {});
+            this.eventMofDataFields = Object.assign({}, {});
+            this.eventMofDataFieldsLayoutData = Object.assign({}, {});
+            this.eventMofDataLabel = 'Measurement or Fact Data';
+            this.occurrenceMofData = Object.assign({}, {});
+            this.occurrenceMofDataFields = Object.assign({}, {});
+            this.occurrenceMofDataFieldsLayoutData = Object.assign({}, {});
+            this.occurrenceMofDataLabel = 'Measurement or Fact Data';
         },
         getCollectionListByUserRights(callback) {
             const formData = new FormData();
@@ -170,13 +195,30 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 response.json().then((resObj) => {
                     if(Number(resObj['ispublic']) === 1 || (this.collectionPermissions.includes('CollAdmin') || this.collectionPermissions.includes('CollEditor'))){
                         this.collectionData = Object.assign({}, resObj);
-                        if(this.collectionData['configuredData'] && this.collectionData['configuredData'].hasOwnProperty('dataFields') && Object.keys(this.collectionData['configuredData']['dataFields']).length > 0){
-                            this.configuredDataFields = this.collectionData['configuredData']['dataFields'];
-                            if(this.collectionData['configuredData'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['dataLayout']){
-                                this.configuredDataFieldsLayoutData = this.collectionData['configuredData']['dataLayout'];
+                        if(this.collectionData['configuredData']){
+                            if(this.collectionData['configuredData'].hasOwnProperty('eventMofExtension')){
+                                this.eventMofData = Object.assign({}, this.collectionData['configuredData']['eventMofExtension']);
+                                if(Object.keys(this.collectionData['configuredData']['eventMofExtension']['dataFields']).length > 0){
+                                    this.eventMofDataFields = this.collectionData['configuredData']['eventMofExtension']['dataFields'];
+                                    if(this.collectionData['configuredData']['eventMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['eventMofExtension']['dataLayout']){
+                                        this.eventMofDataFieldsLayoutData = this.collectionData['configuredData']['eventMofExtension']['dataLayout'];
+                                    }
+                                    if(this.collectionData['configuredData']['eventMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['eventMofExtension']['dataLabel']){
+                                        this.eventMofDataLabel = this.collectionData['configuredData']['eventMofExtension']['dataLabel'].toString();
+                                    }
+                                }
                             }
-                            if(this.collectionData['configuredData'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['dataLabel']){
-                                this.configuredDataLabel = this.collectionData['configuredData']['dataLabel'].toString();
+                            if(this.collectionData['configuredData'].hasOwnProperty('occurrenceMofExtension')){
+                                this.occurrenceMofData = Object.assign({}, this.collectionData['configuredData']['occurrenceMofExtension']);
+                                if(Object.keys(this.collectionData['configuredData']['occurrenceMofExtension']['dataFields']).length > 0){
+                                    this.occurrenceMofDataFields = this.collectionData['configuredData']['occurrenceMofExtension']['dataFields'];
+                                    if(this.collectionData['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['occurrenceMofExtension']['dataLayout']){
+                                        this.occurrenceMofDataFieldsLayoutData = this.collectionData['configuredData']['occurrenceMofExtension']['dataLayout'];
+                                    }
+                                    if(this.collectionData['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['occurrenceMofExtension']['dataLabel']){
+                                        this.occurrenceMofDataLabel = this.collectionData['configuredData']['occurrenceMofExtension']['dataLabel'].toString();
+                                    }
+                                }
                             }
                             if(this.collectionData['configuredData'].hasOwnProperty('dataDownloads') && this.collectionData['configuredData']['dataDownloads']){
                                 this.configuredDataDownloads = this.collectionData['configuredData']['dataDownloads'];
