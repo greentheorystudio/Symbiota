@@ -36,6 +36,7 @@ const occurrenceEditorOccurrenceDataControls = {
         const editsExist = Vue.computed(() => occurrenceStore.getOccurrenceEditsExist);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
+        const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceValid = Vue.computed(() => occurrenceStore.getOccurrenceValid);
 
@@ -44,15 +45,31 @@ const occurrenceEditorOccurrenceDataControls = {
         }
 
         function createOccurrenceRecord() {
-            occurrenceStore.createOccurrenceRecord((newOccid) => {
-                if(newOccid > 0){
-                    context.emit('occurrence:created', newOccid);
-                    showNotification('positive','Occurrence record created successfully.');
-                }
-                else{
-                    showNotification('negative', 'There was an error creating the occurrence record.');
-                }
-            });
+            if(Object.keys(configuredEventMofDataFields.value).length > 0 && !occurrenceData.value['eventid']){
+                occurrenceStore.setNewCollectingEventDataFromCurrentOccurrence();
+                occurrenceStore.createCollectingEventRecord(() => {
+                    occurrenceStore.createOccurrenceRecord((newOccid) => {
+                        if(newOccid > 0){
+                            context.emit('occurrence:created', newOccid);
+                            showNotification('positive','Occurrence record created successfully.');
+                        }
+                        else{
+                            showNotification('negative', 'There was an error creating the occurrence record.');
+                        }
+                    });
+                });
+            }
+            else{
+                occurrenceStore.createOccurrenceRecord((newOccid) => {
+                    if(newOccid > 0){
+                        context.emit('occurrence:created', newOccid);
+                        showNotification('positive','Occurrence record created successfully.');
+                    }
+                    else{
+                        showNotification('negative', 'There was an error creating the occurrence record.');
+                    }
+                });
+            }
         }
 
         function saveOccurrenceEdits() {
