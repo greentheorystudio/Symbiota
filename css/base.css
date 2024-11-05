@@ -1105,3 +1105,6 @@ body.processing .loadingModal {
 .coll-icon-collection-checklist {
 	width: 30px;
 }
+.q-field__native {
+	overflow: hidden;
+}
