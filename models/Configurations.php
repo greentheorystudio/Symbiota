@@ -424,12 +424,6 @@ class Configurations{
             $this->initializeImportConfigurations();
         }
         $rs->free();
-        /*if(file_exists($GLOBALS['SERVER_ROOT'].'/content/json/portalconfig.json')){
-            $data = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/portalconfig.json'), true);
-            $sql = "UPDATE configurations SET configurationValue = '" . addslashes(json_encode($data['spatialLayerConfig'])) . "' WHERE configurationName = 'SPATIAL_LAYER_CONFIG_JSON' ";
-            //echo $sql;
-            $this->conn->query($sql);
-        }*/
         if(!isset($GLOBALS['CLIENT_ROOT'])){
             $GLOBALS['CLIENT_ROOT'] = '';
         }
