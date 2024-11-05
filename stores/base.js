@@ -87,9 +87,9 @@ const useBaseStore = Pinia.defineStore('base', {
                 method: 'POST',
                 body: formData
             })
-            .then((response) => response.json())
-            .then((data) => {
-                callback(data ? data : null);
+            .then((response) => response.text())
+            .then((resStr) => {
+                callback(resStr ? JSON.parse(resStr) : null);
             });
         },
         async logout() {
