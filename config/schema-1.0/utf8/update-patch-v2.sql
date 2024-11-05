@@ -4,6 +4,7 @@ ALTER TABLE `omcollections`
     ADD COLUMN `ccpk` int(10) UNSIGNED NULL AFTER `CollID`,
     ADD COLUMN `isPublic` smallint(1) NOT NULL DEFAULT 1 AFTER `SortSeq`,
     ADD COLUMN `defaultRepCount` int(10) NULL AFTER `DataRecordingMethod`,
+    CHANGE COLUMN `dynamicProperties` `configJson` text NULL AFTER `accessrights`,
     ADD INDEX `isPublic`(`isPublic`),
     ADD CONSTRAINT `FK_collid_ccpk` FOREIGN KEY (`ccpk`) REFERENCES `omcollcategories` (`ccpk`) ON DELETE RESTRICT ON UPDATE NO ACTION;
 

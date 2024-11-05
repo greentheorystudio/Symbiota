@@ -41,7 +41,7 @@ class Collections {
         "dwcaurl" => array("dataType" => "string", "length" => 250),
         "bibliographiccitation" => array("dataType" => "string", "length" => 1000),
         "accessrights" => array("dataType" => "string", "length" => 1000),
-        "dynamicproperties" => array("dataType" => "text", "length" => 0),
+        "configjson" => array("dataType" => "text", "length" => 0),
         "ispublic" => array("dataType" => "number", "length" => 6),
         "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
     );
@@ -130,6 +130,7 @@ class Collections {
     public function getCollectionInfoArr($collId): array
     {
         $retArr = array();
+        $retArr['configuredData'] = null;
         $uDate = null;
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
         $fieldNameArr = array_merge($fieldNameArr, array('s.uploaddate', 's.recordcnt', 's.georefcnt', 's.familycnt', 's.genuscnt', 's.speciescnt',
@@ -144,12 +145,10 @@ class Collections {
         if($r = $rs->fetch_object()){
             foreach($fields as $val){
                 $name = $val->name;
-                if($name === 'dynamicproperties' && $r->$name){
-                    $retArr[$name] = json_decode($r->$name, true);
+                if($name === 'configjson' && $r->$name){
+                    $retArr['configuredData'] = json_decode($r->$name, true);
                 }
-                else{
-                    $retArr[$name] = $r->$name;
-                }
+                $retArr[$name] = $r->$name;
             }
             if($r->uploaddate){
                 $uDate = $r->uploaddate;
@@ -159,12 +158,8 @@ class Collections {
                 $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
             }
             $retArr['uploaddate'] = $uDate;
-            $retArr['configuredData'] = null;
         }
         $rs->free();
-        if(file_exists($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collId . 'occurrencedatafields.json')) {
-            $retArr['configuredData'] = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collId . 'occurrencedatafields.json'), true);
-        }
         return $retArr;
     }
 
