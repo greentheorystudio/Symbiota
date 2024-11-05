@@ -627,7 +627,7 @@ class OccurrenceCollectionProfile {
 
 	public function getStatCollectionList($catId = null): array
 	{
-		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
+		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, c.ccpk, '.
 			'cat.category, cat.icon AS caticon, cat.acronym '.
 			'FROM omcollections c LEFT JOIN omcollcategories cat ON c.ccpk = cat.ccpk '.
 			'ORDER BY cat.category, c.CollectionName ';
