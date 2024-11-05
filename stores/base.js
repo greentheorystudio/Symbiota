@@ -79,15 +79,18 @@ const useBaseStore = Pinia.defineStore('base', {
         }
     },
     actions: {
-        getPortalConfiguration(congifProp, callback) {
-            const url = this.clientRoot + '/content/json/portalconfig.json';
-            fetch(url)
-            .then((response) => {
-                return response.status === 200 ? response.json() : null;
+        getGlobalJsonConfigValue(prop, callback) {
+            const formData = new FormData();
+            formData.append('action', 'getGlobalConfigValue');
+            formData.append('prop', prop);
+            fetch(configurationsApiUrl, {
+                method: 'POST',
+                body: formData
             })
+            .then((response) => response.json())
             .then((data) => {
-                callback((data && data.hasOwnProperty(congifProp)) ? data[congifProp] : null);
-            }).catch();
+                callback(data ? data : null);
+            });
         },
         async logout() {
             const url = profileApiUrl + '?action=logout';
