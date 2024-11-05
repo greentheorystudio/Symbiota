@@ -49,6 +49,7 @@ class Configurations{
         'SMTP_USERNAME',
         'SOLR_FULL_IMPORT_INTERVAL',
         'SOLR_URL',
+        'SPATIAL_LAYER_CONFIG_JSON',
         'SPATIAL_DRAGDROP_BORDER_COLOR',
         'SPATIAL_DRAGDROP_BORDER_WIDTH',
         'SPATIAL_DRAGDROP_FILL_COLOR',
@@ -394,7 +395,7 @@ class Configurations{
     public function saveMapServerConfig($json): bool
     {
         $status = true;
-        if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/json/spatiallayerconfig.json', 'wb')){
+        if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/json/portalconfig.json', 'wb')){
             if(!fwrite($fh,$json)){
                 $status = false;
             }
@@ -423,6 +424,12 @@ class Configurations{
             $this->initializeImportConfigurations();
         }
         $rs->free();
+        /*if(file_exists($GLOBALS['SERVER_ROOT'].'/content/json/portalconfig.json')){
+            $data = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/portalconfig.json'), true);
+            $sql = "UPDATE configurations SET configurationValue = '" . addslashes(json_encode($data['spatialLayerConfig'])) . "' WHERE configurationName = 'SPATIAL_LAYER_CONFIG_JSON' ";
+            //echo $sql;
+            $this->conn->query($sql);
+        }*/
         if(!isset($GLOBALS['CLIENT_ROOT'])){
             $GLOBALS['CLIENT_ROOT'] = '';
         }
@@ -430,7 +437,7 @@ class Configurations{
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
         $GLOBALS['CSS_VERSION'] = '20240926';
-        $GLOBALS['JS_VERSION'] = '2024051511111111112112111';
+        $GLOBALS['JS_VERSION'] = '20240516';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -449,9 +456,10 @@ class Configurations{
         $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
         $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
         $GLOBALS['PORTAL_GUID'] = UuidService::getUuidV4();
-        $GLOBALS['PROCESSING_STATUS_OPTIONS'] = UuidService::getUuidV4();
+        $GLOBALS['PROCESSING_STATUS_OPTIONS'] = array('Unprocessed','Stage 1','Stage 2','Stage 3','Pending Review','Expert Required','Reviewed','Closed');
         $GLOBALS['SECURITY_KEY'] = UuidService::getUuidV4();
         $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
+        $GLOBALS['SPATIAL_LAYER_CONFIG_JSON'] = null;
         $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
         $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
         $GLOBALS['SPATIAL_DRAGDROP_FILL_COLOR'] = '#AAAAAA';
@@ -652,6 +660,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['SOLR_URL']) || $GLOBALS['SOLR_URL'] === ''){
             $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 0;
+        }
+        if(!isset($GLOBALS['SPATIAL_LAYER_CONFIG_JSON']) || $GLOBALS['SPATIAL_LAYER_CONFIG_JSON'] === ''){
+            $GLOBALS['SPATIAL_LAYER_CONFIG_JSON'] = null;
         }
         if(!isset($GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR']) || $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] === ''){
             $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';

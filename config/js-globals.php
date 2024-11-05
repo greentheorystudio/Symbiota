@@ -53,6 +53,7 @@
     const checklistVoucherApiUrl = CLIENT_ROOT + '/api/checklists/checklistVoucherController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
     const collectionCategoryApiUrl = CLIENT_ROOT + '/api/collections/collectionCategoryController.php';
+    const configurationsApiUrl = CLIENT_ROOT + '/api/configurations/configurationsController.php';
     const dataDownloadServiceApiUrl = CLIENT_ROOT + '/api/services/dataDownloadServiceController.php';
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
@@ -72,7 +73,6 @@
     const proxyServiceApiUrl = CLIENT_ROOT + '/api/services/proxyServiceController.php';
     const searchServiceApiUrl = CLIENT_ROOT + '/api/services/searchServiceController.php';
     const solrConnectorUrl = CLIENT_ROOT + '/api/search/SOLRConnector.php';
-    const spatialApiUrl = CLIENT_ROOT + '/api/spatial/spatialController.php';
     const taxaApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
     const taxaProfileApiUrl = CLIENT_ROOT + '/api/taxa/taxaProfileController.php';
     const taxonDescriptionApiUrl = CLIENT_ROOT + '/api/taxa/taxonDescriptionController.php';
