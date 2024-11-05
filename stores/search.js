@@ -170,7 +170,7 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchTermsValid(state) {
             let populated = false;
             if(
-                state.searchTerms['db'].length > 0 ||
+                (state.searchTerms.hasOwnProperty('db') && state.searchTerms['db'].length > 0) ||
                 state.searchTerms.hasOwnProperty('clid') ||
                 state.searchTerms.hasOwnProperty('taxa') ||
                 state.searchTerms.hasOwnProperty('country') ||
@@ -198,14 +198,14 @@ const useSearchStore = Pinia.defineStore('search', {
                 state.searchTerms.hasOwnProperty('dateentered') ||
                 state.searchTerms.hasOwnProperty('datemodified') ||
                 state.searchTerms.hasOwnProperty('processingstatus') ||
-                state.searchTerms['typestatus'] ||
-                state.searchTerms['hasaudio'] ||
-                state.searchTerms['hasimages'] ||
-                state.searchTerms['hasvideo'] ||
-                state.searchTerms['hasmedia'] ||
-                state.searchTerms['hasgenetic'] ||
-                state.searchTerms['withoutimages'] ||
-                state.searchTerms['advanced'].length > 0
+                (state.searchTerms.hasOwnProperty('typestatus') && state.searchTerms['typestatus']) ||
+                (state.searchTerms.hasOwnProperty('hasaudio') && state.searchTerms['hasaudio']) ||
+                (state.searchTerms.hasOwnProperty('hasimages') && state.searchTerms['hasimages']) ||
+                (state.searchTerms.hasOwnProperty('hasvideo') && state.searchTerms['hasvideo']) ||
+                (state.searchTerms.hasOwnProperty('hasmedia') && state.searchTerms['hasmedia']) ||
+                (state.searchTerms.hasOwnProperty('hasgenetic') && state.searchTerms['hasgenetic']) ||
+                (state.searchTerms.hasOwnProperty('withoutimages') && state.searchTerms['withoutimages']) ||
+                (state.searchTerms.hasOwnProperty('advanced') && state.searchTerms['advanced'].length > 0)
             ){
                 populated = true;
             }
