@@ -79,13 +79,25 @@ const useBaseStore = Pinia.defineStore('base', {
         }
     },
     actions: {
+        getGlobalJsonConfigValue(prop, callback) {
+            const formData = new FormData();
+            formData.append('action', 'getGlobalConfigValue');
+            formData.append('prop', prop);
+            fetch(configurationsApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                callback(data ? data : null);
+            });
+        },
         async logout() {
             const url = profileApiUrl + '?action=logout';
             fetch(url)
             .then(() => {
                 window.location.href = this.clientRoot + '/index.php';
-                this.userRights = Object.assign({}, {});
             })
-        }
+        },
     }
 });

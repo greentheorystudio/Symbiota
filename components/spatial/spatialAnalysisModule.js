@@ -61,6 +61,7 @@ const spatialAnalysisModule = {
     },
     setup(props, context) {
         const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
+        const baseStore = useBaseStore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
 
@@ -92,8 +93,6 @@ const spatialAnalysisModule = {
         const layersInfoObj = Vue.reactive({});
         const layersObj = Vue.shallowReactive({});
         const lazyLoadCnt = 20000;
-        let loadPointsIndex = 0;
-        let loadPointsProcessed = 0;
         let map = null;
         const mapProjection = new ol.proj.Projection({
             code: 'EPSG:3857'
@@ -1409,28 +1408,18 @@ const spatialAnalysisModule = {
         }
 
         function setLayersController() {
-            const formData = new FormData();
-            formData.append('action', 'getLayersConfiguration');
-            fetch(spatialApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                if(response.status === 200){
-                    response.json().then((layerArrObject) => {
-                        if(layerArrObject.hasOwnProperty('layerConfig') && layerArrObject['layerConfig'].length > 0){
-                            layerArrObject['layerConfig'].forEach((object) => {
-                                layersConfigArr.push(object);
-                            });
-                            layersConfigArr.forEach((object) => {
-                                if(object['type'] === 'layer'){
-                                    processAddedLayer(object,false);
-                                }
-                                if(object['type'] === 'layerGroup' && object.hasOwnProperty('layers') && object['layers'].length > 0){
-                                    object['layers'].forEach((groupObject) => {
-                                        processAddedLayer(groupObject,false);
-                                    });
-                                }
+            baseStore.getGlobalJsonConfigValue('SPATIAL_LAYER_CONFIG_JSON', (data) => {
+                if(data && data.length > 0){
+                    data.forEach((object) => {
+                        layersConfigArr.push(object);
+                    });
+                    layersConfigArr.forEach((object) => {
+                        if(object['type'] === 'layer'){
+                            processAddedLayer(object,false);
+                        }
+                        if(object['type'] === 'layerGroup' && object.hasOwnProperty('layers') && object['layers'].length > 0){
+                            object['layers'].forEach((groupObject) => {
+                                processAddedLayer(groupObject,false);
                             });
                         }
                     });
