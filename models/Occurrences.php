@@ -129,9 +129,7 @@ class Occurrences{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function createOccurrenceRecord($data): int
@@ -220,6 +218,10 @@ class Occurrences{
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
+        $sql = 'DELETE FROM ommofextension WHERE occid = ' . (int)$occid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
         $sql = 'DELETE FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
@@ -234,18 +236,22 @@ class Occurrences{
         //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['images'] = (int)$rs->num_rows;
+        $rs->free();
         $sql = 'SELECT DISTINCT mediaid FROM media WHERE occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['media'] = (int)$rs->num_rows;
+        $rs->free();
         $sql = 'SELECT DISTINCT clid FROM fmvouchers WHERE occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['checklists'] = (int)$rs->num_rows;
+        $rs->free();
         $sql = 'SELECT DISTINCT idoccurgenetic FROM omoccurgenetic WHERE occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['genetic'] = (int)$rs->num_rows;
+        $rs->free();
         return $retArr;
     }
 
@@ -264,6 +270,7 @@ class Occurrences{
             else{
                 $isLocked = true;
             }
+            $frs->free();
         }
         return $isLocked;
     }
@@ -279,11 +286,14 @@ class Occurrences{
         }
         if($guidArr){
             $sql = 'SELECT occid FROM guidoccurrences WHERE guid IN("' . $searchStr . '")';
-            $rs = $this->conn->query($sql);
-            while($r = $rs->fetch_object()){
-                $retArr[] = $r->occid;
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $retArr[] = $row['occid'];
+                    unset($rows[$index]);
+                }
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -297,15 +307,16 @@ class Occurrences{
             'FROM omoccurrences AS o LEFT JOIN guidoccurrences AS g ON o.occid = g.occid '.
             'WHERE o.occid = ' . (int)$occid . ' ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $r->$name;
+                    $retArr[$name] = $row[$name];
                 }
             }
-            $rs->free();
             if($retArr && $retArr['tid'] && (int)$retArr['tid'] > 0){
                 $retArr['taxonData'] = (new Taxa)->getTaxonFromTid($retArr['tid']);
             }
@@ -321,21 +332,22 @@ class Occurrences{
             'FROM omoccuredits AS e LEFT JOIN users AS u ON e.uid = u.uid '.
             'WHERE e.occid = ' . (int)$occid . ' ORDER BY e.initialtimestamp DESC ';
         //echo $sql;
-        $result = $this->conn->query($sql);
-        if($result){
-            while($r = $result->fetch_object()){
-                $nodeArr = array();
-                $nodeArr['ocedid'] = $r->ocedid;
-                $nodeArr['editor'] = $r->editor;
-                $nodeArr['ts'] = substr($r->initialtimestamp,0,16);
-                $nodeArr['reviewstatus'] = $r->reviewstatus;
-                $nodeArr['appliedstatus'] = $r->appliedstatus;
-                $nodeArr['fieldname'] = $r->fieldname;
-                $nodeArr['old'] = $r->fieldvalueold;
-                $nodeArr['new'] = $r->fieldvaluenew;
-                $retArr[] = $nodeArr;
-            }
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $nodeArr['ocedid'] = $row['ocedid'];
+                $nodeArr['editor'] = $row['editor'];
+                $nodeArr['ts'] = substr($row['initialtimestamp'], 0, 16);
+                $nodeArr['reviewstatus'] = $row['reviewstatus'];
+                $nodeArr['appliedstatus'] = $row['appliedstatus'];
+                $nodeArr['fieldname'] = $row['fieldname'];
+                $nodeArr['old'] = $row['fieldvalueold'];
+                $nodeArr['new'] = $row['fieldvaluenew'];
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
         }
         return $retArr;
     }
@@ -351,12 +363,14 @@ class Occurrences{
         if($identifierField === 'catalognumber' || $identifierField === 'othercatalognumbers'){
             $sql = 'SELECT DISTINCT occid, tid, ' . $identifierField . ' FROM omoccurrences  '.
                 'WHERE collid = ' . (int)$collid . ' AND ' . $identifierField . ' IN("' . implode('","', $identifierArr) . '") ';
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
-                    $retArr[strtolower($r->$identifierField)]['occid'] = $r->occid;
-                    $retArr[strtolower($r->$identifierField)]['tid'] = $r->tid;
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $retArr[strtolower($row[$identifierField])]['occid'] = $row['occid'];
+                    $retArr[strtolower($row[$identifierField])]['tid'] = $row['tid'];
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $retArr;
@@ -372,17 +386,19 @@ class Occurrences{
             $sql .= 'AND collid = ' . (int)$collid . ' ';
         }
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
+                    $nodeArr[$name] = $row[$name];
                 }
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }

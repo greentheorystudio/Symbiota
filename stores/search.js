@@ -170,42 +170,42 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchTermsValid(state) {
             let populated = false;
             if(
-                state.searchTerms['db'].length > 0 ||
-                state.searchTerms.hasOwnProperty('clid') ||
-                state.searchTerms.hasOwnProperty('taxa') ||
-                state.searchTerms.hasOwnProperty('country') ||
-                state.searchTerms.hasOwnProperty('state') ||
-                state.searchTerms.hasOwnProperty('county') ||
-                state.searchTerms.hasOwnProperty('local') ||
-                state.searchTerms.hasOwnProperty('elevlow') ||
-                state.searchTerms.hasOwnProperty('elevhigh') ||
-                state.searchTerms.hasOwnProperty('collector') ||
-                state.searchTerms.hasOwnProperty('collnum') ||
-                state.searchTerms.hasOwnProperty('eventdate1') ||
-                state.searchTerms.hasOwnProperty('eventdate2') ||
-                state.searchTerms.hasOwnProperty('occurrenceRemarks') ||
-                state.searchTerms.hasOwnProperty('catnum') ||
-                state.searchTerms.hasOwnProperty('upperlat') ||
-                state.searchTerms.hasOwnProperty('pointlat') ||
-                state.searchTerms.hasOwnProperty('circleArr') ||
-                state.searchTerms.hasOwnProperty('phuid') ||
-                state.searchTerms.hasOwnProperty('imagetag') ||
-                state.searchTerms.hasOwnProperty('imagekeyword') ||
-                state.searchTerms.hasOwnProperty('uploaddate1') ||
-                state.searchTerms.hasOwnProperty('uploaddate2') ||
-                state.searchTerms.hasOwnProperty('polyArr') ||
-                state.searchTerms.hasOwnProperty('enteredby') ||
-                state.searchTerms.hasOwnProperty('dateentered') ||
-                state.searchTerms.hasOwnProperty('datemodified') ||
-                state.searchTerms.hasOwnProperty('processingstatus') ||
-                state.searchTerms['typestatus'] ||
-                state.searchTerms['hasaudio'] ||
-                state.searchTerms['hasimages'] ||
-                state.searchTerms['hasvideo'] ||
-                state.searchTerms['hasmedia'] ||
-                state.searchTerms['hasgenetic'] ||
-                state.searchTerms['withoutimages'] ||
-                state.searchTerms['advanced'].length > 0
+                (state.searchTerms.hasOwnProperty('db') && state.searchTerms['db'].length > 0) ||
+                (state.searchTerms.hasOwnProperty('clid') && state.searchTerms['clid']) ||
+                (state.searchTerms.hasOwnProperty('taxa') && state.searchTerms['taxa']) ||
+                (state.searchTerms.hasOwnProperty('country') && state.searchTerms['country']) ||
+                (state.searchTerms.hasOwnProperty('state') && state.searchTerms['state']) ||
+                (state.searchTerms.hasOwnProperty('county') && state.searchTerms['county']) ||
+                (state.searchTerms.hasOwnProperty('local') && state.searchTerms['local']) ||
+                (state.searchTerms.hasOwnProperty('elevlow') && state.searchTerms['elevlow']) ||
+                (state.searchTerms.hasOwnProperty('elevhigh') && state.searchTerms['elevhigh']) ||
+                (state.searchTerms.hasOwnProperty('collector') && state.searchTerms['collector']) ||
+                (state.searchTerms.hasOwnProperty('collnum') && state.searchTerms['collnum']) ||
+                (state.searchTerms.hasOwnProperty('eventdate1') && state.searchTerms['eventdate1']) ||
+                (state.searchTerms.hasOwnProperty('eventdate2') && state.searchTerms['eventdate2']) ||
+                (state.searchTerms.hasOwnProperty('occurrenceRemarks') && state.searchTerms['occurrenceRemarks']) ||
+                (state.searchTerms.hasOwnProperty('catnum') && state.searchTerms['catnum']) ||
+                (state.searchTerms.hasOwnProperty('upperlat') && state.searchTerms['upperlat']) ||
+                (state.searchTerms.hasOwnProperty('pointlat') && state.searchTerms['pointlat']) ||
+                (state.searchTerms.hasOwnProperty('circleArr') && state.searchTerms['circleArr'].length > 0) ||
+                (state.searchTerms.hasOwnProperty('phuid') && state.searchTerms['phuid']) ||
+                (state.searchTerms.hasOwnProperty('imagetag') && state.searchTerms['imagetag']) ||
+                (state.searchTerms.hasOwnProperty('imagekeyword') && state.searchTerms['imagekeyword']) ||
+                (state.searchTerms.hasOwnProperty('uploaddate1') && state.searchTerms['uploaddate1']) ||
+                (state.searchTerms.hasOwnProperty('uploaddate2') && state.searchTerms['uploaddate2']) ||
+                (state.searchTerms.hasOwnProperty('polyArr') && state.searchTerms['polyArr'].length > 0) ||
+                (state.searchTerms.hasOwnProperty('enteredby') && state.searchTerms['enteredby']) ||
+                (state.searchTerms.hasOwnProperty('dateentered') && state.searchTerms['dateentered']) ||
+                (state.searchTerms.hasOwnProperty('datemodified') && state.searchTerms['datemodified']) ||
+                (state.searchTerms.hasOwnProperty('processingstatus') && state.searchTerms['processingstatus']) ||
+                (state.searchTerms.hasOwnProperty('typestatus') && state.searchTerms['typestatus']) ||
+                (state.searchTerms.hasOwnProperty('hasaudio') && state.searchTerms['hasaudio']) ||
+                (state.searchTerms.hasOwnProperty('hasimages') && state.searchTerms['hasimages']) ||
+                (state.searchTerms.hasOwnProperty('hasvideo') && state.searchTerms['hasvideo']) ||
+                (state.searchTerms.hasOwnProperty('hasmedia') && state.searchTerms['hasmedia']) ||
+                (state.searchTerms.hasOwnProperty('hasgenetic') && state.searchTerms['hasgenetic']) ||
+                (state.searchTerms.hasOwnProperty('withoutimages') && state.searchTerms['withoutimages']) ||
+                (state.searchTerms.hasOwnProperty('advanced') && state.searchTerms['advanced'].length > 0)
             ){
                 populated = true;
             }

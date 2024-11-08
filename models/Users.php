@@ -48,9 +48,7 @@ class Users{
     }
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function authenticateUserFromPassword($username, $password, $rememberMe = false): int
@@ -68,22 +66,24 @@ class Users{
             if($this->encryption === 'sha2'){
                 $sql .= 'AND password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) ';
             }
-            $result = $this->conn->query($sql);
-            if(($row = $result->fetch_object()) && $row->uid) {
-                $returnVal = 1;
-                $this->clearCookieSession();
-                $this->setUserParams($row);
-                (new Permissions)->setUserPermissions();
-                if($rememberMe){
-                    $this->setTokenCookie($row->uid, $username, 2592000);
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = 1;
+                    $this->clearCookieSession();
+                    $this->setUserParams($row);
+                    (new Permissions)->setUserPermissions();
+                    if($rememberMe){
+                        $this->setTokenCookie($row['uid'], SanitizerService::cleanInStr($this->conn, $username), 2592000);
+                    }
+                    else{
+                        $this->setTokenCookie($row['uid'], SanitizerService::cleanInStr($this->conn, $username), 10800);
+                    }
+                    $sql = 'UPDATE users SET lastlogindate = NOW() WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
+                    $this->conn->query($sql);
                 }
-                else{
-                    $this->setTokenCookie($row->uid, $username, 10800);
-                }
-                $sql = 'UPDATE users SET lastlogindate = NOW() WHERE username = "' . $username . '" ';
-                $this->conn->query($sql);
             }
-            $result->free();
         }
         return $returnVal;
     }
@@ -97,17 +97,19 @@ class Users{
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM users AS u LEFT JOIN useraccesstokens AS ut ON u.uid = ut.uid '.
                 'WHERE u.username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" AND ut.token = "' . SanitizerService::cleanInStr($this->conn, $token) . '" ';
-            $result = $this->conn->query($sql);
-            if(($row = $result->fetch_object()) && $row->uid) {
-                $returnVal = 1;
-                $this->clearCookieSession();
-                $this->setUserParams($row);
-                (new Permissions)->setUserPermissions();
-                $this->setTokenCookie($row->uid, $username, $cookieDuration);
-                $sql = 'UPDATE users SET lastlogindate = NOW() WHERE username = "' . $username . '" ';
-                $this->conn->query($sql);
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row && $row['uid']){
+                    $returnVal = 1;
+                    $this->clearCookieSession();
+                    $this->setUserParams($row);
+                    (new Permissions)->setUserPermissions();
+                    $this->setTokenCookie($row['uid'], SanitizerService::cleanInStr($this->conn, $username), $cookieDuration);
+                    $sql = 'UPDATE users SET lastlogindate = NOW() WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
+                    $this->conn->query($sql);
+                }
             }
-            $result->free();
         }
         return $returnVal;
     }
@@ -127,7 +129,6 @@ class Users{
             if($this->conn->query($sql)){
                 $success = 1;
             }
-            $this->conn->close();
         }
         return $success;
     }
@@ -141,7 +142,6 @@ class Users{
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
-            $this->conn->close();
         }
         return $returnVal;
     }
@@ -231,18 +231,21 @@ class Users{
     public function deleteAllUnconfirmedUsers(): void
     {
         $sql = 'SELECT uid FROM users WHERE validated <> 1 ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $sql = 'DELETE FROM useraccesstokens WHERE uid = ' . $r->uid . ' ';
-            $this->conn->query($sql);
-            $sql = 'DELETE FROM userroles WHERE uid = ' . $r->uid . ' ';
-            $this->conn->query($sql);
-            $sql = 'DELETE FROM usertaxonomy WHERE uid = ' . $r->uid . ' ';
-            $this->conn->query($sql);
-            $sql = 'DELETE FROM users WHERE uid = ' . $r->uid . ' ';
-            $this->conn->query($sql);
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $sql = 'DELETE FROM useraccesstokens WHERE uid = ' . $row['uid'] . ' ';
+                $this->conn->query($sql);
+                $sql = 'DELETE FROM userroles WHERE uid = ' . $row['uid'] . ' ';
+                $this->conn->query($sql);
+                $sql = 'DELETE FROM usertaxonomy WHERE uid = ' . $row['uid'] . ' ';
+                $this->conn->query($sql);
+                $sql = 'DELETE FROM users WHERE uid = ' . $row['uid'] . ' ';
+                $this->conn->query($sql);
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
     }
 
     public function deleteToken($uid, $token): void
@@ -284,10 +287,11 @@ class Users{
         $sql = 'SELECT COUNT(token) AS cnt FROM useraccesstokens WHERE uid = ' . (int)$uid;
         //echo $sql;
         $result = $this->conn->query($sql);
-        if($row = $result->fetch_object()){
-            $cnt = $row->cnt;
+        if($row = $result->fetch_array(MYSQLI_ASSOC)){
+            $cnt = $row['cnt'];
             $result->free();
         }
+        $result->free();
         return $cnt;
     }
 
@@ -297,17 +301,18 @@ class Users{
         if($email){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM users '.
-                'WHERE email = "' . SanitizerService::cleanInStr($this->conn, $email) . '" ';
-            $rs = $this->conn->query($sql);
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $returnArr[$name] = $r->$name;
+                'FROM users WHERE email = "' . SanitizerService::cleanInStr($this->conn, $email) . '" ';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $returnArr[$name] = $row[$name];
+                    }
                 }
             }
-            $rs->free();
         }
         return $returnArr;
     }
@@ -318,17 +323,18 @@ class Users{
         if($uid){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM users '.
-                'WHERE uid = ' . (int)$uid . ' ';
-            $rs = $this->conn->query($sql);
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $returnArr[$name] = $r->$name;
+                'FROM users WHERE uid = ' . (int)$uid . ' ';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $returnArr[$name] = $row[$name];
+                    }
                 }
             }
-            $rs->free();
         }
         return $returnArr;
     }
@@ -339,17 +345,18 @@ class Users{
         if($username){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM users '.
-                'WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
-            $rs = $this->conn->query($sql);
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $returnArr[$name] = $r->$name;
+                'FROM users WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $returnArr[$name] = $row[$name];
+                    }
                 }
             }
-            $rs->free();
         }
         return $returnArr;
     }
@@ -362,16 +369,17 @@ class Users{
             if($username){
                 $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
                 $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                    'FROM users '.
-                    'WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
-                $result = $this->conn->query($sql);
-                if(($row = $result->fetch_object()) && $row->uid) {
-                    $returnVal = 1;
-                    $this->clearCookieSession();
-                    $this->setUserParams($row);
-                    (new Permissions)->setUserPermissions();
+                    'FROM users WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
+                if($result = $this->conn->query($sql)){
+                    $row = $result->fetch_array(MYSQLI_ASSOC);
+                    $result->free();
+                    if($row && $row['uid']){
+                        $returnVal = 1;
+                        $this->clearCookieSession();
+                        $this->setUserParams($row);
+                        (new Permissions)->setUserPermissions();
+                    }
                 }
-                $result->free();
             }
         }
         return $returnVal;
@@ -399,9 +407,10 @@ class Users{
                     $emailAddr = '';
                     $sql = 'SELECT email FROM users WHERE uid = ' . (int)$uid . ' ';
                     $result = $this->conn->query($sql);
-                    if($row = $result->fetch_object()){
-                        $emailAddr = $row->email;
+                    if($row = $result->fetch_array(MYSQLI_ASSOC)){
+                        $emailAddr = $row['email'];
                     }
+                    $result->free();
                     if($emailAddr){
                         $subject = 'Your password';
                         $bodyStr = 'Your ' . $GLOBALS['DEFAULT_TITLE'] . ' password has been reset to: ' . $newPassword . ' ';
@@ -426,9 +435,9 @@ class Users{
             $code = '';
             $sql = 'SELECT email, guid FROM users WHERE uid = ' . (int)$uid . ' ';
             $result = $this->conn->query($sql);
-            if($row = $result->fetch_object()){
-                $email = $row->email;
-                $code = $row->guid;
+            if($row = $result->fetch_array(MYSQLI_ASSOC)){
+                $email = $row['email'];
+                $code = $row['guid'];
                 if(!$code){
                     $code = UuidService::getUuidV4();
                     $sql = 'UPDATE users SET guid = "' . $code . '" WHERE uid = ' . (int)$uid . ' ';
@@ -445,7 +454,7 @@ class Users{
                 if($GLOBALS['ADMIN_EMAIL']){
                     $bodyStr .= '<br/>If you have trouble confirming your account, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                 }
-                $mailerResult = (new MailerService)->sendEmail($email,$subject,$bodyStr);
+                $mailerResult = (new MailerService)->sendEmail($email, $subject, $bodyStr);
                 if($mailerResult === 'Sent'){
                     $status = 1;
                 }
@@ -462,9 +471,10 @@ class Users{
             $sql = 'SELECT username FROM users '.
                 'WHERE email = "' . SanitizerService::cleanInStr($this->conn, $email) . '" ';
             $result = $this->conn->query($sql);
-            if($row = $result->fetch_object()){
-                $username = $row->username;
+            if($row = $result->fetch_array(MYSQLI_ASSOC)){
+                $username = $row['username'];
             }
+            $result->free();
             if($username){
                 $subject = $GLOBALS['DEFAULT_TITLE'] . ' Login Name';
                 $bodyStr = 'Your ' . $GLOBALS['DEFAULT_TITLE'] . ' login name is: ' . $username . ' ';
@@ -497,19 +507,19 @@ class Users{
 
     private function setUserParams($user): void
     {
-        $displayName = $user->firstname;
+        $displayName = $user['firstname'];
         if(strlen($displayName) > 15) {
-            $displayName = $user->username;
+            $displayName = $user['username'];
         }
         if(strlen($displayName) > 15) {
             $displayName = substr($displayName, 0, 10) . '...';
         }
-        $_SESSION['PARAMS_ARR']['un'] = $user->username;
+        $_SESSION['PARAMS_ARR']['un'] = $user['username'];
         $_SESSION['PARAMS_ARR']['dn'] = $displayName;
-        $_SESSION['PARAMS_ARR']['uid'] = $user->uid;
-        $_SESSION['PARAMS_ARR']['valid'] = $user->validated ? (int)$user->validated : 0;
+        $_SESSION['PARAMS_ARR']['uid'] = $user['uid'];
+        $_SESSION['PARAMS_ARR']['valid'] = $user['validated'] ? (int)$user['validated'] : 0;
         $GLOBALS['PARAMS_ARR'] = $_SESSION['PARAMS_ARR'];
-        $GLOBALS['USERNAME'] = $user->username;
+        $GLOBALS['USERNAME'] = $user['username'];
     }
 
     public function updateUser($userId, $editData): int
@@ -535,28 +545,28 @@ class Users{
     public function validateAllUnconfirmedUsers(): void
     {
         $sql = 'SELECT uid FROM users WHERE validated <> 1 ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $sql = 'UPDATE users SET validated = 1 WHERE uid = ' . $r->uid . ' ';
-            $this->conn->query($sql);
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $sql = 'UPDATE users SET validated = 1 WHERE uid = ' . $row['uid'] . ' ';
+                $this->conn->query($sql);
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
     }
 
-    public function validateFromConfirmationEmail($uid,$confirmationCode): int
+    public function validateFromConfirmationEmail($uid, $confirmationCode): int
     {
         $returnVal = 0;
         if($uid && $confirmationCode){
             $sql = 'SELECT guid, validated '.
-                'FROM users '.
-                'WHERE uid = ' . (int)$uid . ' ';
+                'FROM users WHERE uid = ' . (int)$uid . ' ';
             $result = $this->conn->query($sql);
-            while($row = $result->fetch_object()){
-                if((int)$row->validated !== 1 && $row->guid && $row->guid === $confirmationCode) {
-                    $sql = 'UPDATE users SET validated = 1 WHERE uid = ' . (int)$uid . ' ';
-                    $this->conn->query($sql);
-                    $returnVal = 1;
-                }
+            if(($row = $result->fetch_array(MYSQLI_ASSOC)) && (int)$row['validated'] !== 1 && $row['guid'] && $row['guid'] === $confirmationCode) {
+                $sql = 'UPDATE users SET validated = 1 WHERE uid = ' . (int)$uid . ' ';
+                $this->conn->query($sql);
+                $returnVal = 1;
             }
             $result->free();
         }
@@ -566,7 +576,7 @@ class Users{
     public function validateUser($userId): void
     {
         if($userId){
-            $sql = 'UPDATE users SET validated = 1 WHERE uid = '.(int)$userId.' ';
+            $sql = 'UPDATE users SET validated = 1 WHERE uid = ' . (int)$userId . ' ';
             //echo $sql; Exit;
             $this->conn->query($sql);
         }

@@ -23,9 +23,18 @@ const spatialControlPanel = {
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                 </div>
-                                <div v-if="!inputWindowMode">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
-                                </div>
+                                <template v-if="!inputWindowMode">
+                                    <div>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                    </div>
+                                    <div>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();">
+                                            <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                Go to homepage
+                                            </q-tooltip>
+                                        </q-btn>
+                                    </div>
+                                </template>
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();">
                                         <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -108,9 +117,18 @@ const spatialControlPanel = {
                                     <div>
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
                                     </div>
-                                    <div v-if="!inputWindowMode">
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
-                                    </div>
+                                    <template v-if="!inputWindowMode">
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                        </div>
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();">
+                                                <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Go to homepage
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                    </template>
                                     <div>
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();">
                                             <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -151,6 +169,13 @@ const spatialControlPanel = {
                             <template v-if="!inputWindowMode">
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                </div>
+                                <div>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();">
+                                        <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Go to homepage
+                                        </q-tooltip>
+                                    </q-btn>
                                 </div>
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense />
@@ -201,8 +226,10 @@ const spatialControlPanel = {
     },
     setup() {
         const { openTutorialWindow } = useCore();
+        const baseStore = useBaseStore();
         const searchStore = useSearchStore();
 
+        const clientRoot = baseStore.getClientRoot;
         const inputWindowMode = Vue.inject('inputWindowMode');
         const inputWindowToolsArr = Vue.inject('inputWindowToolsArr');
         const map = Vue.inject('map');
@@ -371,6 +398,10 @@ const spatialControlPanel = {
             });
         }
 
+        function goHome() {
+            window.location.href = (clientRoot + '/index.php');
+        }
+
         function processChangeBaseLayer(value) {
             updateMapSettings('selectedBaseLayer', value);
             changeBaseMap();
@@ -385,6 +416,7 @@ const spatialControlPanel = {
             changeBaseMap,
             changeInputPointUncertainty,
             exportMapPNG,
+            goHome,
             openTutorialWindow,
             processChangeBaseLayer,
             setQueryPopupDisplay,

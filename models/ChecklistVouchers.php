@@ -22,9 +22,7 @@ class ChecklistVouchers{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function addOccurrenceVoucherLinkage($clid, $occid, $tid): int
@@ -46,14 +44,16 @@ class ChecklistVouchers{
             $sql = 'SELECT c.clid, c.name '.
                 'FROM fmchecklists AS c LEFT JOIN fmvouchers AS v ON c.clid = v.clid '.
                 'WHERE v.occid = ' . (int)$occid . ' ORDER BY c.name ';
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $nodeArr = array();
-                    $nodeArr['clid'] = $r->clid;
-                    $nodeArr['name'] = $r->name;
+                    $nodeArr['clid'] = $row['clid'];
+                    $nodeArr['name'] = $row['name'];
                     $retArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $retArr;

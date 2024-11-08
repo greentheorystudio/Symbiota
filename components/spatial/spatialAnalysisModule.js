@@ -2542,6 +2542,9 @@ const spatialAnalysisModule = {
         Vue.provide('zoomToSelections', zoomToSelections);
 
         Vue.onMounted(() => {
+            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
+                showWorking('Loading...');
+            }
             spatialModuleInitialising.value = true;
             setMapLayersInteractions();
             setMapOverlays();

@@ -52,9 +52,7 @@ class Collections {
     }
 
     public function __destruct(){
-        if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
     }
 
     public function cleanSOLRIndex($collidStr): int
@@ -104,26 +102,29 @@ class Collections {
         }
         $sql .= 'ORDER BY c.collectionname ';
         //echo $sql;
-        $rs = $this->conn->query($sql);
-        $fields = mysqli_fetch_fields($rs);
-        while($row = $rs->fetch_object()){
-            $uDate = null;
-            $nodeArr = array();
-            foreach($fields as $val){
-                $name = $val->name;
-                $nodeArr[$name] = $row->$name;
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $uDate = null;
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                if($row['uploaddate']){
+                    $uDate = $row['uploaddate'];
+                    $month = substr($uDate,5,2);
+                    $day = substr($uDate,8,2);
+                    $year = substr($uDate,0,4);
+                    $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
+                }
+                $nodeArr['uploaddate'] = $uDate;
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            if($row->uploaddate){
-                $uDate = $row->uploaddate;
-                $month = substr($uDate,5,2);
-                $day = substr($uDate,8,2);
-                $year = substr($uDate,0,4);
-                $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
-            }
-            $nodeArr['uploaddate'] = $uDate;
-            $retArr[] = $nodeArr;
         }
-        $rs->free();
         return $retArr;
     }
 
@@ -140,26 +141,28 @@ class Collections {
             'LEFT JOIN institutions AS i ON c.iid = i.iid '.
             'WHERE c.collid = ' . (int)$collId . ' ';
         //echo $sql;
-        $rs = $this->conn->query($sql);
-        $fields = mysqli_fetch_fields($rs);
-        if($r = $rs->fetch_object()){
-            foreach($fields as $val){
-                $name = $val->name;
-                if($name === 'configjson' && $r->$name){
-                    $retArr['configuredData'] = json_decode($r->$name, true);
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    if($name === 'configjson' && $row[$name]){
+                        $retArr['configuredData'] = json_decode($row[$name], true);
+                    }
+                    $retArr[$name] = $row[$name];
                 }
-                $retArr[$name] = $r->$name;
+                if($row['uploaddate']){
+                    $uDate = $row['uploaddate'];
+                    $month = substr($uDate,5,2);
+                    $day = substr($uDate,8,2);
+                    $year = substr($uDate,0,4);
+                    $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
+                }
+                $retArr['uploaddate'] = $uDate;
             }
-            if($r->uploaddate){
-                $uDate = $r->uploaddate;
-                $month = substr($uDate,5,2);
-                $day = substr($uDate,8,2);
-                $year = substr($uDate,0,4);
-                $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
-            }
-            $retArr['uploaddate'] = $uDate;
         }
-        $rs->free();
         return $retArr;
     }
 
@@ -176,16 +179,18 @@ class Collections {
         if($cArr){
             $sql = 'SELECT collid, institutioncode, collectioncode, collectionname, colltype FROM omcollections '.
                 'WHERE collid IN(' . implode(',', $cArr) . ') ORDER BY collectionname ';
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $collCode = '';
-                    if($r->institutioncode){
-                        $collCode .= $r->institutioncode;
+                    if($row['institutioncode']){
+                        $collCode .= $row['institutioncode'];
                     }
-                    if($r->collectioncode){
-                        $collCode .= ($collCode ? '-' : '') . $r->collectioncode;
+                    if($row['collectioncode']){
+                        $collCode .= ($collCode ? '-' : '') . $row['collectioncode'];
                     }
-                    $collid = (int)$r->collid;
+                    $collid = (int)$row['collid'];
                     $nodeArr = array();
                     $nodeArr['collectionpermissions'] = array();
                     if(array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
@@ -195,11 +200,11 @@ class Collections {
                         $nodeArr['collectionpermissions'][] = 'CollEditor';
                     }
                     $nodeArr['collid'] = $collid;
-                    $nodeArr['label'] = $r->collectionname . ($collCode ? (' (' . $collCode . ')') : '');
-                    $nodeArr['colltype'] = $r->colltype;
+                    $nodeArr['label'] = $row['collectionname'] . ($collCode ? (' (' . $collCode . ')') : '');
+                    $nodeArr['colltype'] = $row['colltype'];
                     $retArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $retArr;
@@ -227,21 +232,24 @@ class Collections {
                 'GROUP BY country ORDER BY termstr ';
         }
         //echo $sql; exit;
-        $rs = $this->conn->query($sql);
-        while($row = $rs->fetch_object()){
-            if($row->termstr) {
-                $t = $row->termstr;
-                $cnt = $row->cnt;
-                if($state){
-                    $t = trim(str_ireplace(array(' county',' co.',' counties'),'',$t));
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if($row['termstr']) {
+                    $t = $row['termstr'];
+                    $cnt = $row['cnt'];
+                    if($state){
+                        $t = trim(str_ireplace(array(' county', ' co.', ' counties'),'', $t));
+                    }
+                    if(array_key_exists($t, $retArr)) {
+                        $cnt += $retArr[$t];
+                    }
+                    $retArr[$t] = $cnt;
                 }
-                if(array_key_exists($t, $retArr)) {
-                    $cnt += $retArr[$t];
-                }
-                $retArr[$t] = $cnt;
+                unset($rows[$index]);
             }
         }
-        $rs->free();
         return $retArr;
     }
 
@@ -250,11 +258,14 @@ class Collections {
         $retArr = array();
         $sql = 'SELECT collid FROM omcollections WHERE isPublic = 1 ';
         //echo "<div>$sql</div>";
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $retArr[] = (int)$r->collid;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = (int)$row['collid'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
         return $retArr;
     }
 
@@ -264,45 +275,54 @@ class Collections {
         $targetTidArr = array();
         $parentTaxonArr = array();
         $tidSql = 'SELECT DISTINCT tid FROM omoccurrences WHERE collid = ' . (int)$collid . ' ';
-        $rs = $this->conn->query($tidSql);
-        while($r = $rs->fetch_object()){
-            if($r->tid){
-                $targetTidArr[] = $r->tid;
+        if($result = $this->conn->query($tidSql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if($row['tid']){
+                    $targetTidArr[] = $row['tid'];
+                }
+                unset($rows[$index]);
             }
         }
-        $rs->free();
         $parentTaxonSql = 'SELECT DISTINCT te.tid, t.TID AS parentTid, t.RankId, t.SciName '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
             'WHERE te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted AND t.RankId IN(10,30,60,100,140) ';
         //echo '<div>Parent sql: ' .$parentTaxonSql. '</div>';
-        $rs = $this->conn->query($parentTaxonSql);
-        while($r = $rs->fetch_object()){
-            $parentTaxonArr[$r->tid][(int)$r->RankId]['id'] = $r->parentTid;
-            $parentTaxonArr[$r->tid][(int)$r->RankId]['sciname'] = $r->SciName;
+        if($result = $this->conn->query($parentTaxonSql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $parentTaxonArr[$row['tid']][(int)$row['RankId']]['id'] = $row['parentTid'];
+                $parentTaxonArr[$row['tid']][(int)$row['RankId']]['sciname'] = $row['SciName'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
 
         $sql = 'SELECT DISTINCT t.TID, t.SciName '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'WHERE (te.tid IN(' . implode(',', $targetTidArr) . ') AND t.RankId >= 180 AND t.tid = t.tidaccepted) '.
             'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT DISTINCT parenttid FROM taxa)) ';
         //echo '<div>Table sql: ' .$sql. '</div>';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $tid = $r->TID;
-            if($tid){
-                $recordArr = array();
-                $parentArr = (array_key_exists($tid,$parentTaxonArr)?$parentTaxonArr[$tid]:array());
-                $recordArr['kingdomName'] = (array_key_exists(10, $parentArr) ? $parentArr[10]['sciname'] : '');
-                $recordArr['phylumName'] = (array_key_exists(30, $parentArr) ? $parentArr[30]['sciname'] : '');
-                $recordArr['className'] = (array_key_exists(60, $parentArr) ? $parentArr[60]['sciname'] : '');
-                $recordArr['orderName'] = (array_key_exists(100, $parentArr) ? $parentArr[100]['sciname'] : '');
-                $recordArr['familyName'] = (array_key_exists(140, $parentArr) ? $parentArr[140]['sciname'] : '');
-                $recordArr['SciName'] = $r->SciName;
-                $returnArr[] = $recordArr;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $tid = $row['TID'];
+                if($tid){
+                    $recordArr = array();
+                    $parentArr = (array_key_exists($tid,$parentTaxonArr) ? $parentTaxonArr[$tid] : array());
+                    $recordArr['kingdomName'] = (array_key_exists(10, $parentArr) ? $parentArr[10]['sciname'] : '');
+                    $recordArr['phylumName'] = (array_key_exists(30, $parentArr) ? $parentArr[30]['sciname'] : '');
+                    $recordArr['className'] = (array_key_exists(60, $parentArr) ? $parentArr[60]['sciname'] : '');
+                    $recordArr['orderName'] = (array_key_exists(100, $parentArr) ? $parentArr[100]['sciname'] : '');
+                    $recordArr['familyName'] = (array_key_exists(140, $parentArr) ? $parentArr[140]['sciname'] : '');
+                    $recordArr['SciName'] = $row['SciName'];
+                    $returnArr[] = $recordArr;
+                }
+                unset($rows[$index]);
             }
         }
-        $rs->free();
         $kingdomName  = array_column($returnArr, 'kingdomName');
         $phylumName = array_column($returnArr, 'phylumName');
         $className = array_column($returnArr, 'className');
@@ -319,11 +339,14 @@ class Collections {
         $retArr = array();
         $sql = 'SELECT family, count(occid) AS cnt FROM omoccurrences WHERE family IS NOT NULL AND collid = ' . $collId . ' GROUP BY family';
         //echo $sql; exit;
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $retArr[ucwords($r->family)] = $r->cnt;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[ucwords($row['family'])] = $row['cnt'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
         return $retArr;
     }
 
@@ -368,47 +391,59 @@ class Collections {
             'COUNT(DISTINCT CASE WHEN t.RankId >= 220 THEN t.SciName ELSE NULL END) AS TotalTaxaCount '.
             'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
             'WHERE o.collid IN(' . $collidStr . ') ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $recordCnt = $r->SpecimenCount;
-            $georefCnt = $r->GeorefCount;
-            $familyCnt = $r->FamilyCount;
-            $genusCnt = $r->GeneraCount;
-            $speciesCnt = $r->SpeciesCount;
-            $statsArr['SpecimensCountID'] = $r->SpecimensCountID;
-            $statsArr['TotalTaxaCount'] = $r->TotalTaxaCount;
-            $statsArr['TypeCount'] = $r->TypeCount;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $recordCnt = $row['SpecimenCount'];
+                $georefCnt = $row['GeorefCount'];
+                $familyCnt = $row['FamilyCount'];
+                $genusCnt = $row['GeneraCount'];
+                $speciesCnt = $row['SpeciesCount'];
+                $statsArr['SpecimensCountID'] = $row['SpecimensCountID'];
+                $statsArr['TotalTaxaCount'] = $row['TotalTaxaCount'];
+                $statsArr['TypeCount'] = $row['TypeCount'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
 
         $sql = 'SELECT count(DISTINCT o.occid) as imgcnt '.
             'FROM omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
             'WHERE o.collid IN(' . $collidStr . ') ';
-        $rs = $this->conn->query($sql);
-        if($r = $rs->fetch_object()){
-            $statsArr['imgcnt'] = $r->imgcnt;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $statsArr['imgcnt'] = $row['imgcnt'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
 
         $sql = 'SELECT COUNT(CASE WHEN g.resourceurl LIKE "http://www.boldsystems%" THEN o.occid ELSE NULL END) AS boldcnt, '.
             'COUNT(CASE WHEN g.resourceurl LIKE "http://www.ncbi%" THEN o.occid ELSE NULL END) AS gencnt '.
             'FROM omoccurrences AS o LEFT JOIN omoccurgenetic AS g ON o.occid = g.occid '.
             'WHERE o.collid IN(' . $collidStr . ') ';
-        $rs = $this->conn->query($sql);
-        if($r = $rs->fetch_object()){
-            $statsArr['boldcnt'] = $r->boldcnt;
-            $statsArr['gencnt'] = $r->gencnt;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $statsArr['boldcnt'] = $row['boldcnt'];
+                $statsArr['gencnt'] = $row['gencnt'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
 
         $sql = 'SELECT count(r.occid) AS refcnt '.
             'FROM omoccurrences AS o LEFT JOIN referenceoccurlink AS r ON o.occid = r.occid '.
             'WHERE o.collid IN(' . $collidStr . ') ';
-        $rs = $this->conn->query($sql);
-        if($r = $rs->fetch_object()){
-            $statsArr['refcnt'] = $r->refcnt;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $statsArr['refcnt'] = $row['refcnt'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
 
         $sql = 'SELECT o.family, COUNT(o.occid) AS SpecimensPerFamily, COUNT(o.decimalLatitude) AS GeorefSpecimensPerFamily, '.
             'COUNT(CASE WHEN t.RankId >= 220 THEN o.occid ELSE NULL END) AS IDSpecimensPerFamily, '.
@@ -416,17 +451,20 @@ class Collections {
             'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
             'WHERE o.collid IN(' . $collidStr . ') '.
             'GROUP BY o.family ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $family = $r->family ? str_replace(array('"',"'"), '',$r->family) : '';
-            if($family){
-                $statsArr['families'][$family]['SpecimensPerFamily'] = $r->SpecimensPerFamily;
-                $statsArr['families'][$family]['GeorefSpecimensPerFamily'] = $r->GeorefSpecimensPerFamily;
-                $statsArr['families'][$family]['IDSpecimensPerFamily'] = $r->IDSpecimensPerFamily;
-                $statsArr['families'][$family]['IDGeorefSpecimensPerFamily'] = $r->IDGeorefSpecimensPerFamily;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $family = $row['family'] ? str_replace(array('"', "'"), '', $row['family']) : '';
+                if($family){
+                    $statsArr['families'][$family]['SpecimensPerFamily'] = $row['SpecimensPerFamily'];
+                    $statsArr['families'][$family]['GeorefSpecimensPerFamily'] = $row['GeorefSpecimensPerFamily'];
+                    $statsArr['families'][$family]['IDSpecimensPerFamily'] = $row['IDSpecimensPerFamily'];
+                    $statsArr['families'][$family]['IDGeorefSpecimensPerFamily'] = $row['IDGeorefSpecimensPerFamily'];
+                }
+                unset($rows[$index]);
             }
         }
-        $rs->free();
 
         $sql = 'SELECT o.country, COUNT(o.occid) AS CountryCount, COUNT(o.decimalLatitude) AS GeorefSpecimensPerCountry, '.
             'COUNT(CASE WHEN t.RankId >= 220 THEN o.occid ELSE NULL END) AS IDSpecimensPerCountry, '.
@@ -434,17 +472,20 @@ class Collections {
             'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
             'WHERE o.collid IN(' . $collidStr . ') '.
             'GROUP BY o.country ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $country = $r->country ? str_replace(array('"',"'"), '',$r->country) : '';
-            if($country){
-                $statsArr['countries'][$country]['CountryCount'] = $r->CountryCount;
-                $statsArr['countries'][$country]['GeorefSpecimensPerCountry'] = $r->GeorefSpecimensPerCountry;
-                $statsArr['countries'][$country]['IDSpecimensPerCountry'] = $r->IDSpecimensPerCountry;
-                $statsArr['countries'][$country]['IDGeorefSpecimensPerCountry'] = $r->IDGeorefSpecimensPerCountry;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $country = $row['country'] ? str_replace(array('"', "'"), '', $row['country']) : '';
+                if($country){
+                    $statsArr['countries'][$country]['CountryCount'] = $row['CountryCount'];
+                    $statsArr['countries'][$country]['GeorefSpecimensPerCountry'] = $row['GeorefSpecimensPerCountry'];
+                    $statsArr['countries'][$country]['IDSpecimensPerCountry'] = $row['IDSpecimensPerCountry'];
+                    $statsArr['countries'][$country]['IDGeorefSpecimensPerCountry'] = $row['IDGeorefSpecimensPerCountry'];
+                }
+                unset($rows[$index]);
             }
         }
-        $rs->free();
 
         $returnArrJson = json_encode($statsArr);
         $sql = 'UPDATE omcollectionstats '.

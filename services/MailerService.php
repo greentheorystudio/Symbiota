@@ -4,6 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 class MailerService {
+
     public function sendEmail($emailAddr,$subject,$bodyStr): ?string
     {
         $returnStr = '';
