@@ -116,7 +116,7 @@ const dateInputElement = {
                         showNotification('negative', 'Date cannot be in the future.');
                     }
                     else if(diffYears > 99){
-                        popupText.value = 'That date is ' + diffYears.toString() + ' years ago, are you sure it\'s correct?';
+                        popupText.value = 'That date was ' + diffYears.toString() + ' years ago, are you sure it\'s correct?';
                         showPopup.value = true;
                     }
                     else{
