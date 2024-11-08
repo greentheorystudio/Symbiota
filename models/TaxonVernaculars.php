@@ -26,9 +26,7 @@ class TaxonVernaculars{
     }
 
     public function __destruct(){
-        if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
     }
 
     public function addTaxonCommonName($tid, $name, $langId): bool
@@ -54,13 +52,17 @@ class TaxonVernaculars{
             if($limit){
                 $sql .= 'LIMIT ' . $limit . ' ';
             }
-            $rs = $this->conn->query($sql);
-            while ($r = $rs->fetch_object()){
-                $scinameArr = array();
-                $scinameArr['tid'] = '';
-                $scinameArr['label'] = $r->VernacularName;
-                $scinameArr['name'] = $r->VernacularName;
-                $retArr[] = $scinameArr;
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $scinameArr = array();
+                    $scinameArr['tid'] = '';
+                    $scinameArr['label'] = $row['VernacularName'];
+                    $scinameArr['name'] = $row['VernacularName'];
+                    $retArr[] = $scinameArr;
+                    unset($rows[$index]);
+                }
             }
         }
         return $retArr;
@@ -73,16 +75,18 @@ class TaxonVernaculars{
             $sql = 'SELECT DISTINCT VID, VernacularName FROM taxavernaculars '.
                 'WHERE TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
                 'ORDER BY VernacularName '.
-                'LIMIT ' . (($index - 1) * 50000) . ', 50000';
+                'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
             //echo $sql;
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $rIndex => $row){
                     $nodeArr = array();
-                    $nodeArr['vid'] = $r->VID;
-                    $nodeArr['vernacularname'] = $r->VernacularName;
+                    $nodeArr['vid'] = $row['VID'];
+                    $nodeArr['vernacularname'] = $row['VernacularName'];
                     $retArr[] = $nodeArr;
+                    unset($rows[$rIndex]);
                 }
-                $rs->free();
             }
         }
         return $retArr;
@@ -92,14 +96,16 @@ class TaxonVernaculars{
     {
         $retArr = array();
         $sql = 'SELECT VernacularName, langid FROM taxavernaculars WHERE TID = ' . (int)$tid . ' ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
-                $nodeArr['commonname'] = $r->VernacularName;
-                $nodeArr['langid'] = $r->langid;
+                $nodeArr['commonname'] = $row['VernacularName'];
+                $nodeArr['langid'] = $row['langid'];
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -109,12 +115,11 @@ class TaxonVernaculars{
         $returnVal = 0;
         $sql = 'SELECT v.tid FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.TID = t.TID '.
             'WHERE v.VernacularName = "' . SanitizerService::cleanInStr($this->conn, $vernacular) . '" ORDER BY t.RankId LIMIT 1 ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $returnVal = $r->tid;
-            }
-            $rs->free();
+        $result = $this->conn->query($sql);
+        if($row = $result->fetch_array(MYSQLI_ASSOC)){
+            $returnVal = $row['tid'];
         }
+        $result->free();
         return $returnVal;
     }
 
@@ -139,14 +144,16 @@ class TaxonVernaculars{
         foreach($vernaculars as $name){
             $whereStr .= "OR v.VernacularName = '" . SanitizerService::cleanInStr($this->conn, $name) . "' ";
         }
-        $sql .= 'WHERE ' .substr($whereStr,3). ' ';
+        $sql .= 'WHERE ' . substr($whereStr,3) . ' ';
         //echo "<div>sql: ".$sql."</div>";
         if($result = $this->conn->query($sql)){
-            while($row = $result->fetch_object()){
-                $searchData[$row->sciname] = $row->tid;
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $searchData[$row['sciname']] = $row['tid'];
+                unset($rows[$index]);
             }
         }
-        $result->free();
         return $searchData;
     }
 

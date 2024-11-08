@@ -39,9 +39,7 @@ class Media{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function createMediaRecord($data): int
@@ -92,7 +90,7 @@ class Media{
         if($property === 'occid' || $property === 'tid'){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM media WHERE ' . $property . ' = ' . (int)$value . ' ';
+                'FROM media WHERE ' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
             if($limitFormat){
                 if($limitFormat === 'audio'){
                     $sql .= 'AND format LIKE "audio/%" ';
@@ -103,17 +101,19 @@ class Media{
             }
             $sql .= 'ORDER BY sortsequence ';
             //echo '<div>'.$sql.'</div>';
-            if($rs = $this->conn->query($sql)){
-                $fields = mysqli_fetch_fields($rs);
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $nodeArr = array();
                     foreach($fields as $val){
                         $name = $val->name;
-                        $nodeArr[$name] = $r->$name;
+                        $nodeArr[$name] = $row[$name];
                     }
                     $returnArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $returnArr;
@@ -126,16 +126,17 @@ class Media{
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM media WHERE mediaid = ' . (int)$mediaid . ' ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $r->$name;
+                    $retArr[$name] = $row[$name];
                 }
                 $retArr['taxonData'] = (int)$retArr['tid'] > 0 ? (new Taxa)->getTaxonFromTid($retArr['tid']) : null;
             }
-            $rs->free();
         }
         return $retArr;
     }

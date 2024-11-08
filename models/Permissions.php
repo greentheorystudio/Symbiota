@@ -36,9 +36,7 @@ class Permissions{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function addPermission($uid, $role, $tablePk = null): void
@@ -73,19 +71,22 @@ class Permissions{
             $userrights = array();
             $sql = 'SELECT role, tablepk FROM userroles WHERE uid = ' . (int)$_SESSION['PARAMS_ARR']['uid'] . ' ';
             //echo $sql;
-            $rs = $this->conn->query($sql);
-            while($r = $rs->fetch_object()){
-                if($r->tablepk){
-                    $userrights[$r->role][] = (int)$r->tablepk;
-                    if(($r->role === 'CollAdmin' || $r->role === 'CollEditor' || $r->role === 'CollTaxon') && !in_array((int)$r->tablepk, $permittedCollections, true)){
-                        $permittedCollections[] = (int)$r->tablepk;
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($row['tablepk']){
+                        $userrights[$row['role']][] = (int)$row['tablepk'];
+                        if(($row['role'] === 'CollAdmin' || $row['role'] === 'CollEditor' || $row['role'] === 'CollTaxon') && !in_array((int)$row['tablepk'], $permittedCollections, true)){
+                            $permittedCollections[] = (int)$row['tablepk'];
+                        }
                     }
-                }
-                else{
-                    $userrights[$r->role] = true;
+                    else{
+                        $userrights[$row['role']] = true;
+                    }
+                    unset($rows[$index]);
                 }
             }
-            $rs->free();
             $_SESSION['USER_RIGHTS'] = $userrights;
             $GLOBALS['USER_RIGHTS'] = $userrights;
             $GLOBALS['PERMITTED_COLLECTIONS'] = $permittedCollections;

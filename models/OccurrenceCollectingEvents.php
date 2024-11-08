@@ -56,9 +56,7 @@ class OccurrenceCollectingEvents{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function createCollectingEventRecord($data): int
@@ -96,25 +94,27 @@ class OccurrenceCollectingEvents{
             'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' '.
             'ORDER BY sciname, identificationqualifier, identificationremarks, rep ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                if($r->rep && $r->individualcount && (int)$r->individualcount > 0){
-                    $key = $r->sciname . ($r->identificationqualifier ? '-' . $r->identificationqualifier : '') . ($r->identificationremarks ? '-' . $r->identificationremarks : '');
-                    $repLabel = 'rep' . (int)$r->rep;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if($row['rep'] && $row['individualcount'] && (int)$row['individualcount'] > 0){
+                    $key = $row['sciname'] . ($row['identificationqualifier'] ? '-' . $row['identificationqualifier'] : '') . ($row['identificationremarks'] ? '-' . $row['identificationremarks'] : '');
+                    $repLabel = 'rep' . (int)$row['rep'];
                     if(!array_key_exists($key, $retArr)){
                         $retArr[$key] = array();
-                        $retArr[$key]['tid'] = $r->tid;
-                        $retArr[$key]['sciname'] = $r->sciname;
-                        $retArr[$key]['family'] = $r->family;
-                        $retArr[$key]['scientificnameauthorship'] = $r->scientificnameauthorship;
-                        $retArr[$key]['identificationqualifier'] = $r->identificationqualifier;
-                        $retArr[$key]['identificationremarks'] = $r->identificationremarks;
+                        $retArr[$key]['tid'] = $row['tid'];
+                        $retArr[$key]['sciname'] = $row['sciname'];
+                        $retArr[$key]['family'] = $row['family'];
+                        $retArr[$key]['scientificnameauthorship'] = $row['scientificnameauthorship'];
+                        $retArr[$key]['identificationqualifier'] = $row['identificationqualifier'];
+                        $retArr[$key]['identificationremarks'] = $row['identificationremarks'];
                     }
-                    $retArr[$key][$repLabel]['occid'] = $r->occid;
-                    $retArr[$key][$repLabel]['cnt'] = $r->individualcount;
+                    $retArr[$key][$repLabel]['occid'] = $row['occid'];
+                    $retArr[$key][$repLabel]['cnt'] = $row['individualcount'];
                 }
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -127,17 +127,19 @@ class OccurrenceCollectingEvents{
             'catalognumber, othercatalognumbers, basisofrecord, verbatimattributes '.
             'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
+                    $nodeArr[$name] = $row[$name];
                 }
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -149,15 +151,16 @@ class OccurrenceCollectingEvents{
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurcollectingevents WHERE eventID = ' . (int)$eventid . ' ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $r->$name;
+                    $retArr[$name] = $row[$name];
                 }
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -182,17 +185,19 @@ class OccurrenceCollectingEvents{
             'WHERE e.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
             'ORDER BY e.eventdate, e.recordnumber ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
+                    $nodeArr[$name] = $row[$name];
                 }
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -261,17 +266,19 @@ class OccurrenceCollectingEvents{
             'WHERE o.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
             'ORDER BY o.eventdate, o.recordnumber ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
+                    $nodeArr[$name] = $row[$name];
                 }
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -294,7 +301,7 @@ class OccurrenceCollectingEvents{
                 }
             }
             $sql = 'UPDATE omoccurcollectingevents SET ' . implode(', ', $sqlPartArr) . ' '.
-                'WHERE eventid = ' . $eventId . ' ';
+                'WHERE eventid = ' . (int)$eventId . ' ';
             //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
@@ -308,7 +315,7 @@ class OccurrenceCollectingEvents{
                         }
                         $occSqlPartArr[] = $fieldStr . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                         $occSql = 'UPDATE omoccurrences SET ' . implode(', ', $occSqlPartArr) . ' '.
-                            'WHERE eventid = ' . $eventId . ' ';
+                            'WHERE eventid = ' . (int)$eventId . ' ';
                         if(!$this->conn->query($occSql)){
                             $retVal = 0;
                         }
