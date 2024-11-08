@@ -779,7 +779,7 @@ body.processing .loadingModal {
 }
 .map-control-panel-inner-container-wide {
 	width: 75%;
-	min-width: 1000px;
+	min-width: 1020px;
 }
 .map-control-panel-inner-container-med {
 	width: 40%;

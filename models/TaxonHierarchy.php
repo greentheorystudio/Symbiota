@@ -11,9 +11,7 @@ class TaxonHierarchy{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function deleteTidFromHierarchyTable($tid): bool
@@ -45,31 +43,35 @@ class TaxonHierarchy{
         $sql = 'SELECT t2.TID, t2.SciName '.
             'FROM taxa AS t LEFT JOIN taxaenumtree AS te ON t.tidaccepted = te.tid  '.
             'LEFT JOIN taxa AS t2 ON te.parenttid = t2.TID  '.
-            'WHERE t.TID = '.$tId.' AND t2.RankId >= 10 '.
+            'WHERE t.TID = ' . (int)$tId . ' AND t2.RankId >= 10 '.
             'ORDER BY t2.RankId ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
-                $nodeArr['tid'] = $r->TID;
-                $nodeArr['sciname'] = $r->SciName;
+                $nodeArr['tid'] = $row['TID'];
+                $nodeArr['sciname'] = $row['SciName'];
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
 
         $sql = 'SELECT t.TID, t2.TID AS accTID, t2.SciName AS accSciName '.
             'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID  '.
-            'WHERE t.TID = '.$tId.' ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                if($r->TID !== $r->accTID){
+            'WHERE t.TID = ' . (int)$tId . ' ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if($row['TID'] !== $row['accTID']){
                     $nodeArr = array();
-                    $nodeArr['tid'] = $r->accTID;
-                    $nodeArr['sciname'] = $r->accSciName;
+                    $nodeArr['tid'] = $row['accTID'];
+                    $nodeArr['sciname'] = $row['accSciName'];
                     $retArr[] = $nodeArr;
                 }
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -101,7 +103,7 @@ class TaxonHierarchy{
         }
         $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
             'SELECT DISTINCT tid, parenttid FROM taxa '.
-            'WHERE '.($tidStr ? 'tid IN('.$tidStr.') AND ' : '').'tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
+            'WHERE ' . ($tidStr ? 'tid IN(' . $tidStr . ') AND ' : '') . 'tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
         //echo $sql . '<br />';;
         if($this->conn->query($sql)){
             $retCnt = $this->conn->affected_rows;
@@ -113,13 +115,13 @@ class TaxonHierarchy{
     {
         $retVal = 1;
         if($tid){
-            $sql = 'DELETE FROM taxaenumtree WHERE parenttid = '.$tid.' ';
+            $sql = 'DELETE FROM taxaenumtree WHERE parenttid = ' . (int)$tid . ' ';
             //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
 
-            $sql = 'UPDATE taxa SET parenttid = '.$parenttid.' WHERE parenttid = '.$tid.' ';
+            $sql = 'UPDATE taxa SET parenttid = ' . (int)$parenttid . ' WHERE parenttid = ' . (int)$tid . ' ';
             //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
@@ -133,11 +135,14 @@ class TaxonHierarchy{
         $sql = 'SELECT DISTINCT t.tid, t.sciname ' .
             'FROM taxa AS t LEFT JOIN taxaenumtree AS te ON t.tid = te.tid ' .
             'WHERE te.parenttid IN(' . implode('', $tidArr) . ') AND t.tidaccepted = t.tid ';
-        $rs = $this->conn->query($sql);
-        while ($r = $rs->fetch_object()) {
-            $searchData[$r->sciname] = $r->tid;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $searchData[$row['sciname']] = $row['tid'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
         return $searchData;
     }
 

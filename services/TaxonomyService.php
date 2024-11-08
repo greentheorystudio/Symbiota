@@ -11,6 +11,10 @@ class TaxonomyService {
         $this->conn = $connection->getConnection();
     }
 
+    public function __destruct(){
+        $this->conn->close();
+    }
+
     public static function formatScientificName($inStr){
         $sciNameStr = trim($inStr);
         $sciNameStr = preg_replace('/\s\s+/', ' ',$sciNameStr);
@@ -134,7 +138,6 @@ class TaxonomyService {
                             unset($sciNameArr);
                         }
                         $rs->free();
-                        $this->conn->close();
                     }
                     if(isset($sciNameArr) && $retArr['unitname2']){
                         $retArr['unitname2'] = strtolower($retArr['unitname2']);
@@ -190,19 +193,22 @@ class TaxonomyService {
                             $sql = 'SELECT unitind3 FROM taxa '.
                                 'WHERE unitname1 = "' . SanitizerService::cleanInStr($this->conn, $retArr['unitname1']) . '" AND unitname2 = "' . SanitizerService::cleanInStr($this->conn, $retArr['unitname2']) . '" AND unitname3 = "' . SanitizerService::cleanInStr($this->conn, $firstWord) . '" ';
                             //echo $sql.'<br/>';
-                            $rs = $this->conn->query($sql);
-                            if($r = $rs->fetch_object()){
-                                $retArr['unitind3'] = $r->unitind3;
-                                $retArr['unitname3'] = $firstWord;
-                                $authorStr = implode(' ',$arr);
-                                if(preg_match('/[A-Z]+/',$authorStr)){
-                                    $retArr['author'] = implode(' ',$arr);
-                                }
-                                else{
-                                    $retArr['author'] = '';
+                            if($result = $this->conn->query($sql)){
+                                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                                $result->free();
+                                foreach($rows as $index => $row){
+                                    $retArr['unitind3'] = $row['unitind3'];
+                                    $retArr['unitname3'] = $firstWord;
+                                    $authorStr = implode(' ', $arr);
+                                    if(preg_match('/[A-Z]+/', $authorStr)){
+                                        $retArr['author'] = implode(' ', $arr);
+                                    }
+                                    else{
+                                        $retArr['author'] = '';
+                                    }
+                                    unset($rows[$index]);
                                 }
                             }
-                            $rs->free();
                         }
                     }
                 }

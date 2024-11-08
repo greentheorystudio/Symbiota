@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/Users.php');
-include_once(__DIR__ . '/../services/EncryptionService.php');
 include_once(__DIR__ . '/../services/DbService.php');
-include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/../services/EncryptionService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class Configurations{
 
@@ -124,9 +124,7 @@ class Configurations{
     }
 
     public function __destruct(){
-        if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
     }
 
     public function addConfiguration($name, $value): bool
@@ -135,14 +133,14 @@ class Configurations{
             $value = EncryptionService::encrypt($value);
         }
         $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
-            'VALUES("'.$name.'","'.$value.'")';
+            'VALUES("' . SanitizerService::cleanInStr($this->conn, $name) . '", "' . SanitizerService::cleanInStr($this->conn, $value) . '") ';
         return $this->conn->query($sql);
     }
 
     public function deleteConfiguration($name): bool
     {
         $sql = 'DELETE FROM configurations '.
-            'WHERE configurationname = "'.$name.'" ';
+            'WHERE configurationname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
         return $this->conn->query($sql);
     }
 
@@ -197,11 +195,14 @@ class Configurations{
     {
         $retArr = array();
         $sql = 'SELECT ccpk, category FROM omcollcategories ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $retArr[$r->ccpk] = $r->category;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[$row['ccpk']] = $row['category'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
         return $retArr;
     }
 
@@ -211,21 +212,24 @@ class Configurations{
         $retArr['core'] = array();
         $retArr['additional'] = array();
         $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $value = $r->configurationvalue;
-            if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
-                $value = EncryptionService::decrypt($value);
-            }
-            $retArr[$r->configurationname] = $value;
-            if(in_array($r->configurationname, $this->coreConfigurations, true)){
-                $retArr['core'][$r->configurationname] = $value;
-            }
-            else{
-                $retArr['additional'][$r->configurationname] = $value;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $value = $row['configurationvalue'];
+                if(strpos($row['configurationname'], 'PASSWORD') !== false || strpos($row['configurationname'], 'USERNAME') !== false){
+                    $value = EncryptionService::decrypt($value);
+                }
+                $retArr[$row['configurationname']] = $value;
+                if(in_array($row['configurationname'], $this->coreConfigurations, true)){
+                    $retArr['core'][$row['configurationname']] = $value;
+                }
+                else{
+                    $retArr['additional'][$row['configurationname']] = $value;
+                }
+                unset($rows[$index]);
             }
         }
-        $rs->free();
         return $retArr;
     }
 
@@ -242,11 +246,13 @@ class Configurations{
         $versionArr = array();
         $versionStr = '';
         $sql = 'SELECT VERSION() AS ver ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $versionStr = $r->ver;
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $versionStr = $row['ver'];
+            }
         }
-        $rs->free();
         if($versionStr){
             if(strpos($versionStr,'MariaDB') !== false){
                 $versionArr['db'] = 'MariaDB';
@@ -382,10 +388,10 @@ class Configurations{
             if($GLOBALS[$key] && $key !== 'confManager' && $key !== 'DB_SERVER' && $key !== 'RIGHTS_TERMS' && $key !== 'GLOBALS' && $key[0] !== '_'){
                 $sql = 'INSERT INTO configurations(configurationname, configurationvalue) ';
                 if(is_array($GLOBALS[$key])){
-                    $sql .= "VALUES('".$key."','".json_encode($GLOBALS[$key])."')";
+                    $sql .= "VALUES('" . SanitizerService::cleanInStr($this->conn, $key) . "', '" . json_encode($GLOBALS[$key]) . "') ";
                 }
                 else{
-                    $sql .= 'VALUES("'.$key.'","'.$GLOBALS[$key].'")';
+                    $sql .= 'VALUES("' . SanitizerService::cleanInStr($this->conn, $key) . '", "' . SanitizerService::cleanInStr($this->conn, $GLOBALS[$key]) . '") ';
                 }
                 $this->conn->query($sql);
             }
@@ -395,7 +401,7 @@ class Configurations{
     public function saveMapServerConfig($json): bool
     {
         $status = true;
-        if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/json/portalconfig.json', 'wb')){
+        if($fh = fopen($GLOBALS['SERVER_ROOT'] . '/content/json/portalconfig.json', 'wb')){
             if(!fwrite($fh,$json)){
                 $status = false;
             }
@@ -410,34 +416,31 @@ class Configurations{
     public function setGlobalArr(): void
     {
         $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
-        $rs = $this->conn->query($sql);
-        if($rs->num_rows){
-            while($r = $rs->fetch_object()){
-                $value = $r->configurationvalue;
-                if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
-                    $value = EncryptionService::decrypt($value);
+        if($result = $this->conn->query($sql)){
+            if($result->num_rows){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $value = $row['configurationvalue'];
+                    if(strpos($row['configurationname'], 'PASSWORD') !== false || strpos($row['configurationname'], 'USERNAME') !== false){
+                        $value = EncryptionService::decrypt($value);
+                    }
+                    $GLOBALS[$row['configurationname']] = $value;
+                    unset($rows[$index]);
                 }
-                $GLOBALS[$r->configurationname] = $value;
+            }
+            else{
+                $this->initializeImportConfigurations();
             }
         }
-        else{
-            $this->initializeImportConfigurations();
-        }
-        $rs->free();
-        /*if(file_exists($GLOBALS['SERVER_ROOT'].'/content/json/portalconfig.json')){
-            $data = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/portalconfig.json'), true);
-            $sql = "UPDATE configurations SET configurationValue = '" . addslashes(json_encode($data['spatialLayerConfig'])) . "' WHERE configurationName = 'SPATIAL_LAYER_CONFIG_JSON' ";
-            //echo $sql;
-            $this->conn->query($sql);
-        }*/
         if(!isset($GLOBALS['CLIENT_ROOT'])){
             $GLOBALS['CLIENT_ROOT'] = '';
         }
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20240927';
-        $GLOBALS['JS_VERSION'] = '202405161111';
+        $GLOBALS['CSS_VERSION'] = '20240928';
+        $GLOBALS['JS_VERSION'] = '2024051611111111111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -499,8 +502,8 @@ class Configurations{
             $value = EncryptionService::encrypt($value);
         }
         $sql = 'UPDATE configurations '.
-            'SET configurationvalue = "'.$value.'" '.
-            'WHERE configurationname = "'.$name.'" ';
+            'SET configurationvalue = "' . SanitizerService::cleanInStr($this->conn, $value) . '" '.
+            'WHERE configurationname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
         return $this->conn->query($sql);
     }
 
@@ -509,11 +512,13 @@ class Configurations{
         $currentCssVersion = '';
         $subVersion = 0;
         $sql = 'SELECT configurationvalue FROM configurations WHERE configurationname = "CSS_VERSION_LOCAL" ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $currentCssVersion = $r->configurationvalue;
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $currentCssVersion = $row['configurationvalue'];
+            }
         }
-        $rs->free();
         $newCssVersion = $this->getCssVersion();
         if($currentCssVersion){
             if(strpos($currentCssVersion, '-') !== false){
@@ -538,11 +543,11 @@ class Configurations{
                 } while($currentCssVersion === $newCssVersion);
             }
             $sql = 'UPDATE configurations '.
-                'SET configurationvalue = "'.$newCssVersion.'" WHERE configurationname = "CSS_VERSION_LOCAL" ';
+                'SET configurationvalue = "' . $newCssVersion . '" WHERE configurationname = "CSS_VERSION_LOCAL" ';
         }
         else{
-            $sql = 'INSERT INTO configurations(configurationname,configurationvalue) '.
-                'VALUES("CSS_VERSION_LOCAL","'.$newCssVersion.'")';
+            $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
+                'VALUES("CSS_VERSION_LOCAL", "' . $newCssVersion . '") ';
         }
         return $this->conn->query($sql);
     }
@@ -777,7 +782,7 @@ class Configurations{
 
     public function validateNewConfNameExisting($name): bool
     {
-        $sql = 'SELECT id FROM configurations WHERE configurationname = "'.$name.'" ';
+        $sql = 'SELECT id FROM configurations WHERE configurationname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
         return $this->conn->query($sql)->num_rows;
     }
 

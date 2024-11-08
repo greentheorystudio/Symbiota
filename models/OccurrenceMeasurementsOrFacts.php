@@ -22,9 +22,7 @@ class OccurrenceMeasurementsOrFacts{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function getMofDataByTypeAndId($type, $id): array
@@ -39,11 +37,13 @@ class OccurrenceMeasurementsOrFacts{
         $sql = 'SELECT mofid, field, datavalue, initialtimestamp '.
             'FROM ommofextension WHERE ' . $field . ' = ' . (int)$id . ' ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $retArr[$r->field] = $r->datavalue;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[$row['field']] = $row['datavalue'];
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }

@@ -24,9 +24,7 @@ class TaxonRanks{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function getRankArr($kingdomId = null): array
@@ -37,17 +35,20 @@ class TaxonRanks{
             $sql .= 'WHERE kingdomid = ' . (int)$kingdomId . ' ';
         }
         $sql .= 'ORDER BY rankid ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            if(array_key_exists($row->rankid, $retArr)){
-                $retArr[$row->rankid]['rankname'] .= ', ' . $row->rankname;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(array_key_exists($row['rankid'], $retArr)){
+                    $retArr[$row['rankid']]['rankname'] .= ', ' . $row['rankname'];
+                }
+                else{
+                    $retArr[$row['rankid']]['rankname'] = $row['rankname'];
+                }
+                $retArr[$row['rankid']]['rankid'] = (int)$row['rankid'];
+                unset($rows[$index]);
             }
-            else{
-                $retArr[$row->rankid]['rankname'] = $row->rankname;
-            }
-            $retArr[$row->rankid]['rankid'] = (int)$row->rankid;
         }
-        $result->free();
         return $retArr;
     }
 
@@ -56,12 +57,15 @@ class TaxonRanks{
         $retArr = array();
         $sql = 'SELECT DISTINCT rankname, rankid FROM taxonunits ';
         //echo $sql;
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $rankName = strtolower($r->rankname);
-            $retArr[$rankName] = (int)$r->rankid;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $rankName = strtolower($row['rankname']);
+                $retArr[$rankName] = (int)$row['rankid'];
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
         return $retArr;
     }
 }

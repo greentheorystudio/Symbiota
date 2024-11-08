@@ -75,39 +75,62 @@ const dateInputElement = {
                 </q-card>
             </q-dialog>
         </template>
+        <q-dialog class="z-top" v-model="showPopup" persistent>
+            <q-card class="q-dialog-plugin q-pa-lg">
+                {{ popupText }}
+                <q-card-actions align="right">
+                    <q-btn color="primary" label="Yes" @click="emitValue" />
+                    <q-btn color="primary" label="Cancel" @click="showPopup = false" />
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
     `,
     setup(props, context) {
         const { parseDate, showNotification } = useCore();
+
+        const dateData = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
+        const popupText = Vue.ref(null);
+        const showPopup = Vue.ref(false);
+
+        function emitValue() {
+            context.emit('update:value', dateData.value);
+            showPopup.value = false;
+        }
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
         }
 
         function processValueChange(value) {
-            let valid = true;
-            const dateData = parseDate(value);
+            dateData.value = Object.assign({}, parseDate(value));
             if(value){
-                if(!dateData['year']){
-                    valid = false;
+                if(!dateData.value['year']){
                     showNotification('negative', 'Unable to interpret the date entered. Please use one of the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy.');
                 }
-                else if(dateData['month'] && dateData['day']){
-                    const testDate = new Date(dateData['year'], (dateData['month'] - 1), dateData['day']);
+                else if(dateData.value['month'] && dateData.value['day']){
+                    const testDate = new Date(dateData.value['year'], (dateData.value['month'] - 1), dateData.value['day']);
                     const today = new Date();
+                    const diffYears = Math.abs(Math.round((((today.getTime() - testDate.getTime()) / 1000) / (60 * 60 * 24)) / 365.25));
                     if(testDate > today){
-                        valid = false;
                         showNotification('negative', 'Date cannot be in the future.');
                     }
+                    else if(diffYears > 99){
+                        popupText.value = 'That date is ' + diffYears.toString() + ' years ago, are you sure it\'s correct?';
+                        showPopup.value = true;
+                    }
+                    else{
+                        emitValue();
+                    }
                 }
-            }
-            if(valid){
-                context.emit('update:value', dateData);
             }
         }
 
         return {
             displayDefinitionPopup,
+            popupText,
+            showPopup,
+            emitValue,
             openDefinitionPopup,
             processValueChange
         }

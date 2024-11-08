@@ -62,9 +62,7 @@ class OccurrenceLocations{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function createLocationRecord($data): int
@@ -102,48 +100,51 @@ class OccurrenceLocations{
             $sql .= 'AND locationname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         }
         $sql .= 'ORDER BY locationcode, locationname, country, stateprovince, county LIMIT 10 ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $label = '';
-            if($r->locationcode || $r->locationname){
-                if($r->locationcode){
-                    $label .= $r->locationcode . ($r->locationname ? ':' : '');
-                }
-                if($r->locationname){
-                    $label .= $r->locationname;
-                }
-                $label .= '; ';
-            }
-            if($r->country || $r->stateprovince || $r->county){
-                if($r->country){
-                    $label .= $r->country . (($r->stateprovince || $r->county) ? ', ' : '');
-                }
-                if($r->stateprovince){
-                    $label .= $r->stateprovince . ($r->county ? ', ' : '');
-                }
-                if($r->county){
-                    $label .= $r->county;
-                }
-                if($r->decimallatitude && $r->decimallongitude){
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $label = '';
+                if($row['locationcode'] || $row['locationname']){
+                    if($row['locationcode']){
+                        $label .= $row['locationcode'] . ($row['locationname'] ? ':' : '');
+                    }
+                    if($row['locationname']){
+                        $label .= $row['locationname'];
+                    }
                     $label .= '; ';
                 }
+                if($row['country'] || $row['stateprovince'] || $row['county']){
+                    if($row['country']){
+                        $label .= $row['country'] . (($row['stateprovince'] || $row['county']) ? ', ' : '');
+                    }
+                    if($row['stateprovince']){
+                        $label .= $row['stateprovince'] . ($row['county'] ? ', ' : '');
+                    }
+                    if($row['county']){
+                        $label .= $row['county'];
+                    }
+                    if($row['decimallatitude'] && $row['decimallongitude']){
+                        $label .= '; ';
+                    }
+                }
+                if($row['decimallatitude'] && $row['decimallongitude']){
+                    $label .= $row['decimallatitude'] . ', ' . $row['decimallongitude'];
+                }
+                $dataArr = array();
+                $dataArr['id'] = $row['locationid'];
+                $dataArr['label'] = $label;
+                $dataArr['locationname'] = $row['locationname'];
+                $dataArr['locationcode'] = $row['locationcode'];
+                $dataArr['country'] = $row['country'];
+                $dataArr['stateprovince'] = $row['stateprovince'];
+                $dataArr['county'] = $row['county'];
+                $dataArr['decimallatitude'] = $row['decimallatitude'];
+                $dataArr['decimallongitude'] = $row['decimallongitude'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
             }
-            if($r->decimallatitude && $r->decimallongitude){
-                $label .= $r->decimallatitude . ', ' . $r->decimallongitude;
-            }
-            $dataArr = array();
-            $dataArr['id'] = $r->locationid;
-            $dataArr['label'] = $label;
-            $dataArr['locationname'] = $r->locationname;
-            $dataArr['locationcode'] = $r->locationcode;
-            $dataArr['country'] = $r->country;
-            $dataArr['stateprovince'] = $r->stateprovince;
-            $dataArr['county'] = $r->county;
-            $dataArr['decimallatitude'] = $r->decimallatitude;
-            $dataArr['decimallongitude'] = $r->decimallongitude;
-            $retArr[] = $dataArr;
         }
-
         return $retArr;
     }
 
@@ -152,17 +153,18 @@ class OccurrenceLocations{
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM omoccurlocations WHERE locationid = ' . $locationid . ' ';
+            'FROM omoccurlocations WHERE locationid = ' . (int)$locationid . ' ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $r->$name;
+                    $retArr[$name] = $row[$name];
                 }
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -179,17 +181,19 @@ class OccurrenceLocations{
             $sql .= 'AND locationid <> ' . $locationid . ' ';
         }
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
+                    $nodeArr[$name] = $row[$name];
                 }
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -210,7 +214,7 @@ class OccurrenceLocations{
                 }
             }
             $sql = 'UPDATE omoccurlocations SET ' . implode(', ', $sqlPartArr) . ' '.
-                'WHERE locationid = ' . $locationId . ' ';
+                'WHERE locationid = ' . (int)$locationId . ' ';
             //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
@@ -219,11 +223,11 @@ class OccurrenceLocations{
                         if(in_array($field, $this->collectingEventOverlapFields)){
                             $sqlOcc = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
                                 'SET o.' . $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
-                                'WHERE o.locationid = ' . $locationId . ' AND (ISNULL(o.eventid) OR ISNULL(e.' . $field . ')) ';
+                                'WHERE o.locationid = ' . (int)$locationId . ' AND (ISNULL(o.eventid) OR ISNULL(e.' . $field . ')) ';
                         }
                         else{
                             $sqlOcc = 'UPDATE omoccurrences SET ' . $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
-                                'WHERE locationid = ' . $locationId . ' ';
+                                'WHERE locationid = ' . (int)$locationId . ' ';
                         }
                         if(!$this->conn->query($sqlOcc)){
                             $retVal = 0;
