@@ -12,9 +12,7 @@ class TaxonDescriptions{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function addTaxonDescriptionStatement($statement): int
@@ -64,23 +62,25 @@ class TaxonDescriptions{
     {
         $retArr = array();
         $sql = 'SELECT tdbid, caption, source, sourceurl, language, displaylevel, notes '.
-            'FROM taxadescrblock WHERE tid = '.$tid.' '.
+            'FROM taxadescrblock WHERE tid = ' . (int)$tid . ' '.
             'ORDER BY displaylevel ';
         //echo $sql;
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $descrArr = array();
-                $descrArr['tdbid'] = $r->tdbid;
-                $descrArr['caption'] = $r->caption;
-                $descrArr['source'] = $r->source;
-                $descrArr['sourceurl'] = $r->sourceurl;
-                $descrArr['language'] = $r->language;
-                $descrArr['displaylevel'] = $r->displaylevel;
-                $descrArr['notes'] = $r->notes;
-                $descrArr['stmts'] = $this->getTaxonDescriptionStatements($r->tdbid);
+                $descrArr['tdbid'] = $row['tdbid'];
+                $descrArr['caption'] = $row['caption'];
+                $descrArr['source'] = $row['source'];
+                $descrArr['sourceurl'] = $row['sourceurl'];
+                $descrArr['language'] = $row['language'];
+                $descrArr['displaylevel'] = $row['displaylevel'];
+                $descrArr['notes'] = $row['notes'];
+                $descrArr['stmts'] = $this->getTaxonDescriptionStatements($row['tdbid']);
                 $retArr[] = $descrArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -89,20 +89,22 @@ class TaxonDescriptions{
     {
         $retArr = array();
         $sql = 'SELECT tdsid, heading, statement, displayheader, notes, sortsequence '.
-            'FROM taxadescrstmts WHERE tdbid = '.$tdbid.' '.
+            'FROM taxadescrstmts WHERE tdbid = ' . (int)$tdbid . ' '.
             'ORDER BY sortsequence';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $statementArr = array();
-                $statementArr['tdsid'] = $r->tdsid;
-                $statementArr['heading'] = $r->heading;
-                $statementArr['statement'] = $r->statement;
-                $statementArr['displayheader'] = $r->displayheader;
-                $statementArr['notes'] = $r->notes;
-                $statementArr['sortsequence'] = $r->sortsequence;
+                $statementArr['tdsid'] = $row['tdsid'];
+                $statementArr['heading'] = $row['heading'];
+                $statementArr['statement'] = $row['statement'];
+                $statementArr['displayheader'] = $row['displayheader'];
+                $statementArr['notes'] = $row['notes'];
+                $statementArr['sortsequence'] = $row['sortsequence'];
                 $retArr[] = $statementArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }

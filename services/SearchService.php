@@ -18,9 +18,7 @@ class SearchService {
     }
 
     public function __destruct(){
-        if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
     }
 
     public function clearSensitiveResultData($resultObj): array
@@ -82,8 +80,11 @@ class SearchService {
                 }
                 //echo '<div>Occid sql: ' . $sql . '</div>';
                 if($result = $this->conn->query($sql)){
-                    while($row = $result->fetch_object()){
-                        $returnArr[] = $row->occid;
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
+                    foreach($rows as $index => $row){
+                        $returnArr[] = $row['occid'];
+                        unset($rows[$index]);
                     }
                 }
             }
@@ -1026,20 +1027,23 @@ class SearchService {
     {
         $sql = 'SELECT o.collid, o.occid, i.thumbnailurl, i.url FROM omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
             'WHERE o.occid IN(' . implode(',', $idArr) . ') ORDER BY o.occid, i.sortsequence ';
-        $rs = $this->conn->query($sql);
-        $previousOccid = 0;
-        while($r = $rs->fetch_object()){
-            if($r->occid !== $previousOccid){
-                if($r->thumbnailurl){
-                    $returnData[$r->occid]['img'] = $r->thumbnailurl;
+        if($result = $this->conn->query($sql)){
+            $previousOccid = 0;
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if($row['occid'] !== $previousOccid){
+                    if($row['thumbnailurl']){
+                        $returnData[$row['occid']]['img'] = $row['thumbnailurl'];
+                    }
+                    if($r->url){
+                        $returnData[$row['occid']]['hasimage'] = true;
+                    }
                 }
-                if($r->url){
-                    $returnData[$r->occid]['hasimage'] = true;
-                }
+                $previousOccid = $row['occid'];
+                unset($rows[$index]);
             }
-            $previousOccid = $r->occid;
         }
-        $rs->free();
         return $returnData;
     }
 

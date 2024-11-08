@@ -11,19 +11,17 @@ class TaxonKingdoms{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function createTaxonKingdomRecord($name): int
     {
         $retVal = 0;
-        $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("'.SanitizerService::cleanInStr($this->conn,$name).'")';
+        $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("' . SanitizerService::cleanInStr($this->conn, $name) . '")';
         if($this->conn->query($sql)){
             $retVal = $this->conn->insert_id;
             $sql = 'INSERT INTO taxonunits(kingdomid,rankid,rankname,dirparentrankid,reqparentrankid) '.
-                'SELECT '.$retVal.',rankid,rankname,dirparentrankid,reqparentrankid '.
+                'SELECT ' . $retVal . ', rankid, rankname, dirparentrankid, reqparentrankid '.
                 'FROM taxonunits WHERE kingdomid = 100 ';
             $this->conn->query($sql);
         }
@@ -38,15 +36,18 @@ class TaxonKingdoms{
             'WHERE t.tid IS NOT NULL '.
             'ORDER BY t.SciName ';
         //echo $sql;
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $tArr = array();
-            $tArr['id'] = $r->kingdom_id;
-            $tArr['tid'] = $r->tid;
-            $tArr['name'] = $r->sciname;
-            $retArr[] = $tArr;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $tArr = array();
+                $tArr['id'] = $row['kingdom_id'];
+                $tArr['tid'] = $row['tid'];
+                $tArr['name'] = $row['sciname'];
+                $retArr[] = $tArr;
+                unset($rows[$index]);
+            }
         }
-        $rs->free();
         return $retArr;
     }
 
@@ -55,22 +56,24 @@ class TaxonKingdoms{
         if(is_numeric($tid) && is_numeric($tidNew)){
             $oldKingdomId = 0;
             $newKingdomId = 0;
-            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.SciName = k.kingdom_name WHERE t.TID = '.$tid.' ';
-            $rs = $this->conn->query($sql);
-            if($r = $rs->fetch_object()){
-                $oldKingdomId = $r->kingdom_id;
+            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.SciName = k.kingdom_name WHERE t.TID = ' . (int)$tid . ' ';
+            $result = $this->conn->query($sql);
+            if($row = $result->fetch_array(MYSQLI_ASSOC)){
+                $oldKingdomId = $row['kingdom_id'];
             }
-            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.SciName = k.kingdom_name WHERE t.TID = '.$tidNew.' ';
-            $rs = $this->conn->query($sql);
-            if($r = $rs->fetch_object()){
-                $newKingdomId = $r->kingdom_id;
+            $result->free();
+            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.SciName = k.kingdom_name WHERE t.TID = ' . (int)$tidNew . ' ';
+            $result = $this->conn->query($sql);
+            if($row = $result->fetch_array(MYSQLI_ASSOC)){
+                $newKingdomId = $row['kingdom_id'];
             }
+            $result->free();
             if($oldKingdomId && $newKingdomId){
-                $sql = 'UPDATE taxa SET kingdomId = '.$newKingdomId.' WHERE kingdomId = '.$oldKingdomId.' ';
+                $sql = 'UPDATE taxa SET kingdomId = '.$newKingdomId.' WHERE kingdomId = ' . (int)$oldKingdomId . ' ';
                 $this->conn->query($sql);
-                $sql = 'DELETE FROM taxonkingdoms WHERE kingdom_id = '.$oldKingdomId.' ';
+                $sql = 'DELETE FROM taxonkingdoms WHERE kingdom_id = ' . (int)$oldKingdomId . ' ';
                 $this->conn->query($sql);
-                $sql = 'DELETE FROM taxonunits WHERE kingdomid = '.$oldKingdomId.' ';
+                $sql = 'DELETE FROM taxonunits WHERE kingdomid = ' . (int)$oldKingdomId . ' ';
                 $this->conn->query($sql);
             }
         }

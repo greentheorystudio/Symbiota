@@ -65,7 +65,7 @@ const spatialSymbologyTab = {
                                 </template>
                             </template>
                             <template v-for="key in symbologyArr['taxonomy']">
-                                <template v-if="key.hasOwnProperty('taxa')">
+                                <template v-if="key.hasOwnProperty('taxa') && key['taxa'].length > 0">
                                     <div class="q-mt-sm">
                                         <div class="text-body1 text-bold">
                                             {{ key.value }}

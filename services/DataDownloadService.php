@@ -5,19 +5,6 @@ include_once(__DIR__ . '/SanitizerService.php');
 
 class DataDownloadService {
 
-    private $conn;
-
-    public function __construct(){
-        $connection = new DbService();
-        $this->conn = $connection->getConnection();
-    }
-
-    public function __destruct(){
-        if($this->conn) {
-            $this->conn->close();
-        }
-    }
-
     public function getContentTypeFromFileType($fileType): string
     {
         $returnVal = '';

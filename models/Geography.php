@@ -12,9 +12,7 @@ class Geography {
     }
 
     public function __destruct(){
-        if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
     }
 
     public function getAutocompleteCountryList($queryString): array
@@ -22,14 +20,17 @@ class Geography {
         $retArr = array();
         $sql = 'SELECT DISTINCT countryid, countryname FROM lkupcountry ';
         $sql .= 'WHERE countryname LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $dataArr = array();
-            $dataArr['id'] = $r->countryid;
-            $dataArr['name'] = $r->countryname;
-            $retArr[] = $dataArr;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $dataArr = array();
+                $dataArr['id'] = $row['countryid'];
+                $dataArr['name'] = $row['countryname'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
+            }
         }
-
         return $retArr;
     }
 
@@ -40,19 +41,22 @@ class Geography {
         if($stateProvince){
             $sql .= 'LEFT JOIN lkupstateprovince AS s ON c.stateid = s.stateid ';
         }
-        $sql .= 'WHERE c.countyname LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'WHERE c.countyname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         if($stateProvince){
-            $sql .= 'AND s.statename = "'.$stateProvince.'" ';
+            $sql .= 'AND s.statename = "' . SanitizerService::cleanInStr($this->conn, $stateProvince) . '" ';
         }
-        $sql .= 'ORDER BY c.countyname';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $dataArr = array();
-            $dataArr['id'] = $r->countyid;
-            $dataArr['name'] = $r->countyname;
-            $retArr[] = $dataArr;
+        $sql .= 'ORDER BY c.countyname ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $dataArr = array();
+                $dataArr['id'] = $row['countyid'];
+                $dataArr['name'] = $row['countyname'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
+            }
         }
-
         return $retArr;
     }
 
@@ -63,19 +67,22 @@ class Geography {
         if($country){
             $sql .= 'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid ';
         }
-        $sql .= 'WHERE s.statename LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'WHERE s.statename LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         if($country){
-            $sql .= 'AND c.countryname = "'.$country.'" ';
+            $sql .= 'AND c.countryname = "' . SanitizerService::cleanInStr($this->conn, $country) . '" ';
         }
-        $sql .= 'ORDER BY s.statename';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $dataArr = array();
-            $dataArr['id'] = $r->stateid;
-            $dataArr['name'] = $r->statename;
-            $retArr[] = $dataArr;
+        $sql .= 'ORDER BY s.statename ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $dataArr = array();
+                $dataArr['id'] = $row['stateid'];
+                $dataArr['name'] = $row['statename'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
+            }
         }
-
         return $retArr;
     }
 }

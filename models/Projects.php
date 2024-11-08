@@ -29,9 +29,7 @@ class Projects{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function getProjectListByUserRights(): array
@@ -42,15 +40,17 @@ class Projects{
             $cArr = $GLOBALS['USER_RIGHTS']['ProjAdmin'];
         }
         if($cArr){
-            $sql = 'SELECT pid, projname FROM fmprojects WHERE pid IN('.implode(',', $cArr).') ORDER BY projname ';
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
+            $sql = 'SELECT pid, projname FROM fmprojects WHERE pid IN(' . implode(',', $cArr) . ') ORDER BY projname ';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $nodeArr = array();
-                    $nodeArr['pid'] = $r->pid;
-                    $nodeArr['projname'] = $r->projname;
+                    $nodeArr['pid'] = $row['pid'];
+                    $nodeArr['projname'] = $row['projname'];
                     $retArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $retArr;

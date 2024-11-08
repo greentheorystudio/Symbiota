@@ -42,9 +42,7 @@ class Images{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function addImageTag($imgid, $tag): int
@@ -145,7 +143,7 @@ class Images{
         if($property === 'occid' || $property === 'tid'){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM images WHERE ' . $property . ' = ' . (int)$value . ' ';
+                'FROM images WHERE ' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
             if($property === 'tid' && !$includeOccurrence){
                 $sql .= 'AND ISNULL(occid) ';
             }
@@ -154,18 +152,20 @@ class Images{
                 $sql .= 'LIMIT ' . (int)$limit . ' ';
             }
             //echo '<div>'.$sql.'</div>';
-            if($rs = $this->conn->query($sql)){
-                $fields = mysqli_fetch_fields($rs);
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $nodeArr = array();
                     foreach($fields as $val){
                         $name = $val->name;
-                        $nodeArr[$name] = $r->$name;
+                        $nodeArr[$name] = $row[$name];
                     }
-                    $nodeArr['tagArr'] = $this->getImageTags($r->imgid);
+                    $nodeArr['tagArr'] = $this->getImageTags($row['imgid']);
                     $returnArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $returnArr;
@@ -186,17 +186,19 @@ class Images{
                 $sql .= 'LIMIT ' . (int)$limit . ' ';
             }
             //echo '<div>'.$sql.'</div>';
-            if($rs = $this->conn->query($sql)){
-                $fields = mysqli_fetch_fields($rs);
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $nodeArr = array();
                     foreach($fields as $val){
                         $name = $val->name;
-                        $nodeArr[$name] = $r->$name;
+                        $nodeArr[$name] = $row[$name];
                     }
                     $returnArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $returnArr;
@@ -209,17 +211,18 @@ class Images{
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM images WHERE imgid = ' . (int)$imgid . ' ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $r->$name;
+                    $retArr[$name] = $row[$name];
                 }
-                $retArr['tagArr'] = $this->getImageTags($r->imgid);
+                $retArr['tagArr'] = $this->getImageTags($row['imgid']);
                 $retArr['taxonData'] = (int)$retArr['tid'] > 0 ? (new Taxa)->getTaxonFromTid($retArr['tid']) : null;
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -229,11 +232,13 @@ class Images{
         $retArr = array();
         $sql = 'SELECT keyvalue FROM imagetag WHERE imgid = ' . (int)$imgid . ' ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $retArr[] = $r->keyvalue;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['keyvalue'];
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }

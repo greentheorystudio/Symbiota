@@ -24,9 +24,7 @@ class OccurrenceGeneticLinks{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function createOccurrenceGeneticLinkageRecord($data): int
@@ -73,17 +71,19 @@ class OccurrenceGeneticLinks{
             'FROM omoccurgenetic '.
             'WHERE occid = ' . (int)$occid . ' ORDER BY resourcename ';
         //echo '<div>'.$sql.'</div>';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            while($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $r->$name;
+                    $nodeArr[$name] = $row[$name];
                 }
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }

@@ -41,9 +41,7 @@ class Taxa{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function addTaxonIdentifier($tid, $idName, $id): int
@@ -52,13 +50,13 @@ class Taxa{
         if($tid && $idName && $id){
             $identifierName = SanitizerService::cleanInStr($this->conn, $idName);
             $identifier = SanitizerService::cleanInStr($this->conn, $id);
-            $sql = 'INSERT IGNORE INTO taxaidentifiers(tid,`name`,identifier) VALUES('.
-                $tid . ',"' . $identifierName . '", "' . $identifier . '")';
+            $sql = 'INSERT IGNORE INTO taxaidentifiers(tid, `name`, identifier) VALUES('.
+                (int)$tid . ',"' . $identifierName . '", "' . $identifier . '")';
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
             else{
-                $sql = 'UPDATE taxaidentifiers SET identifier = "' . $identifier . '" WHERE tid = ' . $tid . ' AND `name` = "' . $identifierName . '" ';
+                $sql = 'UPDATE taxaidentifiers SET identifier = "' . $identifier . '" WHERE tid = ' . (int)$tid . ' AND `name` = "' . $identifierName . '" ';
                 if($this->conn->query($sql)){
                     $returnVal = 1;
                 }
@@ -140,7 +138,7 @@ class Taxa{
         $status = '';
         if($tId && is_numeric($parentTid) && $parentTid){
             $sql = 'UPDATE taxa '.
-                'SET parenttid = ' . $parentTid . ' '.
+                'SET parenttid = ' . (int)$parentTid . ' '.
                 'WHERE tid = ' . (int)$tId . ' ';
             if(!$this->conn->query($sql)){
                 $status = 'Unable to edit taxonomic placement.';
@@ -154,25 +152,25 @@ class Taxa{
         $retVal = 0;
         if($tid){
             $sql = 'SELECT DISTINCT TID FROM taxa '.
-                'WHERE TID IN(SELECT tid FROM taxa WHERE parenttid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM taxa WHERE TID <> tidaccepted AND tidaccepted = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM fmchklsttaxalink WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM fmdyncltaxalink WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM fmvouchers WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM glossarysources WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM glossarytaxalink WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM images WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM kmchartaxalink WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM kmdescr WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM media WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM omoccurassociations WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM omoccurdeterminations WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM omoccurrences WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM referencetaxalink WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM taxadescrblock WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM taxamaps WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM tmtraittaxalink WHERE tid = '.$tid.') '.
-                'OR TID IN(SELECT tid FROM usertaxonomy WHERE tid = '.$tid.') ';
+                'WHERE TID IN(SELECT tid FROM taxa WHERE parenttid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM taxa WHERE TID <> tidaccepted AND tidaccepted = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM fmchklsttaxalink WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM fmdyncltaxalink WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM fmvouchers WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM glossarysources WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM glossarytaxalink WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM images WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM kmchartaxalink WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM kmdescr WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM media WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM omoccurassociations WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM omoccurdeterminations WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM omoccurrences WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM referencetaxalink WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM taxadescrblock WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM taxamaps WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM tmtraittaxalink WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM usertaxonomy WHERE tid = ' . (int)$tid . ') ';
             //echo $sql;
             $rs = $this->conn->query($sql);
             $retVal = $rs->num_rows;
@@ -186,23 +184,25 @@ class Taxa{
         $retArr = array();
         if($parentTid){
             $sql = 'SELECT DISTINCT TID, SciName, parenttid FROM taxa '.
-                'WHERE TID = tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ') '.
-                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ')) ';
+                'WHERE TID = tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
+                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ')) ';
             if($rankId){
-                $sql .= 'AND RankId = ' . $rankId . ' ';
+                $sql .= 'AND RankId = ' . (int)$rankId . ' ';
             }
             $sql .= 'ORDER BY SciName '.
-                'LIMIT ' . (($index - 1) * 50000) . ', 50000';
+                'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
             //echo $sql;
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $rIndex => $row){
                     $nodeArr = array();
-                    $nodeArr['tid'] = $r->TID;
-                    $nodeArr['sciname'] = $r->SciName;
-                    $nodeArr['parenttid'] = $r->parenttid;
+                    $nodeArr['tid'] = $row['TID'];
+                    $nodeArr['sciname'] = $row['SciName'];
+                    $nodeArr['parenttid'] = $row['parenttid'];
                     $retArr[] = $nodeArr;
+                    unset($rows[$rIndex]);
                 }
-                $rs->free();
             }
         }
         return $retArr;
@@ -214,23 +214,26 @@ class Taxa{
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(m.mediaid) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN media AS m ON t.TID = m.tid '.
-            'WHERE (te.parenttid = ' . $tid . ' OR t.TID = ' . $tid . ') AND t.TID = t.tidaccepted AND (m.format LIKE "audio/%" OR ISNULL(m.format)) ';
+            'WHERE (te.parenttid = ' . (int)$tid . ' OR t.TID = ' . (int)$tid . ') AND t.TID = t.tidaccepted AND (m.format LIKE "audio/%" OR ISNULL(m.format)) ';
         if(!$includeOcc){
             $sql .= 'AND ISNULL(m.occid) ';
         }
         $sql .= 'GROUP BY t.TID '.
             'ORDER BY t.RankId, t.SciName '.
-            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $resultArr = array();
-            $resultArr['tid'] = $row->TID;
-            $resultArr['sciname'] = $row->SciName;
-            $resultArr['rankid'] = $row->RankId;
-            $resultArr['cnt'] = $row->cnt;
-            $retArr[] = $resultArr;
+            'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $rIndex => $row){
+                $resultArr = array();
+                $resultArr['tid'] = $row['TID'];
+                $resultArr['sciname'] = $row['SciName'];
+                $resultArr['rankid'] = $row['RankId'];
+                $resultArr['cnt'] = $row['cnt'];
+                $retArr[] = $resultArr;
+                unset($rows[$rIndex]);
+            }
         }
-        $result->free();
         return $retArr;
     }
 
@@ -270,19 +273,21 @@ class Taxa{
             if($limit){
                 $sql .= 'LIMIT ' . $limit . ' ';
             }
-            if($rs = $this->conn->query($sql)){
-                $fields = mysqli_fetch_fields($rs);
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $scinameArr = array();
-                    $label = $r->sciname . ($hideAuth ? '' : (' ' . $r->author));
+                    $label = $row['sciname'] . ($hideAuth ? '' : (' ' . $row['author']));
                     $scinameArr['label'] = $label;
                     foreach($fields as $val){
                         $name = $val->name;
-                        $scinameArr[$name] = $r->$name;
+                        $scinameArr[$name] = $row[$name];
                     }
                     $retArr[] = $scinameArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $retArr;
@@ -292,18 +297,20 @@ class Taxa{
     {
         $retArr = array();
         $sql = 'SELECT TID, SciName, Author, RankId, family '.
-            'FROM taxa WHERE parenttid = '.$tid.' AND TID = tidaccepted ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
+            'FROM taxa WHERE parenttid = ' . (int)$tid . ' AND TID = tidaccepted ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
-                $nodeArr['tid'] = $r->TID;
-                $nodeArr['sciname'] = $r->SciName;
-                $nodeArr['author'] = $r->Author;
-                $nodeArr['rankid'] = $r->RankId;
-                $nodeArr['family'] = $r->family;
+                $nodeArr['tid'] = $row['TID'];
+                $nodeArr['sciname'] = $row['SciName'];
+                $nodeArr['author'] = $row['Author'];
+                $nodeArr['rankid'] = $row['RankId'];
+                $nodeArr['family'] = $row['family'];
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -313,17 +320,20 @@ class Taxa{
         $retArr = array();
         $sql = 'SELECT tid, sciname FROM taxa ';
         if($kingdomId){
-            $sql .= 'WHERE kingdomId = ' . $kingdomId . ' ';
+            $sql .= 'WHERE kingdomId = ' . (int)$kingdomId . ' ';
         }
         $sql .= 'ORDER BY sciname ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                if($name !== $r->sciname && levenshtein($name,$r->sciname) <= $levDistance){
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if($name !== $row['sciname'] && levenshtein($name, $row['sciname']) <= $levDistance){
                     $valArr = array();
-                    $valArr['tid'] = $r->tid;
-                    $valArr['sciname'] = $r->sciname;
+                    $valArr['tid'] = $row['tid'];
+                    $valArr['sciname'] = $row['sciname'];
                     $retArr[] = $valArr;
                 }
+                unset($rows[$index]);
             }
         }
         return $retArr;
@@ -335,20 +345,23 @@ class Taxa{
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(tdb.tdbid) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN taxadescrblock AS tdb ON t.TID = tdb.tid '.
-            'WHERE (te.parenttid = ' . $tid . ' OR t.TID = ' . $tid . ') AND t.TID = t.tidaccepted '.
+            'WHERE (te.parenttid = ' . (int)$tid . ' OR t.TID = ' . (int)$tid . ') AND t.TID = t.tidaccepted '.
             'GROUP BY t.TID '.
             'ORDER BY t.RankId, t.SciName '.
-            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $resultArr = array();
-            $resultArr['tid'] = $row->TID;
-            $resultArr['sciname'] = $row->SciName;
-            $resultArr['rankid'] = $row->RankId;
-            $resultArr['cnt'] = $row->cnt;
-            $retArr[] = $resultArr;
+            'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $rIndex => $row){
+                $resultArr = array();
+                $resultArr['tid'] = $row['TID'];
+                $resultArr['sciname'] = $row['SciName'];
+                $resultArr['rankid'] = $row['RankId'];
+                $resultArr['cnt'] = $row['cnt'];
+                $retArr[] = $resultArr;
+                unset($rows[$rIndex]);
+            }
         }
-        $result->free();
         return $retArr;
     }
 
@@ -358,16 +371,19 @@ class Taxa{
         $sql = 'SELECT t.TID, ti.identifier '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN taxaidentifiers AS ti ON t.TID = ti.tid '.
-            'WHERE (te.parenttid = ' . $tid . ' OR t.TID = ' . $tid . ') AND ti.name = "' . SanitizerService::cleanInStr($this->conn, $source) . '" '.
-            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $resultArr = array();
-            $resultArr['tid'] = $row->TID;
-            $resultArr['identifier'] = $row->identifier;
-            $retArr[] = $resultArr;
+            'WHERE (te.parenttid = ' . (int)$tid . ' OR t.TID = ' . (int)$tid . ') AND ti.name = "' . SanitizerService::cleanInStr($this->conn, $source) . '" '.
+            'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $rIndex => $row){
+                $resultArr = array();
+                $resultArr['tid'] = $row['TID'];
+                $resultArr['identifier'] = $row['identifier'];
+                $retArr[] = $resultArr;
+                unset($rows[$rIndex]);
+            }
         }
-        $result->free();
         return $retArr;
     }
 
@@ -377,23 +393,26 @@ class Taxa{
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(i.imgid) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN images AS i ON t.TID = i.tid '.
-            'WHERE (te.parenttid = ' . $tid . ' OR t.TID = ' . $tid . ') AND t.TID = t.tidaccepted ';
+            'WHERE (te.parenttid = ' . (int)$tid . ' OR t.TID = ' . (int)$tid . ') AND t.TID = t.tidaccepted ';
         if(!$includeOcc){
             $sql .= 'AND ISNULL(i.occid) ';
         }
         $sql .= 'GROUP BY t.TID '.
             'ORDER BY t.RankId, t.SciName '.
-            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $resultArr = array();
-            $resultArr['tid'] = $row->TID;
-            $resultArr['sciname'] = $row->SciName;
-            $resultArr['rankid'] = $row->RankId;
-            $resultArr['cnt'] = $row->cnt;
-            $retArr[] = $resultArr;
+            'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $rIndex => $row){
+                $resultArr = array();
+                $resultArr['tid'] = $row['TID'];
+                $resultArr['sciname'] = $row['SciName'];
+                $resultArr['rankid'] = $row['RankId'];
+                $resultArr['cnt'] = $row['cnt'];
+                $retArr[] = $resultArr;
+                unset($rows[$rIndex]);
+            }
         }
-        $result->free();
         return $retArr;
     }
 
@@ -402,18 +421,20 @@ class Taxa{
         $retArr = array();
         if($parentTid){
             $sql = 'SELECT DISTINCT t.RankId, tu.rankname FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.RankId = tu.rankid AND t.kingdomId = tu.kingdomid '.
-                'WHERE t.TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
-                'OR t.parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') '.
+                'WHERE t.TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
+                'OR t.parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
                 'ORDER BY t.RankId ';
             //echo $sql;
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $nodeArr = array();
-                    $nodeArr['rankid'] = $r->RankId;
-                    $nodeArr['rankname'] = $r->rankname;
+                    $nodeArr['rankid'] = $row['RankId'];
+                    $nodeArr['rankname'] = $row['rankname'];
                     $retArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $retArr;
@@ -424,12 +445,14 @@ class Taxa{
         $retArr = array();
         $sql = 'SELECT DISTINCT tid, sciname FROM taxa  '.
             'WHERE sciname IN("' . implode('","', $nameArr) . '") ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $retArr[strtolower($r->sciname)]['tid'] = $r->tid;
-                $retArr[strtolower($r->sciname)]['sciname'] = $r->sciname;
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[strtolower($row['sciname'])]['tid'] = $row['tid'];
+                $retArr[strtolower($row['sciname'])]['sciname'] = $row['sciname'];
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -446,22 +469,23 @@ class Taxa{
             'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
             'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
             'WHERE t.SciName = "' . SanitizerService::cleanInStr($this->conn, $sciname) . '" AND t.kingdomId = ' . (int)$kingdomId . ' ';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $r->$name;
+                    $retArr[$name] = $row[$name];
                 }
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($r->tid);
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($row['tid']);
                 if($includeCommonNames){
-                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($r->tid);
+                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($row['tid']);
                 }
                 if($includeChildren){
-                    $retArr['children'] = $this->getChildTaxaFromTid($r->tid);
+                    $retArr['children'] = $this->getChildTaxaFromTid($row['tid']);
                 }
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -478,22 +502,23 @@ class Taxa{
             'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
             'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
             'WHERE t.tid = ' . (int)$tid . ' ';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $r->$name;
+                    $retArr[$name] = $row[$name];
                 }
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($tid);
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($row['tid']);
                 if($includeCommonNames){
-                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($tid);
+                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($row['tid']);
                 }
                 if($includeChildren){
-                    $retArr['children'] = $this->getChildTaxaFromTid($tid);
+                    $retArr['children'] = $this->getChildTaxaFromTid($row['tid']);
                 }
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -501,15 +526,17 @@ class Taxa{
     public function getTaxonIdentifiersFromTid($tid): array
     {
         $retArr = array();
-        $sql = 'SELECT `name`, identifier FROM taxaidentifiers WHERE tid = '.$tid.' ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
+        $sql = 'SELECT `name`, identifier FROM taxaidentifiers WHERE tid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
                 $nodeArr = array();
-                $nodeArr['name'] = $r->name;
-                $nodeArr['identifier'] = $r->identifier;
+                $nodeArr['name'] = $row['name'];
+                $nodeArr['identifier'] = $row['identifier'];
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -520,22 +547,23 @@ class Taxa{
         if(!$limitToAccepted){
             $sql = 'SELECT t.TID, t.SciName, t.Author, tu.rankname '.
                 'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid  '.
-                'WHERE t.tidaccepted = '.$tId.' AND TID <> tidaccepted '.
+                'WHERE t.tidaccepted = ' . (int)$tId . ' AND TID <> tidaccepted '.
                 'ORDER BY tu.rankid, t.SciName ';
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
-                    $nTid = $r->TID;
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $nodeArr = array();
-                    $nodeArr['tid'] = $nTid;
-                    $nodeArr['sciname'] = $r->SciName;
-                    $nodeArr['author'] = $r->Author;
-                    $nodeArr['rankname'] = $r->rankname;
+                    $nodeArr['tid'] = $row['TID'];
+                    $nodeArr['sciname'] = $row['SciName'];
+                    $nodeArr['author'] = $row['Author'];
+                    $nodeArr['rankname'] = $row['rankname'];
                     $nodeArr['nodetype'] = 'synonym';
                     $nodeArr['expandable'] = false;
                     $nodeArr['lazy'] = false;
                     $retArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
 
@@ -543,28 +571,29 @@ class Taxa{
             'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid  '.
             'WHERE t.parenttid = '.$tId.' AND TID = tidaccepted '.
             'ORDER BY tu.rankid, t.SciName ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $nTid = $r->TID;
-                $expandable = $this->taxonHasChildren($nTid);
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $expandable = $this->taxonHasChildren($row['TID']);
                 $nodeArr = array();
-                $nodeArr['tid'] = $nTid;
-                $nodeArr['sciname'] = $r->SciName;
-                $nodeArr['author'] = $r->Author;
-                $nodeArr['rankname'] = $r->rankname;
+                $nodeArr['tid'] = $row['TID'];
+                $nodeArr['sciname'] = $row['SciName'];
+                $nodeArr['author'] = $row['Author'];
+                $nodeArr['rankname'] = $row['rankname'];
                 $nodeArr['nodetype'] = 'child';
                 $nodeArr['expandable'] = $expandable;
                 $nodeArr['lazy'] = $expandable;
                 if($includeImage){
                     $nodeArr['image'] = null;
-                    $imageArr = (new Images)->getImageArrByTaxonomicGroup($nTid, false, 1);
+                    $imageArr = (new Images)->getImageArrByTaxonomicGroup($row['TID'], false, 1);
                     if(count($imageArr) > 0){
                         $nodeArr['image'] = $imageArr[0]['url'];
                     }
                 }
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -575,21 +604,22 @@ class Taxa{
         $sql = 'SELECT TID, SciName, Author FROM taxa '.
             'WHERE RankId = 10 AND TID = tidaccepted '.
             'ORDER BY SciName ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $nTid = $r->TID;
-                $expandable = $this->taxonHasChildren($nTid);
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $expandable = $this->taxonHasChildren($row['TID']);
                 $nodeArr = array();
-                $nodeArr['tid'] = $nTid;
-                $nodeArr['sciname'] = $r->SciName;
-                $nodeArr['author'] = $r->Author;
+                $nodeArr['tid'] = $row['TID'];
+                $nodeArr['sciname'] = $row['SciName'];
+                $nodeArr['author'] = $row['Author'];
                 $nodeArr['rankname'] = 'Kingdom';
                 $nodeArr['nodetype'] = 'child';
                 $nodeArr['expandable'] = $expandable;
                 $nodeArr['lazy'] = $expandable;
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
-            $rs->free();
         }
         return $retArr;
     }
@@ -608,11 +638,11 @@ class Taxa{
             if($author){
                 $sql .= 'AND author = "' . SanitizerService::cleanInStr($this->conn, $author) . '" ';
             }
-            $rs = $this->conn->query($sql);
-            if($r = $rs->fetch_object()){
-                $retTid = (int)$r->tid;
+            $result = $this->conn->query($sql);
+            if($row = $result->fetch_array(MYSQLI_ASSOC)){
+                $retTid = (int)$row['tid'];
             }
-            $rs->close();
+            $result->free();
         }
         return $retTid;
     }
@@ -622,22 +652,24 @@ class Taxa{
         $retArr = array();
         if($parentTid){
             $sql = 'SELECT DISTINCT TID, SciName FROM taxa '.
-                'WHERE TID <> tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ') '.
-                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ')) ';
+                'WHERE TID <> tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
+                'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ')) ';
             if($rankId){
-                $sql .= 'AND RankId = ' . $rankId . ' ';
+                $sql .= 'AND RankId = ' . (int)$rankId . ' ';
             }
             $sql .= 'ORDER BY SciName '.
-                'LIMIT ' . (($index - 1) * 50000) . ', 50000';
+                'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
             //echo $sql;
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $rIndex => $row){
                     $nodeArr = array();
-                    $nodeArr['tid'] = $r->TID;
-                    $nodeArr['sciname'] = $r->SciName;
+                    $nodeArr['tid'] = $row['TID'];
+                    $nodeArr['sciname'] = $row['SciName'];
                     $retArr[] = $nodeArr;
+                    unset($rows[$rIndex]);
                 }
-                $rs->free();
             }
         }
         return $retArr;
@@ -649,23 +681,26 @@ class Taxa{
         $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(m.mediaid) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN media AS m ON t.TID = m.tid '.
-            'WHERE (te.parenttid = ' . $tid . ' OR t.TID = ' . $tid . ') AND t.TID = t.tidaccepted AND (m.format LIKE "video/%" OR ISNULL(m.format)) ';
+            'WHERE (te.parenttid = ' . (int)$tid . ' OR t.TID = ' . (int)$tid . ') AND t.TID = t.tidaccepted AND (m.format LIKE "video/%" OR ISNULL(m.format)) ';
         if(!$includeOcc){
             $sql .= 'AND ISNULL(m.occid) ';
         }
         $sql .= 'GROUP BY t.TID '.
             'ORDER BY t.RankId, t.SciName '.
-            'LIMIT ' . (($index - 1) * 50000) . ', 50000';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $resultArr = array();
-            $resultArr['tid'] = $row->TID;
-            $resultArr['sciname'] = $row->SciName;
-            $resultArr['rankid'] = $row->RankId;
-            $resultArr['cnt'] = $row->cnt;
-            $retArr[] = $resultArr;
+            'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $rIndex => $row){
+                $resultArr = array();
+                $resultArr['tid'] = $row['TID'];
+                $resultArr['sciname'] = $row['SciName'];
+                $resultArr['rankid'] = $row['RankId'];
+                $resultArr['cnt'] = $row['cnt'];
+                $retArr[] = $resultArr;
+                unset($rows[$rIndex]);
+            }
         }
-        $result->free();
         return $retArr;
     }
 
@@ -675,30 +710,36 @@ class Taxa{
             $targetTidArr = array();
             if($key){
                 $sql = 'SELECT tid, tidaccepted FROM taxa WHERE sciname IN("' . $key . '") ';
-                $rs = $this->conn->query($sql);
-                while($r = $rs->fetch_object()){
-                    if($r->tid && !in_array($r->tid, $targetTidArr, true)){
-                        $targetTidArr[] = $r->tid;
-                    }
-                    if($r->tidaccepted && !in_array($r->tidaccepted, $targetTidArr, true)){
-                        $targetTidArr[] = $r->tidaccepted;
+                if($result = $this->conn->query($sql)){
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
+                    foreach($rows as $index => $row){
+                        if($row['tid'] && !in_array($row['tid'], $targetTidArr, true)){
+                            $targetTidArr[] = $row['tid'];
+                        }
+                        if($row['tidaccepted'] && !in_array($row['tidaccepted'], $targetTidArr, true)){
+                            $targetTidArr[] = $row['tidaccepted'];
+                        }
+                        unset($rows[$index]);
                     }
                 }
-                $rs->free();
             }
 
             if($targetTidArr){
                 $parentTidArr = array();
                 $sql = 'SELECT DISTINCT tid, sciname, rankid FROM taxa '.
                     'WHERE tid IN(' . implode(',', $targetTidArr) . ') OR tidaccepted IN(' . implode(',', $targetTidArr) . ') ';
-                $rs = $this->conn->query($sql);
-                while($r = $rs->fetch_object()){
-                    $searchData[$r->sciname] = $r->tid;
-                    if((int)$r->rankid === 220){
-                        $parentTidArr[] = $r->tid;
+                if($result = $this->conn->query($sql)){
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
+                    foreach($rows as $index => $row){
+                        $searchData[$row['sciname']] = $row['tid'];
+                        if((int)$row['rankid'] === 220){
+                            $parentTidArr[] = $row['tid'];
+                        }
+                        unset($rows[$index]);
                     }
                 }
-                $rs->free();
 
                 if($parentTidArr) {
                     $searchData = (new TaxonHierarchy)->setParentSearchDataByTidArr($searchData, $parentTidArr);
@@ -714,9 +755,13 @@ class Taxa{
             $cleanName = SanitizerService::cleanInStr($this->conn, $name);
             $sql = 'SELECT DISTINCT TID, SciName FROM taxa '.
                 "WHERE SciName = '" . $cleanName . "' OR SciName LIKE '" . $cleanName . " %' ";
-            $rs = $this->conn->query($sql);
-            while($r = $rs->fetch_object()){
-                $searchData[$r->SciName] = $r->TID;
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $searchData[$row['SciName']] = $row['TID'];
+                    unset($rows[$index]);
+                }
             }
         }
         return $searchData;
@@ -728,7 +773,7 @@ class Taxa{
         if($parentTid){
             $sql1 = 'UPDATE taxa '.
                 'SET family = SciName '.
-                'WHERE RankId = 140 AND TID = tidaccepted AND (TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR TID = '.$parentTid.') ';
+                'WHERE RankId = 140 AND TID = tidaccepted AND (TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') OR TID = ' . (int)$parentTid . ') ';
             //echo $sql1;
             if($this->conn->query($sql1)){
                 $retCnt += $this->conn->affected_rows;
@@ -737,7 +782,7 @@ class Taxa{
             $sql3 = 'UPDATE taxa AS t LEFT JOIN taxaenumtree AS te ON t.TID = te.tid '.
                 'LEFT JOIN taxa AS t2 ON te.parenttid = t2.TID '.
                 'SET t.family = t2.SciName '.
-                'WHERE t.RankId >= 140 AND t.TID = t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR t.TID = '.$parentTid.') AND (t2.RankId = 140 OR ISNULL(t2.RankId)) ';
+                'WHERE t.RankId >= 140 AND t.TID = t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') OR t.TID = ' . (int)$parentTid . ') AND (t2.RankId = 140 OR ISNULL(t2.RankId)) ';
             //echo $sql3;
             if($this->conn->query($sql3)){
                 $retCnt += $this->conn->affected_rows;
@@ -752,7 +797,7 @@ class Taxa{
         if($parentTid){
             $sql2 = 'UPDATE taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
                 'SET t.family = t2.family '.
-                'WHERE t.RankId = 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR t.TID = '.$parentTid.') ';
+                'WHERE t.RankId = 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') OR t.TID = ' . (int)$parentTid . ') ';
             //echo $sql2;
             if($this->conn->query($sql2)){
                 $retCnt += $this->conn->affected_rows;
@@ -762,7 +807,7 @@ class Taxa{
                 'LEFT JOIN taxaenumtree AS te ON t2.TID = te.tid '.
                 'LEFT JOIN taxa AS t3 ON te.parenttid = t3.TID '.
                 'SET t.family = t3.SciName '.
-                'WHERE t.RankId >= 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$parentTid.') OR t.TID = '.$parentTid.') AND t3.RankId = 140 ';
+                'WHERE t.RankId >= 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') OR t.TID = ' . (int)$parentTid . ') AND t3.RankId = 140 ';
             //echo $sql4;
             if($this->conn->query($sql4)){
                 $retCnt += $this->conn->affected_rows;
@@ -775,43 +820,45 @@ class Taxa{
     {
         $status = '';
         if(is_numeric($tid)){
-            $sql = 'SELECT parenttid, kingdomId FROM taxa WHERE TID = '.$tidAccepted.' ';
+            $sql = 'SELECT parenttid, kingdomId FROM taxa WHERE TID = ' . (int)$tidAccepted . ' ';
             //echo $sql."<br>";
-            $rs = $this->conn->query($sql);
-            if($r = $rs->fetch_object()){
-                $parentTid = $r->parenttid;
-                $kingdomId = $r->kingdomId;
-                $sql2 = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', parenttid = '.$parentTid.', kingdomId = '.$kingdomId.' WHERE tid = '.$tid.' ';
-                //echo $sql2;
-                if($this->conn->query($sql2)) {
-                    $sqlSyns = 'UPDATE taxa SET tidaccepted = '.$tidAccepted.', parenttid = '.$parentTid.', kingdomId = '.$kingdomId.' WHERE tidaccepted = '.$tid.' ';
-                    if(!$this->conn->query($sqlSyns)){
-                        $status = 'ERROR: unable to transfer linked synonyms to accepted taxon.';
-                    }
-                    $sqlParent = 'UPDATE taxa SET parenttid = '.$tidAccepted.', kingdomId = '.$kingdomId.' WHERE parenttid = '.$tid.' ';
-                    if(!$this->conn->query($sqlParent)){
-                        $status = 'ERROR: unable to transfer children taxa to accepted taxon.';
-                    }
-                    $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = '.$tidAccepted.' WHERE parenttid = '.$tid.' ';
-                    if(!$this->conn->query($sqlHierarchy)){
-                        $status = 'ERROR: unable to update taxonomic hierarchy with accepted taxon.';
-                    }
-                    if((int)$tid !== (int)$tidAccepted){
-                        $sqlHierarchy = 'DELETE FROM taxaenumtree WHERE tid = '.$tid.' ';
-                        if(!$this->conn->query($sqlHierarchy)){
-                            $status = 'ERROR: unable to remove taxonomic hierarchy for unaccepted taxon.';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $parentTid = (int)$row['parenttid'];
+                    $kingdomId = (int)$row['kingdomId'];
+                    $sql2 = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', kingdomId = ' . $kingdomId . ' WHERE tid = ' . (int)$tid . ' ';
+                    //echo $sql2;
+                    if($this->conn->query($sql2)) {
+                        $sqlSyns = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', kingdomId = ' . $kingdomId . ' WHERE tidaccepted = ' . (int)$tid . ' ';
+                        if(!$this->conn->query($sqlSyns)){
+                            $status = 'ERROR: unable to transfer linked synonyms to accepted taxon.';
                         }
+                        $sqlParent = 'UPDATE taxa SET parenttid = ' . (int)$tidAccepted . ', kingdomId = ' . $kingdomId . ' WHERE parenttid = ' . (int)$tid . ' ';
+                        if(!$this->conn->query($sqlParent)){
+                            $status = 'ERROR: unable to transfer children taxa to accepted taxon.';
+                        }
+                        $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = ' . (int)$tidAccepted . ' WHERE parenttid = ' . (int)$tid . ' ';
+                        if(!$this->conn->query($sqlHierarchy)){
+                            $status = 'ERROR: unable to update taxonomic hierarchy with accepted taxon.';
+                        }
+                        if((int)$tid !== (int)$tidAccepted){
+                            $sqlHierarchy = 'DELETE FROM taxaenumtree WHERE tid = ' . (int)$tid . ' ';
+                            if(!$this->conn->query($sqlHierarchy)){
+                                $status = 'ERROR: unable to remove taxonomic hierarchy for unaccepted taxon.';
+                            }
+                        }
+                        if($kingdom){
+                            (new TaxonKingdoms)->updateKingdomAcceptance($tid, $tidAccepted);
+                        }
+                        $this->updateDependentData($tid, $tidAccepted);
                     }
-                    if($kingdom){
-                        (new TaxonKingdoms)->updateKingdomAcceptance($tid,$tidAccepted);
+                    else {
+                        $status = 'ERROR: unable to switch acceptance.';
                     }
-                    $this->updateDependentData($tid,$tidAccepted);
-                }
-                else {
-                    $status = 'ERROR: unable to switch acceptance.';
                 }
             }
-            $rs->free();
         }
         return $status;
     }
@@ -825,23 +872,19 @@ class Taxa{
         if($result->num_rows){
             $retVal = true;
         }
+        $result->free();
         return $retVal;
     }
 
     private function updateDependentData($tid, $tidNew): void
     {
         if(is_numeric($tid) && is_numeric($tidNew)){
-            /*$this->conn->query('DELETE FROM kmdescr WHERE inherited IS NOT NULL AND tid = '.$tid.' ');
-            $this->conn->query('UPDATE IGNORE kmdescr SET tid = '.$tidNew.' WHERE tid = '.$tid.' ');
-            $this->conn->query('DELETE FROM kmdescr WHERE tid = '.$tid.' ');
-            $this->resetCharStateInheritance($tidNew);*/
-
             $sqlVerns = 'DELETE v2.* '.
                 'FROM taxavernaculars AS v1 LEFT JOIN taxavernaculars AS v2 ON v1.VernacularName = v2.VernacularName AND v1.langid = v2.langid '.
-                'WHERE v1.TID = '.$tidNew.' AND v2.TID = '.$tid.' AND v2.VID IS NOT NULL ';
+                'WHERE v1.TID = ' . (int)$tidNew . ' AND v2.TID = ' . (int)$tid . ' AND v2.VID IS NOT NULL ';
             $this->conn->query($sqlVerns);
 
-            $sqlVerns = 'UPDATE taxavernaculars SET tid = '.$tidNew.' WHERE tid = '.$tid.' ';
+            $sqlVerns = 'UPDATE taxavernaculars SET tid = ' . (int)$tidNew . ' WHERE tid = ' . (int)$tid . ' ';
             $this->conn->query($sqlVerns);
         }
     }
@@ -888,7 +931,7 @@ class Taxa{
         if($tid && $idName && $id){
             $identifierName = SanitizerService::cleanInStr($this->conn, $idName);
             $identifier = SanitizerService::cleanInStr($this->conn, $id);
-            $sql = 'UPDATE taxaidentifiers SET identifier = "' . $identifier . '" WHERE tid = ' . $tid . ' AND `name` = "' . $identifierName . '" ';
+            $sql = 'UPDATE taxaidentifiers SET identifier = "' . $identifier . '" WHERE tid = ' . (int)$tid . ' AND `name` = "' . $identifierName . '" ';
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
@@ -904,14 +947,17 @@ class Taxa{
             $dataArr['kingdomid'] = (new TaxonKingdoms)->createTaxonKingdomRecord($dataArr['sciname']);
         }
         elseif((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family'])){
-            $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE tid = '.(int)$dataArr['parenttid'].' ';
+            $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE tid = ' . (int)$dataArr['parenttid'] . ' ';
             //echo $sqlKg; exit;
-            $rsKg = $this->conn->query($sqlKg);
-            if($r = $rsKg->fetch_object()){
-                $dataArr['kingdomid'] = $r->kingdomId;
-                $dataArr['family'] = $r->family;
+            if($result = $this->conn->query($sqlKg)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $dataArr['kingdomid'] = $row['kingdomId'];
+                    $dataArr['family'] = $row['family'];
+                    unset($rows[$index]);
+                }
             }
-            $rsKg->free();
             if(!$dataArr['family'] && (int)$dataArr['rankid'] === 140){
                 $dataArr['family'] = $dataArr['sciname'];
             }

@@ -41,9 +41,7 @@ class Checklists{
 	}
 
  	public function __destruct(){
-		if($this->conn) {
-            $this->conn->close();
-        }
+        $this->conn->close();
 	}
 
     public function getChecklistFromClid($clid): array
@@ -74,14 +72,16 @@ class Checklists{
         }
         if($cArr){
             $sql = 'SELECT clid, name FROM fmchecklists WHERE clid IN('.implode(',', $cArr).') ORDER BY name ';
-            if($rs = $this->conn->query($sql)){
-                while($r = $rs->fetch_object()){
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
                     $nodeArr = array();
-                    $nodeArr['clid'] = $r->clid;
-                    $nodeArr['name'] = $r->name;
+                    $nodeArr['clid'] = $row['clid'];
+                    $nodeArr['name'] = $row['name'];
                     $retArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $rs->free();
             }
         }
         return $retArr;
