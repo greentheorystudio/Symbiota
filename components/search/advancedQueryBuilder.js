@@ -38,7 +38,7 @@ const advancedQueryBuilder = {
                                                         {{ criteria['openParens'] }}
                                                     </span>
                                                     <span v-if="criteria['field']">
-                                                        {{ '[' + criteria['field'] + ']' }}
+                                                        {{ '[' + criteria['fieldLabel'] + ']' }}
                                                     </span>
                                                     <span v-if="criteria['operator']">
                                                         {{ criteria['operator'] }}
@@ -109,6 +109,7 @@ const advancedQueryBuilder = {
             concatenator: 'AND',
             openParens: null,
             field: null,
+            fieldLabel: null,
             dataType: null,
             operator: 'EQUALS',
             value: null,
@@ -182,6 +183,12 @@ const advancedQueryBuilder = {
                 criteriaArr.push(Object.assign({}, blankCriteriaObj));
                 criteriaArr[0]['concatenator'] = null;
             }
+            criteriaArr.forEach((criteriaObj) => {
+                if(criteriaObj['field']){
+                    const fieldData = props.fieldOptions.find(opt => opt['field'] === criteriaObj['field']);
+                    criteriaObj['fieldLabel'] = fieldData['label'];
+                }
+            });
             setCriteriaArrIndexVals();
         }
 
@@ -193,9 +200,12 @@ const advancedQueryBuilder = {
 
         function updateCriteriaParameters(index, param, value) {
             criteriaArr[(index - 1)][param] = value;
-            if(props.queryType === 'mofextension' && param === 'field'){
+            if(param === 'field'){
                 const fieldData = props.fieldOptions.find(opt => opt['field'] === value);
-                criteriaArr[(index - 1)]['dataType'] = fieldData['dataType'];
+                criteriaArr[(index - 1)]['fieldLabel'] = fieldData['label'];
+                if(props.queryType === 'mofextension'){
+                    criteriaArr[(index - 1)]['dataType'] = fieldData['dataType'];
+                }
             }
             if(criteriaArr.length > 0 || newestCriteriaValid.value){
                 updateSearchTerms();

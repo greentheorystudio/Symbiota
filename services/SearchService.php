@@ -128,10 +128,11 @@ class SearchService {
 
     public function prepareOccurrenceAdvancedWhereSql($searchTermsArr): string
     {
-        $advSqlWhereStr = '';
+        $advSqlWherePartsArr = array();
         if(array_key_exists('advanced', $searchTermsArr) && is_array($searchTermsArr['advanced']) && count($searchTermsArr['advanced']) > 0) {
             $fields = (new Occurrences)->getOccurrenceFields();
             foreach($searchTermsArr['advanced'] as $criteriaArr){
+                $advSqlWhereStr = '';
                 if($criteriaArr['field'] && $criteriaArr['operator'] && array_key_exists($criteriaArr['field'], $fields)){
                     if($criteriaArr['field'] === 'year' || $criteriaArr['field'] === 'month' || $criteriaArr['field'] === 'day'){
                         $field = 'o.`' . $criteriaArr['field'] . '`';
@@ -189,10 +190,11 @@ class SearchService {
                     if(array_key_exists('closeParens', $criteriaArr) && $criteriaArr['closeParens']){
                         $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['closeParens']);
                     }
+                    $advSqlWherePartsArr[] = $advSqlWhereStr;
                 }
             }
         }
-        return '(' . $advSqlWhereStr . ')';
+        return '(' . implode(' ', $advSqlWherePartsArr) . ')';
     }
 
     public function prepareOccurrenceCatalogNumberWhereSql($searchTermsArr): string
@@ -206,7 +208,7 @@ class SearchService {
         foreach($catArr as $v){
             if($p = strpos($v,' - ')){
                 $term1 = trim(substr($v,0, $p));
-                $term2 = trim(substr($v,$p+3));
+                $term2 = trim(substr($v, ($p + 3)));
                 if(is_numeric($term1) && is_numeric($term2)){
                     $betweenFrag[] = '(o.catalognumber BETWEEN ' . SanitizerService::cleanInStr($this->conn, $term1) . ' AND ' . SanitizerService::cleanInStr($this->conn, $term2) . ')';
                     if($includeOtherCatNum){
@@ -564,9 +566,10 @@ class SearchService {
 
     public function prepareOccurrenceMeasurementOrFactWhereSql($searchTermsArr): string
     {
-        $mofSqlWhereStr = '';
+        $mofSqlWherePartsArr = array();
         if(array_key_exists('mofextension', $searchTermsArr) && is_array($searchTermsArr['mofextension']) && count($searchTermsArr['mofextension']) > 0) {
             foreach($searchTermsArr['mofextension'] as $criteriaArr){
+                $mofSqlWhereStr = '';
                 if($criteriaArr['field'] && $criteriaArr['operator']){
                     if($criteriaArr['dataType'] === 'event'){
                         $field = 'eventid';
@@ -620,15 +623,16 @@ class SearchService {
                         elseif($criteriaArr['operator'] === 'DOES NOT CONTAIN'){
                             $mofSqlWhereStr .= ' NOT REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
                         }
-                        $mofSqlWhereStr .= 'AND ' . $field . ' IS NOT NULL)';
+                        $mofSqlWhereStr .= ' AND ' . $field . ' IS NOT NULL)';
                     }
                     if(array_key_exists('closeParens', $criteriaArr) && $criteriaArr['closeParens']){
                         $mofSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['closeParens']);
                     }
+                    $mofSqlWherePartsArr[] = $mofSqlWhereStr;
                 }
             }
         }
-        return '(' . $mofSqlWhereStr . ')';
+        return '(' . implode(' ', $mofSqlWherePartsArr) . ')';
     }
 
     public function prepareOccurrenceOccurrenceRemarksWhereSql($searchTermsArr): string
