@@ -14,33 +14,65 @@ const searchAdvancedBlock = {
                         parenthesis will be ignored.
                     </div>
                     <div class="q-pa-md column q-gutter-md">
+                        <template v-if="criteriaArr.length > 1 || !addCriteriaDisabled">
+                            <div>
+                                <q-card>
+                                    <q-card-section class="column q-gutter-xs">
+                                        <template v-for="criteria in criteriaArr">
+                                            <template v-if="criteria['field'] && (criteria['operator'] === 'IS NULL' || criteria['operator'] === 'IS NOT NULL' || criteria['value'])">
+                                                <div class="row justify-center q-gutter-md text-body1">
+                                                    <span v-if="criteria['concatenator']">
+                                                        {{ criteria['concatenator'] }}
+                                                    </span>
+                                                    <span v-if="criteria['openParens']">
+                                                        {{ criteria['openParens'] }}
+                                                    </span>
+                                                    <span v-if="criteria['field']">
+                                                        {{ '[' + criteria['field'] + ']' }}
+                                                    </span>
+                                                    <span v-if="criteria['operator']">
+                                                        {{ criteria['operator'] }}
+                                                    </span>
+                                                    <span v-if="criteria['value']">
+                                                        {{ criteria['value'] }}
+                                                    </span>
+                                                    <span v-if="criteria['closeParens']">
+                                                        {{ criteria['closeParens'] }}
+                                                    </span>
+                                                </div>
+                                            </template>
+                                        </template>
+                                    </q-card-section>
+                                </q-card>
+                            </div>
+                        </template>
                         <template v-for="criteria in criteriaArr">
                             <div>
                                 <q-card>
-                                    <q-card-section class="row q-gutter-xs">
-                                        <div class="col-1 q-pt-xs" v-if="criteria['field'] && (criteria['operator'] === 'IS NULL' || criteria['operator'] === 'IS NOT NULL' || criteria['value'])">
+                                    <q-card-section class="row q-col-gutter-xs">
+                                        <div class="col-12 col-sm-2 col-md-1 q-pt-xs row justify-center" v-if="criteria['field'] && (criteria['operator'] === 'IS NULL' || criteria['operator'] === 'IS NOT NULL' || criteria['value'])">
                                             <q-btn color="negative" @click="deleteCriteria(criteria['index']);" text-color="white" icon="delete" dense>
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Delete this query line
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
-                                        <div class="col-1" v-if="criteria['index'] > 1">
+                                        <div class="col-12 col-sm-3 col-md-2 col-lg-1" v-if="criteria['index'] > 1">
                                             <selector-input-element :options="concatenatorOptions" :value="criteria['concatenator']" @update:value="(value) => updateCriteriaParameters(criteria['index'], 'concatenator', value)"></selector-input-element>
                                         </div>
-                                        <div class="col-1">
+                                        <div class="col-12 col-sm-3 col-md-2 col-lg-1">
                                             <selector-input-element :options="openParenthesisOptions" :value="criteria['openParens']" @update:value="(value) => updateCriteriaParameters(criteria['index'], 'openParens', value)" :clearable="true"></selector-input-element>
                                         </div>
-                                        <div class="col-2">
+                                        <div class="col-12 col-sm-4 col-md-3 col-lg-2">
                                             <selector-input-element label="Field" :options="fieldOptions" option-value="field" option-label="label" :value="criteria['field']" @update:value="(value) => updateCriteriaParameters(criteria['index'], 'field', value)"></selector-input-element>
                                         </div>
-                                        <div class="col-2">
+                                        <div class="col-12 col-sm-4 col-md-3 col-lg-2">
                                             <selector-input-element label="Operator" :options="operatorOptions" :value="criteria['operator']" @update:value="(value) => updateCriteriaParameters(criteria['index'], 'operator', value)"></selector-input-element>
                                         </div>
-                                        <div class="col-2">
+                                        <div class="col-12 col-sm-4 col-md-3 col-lg-2">
                                             <text-field-input-element label="Value" :value="criteria['value']" @update:value="(value) => updateCriteriaParameters(criteria['index'], 'value', value)"></text-field-input-element>
                                         </div>
-                                        <div class="col-1">
+                                        <div class="col-12 col-sm-3 col-md-2 col-lg-1">
                                             <selector-input-element :options="closeParenthesisOptions" :value="criteria['closeParens']" @update:value="(value) => updateCriteriaParameters(criteria['index'], 'closeParens', value)" :clearable="true"></selector-input-element>
                                         </div>
                                     </q-card-section>
@@ -115,6 +147,9 @@ const searchAdvancedBlock = {
 
         function addCriteriaObjToArr() {
             criteriaArr.push(Object.assign({}, blankCriteriaObj));
+            if(criteriaArr.length === 1){
+                criteriaArr[0]['concatenator'] = null;
+            }
             setCriteriaArrIndexVals();
         }
 
@@ -122,6 +157,7 @@ const searchAdvancedBlock = {
             criteriaArr.splice((index - 1), 1);
             if(criteriaArr.length === 0){
                 criteriaArr.push(Object.assign({}, blankCriteriaObj));
+                criteriaArr[0]['concatenator'] = null;
             }
             setCriteriaArrIndexVals();
             updateSearchTerms();
@@ -134,6 +170,7 @@ const searchAdvancedBlock = {
             });
             if(criteriaArr.length === 0){
                 criteriaArr.push(Object.assign({}, blankCriteriaObj));
+                criteriaArr[0]['concatenator'] = null;
             }
             setCriteriaArrIndexVals();
         }

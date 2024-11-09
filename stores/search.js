@@ -18,7 +18,6 @@ const useSearchStore = Pinia.defineStore('search', {
         dateId: null,
         queryBuilderFieldOptions: [
             {field: 'associatedcollectors', label: 'Associated Collectors'},
-            {field: 'associatedoccurrences', label: 'Associated Occurrences'},
             {field: 'associatedtaxa', label: 'Associated Taxa'},
             {field: 'attributes', label: 'Attributes'},
             {field: 'scientificnameauthorship', label: 'Author'},

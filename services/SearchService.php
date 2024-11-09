@@ -4,8 +4,8 @@ include_once(__DIR__ . '/../models/Collections.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../models/TaxonVernaculars.php');
-include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/DataUtilitiesService.php');
+include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/SanitizerService.php');
 
 class SearchService {
