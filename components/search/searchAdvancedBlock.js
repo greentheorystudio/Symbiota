@@ -193,7 +193,7 @@ const searchAdvancedBlock = {
             criteriaArr.forEach((criteriaObj, index) => {
                 if(criteriaObj['field'] && (criteriaObj['operator'] === 'IS NULL' || criteriaObj['operator'] === 'IS NOT NULL' || criteriaObj['value'])){
                     updateArr.push({
-                        concatenator: (index > 0 ? criteriaObj['concatenator'] : null),
+                        concatenator: criteriaObj['concatenator'],
                         openParens: (parenthesisValid.value ? criteriaObj['openParens'] : null),
                         field: criteriaObj['field'],
                         operator: criteriaObj['operator'],
