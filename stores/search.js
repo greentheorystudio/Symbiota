@@ -13,7 +13,8 @@ const useSearchStore = Pinia.defineStore('search', {
             hasmedia: false,
             hasgenetic: false,
             withoutimages: false,
-            advanced: []
+            advanced: [],
+            mofextension: []
         },
         dateId: null,
         queryBuilderFieldOptions: [
@@ -204,7 +205,8 @@ const useSearchStore = Pinia.defineStore('search', {
                 (state.searchTerms.hasOwnProperty('hasmedia') && state.searchTerms['hasmedia']) ||
                 (state.searchTerms.hasOwnProperty('hasgenetic') && state.searchTerms['hasgenetic']) ||
                 (state.searchTerms.hasOwnProperty('withoutimages') && state.searchTerms['withoutimages']) ||
-                (state.searchTerms.hasOwnProperty('advanced') && state.searchTerms['advanced'].length > 0)
+                (state.searchTerms.hasOwnProperty('advanced') && state.searchTerms['advanced'].length > 0) ||
+                (state.searchTerms.hasOwnProperty('mofextension') && state.searchTerms['mofextension'].length > 0)
             ){
                 populated = true;
             }

@@ -1,10 +1,20 @@
-const searchAdvancedBlock = {
+const advancedQueryBuilder = {
+    props: {
+        fieldOptions: {
+            type: Array,
+            default: []
+        },
+        queryType: {
+            type: String,
+            default: 'advanced'
+        }
+    },
     template: `
         <div>
             <q-card flat bordered>
                 <q-card-section>
                     <div class="full-width row justify-between">
-                        <div class="text-body1 text-bold">Advanced Query Builder</div>
+                        <div class="text-body1 text-bold">Query Builder</div>
                         <div>
                             <q-btn color="primary" @click="addCriteriaObjToArr();" label="Add Criteria" :disabled="addCriteriaDisabled" />
                         </div>
@@ -88,7 +98,7 @@ const searchAdvancedBlock = {
         'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
     },
-    setup() {
+    setup(props) {
         const searchStore = useSearchStore();
 
         const addCriteriaDisabled = Vue.computed(() => {
@@ -99,6 +109,7 @@ const searchAdvancedBlock = {
             concatenator: 'AND',
             openParens: null,
             field: null,
+            dataType: null,
             operator: 'EQUALS',
             value: null,
             closeParens: null
@@ -106,7 +117,6 @@ const searchAdvancedBlock = {
         const closeParenthesisOptions = [')', '))', ')))'];
         const concatenatorOptions = ['AND', 'OR'];
         const criteriaArr = Vue.reactive([]);
-        const fieldOptions = Vue.computed(() => searchStore.getQueryBuilderFieldOptions);
         const newestCriteriaValid = Vue.computed(() => {
             return (criteriaArr[(criteriaArr.length - 1)]['field'] && (criteriaArr[(criteriaArr.length - 1)]['operator'] === 'IS NULL' || criteriaArr[(criteriaArr.length - 1)]['operator'] === 'IS NOT NULL' || criteriaArr[(criteriaArr.length - 1)]['value']));
         });
@@ -165,7 +175,7 @@ const searchAdvancedBlock = {
 
         function setCriteriaArrFromSearchTerms() {
             criteriaArr.length = 0;
-            searchTerms.value['advanced'].forEach((criteriaObj) => {
+            searchTerms.value[props.queryType].forEach((criteriaObj) => {
                 criteriaArr.push(criteriaObj);
             });
             if(criteriaArr.length === 0){
@@ -183,6 +193,10 @@ const searchAdvancedBlock = {
 
         function updateCriteriaParameters(index, param, value) {
             criteriaArr[(index - 1)][param] = value;
+            if(props.queryType === 'mofextension' && param === 'field'){
+                const fieldData = props.fieldOptions.find(opt => opt['field'] === value);
+                criteriaArr[(index - 1)]['dataType'] = fieldData['dataType'];
+            }
             if(criteriaArr.length > 0 || newestCriteriaValid.value){
                 updateSearchTerms();
             }
@@ -196,13 +210,14 @@ const searchAdvancedBlock = {
                         concatenator: criteriaObj['concatenator'],
                         openParens: (parenthesisValid.value ? criteriaObj['openParens'] : null),
                         field: criteriaObj['field'],
+                        dataType: criteriaObj['dataType'],
                         operator: criteriaObj['operator'],
                         value: criteriaObj['value'],
                         closeParens: (parenthesisValid.value ? criteriaObj['closeParens'] : null)
                     });
                 }
             });
-            searchStore.updateSearchTerms('advanced', updateArr);
+            searchStore.updateSearchTerms(props.queryType, updateArr);
         }
 
         Vue.onMounted(() => {
@@ -214,7 +229,6 @@ const searchAdvancedBlock = {
             closeParenthesisOptions,
             concatenatorOptions,
             criteriaArr,
-            fieldOptions,
             openParenthesisOptions,
             operatorOptions,
             parenthesisValid,
