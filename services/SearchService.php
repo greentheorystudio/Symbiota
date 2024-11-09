@@ -562,6 +562,75 @@ class SearchService {
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
     }
 
+    public function prepareOccurrenceMeasurementOrFactWhereSql($searchTermsArr): string
+    {
+        $mofSqlWhereStr = '';
+        if(array_key_exists('mofextension', $searchTermsArr) && is_array($searchTermsArr['mofextension']) && count($searchTermsArr['mofextension']) > 0) {
+            foreach($searchTermsArr['mofextension'] as $criteriaArr){
+                if($criteriaArr['field'] && $criteriaArr['operator']){
+                    if($criteriaArr['dataType'] === 'event'){
+                        $field = 'eventid';
+                    }
+                    else{
+                        $field = 'occid';
+                    }
+                    if(array_key_exists('concatenator', $criteriaArr) && $criteriaArr['concatenator']){
+                        $mofSqlWhereStr .= ' ' . SanitizerService::cleanInStr($this->conn, $criteriaArr['concatenator']) . ' ';
+                    }
+                    if(array_key_exists('openParens', $criteriaArr) && $criteriaArr['openParens']){
+                        $mofSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['openParens']);
+                    }
+                    if($criteriaArr['operator'] === 'IS NULL'){
+                        $mofSqlWhereStr .= 'o.' . $field . ' NOT IN(SELECT ' . $field . ' FROM ommofextension WHERE `field` = "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['field']) . '" AND datavalue IS NOT NULL AND ' . $field . ' IS NOT NULL)';
+                    }
+                    elseif($criteriaArr['operator'] === 'IS NOT NULL'){
+                        $mofSqlWhereStr .= 'o.' . $field . ' IN(SELECT ' . $field . ' FROM ommofextension WHERE `field` = "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['field']) . '" AND datavalue IS NOT NULL AND ' . $field . ' IS NOT NULL)';
+                    }
+                    else{
+                        $mofSqlWhereStr .= 'o.' . $field . ' IN(SELECT ' . $field . ' FROM ommofextension WHERE `field` = "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['field']) . '" AND datavalue';
+                        if($criteriaArr['operator'] === 'EQUALS' || $criteriaArr['operator'] === 'NOT EQUALS' || $criteriaArr['operator'] === 'GREATER THAN' || $criteriaArr['operator'] === 'LESS THAN'){
+                            if($criteriaArr['operator'] === 'EQUALS'){
+                                $mofSqlWhereStr .= ' = ';
+                            }
+                            elseif($criteriaArr['operator'] === 'NOT EQUALS'){
+                                $mofSqlWhereStr .= ' <> ';
+                            }
+                            elseif($criteriaArr['operator'] === 'GREATER THAN'){
+                                $mofSqlWhereStr .= ' > ';
+                            }
+                            else{
+                                $mofSqlWhereStr .= ' < ';
+                            }
+                            if(is_numeric($criteriaArr['value'])){
+                                $mofSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['value']);
+                            }
+                            else{
+                                $mofSqlWhereStr .= '"' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            }
+                        }
+                        else if($criteriaArr['operator'] === 'STARTS WITH'){
+                            $mofSqlWhereStr .= ' REGEXP "^' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                        elseif($criteriaArr['operator'] === 'ENDS WITH'){
+                            $mofSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '^"';
+                        }
+                        elseif($criteriaArr['operator'] === 'CONTAINS'){
+                            $mofSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                        elseif($criteriaArr['operator'] === 'DOES NOT CONTAIN'){
+                            $mofSqlWhereStr .= ' NOT REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                        $mofSqlWhereStr .= 'AND ' . $field . ' IS NOT NULL)';
+                    }
+                    if(array_key_exists('closeParens', $criteriaArr) && $criteriaArr['closeParens']){
+                        $mofSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['closeParens']);
+                    }
+                }
+            }
+        }
+        return '(' . $mofSqlWhereStr . ')';
+    }
+
     public function prepareOccurrenceOccurrenceRemarksWhereSql($searchTermsArr): string
     {
         $tempArr = array();
@@ -890,6 +959,12 @@ class SearchService {
             $advancedStr = $this->prepareOccurrenceAdvancedWhereSql($searchTermsArr);
             if($advancedStr){
                 $sqlWherePartsArr[] = $advancedStr;
+            }
+        }
+        if(array_key_exists('mofextension', $searchTermsArr) && is_array($searchTermsArr['mofextension']) && count($searchTermsArr['mofextension']) > 0) {
+            $mofStr = $this->prepareOccurrenceMeasurementOrFactWhereSql($searchTermsArr);
+            if($mofStr){
+                $sqlWherePartsArr[] = $mofStr;
             }
         }
         return count($sqlWherePartsArr) > 0 ? implode(' AND ', $sqlWherePartsArr) : '';
