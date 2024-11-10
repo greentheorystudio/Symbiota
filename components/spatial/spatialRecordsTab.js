@@ -224,10 +224,10 @@ const spatialRecordsTab = {
 
         return {
             clientRoot,
-            searchTermsJson,
             columns,
             pagination,
             recordDataArr,
+            searchTermsJson,
             selectedRecordSelectAllVal,
             tableLoading,
             changeRecordPage,

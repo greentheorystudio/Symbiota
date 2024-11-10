@@ -1115,7 +1115,7 @@ class SearchService {
                     if($row['thumbnailurl']){
                         $returnData[$row['occid']]['img'] = $row['thumbnailurl'];
                     }
-                    if($r->url){
+                    if($row['url']){
                         $returnData[$row['occid']]['hasimage'] = true;
                     }
                 }
@@ -1155,7 +1155,7 @@ class SearchService {
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($occurrenceFields, 'o');
             $fieldNameArr[] = 'IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),"") AS date';
         }
-        if($schema !== 'occid' && $schema !== 'taxa'){
+        if($schema !== 'taxa'){
             $fieldNameArr[] = 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode';
             $fieldNameArr[] = 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode';
             $fieldNameArr[] = 'c.collectionname';

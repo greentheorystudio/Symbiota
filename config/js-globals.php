@@ -81,6 +81,4 @@
     const taxonomyServiceApiUrl = CLIENT_ROOT + '/api/services/taxonomyServiceController.php';
     const taxonRankApiUrl = CLIENT_ROOT + '/api/taxa/taxonRankController.php';
     const taxonVernacularApiUrl = CLIENT_ROOT + '/api/taxa/taxonVernacularController.php';
-
-    const componentRegistry = {};
 </script>

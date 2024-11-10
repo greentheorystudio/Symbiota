@@ -81,7 +81,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     const clientRoot = store.getClientRoot;
                     const navBarData = Vue.ref([
                         {url: clientRoot + '/index.php', label: 'Home'},
-                        {url: clientRoot + '/collections/index.php', label: 'Search Collections'},
+                        {url: clientRoot + '/collections/list.php', label: 'Search Collections'},
                         {url: clientRoot + '/spatial/index.php', label: 'Spatial Module', newTab: true},
                         {url: clientRoot + '/imagelib/search.php', label: 'Image Search'},
                         {url: clientRoot + '/imagelib/index.php', label: 'Browse Images'},

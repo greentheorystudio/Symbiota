@@ -13,6 +13,8 @@ const useSearchStore = Pinia.defineStore('search', {
             hasmedia: false,
             hasgenetic: false,
             withoutimages: false,
+            radiusval: null,
+            radiusunit: 'km',
             advanced: [],
             mofextension: []
         },

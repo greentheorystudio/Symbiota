@@ -45,7 +45,7 @@ const searchCriteriaPopup = {
                                             </q-btn>
                                         </div>
                                     </div>
-                                    <search-criteria-block ref="searchCriteriaBlockRef" :collection-id="collectionId" :show-spatial="showSpatial"></search-criteria-block>
+                                    <search-criteria-block ref="searchCriteriaBlockRef" :collection-id="collectionId" :show-spatial="showSpatial" @open:spatial-popup="openSpatialPopup"></search-criteria-block>
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel class="q-pa-none" v-if="!collectionId" name="collections">
@@ -138,6 +138,10 @@ const searchCriteriaPopup = {
             context.emit('close:popup');
         }
 
+        function openSpatialPopup(type) {
+            context.emit('open:spatial-popup', type);
+        }
+
         function resetCriteria() {
             searchStore.clearSearchTerms();
             if(searchCriteriaBlockRef.value){
@@ -226,6 +230,7 @@ const searchCriteriaPopup = {
             tab,
             closePopup,
             loadRecords,
+            openSpatialPopup,
             resetCriteria
         }
     }

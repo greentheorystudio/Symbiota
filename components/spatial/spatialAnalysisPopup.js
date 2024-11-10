@@ -1,4 +1,4 @@
-componentRegistry['spatialAnalysisPopup'] = {
+const spatialAnalysisPopup = {
     props: {
         bottomLat: {
             type: Number,
