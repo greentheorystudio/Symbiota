@@ -237,9 +237,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
             const starrObj = {
                 usethes: true,
                 taxa: tid,
-                targetclid: clid
+                clid: clid
             };
-            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj) + '&targettid=' + clid;
+            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj);
             openPopup(url);
         }
     </script>
