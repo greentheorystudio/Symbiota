@@ -97,7 +97,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                     <div class="fit">
                                         <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="occid" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
                                             <template v-slot:top="scope">
-                                                <div class="spatial-record-table-top-pagination row justify-end">
+                                                <div class="full-width row justify-end">
                                                     <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
                                                     <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
@@ -212,8 +212,8 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                                 </q-tr>
                                             </template>
                                             <template v-slot:pagination="scope">
-                                                <div class="spatial-record-table-top-pagination row justify-end">
-                                                    <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                                                <div class="full-width row justify-end">
+                                                    <div class="self-center text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
                                                     <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
 
