@@ -385,6 +385,30 @@ const useSearchStore = Pinia.defineStore('search', {
                 callback(data);
             });
         },
+        processSpatialPopupData(windowType, data) {
+            if(windowType.includes('box') && data.hasOwnProperty('boundingBoxArr')){
+                this.updateSearchTerms('upperlat', data['boundingBoxArr']['upperlat']);
+                this.updateSearchTerms('bottomlat', data['boundingBoxArr']['bottomlat']);
+                this.updateSearchTerms('leftlong', data['boundingBoxArr']['leftlong']);
+                this.updateSearchTerms('rightlong', data['boundingBoxArr']['rightlong']);
+            }
+            else if(windowType.includes('circle') && data.hasOwnProperty('circleArr') && data['circleArr'].length === 1){
+                this.updateSearchTerms('pointlat', data['circleArr'][0]['pointlat']);
+                this.updateSearchTerms('pointlong', data['circleArr'][0]['pointlong']);
+                this.updateSearchTerms('radius', data['circleArr'][0]['radius']);
+                this.updateSearchTerms('groundradius', data['circleArr'][0]['groundradius']);
+                this.updateSearchTerms('radiusval', (data['circleArr'][0]['radius'] / 1000));
+                this.updateSearchTerms('radiusunit', 'km');
+            }
+            else if(windowType === 'input' && (data.hasOwnProperty('circleArr') || data.hasOwnProperty('polyArr'))){
+                if(data.hasOwnProperty('circleArr')){
+                    this.updateSearchTerms('circleArr', data['circleArr']);
+                }
+                if(data.hasOwnProperty('polyArr')){
+                    this.updateSearchTerms('polyArr', data['polyArr']);
+                }
+            }
+        },
         redirectWithQueryId(url) {
             const baseStore = useBaseStore();
             window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId;
@@ -453,9 +477,12 @@ const useSearchStore = Pinia.defineStore('search', {
                 });
             }
         },
-        setSearchRecordData(options) {
+        setSearchRecordData(options, callback = null) {
             this.processSearch(options, (res) => {
                 this.searchRecordData = this.setSelectedRecords(res);
+                if(callback){
+                    callback(res.length);
+                }
             });
         },
         setSelectedRecords(recordArr) {

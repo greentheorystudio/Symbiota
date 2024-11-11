@@ -1408,7 +1408,8 @@ const spatialAnalysisModule = {
         }
 
         function setLayersController() {
-            baseStore.getGlobalJsonConfigValue('SPATIAL_LAYER_CONFIG_JSON', (data) => {
+            baseStore.getGlobalConfigValue('SPATIAL_LAYER_CONFIG_JSON', (dataStr) => {
+                const data = dataStr ? JSON.parse(dataStr) : null;
                 if(data && data.length > 0){
                     data.forEach((object) => {
                         layersConfigArr.push(object);

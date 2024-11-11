@@ -7,6 +7,7 @@ const useBaseStore = Pinia.defineStore('base', {
         defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
         imageTagOptions: IMAGE_TAG_OPTIONS,
+        isAdmin: IS_ADMIN,
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         rightsTerms: RIGHTS_TERMS,
@@ -50,6 +51,9 @@ const useBaseStore = Pinia.defineStore('base', {
         getImageTagOptions(state) {
             return state.imageTagOptions;
         },
+        getIsAdmin(state) {
+            return state.isAdmin;
+        },
         getMaxUploadFilesize(state) {
             return state.maxUploadFilesize;
         },
@@ -79,7 +83,7 @@ const useBaseStore = Pinia.defineStore('base', {
         }
     },
     actions: {
-        getGlobalJsonConfigValue(prop, callback) {
+        getGlobalConfigValue(prop, callback) {
             const formData = new FormData();
             formData.append('action', 'getGlobalConfigValue');
             formData.append('prop', prop);
@@ -89,7 +93,7 @@ const useBaseStore = Pinia.defineStore('base', {
             })
             .then((response) => response.text())
             .then((resStr) => {
-                callback(resStr ? JSON.parse(resStr) : null);
+                callback(resStr);
             });
         },
         async logout() {

@@ -75,10 +75,10 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                 <div class="q-pa-sm column q-col-gutter-xs">
                                     <div class="row justify-start">
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
                                         </div>
                                     </div>
-                                    <div class="row justify-between q-col-gutter-sm">
+                                    <div v-if="recordDataArr.length > 0" class="row justify-between q-col-gutter-sm">
                                         <div>
                                             <search-data-downloader :spatial="false"></search-data-downloader>
                                         </div>
@@ -95,7 +95,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                 <q-separator ></q-separator>
                                 <template v-if="recordDataArr.length > 0">
                                     <div>
-                                        <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" :columns="columns" row-key="name" :loading="tableLoading" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
+                                        <q-table :grid="$q.screen.xs" flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="name" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
                                             <template v-slot:top="scope">
                                                 <div class="spatial-record-table-top-pagination row justify-end">
                                                     <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
@@ -109,45 +109,105 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                                     <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
                                                 </div>
                                             </template>
-                                            <template v-slot:header="props">
-                                                <q-tr :props='props' class="bg-blue-grey-2">
-                                                    <q-th>
-                                                        <q-checkbox v-model="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense />
-                                                    </q-th>
-                                                </q-tr>
-                                            </template>
+                                            <template v-slot:header="props"></template>
                                             <template v-slot:body="props">
-                                                <q-tr v-if="!tableLoading" :props="props">
-                                                    <q-td>
-                                                        <q-checkbox v-model="props.row.selected" @update:model-value="(val) => processRecordSelectionChange(val, props.row)" dense />
-                                                    </q-td>
-                                                    <q-td key="catalognumber" :props="props">
-                                                        {{ props.row.catalognumber }}
-                                                    </q-td>
-                                                    <q-td key="collector" :props="props">
-                                                        <div class="column q-gutter-xs">
-                                                            <div class="fit text-left">
-                                                                <a class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);">{{ (props.row.collector ? props.row.collector : '[No data]') }}</a>
+                                                <q-tr v-if="recordDataArr.length > 0" :props="props">
+                                                    <q-td class="full-width">
+                                                        <div class="full-width column">
+                                                            <div class="q-mb-xs row justify-between">
+                                                                <div class="text-bold">
+                                                                    {{ props.row.collectionname + ' ' + ((props.row.institutioncode || props.row.collectioncode) ? '(' : '') + (props.row.institutioncode ? props.row.institutioncode : '') + ((props.row.collectionname && props.row.collectionname) ? ':' : '') + (props.row.collectioncode ? props.row.collectioncode : '') + ((props.row.collectionname || props.row.collectionname) ? ')' : '') }}
+                                                                </div>
+                                                                <div class="row q-gutter-xs">
+                                                                    <template v-if="props.row.hasimage">
+                                                                        <q-btn color="grey-4" text-color="black" class="black-border cursor-inherit" size="sm" icon="fas fa-camera" dense>
+                                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                                Record includes images
+                                                                            </q-tooltip>
+                                                                        </q-btn>
+                                                                    </template>
+                                                                    <template v-if="isAdmin || (currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))">
+                                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + props.row.occid + '&collid=' + props.row.collid)" target="_blank" icon="fas fa-edit" dense>
+                                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                                Edit occurrence record
+                                                                            </q-tooltip>
+                                                                        </q-btn>
+                                                                    </template>
+                                                                </div>
                                                             </div>
-                                                            <div class="row justify-end">
-                                                                <q-btn color="grey-4" size="xs" text-color="black" class="q-ml-sm black-border" icon="fas fa-search-location" @click="setMapFinderPopup(props.row);" dense>
-                                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                                        See location on map
-                                                                    </q-tooltip>
-                                                                </q-btn>
+                                                            <div class="full-width row justify-between">
+                                                                <div class="col-10 row q-col-gutter-md">
+                                                                    <div class="col-1 row justify-center items-center">
+                                                                        <div>
+                                                                            <template v-if="props.row.icon">
+                                                                                <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" :fit="contain"></q-img>
+                                                                            </template>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-8 column text-body1 wrap">
+                                                                        <div v-if="props.row.sciname">
+                                                                            <template v-if="Number(props.row.tid) > 0">
+                                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">
+                                                                                    <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
+                                                                                </a>
+                                                                            </template>
+                                                                            <template v-else>
+                                                                                <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
+                                                                            </template>
+                                                                        </div>
+                                                                        <div v-if="props.row.catalognumber || props.row.othercatalognumbers">
+                                                                            <span v-if="props.row.catalognumber">
+                                                                                {{ props.row.catalognumber + (props.row.othercatalognumbers ? '  ' : '') }}
+                                                                            </span>
+                                                                            <span v-if="props.row.othercatalognumbers">
+                                                                                {{ props.row.othercatalognumbers }}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div v-if="props.row.recordedby || props.row.recordnumber || props.row.eventdate || props.row.verbatimeventdate">
+                                                                            <span v-if="props.row.recordedby || props.row.recordnumber">
+                                                                                {{ (props.row.recordedby ? props.row.recordedby : '') + ((props.row.recordedby && props.row.recordnumber) ? ' ' : '') + (props.row.recordnumber ? props.row.recordnumber : '') + ((props.row.eventdate || props.row.verbatimeventdate) ? '  ' : '') }}
+                                                                            </span>
+                                                                            <span v-if="props.row.eventdate">
+                                                                                {{ props.row.eventdate }}
+                                                                            </span>
+                                                                            <span v-else-if="props.row.verbatimeventdate">
+                                                                                {{ props.row.verbatimeventdate }}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div v-if="props.row.country || props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation">
+                                                                            <span v-if="props.row.country">
+                                                                                {{ props.row.country + ((props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                            </span>
+                                                                            <span v-if="props.row.stateprovince">
+                                                                                {{ props.row.stateprovince + ((props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                            </span>
+                                                                            <span v-if="props.row.county">
+                                                                                {{ props.row.county + ((props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                            </span>
+                                                                            <span v-if="props.row.locality">
+                                                                                {{ props.row.locality + ((props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                            </span>
+                                                                            <span v-if="props.row.minimumelevationinmeters || props.row.maximumelevationinmeters">
+                                                                                {{ (props.row.minimumelevationinmeters ? props.row.minimumelevationinmeters : '') + ((props.row.minimumelevationinmeters && props.row.maximumelevationinmeters) ? '-' : '') + (props.row.maximumelevationinmeters ? props.row.maximumelevationinmeters : '') + 'm' }}
+                                                                            </span>
+                                                                            <span v-else-if="props.row.verbatimelevation">
+                                                                                {{ props.row.verbatimelevation }}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div>
+                                                                            <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);">Full Record Details</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-2">
+                                                                    <div class="fit">
+                                                                        <template v-if="props.row.img">
+                                                                            <img :src="props.row.img" class="occurrence-search-image-thumbnail"></img>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </q-td>
-                                                    <q-td key="eventdate" :props="props">
-                                                        {{ props.row.eventdate }}
-                                                    </q-td>
-                                                    <q-td key="sciname" :props="props">
-                                                        <template v-if="Number(props.row.tid) > 0">
-                                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">{{ props.row.sciname }}</a>
-                                                        </template>
-                                                        <template v-else>
-                                                            {{ props.row.sciname }}
-                                                        </template>
                                                     </q-td>
                                                 </q-tr>
                                             </template>
@@ -297,13 +357,9 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                     const bottomLatitude = Vue.ref(null);
                     const circleArr = Vue.ref(null);
                     const clientRoot = baseStore.getClientRoot;
-                    const columns = [
-                        { name: 'catalognumber', label: 'Catalog #', field: 'catalognumber' },
-                        { name: 'collector', label: 'Collector', field: 'collector' },
-                        { name: 'eventdate', label: 'Date', field: 'eventdate' },
-                        { name: 'sciname', label: 'Scientific Name', field: 'sciname' }
-                    ];
+                    const currentUserPermissions = Vue.ref(null);
                     const displayQueryPopup = Vue.ref(false);
+                    const isAdmin = baseStore.getIsAdmin;
                     const lazyLoadCnt = 100;
                     const leftLongitude = Vue.ref(null);
                     const pageNumber = Vue.ref(1);
@@ -363,7 +419,6 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                     const showSpatialPopup = Vue.ref(false);
                     const stArrJson = STARRJSON;
                     const tab = Vue.ref('occurrence');
-                    const tableLoading = Vue.computed(() => (recordDataArr.value.length === 0));
                     const upperLatitude = Vue.ref(null);
 
                     function changeRecordPage(props) {
@@ -429,28 +484,16 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function processSpatialData(data) {
-                        if(popupWindowType.value.includes('box') && data.hasOwnProperty('boundingBoxArr')){
-                            searchStore.updateSearchTerms('upperlat', data['boundingBoxArr']['upperlat']);
-                            searchStore.updateSearchTerms('bottomlat', data['boundingBoxArr']['bottomlat']);
-                            searchStore.updateSearchTerms('leftlong', data['boundingBoxArr']['leftlong']);
-                            searchStore.updateSearchTerms('rightlong', data['boundingBoxArr']['rightlong']);
-                        }
-                        else if(popupWindowType.value.includes('circle') && data.hasOwnProperty('circleArr') && data['circleArr'].length === 1){
-                            searchStore.updateSearchTerms('pointlat', data['circleArr'][0]['pointlat']);
-                            searchStore.updateSearchTerms('pointlong', data['circleArr'][0]['pointlong']);
-                            searchStore.updateSearchTerms('radius', data['circleArr'][0]['radius']);
-                            searchStore.updateSearchTerms('groundradius', data['circleArr'][0]['groundradius']);
-                            searchStore.updateSearchTerms('radiusval', (data['circleArr'][0]['radius'] / 1000));
-                            searchStore.updateSearchTerms('radiusunit', 'km');
-                        }
-                        else if(popupWindowType.value === 'input' && (data.hasOwnProperty('circleArr') || data.hasOwnProperty('polyArr'))){
-                            if(data.hasOwnProperty('circleArr')){
-                                searchStore.updateSearchTerms('circleArr', data['circleArr']);
+                        searchStore.processSpatialPopupData(popupWindowType.value, data);
+                    }
+
+                    function setCurrentUserPermissions() {
+                        baseStore.getGlobalConfigValue('USER_RIGHTS', (dataStr) => {
+                            const data = dataStr ? JSON.parse(dataStr) : null;
+                            if(data && Object.keys(data).length > 0){
+                                currentUserPermissions.value = data;
                             }
-                            if(data.hasOwnProperty('polyArr')){
-                                searchStore.updateSearchTerms('polyArr', data['polyArr']);
-                            }
-                        }
+                        });
                     }
 
                     function setQueryPopupDisplay(val) {
@@ -477,13 +520,20 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                             index: (index - 1),
                             output: 'json'
                         };
-                        searchStore.setSearchRecordData(options);
+                        searchStore.setSearchRecordData(options, (retCnt) => {
+                            hideWorking();
+                            if(retCnt === 0){
+                                showNotification('negative', 'An error occurred while loading the occurrence records.');
+                            }
+                        });
                         pageNumber.value = Number(index);
                     }
 
+                    Vue.provide('loadRecords', loadRecords);
                     Vue.provide('setQueryPopupDisplay', setQueryPopupDisplay);
 
                     Vue.onMounted(() => {
+                        setCurrentUserPermissions();
                         if(queryId || stArrJson){
                             showWorking('Loading...');
                         }
@@ -508,8 +558,9 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                         bottomLatitude,
                         circleArr,
                         clientRoot,
-                        columns,
+                        currentUserPermissions,
                         displayQueryPopup,
+                        isAdmin,
                         leftLongitude,
                         pagination,
                         pointLatitude,
@@ -524,7 +575,6 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                         showRecordInfoWindow,
                         showSpatialPopup,
                         tab,
-                        tableLoading,
                         upperLatitude,
                         changeRecordPage,
                         closeRecordInfoWindow,

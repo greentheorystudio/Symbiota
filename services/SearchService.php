@@ -1151,7 +1151,7 @@ class SearchService {
         }
         else{
             $occurrenceFields = (new Occurrences)->getOccurrenceFields();
-            unset($occurrenceFields['institutioncode'], $occurrenceFields['collectioncode'], $occurrenceFields['family']);
+            unset($occurrenceFields['institutioncode'], $occurrenceFields['collectioncode'], $occurrenceFields['family'], $occurrenceFields['scientificnameauthorship']);
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($occurrenceFields, 'o');
             $fieldNameArr[] = 'IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),"") AS date';
         }
@@ -1161,6 +1161,7 @@ class SearchService {
             $fieldNameArr[] = 'c.collectionname';
             $fieldNameArr[] = 'c.icon';
             $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
+            $fieldNameArr[] = 'IFNULL(t.author, o.scientificnameauthorship) AS scientificnameauthorship';
             $fieldNameArr[] = 't.tidaccepted';
         }
         return 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' ';

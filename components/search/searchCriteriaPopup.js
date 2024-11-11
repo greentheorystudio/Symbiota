@@ -193,7 +193,8 @@ const searchCriteriaPopup = {
         }
 
         function setMoFExtensionFieldArrFromGlobalArr() {
-            baseStore.getGlobalJsonConfigValue('MOF_SEARCH_FIELD_JSON', (data) => {
+            baseStore.getGlobalConfigValue('MOF_SEARCH_FIELD_JSON', (dataStr) => {
+                const data = dataStr ? JSON.parse(dataStr) : null;
                 if(data && data.length > 0){
                     data.forEach((object) => {
                         mofExtensionFieldsArr.push(object);
