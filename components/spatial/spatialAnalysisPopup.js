@@ -169,6 +169,7 @@ const spatialAnalysisPopup = {
             if(props.footprintWkt && inputWindowToolsArr.includes('polygon') && inputWindowToolsArr.includes('wkt')){
                 processInputParentPolyWKTParams();
             }
+            spatialModuleRef.value.zoomToShapesLayer();
         }
 
         function processInputParentBoxParams() {

@@ -94,8 +94,8 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                 </div>
                                 <q-separator ></q-separator>
                                 <template v-if="recordDataArr.length > 0">
-                                    <div>
-                                        <q-table :grid="$q.screen.xs" flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="name" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
+                                    <div class="fit">
+                                        <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="occid" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
                                             <template v-slot:top="scope">
                                                 <div class="spatial-record-table-top-pagination row justify-end">
                                                     <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
@@ -144,7 +144,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                                                             </template>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-8 column text-body1 wrap">
+                                                                    <div class="col-10 column text-body1 wrap">
                                                                         <div v-if="props.row.sciname">
                                                                             <template v-if="Number(props.row.tid) > 0">
                                                                                 <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">
@@ -163,7 +163,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                                                                 {{ props.row.othercatalognumbers }}
                                                                             </span>
                                                                         </div>
-                                                                        <div v-if="props.row.recordedby || props.row.recordnumber || props.row.eventdate || props.row.verbatimeventdate">
+                                                                        <div v-if="props.row.recordedby || props.row.recordnumber || props.row.eventdate || props.row.verbatimeventdate" class="full-width">
                                                                             <span v-if="props.row.recordedby || props.row.recordnumber">
                                                                                 {{ (props.row.recordedby ? props.row.recordedby : '') + ((props.row.recordedby && props.row.recordnumber) ? ' ' : '') + (props.row.recordnumber ? props.row.recordnumber : '') + ((props.row.eventdate || props.row.verbatimeventdate) ? '  ' : '') }}
                                                                             </span>
@@ -174,7 +174,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                                                                 {{ props.row.verbatimeventdate }}
                                                                             </span>
                                                                         </div>
-                                                                        <div v-if="props.row.country || props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation">
+                                                                        <div v-if="props.row.country || props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation" class="full-width">
                                                                             <span v-if="props.row.country">
                                                                                 {{ props.row.country + ((props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
                                                                             </span>
@@ -212,15 +212,17 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                                 </q-tr>
                                             </template>
                                             <template v-slot:pagination="scope">
-                                                <div class="text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                                                <div class="spatial-record-table-top-pagination row justify-end">
+                                                    <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
-                                                <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
 
-                                                <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
+                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
 
-                                                <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
+                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
 
-                                                <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                                                </div>
                                             </template>
                                             <template v-slot:no-data>
                                                 <div class="text-bold">Loading...</div>
@@ -523,7 +525,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.setSearchRecordData(options, (retCnt) => {
                             hideWorking();
                             if(retCnt === 0){
-                                showNotification('negative', 'An error occurred while loading the occurrence records.');
+                                //showNotification('negative', 'An error occurred while loading the occurrence records.');
                             }
                         });
                         pageNumber.value = Number(index);

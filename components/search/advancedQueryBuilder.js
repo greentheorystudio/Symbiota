@@ -14,7 +14,7 @@ const advancedQueryBuilder = {
             <q-card flat bordered>
                 <q-card-section>
                     <div class="full-width row justify-between">
-                        <div class="text-body1 text-bold">Query Builder</div>
+                        <div class="text-body1 text-bold">{{ queryType === 'advanced' ? 'Occurrence Data ' : 'Data Extension ' }}Query Builder</div>
                         <div>
                             <q-btn color="primary" @click="addCriteriaObjToArr();" label="Add Criteria" :disabled="addCriteriaDisabled" />
                         </div>
