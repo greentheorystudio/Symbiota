@@ -409,13 +409,23 @@ const useSearchStore = Pinia.defineStore('search', {
                 }
             }
         },
-        redirectWithQueryId(url, addlProp = null) {
+        redirectWithQueryId(url, addlProp = null, newTab = false) {
             const baseStore = useBaseStore();
-            window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+            if(newTab){
+                window.open((baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '')), '_blank');
+            }
+            else{
+                window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+            }
         },
-        redirectWithSearchTermsJson(url, addlProp = null) {
+        redirectWithSearchTermsJson(url, addlProp = null, newTab = false) {
             const baseStore = useBaseStore();
-            window.location.href = baseStore.getClientRoot + url + '?starr=' + this.getSearchTermsJson + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+            if(newTab){
+                window.open((baseStore.getClientRoot + url + '?starr=' + this.getSearchTermsJson + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '')), '_blank');
+            }
+            else{
+                window.location.href = baseStore.getClientRoot + url + '?starr=' + this.getSearchTermsJson + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+            }
         },
         removeRecordFromSelections(id) {
             const selObj = this.selections.find(obj => Number(obj['occid']) === Number(id));
