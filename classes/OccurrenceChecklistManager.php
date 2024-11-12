@@ -79,7 +79,8 @@ class OccurrenceChecklistManager extends OccurrenceManager{
             else{
             	$sqlWhere = $this->getSqlWhere();
             	$sqlTaxaInsert .= 'SELECT DISTINCT t.tid, ' .$dynClid.' '.
-                    'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid ';
+                    'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                    'LEFT JOIN taxa AS t ON o.tid = t.TID ';
                 $sqlTaxaInsert .= $this->setTableJoins($sqlWhere);
                 $sqlTaxaInsert .= $sqlWhere;
                 $sqlTaxaInsert .= ' AND (t.tid IS NOT NULL) ';

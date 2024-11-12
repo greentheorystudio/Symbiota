@@ -12,7 +12,7 @@ const keyDisplayButton = {
         const searchStore = useSearchStore();
 
         function redirectWithSearchTermsJson() {
-            searchStore.redirectWithSearchTermsJson('/collections/checklistnative.php', {prop: 'interface', propValue: 'key'});
+            searchStore.redirectWithSearchTermsJson('/collections/checklistnative.php', {prop: 'interface', propValue: 'key'}, true);
         }
 
         return {
