@@ -12,7 +12,7 @@ const checklistDisplayButton = {
         const searchStore = useSearchStore();
 
         function redirectWithSearchTermsJson() {
-            searchStore.redirectWithSearchTermsJson('/collections/checklistnative.php', {prop: 'interface', propValue: 'checklist'});
+            searchStore.redirectWithSearchTermsJson('/collections/checklistnative.php', {prop: 'interface', propValue: 'checklist'}, true);
         }
 
         return {
