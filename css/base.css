@@ -40,19 +40,19 @@ h6 {
 	padding-top: 15px;
 }
 a{
-	color: 		#2C405E;
+	color: 		#424242;
 	text-decoration: none;
 }
 a:hover{
-	color: black;
-	text-decoration: underline;
+	color: #424242;
+	text-decoration: none;
 }
 span[class=link] {
-	color: 		#2C405E;
+	color: 		#424242;
 	text-decoration: none;
 }
 span[class=link]:hover {
-	color: black;
+	color: #424242;
 	text-decoration: underline;
 }
 div.tndiv{
