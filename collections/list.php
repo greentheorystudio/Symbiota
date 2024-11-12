@@ -93,7 +93,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                             </template>
                                             <template v-slot:header="props"></template>
                                             <template v-slot:body="props">
-                                                <q-tr v-if="recordDataArr.length > 0" :props="props">
+                                                <q-tr v-if="recordDataArr.length > 0" :props="props" no-hover>
                                                     <q-td class="full-width">
                                                         <div class="full-width column">
                                                             <div class="q-mb-xs row justify-between">
