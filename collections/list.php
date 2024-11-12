@@ -258,11 +258,11 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                                         <div>
                                                             <template v-if="Number(taxon.tid) > 0">
                                                                 <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon.tid)" target="_blank">
-                                                                    <span class="text-italic">{{ taxon.sciname }}</span><span class="q-ml-sm">{{ taxon.scientificNameAuthorship }}</span>
+                                                                    <span class="text-italic">{{ taxon.sciname }}</span><span class="q-ml-sm">{{ taxon.author }}</span>
                                                                 </a>
                                                             </template>
                                                             <template v-else>
-                                                                <span class="text-italic">{{ taxon.sciname }}</span><span class="q-ml-sm">{{ taxon.scientificNameAuthorship }}</span>
+                                                                <span class="text-italic">{{ taxon.sciname }}</span><span class="q-ml-sm">{{ taxon.author }}</span>
                                                             </template>
                                                         </div>
                                                     </template>
@@ -539,7 +539,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                             const taxonData = familyData['taxa'].find((taxonObj) => taxonObj.sciname === taxon['sciname']);
                             if(!taxonData){
                                 familyData['taxa'].push({
-                                    tid: taxon['tid'],
+                                    tid: taxon['id'],
                                     sciname: taxon['sciname'],
                                     author: taxon['scientificNameAuthorship']
                                 });
