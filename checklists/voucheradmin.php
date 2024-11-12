@@ -79,9 +79,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
             const starrObj = {
                 usethes: true,
                 taxa: sciname,
-                targetclid: clid
+                clid: clid
             };
-            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj) + '&targettid=' + sciname;
+            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj);
             openPopup(url);
         }
     </script>

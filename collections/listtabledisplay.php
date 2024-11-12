@@ -154,8 +154,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <?php
         echo '<span class="navpath">';
         echo '<a href="../index.php">Home</a> &gt;&gt; ';
-        echo '<a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId(\'index.php\');">Collections</a> &gt;&gt; ';
-        echo '<a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId(\'harvestparams.php\');">Search Criteria</a> &gt;&gt; ';
+        echo '<a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId(\'list.php\');">Search Criteria</a> &gt;&gt; ';
         echo '<b>Specimen Records Table</b>';
         echo '</span>';
         ?>

@@ -1057,9 +1057,6 @@ body.processing .loadingModal {
 	left: 0;
 	height: 100%;
 }
-.spatial-record-table-top-pagination {
-	width: 100%;
-}
 .spatial-record-table thead tr th {
 	font-weight: bold;
 	text-align: center;
@@ -1107,4 +1104,10 @@ body.processing .loadingModal {
 }
 .q-field__native {
 	overflow: hidden;
+}
+.occurrence-search-list-coll-icon {
+	width: 50px;
+}
+.occurrence-search-image-thumbnail {
+	height: 150px;
 }
