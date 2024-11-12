@@ -9,6 +9,7 @@
     const EMAIL_CONFIGURED = <?php echo ($GLOBALS['EMAIL_CONFIGURED'] ? 'true' : 'false'); ?>;
     const VALID_USER = <?php echo ($GLOBALS['VALID_USER'] ? 'true' : 'false'); ?>;
     const IS_ADMIN = <?php echo ($GLOBALS['IS_ADMIN'] ? 'true' : 'false'); ?>;
+    const KEY_MOD_IS_ACTIVE = <?php echo ($GLOBALS['KEY_MOD_IS_ACTIVE'] ? 'true' : 'false'); ?>;
     const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;
     const USER_DISPLAY_NAME = '<?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>';
     const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');

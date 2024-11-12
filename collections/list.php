@@ -1,6 +1,5 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -18,8 +17,8 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" type="text/css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
-        <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
@@ -34,23 +33,6 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
         <script type="text/javascript">
             const QUERYID = <?php echo $queryId; ?>;
             const STARRJSON = '<?php echo $stArrJson; ?>';
-
-            function getTaxaList(){
-                document.getElementById("taxalist").innerHTML = "<p>Loading...</p>";
-                const http = new XMLHttpRequest();
-                const url = "../api/search/getchecklist.php";
-                const jsonStarr = encodeURIComponent(JSON.stringify(stArr));
-                const params = 'starr='+jsonStarr;
-                //console.log(url+'?'+params);
-                http.open("POST", url, true);
-                http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                http.onreadystatechange = function() {
-                    if(http.readyState === 4 && http.status === 200) {
-                        document.getElementById("taxalist").innerHTML = http.responseText;
-                    }
-                };
-                http.send(params);
-            }
         </script>
     </head>
     <body>
@@ -66,7 +48,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                 <q-card flat bordered>
                     <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                         <q-tab name="occurrence" label="Occurrence Records" no-caps></q-tab>
-                        <q-tab name="taxa" label="Taxa List" no-caps :disable="true"></q-tab>
+                        <q-tab name="taxa" label="Taxa List" no-caps :disable="taxaCnt === 0"></q-tab>
                     </q-tabs>
                     <q-separator></q-separator>
                     <q-tab-panels v-model="tab">
@@ -241,20 +223,54 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                             </div>
                         </q-tab-panel>
                         <q-tab-panel class="q-pa-none" name="taxa">
-                            <div class="column q-pa-sm q-col-gutter-md">
-                                <div class="row justify-end q-col-gutter-sm">
-                                    <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Reset" dense />
+                            <div class="column">
+                                <div class="q-pa-sm column q-col-gutter-xs">
+                                    <div class="row justify-start">
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="loadRecords();" label="Search Records" :disabled="!searchTermsValid" dense>
-                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                {{ searchRecordsTooltip }}
-                                            </q-tooltip>
-                                        </q-btn>
+                                    <div v-if="recordDataArr.length > 0" class="row justify-between q-col-gutter-sm">
+                                        <div>
+                                            <search-data-downloader :spatial="false"></search-data-downloader>
+                                        </div>
+                                        <div class="row justify-end q-col-gutter-sm">
+                                            <template v-if="keyModuleIsActive">
+                                                <key-display-button></key-display-button>
+                                            </template>
+                                            <checklist-display-button></checklist-display-button>
+                                        </div>
                                     </div>
                                 </div>
-                                <advanced-query-builder :field-options="advancedFieldOptions" query-type="advanced"></advanced-query-builder>
+                                <q-separator ></q-separator>
+                                <div class="q-pa-md">
+                                    <div class="text-h6 text-bold">
+                                        {{ 'Taxa Count: ' + taxaCnt }}
+                                    </div>
+                                    <div class="column q-gutter-sm">
+                                        <template v-for="family in taxaDataArr">
+                                            <div class="q-mt-sm">
+                                                <div class="text-h6 text-bold">
+                                                    {{ family.name }}
+                                                </div>
+                                                <div class="q-ml-md column q-gutter-xs">
+                                                    <template v-for="taxon in family['taxa']">
+                                                        <div>
+                                                            <template v-if="Number(taxon.tid) > 0">
+                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon.tid)" target="_blank">
+                                                                    <span class="text-italic">{{ taxon.sciname }}</span><span class="q-ml-sm">{{ taxon.scientificNameAuthorship }}</span>
+                                                                </a>
+                                                            </template>
+                                                            <template v-else>
+                                                                <span class="text-italic">{{ taxon.sciname }}</span><span class="q-ml-sm">{{ taxon.scientificNameAuthorship }}</span>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
                             </div>
                         </q-tab-panel>
                     </q-tab-panels>
@@ -306,6 +322,8 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDataDownloader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/tableDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/keyDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/checklistDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/imageDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/advancedQueryBuilder.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCollectionsBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -342,8 +360,10 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
         <script>
             const searchListDisplayModule = Vue.createApp({
                 components: {
+                    'checklist-display-button': checklistDisplayButton,
                     'copy-url-button': copyURLButton,
                     'image-display-button': imageDisplayButton,
+                    'key-display-button': keyDisplayButton,
                     'occurrence-info-window-popup': occurrenceInfoWindowPopup,
                     'search-criteria-popup': searchCriteriaPopup,
                     'search-data-downloader': searchDataDownloader,
@@ -362,6 +382,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                     const currentUserPermissions = Vue.ref(null);
                     const displayQueryPopup = Vue.ref(false);
                     const isAdmin = baseStore.getIsAdmin;
+                    const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const lazyLoadCnt = 100;
                     const leftLongitude = Vue.ref(null);
                     const pageNumber = Vue.ref(1);
@@ -421,6 +442,8 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                     const showSpatialPopup = Vue.ref(false);
                     const stArrJson = STARRJSON;
                     const tab = Vue.ref('occurrence');
+                    const taxaCnt = Vue.ref(0);
+                    const taxaDataArr = Vue.reactive([]);
                     const upperLatitude = Vue.ref(null);
 
                     function changeRecordPage(props) {
@@ -450,9 +473,21 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                         clearSpatialInputValues();
                     }
 
+                    function getTaxaData() {
+                        const options = {
+                            schema: 'taxa',
+                            spatial: 0,
+                            output: 'json'
+                        };
+                        searchStore.processSearch(options, (res) => {
+                            processTaxaData(res);
+                        });
+                    }
+
                     function loadRecords(){
                         if(searchStore.getSearchTermsValid){
-                            searchStore.clearSelections();
+                            taxaCnt.value = 0;
+                            taxaDataArr.length = 0;
                             showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
@@ -462,6 +497,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                 if(Number(searchStore.getSearchRecCnt) > 0){
                                     displayQueryPopup.value = false;
                                     setTableRecordData(pagination.value.page);
+                                    getTaxaData();
                                 }
                                 else{
                                     hideWorking();
@@ -487,6 +523,37 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function processSpatialData(data) {
                         searchStore.processSpatialPopupData(popupWindowType.value, data);
+                    }
+
+                    function processTaxaData(data) {
+                        data.forEach((taxon) => {
+                            const familyName = (taxon['family'] && taxon['family'] !== '') ? taxon['family'] : '[Family Unknown]';
+                            let familyData = taxaDataArr.find((family) => family.name === familyName);
+                            if(!familyData){
+                                taxaDataArr.push({
+                                    name: familyName,
+                                    taxa: []
+                                });
+                                familyData = taxaDataArr.find((family) => family.name === familyName);
+                            }
+                            const taxonData = familyData['taxa'].find((taxonObj) => taxonObj.sciname === taxon['sciname']);
+                            if(!taxonData){
+                                familyData['taxa'].push({
+                                    tid: taxon['tid'],
+                                    sciname: taxon['sciname'],
+                                    author: taxon['scientificNameAuthorship']
+                                });
+                            }
+                        });
+                        taxaDataArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
+                        taxaDataArr.forEach((family) => {
+                            family['taxa'].sort((a, b) => {
+                                return a['sciname'].toLowerCase().localeCompare(b['sciname'].toLowerCase());
+                            });
+                        });
+                        taxaCnt.value = data.length;
                     }
 
                     function setCurrentUserPermissions() {
@@ -563,6 +630,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                         currentUserPermissions,
                         displayQueryPopup,
                         isAdmin,
+                        keyModuleIsActive,
                         leftLongitude,
                         pagination,
                         pointLatitude,
@@ -577,6 +645,8 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                         showRecordInfoWindow,
                         showSpatialPopup,
                         tab,
+                        taxaCnt,
+                        taxaDataArr,
                         upperLatitude,
                         changeRecordPage,
                         closeRecordInfoWindow,

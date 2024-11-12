@@ -8,6 +8,7 @@ const useBaseStore = Pinia.defineStore('base', {
         emailConfigured: EMAIL_CONFIGURED,
         imageTagOptions: IMAGE_TAG_OPTIONS,
         isAdmin: IS_ADMIN,
+        keyModuleIsActive: KEY_MOD_IS_ACTIVE,
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         rightsTerms: RIGHTS_TERMS,
@@ -53,6 +54,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getIsAdmin(state) {
             return state.isAdmin;
+        },
+        getKeyModuleIsActive(state) {
+            return state.keyModuleIsActive;
         },
         getMaxUploadFilesize(state) {
             return state.maxUploadFilesize;

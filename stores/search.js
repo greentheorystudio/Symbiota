@@ -409,9 +409,13 @@ const useSearchStore = Pinia.defineStore('search', {
                 }
             }
         },
-        redirectWithQueryId(url) {
+        redirectWithQueryId(url, addlProp = null) {
             const baseStore = useBaseStore();
-            window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId;
+            window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+        },
+        redirectWithSearchTermsJson(url, addlProp = null) {
+            const baseStore = useBaseStore();
+            window.location.href = baseStore.getClientRoot + url + '?starr=' + this.getSearchTermsJson + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
         },
         removeRecordFromSelections(id) {
             const selObj = this.selections.find(obj => Number(obj['occid']) === Number(id));

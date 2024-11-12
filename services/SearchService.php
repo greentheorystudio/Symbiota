@@ -1134,13 +1134,14 @@ class SearchService {
         }
         elseif($schema === 'taxa'){
             $fieldNameArr = array();
+            $fieldNameArr[] = 't.tid AS id';
             $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
             $fieldNameArr[] = 'o.sciname';
             $fieldNameArr[] = 'CONCAT_WS(" ", t.unitind1, t.unitname1) AS genus';
             $fieldNameArr[] = 'CONCAT_WS(" ", t.unitind2, t.unitname2) AS specificEpithet';
             $fieldNameArr[] = 't.unitind3 AS infraSpecificRank';
             $fieldNameArr[] = 't.unitname3 AS infraSpecificEpithet';
-            $fieldNameArr[] = 't.author AS scientificNameAuthorship';
+            $fieldNameArr[] = 'IFNULL(t.author, o.scientificnameauthorship) AS scientificNameAuthorship';
         }
         elseif($schema === 'map'){
             $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.`year`', 'o.`month`', 'o.`day`', 'o.decimallatitude',
