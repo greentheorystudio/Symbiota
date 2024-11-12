@@ -4,8 +4,8 @@ include_once(__DIR__ . '/../models/Collections.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../models/TaxonVernaculars.php');
-include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/DataUtilitiesService.php');
+include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/SanitizerService.php');
 
 class SearchService {
@@ -128,10 +128,11 @@ class SearchService {
 
     public function prepareOccurrenceAdvancedWhereSql($searchTermsArr): string
     {
-        $advSqlWhereStr = '';
+        $advSqlWherePartsArr = array();
         if(array_key_exists('advanced', $searchTermsArr) && is_array($searchTermsArr['advanced']) && count($searchTermsArr['advanced']) > 0) {
             $fields = (new Occurrences)->getOccurrenceFields();
             foreach($searchTermsArr['advanced'] as $criteriaArr){
+                $advSqlWhereStr = '';
                 if($criteriaArr['field'] && $criteriaArr['operator'] && array_key_exists($criteriaArr['field'], $fields)){
                     if($criteriaArr['field'] === 'year' || $criteriaArr['field'] === 'month' || $criteriaArr['field'] === 'day'){
                         $field = 'o.`' . $criteriaArr['field'] . '`';
@@ -189,10 +190,11 @@ class SearchService {
                     if(array_key_exists('closeParens', $criteriaArr) && $criteriaArr['closeParens']){
                         $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['closeParens']);
                     }
+                    $advSqlWherePartsArr[] = $advSqlWhereStr;
                 }
             }
         }
-        return '(' . $advSqlWhereStr . ')';
+        return '(' . implode(' ', $advSqlWherePartsArr) . ')';
     }
 
     public function prepareOccurrenceCatalogNumberWhereSql($searchTermsArr): string
@@ -206,7 +208,7 @@ class SearchService {
         foreach($catArr as $v){
             if($p = strpos($v,' - ')){
                 $term1 = trim(substr($v,0, $p));
-                $term2 = trim(substr($v,$p+3));
+                $term2 = trim(substr($v, ($p + 3)));
                 if(is_numeric($term1) && is_numeric($term2)){
                     $betweenFrag[] = '(o.catalognumber BETWEEN ' . SanitizerService::cleanInStr($this->conn, $term1) . ' AND ' . SanitizerService::cleanInStr($this->conn, $term2) . ')';
                     if($includeOtherCatNum){
@@ -562,6 +564,77 @@ class SearchService {
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
     }
 
+    public function prepareOccurrenceMeasurementOrFactWhereSql($searchTermsArr): string
+    {
+        $mofSqlWherePartsArr = array();
+        if(array_key_exists('mofextension', $searchTermsArr) && is_array($searchTermsArr['mofextension']) && count($searchTermsArr['mofextension']) > 0) {
+            foreach($searchTermsArr['mofextension'] as $criteriaArr){
+                $mofSqlWhereStr = '';
+                if($criteriaArr['field'] && $criteriaArr['operator']){
+                    if($criteriaArr['dataType'] === 'event'){
+                        $field = 'eventid';
+                    }
+                    else{
+                        $field = 'occid';
+                    }
+                    if(array_key_exists('concatenator', $criteriaArr) && $criteriaArr['concatenator']){
+                        $mofSqlWhereStr .= ' ' . SanitizerService::cleanInStr($this->conn, $criteriaArr['concatenator']) . ' ';
+                    }
+                    if(array_key_exists('openParens', $criteriaArr) && $criteriaArr['openParens']){
+                        $mofSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['openParens']);
+                    }
+                    if($criteriaArr['operator'] === 'IS NULL'){
+                        $mofSqlWhereStr .= 'o.' . $field . ' NOT IN(SELECT ' . $field . ' FROM ommofextension WHERE `field` = "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['field']) . '" AND datavalue IS NOT NULL AND ' . $field . ' IS NOT NULL)';
+                    }
+                    elseif($criteriaArr['operator'] === 'IS NOT NULL'){
+                        $mofSqlWhereStr .= 'o.' . $field . ' IN(SELECT ' . $field . ' FROM ommofextension WHERE `field` = "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['field']) . '" AND datavalue IS NOT NULL AND ' . $field . ' IS NOT NULL)';
+                    }
+                    else{
+                        $mofSqlWhereStr .= 'o.' . $field . ' IN(SELECT ' . $field . ' FROM ommofextension WHERE `field` = "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['field']) . '" AND datavalue';
+                        if($criteriaArr['operator'] === 'EQUALS' || $criteriaArr['operator'] === 'NOT EQUALS' || $criteriaArr['operator'] === 'GREATER THAN' || $criteriaArr['operator'] === 'LESS THAN'){
+                            if($criteriaArr['operator'] === 'EQUALS'){
+                                $mofSqlWhereStr .= ' = ';
+                            }
+                            elseif($criteriaArr['operator'] === 'NOT EQUALS'){
+                                $mofSqlWhereStr .= ' <> ';
+                            }
+                            elseif($criteriaArr['operator'] === 'GREATER THAN'){
+                                $mofSqlWhereStr .= ' > ';
+                            }
+                            else{
+                                $mofSqlWhereStr .= ' < ';
+                            }
+                            if(is_numeric($criteriaArr['value'])){
+                                $mofSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['value']);
+                            }
+                            else{
+                                $mofSqlWhereStr .= '"' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            }
+                        }
+                        else if($criteriaArr['operator'] === 'STARTS WITH'){
+                            $mofSqlWhereStr .= ' REGEXP "^' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                        elseif($criteriaArr['operator'] === 'ENDS WITH'){
+                            $mofSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '^"';
+                        }
+                        elseif($criteriaArr['operator'] === 'CONTAINS'){
+                            $mofSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                        elseif($criteriaArr['operator'] === 'DOES NOT CONTAIN'){
+                            $mofSqlWhereStr .= ' NOT REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                        }
+                        $mofSqlWhereStr .= ' AND ' . $field . ' IS NOT NULL)';
+                    }
+                    if(array_key_exists('closeParens', $criteriaArr) && $criteriaArr['closeParens']){
+                        $mofSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['closeParens']);
+                    }
+                    $mofSqlWherePartsArr[] = $mofSqlWhereStr;
+                }
+            }
+        }
+        return '(' . implode(' ', $mofSqlWherePartsArr) . ')';
+    }
+
     public function prepareOccurrenceOccurrenceRemarksWhereSql($searchTermsArr): string
     {
         $tempArr = array();
@@ -892,6 +965,12 @@ class SearchService {
                 $sqlWherePartsArr[] = $advancedStr;
             }
         }
+        if(array_key_exists('mofextension', $searchTermsArr) && is_array($searchTermsArr['mofextension']) && count($searchTermsArr['mofextension']) > 0) {
+            $mofStr = $this->prepareOccurrenceMeasurementOrFactWhereSql($searchTermsArr);
+            if($mofStr){
+                $sqlWherePartsArr[] = $mofStr;
+            }
+        }
         return count($sqlWherePartsArr) > 0 ? implode(' AND ', $sqlWherePartsArr) : '';
     }
 
@@ -1036,7 +1115,7 @@ class SearchService {
                     if($row['thumbnailurl']){
                         $returnData[$row['occid']]['img'] = $row['thumbnailurl'];
                     }
-                    if($r->url){
+                    if($row['url']){
                         $returnData[$row['occid']]['hasimage'] = true;
                     }
                 }
@@ -1055,13 +1134,14 @@ class SearchService {
         }
         elseif($schema === 'taxa'){
             $fieldNameArr = array();
+            $fieldNameArr[] = 't.tid AS id';
             $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
             $fieldNameArr[] = 'o.sciname';
             $fieldNameArr[] = 'CONCAT_WS(" ", t.unitind1, t.unitname1) AS genus';
             $fieldNameArr[] = 'CONCAT_WS(" ", t.unitind2, t.unitname2) AS specificEpithet';
             $fieldNameArr[] = 't.unitind3 AS infraSpecificRank';
             $fieldNameArr[] = 't.unitname3 AS infraSpecificEpithet';
-            $fieldNameArr[] = 't.author AS scientificNameAuthorship';
+            $fieldNameArr[] = 'IFNULL(t.author, o.scientificnameauthorship) AS scientificNameAuthorship';
         }
         elseif($schema === 'map'){
             $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.`year`', 'o.`month`', 'o.`day`', 'o.decimallatitude',
@@ -1072,16 +1152,17 @@ class SearchService {
         }
         else{
             $occurrenceFields = (new Occurrences)->getOccurrenceFields();
-            unset($occurrenceFields['institutioncode'], $occurrenceFields['collectioncode'], $occurrenceFields['family']);
+            unset($occurrenceFields['institutioncode'], $occurrenceFields['collectioncode'], $occurrenceFields['family'], $occurrenceFields['scientificnameauthorship']);
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($occurrenceFields, 'o');
             $fieldNameArr[] = 'IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),"") AS date';
         }
-        if($schema !== 'occid' && $schema !== 'taxa'){
+        if($schema !== 'taxa'){
             $fieldNameArr[] = 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode';
             $fieldNameArr[] = 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode';
             $fieldNameArr[] = 'c.collectionname';
             $fieldNameArr[] = 'c.icon';
             $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
+            $fieldNameArr[] = 'IFNULL(t.author, o.scientificnameauthorship) AS scientificnameauthorship';
             $fieldNameArr[] = 't.tidaccepted';
         }
         return 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' ';

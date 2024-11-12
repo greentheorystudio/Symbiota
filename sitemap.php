@@ -26,7 +26,7 @@ include_once(__DIR__ . '/config/header-includes.php');
 		<div class="pmargin">
 			<h3>Collections</h3>
 			<ul>
-				<li><a href="collections/index.php">Search Collections</a></li>
+				<li><a href="collections/list.php">Search Collections</a></li>
                 <li><a href="spatial/index.php">Spatial Module</a></li>
 				<li><a href="collections/misc/collprofiles.php">Collections</a></li>
 				<li><a href="collections/misc/collstats.php">Collection Statistics</a></li>

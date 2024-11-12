@@ -12,6 +12,6 @@ if($GLOBALS['IS_ADMIN']){
 
 if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getGlobalConfigValue' && $prop){
-        echo $GLOBALS[$prop];
+        echo is_array($GLOBALS[$prop]) ? json_encode($GLOBALS[$prop]) : $GLOBALS[$prop];
     }
 }

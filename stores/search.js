@@ -13,12 +13,14 @@ const useSearchStore = Pinia.defineStore('search', {
             hasmedia: false,
             hasgenetic: false,
             withoutimages: false,
-            advanced: []
+            radiusval: null,
+            radiusunit: 'km',
+            advanced: [],
+            mofextension: []
         },
         dateId: null,
         queryBuilderFieldOptions: [
             {field: 'associatedcollectors', label: 'Associated Collectors'},
-            {field: 'associatedoccurrences', label: 'Associated Occurrences'},
             {field: 'associatedtaxa', label: 'Associated Taxa'},
             {field: 'attributes', label: 'Attributes'},
             {field: 'scientificnameauthorship', label: 'Author'},
@@ -205,7 +207,8 @@ const useSearchStore = Pinia.defineStore('search', {
                 (state.searchTerms.hasOwnProperty('hasmedia') && state.searchTerms['hasmedia']) ||
                 (state.searchTerms.hasOwnProperty('hasgenetic') && state.searchTerms['hasgenetic']) ||
                 (state.searchTerms.hasOwnProperty('withoutimages') && state.searchTerms['withoutimages']) ||
-                (state.searchTerms.hasOwnProperty('advanced') && state.searchTerms['advanced'].length > 0)
+                (state.searchTerms.hasOwnProperty('advanced') && state.searchTerms['advanced'].length > 0) ||
+                (state.searchTerms.hasOwnProperty('mofextension') && state.searchTerms['mofextension'].length > 0)
             ){
                 populated = true;
             }
@@ -382,9 +385,37 @@ const useSearchStore = Pinia.defineStore('search', {
                 callback(data);
             });
         },
-        redirectWithQueryId(url) {
+        processSpatialPopupData(windowType, data) {
+            if(windowType.includes('box') && data.hasOwnProperty('boundingBoxArr')){
+                this.updateSearchTerms('upperlat', data['boundingBoxArr']['upperlat']);
+                this.updateSearchTerms('bottomlat', data['boundingBoxArr']['bottomlat']);
+                this.updateSearchTerms('leftlong', data['boundingBoxArr']['leftlong']);
+                this.updateSearchTerms('rightlong', data['boundingBoxArr']['rightlong']);
+            }
+            else if(windowType.includes('circle') && data.hasOwnProperty('circleArr') && data['circleArr'].length === 1){
+                this.updateSearchTerms('pointlat', data['circleArr'][0]['pointlat']);
+                this.updateSearchTerms('pointlong', data['circleArr'][0]['pointlong']);
+                this.updateSearchTerms('radius', data['circleArr'][0]['radius']);
+                this.updateSearchTerms('groundradius', data['circleArr'][0]['groundradius']);
+                this.updateSearchTerms('radiusval', (data['circleArr'][0]['radius'] / 1000));
+                this.updateSearchTerms('radiusunit', 'km');
+            }
+            else if(windowType === 'input' && (data.hasOwnProperty('circleArr') || data.hasOwnProperty('polyArr'))){
+                if(data.hasOwnProperty('circleArr')){
+                    this.updateSearchTerms('circleArr', data['circleArr']);
+                }
+                if(data.hasOwnProperty('polyArr')){
+                    this.updateSearchTerms('polyArr', data['polyArr']);
+                }
+            }
+        },
+        redirectWithQueryId(url, addlProp = null) {
             const baseStore = useBaseStore();
-            window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId;
+            window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+        },
+        redirectWithSearchTermsJson(url, addlProp = null) {
+            const baseStore = useBaseStore();
+            window.location.href = baseStore.getClientRoot + url + '?starr=' + this.getSearchTermsJson + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
         },
         removeRecordFromSelections(id) {
             const selObj = this.selections.find(obj => Number(obj['occid']) === Number(id));
@@ -450,9 +481,12 @@ const useSearchStore = Pinia.defineStore('search', {
                 });
             }
         },
-        setSearchRecordData(options) {
+        setSearchRecordData(options, callback = null) {
             this.processSearch(options, (res) => {
                 this.searchRecordData = this.setSelectedRecords(res);
+                if(callback){
+                    callback(res.length);
+                }
             });
         },
         setSelectedRecords(recordArr) {

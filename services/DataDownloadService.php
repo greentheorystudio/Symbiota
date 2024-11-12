@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/DataUtilitiesService.php');
+include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/SanitizerService.php');
 
 class DataDownloadService {

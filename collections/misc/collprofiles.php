@@ -37,7 +37,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <div id="moduleContainer">
         <div class="q-mt-xs q-ml-xs row justify-start">
             <a :href="clientRoot + '/index.php'">Home</a> &gt;&gt;
-            <a :href="clientRoot + '/collections/index.php'">Collection Search Page</a> &gt;&gt;
+            <a :href="clientRoot + '/collections/list.php'">Collection Search Page</a> &gt;&gt;
             <span class="text-body1 text-bold">{{ collectionData.collectionname }} Details</span>
         </div>
         <div id="innertext">
