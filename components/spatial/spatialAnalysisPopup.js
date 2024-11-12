@@ -1,4 +1,4 @@
-componentRegistry['spatialAnalysisPopup'] = {
+const spatialAnalysisPopup = {
     props: {
         bottomLat: {
             type: Number,
@@ -169,6 +169,7 @@ componentRegistry['spatialAnalysisPopup'] = {
             if(props.footprintWkt && inputWindowToolsArr.includes('polygon') && inputWindowToolsArr.includes('wkt')){
                 processInputParentPolyWKTParams();
             }
+            spatialModuleRef.value.zoomToShapesLayer();
         }
 
         function processInputParentBoxParams() {
