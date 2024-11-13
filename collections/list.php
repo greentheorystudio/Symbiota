@@ -611,7 +611,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                             showWorking('Loading...');
                         }
                         searchStore.initializeSearchStorage(queryId);
-                        if(queryId || stArrJson){
+                        if(Number(queryId) > 0 || stArrJson){
                             if(stArrJson){
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
