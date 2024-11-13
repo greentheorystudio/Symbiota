@@ -223,7 +223,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                             </div>
                         </q-tab-panel>
                         <q-tab-panel class="q-pa-none" name="taxa">
-                            <div class="column">
+                            <div v-if="taxaCnt > 0" class="column">
                                 <div class="q-pa-sm column q-col-gutter-xs">
                                     <div class="row justify-start">
                                         <div>

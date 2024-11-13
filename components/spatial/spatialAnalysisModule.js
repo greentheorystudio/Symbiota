@@ -1545,7 +1545,7 @@ const spatialAnalysisModule = {
                             const properties = feature.getKeys();
                             properties.forEach((prop) => {
                                 if(String(prop) !== 'geometry'){
-                                    infoHTML += '<b>' + prop + ':</b> ' + feature.get(prop) + '<br />';
+                                    infoHTML += '<b>' + prop + ':</b> ' + (feature.get(prop) ? feature.get(prop) : '') + '<br />';
                                 }
                             });
                             if(infoHTML){
