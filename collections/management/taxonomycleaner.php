@@ -7,7 +7,7 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
-$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -309,7 +309,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                 },
                 setup() {
                     const { getErrorResponseText, openTutorialWindow, showNotification } = useCore();
-                    const store = useBaseStore();
+                    const baseStore = useBaseStore();
                     const collectionStore = useCollectionStore();
 
                     let abortController = null;
@@ -347,7 +347,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                     const selectedKingdomName = Vue.ref(null);
                     let taxaLoaded = 0;
                     let taxaToAddArr = [];
-                    const taxonomicRanks = store.getTaxonomicRanks;
+                    const taxonomicRanks = baseStore.getTaxonomicRanks;
                     const undoButtonsDisabled = Vue.ref(true);
                     const undoId = Vue.ref(null);
                     const unlinkedLoading = Vue.ref(false);
@@ -2056,7 +2056,7 @@ $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
                                 setUnlinkedRecordCounts();
                             }
                             else{
-                                window.location.href = store.getClientRoot + '/index.php';
+                                window.location.href = baseStore.getClientRoot + '/index.php';
                             }
                         });
                     });
