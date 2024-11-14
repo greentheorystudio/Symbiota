@@ -3,6 +3,10 @@ const spatialViewerElement = {
         coordinateSet: {
             type: Array,
             default: []
+        },
+        footprintWkt: {
+            type: String,
+            default: null
         }
     },
     template: `
@@ -243,13 +247,30 @@ const spatialViewerElement = {
                     const vectorextent = mapSettings.vectorSource.getExtent();
                     map.getView().fit(vectorextent,map.getSize());
                     let fittedZoom = map.getView().getZoom();
-                    if(fittedZoom > 10){
-                        map.getView().setZoom(fittedZoom - 8);
-                    }
+                    map.getView().setZoom(fittedZoom);
                 });
             }
-            else{
-                mapSettings.vectorSource.clear();
+        }
+
+        function processFootprintWkt() {
+            if(props.footprintWkt){
+                const wktFormat = new ol.format.WKT();
+                const wgs84Projection = new ol.proj.Projection({
+                    code: 'EPSG:4326',
+                    units: 'degrees'
+                });
+                const mapProjection = new ol.proj.Projection({
+                    code: 'EPSG:3857'
+                });
+                const footprintpoly = wktFormat.readFeature(props.footprintWkt, mapProjection);
+                if(footprintpoly){
+                    footprintpoly.getGeometry().transform(wgs84Projection, mapProjection);
+                    mapSettings.vectorSource.addFeature(footprintpoly);
+                    const vectorextent = mapSettings.vectorSource.getExtent();
+                    map.getView().fit(vectorextent, map.getSize());
+                    let fittedZoom = map.getView().getZoom();
+                    map.getView().setZoom(fittedZoom);
+                }
             }
         }
 
@@ -579,6 +600,7 @@ const spatialViewerElement = {
             setMap();
             addMapControlsInteractions();
             changeBaseMap();
+            processFootprintWkt();
             processCoordinateSet();
         });
 

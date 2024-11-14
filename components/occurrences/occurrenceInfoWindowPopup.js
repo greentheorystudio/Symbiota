@@ -237,7 +237,7 @@ const occurrenceInfoWindowPopup = {
                             </q-tab-panel>
                             <template v-if="occurrenceData['decimallatitude'] && occurrenceData['decimallongitude']">
                                 <q-tab-panel name="map" class="q-pa-none" :style="tabPanelStyle">
-                                    <spatial-viewer-element :coordinate-set="coordinateArr"></spatial-viewer-element>
+                                    <spatial-viewer-element :coordinate-set="coordinateArr" :footprint-wkt="occurrenceData['footprintwkt'] ? occurrenceData['footprintwkt'] : null"></spatial-viewer-element>
                                 </q-tab-panel>
                             </template>
                             <template v-if="determinationArr.length > 0">
@@ -306,16 +306,14 @@ const occurrenceInfoWindowPopup = {
                                 <q-tab-panel name="eventmof" :style="tabPanelStyle">
                                     <div class="column q-gutter-xs">
                                         <template v-for="key in Object.keys(eventMofDataFields)">
-                                            <template v-if="eventMofData.hasOwnProperty(key) && eventMofData[key]">
-                                                <div class="row justify-start q-gutter-sm">
-                                                    <div class="text-bold">
-                                                        {{ (eventMofDataFields[key]['label'] ? eventMofDataFields[key]['label'] : key) + ':' }}
-                                                    </div>
-                                                    <div>
-                                                        {{ eventMofData[key] }}
-                                                    </div>
+                                            <div class="row justify-start q-gutter-sm">
+                                                <div class="text-bold">
+                                                    {{ (eventMofDataFields[key]['label'] ? eventMofDataFields[key]['label'] : key) + ':' }}
                                                 </div>
-                                            </template>
+                                                <div>
+                                                    {{ eventMofData[key] ? eventMofData[key] : '' }}
+                                                </div>
+                                            </div>
                                         </template>
                                     </div>
                                 </q-tab-panel>
@@ -324,16 +322,14 @@ const occurrenceInfoWindowPopup = {
                                 <q-tab-panel name="occurrencemof" :style="tabPanelStyle">
                                     <div class="column q-gutter-xs">
                                         <template v-for="key in Object.keys(occurrenceMofDataFields)">
-                                            <template v-if="occurrenceMofData.hasOwnProperty(key) && occurrenceMofData[key]">
-                                                <div class="row justify-start q-gutter-sm">
-                                                    <div class="text-bold">
-                                                        {{ (occurrenceMofDataFields[key]['label'] ? occurrenceMofDataFields[key]['label'] : key) + ':' }}
-                                                    </div>
-                                                    <div>
-                                                        {{ occurrenceMofData[key] }}
-                                                    </div>
+                                            <div class="row justify-start q-gutter-sm">
+                                                <div class="text-bold">
+                                                    {{ (occurrenceMofDataFields[key]['label'] ? occurrenceMofDataFields[key]['label'] : key) + ':' }}
                                                 </div>
-                                            </template>
+                                                <div>
+                                                    {{ occurrenceMofData[key] ? occurrenceMofData[key] : '' }}
+                                                </div>
+                                            </div>
                                         </template>
                                     </div>
                                 </q-tab-panel>

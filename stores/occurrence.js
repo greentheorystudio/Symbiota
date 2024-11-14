@@ -793,6 +793,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         this.occurrenceEditData = Object.assign({}, this.occurrenceData);
                         this.setCurrentLocationRecord(this.occurrenceEditData['locationid'] ? this.occurrenceEditData['locationid'] : 0);
                         this.setCurrentCollectingEventRecord(this.occurrenceEditData['eventid'] ? this.occurrenceEditData['eventid'] : 0);
+                        this.setOccurrenceMofData();
                     }
                     if(this.getCollectingEventID === 0){
                         this.updateCollectingEventEditData('repcount', (this.getCollectionData['defaultrepcount'] ? Number(this.getCollectionData['defaultrepcount']) : 0))
@@ -950,7 +951,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             this.setOccurrenceImageArr();
                             this.setOccurrenceMediaArr();
                             this.setChecklistArr();
-                            this.setOccurrenceMofData();
                             this.geneticLinkStore.setGeneticLinkArr(this.occId);
                             if(this.getCollId !== Number(this.occurrenceData.collid)){
                                 this.setCollection(this.occurrenceData.collid, callback);
@@ -959,6 +959,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                                 this.occurrenceEditData = Object.assign({}, this.occurrenceData);
                                 this.setCurrentLocationRecord(this.occurrenceEditData['locationid'] ? this.occurrenceEditData['locationid'] : 0);
                                 this.setCurrentCollectingEventRecord(this.occurrenceEditData['eventid'] ? this.occurrenceEditData['eventid'] : 0);
+                                this.setOccurrenceMofData();
                                 if(callback){
                                     callback();
                                 }
