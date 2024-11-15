@@ -250,13 +250,6 @@ const useSearchStore = Pinia.defineStore('search', {
                 record.selected = false;
             });
         },
-        copySearchUrlToClipboard(index){
-            const currentSearchTerms = Object.assign({}, this.getSearchTerms);
-            currentSearchTerms.recordPage = index;
-            const searchTermsJson = JSON.stringify(currentSearchTerms);
-            let copyUrl = window.location.href + '?starr=' + searchTermsJson.replaceAll("'", '%squot;');
-            navigator.clipboard.writeText(copyUrl).then();
-        },
         deselectAllCurrentRecords() {
             this.searchRecordData.forEach((record) => {
                 if(this.selectionsIds.indexOf(Number(record.occid)) > -1){
