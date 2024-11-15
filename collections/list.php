@@ -41,7 +41,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
     ?>
     <div class="navpath">
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <b>Search Criteria</b>
+            <b>Search Collections</b>
         </div>
         <div id="innertext">
             <div class="fit">
