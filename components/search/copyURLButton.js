@@ -21,17 +21,22 @@ const copyURLButton = {
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
 
         function copySearchUrlToClipboard(index) {
-            const currentSearchTerms = Object.assign({}, searchTerms.value);
-            currentSearchTerms.recordPage = index;
-            const searchTermsJson = JSON.stringify(currentSearchTerms);
-            let copyUrl = window.location.href + '?starr=' + searchTermsJson.replaceAll("'", '%squot;');
-            navigator.clipboard.writeText(copyUrl)
-            .then(() => {
-                showNotification('positive','URL copied successfully');
-            })
-            .catch(() => {
+            if(navigator && navigator.hasOwnProperty('clipboard')){
+                const currentSearchTerms = Object.assign({}, searchTerms.value);
+                currentSearchTerms.recordPage = index;
+                const searchTermsJson = JSON.stringify(currentSearchTerms);
+                let copyUrl = window.location.href + '?starr=' + searchTermsJson.replaceAll("'", '%squot;');
+                navigator.clipboard.writeText(copyUrl)
+                .then(() => {
+                    showNotification('positive','URL copied successfully');
+                })
+                .catch(() => {
+                    showNotification('negative', 'An error occurred while copying the URL to the clipboard');
+                });
+            }
+            else{
                 showNotification('negative', 'An error occurred while copying the URL to the clipboard');
-            });
+            }
         }
 
         return {
